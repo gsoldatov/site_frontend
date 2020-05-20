@@ -11,7 +11,8 @@ module.exports = {
     output: {
         filename: "[name].[contenthash].js",
         chunkFilename: "[name].[contenthash].js",
-        path: path.resolve(__dirname, "dist")
+        path: path.resolve(__dirname, "dist"),
+        publicPath: "/"
     },
 
     optimization: {
@@ -52,7 +53,11 @@ module.exports = {
                     "style-loader",
                     "css-loader"
                 ]
-            }
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                loader: "file-loader?name=/static/icons/[name].[ext]"
+            },
         ]
     },
 };
