@@ -1,25 +1,48 @@
 import React from "react";
 import Navigation from "./navigation";
 import SideMenu from "./side-menu";
-import TagField from "./tag-field";
-
-const created_at = new Date(2019, 11, 25, 17, 50, 15);
-const modified_at = new Date(2020, 4, 18, 12, 28, 20);
-
-const tempTag = {
-    tag_name: "Music",
-    tag_description: "Everything related to music",
-    created_at: created_at.toLocaleString("ru-RU"),
-    modified_at: modified_at.toLocaleString("ru-RU")
-};
+import sideMenuItemListAddTag from "./side-menu-itemlist-add-tag";
+import sideMenuItemListEditTag from "./side-menu-itemlist-edit-tag";
+import TagFieldContainer from "./tag-field-container";
+import { loadEditTagPage } from "../actions/tag";
 
 class Tag extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.props.setRedirectOnRender("");
+        let currentID = this.props.match.params.id;
+
+        if (currentID === "add") {
+            this.props.loadAddTagPage();
+        } else {
+            this.props.loadEditTagPage();
+            this.props.editTagOnLoadFetch(currentID);
+            // TODO fetch linked tag data here
+        }        
+    }
+
+    componentDidUpdate(prevProps) {
+        // Handle redirect to tag page after successful tag creation
+        let currentID = this.props.match.params.id;
+        let previousID = prevProps.match.params.id;
+
+        if (currentID !== "add" && previousID === "add") {
+            this.props.setRedirectOnRender("");
+            this.props.loadEditTagPage();
+            this.props.editTagOnLoadFetch(currentID);
+            // TODO fetch linked tag data here
+        }
+    }
+
     render() {
+        const isAddTagPage = this.props.match.params.id === "add";
+        const sideMenuItemList = isAddTagPage ? sideMenuItemListAddTag : sideMenuItemListEditTag;
         return (
             <div className="layout-div">
                 <Navigation />
-                <SideMenu />
-                <TagField tag={tempTag} />
+                <SideMenu itemList={sideMenuItemList}/>
+                <TagFieldContainer isAddTagPage={isAddTagPage} />
             </div>
         );
     }

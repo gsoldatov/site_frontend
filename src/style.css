@@ -5,6 +5,8 @@
     
     --pressed-button-color: rgba(80, 80, 80);
     --field-menu-button-overlay-color: rgba(0, 0, 0, 0.3);
+
+    --error-text-color: red;
 }
 
 * {
@@ -82,8 +84,23 @@ main {
     border-right: double var(--border-color);
 }
 
+.side-menu-item, .side-menu-item-inactive {
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border-right: solid 1px var(--border-color);
+    border-bottom: solid 1px var(--border-color);
+    background-color: rgba(255, 255, 255, 1);
+    /* font-size: larger; */
+}
+
+.side-menu-item-inactive {
+    color: rgba(180, 180, 180, 1);
+}
+
 .side-menu-item:hover {
     background-color: var(--hover-color);
+    cursor: pointer;
 }
 
 /****** Item field ******/
@@ -291,4 +308,10 @@ main {
     margin-left: 10px;
     margin-right: 10px;
     border: 1px solid black;
+}
+
+/* Errors & messages */
+.fetch-error-info {
+    color: var(--error-text-color);
+    margin-left: 10px;
 }

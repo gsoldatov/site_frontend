@@ -1,14 +1,19 @@
 import React from "react";
+import factory from "./side-menu-item-container-factory";
+
 
 class SideMenu extends React.Component {
     render() {
+        let k = 0;
+        const itemList = this.props.itemList
+                        ? this.props.itemList.map(item => {
+                            let SideMenuItemContainer = factory(item.itemJSX, item.getIsActive, item.onClick);
+                            return <SideMenuItemContainer key={k++} />;
+                        })
+                        : "no menu items available";
         return (
             <aside>
-                <ul className="side-menu">
-                    <li className="side-menu-item">Menu item 1</li>
-                    <li className="side-menu-item">Menu item 2</li>
-                    <li className="side-menu-item">Menu item 3</li>
-                </ul>
+                {itemList}
             </aside>
         );
     }

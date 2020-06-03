@@ -4,7 +4,7 @@ import FieldPaginationDots from "./field-pagination-dots";
 
 // Previous 1 ... i-2 i-1 i i+1 i+2 ... N Next
 function onClickTemp(e) {
-    console.log(`Button ${e} clicked`);
+    console.log(`Button ${e.target.firstChild.textContent} clicked`);
 }
 
 class FieldPagination extends React.Component {
