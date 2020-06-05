@@ -101,13 +101,17 @@ class TagField extends React.Component {
     }
 
     renderEdit() {
-        if (this.props.isFetching) {
+        if (this.props.isFetching && this.props.fetchType === "onLoad") {
             return <div>Fetching data...</div>
         };
 
-        if (this.props.fetchError) {
+        if (this.props.fetchError && this.props.fetchType === "onLoad") {
             return <div>Failed to fetch data: {this.props.fetchError}</div>
         }
+
+        const fetchError = this.props.fetchError && this.props.fetchType === "onSave" && (
+            <div className="fetch-error-info">{this.props.fetchError}</div>
+        );
 
         const tag = this.state.tag;
 
@@ -134,6 +138,7 @@ class TagField extends React.Component {
                 <section className="tag-page-body">
                     <h3 className="item-field-header">Tag Information</h3>
                     {timestamps}
+                    {fetchError}
                     <form className="item-field-form">
                         <label htmlFor="tag_name" className="item-field-form-label">
                             Tag name

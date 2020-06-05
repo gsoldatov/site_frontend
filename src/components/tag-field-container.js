@@ -5,6 +5,9 @@ import { setCurrentTag } from "../actions/tag";
 const mapStateToProps = (state, ownProps) => {
     return {
         isAddTagPage: ownProps.isAddTagPage,
+        fetchType: ownProps.isAddTagPage
+                    ? undefined
+                    : state.tagUI.editTagFetch.fetchType,
         isFetching: ownProps.isAddTagPage
                     ? undefined
                     : state.tagUI.editTagFetch.isFetching,
