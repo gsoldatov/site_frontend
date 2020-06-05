@@ -53,8 +53,10 @@ export function addTagFetch() {
 
         // Post the tag and handle response & errors
         let payload = JSON.stringify({
-            tag_name: state.tagUI.currentTag.tag_name,
-            tag_description: state.tagUI.currentTag.tag_description
+            tag: {
+                tag_name: state.tagUI.currentTag.tag_name,
+                tag_description: state.tagUI.currentTag.tag_description
+            }
         });
 
         return fetch(`${backendURL}/tags/add`, {
@@ -64,7 +66,7 @@ export function addTagFetch() {
         }).then(response => {
             switch (response.status) {
                 case 200:
-                    return response.json().then(json => ({ error: "", tag: json }));
+                    return response.json().then(json => ({ error: "", tag: json["tag"] }));
                 case 400:
                     return response.json().then(json => ({ error: json._error, tag: null }));
                 case 500:
