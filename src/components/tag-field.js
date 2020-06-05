@@ -42,16 +42,17 @@ class TagField extends React.Component {
         alert("In componentWillUnmount");
     }
 
-    componentDidUpdate(prevprops) {
-        // Update the height of textare to the size of its text
+    componentDidUpdate(prevProps) {
+        // Update the height of textarea to the size of its text
         if (this.tag_description.current){
             this.tag_description.current.style.height = "inherit";  // reset
             this.tag_description.current.style.height = this.tag_description.current.scrollHeight + "px";   // set to text height
         }
 
-        // Handle redirect to tag page after successful tag creation
-        // + update current tag after loading tag info from backend
-        if (this.props.tag.tag_id !== 0 && prevprops.tag.tag_id === 0) {
+        // Push updated currentTag into component's state
+        if (this.props.tag.tag_id !== 0 && prevProps.tag.tag_id === 0                       // after adding a new tag + after loading an uncached tag from backend
+            || !prevProps.isAddTagPage && !this.props.isFetching && prevProps.isFetching    // after saving tag changes
+            ) {
             this.setState({
                 tag: this.props.tag
             });

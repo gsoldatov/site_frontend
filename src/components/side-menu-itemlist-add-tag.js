@@ -1,4 +1,4 @@
-import {addTagFetch, setRedirectOnRender } from "../actions/tag";
+import { addTagFetch, setRedirectOnRender } from "../actions/tag";
 
 /*
     Side menu item definition for the add tag page.

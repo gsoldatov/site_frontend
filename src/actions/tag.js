@@ -130,3 +130,55 @@ export function editTagOnLoadFetch(tag_id) {
         });
     };
 };
+
+export function editTagOnSaveFetch() {
+    return (dispatch, getState) => {
+        let state = getState();
+
+        // exit if already fetching
+        if (state.tagUI.editTagFetch.isFetching) {
+            return;
+        }
+        
+        // Update fetch status
+        dispatch(setEditTagFetchState(true, "", "onSave"));
+
+        // Fetch tag data and handle response
+        let payload = JSON.stringify({ 
+            tag: {
+                tag_id: state.tagUI.currentTag.tag_id,
+                tag_name: state.tagUI.currentTag.tag_name,
+                tag_description: state.tagUI.currentTag.tag_description
+            } 
+        });
+
+        return fetch(`${backendURL}/tags/update`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: payload
+        }).then(response => {
+            console.log("In editTagOnSaveFetch thunk, response status = " + response.status);
+            // response.json().then(json => console.log("In editTagOnSaveFetch thunk, response json = " + JSON.stringify(json)));
+            switch (response.status) {
+                case 200:
+                    // return response.json().then(json => ({ error: "", tag: json["tag"] }));
+                    return response.json().then(json => { console.log("In editTagOnSaveFetch thunk, response json = " + JSON.stringify(json)); return ({ error: "", tag: json["tag"] }) });
+                case 400:
+                    return response.json().then(json => ({ error: json._error, tag: null }));
+                case 404:
+                    return response.json().then(json => ({ error: "Tag not found.", tag: null }));
+                case 500:
+                    return response.text().then(text => ({ error: text, tag: null }));
+            }
+        }).then(({ error, tag }) => {
+            console.log("In editTagOnSaveFetch thunk, received tag = " + JSON.stringify(tag));
+            if (tag) {
+                dispatch(addTag(tag))
+                dispatch(setCurrentTag(tag))
+            }
+            dispatch(setEditTagFetchState(false, error, "onSave"));
+        }).catch(error => {
+            dispatch(setEditTagFetchState(false, error.message, "onSave"));
+        });
+    };        
+};
