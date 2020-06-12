@@ -1,4 +1,5 @@
 import config from "../config";
+import { isFetchingTag, checkIfCurrentTagNameExists } from "../store/state-check-functions";
 
 const backendURL = config.backendURL;
 
@@ -7,8 +8,9 @@ export const LOAD_EDIT_TAG_PAGE = "LOAD_EDIT_TAG_PAGE";
 export const SET_CURRENT_TAG = "SET_CURRENT_TAG";
 export const ADD_TAG = "ADD_TAG";
 export const SET_REDIRECT_ON_RENDER  = "SET_REDIRECT_ON_RENDER";
-export const SET_ADD_TAG_FETCH_STATE = "SET_ADD_TAG_FETCH_STATE";
-export const SET_EDIT_TAG_FETCH_STATE = "SET_EDIT_TAG_FETCH_STATE";
+export const SET_ADD_TAG_ON_SAVE_FETCH_STATE = "SET_ADD_TAG_ON_SAVE_FETCH_STATE";
+export const SET_EDIT_TAG_ON_LOAD_FETCH_STATE = "SET_EDIT_TAG_ON_LOAD_FETCH_STATE";
+export const SET_EDIT_TAG_ON_SAVE_FETCH_STATE = "SET_EDIT_TAG_ON_SAVE_FETCH_STATE";
 
 export const loadAddTagPage      = () => ({ type: LOAD_ADD_TAG_PAGE });
 export const loadEditTagPage     = () => ({ type: LOAD_EDIT_TAG_PAGE });
@@ -16,40 +18,45 @@ export const setCurrentTag       = (tag) => ({ type: SET_CURRENT_TAG, tag: tag }
 export const addTag              = (tag) => ({ type: ADD_TAG, tag: tag });
 export const setRedirectOnRender = (redirectOnRender = "") => ({ type: SET_REDIRECT_ON_RENDER, redirectOnRender: redirectOnRender });
 
-export const setAddTagFetchState = (isFetching = false, fetchError = "") => {
+export const setAddTagOnSaveFetchState = (isFetching = false, fetchError = "", lastFetch = undefined) => {
     return {
-        type: SET_ADD_TAG_FETCH_STATE,
+        type: SET_ADD_TAG_ON_SAVE_FETCH_STATE,
         isFetching: isFetching,
-        fetchError: fetchError
+        fetchError: fetchError,
+        lastFetch: lastFetch
     };
 };
 
-export const setEditTagFetchState = (isFetching = false, fetchError = "", fetchType = "onLoad") => {
+export const setEditTagOnLoadFetchState = (isFetching = false, fetchError = "", lastFetch = undefined) => {
     return {
-        type: SET_EDIT_TAG_FETCH_STATE,
+        type: SET_EDIT_TAG_ON_LOAD_FETCH_STATE,
         isFetching: isFetching,
         fetchError: fetchError,
-        fetchType: fetchType
-    }
-}
+        lastFetch: lastFetch
+    };
+};
 
-export function addTagFetch() {
+export const setEditTagOnSaveFetchState = (isFetching = false, fetchError = "", lastFetch = undefined) => {
+    return {
+        type: SET_EDIT_TAG_ON_SAVE_FETCH_STATE,
+        isFetching: isFetching,
+        fetchError: fetchError,
+        lastFetch: lastFetch
+    };
+};
+
+export function addTagOnSaveFetch() {
     return (dispatch, getState) => {
-        // Check if tag_name already exists in local storage
         let state = getState();
-        let tags = state.tags;
-        let currentTagNameLowered = state.tagUI.currentTag.tag_name.toLowerCase();
 
-        for (let i in tags) {
-            if (currentTagNameLowered === tags[i].tag_name.toLowerCase()) {
-                let fetchError = `Tag name "${tags[i].tag_name}" already exists.`;
-                dispatch(setAddTagFetchState(false, fetchError));
-                return;
-            }
+        // Check if tag_name already exists in local storage
+        if (checkIfCurrentTagNameExists(state)) {
+            dispatch(setAddTagOnSaveFetchState(false, "Tag name already exists.", "addTagOnSave"));
+            return;
         }
 
         // Update fetch status
-        dispatch(setAddTagFetchState(true, ""));
+        dispatch(setAddTagOnSaveFetchState(true, "", ""));
 
         // Post the tag and handle response & errors
         let payload = JSON.stringify({
@@ -77,10 +84,10 @@ export function addTagFetch() {
             if (tag) {
                 dispatch(addTag(tag))
             }
-            dispatch(setAddTagFetchState(false, error));
+            dispatch(setAddTagOnSaveFetchState(false, error, "addTagOnSave"));
             dispatch(setRedirectOnRender(redirectOnRender));
         }).catch(error => {
-            dispatch(setAddTagFetchState(false, error.message));
+            dispatch(setAddTagOnSaveFetchState(false, error.message, "addTagOnSave"));
         });
     };
 };
@@ -90,7 +97,7 @@ export function editTagOnLoadFetch(tag_id) {
         let state = getState();
 
         // exit if already fetching
-        if (state.tagUI.editTagFetch.isFetching) {
+        if (isFetchingTag(state)) {
             return;
         }
 
@@ -101,7 +108,7 @@ export function editTagOnLoadFetch(tag_id) {
         }
         
         // Update fetch status
-        dispatch(setEditTagFetchState(true, "", "onLoad"));
+        dispatch(setEditTagOnLoadFetchState(true, "", ""));
 
         // Fetch tag data and handle response
         let payload = JSON.stringify({ tag_ids: [parseInt(tag_id)] });
@@ -126,9 +133,9 @@ export function editTagOnLoadFetch(tag_id) {
                 dispatch(addTag(tag))
                 dispatch(setCurrentTag(tag))
             }
-            dispatch(setEditTagFetchState(false, error, "onLoad"));
+            dispatch(setEditTagOnLoadFetchState(false, error, "editTagOnLoad"));
         }).catch(error => {
-            dispatch(setEditTagFetchState(false, error.message, "onLoad"));
+            dispatch(setEditTagOnLoadFetchState(false, error.message, "editTagOnLoad"));
         });
     };
 };
@@ -138,12 +145,18 @@ export function editTagOnSaveFetch() {
         let state = getState();
 
         // exit if already fetching
-        if (state.tagUI.editTagFetch.isFetching) {
+        if (isFetchingTag(state)) {
+            return;
+        }
+
+        // Check if tag_name already exists in local storage
+        if (checkIfCurrentTagNameExists(state)) {
+            dispatch(setEditTagOnSaveFetchState(false, "Tag name already exists.", "editTagOnSave"));
             return;
         }
         
         // Update fetch status
-        dispatch(setEditTagFetchState(true, "", "onSave"));
+        dispatch(setEditTagOnSaveFetchState(true, "", ""));
 
         // Fetch tag data and handle response
         let payload = JSON.stringify({ 
@@ -159,12 +172,9 @@ export function editTagOnSaveFetch() {
             headers: { "Content-Type": "application/json" },
             body: payload
         }).then(response => {
-            console.log("In editTagOnSaveFetch thunk, response status = " + response.status);
-            // response.json().then(json => console.log("In editTagOnSaveFetch thunk, response json = " + JSON.stringify(json)));
             switch (response.status) {
                 case 200:
-                    // return response.json().then(json => ({ error: "", tag: json["tag"] }));
-                    return response.json().then(json => { console.log("In editTagOnSaveFetch thunk, response json = " + JSON.stringify(json)); return ({ error: "", tag: json["tag"] }) });
+                    return response.json().then(json => ({ error: "", tag: json["tag"] }));
                 case 400:
                     return response.json().then(json => ({ error: json._error, tag: null }));
                 case 404:
@@ -173,14 +183,13 @@ export function editTagOnSaveFetch() {
                     return response.text().then(text => ({ error: text, tag: null }));
             }
         }).then(({ error, tag }) => {
-            console.log("In editTagOnSaveFetch thunk, received tag = " + JSON.stringify(tag));
             if (tag) {
                 dispatch(addTag(tag))
                 dispatch(setCurrentTag(tag))
             }
-            dispatch(setEditTagFetchState(false, error, "onSave"));
+            dispatch(setEditTagOnSaveFetchState(false, error, "editTagOnSave"));
         }).catch(error => {
-            dispatch(setEditTagFetchState(false, error.message, "onSave"));
+            dispatch(setEditTagOnSaveFetchState(false, error.message, "editTagOnSave"));
         });
     };        
 };

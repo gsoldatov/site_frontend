@@ -4,18 +4,14 @@ import { setCurrentTag } from "../actions/tag";
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        isAddTagPage: ownProps.isAddTagPage,
-        fetchType: ownProps.isAddTagPage
-                    ? undefined
-                    : state.tagUI.editTagFetch.fetchType,
-        isFetching: ownProps.isAddTagPage
-                    ? undefined
-                    : state.tagUI.editTagFetch.isFetching,
-        fetchError: ownProps.isAddTagPage
-                    ? state.tagUI.addTagFetch.fetchError
-                    : state.tagUI.editTagFetch.fetchError,
+        tag: state.tagUI.currentTag,
         redirectOnRender: state.tagUI.redirectOnRender,
-        tag: state.tagUI.currentTag
+        isAddTagPage: ownProps.isAddTagPage,
+
+        lastFetch: state.tagUI.lastFetch,
+        addTagOnSaveFetch: state.tagUI.addTagOnSaveFetch,
+        editTagOnLoadFetch: state.tagUI.editTagOnLoadFetch,
+        editTagOnSaveFetch: state.tagUI.editTagOnSaveFetch,
     };
 };
 

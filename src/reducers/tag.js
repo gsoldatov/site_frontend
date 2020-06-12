@@ -1,5 +1,6 @@
 import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, ADD_TAG, SET_REDIRECT_ON_RENDER, 
-        SET_ADD_TAG_FETCH_STATE, SET_EDIT_TAG_FETCH_STATE } from "../actions/tag";
+    SET_ADD_TAG_ON_SAVE_FETCH_STATE, SET_EDIT_TAG_ON_LOAD_FETCH_STATE, SET_EDIT_TAG_ON_SAVE_FETCH_STATE
+    } from "../actions/tag";
 
 function loadAddTagPage(state, action) {
     return {
@@ -13,7 +14,10 @@ function loadAddTagPage(state, action) {
                 created_at: "",
                 modified_at: ""
             },
-            addTagFetch: {
+
+            lastFetch: "",
+
+            addTagOnSaveFetch: {
                 isFetching: false,
                 fetchError: ""
             }
@@ -33,10 +37,17 @@ function loadEditTagPage(state, action) {
                 created_at: "",
                 modified_at: ""
             },
-            editTagFetch: {
+            
+            lastFetch: "",
+
+            editTagOnLoadFetch: {
                 isFetching: false,
-                fetchError: "",
-                fetchType: ""
+                fetchError: ""
+            },
+            
+            editTagOnSaveFetch: {
+                isFetching: false,
+                fetchError: ""
             }
         }
     };
@@ -80,12 +91,13 @@ function setRedirectOnRender(state, action) {
     };
 };
 
-function setAddTagFetchState(state, action) {
+function setAddTagOnSaveFetchState(state, action) {
     return {
         ...state,
         tagUI: {
             ...state.tagUI,
-            addTagFetch: {
+            lastFetch: action.lastFetch === undefined ? state.tagUI.lastFetch : action.lastFetch,
+            addTagOnSaveFetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError
             }
@@ -93,18 +105,32 @@ function setAddTagFetchState(state, action) {
     };
 }
 
-function setEditTagFetchState(state, action) {
+function setEditTagOnLoadFetchState(state, action) {
     return {
         ...state,
         tagUI: {
             ...state.tagUI,
-            editTagFetch: {
+            lastFetch: action.lastFetch === undefined ? state.tagUI.lastFetch : action.lastFetch,
+            editTagOnLoadFetch: {
                 isFetching: action.isFetching,
-                fetchError: action.fetchError,
-                fetchType: action.fetchType
+                fetchError: action.fetchError
             }
         }
-    }
+    };
+}
+
+function setEditTagOnSaveFetchState(state, action) {
+    return {
+        ...state,
+        tagUI: {
+            ...state.tagUI,
+            lastFetch: action.lastFetch === undefined ? state.tagUI.lastFetch : action.lastFetch,
+            editTagOnSaveFetch: {
+                isFetching: action.isFetching,
+                fetchError: action.fetchError
+            }
+        }
+    };
 }
 
 const root = {
@@ -113,8 +139,9 @@ const root = {
     SET_CURRENT_TAG: setCurrentTag,
     ADD_TAG: addTag,
     SET_REDIRECT_ON_RENDER: setRedirectOnRender,
-    SET_ADD_TAG_FETCH_STATE: setAddTagFetchState,
-    SET_EDIT_TAG_FETCH_STATE: setEditTagFetchState
+    SET_ADD_TAG_ON_SAVE_FETCH_STATE: setAddTagOnSaveFetchState,
+    SET_EDIT_TAG_ON_LOAD_FETCH_STATE: setEditTagOnLoadFetchState,
+    SET_EDIT_TAG_ON_SAVE_FETCH_STATE: setEditTagOnSaveFetchState
 };
 
 export default root;

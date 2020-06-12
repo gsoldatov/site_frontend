@@ -44,7 +44,7 @@ class TagField extends React.Component {
 
     componentDidUpdate(prevProps) {
         // Update the height of textarea to the size of its text
-        if (this.tag_description.current){
+        if (this.tag_description.current) {
             this.tag_description.current.style.height = "inherit";  // reset
             this.tag_description.current.style.height = this.tag_description.current.scrollHeight + "px";   // set to text height
         }
@@ -68,8 +68,8 @@ class TagField extends React.Component {
     }
 
     renderAdd() {
-        const fetchError = this.props.fetchError && (
-            <div className="fetch-error-info">{this.props.fetchError}</div>
+        const fetchError = this.props.lastFetch === "addTagOnSave" && this.props.addTagOnSaveFetch.fetchError && (
+            <div className="fetch-error-info">{this.props.addTagOnSaveFetch.fetchError}</div>
         );
         
         const tag = this.state.tag;
@@ -101,17 +101,22 @@ class TagField extends React.Component {
     }
 
     renderEdit() {
-        if (this.props.isFetching && this.props.fetchType === "onLoad") {
+        // onLoad fetch and fetch error display
+        if (this.props.editTagOnLoadFetch.isFetching) {
             return <div>Fetching data...</div>
-        };
-
-        if (this.props.fetchError && this.props.fetchType === "onLoad") {
-            return <div>Failed to fetch data: {this.props.fetchError}</div>
         }
 
-        const fetchError = this.props.fetchError && this.props.fetchType === "onSave" && (
-            <div className="fetch-error-info">{this.props.fetchError}</div>
+        if (this.props.lastFetch === "editTagOnLoad" && this.props.editTagOnLoadFetch.fetchError) {
+            return <div>Failed to fetch data: {this.props.editTagOnLoadFetch.fetchError}</div>
+        }
+
+        // onSave fetch error
+        const onSaveFetchError = this.props.lastFetch === "editTagOnSave" && this.props.editTagOnSaveFetch.fetchError && (
+            <div className="fetch-error-info">{this.props.editTagOnSaveFetch.fetchError}</div>
         );
+        console.log("IN TAG FIELD RENDER EDIT()")
+        console.log("LAST FETCH = " + this.props.lastFetch)
+        console.log("EDIT TAG ON SAVE FETCH ERROR: " + this.props.editTagOnSaveFetch.fetchError);
 
         const tag = this.state.tag;
 
@@ -138,7 +143,7 @@ class TagField extends React.Component {
                 <section className="tag-page-body">
                     <h3 className="item-field-header">Tag Information</h3>
                     {timestamps}
-                    {fetchError}
+                    {onSaveFetchError}
                     <form className="item-field-form">
                         <label htmlFor="tag_name" className="item-field-form-label">
                             Tag name

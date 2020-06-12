@@ -4,7 +4,6 @@ import SideMenu from "./side-menu";
 import sideMenuItemListAddTag from "./side-menu-itemlist-add-tag";
 import sideMenuItemListEditTag from "./side-menu-itemlist-edit-tag";
 import TagFieldContainer from "./tag-field-container";
-import { loadEditTagPage } from "../actions/tag";
 
 class Tag extends React.Component {
     constructor(props) {
