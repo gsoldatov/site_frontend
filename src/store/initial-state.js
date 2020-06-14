@@ -33,7 +33,9 @@ const initialState = {
         editTagOnDeleteFetch: {
             isFetching: false,
             fetchError: ""
-        }
+        },
+
+        showDeleteDialog: false
     },
 
     // tags page UI controllers

@@ -1,5 +1,6 @@
-import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, ADD_TAG, SET_REDIRECT_ON_RENDER, 
-    SET_ADD_TAG_ON_SAVE_FETCH_STATE, SET_EDIT_TAG_ON_LOAD_FETCH_STATE, SET_EDIT_TAG_ON_SAVE_FETCH_STATE
+import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, ADD_TAG, DELETE_TAG, SET_REDIRECT_ON_RENDER, 
+    SET_ADD_TAG_ON_SAVE_FETCH_STATE, SET_EDIT_TAG_ON_LOAD_FETCH_STATE, SET_EDIT_TAG_ON_SAVE_FETCH_STATE,
+    SET_EDIT_TAG_ON_DELETE_FETCH_STATE, SET_SHOW_DELETE_DIALOG
     } from "../actions/tag";
 
 function loadAddTagPage(state, action) {
@@ -44,11 +45,18 @@ function loadEditTagPage(state, action) {
                 isFetching: false,
                 fetchError: ""
             },
-            
+
             editTagOnSaveFetch: {
                 isFetching: false,
                 fetchError: ""
-            }
+            },
+
+            editTagOnDeleteFetch: {
+                isFetching: false,
+                fetchError: ""
+            },
+
+            showDeleteDialog: false
         }
     };
 }
@@ -80,6 +88,15 @@ function addTag(state, action) {
         }
     };
 };
+
+function deleteTag(state, action) {
+    let tags = {...state.tags};
+    delete tags[action.tag_id];
+    return {
+        ...state,
+        tags: tags
+    };
+}
 
 function setRedirectOnRender(state, action) {
     return {
@@ -133,15 +150,43 @@ function setEditTagOnSaveFetchState(state, action) {
     };
 }
 
+function setEditTagOnDeleteFetchState(state, action) {
+    return {
+        ...state,
+        tagUI: {
+            ...state.tagUI,
+            lastFetch: action.lastFetch === undefined ? state.tagUI.lastFetch : action.lastFetch,
+            editTagOnDeleteFetch: {
+                isFetching: action.isFetching,
+                fetchError: action.fetchError
+            }
+        }
+    };
+}
+
+function setShowDeleteDialog(state, action) {
+    return {
+        ...state,
+        tagUI: {
+            ...state.tagUI,
+            showDeleteDialog: action.showDeleteDialog
+        }
+    }
+}
+
 const root = {
     LOAD_ADD_TAG_PAGE: loadAddTagPage,
     LOAD_EDIT_TAG_PAGE: loadEditTagPage,
     SET_CURRENT_TAG: setCurrentTag,
     ADD_TAG: addTag,
+    DELETE_TAG: deleteTag,
+
     SET_REDIRECT_ON_RENDER: setRedirectOnRender,
     SET_ADD_TAG_ON_SAVE_FETCH_STATE: setAddTagOnSaveFetchState,
     SET_EDIT_TAG_ON_LOAD_FETCH_STATE: setEditTagOnLoadFetchState,
-    SET_EDIT_TAG_ON_SAVE_FETCH_STATE: setEditTagOnSaveFetchState
+    SET_EDIT_TAG_ON_SAVE_FETCH_STATE: setEditTagOnSaveFetchState,
+    SET_EDIT_TAG_ON_DELETE_FETCH_STATE: setEditTagOnDeleteFetchState,
+    SET_SHOW_DELETE_DIALOG: setShowDeleteDialog
 };
 
 export default root;

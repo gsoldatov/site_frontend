@@ -12,7 +12,6 @@ export function loadState() {
         validateStoreState(initialState, parsedState);
 
         console.log("Loaded saved state from local storage.");
-        console.log("Loaded state is: " + JSON.stringify(parsedState));
         return parsedState;
     } catch (e) {
         console.log("Error when loading state from local storage: " + e.message);

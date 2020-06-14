@@ -1,7 +1,7 @@
 :root {
     --selected-color: rgba(160, 160, 160, 0.5);
     --hover-color: rgba(30, 105, 55, 0.7);
-    --border-color: var(--hover-color);
+    --border-color: var(--hover-color);     /* TODO rename */
     
     --pressed-button-color: rgba(80, 80, 80);
     --field-menu-button-overlay-color: rgba(0, 0, 0, 0.3);
@@ -84,14 +84,16 @@ main {
     border-right: double var(--border-color);
 }
 
-.side-menu-item, .side-menu-item-inactive {
-    padding: 10px;
+.side-menu-item, .side-menu-item-inactive, .side-menu-dialog {
     text-align: center;
     font-weight: bold;
     border-right: solid 1px var(--border-color);
     border-bottom: solid 1px var(--border-color);
     background-color: rgba(255, 255, 255, 1);
-    /* font-size: larger; */
+}
+
+.side-menu-item, .side-menu-item-inactive {
+    padding: 10px;
 }
 
 .side-menu-item-inactive {
@@ -100,6 +102,49 @@ main {
 
 .side-menu-item:hover {
     background-color: var(--hover-color);
+    cursor: pointer;
+}
+
+.side-menu-dialog {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.side-menu-dialog-message, .side-menu-dialog-buttons {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.side-menu-dialog-buttons {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.side-menu-dialog-button, .side-menu-dialog-button-red {
+    min-width: 30%;
+    min-height: 40px;
+    font-weight: bold;
+}
+
+.side-menu-dialog-button {
+    background-color: rgba(255, 255, 255, 1);
+    border: solid 2px var(--border-color);
+}
+
+.side-menu-dialog-button:hover {
+    background-color: var(--hover-color);
+    cursor: pointer;
+}
+
+.side-menu-dialog-button-red {
+    border: solid 2px crimson;
+}
+
+.side-menu-dialog-button-red:hover {
+    background-color: crimson;
     cursor: pointer;
 }
 

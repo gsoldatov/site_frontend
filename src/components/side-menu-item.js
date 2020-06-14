@@ -2,6 +2,10 @@ import React from "react";
 
 class SideMenuItem extends React.Component {
     render() {
+        if (!this.props.isVisible) {
+            return null;
+        }
+        
         const className = this.props.isActive ? "side-menu-item" : "side-menu-item-inactive";
         const onClick = this.props.isActive ? this.props.onClick : null;
 

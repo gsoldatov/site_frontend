@@ -114,9 +114,6 @@ class TagField extends React.Component {
         const onSaveFetchError = this.props.lastFetch === "editTagOnSave" && this.props.editTagOnSaveFetch.fetchError && (
             <div className="fetch-error-info">{this.props.editTagOnSaveFetch.fetchError}</div>
         );
-        console.log("IN TAG FIELD RENDER EDIT()")
-        console.log("LAST FETCH = " + this.props.lastFetch)
-        console.log("EDIT TAG ON SAVE FETCH ERROR: " + this.props.editTagOnSaveFetch.fetchError);
 
         const tag = this.state.tag;
 

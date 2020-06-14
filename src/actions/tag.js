@@ -7,16 +7,21 @@ export const LOAD_ADD_TAG_PAGE = "LOAD_ADD_TAG_PAGE";
 export const LOAD_EDIT_TAG_PAGE = "LOAD_EDIT_TAG_PAGE";
 export const SET_CURRENT_TAG = "SET_CURRENT_TAG";
 export const ADD_TAG = "ADD_TAG";
+export const DELETE_TAG = "DELETE_TAG";
 export const SET_REDIRECT_ON_RENDER  = "SET_REDIRECT_ON_RENDER";
 export const SET_ADD_TAG_ON_SAVE_FETCH_STATE = "SET_ADD_TAG_ON_SAVE_FETCH_STATE";
 export const SET_EDIT_TAG_ON_LOAD_FETCH_STATE = "SET_EDIT_TAG_ON_LOAD_FETCH_STATE";
 export const SET_EDIT_TAG_ON_SAVE_FETCH_STATE = "SET_EDIT_TAG_ON_SAVE_FETCH_STATE";
+export const SET_EDIT_TAG_ON_DELETE_FETCH_STATE = "SET_EDIT_TAG_ON_DELETE_FETCH_STATE";
+export const SET_SHOW_DELETE_DIALOG = "SET_SHOW_DELETE_DIALOG";
 
 export const loadAddTagPage      = () => ({ type: LOAD_ADD_TAG_PAGE });
 export const loadEditTagPage     = () => ({ type: LOAD_EDIT_TAG_PAGE });
 export const setCurrentTag       = (tag) => ({ type: SET_CURRENT_TAG, tag: tag });
 export const addTag              = (tag) => ({ type: ADD_TAG, tag: tag });
+export const deleteTag           = (tag_id) => ({ type: ADD_TAG, tag_id: tag_id });
 export const setRedirectOnRender = (redirectOnRender = "") => ({ type: SET_REDIRECT_ON_RENDER, redirectOnRender: redirectOnRender });
+export const setShowDeleteDialog = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG, showDeleteDialog: showDeleteDialog });
 
 export const setAddTagOnSaveFetchState = (isFetching = false, fetchError = "", lastFetch = undefined) => {
     return {
@@ -39,6 +44,15 @@ export const setEditTagOnLoadFetchState = (isFetching = false, fetchError = "", 
 export const setEditTagOnSaveFetchState = (isFetching = false, fetchError = "", lastFetch = undefined) => {
     return {
         type: SET_EDIT_TAG_ON_SAVE_FETCH_STATE,
+        isFetching: isFetching,
+        fetchError: fetchError,
+        lastFetch: lastFetch
+    };
+};
+
+export const setEditTagOnDeleteFetchState = (isFetching = false, fetchError = "", lastFetch = undefined) => {
+    return {
+        type: SET_EDIT_TAG_ON_DELETE_FETCH_STATE,
         isFetching: isFetching,
         fetchError: fetchError,
         lastFetch: lastFetch
