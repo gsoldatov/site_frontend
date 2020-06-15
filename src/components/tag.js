@@ -21,7 +21,6 @@ class Tag extends React.Component {
         }
 
         // side menu items
-        console.log("BEFORE addTagSideMenuItemList")
         this.addTagSideMenuItemList = getAddTagPageSideMenuItems();
         this.editTagSideMenuItemList = getEditTagPageSideMenuItems();
     }

@@ -1,4 +1,4 @@
-import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, ADD_TAG, DELETE_TAG, SET_REDIRECT_ON_RENDER, 
+import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, ADD_TAG, DELETE_TAGS, SET_REDIRECT_ON_RENDER, 
     SET_ADD_TAG_ON_SAVE_FETCH_STATE, SET_EDIT_TAG_ON_LOAD_FETCH_STATE, SET_EDIT_TAG_ON_SAVE_FETCH_STATE,
     SET_EDIT_TAG_ON_DELETE_FETCH_STATE, SET_SHOW_DELETE_DIALOG
     } from "../actions/tag";
@@ -89,9 +89,12 @@ function addTag(state, action) {
     };
 };
 
-function deleteTag(state, action) {
+function deleteTags(state, action) {
     let tags = {...state.tags};
-    delete tags[action.tag_id];
+    for (let tagID of action.tag_ids) {
+        delete tags[tagID];
+    }
+
     return {
         ...state,
         tags: tags
@@ -179,7 +182,7 @@ const root = {
     LOAD_EDIT_TAG_PAGE: loadEditTagPage,
     SET_CURRENT_TAG: setCurrentTag,
     ADD_TAG: addTag,
-    DELETE_TAG: deleteTag,
+    DELETE_TAGS: deleteTags,
 
     SET_REDIRECT_ON_RENDER: setRedirectOnRender,
     SET_ADD_TAG_ON_SAVE_FETCH_STATE: setAddTagOnSaveFetchState,

@@ -12,6 +12,7 @@ const mapStateToProps = (state, ownProps) => {
         addTagOnSaveFetch: state.tagUI.addTagOnSaveFetch,
         editTagOnLoadFetch: state.tagUI.editTagOnLoadFetch,
         editTagOnSaveFetch: state.tagUI.editTagOnSaveFetch,
+        editTagOnDeleteFetch: state.tagUI.editTagOnDeleteFetch
     };
 };
 

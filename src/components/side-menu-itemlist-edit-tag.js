@@ -4,7 +4,7 @@ import SideMenuItemContainer from "./side-menu-item-container";
 import SideMenuDialogContainer from "./side-menu-dialog-container";
 import SideMenuDialogButtonContainer from "./side-menu-dialog-button-container";
 
-import { editTagOnSaveFetch, setRedirectOnRender, setShowDeleteDialog } from "../actions/tag";
+import { editTagOnSaveFetch, setRedirectOnRender, setShowDeleteDialog, editTagOnDeleteFetch } from "../actions/tag";
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../store/state-check-functions";
 
 /*
@@ -28,7 +28,7 @@ function getEditTagPageSideMenuItems() {
         <SideMenuItemContainer 
             itemJSX="Delete" 
             isVisible={ state => !state.tagUI.showDeleteDialog } 
-            isActive={ state => !isFetchinOrShowingDialogTag(state) }
+            isActive={ state => !isFetchinOrShowingDialogTag(state) && state.tagUI.currentTag.tag_id !== 0 }
             onClick={ setShowDeleteDialog(true) }
             key={key++}
         />,
@@ -38,7 +38,7 @@ function getEditTagPageSideMenuItems() {
             message="Delete this tag?"
             isVisible={ state => state.tagUI.showDeleteDialog }
             buttons={[
-                <SideMenuDialogButtonContainer key={key++} text="Yes" CSSClass="side-menu-dialog-button-red" onClick={setShowDeleteDialog(false)}/>,
+                <SideMenuDialogButtonContainer key={key++} text="Yes" CSSClass="side-menu-dialog-button-red" onClick={editTagOnDeleteFetch()}/>,
                 <SideMenuDialogButtonContainer key={key++} text="No" onClick={setShowDeleteDialog(false)}/>
             ]}
         />,

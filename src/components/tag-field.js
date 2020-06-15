@@ -38,10 +38,6 @@ class TagField extends React.Component {
         );
     }
 
-    componentWillUnmount() {
-        alert("In componentWillUnmount");
-    }
-
     componentDidUpdate(prevProps) {
         // Update the height of textarea to the size of its text
         if (this.tag_description.current) {
@@ -114,6 +110,11 @@ class TagField extends React.Component {
         const onSaveFetchError = this.props.lastFetch === "editTagOnSave" && this.props.editTagOnSaveFetch.fetchError && (
             <div className="fetch-error-info">{this.props.editTagOnSaveFetch.fetchError}</div>
         );
+        
+        // onDelete fetch error
+        const onDeleteFetchError = this.props.lastFetch === "editTagOnDelete" && this.props.editTagOnDeleteFetch.fetchError && (
+            <div className="fetch-error-info">{this.props.editTagOnDeleteFetch.fetchError}</div>
+        );
 
         const tag = this.state.tag;
 
@@ -141,6 +142,7 @@ class TagField extends React.Component {
                     <h3 className="item-field-header">Tag Information</h3>
                     {timestamps}
                     {onSaveFetchError}
+                    {onDeleteFetchError}
                     <form className="item-field-form">
                         <label htmlFor="tag_name" className="item-field-form-label">
                             Tag name
