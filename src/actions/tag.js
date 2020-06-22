@@ -6,7 +6,7 @@ const backendURL = config.backendURL;
 export const LOAD_ADD_TAG_PAGE = "LOAD_ADD_TAG_PAGE";
 export const LOAD_EDIT_TAG_PAGE = "LOAD_EDIT_TAG_PAGE";
 export const SET_CURRENT_TAG = "SET_CURRENT_TAG";
-export const ADD_TAG = "ADD_TAG";
+export const ADD_TAGS = "ADD_TAGS";
 export const DELETE_TAGS = "DELETE_TAGS";
 export const SET_REDIRECT_ON_RENDER  = "SET_REDIRECT_ON_RENDER";
 export const SET_ADD_TAG_ON_SAVE_FETCH_STATE = "SET_ADD_TAG_ON_SAVE_FETCH_STATE";
@@ -18,7 +18,7 @@ export const SET_SHOW_DELETE_DIALOG = "SET_SHOW_DELETE_DIALOG";
 export const loadAddTagPage      = () => ({ type: LOAD_ADD_TAG_PAGE });
 export const loadEditTagPage     = () => ({ type: LOAD_EDIT_TAG_PAGE });
 export const setCurrentTag       = (tag) => ({ type: SET_CURRENT_TAG, tag: tag });
-export const addTag              = (tag) => ({ type: ADD_TAG, tag: tag });
+export const addTags             = (tags) => ({ type: ADD_TAGS, tags: tags });
 export const deleteTags          = (tag_ids) => ({ type: DELETE_TAGS, tag_ids: tag_ids });
 export const setRedirectOnRender = (redirectOnRender = "") => ({ type: SET_REDIRECT_ON_RENDER, redirectOnRender: redirectOnRender });
 export const setShowDeleteDialog = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG, showDeleteDialog: showDeleteDialog });
@@ -101,7 +101,7 @@ export function addTagOnSaveFetch() {
         }).then(({ error, tag }) => {
             let redirectOnRender = tag ? `/tags/${tag.tag_id}` : "";
             if (tag) {
-                dispatch(addTag(tag))
+                dispatch(addTags([tag]));
             }
             dispatch(setAddTagOnSaveFetchState(false, error, "addTagOnSave"));
             dispatch(setRedirectOnRender(redirectOnRender));
@@ -149,8 +149,8 @@ export function editTagOnLoadFetch(tag_id) {
             }
         }).then(({ error, tag }) => {
             if (tag) {
-                dispatch(addTag(tag))
-                dispatch(setCurrentTag(tag))
+                dispatch(addTags([tag]));
+                dispatch(setCurrentTag(tag));
             }
             dispatch(setEditTagOnLoadFetchState(false, error, "editTagOnLoad"));
         }).catch(error => {
@@ -203,8 +203,8 @@ export function editTagOnSaveFetch() {
             }
         }).then(({ error, tag }) => {
             if (tag) {
-                dispatch(addTag(tag))
-                dispatch(setCurrentTag(tag))
+                dispatch(addTags([tag]));
+                dispatch(setCurrentTag(tag));
             }
             dispatch(setEditTagOnSaveFetchState(false, error, "editTagOnSave"));
         }).catch(error => {

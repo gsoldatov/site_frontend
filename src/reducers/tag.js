@@ -1,4 +1,4 @@
-import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, ADD_TAG, DELETE_TAGS, SET_REDIRECT_ON_RENDER, 
+import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, ADD_TAGS, DELETE_TAGS, SET_REDIRECT_ON_RENDER, 
     SET_ADD_TAG_ON_SAVE_FETCH_STATE, SET_EDIT_TAG_ON_LOAD_FETCH_STATE, SET_EDIT_TAG_ON_SAVE_FETCH_STATE,
     SET_EDIT_TAG_ON_DELETE_FETCH_STATE, SET_SHOW_DELETE_DIALOG
     } from "../actions/tag";
@@ -79,12 +79,15 @@ function setCurrentTag(state, action) {
     };
 }
 
-function addTag(state, action) {
+function addTags(state, action) {
+    let newTags = {};
+    action.tags.forEach(tag => newTags[tag.tag_id] = tag);
     return {
         ...state,
         tags: {
             ...state.tags,
-            [action.tag.tag_id]: action.tag
+            ...newTags
+            // [action.tag.tag_id]: action.tag
         }
     };
 };
@@ -181,7 +184,7 @@ const root = {
     LOAD_ADD_TAG_PAGE: loadAddTagPage,
     LOAD_EDIT_TAG_PAGE: loadEditTagPage,
     SET_CURRENT_TAG: setCurrentTag,
-    ADD_TAG: addTag,
+    ADD_TAGS: addTags,
     DELETE_TAGS: deleteTags,
 
     SET_REDIRECT_ON_RENDER: setRedirectOnRender,
