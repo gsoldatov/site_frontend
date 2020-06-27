@@ -1,32 +1,52 @@
 import React from "react";
 import FieldPaginationButton from "./field-pagination-button";
-import FieldPaginationDots from "./field-pagination-dots";
-
-// Previous 1 ... i-2 i-1 i i+1 i+2 ... N Next
-function onClickTemp(e) {
-    console.log(`Button ${e.target.firstChild.textContent} clicked`);
-}
+import FieldPaginationGap from "./field-pagination-gap";
 
 class FieldPagination extends React.Component {
     render() {
-        
+        const paginationInfo = this.props.paginationInfo;
+        const currentPage = paginationInfo ? paginationInfo.currentPage : null;
+        const totalPages = paginationInfo ? Math.ceil(paginationInfo.totalItems / paginationInfo.itemsPerPage) : null;
+        const setCurrentPage = this.props.setCurrentPage;
+
+        if (totalPages === null || totalPages === 1) {
+            return null;
+        }
+
+        let paginationControls = [];
+        let key = 0;
+
+        paginationControls.push(<FieldPaginationButton key={key++} text={"Previous"} onClick={ () => setCurrentPage(Math.max(currentPage - 1, 1)) } />);
+        paginationControls.push(<FieldPaginationButton key={key++} text={"1"} onClick={ () => setCurrentPage(1) } />);
+
+        if (currentPage === 5) {
+            paginationControls.push(<FieldPaginationButton key={key++} text={"2"} onClick={ () => setCurrentPage(2) } />);
+        } else if (currentPage > 5) {
+            paginationControls.push(<FieldPaginationGap key={key++} />);
+        }
+
+        for (let i = -2; i <= 2; i++) {
+            let page = currentPage + i;
+            if (page > 1 && page < totalPages
+                && !(page === 2 && currentPage === 5)                                   // page 2 button is already inserted in this case
+                && !(page === totalPages - 1 && currentPage === totalPages - 4)) {      // page totalPages - 1 button will be inserted later in this case
+                    paginationControls.push(<FieldPaginationButton key={key++} text={`${page}`} onClick={ () => setCurrentPage(page) } />);
+                }
+            
+        }
+
+        if (currentPage === totalPages - 4) {
+            paginationControls.push(<FieldPaginationButton key={key++} text={`${totalPages - 1}`} onClick={ () => setCurrentPage(totalPages - 1) } />);
+        } else if (currentPage < totalPages - 4) {
+            paginationControls.push(<FieldPaginationGap key={key++} />);
+        }
+
+        paginationControls.push(<FieldPaginationButton key={key++} text={`${totalPages}`} onClick={ () => setCurrentPage(totalPages) } />);
+        paginationControls.push(<FieldPaginationButton key={key++} text={"Next"} onClick={ () => setCurrentPage(Math.min(currentPage + 1, totalPages)) } />);
+
         return (
             <div className="field-pagination">
-                <FieldPaginationButton onClick={onClickTemp} text="Previous" 
-                    className="field-pagination-button-prev-next" />
-                <FieldPaginationButton onClick={onClickTemp} text="1" />
-                <FieldPaginationButton onClick={onClickTemp} text="2" />
-                <FieldPaginationDots />
-                <FieldPaginationButton onClick={onClickTemp} text="i-2" />
-                <FieldPaginationButton onClick={onClickTemp} text="i-1" />
-                <FieldPaginationButton onClick={onClickTemp} text="i" />
-                <FieldPaginationButton onClick={onClickTemp} text="i+1" />
-                <FieldPaginationButton onClick={onClickTemp} text="i+2" />
-                <FieldPaginationDots />
-                <FieldPaginationButton onClick={onClickTemp} text="N-1" />
-                <FieldPaginationButton onClick={onClickTemp} text="N" />
-                <FieldPaginationButton onClick={onClickTemp} text="Next" 
-                    className="field-pagination-button-prev-next" />
+                {paginationControls}
             </div>
         );
     }

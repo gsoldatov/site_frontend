@@ -40,35 +40,26 @@ const initialState = {
 
     // tags page UI controllers
     tagsUI: {
-        selected: [],           // list of selected tags
-        filterText: "",         // filter tags by name
-        sortBy: "tag_name",     // created_at, tag_name
-        sortAsc: true,          // sort order
-        /* 
-            tags page menu actions (all enabled actions are present in the list):
-            - create tag (always available);
-            - edit (1 selected);
-            - delete (1+ selected);
+        redirectOnRender: "",
+        paginationFetch: {
+            isFetching: false,
+            fetchError: ""
+        },
 
-            - merge (2+ selected);
-            - add synonims (2+ selected);       // todo separate menu/page for editing synonims
-            - add autotags (2+ selected);       // todo separate menu/page
-            - remove synonims/autotags (2+ selected);        // todo separate menu/page
-
-            tag page:
-            - save
-            - exit
-
-        */
-        menuActions: [],
         paginationInfo: {
             currentPage: 1,
-            lastPage: 20,
-            itemsPerPage: 100,
-            currentPageItems: []
-        }
+            itemsPerPage: 2,
+            totalItems: 0,
+            sortField: "tag_name",          // field name to sort the tags by (tag_name, modified_at)
+            sortOrder: "asc",               // sort order (asc, desc)
+            filterText: "",                 // text by which tags are filtered
+            currentPageTagIDs: []
+            
+            
+        },
+        selectedTagIDs: []
     },
-    // TODO
+
     objects: [], // list of loaded objects
     objectsUI: {       
         selected: [],       // selected objects

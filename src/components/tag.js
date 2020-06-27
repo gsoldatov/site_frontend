@@ -21,8 +21,8 @@ class Tag extends React.Component {
         }
 
         // side menu items
-        this.addTagSideMenuItemList = getAddTagPageSideMenuItems();
-        this.editTagSideMenuItemList = getEditTagPageSideMenuItems();
+        this.addTagSideMenuItems = getAddTagPageSideMenuItems();
+        this.editTagSideMenuItems = getEditTagPageSideMenuItems();
     }
 
     componentDidUpdate(prevProps) {
@@ -40,11 +40,11 @@ class Tag extends React.Component {
 
     render() {
         const isAddTagPage = this.props.match.params.id === "add";
-        const sideMenuItemList = isAddTagPage ? this.addTagSideMenuItemList : this.editTagSideMenuItemList;
+        const sideMenuItems = isAddTagPage ? this.addTagSideMenuItems : this.editTagSideMenuItems;
         return (
             <div className="layout-div">
                 <Navigation />
-                <SideMenu itemList={sideMenuItemList}/>
+                <SideMenu items={sideMenuItems}/>
                 <TagFieldContainer isAddTagPage={isAddTagPage} />
             </div>
         );

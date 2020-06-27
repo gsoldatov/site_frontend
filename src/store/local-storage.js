@@ -1,5 +1,7 @@
 import initialState from "./initial-state";
 
+const DATE_TIME_PROPERTY_NAMES = ["updatedAt"];
+
 export function loadState() {
     try {
         const serializedState = localStorage.getItem('state');
@@ -99,5 +101,8 @@ function validateStoreState(initialState, parsedState) {
 }
 
 function deserializeStore(serializedState) {
-    return JSON.parse(serializedState);
+    return JSON.parse(serializedState, (k, v) => {
+        // parse date strings into Date objects
+        return DATE_TIME_PROPERTY_NAMES.includes(k) ? new Date(v) : v;
+    });
 }

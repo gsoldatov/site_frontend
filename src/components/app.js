@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../store/create-store";
-import Tags from "./tags";
+import TagsContainer from "./tags-container";
 import TagContainer from "./tag-container";
 import Objects from "./objects";
 
@@ -14,7 +14,7 @@ function App () {
             <BrowserRouter>
                 <Switch>
                     <Route exact path="/tags">
-                        <Tags />
+                        <TagsContainer />
                     </Route>
                     <Route exact path="/tags/:id">
                         <TagContainer />

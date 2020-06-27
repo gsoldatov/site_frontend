@@ -1,4 +1,5 @@
 import tag from "./tag";
+import tags from "./tags";
 
 function getActionHandlers(rootObjects) {
     let actionHandlers = {};
@@ -20,7 +21,8 @@ function getActionHandlers(rootObjects) {
 }
 
 const ACTION_HANDLERS = getActionHandlers({
-    "tag": tag
+    "tag": tag,
+    "tags": tags
 });
 
 function root(state, action){

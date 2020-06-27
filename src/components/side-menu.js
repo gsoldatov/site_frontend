@@ -4,10 +4,10 @@ import SideMenuItemContainer from "./side-menu-item-container";
 
 class SideMenu extends React.Component {
     render() {
-        const itemList = this.props.itemList ? this.props.itemList : "no menu items available";
+        const items = this.props.items ? this.props.items : "no menu items available";
         return (
             <aside>
-                {itemList}
+                {items}
             </aside>
         );
     }

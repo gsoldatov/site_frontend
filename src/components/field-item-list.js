@@ -2,17 +2,18 @@ import React from "react";
 
 class FieldItemList extends React.Component {
     render() {
-        let items = [];
-        for (let item of this.props.items){
-            let FieldItem = this.props.getFieldItemComponent();
-            items.push(
-                <FieldItem key={item.id} checked={item.checked} 
-                    text={item.text} link={item.link}/>
-            );
+        const paginationFetch = this.props.paginationFetch;
+        if (paginationFetch.isFetching) {
+            return (<div>Loading...</div>);
         }
+
+        if (paginationFetch.fetchError) {
+            return (<div>{paginationFetch.fetchError}</div>);
+        }
+
         return (
             <div className="field-item-list">
-                {items}
+                {this.props.items}
             </div>
         );
     }

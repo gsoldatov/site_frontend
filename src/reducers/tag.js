@@ -79,31 +79,6 @@ function setCurrentTag(state, action) {
     };
 }
 
-function addTags(state, action) {
-    let newTags = {};
-    action.tags.forEach(tag => newTags[tag.tag_id] = tag);
-    return {
-        ...state,
-        tags: {
-            ...state.tags,
-            ...newTags
-            // [action.tag.tag_id]: action.tag
-        }
-    };
-};
-
-function deleteTags(state, action) {
-    let tags = {...state.tags};
-    for (let tagID of action.tag_ids) {
-        delete tags[tagID];
-    }
-
-    return {
-        ...state,
-        tags: tags
-    };
-}
-
 function setRedirectOnRender(state, action) {
     return {
         ...state,
@@ -184,8 +159,6 @@ const root = {
     LOAD_ADD_TAG_PAGE: loadAddTagPage,
     LOAD_EDIT_TAG_PAGE: loadEditTagPage,
     SET_CURRENT_TAG: setCurrentTag,
-    ADD_TAGS: addTags,
-    DELETE_TAGS: deleteTags,
 
     SET_REDIRECT_ON_RENDER: setRedirectOnRender,
     SET_ADD_TAG_ON_SAVE_FETCH_STATE: setAddTagOnSaveFetchState,
