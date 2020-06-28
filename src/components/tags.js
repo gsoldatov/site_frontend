@@ -15,20 +15,6 @@ class Tags extends React.Component {
     constructor(props) {
         super(props);
         this.props.setCurrentPage(this.props.paginationInfo.currentPage);
-        
-
-        let key = 0;
-        this.items = [
-            <FieldMenu key={key++} items={getTagsFieldMenuItems()} />,
-            // <FieldItemListContainer key={key++} items={this.props.selectedTagIDs} />,     // TODO selected item field
-            <FieldItemListContainer key={key++} getItemIDs={state => state.tagsUI.paginationInfo.currentPageTagIDs} getPaginationFetch={state => state.tagsUI.paginationFetch}
-                itemFactory={tagsFieldItemFactory} />,
-            <FieldPaginationContainer key={key++} getPaginationInfo={state => state.tagsUI.paginationInfo} setCurrentPage={this.props.setCurrentPage} />
-
-            // items: ownProps.itemFactory(state, ownProps.itemIDs),
-            // paginationFetch: ownProps.paginationFetch,
-            // collapseHeight:
-        ];
     }
 
     render() {
@@ -36,6 +22,16 @@ class Tags extends React.Component {
             this.props.setTagsRedirectOnRender("");
             return <Redirect to={this.props.redirectOnRender} />;
         }
+
+        let key = 0;
+        this.items = [
+            <FieldMenu key={key++} items={getTagsFieldMenuItems()} />,
+            // <FieldItemListContainer key={key++} items={this.props.selectedTagIDs} />,     // TODO selected item field
+            <FieldItemListContainer key={key++} itemIDs={this.props.paginationInfo.currentPageTagIDs} paginationFetch={this.props.paginationFetch}
+                itemFactory={tagsFieldItemFactory} />,
+            <FieldPaginationContainer key={key++} paginationInfo={this.props.paginationInfo} setCurrentPage={this.props.setCurrentPage} />
+        ];
+
         return (
             <div className="layout-div">
                 <Navigation />

@@ -3,7 +3,7 @@ import FieldPagination from "./field-pagination";
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        paginationInfo: ownProps.getPaginationInfo(state)
+        paginationInfo: ownProps.paginationInfo
     };
 };
 

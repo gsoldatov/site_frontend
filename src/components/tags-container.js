@@ -8,7 +8,9 @@ const mapStateToProps = (state, ownProps) => {
     
     return {
         paginationInfo: state.tagsUI.paginationInfo,
-        redirectOnRender: state.tagsUI.redirectOnRender
+        redirectOnRender: state.tagsUI.redirectOnRender,
+        
+        paginationFetch: state.tagsUI.paginationFetch
     };
 };
 
