@@ -1,6 +1,6 @@
 import config from "../config";
 import { isFetchingTag, checkIfCurrentTagNameExists } from "../store/state-check-functions";
-import { addTags, deleteTags } from "./tags";
+import { addTags, deleteTags, deselectTags } from "./tags";
 
 const backendURL = config.backendURL;
 
@@ -249,6 +249,7 @@ export function editTagOnDeleteFetch() {
         }).then(({ error, deleteFromState }) => {
             dispatch(setEditTagOnDeleteFetchState(false, error, "editTagOnDelete"));
             if (deleteFromState) {
+                dispatch(deselectTags(tag_ids));
                 dispatch(deleteTags(tag_ids));
                 dispatch(setRedirectOnRender("/tags"));
             }

@@ -27,7 +27,7 @@ class Tags extends React.Component {
         this.items = [
             <FieldMenu key={key++} items={getTagsFieldMenuItems()} />,
             // <FieldItemListContainer key={key++} items={this.props.selectedTagIDs} />,     // TODO selected item field
-            <FieldItemListContainer key={key++} itemIDs={this.props.paginationInfo.currentPageTagIDs} paginationFetch={this.props.paginationFetch}
+            <FieldItemListContainer key={key++} itemIDs={this.props.paginationInfo.currentPageTagIDs} isFetching={this.props.isFetching} fetchError={this.props.fetchError}
                 itemFactory={tagsFieldItemFactory} />,
             <FieldPaginationContainer key={key++} paginationInfo={this.props.paginationInfo} setCurrentPage={this.props.setCurrentPage} />
         ];
@@ -35,7 +35,7 @@ class Tags extends React.Component {
         return (
             <div className="layout-div">
                 <Navigation />
-                <SideMenu items={getTagsPageSideMenuItems()} />
+                <SideMenu items={getTagsPageSideMenuItems(this.props.selectedTagIDs[0])} />
                 <Main items={this.items} />
             </div>
         );

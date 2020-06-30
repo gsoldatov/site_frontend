@@ -2,13 +2,12 @@ import React from "react";
 
 class FieldItemList extends React.Component {
     render() {
-        const paginationFetch = this.props.paginationFetch;
-        if (paginationFetch.isFetching) {
+        if (this.props.isFetching) {
             return (<div>Loading...</div>);
         }
 
-        if (paginationFetch.fetchError) {
-            return (<div>{paginationFetch.fetchError}</div>);
+        if (this.props.fetchError) {
+            return (<div>{this.props.fetchError}</div>);
         }
 
         return (

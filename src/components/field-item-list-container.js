@@ -7,10 +7,9 @@ import FieldItemContainer from "./field-item-container";
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        // items: ownProps.itemFactory(state, ownProps.getItemIDs(state)),
-        // paginationFetch: ownProps.getPaginationFetch(state),
         items: ownProps.itemFactory(state, ownProps.itemIDs),
-        paginationFetch: ownProps.paginationFetch,
+        isFetching: ownProps.isFetching,
+        fetchError: ownProps.fetchError,
         collapseHeight: null            // TODO collapsing and expanding
     };
 };

@@ -1,5 +1,5 @@
-import { ADD_TAGS, DELETE_TAGS, TOGGLE_TAG_SELECTION, SET_TAGS_PAGINATION_INFO, SET_TAGS_PAGINATION_FETCH, SET_TAGS_REDIRECT_ON_RENDER } from "../actions/tags";
-import { getTagsPaginationCacheKey } from "../store/state-util";
+import { ADD_TAGS, DELETE_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, SET_TAGS_PAGINATION_INFO, SET_TAGS_REDIRECT_ON_RENDER,
+    SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_PAGINATION_FETCH, SET_TAGS_ON_DELETE_FETCH, clearTagSelection } from "../actions/tags";
 
 function addTags(state, action) {
     let newTags = {};
@@ -37,6 +37,26 @@ function toggleTagSelection(state, action) {
     };
 }
 
+function deselectTags(state, action) {
+    return {
+        ...state,
+        tagsUI: {
+            ...state.tagsUI,
+            selectedTagIDs: state.tagsUI.selectedTagIDs.filter(tag_id => !action.tag_ids.includes(tag_id))
+        }
+    };
+}
+
+function clearSelectedTags(state, action) {
+    return {
+        ...state,
+        tagsUI: {
+            ...state.tagsUI,
+            selectedTagIDs: []
+        }
+    };
+}
+
 function setTagsPaginationInfo(state, action) {
     let oPI = state.tagsUI.paginationInfo;
     let pI = action.paginationInfo;
@@ -57,19 +77,6 @@ function setTagsPaginationInfo(state, action) {
     }
 }
 
-function setTagsPaginationFetch(state, action) {
-    return {
-        ...state,
-        tagsUI: {
-            ...state.tagsUI,
-            paginationFetch: {
-                isFetching: action.isFetching,
-                fetchError: action.fetchError
-            }
-        }
-    }
-}
-
 function setTagsRedirectOnRender(state, action) {
     return {
         ...state,
@@ -80,13 +87,56 @@ function setTagsRedirectOnRender(state, action) {
     }
 }
 
+function setShowDeleteDialogTags(state, action) {
+    return {
+        ...state,
+        tagsUI: {
+            ...state.tagsUI,
+            showDeleteDialog: action.showDeleteDialog
+        }
+    }
+}
+
+function setTagsPaginationFetch(state, action) {
+    return {
+        ...state,
+        tagsUI: {
+            ...state.tagsUI,
+            lastFetch: action.lastFetch === undefined ? state.tagsUI.lastFetch : action.lastFetch,
+            paginationFetch: {
+                isFetching: action.isFetching,
+                fetchError: action.fetchError
+            }
+        }
+    }
+}
+
+
+function setTagsOnDeleteFetch(state, action) {
+    return {
+        ...state,
+        tagsUI: {
+            ...state.tagsUI,
+            lastFetch: action.lastFetch === undefined ? state.tagsUI.lastFetch : action.lastFetch,
+            onDeleteFetch: {
+                isFetching: action.isFetching,
+                fetchError: action.fetchError
+            }
+        }
+    }
+}
+
 const root = {
     ADD_TAGS: addTags,
     DELETE_TAGS: deleteTags,
     TOGGLE_TAG_SELECTION: toggleTagSelection,
+    DESELECT_TAGS: deselectTags,
+    CLEAR_SELECTED_TAGS: clearSelectedTags,
     SET_TAGS_PAGINATION_INFO: setTagsPaginationInfo,
+    SET_TAGS_REDIRECT_ON_RENDER: setTagsRedirectOnRender,
+    SET_SHOW_DELETE_DIALOG_TAGS: setShowDeleteDialogTags,
     SET_TAGS_PAGINATION_FETCH: setTagsPaginationFetch,
-    SET_TAGS_REDIRECT_ON_RENDER: setTagsRedirectOnRender
+    SET_TAGS_ON_DELETE_FETCH: setTagsOnDeleteFetch
 };
 
 export default root;

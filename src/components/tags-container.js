@@ -1,16 +1,17 @@
 import { connect } from "react-redux";
 import Tags from "./tags";
 import { pageFetch } from "../actions/tags";
-import { getTagsPaginationCacheKey } from "../store/state-util";
+import { isFetchingTags } from "../store/state-check-functions";
+import { getTagsFetchError } from "../store/state-util";
 import { setTagsRedirectOnRender } from "../actions/tags";
 
 const mapStateToProps = (state, ownProps) => {
-    
     return {
         paginationInfo: state.tagsUI.paginationInfo,
+        selectedTagIDs: state.tagsUI.selectedTagIDs,
         redirectOnRender: state.tagsUI.redirectOnRender,
-        
-        paginationFetch: state.tagsUI.paginationFetch
+        isFetching: isFetchingTags(state),
+        fetchError: getTagsFetchError(state)
     };
 };
 

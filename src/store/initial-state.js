@@ -40,24 +40,31 @@ const initialState = {
 
     // tags page UI controllers
     tagsUI: {
-        redirectOnRender: "",
-        paginationFetch: {
-            isFetching: false,
-            fetchError: ""
-        },
-
         paginationInfo: {
             currentPage: 1,
-            itemsPerPage: 2,
+            itemsPerPage: 100,
             totalItems: 0,
             sortField: "tag_name",          // field name to sort the tags by (tag_name, modified_at)
             sortOrder: "asc",               // sort order (asc, desc)
             filterText: "",                 // text by which tags are filtered
             currentPageTagIDs: []
-            
-            
         },
-        selectedTagIDs: []
+        selectedTagIDs: [],
+        showDeleteDialog: false,
+
+        redirectOnRender: "",
+        lastFetch: "",
+
+        
+        paginationFetch: {
+            isFetching: false,
+            fetchError: ""
+        },
+
+        onDeleteFetch: {
+            isFetching: false,
+            fetchError: ""
+        }
     },
 
     objects: [], // list of loaded objects

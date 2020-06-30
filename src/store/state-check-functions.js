@@ -2,6 +2,10 @@
     Utility functions for checking current state
 */
 
+/* ********************************************************** */
+/*                          TAG PAGE                          */
+/* ********************************************************** */
+
 /* Returns true if any of tag page fetches are being performed. */
 export function isFetchingTag(state) {
     return state.tagUI.addTagOnSaveFetch.isFetching || state.tagUI.editTagOnLoadFetch.isFetching || 
@@ -26,3 +30,17 @@ export function checkIfCurrentTagNameExists(state) {
 
     return false;
 };
+
+
+/* *********************************************************** */
+/*                          TAGS PAGE                          */
+/* *********************************************************** */
+/* Returns true if any of tags page fetches are being performed. */
+export function isFetchingTags(state) {
+    return state.tagsUI.paginationFetch.isFetching || state.tagsUI.onDeleteFetch.isFetching;
+};
+
+/* Returns true if any of tags page fetches are being performed or a confirmation dialog is being displayed. */
+export function isFetchinOrShowingDialogTags(state) {
+    return isFetchingTags(state) || state.tagsUI.showDeleteDialog;
+}
