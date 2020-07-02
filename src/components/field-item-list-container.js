@@ -10,7 +10,7 @@ const mapStateToProps = (state, ownProps) => {
         items: ownProps.itemFactory(state, ownProps.itemIDs),
         isFetching: ownProps.isFetching,
         fetchError: ownProps.fetchError,
-        collapseHeight: null            // TODO collapsing and expanding
+        isExpandable: ownProps.isExpandable
     };
 };
 

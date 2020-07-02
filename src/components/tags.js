@@ -26,7 +26,7 @@ class Tags extends React.Component {
         let key = 0;
         this.items = [
             <FieldMenu key={key++} items={getTagsFieldMenuItems()} />,
-            // <FieldItemListContainer key={key++} items={this.props.selectedTagIDs} />,     // TODO selected item field
+            <FieldItemListContainer key={key++} itemIDs={this.props.selectedTagIDs} itemFactory={tagsFieldItemFactory} isExpandable={true} />,
             <FieldItemListContainer key={key++} itemIDs={this.props.paginationInfo.currentPageTagIDs} isFetching={this.props.isFetching} fetchError={this.props.fetchError}
                 itemFactory={tagsFieldItemFactory} />,
             <FieldPaginationContainer key={key++} paginationInfo={this.props.paginationInfo} setCurrentPage={this.props.setCurrentPage} />

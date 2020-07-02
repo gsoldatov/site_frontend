@@ -4,7 +4,8 @@ import FieldItem from "./field-item";
 const mapStateToProps = (state, ownProps) => {
     return {
         text: ownProps.getText(state, ownProps.tag_id),
-        isSelected: ownProps.isSelected,
+        // isSelected: ownProps.isSelected,
+        isSelected: ownProps.getIsSelected(state, ownProps.tag_id),
         onClickRedirectURL: ownProps.onClickRedirectURL
     };
 };

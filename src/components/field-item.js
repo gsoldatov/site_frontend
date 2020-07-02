@@ -19,6 +19,13 @@ class FieldItem extends React.Component {
         );
     }
 
+    componentDidUpdate() {
+        // Update the checkbox state if the tag was checked/unchecked in another component (e.g. deselect the tag in the main FieldItemList after it's deselected in the selected FieldItemList)
+        if (this.props.isSelected !== this.state.isSelected) {
+            this.setState({ isSelected: this.props.isSelected });
+        }
+    }
+
     render() {
         return (
             <div className="field-item">
