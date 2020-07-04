@@ -57,7 +57,7 @@ module.exports = {
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
-                loader: "file-loader?name=/static/icons/[name].[ext]"
+                loader: "file-loader?name=static/icons/[name].[ext]"
             },
         ]
     },
