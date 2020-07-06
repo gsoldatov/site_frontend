@@ -1,6 +1,22 @@
 import React from "react";
 
 class FieldMenuButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick() {
+        if (this.props.buttonState !== "inactive") {
+            if (this.props.onClickParams) {
+                this.props.onClick(this.props.onClickParams);
+            } else {
+                this.props.onClick();
+            }
+            
+        }
+    }
+
     render() {
         const overlay = this.props.buttonState || "active";
         let overlayClassName;
@@ -16,15 +32,11 @@ class FieldMenuButton extends React.Component {
                 break;
         }
 
-        // TODO onClick dispatch
-        const onClick = this.props.buttonState === "inactive" ? undefined : undefined;
-
         return (
             <div className="field-menu-item">
                 <img className="field-menu-button" src={this.props.src} />
-                <div className={overlayClassName} />
+                <div className={overlayClassName} title={this.props.title} onClick={this.handleClick} />
             </div>
-                // <span className={className}>{this.props.text}</span>
         );
     }
 }

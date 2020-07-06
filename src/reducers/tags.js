@@ -1,5 +1,5 @@
-import { ADD_TAGS, DELETE_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, SET_TAGS_PAGINATION_INFO, SET_TAGS_REDIRECT_ON_RENDER,
-    SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_PAGINATION_FETCH, SET_TAGS_ON_DELETE_FETCH, clearTagSelection } from "../actions/tags";
+import { ADD_TAGS, DELETE_TAGS, SELECT_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, SET_TAGS_PAGINATION_INFO, SET_TAGS_REDIRECT_ON_RENDER,
+    SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_PAGINATION_FETCH, SET_TAGS_ON_DELETE_FETCH } from "../actions/tags";
 
 function addTags(state, action) {
     let newTags = {};
@@ -23,6 +23,16 @@ function deleteTags(state, action) {
         ...state,
         tags: tags
     };
+}
+
+function selectTags(state, action) {
+    return {
+        ...state,
+        tagsUI: {
+            ...state.tagsUI,
+            selectedTagIDs: [...(new Set(state.tagsUI.selectedTagIDs.concat(action.tag_ids)))]
+        }
+    }
 }
 
 function toggleTagSelection(state, action) {
@@ -129,6 +139,7 @@ function setTagsOnDeleteFetch(state, action) {
 const root = {
     ADD_TAGS: addTags,
     DELETE_TAGS: deleteTags,
+    SELECT_TAGS: selectTags,
     TOGGLE_TAG_SELECTION: toggleTagSelection,
     DESELECT_TAGS: deselectTags,
     CLEAR_SELECTED_TAGS: clearSelectedTags,

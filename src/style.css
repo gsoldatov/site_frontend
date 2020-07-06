@@ -211,6 +211,7 @@ main {
 
 .field-menu-button-overlay-active:hover, 
 .field-menu-button-overlay-pressed:hover {
+    cursor: pointer;
     box-shadow: none;
     background-color: var(--hover-color);
 }
