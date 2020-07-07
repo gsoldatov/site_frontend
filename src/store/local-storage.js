@@ -1,4 +1,5 @@
 import initialState from "./initial-state";
+import intervalWrapper from "../util/interval-wrapper";
 
 const DATE_TIME_PROPERTY_NAMES = ["updatedAt"];
 
@@ -21,35 +22,18 @@ export function loadState() {
     }
 };
 
-let saveTime = new Date();
-saveTime.setTime(saveTime.getTime() - 1000);
-let saveScheduled = false;
-
-export function saveState(store) {
-    const save = () => {
-        try {
-            const state = store.getState();
-            const serializedState = JSON.stringify(state);
-            localStorage.setItem('state', serializedState);
-            console.log("Saved state to local storage");
-        } catch (e) {
-            console.log("Error when saving state: " + e.message);
-        } finally {
-            saveTime = new Date();
-            saveScheduled = false;
-        }
-    };
-
-    // Write state to localStorage at most once per second
-    let timeFromLastWrite = Date.now() - saveTime;
-
-    if (timeFromLastWrite >= 1000) {
-        save();
-    } else if (!saveScheduled) {
-        setTimeout(save, 1000 - timeFromLastWrite);
-        saveScheduled = true;
+function save(store) {
+    try {
+        const state = store.getState();
+        const serializedState = JSON.stringify(state);
+        localStorage.setItem('state', serializedState);
+        console.log("Saved state to local storage");
+    } catch (e) {
+        console.log("Error when saving state: " + e.message);
     }
-};
+}
+
+export const saveState = intervalWrapper(save, 1000, false);
 
 function validateStoreState(initialState, parsedState) {
     /*

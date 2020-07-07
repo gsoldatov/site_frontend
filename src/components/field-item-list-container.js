@@ -14,12 +14,6 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-// const mapDispatchToProps = (dispatch, ownProps) => {
-//     return {
-//         // onCheck: () => { console.log("Checkbox toggled"); }
-//     };
-// };
-
 const FieldItemListContainer = connect(mapStateToProps, null)(FieldItemList);
 
 export default FieldItemListContainer;

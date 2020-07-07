@@ -4,14 +4,14 @@ import FieldMenuFilter from "./field-menu-filter";
 const mapStateToProps = (state, ownProps) => {
     return {
         placeholder: ownProps.placeholder,
-        getOnChangeParams: ownProps.getOnChangeParams
+        getOnChangeParams: ownProps.getOnChangeParams,
+        text: ownProps.getText(state)
     };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-    
     return {
-        onChange: params => dispatch(params instanceof Array ? ownProps.onChange(...params) 
+        onChange: params => dispatch(params instanceof Array ? ownProps.onChange(...params)
                                 : typeof(params) === "object" ?  ownProps.onChange(params) : ownProps.onChange())
     };
 };

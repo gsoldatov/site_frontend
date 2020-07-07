@@ -12,13 +12,14 @@ import sortDescImg from "../icons/sort_desc.png";
 import sortByNameImg from "../icons/sort_by_name.png";
 import sortByTimeImg from "../icons/sort_by_time.png";
 
+// Parameter getter for buttons' onClick handlers
 const selectAllGetOnClickParams = state => [state.tagsUI.paginationInfo.currentPageTagIDs];
 const sortAscGetOnClickParams = () => ({ sortOrder: "asc" });
 const sortDescGetOnClickParams = () => ({ sortOrder: "desc" });
 const sortByTagNameOnClickParams = () => ({ sortField: "tag_name" });
 const sortByModifyTimeOnClickParams = () => ({ sortField: "modified_at" });
-const tagFilterOnChangeParams = text => ({ filterText: text });
 
+// Button state getters
 const selectAllClearAllGetButtonState = state => isFetchingTags(state) ? "inactive" : "active";
 const sortAscGetButtonState = state => isFetchingTags(state) ? "inactive" 
                                         : state.tagsUI.paginationInfo.sortOrder === "asc" ? "pressed" : "active";
@@ -28,6 +29,10 @@ const sortByTagNameGetButtonState = state => isFetchingTags(state) ? "inactive"
                                         : state.tagsUI.paginationInfo.sortField === "tag_name" ? "pressed" : "active";
 const sortByModifyTimeGetButtonState = state => isFetchingTags(state) ? "inactive" 
                                         : state.tagsUI.paginationInfo.sortField === "modified_at" ? "pressed" : "active";
+
+// Parameter getters for filter onChange handler + filter initial text getter
+const tagsFilterGetText = state => state.tagsUI.paginationInfo.filterText;
+const tagsFilterOnChangeParams = text => ({ filterText: text });
 
 export default function getTagsFieldMenuItems() {
     const items = [];
@@ -48,7 +53,7 @@ export default function getTagsFieldMenuItems() {
     items.push(<FieldMenuButtonContainer key={key++} title="Sort by modify time" src={sortByTimeImg} onClick={setTagsPaginationInfoAndFetchPage} getOnClickParams={sortByModifyTimeOnClickParams}
         getButtonState={sortByModifyTimeGetButtonState} />);
     
-    items.push(<FieldMenuFilterContainer key={key++} placeholder="Filter tags" onChange={setTagsPaginationInfoAndFetchPage} getOnChangeParams={tagFilterOnChangeParams} />);
+    items.push(<FieldMenuFilterContainer key={key++} getText={tagsFilterGetText} placeholder="Filter tags" onChange={setTagsPaginationInfoAndFetchPage} getOnChangeParams={tagsFilterOnChangeParams} />);
 
     return items;
 }

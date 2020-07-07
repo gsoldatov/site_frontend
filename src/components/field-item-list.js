@@ -1,19 +1,18 @@
 import React from "react";
+import intervalWrapper from "../util/interval-wrapper";
 
 class FieldItemList extends React.Component {
     constructor(props) {
         super(props);
         this.fieldItemListDiv = React.createRef();
-        this.handleExpandButtonClick = this.handleExpandButtonClick.bind(this);
-        this.checkIfExpandButtonRequired = this.checkIfExpandButtonRequired.bind(this);
-        this.checkItemListScrollHeight = this.checkItemListScrollHeight.bind(this);
         
         this.state = { isExpanded: false, isExpandButtonRequired: false };
-        
-        this.checkScheduled = false;
-        
-        this.lastCheckTime = new Date();
-        this.lastCheckTime.setTime(this.lastCheckTime.getTime() - 1000);
+
+        if (this.props.isExpandable) {
+            this.handleExpandButtonClick = this.handleExpandButtonClick.bind(this);
+            this.checkItemListScrollHeight = this.checkItemListScrollHeight.bind(this);
+            this.onResizeRunner = intervalWrapper(this.checkItemListScrollHeight, 100, false);      // wrap checkItemListScrollHeight to limit its execution frequency
+        }
     }
 
     handleExpandButtonClick(e) {
@@ -21,50 +20,32 @@ class FieldItemList extends React.Component {
     }
 
     checkItemListScrollHeight() {
-        // Check if expand/collapse button needs to be displayed and update the state accordingly
-        const itemListLineHeight = parseInt(                // line-height CSS property
-            getComputedStyle(this.fieldItemListDiv.current)
-            .lineHeight.
-            replace("px", "")
-        );
+        const itemListLineHeight = parseInt(getComputedStyle(this.fieldItemListDiv.current).lineHeight.replace("px", ""));      // line-height CSS property
         const itemListScrollHeight = this.fieldItemListDiv.current.scrollHeight;            // total height of the ItemList div
         let newIsExpandButtonRequired = itemListScrollHeight >= 2 * itemListLineHeight;
 
         if (newIsExpandButtonRequired !== this.state.isExpandButtonRequired) {
             this.setState({ isExpandButtonRequired: newIsExpandButtonRequired });
         }
-
-        this.lastCheckTime = new Date();
-        this.checkScheduled = false;
     };
 
-    checkIfExpandButtonRequired() {
-        // Checks if expand/collapse button is required after component is mounted/updated or window is resized. Check number is limited to 1 per 0.1 second.
-        if (!this.props.isExpandable) {
-            return false;
-        }
-
-        let timeFromLastCheck = Date.now() - this.lastCheckTime;
-        if (timeFromLastCheck >= 100) {
-            this.checkItemListScrollHeight();
-        } else if (!this.checkScheduled) {
-            setTimeout(this.checkItemListScrollHeight, 100 - timeFromLastCheck);
-            this.checkScheduled = true;
-        }
-       
-    }
-
     componentDidMount() {
-        this.checkIfExpandButtonRequired();
-        window.addEventListener("resize", this.checkIfExpandButtonRequired)
+        if (this.props.isExpandable) {
+            this.onResizeRunner();
+            window.addEventListener("resize", this.onResizeRunner);
+        }
     }
 
     componentDidUpdate() {
-        this.checkIfExpandButtonRequired();
+        if (this.props.isExpandable) {
+            this.onResizeRunner();
+        }
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", this.checkIfExpandButtonRequired)
+        if (this.props.isExpandable) {
+            window.removeEventListener("resize", this.onResizeRunner);
+        }
     }
 
     render() {

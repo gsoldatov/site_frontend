@@ -119,7 +119,6 @@ export function pageFetch(currentPage) {
         }
         catch(error) {
             dispatch(setTagsPaginationFetch(false, error.message, "tagsPagination"));
-            throw error;
         }
     };
 };
