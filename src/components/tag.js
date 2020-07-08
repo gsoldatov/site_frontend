@@ -2,8 +2,8 @@ import React from "react";
 import Navigation from "./navigation";
 import TagFieldContainer from "./tag-field-container";
 import SideMenu from "./side-menu";
-import getAddTagPageSideMenuItems from "./side-menu-itemlist-add-tag";
-import getEditTagPageSideMenuItems from "./side-menu-itemlist-edit-tag";
+import getAddTagPageSideMenuItems from "./tag-add-side-menu-itemlist";
+import getEditTagPageSideMenuItems from "./tag-edit-side-menu-itemlist";
 
 class Tag extends React.Component {
     constructor(props) {

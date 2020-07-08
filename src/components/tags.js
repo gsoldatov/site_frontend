@@ -17,9 +17,15 @@ class Tags extends React.Component {
         this.props.setCurrentPage(this.props.paginationInfo.currentPage);
     }
 
-    render() {
+    componentDidUpdate() {
+        // Clear redirectOnRender after rendering Redirect component
         if (this.props.redirectOnRender) {
             this.props.setTagsRedirectOnRender("");
+        }
+    }
+
+    render() {
+        if (this.props.redirectOnRender) {
             return <Redirect to={this.props.redirectOnRender} />;
         }
 

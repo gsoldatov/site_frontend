@@ -17,7 +17,7 @@ function getTagsPageSideMenuItems(selectedTagID) {
         <SideMenuItemContainer 
             itemJSX="Add Tag" 
             isVisible={true} 
-            isActive={true}
+            isActive={ state => !isFetchinOrShowingDialogTags(state) }
             onClick={ setTagsRedirectOnRender("/tags/add") }
             key={key++}
         />,

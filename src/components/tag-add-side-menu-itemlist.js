@@ -1,6 +1,6 @@
 import React from "react";
 import SideMenuItemContainer from "./side-menu-item-container";
-import { addTagOnSaveFetch, setRedirectOnRender } from "../actions/tag";
+import { addTagOnSaveFetch, setTagRedirectOnRender } from "../actions/tag";
 import { isFetchingTag } from "../store/state-check-functions";
 
 /*
@@ -24,7 +24,7 @@ function getAddTagPageSideMenuItems() {
             itemJSX="Cancel" 
             isVisible={true} 
             isActive={ state => !isFetchingTag(state) }
-            onClick={ setRedirectOnRender("/tags") }
+            onClick={ setTagRedirectOnRender("/tags") }
             key={key++}
         />
     ];

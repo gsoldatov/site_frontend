@@ -7,18 +7,18 @@ const backendURL = config.backendURL;
 export const LOAD_ADD_TAG_PAGE = "LOAD_ADD_TAG_PAGE";
 export const LOAD_EDIT_TAG_PAGE = "LOAD_EDIT_TAG_PAGE";
 export const SET_CURRENT_TAG = "SET_CURRENT_TAG";
-export const SET_REDIRECT_ON_RENDER  = "SET_REDIRECT_ON_RENDER";
+export const SET_TAG_REDIRECT_ON_RENDER  = "SET_TAG_REDIRECT_ON_RENDER";
 export const SET_ADD_TAG_ON_SAVE_FETCH_STATE = "SET_ADD_TAG_ON_SAVE_FETCH_STATE";
 export const SET_EDIT_TAG_ON_LOAD_FETCH_STATE = "SET_EDIT_TAG_ON_LOAD_FETCH_STATE";
 export const SET_EDIT_TAG_ON_SAVE_FETCH_STATE = "SET_EDIT_TAG_ON_SAVE_FETCH_STATE";
 export const SET_EDIT_TAG_ON_DELETE_FETCH_STATE = "SET_EDIT_TAG_ON_DELETE_FETCH_STATE";
-export const SET_SHOW_DELETE_DIALOG = "SET_SHOW_DELETE_DIALOG";
+export const SET_SHOW_DELETE_DIALOG_TAG = "SET_SHOW_DELETE_DIALOG_TAG";
 
 export const loadAddTagPage      = () => ({ type: LOAD_ADD_TAG_PAGE });
 export const loadEditTagPage     = () => ({ type: LOAD_EDIT_TAG_PAGE });
 export const setCurrentTag       = (tag) => ({ type: SET_CURRENT_TAG, tag: tag });
-export const setRedirectOnRender = (redirectOnRender = "") => ({ type: SET_REDIRECT_ON_RENDER, redirectOnRender: redirectOnRender });
-export const setShowDeleteDialog = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG, showDeleteDialog: showDeleteDialog });
+export const setTagRedirectOnRender = (redirectOnRender = "") => ({ type: SET_TAG_REDIRECT_ON_RENDER, redirectOnRender: redirectOnRender });
+export const setShowDeleteDialogTag = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_TAG, showDeleteDialog: showDeleteDialog });
 
 export const setAddTagOnSaveFetchState = (isFetching = false, fetchError = "", lastFetch = undefined) => {
     return {
@@ -101,7 +101,7 @@ export function addTagOnSaveFetch() {
                 dispatch(addTags([tag]));
             }
             dispatch(setAddTagOnSaveFetchState(false, error, "addTagOnSave"));
-            dispatch(setRedirectOnRender(redirectOnRender));
+            dispatch(setTagRedirectOnRender(redirectOnRender));
         }).catch(error => {
             dispatch(setAddTagOnSaveFetchState(false, error.message, "addTagOnSave"));
         });
@@ -213,7 +213,7 @@ export function editTagOnSaveFetch() {
 export function editTagOnDeleteFetch() {
     return (dispatch, getState) => {
         // Hide delete dialog
-        dispatch(setShowDeleteDialog(false));
+        dispatch(setShowDeleteDialogTag(false));
 
         // Exit if already fetching
         let state = getState();
@@ -251,7 +251,7 @@ export function editTagOnDeleteFetch() {
             if (deleteFromState) {
                 dispatch(deselectTags(tag_ids));
                 dispatch(deleteTags(tag_ids));
-                dispatch(setRedirectOnRender("/tags"));
+                dispatch(setTagRedirectOnRender("/tags"));
             }
         }).catch(error => {
             dispatch(setEditTagOnDeleteFetchState(false, error.message, "editTagOnDelete"));

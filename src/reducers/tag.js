@@ -1,4 +1,4 @@
-import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, SET_REDIRECT_ON_RENDER, 
+import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, SET_TAG_REDIRECT_ON_RENDER, 
     SET_ADD_TAG_ON_SAVE_FETCH_STATE, SET_EDIT_TAG_ON_LOAD_FETCH_STATE, SET_EDIT_TAG_ON_SAVE_FETCH_STATE,
     SET_EDIT_TAG_ON_DELETE_FETCH_STATE, SET_SHOW_DELETE_DIALOG
     } from "../actions/tag";
@@ -79,7 +79,7 @@ function setCurrentTag(state, action) {
     };
 }
 
-function setRedirectOnRender(state, action) {
+function setTagRedirectOnRender(state, action) {
     return {
         ...state,
         tagUI: {
@@ -145,7 +145,7 @@ function setEditTagOnDeleteFetchState(state, action) {
     };
 }
 
-function setShowDeleteDialog(state, action) {
+function setShowDeleteDialogTag(state, action) {
     return {
         ...state,
         tagUI: {
@@ -160,12 +160,12 @@ const root = {
     LOAD_EDIT_TAG_PAGE: loadEditTagPage,
     SET_CURRENT_TAG: setCurrentTag,
 
-    SET_REDIRECT_ON_RENDER: setRedirectOnRender,
+    SET_TAG_REDIRECT_ON_RENDER: setTagRedirectOnRender,
     SET_ADD_TAG_ON_SAVE_FETCH_STATE: setAddTagOnSaveFetchState,
     SET_EDIT_TAG_ON_LOAD_FETCH_STATE: setEditTagOnLoadFetchState,
     SET_EDIT_TAG_ON_SAVE_FETCH_STATE: setEditTagOnSaveFetchState,
     SET_EDIT_TAG_ON_DELETE_FETCH_STATE: setEditTagOnDeleteFetchState,
-    SET_SHOW_DELETE_DIALOG: setShowDeleteDialog
+    SET_SHOW_DELETE_DIALOG_TAG: setShowDeleteDialogTag
 };
 
 export default root;
