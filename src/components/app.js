@@ -3,9 +3,9 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../store/create-store";
-import TagsContainer from "./tags-container";
-import TagContainer from "./tag-container";
-import Objects from "./objects";
+import TagsContainer from "./tags/tags-container";
+import TagContainer from "./tag/tag-container";
+import Objects from "./objects/objects";
 
 
 function App () {
