@@ -6,7 +6,8 @@
   "scripts": {
     "start": "set NODE_ENV=development&& webpack-dev-server --open",
     "build": "webpack",
-    "test": "echo \"No tests specified\" && exit 0",
+    "test______import_errors_and_not_parsing_JSX": "node_modules/.bin/jest --config tests/jest.config.js",
+    "test": "node_modules/.bin/jest",
     "preversion": "npm test"
   },
   "author": "",
@@ -22,14 +23,18 @@
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-transform-runtime": "^7.10.3",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
+    "@testing-library/react": "^10.4.7",
+    "babel-jest": "^26.1.0",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
+    "jest-cli": "^26.1.0",
     "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
