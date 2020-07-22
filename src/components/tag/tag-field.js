@@ -82,14 +82,14 @@ class TagField extends React.Component {
                         <label htmlFor="tag_name" className="item-field-form-label">
                             Tag name
                         </label>
-                        <input type="text" name="tag_name" value={tag.tag_name} 
+                        <input type="text" id="tag_name" value={tag.tag_name} 
                             readOnly={false}
                             onChange={this.handleTagNameChange}
                             className="item-field-form-text-input" />
                         <label htmlFor="tag_description" className="item-field-form-label">
                             Tag description
                         </label>
-                        <textarea name="tag_description" value={tag.tag_description}
+                        <textarea id="tag_description" value={tag.tag_description}
                             ref={this.tag_description}
                             onChange={this.handleTagDescriptionChange}
                             className="item-field-form-text-area" />
@@ -150,14 +150,14 @@ class TagField extends React.Component {
                         <label htmlFor="tag_name" className="item-field-form-label">
                             Tag name
                         </label>
-                        <input type="text" name="tag_name" value={tag.tag_name} 
+                        <input type="text" id="tag_name" value={tag.tag_name} 
                             readOnly={false}
                             onChange={this.handleTagNameChange}
                             className="item-field-form-text-input" />
                         <label htmlFor="tag_description" className="item-field-form-label">
                             Tag description
                         </label>
-                        <textarea name="tag_description" value={tag.tag_description}
+                        <textarea id="tag_description" value={tag.tag_description}
                             ref={this.tag_description}
                             onChange={this.handleTagDescriptionChange}
                             className="item-field-form-text-area" />
