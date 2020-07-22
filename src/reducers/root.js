@@ -25,14 +25,16 @@ const ACTION_HANDLERS = getActionHandlers({
     "tags": tags
 });
 
-function root(state, action){
-    let handler = typeof(action) === "object" 
-        ? ACTION_HANDLERS[action.type] : 
-        ACTION_HANDLERS[action];
-    let newState = handler ? handler(state, action) : state;
-    console.log("Finished dispatching action: " + action.type);
-    console.log("New state is: " + JSON.stringify(newState));
-    return newState;
-}
-
-export default root;
+export default function getRootReducer (enableDebugLogging) {
+    return (state, action) => {
+        let handler = typeof(action) === "object" 
+            ? ACTION_HANDLERS[action.type] : 
+            ACTION_HANDLERS[action];
+        let newState = handler ? handler(state, action) : state;
+        if (enableDebugLogging) {
+            console.log("Finished dispatching action: " + action.type);
+            console.log("New state is: " + JSON.stringify(newState));
+        }
+        return newState;
+    }
+};

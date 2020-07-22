@@ -8,27 +8,56 @@ import TagContainer from "./tag/tag-container";
 import Objects from "./objects/objects";
 
 
-function App () {
+// function App () {
+//     return (
+//         <Provider store={createStore()}>
+//             <BrowserRouter>
+//                 <Switch>
+//                     <Route exact path="/tags">
+//                         <TagsContainer />
+//                     </Route>
+//                     <Route exact path="/tags/:id">
+//                         <TagContainer />
+//                     </Route>
+//                     <Route exact path="/objects">
+//                         <Objects />
+//                     </Route>
+//                     <Route exact path="/">
+//                         <Objects />
+//                     </Route>
+//                 </Switch>
+//             </BrowserRouter>
+//         </Provider>
+//     );
+// }
+
+// export default App;
+
+export function App() {
     return (
-        <Provider store={createStore()}>
+        <Switch>
+            <Route exact path="/tags">
+                <TagsContainer />
+            </Route>
+            <Route exact path="/tags/:id">
+                <TagContainer />
+            </Route>
+            <Route exact path="/objects">
+                <Objects />
+            </Route>
+            <Route exact path="/">
+                <Objects />
+            </Route>
+        </Switch>
+    );
+}
+
+export function AppWithRouterAndStore() {
+    return (
+        <Provider store={createStore({ enableDebugLogging: true })}>
             <BrowserRouter>
-                <Switch>
-                    <Route exact path="/tags">
-                        <TagsContainer />
-                    </Route>
-                    <Route exact path="/tags/:id">
-                        <TagContainer />
-                    </Route>
-                    <Route exact path="/objects">
-                        <Objects />
-                    </Route>
-                    <Route exact path="/">
-                        <Objects />
-                    </Route>
-                </Switch>
+                <App />
             </BrowserRouter>
         </Provider>
     );
 }
-
-export default App;
