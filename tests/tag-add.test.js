@@ -18,9 +18,9 @@ afterAll(() => {
     jest.resetAllMocks();
 })
 
-test("render /tags/add", async () => {
+test("Render and click cancel button", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history, store, debug } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container, history } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
         route: "/tags/add"
     });
     
@@ -39,13 +39,18 @@ test("render /tags/add", async () => {
     // Check if cancel button redirects to /tags page
     fireEvent.click(cancelButton);
     expect(history.entries[history.length - 1].pathname).toBe("/tags");
+});
 
-    // Return back to /tags/add
-    history.push("/tags/add");
+test("Modify tag name and try saving an existing (in local state) tag name", async () => {
+    // Route component is required for matching (getting :id part of the URL in the Tag component)
+    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+        route: "/tags/add"
+    });
 
     // Check if input is updating the state
-    tagNameInput = getByLabelText(container, "Tag name");
-    tagDescriptionInput = getByLabelText(container, "Tag description");
+    let tagNameInput = getByLabelText(container, "Tag name");
+    let tagDescriptionInput = getByLabelText(container, "Tag description");
+    let saveButton = getByText(container, "Save");
     fireEvent.change(tagNameInput, { target: { value: "existing tag_name" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("existing tag_name"));
     fireEvent.change(tagDescriptionInput, { target: { value: "tag description" } });
@@ -56,20 +61,49 @@ test("render /tags/add", async () => {
     saveButton = getByText(container, "Save");
     fireEvent.click(saveButton);
     let errorMessage = getByText(container, "already exists", { exact: false });
+});
 
-    // Delete tags from local state and refresh the page
-    store.dispatch(deleteTags([1]));
-    history.push("/tags");
-    history.push("/tags/add");
+test("Try saving an existing (on backend) tag name", async () => {
+    // Route component is required for matching (getting :id part of the URL in the Tag component)
+    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+        route: "/tags/add"
+    });
 
     // Check if existing tag_name (on backend) is not added
-    tagNameInput = getByLabelText(container, "Tag name");
-    tagDescriptionInput = getByLabelText(container, "Tag description");
-    saveButton = getByText(container, "Save");
+    let tagNameInput = getByLabelText(container, "Tag name");
+    let saveButton = getByText(container, "Save");
     fireEvent.change(tagNameInput, { target: { value: "existing tag_name" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("existing tag_name"));  // wait for tag_name to be updated in state
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "already exists", { exact: false }));
+});
+
+test("Handle fetch error", async () => {
+    // Route component is required for matching (getting :id part of the URL in the Tag component)
+    let { container, history, store, debug } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+        route: "/tags/add"
+    });
+
+    // Check if an error message is displayed and tag is not added to the state
+    let tagNameInput = getByLabelText(container, "Tag name");
+    let saveButton = getByText(container, "Save");
+    fireEvent.change(tagNameInput, { target: { value: "error" } });
+    await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("error"));  // wait for tag_name to be updated in state
+    fireEvent.click(saveButton);
+    await waitFor(() => getByText(container, "Test add fetch error"));
+    expect(history.entries[history.length - 1].pathname).toBe("/tags/add");
+    expect(store.getState().tags[1000]).toBeUndefined();
+});
+
+test("Save a new tag", async () => {
+    // Route component is required for matching (getting :id part of the URL in the Tag component)
+    let { container, history, store } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+        route: "/tags/add"
+    });
+
+    let tagNameInput = getByLabelText(container, "Tag name");
+    let tagDescriptionInput = getByLabelText(container, "Tag description");
+    let saveButton = getByText(container, "Save");
 
     // Check if tag is redirected after adding a correct tag
     fireEvent.change(tagNameInput, { target: { value: "new tag" } });
