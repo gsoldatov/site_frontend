@@ -57,7 +57,7 @@ export const setEditTagOnDeleteFetchState = (isFetching = false, fetchError = ""
 };
 
 export function addTagOnSaveFetch() {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         let state = getState();
 
         // Exit if already fetching
@@ -82,34 +82,33 @@ export function addTagOnSaveFetch() {
             }
         });
 
-        return fetch(`${backendURL}/tags/add`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: payload
-        }).then(response => {
+        try {
+            let response = await fetch(`${backendURL}/tags/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload
+            });
+
             switch (response.status) {
                 case 200:
-                    return response.json().then(json => ({ error: "", tag: json["tag"] }));
+                    let tag = (await response.json()).tag;
+                    dispatch(addTags([tag]));
+                    dispatch(setAddTagOnSaveFetchState(false, "", "addTagOnSave"));
+                    dispatch(setTagRedirectOnRender(`/tags/${tag.tag_id}`));
+                    break;
                 case 400:
-                    return response.json().then(json => ({ error: json._error, tag: null }));
+                    throw Error((await response.json())._error);
                 case 500:
-                    return response.text().then(text => ({ error: text, tag: null }));
+                    throw Error(await response.text());
             }
-        }).then(({ error, tag }) => {
-            let redirectOnRender = tag ? `/tags/${tag.tag_id}` : "";
-            if (tag) {
-                dispatch(addTags([tag]));
-            }
-            dispatch(setAddTagOnSaveFetchState(false, error, "addTagOnSave"));
-            dispatch(setTagRedirectOnRender(redirectOnRender));
-        }).catch(error => {
+        } catch (error) {
             dispatch(setAddTagOnSaveFetchState(false, error.message, "addTagOnSave"));
-        });
+        }
     };
 };
 
 export function editTagOnLoadFetch(tag_id) {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         let state = getState();
 
         // Exit if already fetching
@@ -129,35 +128,36 @@ export function editTagOnLoadFetch(tag_id) {
         // Fetch tag data and handle response
         let payload = JSON.stringify({ tag_ids: [parseInt(tag_id)] });
 
-        return fetch(`${backendURL}/tags/view`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: payload
-        }).then(response => {
+        try {
+            let response = await fetch(`${backendURL}/tags/view`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload
+            });
+
             switch (response.status) {
                 case 200:
-                    return response.json().then(json => ({ error: "", tag: json["tags"][0] }));
+                    let tag = (await response.json())["tags"][0];
+                    dispatch(addTags([tag]));
+                    dispatch(setCurrentTag(tag));
+                    dispatch(setEditTagOnLoadFetchState(false, "", "editTagOnLoad"));
+                    break;
                 case 400:
-                    return response.json().then(json => ({ error: json._error, tag: null }));
+                    throw Error((await response.json())._error);
                 case 404:
-                    return response.json().then(json => ({ error: "Tag not found.", tag: null }));
+                    throw Error("Tag not found.");
                 case 500:
-                    return response.text().then(text => ({ error: text, tag: null }));
+                    throw Error(await response.text());
             }
-        }).then(({ error, tag }) => {
-            if (tag) {
-                dispatch(addTags([tag]));
-                dispatch(setCurrentTag(tag));
-            }
-            dispatch(setEditTagOnLoadFetchState(false, error, "editTagOnLoad"));
-        }).catch(error => {
+        }
+        catch (error) {
             dispatch(setEditTagOnLoadFetchState(false, error.message, "editTagOnLoad"));
-        });
+        }
     };
 };
 
 export function editTagOnSaveFetch() {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         let state = getState();
 
         // Exit if already fetching
@@ -183,35 +183,35 @@ export function editTagOnSaveFetch() {
             } 
         });
 
-        return fetch(`${backendURL}/tags/update`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: payload
-        }).then(response => {
+        try {
+            let response = await fetch(`${backendURL}/tags/update`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: payload
+            });
+
             switch (response.status) {
                 case 200:
-                    return response.json().then(json => ({ error: "", tag: json["tag"] }));
+                    let tag = (await response.json()).tag;
+                    dispatch(addTags([tag]));
+                    dispatch(setCurrentTag(tag));
+                    dispatch(setEditTagOnSaveFetchState(false, "", "editTagOnSave"));
+                    break;
                 case 400:
-                    return response.json().then(json => ({ error: json._error, tag: null }));
+                    throw Error((await response.json())._error);
                 case 404:
-                    return response.json().then(json => ({ error: "Tag not found.", tag: null }));
+                    throw Error("Tag not found.");
                 case 500:
-                    return response.text().then(text => ({ error: text, tag: null }));
+                    throw Error(await response.text());
             }
-        }).then(({ error, tag }) => {
-            if (tag) {
-                dispatch(addTags([tag]));
-                dispatch(setCurrentTag(tag));
-            }
-            dispatch(setEditTagOnSaveFetchState(false, error, "editTagOnSave"));
-        }).catch(error => {
+        } catch (error) {
             dispatch(setEditTagOnSaveFetchState(false, error.message, "editTagOnSave"));
-        });
+        }
     };        
 };
 
 export function editTagOnDeleteFetch() {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         // Hide delete dialog
         dispatch(setShowDeleteDialogTag(false));
 
@@ -231,30 +231,28 @@ export function editTagOnDeleteFetch() {
             tag_ids: tag_ids
         });
 
-        return fetch(`${backendURL}/tags/delete`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: payload
-        }).then(response => {
+        try {
+            let response = await fetch(`${backendURL}/tags/delete`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: payload
+            });
+                        
             switch (response.status) {
                 case 200:
-                    return response.json().then(() => ({ error: "", deleteFromState: true }));
+                case 404:   // Tags not present in the database should be deleted from state
+                    dispatch(setEditTagOnDeleteFetchState(false, response.status === 200 ? "" : "Tag(s) not found.", "editTagOnDelete"));
+                    dispatch(deselectTags(tag_ids));
+                    dispatch(deleteTags(tag_ids));
+                    dispatch(setTagRedirectOnRender("/tags"));
+                    break;
                 case 400:
-                    return response.json().then(json => ({ error: json._error, deleteFromState: false }));
-                case 404:
-                    return response.json().then(() => ({ error: "Tag(s) not found.", deleteFromState: true }));     // If currentTag is not in the database, then it should be deleted anyway
+                    throw Error((await response.json())._error);
                 case 500:
-                    return response.text().then(text => ({ error: text, deleteFromState: false }));
+                    throw Error(await response.text());
             }
-        }).then(({ error, deleteFromState }) => {
-            dispatch(setEditTagOnDeleteFetchState(false, error, "editTagOnDelete"));
-            if (deleteFromState) {
-                dispatch(deselectTags(tag_ids));
-                dispatch(deleteTags(tag_ids));
-                dispatch(setTagRedirectOnRender("/tags"));
-            }
-        }).catch(error => {
+        } catch (error) {
             dispatch(setEditTagOnDeleteFetchState(false, error.message, "editTagOnDelete"));
-        });
-    };        
+        }
+    };      
 };
