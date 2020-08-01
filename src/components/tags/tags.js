@@ -40,7 +40,7 @@ class Tags extends React.Component {
             <FieldItemListContainer key={key++} itemIDs={this.props.selectedTagIDs} itemFactory={tagsFieldItemFactory} isExpandable={true} />,
             <FieldItemListContainer key={key++} itemIDs={this.props.paginationInfo.currentPageTagIDs} isFetching={this.props.isFetching} fetchError={this.props.fetchError}
                 itemFactory={tagsFieldItemFactory} />,
-            <FieldPaginationContainer key={key++} paginationInfo={this.props.paginationInfo} setCurrentPage={this.props.setCurrentPage} />
+            <FieldPaginationContainer key={key++} paginationInfo={this.props.paginationInfo} setCurrentPage={this.props.setCurrentPage} isFetching={this.props.isFetching} />
         ];
 
         return (

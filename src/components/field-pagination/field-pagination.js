@@ -12,8 +12,9 @@ class FieldPagination extends React.Component {
         const currentPage = paginationInfo ? paginationInfo.currentPage : null;
         const totalPages = paginationInfo ? Math.ceil(paginationInfo.totalItems / paginationInfo.itemsPerPage) : null;
         const setCurrentPage = this.props.setCurrentPage;
+        const isFetching = this.props.isFetching;
 
-        if (totalPages === null || totalPages === 1) {
+        if (isFetching || totalPages === 0 || totalPages === 1) {
             return null;
         }
 

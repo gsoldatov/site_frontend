@@ -10,7 +10,8 @@ import FieldPagination from "./field-pagination";
 */
 const mapStateToProps = (state, ownProps) => {
     return {
-        paginationInfo: ownProps.paginationInfo
+        paginationInfo: ownProps.paginationInfo,
+        isFetching: ownProps.isFetching
     };
 };
 
