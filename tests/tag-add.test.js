@@ -4,7 +4,7 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByLabelText, waitFor } from '@testing-library/dom'
 
-import { mockFetch } from "./mocks/mock-fetch";
+import { mockFetch, setFetchFailParams } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 
 import TagContainer from "../src/components/tag/tag-container";
@@ -15,6 +15,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
+    setFetchFailParams();   // reset fetch params
     jest.resetAllMocks();
 })
 
@@ -89,10 +90,12 @@ test("Handle fetch error", async () => {
     let saveButton = getByText(container, "Save");
     fireEvent.change(tagNameInput, { target: { value: "error" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("error"));  // wait for tag_name to be updated in state
+    setFetchFailParams(true, "Test add fetch error");
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "Test add fetch error"));
     expect(history.entries[history.length - 1].pathname).toBe("/tags/add");
     expect(store.getState().tags[1000]).toBeUndefined();
+    setFetchFailParams();   // reset fetch params
 });
 
 test("Save a new tag", async () => {
