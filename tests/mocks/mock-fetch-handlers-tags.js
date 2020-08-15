@@ -51,9 +51,78 @@ function handleUpdate(body) {
     return {status: status, json: () => Promise.resolve(responseObj)};
 }
 
+function handleGetPageTagIDs(body) {
+    const pI = JSON.parse(body).pagination_info;
+    const tagIDs = getMockedPageTagIDs(pI);
+    if (tagIDs.length === 0) {
+        return {status: 404, json: () => Promise.resolve({_error: "No tags found."})};
+    }
+
+    const responseObj = {
+        page: pI.page,
+        items_per_page: pI.items_per_page,
+        total_items: 100, //?
+        order_by: pI.order_by,
+        sort_order: pI.sort_order,
+        filter_text: pI.filter_text,
+        tag_ids: tagIDs
+    };
+    return {status: 200, json: () => Promise.resolve(responseObj)};  
+}
+
+export function getMockedPageTagIDs(pI) {
+    function getList(f, t, s = 1){
+        let a = [];
+        if (f < t) {
+            for (let i = f; i <= t; i += s) {
+                a.push(i);
+            }   
+        } else {
+            for (let i = f; i >= t; i += s) {
+                a.push(i);
+            }
+        }
+        return a;
+    }
+    
+    // Single page
+    if (pI.items_per_page === 100) {
+        return getList(1, 100);
+    }
+
+    // Sort by modified_at asc
+    if (pI.order_by === "modified_at" && pI.sort_order === "asc") {
+        return getList(41, 50);
+    }
+
+    // Sort by modified_at desc
+    if (pI.order_by === "modified_at" && pI.sort_order === "desc") {
+        return getList(50, 41, -1);
+    }
+    // {"page":1,"items_per_page":10,"order_by":"tag_name","sort_order":"desc","filter_text":""}
+    // Sort by tag_name desc
+    if (pI.order_by === "tag_name" && pI.sort_order === "desc") {
+        return getList(99, 9, -10);
+    }
+
+    // Filtered text without match
+    if (pI.filter_text === "no match") {
+        return [];
+    }
+
+    // Filtered text
+    if (pI.filter_text !== "" && pI.filter_text !== "no match") {
+        return getList(2, 92, 10);
+    }
+
+    // Multiple pages
+    return getList(pI.items_per_page * (pI.page - 1) + 1, pI.items_per_page * pI.page);
+};
+
 export const tagsHandlersList = new Map([
     ["/tags/add", {"POST": handleAdd}],
     ["/tags/view", {"POST": handleView}],
     ["/tags/delete", {"DELETE": handleDelete}],
-    ["/tags/update", {"PUT": handleUpdate}]
+    ["/tags/update", {"PUT": handleUpdate}],
+    ["/tags/get_page_tag_ids", {"POST": handleGetPageTagIDs}]
 ]);

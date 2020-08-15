@@ -11,7 +11,7 @@ export function mockFetch(URL, {
     if (isFailingFetch) {
         throw Error(failMessage);
     }
-    
+
     const URLPath = URL.replace(config["backendURL"], "");
     const handler = getHandler(URLPath, method);
     if (!handler) {
