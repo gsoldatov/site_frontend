@@ -173,6 +173,7 @@ export function onDeleteFetch() {
                     break;
                 case 500:
                     error = await response.text();
+                    deleteFromState = false;
                     break;
             }
 
