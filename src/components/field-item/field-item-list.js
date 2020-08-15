@@ -27,12 +27,15 @@ class FieldItemList extends React.Component {
     }
 
     checkItemListScrollHeight() {
-        const itemListLineHeight = parseInt(getComputedStyle(this.fieldItemListDiv.current).lineHeight.replace("px", ""));      // line-height CSS property
-        const itemListScrollHeight = this.fieldItemListDiv.current.scrollHeight;            // total height of the ItemList div
-        let newIsExpandButtonRequired = itemListScrollHeight >= 2 * itemListLineHeight;
+        // Enable or disable expand controls according to current width if parent div is rendered
+        if (this.fieldItemListDiv.current) {
+            const itemListLineHeight = parseInt(getComputedStyle(this.fieldItemListDiv.current).lineHeight.replace("px", ""));      // line-height CSS property
+            const itemListScrollHeight = this.fieldItemListDiv.current.scrollHeight;            // total height of the ItemList div
+            let newIsExpandButtonRequired = itemListScrollHeight >= 2 * itemListLineHeight;
 
-        if (newIsExpandButtonRequired !== this.state.isExpandButtonRequired) {
-            this.setState({ isExpandButtonRequired: newIsExpandButtonRequired });
+            if (newIsExpandButtonRequired !== this.state.isExpandButtonRequired) {
+                this.setState({ isExpandButtonRequired: newIsExpandButtonRequired });
+            }
         }
     };
 
