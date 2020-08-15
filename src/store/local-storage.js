@@ -11,7 +11,7 @@ export class LocalStorageProxy {
         this.enableDebugLogging = enableDebugLogging;
 
         this.loadState = this.loadState.bind(this);
-        this.save = this.loadState.bind(this);
+        this.save = this.save.bind(this);
 
         this.saveState = intervalWrapper(this.save, 1000, false);
     }
