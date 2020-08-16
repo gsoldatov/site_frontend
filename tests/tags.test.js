@@ -44,7 +44,7 @@ test("Load page with a fetch error", async () => {
 });
 
 test("Load a page without pagination", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -61,7 +61,7 @@ test("Load a page without pagination", async () => {
 });
 
 test("Load page 1 of 5 and click on page 5", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 20}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -100,8 +100,8 @@ test("Load page 1 of 5 and click on page 5", async () => {
 });
 
 test("Load page 1 of 10 and check pagination gaps", async () => {
-    let store = createStore({ enableDebugLogging: false });
-    store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
+    let store = createStore({ useLocalStorage: false });
+    store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
@@ -194,7 +194,7 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
 });
 
 test("Side menu buttons during fetch", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -217,8 +217,8 @@ test("Side menu buttons during fetch", async () => {
 });
 
 test("Side menu add tag button", async () => {
-    let store = createStore({ enableDebugLogging: false });
-    store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
+    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+    store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container, history } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
@@ -236,7 +236,7 @@ test("Side menu add tag button", async () => {
 });
 
 test("Side menu edit tag button", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -272,7 +272,7 @@ test("Side menu edit tag button", async () => {
 });
 
 test("Side menu delete button", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -324,7 +324,7 @@ test("Side menu delete button", async () => {
 
 
 test("Field menu, select + deselect", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -352,7 +352,7 @@ test("Field menu, select + deselect", async () => {
 });
 
 test("Field menu, sort buttons", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     const tagsPerPage = 10;
     store.dispatch(setTagsPaginationInfo({itemsPerPage: tagsPerPage}))
     
@@ -391,7 +391,7 @@ test("Field menu, sort buttons", async () => {
 });
 
 test("Field menu, tag filter", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
