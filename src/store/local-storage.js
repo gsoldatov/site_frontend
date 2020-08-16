@@ -7,7 +7,8 @@ import intervalWrapper from "../util/interval-wrapper";
 export class LocalStorageProxy {
     DATE_TIME_PROPERTY_NAMES = ["updatedAt"];
     
-    constructor(enableDebugLogging) {
+    constructor(useLocalStorage, enableDebugLogging) {
+        this.useLocalStorage = useLocalStorage;
         this.enableDebugLogging = enableDebugLogging;
 
         this.loadState = this.loadState.bind(this);
@@ -17,6 +18,11 @@ export class LocalStorageProxy {
     }
 
     loadState() {
+        if (!this.useLocalStorage) {
+            this.log("useLocalStorage = false, returning default state");
+            return initialState;
+        }
+        // useLocalStorage => реализовать (загрузка, сохранение), проверить
         try {
             const serializedState = localStorage.getItem('state');
             if (serializedState === null) {

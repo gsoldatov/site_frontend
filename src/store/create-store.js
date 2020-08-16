@@ -5,9 +5,10 @@ import { LocalStorageProxy } from "./local-storage";
 import getRootReducer from "../reducers/root";
 
 const createStoreFunc = ({
+    useLocalStorage = true,
     enableDebugLogging = false
 } = {}) => {
-    const proxy = new LocalStorageProxy(enableDebugLogging);
+    const proxy = new LocalStorageProxy(useLocalStorage, enableDebugLogging);
     const store = createStore(
         getRootReducer(enableDebugLogging),
         proxy.loadState(),
@@ -15,8 +16,10 @@ const createStoreFunc = ({
             thunkMiddleware
         )
     );
-    
-    store.subscribe(() => proxy.saveState(store));
+
+    if (useLocalStorage) {
+        store.subscribe(() => proxy.saveState(store));
+    }
 
     return store;
 }
