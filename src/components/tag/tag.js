@@ -12,6 +12,9 @@ import { loadAddTagPage, editTagOnLoadFetch, setCurrentTag } from "../../actions
 import getAddTagPageSideMenuItems from "./tag-add-side-menu-itemlist";
 import getEditTagPageSideMenuItems from "./tag-edit-side-menu-itemlist";
 
+/*
+    /tags/add and /tags/edit components.
+*/
 class Tag extends React.Component {
     render() {
         const tag = this.props.tag;
@@ -66,7 +69,6 @@ const editTagMapStateToProps = state => {
 }
 
 const editTagMapDispatchToProps = (dispatch, ownProps) => {
-    // const tag_id = ownProps.match.params.id;
     return {
         onLoad: () => dispatch(editTagOnLoadFetch(ownProps.match.params.id)),
         changeCallback: componentState => dispatch(setCurrentTag({ tag_name: componentState.name, tag_description: componentState.description }))
@@ -74,14 +76,3 @@ const editTagMapDispatchToProps = (dispatch, ownProps) => {
 };
 
 export const EditTag = withRouter(connect(editTagMapStateToProps, editTagMapDispatchToProps)(Tag));
-
-
-/*
-    TODO: edit tag page => replace changed files with "2" versions => move object CSS into separate files
-    tag2:
-    - app;
-    - components/tag/tag2;
-    - actions/tag2
-    - reducers/tag2
-    - store/state-check-functions => isFetchingTag;
-*/

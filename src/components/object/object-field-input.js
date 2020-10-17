@@ -2,6 +2,11 @@ import React from "react";
 
 import StyleObjectFieldInput from "../../styles/object-field-input.css";
 
+/*
+    Component which renders the form for editing object's/tag's name or description.
+    <ObjectFieldInputContainer> should be used in parent components for connecting this component to the store.
+*/
+
 class ObjectFieldInput extends React.Component {
     constructor(props) {
         super(props);

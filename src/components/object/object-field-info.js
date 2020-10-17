@@ -2,6 +2,9 @@ import React from "react";
 
 import StyleObjectFieldInfo from "../../styles/object-field-info.css";
 
+/*
+    Component for displaying header, onSave fetch errors, timestamps and object type switches on the object/tag pages.
+*/
 const timestamp = (text, timestamp) => {
     return (
         timestamp && (

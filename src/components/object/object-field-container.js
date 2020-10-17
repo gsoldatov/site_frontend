@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import ObjectField from "./object-field";
 
 /*
-    ObjectField wrapper for connecting to the store.
+    <ObjectField> wrapper for connecting to the store.
 
     Props:
     * getRedirectOnRender - function which returns the path to redirect to from the current state;

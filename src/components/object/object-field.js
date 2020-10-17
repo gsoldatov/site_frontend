@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 
 /*
     Component which renders the main part of the object/tag page.
+    <ObjectFieldContainer> should be used in parent components for connecting this component to the store.
 */
 
 class ObjectField extends React.Component {
@@ -10,7 +11,7 @@ class ObjectField extends React.Component {
         if (this.props.redirectOnRender) {
             return <Redirect to={this.props.redirectOnRender} />;          
         }
-        
+
         let onLoadFetch = this.props.onLoadFetch;
         let isFetching = typeof(onLoadFetch) === "object" ? onLoadFetch.isFetching : null;
         let fetchError = typeof(onLoadFetch) === "object" ? onLoadFetch.fetchError : null;
