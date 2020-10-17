@@ -8,7 +8,7 @@ import { mockFetch, setFetchFailParams } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
-import TagContainer from "../src/components/tag/tag-container";
+import { EditTag } from "../src/components/tag/tag";
 import { addTags, deleteTags } from "../src/actions/tags";
 
 beforeAll(() => {
@@ -22,7 +22,7 @@ afterAll(() => {
 
 test("Load a non-existing tag + check buttons", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/9999"
     });
 
@@ -40,7 +40,7 @@ test("Load a tag with fetch error", async () => {
     setFetchFailParams(true, "Test view fetch error");
 
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1"
     });
 
@@ -54,7 +54,7 @@ test("Load a tag from state", async () => {
     let tag = { tag_id: 1, tag_name: "tag name", tag_description: "tag description", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
     store.dispatch(addTags([tag]));
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1",
         store: store
     });
@@ -71,7 +71,7 @@ test("Load a tag from state", async () => {
 
 test("Load a tag from backend", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1"
     });
 
@@ -91,7 +91,7 @@ test("Modify a tag and click cancel", async () => {
     let tag = { tag_id: 1, tag_name: "tag name", tag_description: "tag description", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
     store.dispatch(addTags([tag]));
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container, history } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1",
         store: store
     });
@@ -118,7 +118,7 @@ test("Modify a tag and click cancel", async () => {
 
 test("Delete a tag", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, store, history } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container, store, history } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1"
     });
 
@@ -145,7 +145,7 @@ test("Delete a tag", async () => {
 
 test("Delete a tag with fetch error", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1"
     });
 
@@ -165,7 +165,7 @@ test("Delete a tag with fetch error", async () => {
 
 test("Save an existing tag", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1"
     });
 
@@ -199,7 +199,7 @@ test("Save an existing tag", async () => {
 
 test("Update a tag", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1"
     });
 
@@ -221,7 +221,7 @@ test("Update a tag", async () => {
 
 test("Update a tag with fetch error", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><TagContainer /></Route>, {
+    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1"
     });
 
