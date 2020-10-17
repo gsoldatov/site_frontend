@@ -1,11 +1,13 @@
 import React from "react";
 
+import StyleObjectFieldInfo from "../../styles/object-field-info.css";
+
 const timestamp = (text, timestamp) => {
     return (
         timestamp && (
-            <div className="item-field-date">
-                <span className="item-field-date-label">{text}</span>
-                <span className="item-field-date-value">{timestamp}</span>
+            <div className="object-field-date">
+                <span className="object-field-date-label">{text}</span>
+                <span className="object-field-date-value">{timestamp}</span>
             </div>
         )
     );
@@ -18,15 +20,15 @@ class ObjectFieldInfo extends React.Component {
         );
 
         const timestamps = this.props.createdAt && (
-            <div className="item-field-timestamps">
+            <div className="object-field-timestamps">
                 {timestamp("Created at: ", this.props.createdAt)}
                 {timestamp("Modified at: ", this.props.modifiedAt)}
             </div>
         );
 
         return (
-            <section className="tag-page-body">
-                <h3 className="item-field-header">{this.props.headerText}</h3>
+            <section className="object-field-info">
+                <h3 className="object-field-header">{this.props.headerText}</h3>
                 {fetchError}
                 {this.props.objectTypeSwitch}
                 {timestamps}

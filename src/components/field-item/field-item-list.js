@@ -1,6 +1,8 @@
 import React from "react";
 import intervalWrapper from "../../util/interval-wrapper";
 
+import StyleFieldItemList from "../../styles/field-itemlist.css";
+
 /*
     Renders a list of items passed to it. 
     If isFetching and fetchError are passed as props, renders fetch errors and a message instead of items during fetches.

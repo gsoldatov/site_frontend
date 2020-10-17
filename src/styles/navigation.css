@@ -1,0 +1,29 @@
+/****** Navigation bar ******/
+nav {
+    background-color: rgb(40, 40, 40);
+}
+
+.nav-ul {
+    list-style-type: none;
+}
+
+.nav-li {
+    float: left;
+}
+
+.nav-li .nav-link, .active-nav-link {
+    display: block;
+    text-align: center;
+    font-size: large;
+    color: rgb(255, 255, 255);
+    padding: 16px;
+    text-decoration: none;
+}
+
+.nav-li:hover .nav-link:hover, .active-nav-link:hover {
+    background-color: var(--hover-color);
+}
+
+.active-nav-link {
+    background-color: var(--selected-color);
+}

@@ -1,0 +1,68 @@
+/****** Field menu ******/
+.field-menu {
+    position: sticky;   /* Stck at the top of the page on scrolldown */
+    top: 0px;
+    background-color: rgba(230, 230, 230, 1);
+    border: solid 1px black;
+}
+
+.field-menu-div {
+    list-style-type: none;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.field-menu-div::after {     /* Fill excess space on the last line, so that last line */
+    content: "";            /* menu items are aligned to the left */
+    flex: auto;
+}
+
+.field-menu-item {
+    position: relative;
+    margin: 4px;
+    max-height: 28px;
+    max-width: 28px;
+}
+
+.field-menu-button {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* .field-menu-item:hover {     // TODO pointer cursor when hovering active or clicked menu items
+    cursor: pointer;
+} */
+
+.field-menu-button-overlay-active,      /* Field menu button overlay to change its style */
+.field-menu-button-overlay-inactive,    /* when inactive, pressed or hovered */
+.field-menu-button-overlay-pressed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 28px;
+}
+
+.field-menu-button-overlay-inactive {
+    background-color: var(--field-menu-button-overlay-color);
+}
+    
+.field-menu-button-overlay-pressed {   
+    box-shadow: inset 0px 0px 0px 2px var(--pressed-button-color);
+}
+
+.field-menu-button-overlay-active:hover, 
+.field-menu-button-overlay-pressed:hover {
+    cursor: pointer;
+    box-shadow: none;
+    background-color: var(--hover-color);
+}
+
+.field-menu-filter {
+    height: 24px;
+    width: 150px;
+    border-radius: 3px;
+    border: ridge 1px black;
+}

@@ -1,5 +1,7 @@
 import React from "react";
 
+import StyleObjectFieldInput from "../../styles/object-field-input.css";
+
 class ObjectFieldInput extends React.Component {
     constructor(props) {
         super(props);
@@ -41,22 +43,24 @@ class ObjectFieldInput extends React.Component {
 
     render () {
         return (
-            <form className="item-field-form">
-                <label htmlFor="tag_name" className="item-field-form-label">
-                    {this.props.nameLabel}
-                </label>
-                <input type="text" id="tag_name" value={this.state.name} 
-                    readOnly={false}
-                    onChange={this.handleNameChange}
-                    className="item-field-form-text-input" />
-                <label htmlFor="tag_description" className="item-field-form-label">
-                    {this.props.descriptionLabel}
-                </label>
-                <textarea id="tag_description" value={this.state.description}
-                    ref={this.description}
-                    onChange={this.handleDescriptionChange}
-                    className="item-field-form-text-area" />
-            </form>
+            <section className="object-field-input">
+                <form className="object-field-input-form">
+                    <label htmlFor="object_name" className="object-field-input-form-label">
+                        {this.props.nameLabel}
+                    </label>
+                    <input type="text" id="object_name" value={this.state.name} 
+                        readOnly={false}
+                        onChange={this.handleNameChange}
+                        className="object-field-input-form-text-input" />
+                    <label htmlFor="object_description" className="object-field-input-form-label">
+                        {this.props.descriptionLabel}
+                    </label>
+                    <textarea id="object_description" value={this.state.description}
+                        ref={this.description}
+                        onChange={this.handleDescriptionChange}
+                        className="object-field-input-form-text-area" />
+                </form>
+            </section>
         );
     }
 }

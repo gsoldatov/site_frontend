@@ -1,5 +1,7 @@
 import React from "react";
 
+import StyleFieldMenu from "../../styles/field-menu.css";
+
 /*
     Component for rendering a field menu with a list items passed to it as props.
 */

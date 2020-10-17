@@ -1,0 +1,17 @@
+/****** Field item ******/
+.field-item {
+    margin: 4px;
+}
+
+.field-item:hover {
+    background-color: var(--hover-color);
+}
+
+.field-item-tag-checkbox, .field-item-tag-link {
+    margin: 2px;
+}
+
+.field-item-tag-link {
+    color: black;
+    text-decoration: none;
+}

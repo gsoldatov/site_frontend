@@ -2,6 +2,8 @@ import React from "react";
 import FieldPaginationButton from "./field-pagination-button";
 import FieldPaginationGap from "./field-pagination-gap";
 
+import StyleFieldPagination from "../../styles/field-pagination.css";
+
 /*
     Component for rendering pagination block to change item pages being displayd.
     FieldPaginationContainer should be used instead of this class to connect it to the state.

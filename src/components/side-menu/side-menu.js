@@ -1,5 +1,7 @@
 import React from "react";
 
+import StyleSideMenu from "../../styles/side-menu.css";
+
 /*
     Component for rendering side menu with items passed as props.
 */

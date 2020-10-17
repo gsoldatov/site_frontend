@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import StyleNavigation from "../styles/navigation.css";
 
 class Navigation extends React.Component {
     render() {

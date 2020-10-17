@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import StyleFieldItem from "../../styles/field-item.css";
+
 /*
     Component which renders a single item with a link to its page and selection checkbox
     FieldItemContainer should be used instead of this class to connect it to the state.
