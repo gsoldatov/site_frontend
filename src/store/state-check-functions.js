@@ -5,11 +5,9 @@
 /* ********************************************************** */
 /*                          TAG PAGE                          */
 /* ********************************************************** */
-
 /* Returns true if any of tag page fetches are being performed. */
 export function isFetchingTag(state) {
-    return state.tagUI.addTagOnSaveFetch.isFetching || state.tagUI.editTagOnLoadFetch.isFetching || 
-        state.tagUI.editTagOnSaveFetch.isFetching || state.tagUI.editTagOnDeleteFetch.isFetching;
+    return state.tagUI.tagOnLoadFetch.isFetching || state.tagUI.tagOnSaveFetch.isFetching;
 };
 
 /* Returns true if any of tag page fetches are being performed or a confirmation dialog is being displayed. */

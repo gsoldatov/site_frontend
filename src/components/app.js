@@ -4,34 +4,8 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../store/create-store";
 import TagsContainer from "./tags/tags-container";
-import TagContainer from "./tag/tag-container";
+import { AddTag, EditTag } from "./tag/tag";
 import Objects from "./objects/objects";
-
-
-// function App () {
-//     return (
-//         <Provider store={createStore()}>
-//             <BrowserRouter>
-//                 <Switch>
-//                     <Route exact path="/tags">
-//                         <TagsContainer />
-//                     </Route>
-//                     <Route exact path="/tags/:id">
-//                         <TagContainer />
-//                     </Route>
-//                     <Route exact path="/objects">
-//                         <Objects />
-//                     </Route>
-//                     <Route exact path="/">
-//                         <Objects />
-//                     </Route>
-//                 </Switch>
-//             </BrowserRouter>
-//         </Provider>
-//     );
-// }
-
-// export default App;
 
 export function App() {
     return (
@@ -39,9 +13,7 @@ export function App() {
             <Route exact path="/tags">
                 <TagsContainer />
             </Route>
-            <Route exact path="/tags/:id">
-                <TagContainer />
-            </Route>
+            <Route exact path="/tags/:id" render={props => props.match.params.id === "add" ? <AddTag /> : <EditTag /> }/>
             <Route exact path="/objects">
                 <Objects />
             </Route>
@@ -50,7 +22,7 @@ export function App() {
             </Route>
         </Switch>
     );
-}
+};
 
 export function AppWithRouterAndStore() {
     return (
@@ -60,4 +32,4 @@ export function AppWithRouterAndStore() {
             </BrowserRouter>
         </Provider>
     );
-}
+};

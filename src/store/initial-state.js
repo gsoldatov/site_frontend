@@ -13,24 +13,13 @@ const initialState = {
         },
 
         redirectOnRender: "",
-        lastFetch: "",      // last performed fetch for errors displaying
 
-        addTagOnSaveFetch: {
+        tagOnLoadFetch: {
             isFetching: false,
             fetchError: ""
         },
 
-        editTagOnLoadFetch: {
-            isFetching: false,
-            fetchError: ""
-        },
-
-        editTagOnSaveFetch: {
-            isFetching: false,
-            fetchError: ""
-        },
-
-        editTagOnDeleteFetch: {
+        tagOnSaveFetch: {
             isFetching: false,
             fetchError: ""
         },
