@@ -22,8 +22,8 @@ class Tag extends React.Component {
         // after the onLoad action has been performed in the <ObjectPage> constructor.
         return (
             <ObjectPage redirectOnRender={this.props.redirectOnRender} onLoad={this.props.onLoad} sideMenuItems={this.props.sideMenuItems}>
-                <ObjectFieldContainer getRedirectOnRender={state => state.tagUI.redirectOnRender} getOnLoadFetch={state => state.tagUI.tagOnLoadFetch}>
-                    <ObjectFieldInfo onSaveFetch={this.props.onSaveFetch} headerText={this.props.headerText}
+                <ObjectFieldContainer getRedirectOnRender={state => state.tagUI.redirectOnRender} getOnLoadFetch={this.props.getOnLoadFetch}>
+                    <ObjectFieldInfo getFetchInfo={this.props.getFetchInfo} headerText={this.props.headerText}
                         createdAt={tag.created_at} modifiedAt={tag.modified_at} />
                     
                     <ObjectFieldInputContainer nameLabel="Tag name" getName={state => state.tagUI.currentTag.tag_name}
@@ -40,8 +40,7 @@ const addTagMapStateToProps = state => {
     return {
         redirectOnRender: state.tagUI.redirectOnRender,
         sideMenuItems: getAddTagPageSideMenuItems(),
-        onLoadFetch: state.tagUI.tagOnLoadFetch,
-        onSaveFetch: state.tagUI.tagOnSaveFetch,
+        getFetchInfo: state => state.tagUI.tagOnSaveFetch,
         headerText: "Add a New Tag",
         tag: state.tagUI.currentTag
     };
@@ -61,8 +60,8 @@ const editTagMapStateToProps = state => {
     return {
         redirectOnRender: state.tagUI.redirectOnRender,
         sideMenuItems: getEditTagPageSideMenuItems(),
-        onLoadFetch: state.tagUI.tagOnLoadFetch,
-        onSaveFetch: state.tagUI.tagOnSaveFetch,
+        getOnLoadFetch: state => state.tagUI.tagOnLoadFetch,
+        getFetchInfo: state => state.tagUI.tagOnSaveFetch,
         headerText: "Tag Information",
         tag: state.tagUI.currentTag
     }

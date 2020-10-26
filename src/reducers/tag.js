@@ -26,7 +26,6 @@ function loadAddTagPage(state, action) {
 }
 
 function loadEditTagPage(state, action) {
-    console.log("in loadEditTagPage reducer")
     return {
         ...state,
         tagUI: {

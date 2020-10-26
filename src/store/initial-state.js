@@ -2,7 +2,7 @@ const initialState = {
     // tags storage
     tags: {},
 
-    // tag page UI controllers
+    // /tags/:id page UI controllers
     tagUI: {
         currentTag: {       // current state of the tag being added/edited
             tag_id: 0,
@@ -27,7 +27,7 @@ const initialState = {
         showDeleteDialog: false
     },
 
-    // tags page UI controllers
+    // /tags page UI controllers
     tagsUI: {
         paginationInfo: {
             currentPage: 1,
@@ -56,12 +56,41 @@ const initialState = {
         }
     },
 
-    objects: [], // list of loaded objects
-    objectsUI: {       
-        selected: [],       // selected objects
-        sortBy: "created_at",       // created_at, modified_at, object_type, object_name
-        sortAsc: false,             // sort order
-        
+    // objects storages
+    objects: {},    // general arributes
+    links: {},
+
+    // /objects/:id page UI controllers
+    objectUI: {
+        currentObject: {       // current state of the tag being added/edited
+            object_id: 0,
+            object_type: "url",
+            object_name: "",
+            object_description: "",
+            created_at: "",
+            modified_at: "",
+
+            link: ""
+        },
+
+        redirectOnRender: "",
+
+        objectOnLoadFetch: {
+            isFetching: false,
+            fetchError: ""
+        },
+
+        objectOnSaveFetch: {
+            isFetching: false,
+            fetchError: ""
+        },
+
+        showDeleteDialog: false
+    },
+
+    // /objects page UI controllers
+    objectsUI: {
+        selectedobjectIDs: []
     }
 };
 

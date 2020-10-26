@@ -1,5 +1,7 @@
 import tag from "./tag";
 import tags from "./tags";
+import object from "./object";
+import objects from "./objects";
 
 function getActionHandlers(rootObjects) {
     let actionHandlers = {};
@@ -22,7 +24,9 @@ function getActionHandlers(rootObjects) {
 
 const ACTION_HANDLERS = getActionHandlers({
     "tag": tag,
-    "tags": tags
+    "tags": tags,
+    "object": object,
+    "objects": objects
 });
 
 export default function getRootReducer (enableDebugLogging) {

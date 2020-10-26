@@ -5,6 +5,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import createStore from "../store/create-store";
 import TagsContainer from "./tags/tags-container";
 import { AddTag, EditTag } from "./tag/tag";
+import { AddObject, EditObject } from "./object/object";
 import Objects from "./objects/objects";
 
 export function App() {
@@ -17,6 +18,7 @@ export function App() {
             <Route exact path="/objects">
                 <Objects />
             </Route>
+            <Route exact path="/objects/:id" render={props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> }/>
             <Route exact path="/">
                 <Objects />
             </Route>

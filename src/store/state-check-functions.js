@@ -42,3 +42,31 @@ export function isFetchingTags(state) {
 export function isFetchinOrShowingDialogTags(state) {
     return isFetchingTags(state) || state.tagsUI.showDeleteDialog;
 }
+
+
+/* ********************************************************** */
+/*                        OBJECT PAGE                         */
+/* ********************************************************** */
+/* Returns true if any of object page fetches are being performed. */
+export function isFetchingObject(state) {
+    return state.objectUI.objectOnLoadFetch.isFetching || state.objectUI.objectOnSaveFetch.isFetching;
+};
+
+/* Returns true if any of object page fetches are being performed or a confirmation dialog is being displayed. */
+export function isFetchinOrShowingDialogObject(state) {
+    return isFetchingObject(state) || state.objectUI.showDeleteDialog;
+}
+
+/* Returns true if currentObject's object_name is already taken by another object, which is present in the local storage. */
+export function checkIfCurrentObjectNameExists(state) {
+    let objects = state.objects;
+    let currentObjectNameLowered = state.objectUI.currentObject.object_name.toLowerCase();
+
+    for (let i in objects) {
+        if (currentObjectNameLowered === objects[i].object_name.toLowerCase() && state.objectUI.currentObject.object_id !== objects[i].object_id) {
+            return true;
+        }
+    }
+
+    return false;
+};

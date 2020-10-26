@@ -87,7 +87,6 @@ export function addTagOnSaveFetch() {
 
 export function editTagOnLoadFetch(tag_id) {
     return async (dispatch, getState) => {
-        console.log("in editTagOnLoadFetch thunk, tag_id = " + tag_id)
         // Set initial page state
         dispatch(loadEditTagPage());
 

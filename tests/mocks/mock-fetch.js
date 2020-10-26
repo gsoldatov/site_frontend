@@ -1,7 +1,9 @@
 import config from "../../src/config";
 import { tagsHandlersList } from "./mock-fetch-handlers-tags";
+import { objectsHandlersList } from "./mock-fetch-handlers-objects";
 
 let isFailingFetch, failMessage;
+const handlerLists = [tagsHandlersList, objectsHandlersList];   // add new handler lists here
 
 export function mockFetch(URL, {
     method = "GET",
@@ -26,7 +28,7 @@ export function setFetchFailParams(iff = false, fm = "Test fetch failed") {
 }
 
 function getHandler(URL, method) {
-    for (let list of [tagsHandlersList]) {
+    for (let list of handlerLists) {
         let handlerContainer = list.get(URL);
         if (handlerContainer !== undefined && handlerContainer.hasOwnProperty(method)) {
             return handlerContainer[method];
