@@ -21,7 +21,7 @@ class Tag extends React.Component {
         // Container components are required in order to get the correct current state without re-renders 
         // after the onLoad action has been performed in the <ObjectPage> constructor.
         return (
-            <ObjectPage redirectOnRender={this.props.redirectOnRender} onLoad={this.props.onLoad} sideMenuItems={this.props.sideMenuItems}>
+            <ObjectPage onLoad={this.props.onLoad} sideMenuItems={this.props.sideMenuItems}>
                 <ObjectFieldContainer getRedirectOnRender={state => state.tagUI.redirectOnRender} getOnLoadFetch={this.props.getOnLoadFetch}>
                     <ObjectFieldInfo getFetchInfo={this.props.getFetchInfo} headerText={this.props.headerText}
                         createdAt={tag.created_at} modifiedAt={tag.modified_at} />
@@ -38,7 +38,6 @@ class Tag extends React.Component {
 /* Add tag page */
 const addTagMapStateToProps = state => {
     return {
-        redirectOnRender: state.tagUI.redirectOnRender,
         sideMenuItems: getAddTagPageSideMenuItems(),
         getFetchInfo: state => state.tagUI.tagOnSaveFetch,
         headerText: "Add a New Tag",
@@ -58,7 +57,6 @@ export const AddTag = connect(addTagMapStateToProps, addTagMapDispatchToProps)(T
 /* Edit tag page */
 const editTagMapStateToProps = state => {
     return {
-        redirectOnRender: state.tagUI.redirectOnRender,
         sideMenuItems: getEditTagPageSideMenuItems(),
         getOnLoadFetch: state => state.tagUI.tagOnLoadFetch,
         getFetchInfo: state => state.tagUI.tagOnSaveFetch,

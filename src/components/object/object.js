@@ -22,7 +22,7 @@ class Object_ extends React.Component {
         // Container components are required in order to get the correct current state without re-renders 
         // after the onLoad action has been performed in the <ObjectPage> constructor.
         return (
-            <ObjectPage redirectOnRender={this.props.redirectOnRender} onLoad={this.props.onLoad} sideMenuItems={this.props.sideMenuItems}>
+            <ObjectPage onLoad={this.props.onLoad} sideMenuItems={this.props.sideMenuItems}>
                 <ObjectFieldContainer getRedirectOnRender={state => state.objectUI.redirectOnRender} getOnLoadFetch={this.props.getOnLoadFetch}>
                     <ObjectFieldInfo getFetchInfo={this.props.getFetchInfo} headerText={this.props.headerText}
                         createdAt={object.created_at} modifiedAt={object.modified_at} typeSelector={this.props.typeSelector} />
@@ -41,7 +41,6 @@ class Object_ extends React.Component {
 /* Add object page */
 const addObjectMapStateToProps = state => {
     return {
-        redirectOnRender: state.objectUI.redirectOnRender,
         sideMenuItems: getAddObjectPageSideMenuItems(),
         getFetchInfo: state => state.objectUI.objectOnSaveFetch,
         headerText: "Add a New Object",
@@ -62,7 +61,6 @@ export const AddObject = connect(addObjectMapStateToProps, addObjectMapDispatchT
 /* Edit object page */
 const editObjectMapStateToProps = state => {
     return {
-        redirectOnRender: state.objectUI.redirectOnRender,
         sideMenuItems: getEditObjectPageSideMenuItems(),
         getOnLoadFetch: state => state.objectUI.objectOnLoadFetch,
         getFetchInfo: state => state.objectUI.objectOnSaveFetch,
