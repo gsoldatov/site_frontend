@@ -92,6 +92,7 @@ function getPageTagIDs() {
                 return;
             case 400:
             case 404:
+                dispatch(setTagsPaginationInfo({ totalItems: 0, currentPageTagIDs: [] }));
                 throw new Error((await response.json())["_error"]);
             case 500:
                 throw new Error(await response.text());
