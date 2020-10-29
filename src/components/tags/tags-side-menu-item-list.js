@@ -25,7 +25,7 @@ function getTagsPageSideMenuItems(selectedTagID) {
         <SideMenuItemContainer 
             itemJSX="Edit Tag" 
             isVisible={true} 
-            isActive={ state => state.tagsUI.selectedTagIDs.length === 1 }
+            isActive={ state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state) }
             onClick={ setTagsRedirectOnRender(`/tags/${selectedTagID}`) }
             // onClick={ () => console.log("Clicked edit tag button") }
             key={key++}
