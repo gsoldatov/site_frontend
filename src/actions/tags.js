@@ -70,6 +70,8 @@ function getTagsFetch(tag_ids) {
 
 function getPageTagIDs() {
     return async (dispatch, getState) => {
+        dispatch(setTagsPaginationInfo({ totalItems: 0, currentPageTagIDs: [] }));
+        
         let pI = getState().tagsUI.paginationInfo;
         let response = await fetch(`${backendURL}/tags/get_page_tag_ids`, {
             method: "POST",
@@ -92,7 +94,6 @@ function getPageTagIDs() {
                 return;
             case 400:
             case 404:
-                dispatch(setTagsPaginationInfo({ totalItems: 0, currentPageTagIDs: [] }));
                 throw new Error((await response.json())["_error"]);
             case 500:
                 throw new Error(await response.text());
