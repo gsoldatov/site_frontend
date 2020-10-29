@@ -82,12 +82,12 @@ class FieldItemList extends React.Component {
             : null;
         
         return (
-            <div className={itemListContainerClassName}>
+            <section className={itemListContainerClassName}>
                 <div ref={this.fieldItemListDiv} className={itemListDivClassName}>
                     {this.props.items}
                 </div>
                 {expandDiv}
-            </div>
+            </section>
         );
     }
 }

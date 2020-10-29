@@ -52,9 +52,9 @@ class FieldPagination extends React.Component {
         paginationControls.push(<FieldPaginationButton key={key++} text={"Next"} onClick={ () => setCurrentPage(Math.min(currentPage + 1, totalPages)) } />);
 
         return (
-            <div className="field-pagination">
+            <section className="field-pagination">
                 {paginationControls}
-            </div>
+            </section>
         );
     }
 }
