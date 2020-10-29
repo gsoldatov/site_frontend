@@ -42,15 +42,8 @@ const initialState = {
         showDeleteDialog: false,
 
         redirectOnRender: "",
-        lastFetch: "",
 
-        
-        paginationFetch: {
-            isFetching: false,
-            fetchError: ""
-        },
-
-        onDeleteFetch: {
+        fetch: {
             isFetching: false,
             fetchError: ""
         }

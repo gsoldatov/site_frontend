@@ -9,7 +9,7 @@ import { getMockedPageTagIDs } from "./mocks/mock-fetch-handlers-tags";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
-import TagsContainer from "../src/components/tags/tags-container";
+import TagsContainer from "../src/components/tags/tags";
 import { setTagsPaginationInfo } from "../src/actions/tags";
 
 beforeAll(() => {
@@ -72,7 +72,7 @@ test("Load page 1 of 5 and click on page 5", async () => {
 
     // Check if no pagination is rendered during fetch
     await waitFor(() => expect(
-        store.getState().tagsUI.paginationFetch.isFetching === true
+        store.getState().tagsUI.fetch.isFetching === true
         && container.querySelector(".field-pagination") === null
     ).toBeTruthy());
 
@@ -209,7 +209,7 @@ test("Side menu buttons during fetch", async () => {
 
     // Check if buttons can't be clicked during fetch
     await waitFor(() => expect(
-        store.getState().tagsUI.paginationFetch.isFetching === true
+        store.getState().tagsUI.fetch.isFetching === true
         && addTagButton.onclick === null
         && editTagButton.onclick === null
         && deleteTagButton.onclick === null
@@ -248,7 +248,7 @@ test("Side menu edit tag button", async () => {
     // Wait for the tags to be loaded
     await waitFor(() => getByText(container, "tag #1"));
 
-    // Check if edit tag button is disabled a sinle tag is not selected
+    // Check if edit tag button is disabled if a single tag is not selected
     let editTagButton = getByText(container, "Edit Tag");
     expect(editTagButton.onclick).toBeNull();
 
@@ -284,7 +284,7 @@ test("Side menu delete button", async () => {
     // Wait for the tags to be loaded
     await waitFor(() => getByText(container, "tag #1"));
 
-    // Check if edit tag button is disabled a sinle tag is not selected
+    // Check if edit tag button is disabled if a single tag is not selected
     let deleteButton = getByText(container, "Delete");
     expect(deleteButton.onclick).toBeNull();
 
@@ -371,22 +371,22 @@ test("Field menu, sort buttons", async () => {
 
     // Sort by tag name desc and check if tags are correctly displayed
     fireEvent.click(sortDescButton);
-    await waitForPaginationFetch(store);
+    await waitForFetch(store);
     checkTagsDisplay(store, container);
 
     // Sort by modify time desc and check if tags are correctly displayed
     fireEvent.click(sortByTimeButton);
-    await waitForPaginationFetch(store);
+    await waitForFetch(store);
     checkTagsDisplay(store, container);
 
     // Sort by modify time asc and check if tags are correctly displayed
     fireEvent.click(sortAscButton);
-    await waitForPaginationFetch(store);
+    await waitForFetch(store);
     checkTagsDisplay(store, container);
 
     // Sort by modify tag name asc and check if tags are correctly displayed
     fireEvent.click(sortByNameButton);
-    await waitForPaginationFetch(store);
+    await waitForFetch(store);
     checkTagsDisplay(store, container);
 });
 
@@ -407,7 +407,7 @@ test("Field menu, tag filter", async () => {
     let tagFilterInput = container.querySelector(".field-menu-filter");
     expect(tagFilterInput).toBeTruthy();
     fireEvent.change(tagFilterInput, { target: { value: "some text" } });
-    await waitForPaginationFetch(store);
+    await waitForFetch(store);
     checkTagsDisplay(store, container);
 
     // Filter with no matching tags and check if error message is displayed
@@ -415,10 +415,10 @@ test("Field menu, tag filter", async () => {
     await waitFor(() => getByText(container, "No tags found.", { exact: false }));
 });
 
-async function waitForPaginationFetch(store) {
-    // wait to pagination fetch to start and end
-    await waitFor(() => expect(store.getState().tagsUI.paginationFetch.isFetching).toBeTruthy());
-    await waitFor(() => expect(store.getState().tagsUI.paginationFetch.isFetching).toBeFalsy());
+async function waitForFetch(store) {
+    // wait to fetch to start and end
+    await waitFor(() => expect(store.getState().tagsUI.fetch.isFetching).toBeTruthy());
+    await waitFor(() => expect(store.getState().tagsUI.fetch.isFetching).toBeFalsy());
 }
 
 function getPageTagIDsFromMock(store) {

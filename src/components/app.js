@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../store/create-store";
-import TagsContainer from "./tags/tags-container";
+import TagsContainer from "./tags/tags";
 import { AddTag, EditTag } from "./tag/tag";
 import { AddObject, EditObject } from "./object/object";
 import Objects from "./objects/objects";

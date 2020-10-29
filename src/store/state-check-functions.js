@@ -35,7 +35,7 @@ export function checkIfCurrentTagNameExists(state) {
 /* *********************************************************** */
 /* Returns true if any of tags page fetches are being performed. */
 export function isFetchingTags(state) {
-    return state.tagsUI.paginationFetch.isFetching || state.tagsUI.onDeleteFetch.isFetching;
+    return state.tagsUI.fetch.isFetching
 };
 
 /* Returns true if any of tags page fetches are being performed or a confirmation dialog is being displayed. */

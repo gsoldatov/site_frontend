@@ -12,8 +12,7 @@ export const CLEAR_SELECTED_TAGS = "CLEAR_SELECTED_TAGS";
 export const SET_TAGS_PAGINATION_INFO = "SET_TAGS_PAGINATION_INFO";
 export const SET_TAGS_REDIRECT_ON_RENDER = "SET_TAGS_REDIRECT_ON_RENDER";
 export const SET_SHOW_DELETE_DIALOG_TAGS = "SET_SHOW_DELETE_DIALOG_TAGS";
-export const SET_TAGS_PAGINATION_FETCH = "SET_TAGS_PAGINATION_FETCH";
-export const SET_TAGS_ON_DELETE_FETCH = "SET_TAGS_ON_DELETE_FETCH";
+export const SET_TAGS_FETCH = "SET_TAGS_FETCH";
 
 export const addTags                 = tags => ({ type: ADD_TAGS, tags: tags });
 export const deleteTags              = tag_ids => ({ type: DELETE_TAGS, tag_ids: tag_ids });
@@ -25,21 +24,11 @@ export const setTagsPaginationInfo   = paginationInfo => ({ type: SET_TAGS_PAGIN
 export const setTagsRedirectOnRender = (redirectOnRender = "") => ({ type: SET_TAGS_REDIRECT_ON_RENDER, redirectOnRender: redirectOnRender });
 export const setShowDeleteDialogTags = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_TAGS, showDeleteDialog: showDeleteDialog });
 
-export const setTagsPaginationFetch = (isFetching = false, fetchError = "", lastFetch = undefined) => { 
+export const setTagsFetch = (isFetching = false, fetchError = "") => { 
     return {
-        type: SET_TAGS_PAGINATION_FETCH, 
+        type: SET_TAGS_FETCH, 
         isFetching: isFetching, 
-        fetchError: fetchError,
-        lastFetch: lastFetch
-    };
-};
-
-export const setTagsOnDeleteFetch = (isFetching = false, fetchError = "", lastFetch = undefined) => { 
-    return {
-        type: SET_TAGS_ON_DELETE_FETCH, 
-        isFetching: isFetching, 
-        fetchError: fetchError,
-        lastFetch: lastFetch
+        fetchError: fetchError
     };
 };
 
@@ -71,7 +60,7 @@ function getTagsFetch(tag_ids) {
 function getPageTagIDs() {
     return async (dispatch, getState) => {
         dispatch(setTagsPaginationInfo({ totalItems: 0, currentPageTagIDs: [] }));
-        
+
         let pI = getState().tagsUI.paginationInfo;
         let response = await fetch(`${backendURL}/tags/get_page_tag_ids`, {
             method: "POST",
@@ -111,16 +100,16 @@ export function pageFetch(currentPage) {
 
         try {
             dispatch(setTagsPaginationInfo({ currentPage: currentPage }));
-            dispatch(setTagsPaginationFetch(true, ""));
+            dispatch(setTagsFetch(true, ""));
             await dispatch(getPageTagIDs());
             let nonCachedTags = getState().tagsUI.paginationInfo.currentPageTagIDs.filter(tag_id => !(tag_id in state.tags));
             if (nonCachedTags.length !== 0) {   // Fetch tags of the current page which were not cached before
                 await dispatch(getTagsFetch(nonCachedTags));
             }
-            dispatch(setTagsPaginationFetch(false, "", "tagsPagination"));
+            dispatch(setTagsFetch(false, ""));
         }
         catch(error) {
-            dispatch(setTagsPaginationFetch(false, error.message, "tagsPagination"));
+            dispatch(setTagsFetch(false, error.message));
         }
     };
 };
@@ -147,7 +136,7 @@ export function onDeleteFetch() {
         
         try {
             // Update fetch status
-            dispatch(setTagsOnDeleteFetch(true, "", ""));
+            dispatch(setTagsFetch(true, ""));
 
             // Fetch tag data and handle response
             let payload = JSON.stringify({ 
@@ -184,9 +173,9 @@ export function onDeleteFetch() {
                 dispatch(deleteTags(state.tagsUI.selectedTagIDs));  // delete from tag storage
                 dispatch(clearSelectedTags());    // clear tag selection
             }
-            dispatch(setTagsOnDeleteFetch(false, error, "tagsOnDelete"));
+            dispatch(setTagsFetch(false, error));
         } catch (error) {
-            dispatch(setTagsOnDeleteFetch(false, error.message, "tagsOnDelete"));
+            dispatch(setTagsFetch(false, error.message));
         }
     };
 };

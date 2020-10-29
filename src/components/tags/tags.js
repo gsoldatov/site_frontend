@@ -1,56 +1,60 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
-import Navigation from "../navigation";
-import SideMenu from "../side-menu/side-menu";
-import Main from "../main";
-
-import getTagsPageSideMenuItems from "./tags-side-menu-item-list";
-import getTagsFieldMenuItems from "./tags-field-menu-items";
+import ObjectPage from "../object/object-page";
+import ObjectFieldContainer from "../object/object-field-container";
 import FieldMenu from "../field-menu/field-menu";
+import FetchInfoContainer from "../errors/fetch-info";
 import FieldItemListContainer from "../field-item/field-item-list-container";
-import tagsFieldItemFactory from "./tags-field-item-factory";
 import FieldPaginationContainer from "../field-pagination/field-pagination-container";
 
-/*
-    Component which renders the /tags page.
-    TagsContainer should be used instead of this class to connect it to the state.
-*/
+import { pageFetch, setTagsRedirectOnRender } from "../../actions/tags";
+import getTagsPageSideMenuItems from "./tags-side-menu-item-list";
+import getTagsFieldMenuItems from "./tags-field-menu-items";
+import tagsFieldItemFactory from "./tags-field-item-factory";
+
 class Tags extends React.Component {
-    constructor(props) {
-        super(props);
-        this.props.setCurrentPage(this.props.paginationInfo.currentPage);
-    }
-
-    componentDidUpdate() {
-        // Clear redirectOnRender after rendering Redirect component
-        if (this.props.redirectOnRender) {
-            this.props.setTagsRedirectOnRender("");
-        }
-    }
-
     render() {
-        if (this.props.redirectOnRender) {
-            return <Redirect to={this.props.redirectOnRender} />;
-        }
+        const onLoad = () => {
+            this.props.setTagsRedirectOnRender("");
+            this.props.setCurrentPage(this.props.currentPage);
+        };
 
-        let key = 0;
-        this.items = [
-            <FieldMenu key={key++} items={getTagsFieldMenuItems()} />,
-            <FieldItemListContainer key={key++} itemIDs={this.props.selectedTagIDs} itemFactory={tagsFieldItemFactory} isExpandable={true} />,
-            <FieldItemListContainer key={key++} itemIDs={this.props.paginationInfo.currentPageTagIDs} isFetching={this.props.isFetching} fetchError={this.props.fetchError}
-                itemFactory={tagsFieldItemFactory} />,
-            <FieldPaginationContainer key={key++} paginationInfo={this.props.paginationInfo} setCurrentPage={this.props.setCurrentPage} isFetching={this.props.isFetching} />
-        ];
+        const fieldItemListsAndPagination = !this.props.fetchInfo.isFetching && !this.props.fetchInfo.fetchError && (
+            <>
+                <FieldItemListContainer itemIDs={this.props.selectedTagIDs} itemFactory={tagsFieldItemFactory} isExpandable={true} />
+                <FieldItemListContainer itemIDs={this.props.paginationInfo.currentPageTagIDs} itemFactory={tagsFieldItemFactory} />
+                <FieldPaginationContainer paginationInfo={this.props.paginationInfo} setCurrentPage={this.props.setCurrentPage} />
+            </>
+        );
 
         return (
-            <div className="layout-div">
-                <Navigation />
-                <SideMenu items={getTagsPageSideMenuItems(this.props.selectedTagIDs[0])} />
-                <Main items={this.items} />
-            </div>
-        );
+            <ObjectPage onLoad={onLoad} sideMenuItems={getTagsPageSideMenuItems(this.props.selectedTagIDs[0])}>
+                <ObjectFieldContainer getRedirectOnRender={state => state.tagsUI.redirectOnRender}>
+                    <FieldMenu items={getTagsFieldMenuItems()} /> 
+                    <FetchInfoContainer getFetchInfo={state => state.tagsUI.fetch} />
+                    {fieldItemListsAndPagination}
+                </ObjectFieldContainer>
+            </ObjectPage>
+        ); 
     }
 }
 
-export default Tags;
+const mapStateToProps = state => {
+    return {
+        currentPage: state.tagsUI.paginationInfo.currentPage,
+        fetchInfo: state.tagsUI.fetch,
+        selectedTagIDs: state.tagsUI.selectedTagIDs,
+        paginationInfo: state.tagsUI.paginationInfo
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setTagsRedirectOnRender: route => dispatch(setTagsRedirectOnRender(route)),
+        setCurrentPage: page => dispatch(pageFetch(page))
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tags);

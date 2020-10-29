@@ -3,21 +3,6 @@ import { isFetchingTags } from "./state-check-functions";
     Utility functions for working with state.
 */
 
-export function getTagsFetchError(state) {
-    if (isFetchingTags(state)) {
-        return null;
-    }
-
-    switch (state.tagsUI.lastFetch) {
-        case "tagsPagination":
-            return state.tagsUI.paginationFetch.fetchError;
-        case "tagsOnDelete":
-            return state.tagsUI.onDeleteFetch.fetchError;
-        default:
-            return null;
-    }
-}
-
 export function getCurrentObjectData(state) {
     // Function must return a copy of the object if its data is mutable;
     // This will prevent potential inconsistency in local storage due to user inputs during the add fetch.

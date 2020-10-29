@@ -1,5 +1,5 @@
 import { ADD_TAGS, DELETE_TAGS, SELECT_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, SET_TAGS_PAGINATION_INFO, SET_TAGS_REDIRECT_ON_RENDER,
-    SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_PAGINATION_FETCH, SET_TAGS_ON_DELETE_FETCH } from "../actions/tags";
+    SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_FETCH } from "../actions/tags";
 
 function addTags(state, action) {
     let newTags = {};
@@ -107,28 +107,12 @@ function setShowDeleteDialogTags(state, action) {
     }
 }
 
-function setTagsPaginationFetch(state, action) {
+function setTagsFetch(state, action) {
     return {
         ...state,
         tagsUI: {
             ...state.tagsUI,
-            lastFetch: action.lastFetch === undefined ? state.tagsUI.lastFetch : action.lastFetch,
-            paginationFetch: {
-                isFetching: action.isFetching,
-                fetchError: action.fetchError
-            }
-        }
-    }
-}
-
-
-function setTagsOnDeleteFetch(state, action) {
-    return {
-        ...state,
-        tagsUI: {
-            ...state.tagsUI,
-            lastFetch: action.lastFetch === undefined ? state.tagsUI.lastFetch : action.lastFetch,
-            onDeleteFetch: {
+            fetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError
             }
@@ -146,8 +130,7 @@ const root = {
     SET_TAGS_PAGINATION_INFO: setTagsPaginationInfo,
     SET_TAGS_REDIRECT_ON_RENDER: setTagsRedirectOnRender,
     SET_SHOW_DELETE_DIALOG_TAGS: setShowDeleteDialogTags,
-    SET_TAGS_PAGINATION_FETCH: setTagsPaginationFetch,
-    SET_TAGS_ON_DELETE_FETCH: setTagsOnDeleteFetch
+    SET_TAGS_FETCH: setTagsFetch
 };
 
 export default root;
