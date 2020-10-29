@@ -1,6 +1,6 @@
 import React from "react";
 import ObjectTypeSelectorContainer from "./object-type-selector-container";
-import FetchErrorContainer from "../errors/fetch-error";
+import FetchInfoContainer from "../errors/fetch-info";
 import StyleObjectFieldInfo from "../../styles/object-field-info.css";
 
 /*
@@ -30,10 +30,6 @@ const typeSelector = typeSelectorMode => {
 
 class ObjectFieldInfo extends React.Component {
     render() {
-        // const fetchError = this.props.onSaveFetch.fetchError && (
-        //     <div className="fetch-error-info">{this.props.onSaveFetch.fetchError}</div>
-        // );
-
         const timestamps = this.props.createdAt && (
             <div className="object-field-timestamps">
                 {timestamp("Created at: ", this.props.createdAt)}
@@ -44,7 +40,7 @@ class ObjectFieldInfo extends React.Component {
         return (
             <section className="object-field-info">
                 <h3 className="object-field-header">{this.props.headerText}</h3>
-                <FetchErrorContainer getFetchInfo={this.props.getFetchInfo} />
+                <FetchInfoContainer getFetchInfo={this.props.getFetchInfo} />
                 {typeSelector(this.props.typeSelector)}
                 {timestamps}
             </section>
