@@ -52,8 +52,6 @@ export class LocalStorageProxy {
         }
     }
 
-    
-
     validateStoreState(initialState, parsedState) {
         /*
             Validates the integrity of the state parsed from localStorage. 

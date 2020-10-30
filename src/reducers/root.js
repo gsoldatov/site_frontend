@@ -1,3 +1,5 @@
+import logState from "../store/log-state";
+
 import tag from "./tag";
 import tags from "./tags";
 import object from "./object";
@@ -36,8 +38,9 @@ export default function getRootReducer (enableDebugLogging) {
             ACTION_HANDLERS[action];
         let newState = handler ? handler(state, action) : state;
         if (enableDebugLogging) {
-            console.log("Finished dispatching action: " + action.type);
-            console.log("New state is: " + JSON.stringify(newState));
+            // console.log("Finished dispatching action: " + action.type);
+            // console.log("New state is: " + JSON.stringify(newState));
+            logState(newState, `Finished dispatching action ${action.type}, new state:`);
         }
         return newState;
     }
