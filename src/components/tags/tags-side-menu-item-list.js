@@ -27,7 +27,6 @@ function getTagsPageSideMenuItems(selectedTagID) {
             isVisible={true} 
             isActive={ state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state) }
             onClick={ setTagsRedirectOnRender(`/tags/${selectedTagID}`) }
-            // onClick={ () => console.log("Clicked edit tag button") }
             key={key++}
         />,
 

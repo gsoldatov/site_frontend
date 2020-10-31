@@ -70,3 +70,17 @@ export function checkIfCurrentObjectNameExists(state) {
 
     return false;
 };
+
+
+/* *********************************************************** */
+/*                        OBJECTS PAGE                         */
+/* *********************************************************** */
+/* Returns true if object page fetch is being performed. */
+export function isFetchingObjects(state) {
+    return state.objectsUI.fetch.isFetching
+};
+
+/* Returns true if object page fetch is being performed or a confirmation dialog is being displayed. */
+export function isFetchinOrShowingDialogObjects(state) {
+    return isFetchingObjects(state) || state.objectsUI.showDeleteDialog;
+}

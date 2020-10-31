@@ -83,7 +83,25 @@ const initialState = {
 
     // /objects page UI controllers
     objectsUI: {
-        selectedobjectIDs: []
+        paginationInfo: {
+            currentPage: 1,
+            itemsPerPage: 100,
+            totalItems: 0,
+            sortField: "object_name",       // field name to sort the objects by (object_name, modified_at)
+            sortOrder: "asc",               // sort order (asc, desc)
+            filterText: "",                 // text by which objects are filtered
+            objectTypes: [],
+            currentPageObjectIDs: []
+        },
+        selectedObjectIDs: [],
+        showDeleteDialog: false,
+
+        redirectOnRender: "",
+
+        fetch: {
+            isFetching: false,
+            fetchError: ""
+        }
     }
 };
 

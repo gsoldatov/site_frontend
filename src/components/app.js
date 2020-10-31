@@ -6,7 +6,7 @@ import createStore from "../store/create-store";
 import TagsContainer from "./tags/tags";
 import { AddTag, EditTag } from "./tag/tag";
 import { AddObject, EditObject } from "./object/object";
-import Objects from "./objects/objects";
+import ObjectsContainer from "./objects/objects";
 
 export function App() {
     return (
@@ -16,11 +16,11 @@ export function App() {
             </Route>
             <Route exact path="/tags/:id" render={props => props.match.params.id === "add" ? <AddTag /> : <EditTag /> }/>
             <Route exact path="/objects">
-                <Objects />
+                <ObjectsContainer />
             </Route>
             <Route exact path="/objects/:id" render={props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> }/>
             <Route exact path="/">
-                <Objects />
+                <ObjectsContainer />
             </Route>
         </Switch>
     );
