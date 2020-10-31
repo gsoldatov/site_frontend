@@ -254,8 +254,8 @@ test("Side menu edit tag button", async () => {
 
     // Get tags
     let tags = container.querySelector(".field-item-list").querySelectorAll(".field-item");
-    let firstTagCheckbox = tags.item(0).querySelector(".field-item-tag-checkbox");
-    let secondTagCheckbox = tags.item(1).querySelector(".field-item-tag-checkbox");
+    let firstTagCheckbox = tags.item(0).querySelector(".field-item-checkbox");
+    let secondTagCheckbox = tags.item(1).querySelector(".field-item-checkbox");
 
     // Select two tags and check if edit button is disabled
     fireEvent.click(firstTagCheckbox);
@@ -291,8 +291,8 @@ test("Side menu delete button", async () => {
     // Select two tags
     let mainTagField = container.querySelector(".field-item-list");
     let tags = mainTagField.querySelectorAll(".field-item");
-    let firstTagCheckbox = tags.item(0).querySelector(".field-item-tag-checkbox");
-    let secondTagCheckbox = tags.item(1).querySelector(".field-item-tag-checkbox");
+    let firstTagCheckbox = tags.item(0).querySelector(".field-item-checkbox");
+    let secondTagCheckbox = tags.item(1).querySelector(".field-item-checkbox");
     fireEvent.click(firstTagCheckbox);
     fireEvent.click(secondTagCheckbox);
 

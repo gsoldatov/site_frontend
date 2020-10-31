@@ -254,8 +254,8 @@ test("Side menu edit object button", async () => {
 
     // Get objects
     let objects = container.querySelector(".field-item-list").querySelectorAll(".field-item");
-    let firstObjectCheckbox = objects.item(0).querySelector(".field-item-tag-checkbox");
-    let secondObjectCheckbox = objects.item(1).querySelector(".field-item-tag-checkbox");
+    let firstObjectCheckbox = objects.item(0).querySelector(".field-item-checkbox");
+    let secondObjectCheckbox = objects.item(1).querySelector(".field-item-checkbox");
 
     // Select two objects and check if edit button is disabled
     fireEvent.click(firstObjectCheckbox);
@@ -291,8 +291,8 @@ test("Side menu delete button", async () => {
     // Select two objects
     let mainObjectField = container.querySelector(".field-item-list");
     let objects = mainObjectField.querySelectorAll(".field-item");
-    let firstObjectCheckbox = objects.item(0).querySelector(".field-item-tag-checkbox");
-    let secondObjectCheckbox = objects.item(1).querySelector(".field-item-tag-checkbox");
+    let firstObjectCheckbox = objects.item(0).querySelector(".field-item-checkbox");
+    let secondObjectCheckbox = objects.item(1).querySelector(".field-item-checkbox");
     fireEvent.click(firstObjectCheckbox);
     fireEvent.click(secondObjectCheckbox);
 

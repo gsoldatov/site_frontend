@@ -37,8 +37,8 @@ class FieldItem extends React.Component {
             <div className="field-item">
                 <input type="checkbox" checked={this.state.isSelected} 
                     onChange={this.handleCheckboxToggle}
-                    className="field-item-tag-checkbox" />
-                <Link to={this.props.onClickRedirectURL} className="field-item-tag-link">
+                    className="field-item-checkbox" />
+                <Link to={this.props.onClickRedirectURL} className="field-item-link">
                     {this.props.text}
                 </Link>
             </div>
