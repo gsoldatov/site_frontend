@@ -1,5 +1,6 @@
 import logState from "../store/log-state";
 
+import common from "./common";
 import tag from "./tag";
 import tags from "./tags";
 import object from "./object";
@@ -25,6 +26,7 @@ function getActionHandlers(rootObjects) {
 }
 
 const ACTION_HANDLERS = getActionHandlers({
+    "common": common,
     "tag": tag,
     "tags": tags,
     "object": object,
@@ -38,8 +40,6 @@ export default function getRootReducer (enableDebugLogging) {
             ACTION_HANDLERS[action];
         let newState = handler ? handler(state, action) : state;
         if (enableDebugLogging) {
-            // console.log("Finished dispatching action: " + action.type);
-            // console.log("New state is: " + JSON.stringify(newState));
             logState(newState, `Finished dispatching action ${action.type}, new state:`);
         }
         return newState;

@@ -1,4 +1,6 @@
 const initialState = {
+    redirectOnRender: "",
+
     // tags storage
     tags: {},
 
@@ -11,8 +13,6 @@ const initialState = {
             created_at: "",
             modified_at: ""
         },
-
-        redirectOnRender: "",
 
         tagOnLoadFetch: {
             isFetching: false,
@@ -41,8 +41,6 @@ const initialState = {
         selectedTagIDs: [],
         showDeleteDialog: false,
 
-        redirectOnRender: "",
-
         fetch: {
             isFetching: false,
             fetchError: ""
@@ -63,10 +61,17 @@ const initialState = {
             created_at: "",
             modified_at: "",
 
+            // currentTagIDs: [],   // objects tagging state (not implemented yet)
+            // addedTags: [],
+            // removedTagIDs: [],
+            // tagsInput: {
+            //     isDisplayed: true,
+            //     inputText: "",
+            //     matchingIDs: []
+            // },
+
             link: ""
         },
-
-        redirectOnRender: "",
 
         objectOnLoadFetch: {
             isFetching: false,
@@ -95,8 +100,6 @@ const initialState = {
         },
         selectedObjectIDs: [],
         showDeleteDialog: false,
-
-        redirectOnRender: "",
 
         fetch: {
             isFetching: false,

@@ -1,8 +1,0 @@
-/* Fetch status and error */
-.is-fetching-message, .fetch-error {
-    margin-top: 10px;
-    margin-left: 10px;
-}
-.fetch-error {
-    color: var(--error-text-color);    
-}

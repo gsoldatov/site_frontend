@@ -2,23 +2,26 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByLabelText, waitFor, queryByText } from '@testing-library/dom'
+import { getByText, getByPlaceholderText, waitFor, queryByText } from '@testing-library/dom'
 
 import { mockFetch, setFetchFailParams } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
-import { EditObject } from "../src/components/object/object";
+import { EditObject } from "../src/components/object";
 import { addObjects, addObjectData, deleteObjects } from "../src/actions/objects";
+
 
 beforeAll(() => {
     global.fetch = jest.fn(mockFetch);
 });
 
+
 afterAll(() => {
     setFetchFailParams();   // reset fetch params
     jest.resetAllMocks();
-})
+});
+
 
 test("Load a non-existing object + check buttons", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
@@ -33,9 +36,12 @@ test("Load a non-existing object + check buttons", async () => {
     let saveButton = getByText(container, "Save");
     let deleteButton = getByText(container, "Delete");
     let cancelButton = getByText(container, "Cancel");
-    expect(saveButton.onclick).toBeNull();
-    expect(deleteButton.onclick).toBeNull();
+    expect(saveButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(saveButton.onclick).toBeNull(); 
+    expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(deleteButton.onclick).toBeNull(); 
 });
+
 
 test("Load an object with fetch error", async () => {
     setFetchFailParams(true, "Test view fetch error");
@@ -49,6 +55,7 @@ test("Load an object with fetch error", async () => {
     await waitFor(() => getByText(container, "Test view fetch error", { exact: false }));
     setFetchFailParams();   // reset fetch params
 });
+
 
 test("Load a link object from state", async () => {
     let store = createStore({ enableDebugLogging: false });
@@ -65,21 +72,25 @@ test("Load a link object from state", async () => {
 
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
-    let objectNameInput = getByLabelText(container, "Object name");
-    let objectDescriptionInput = getByLabelText(container, "Object description");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
     expect(objectNameInput.value).toEqual("object name");
     expect(objectDescriptionInput.value).toEqual("object description");
     getByText(container, object.created_at);
     getByText(container, object.modified_at);
 
     // Check if object type is displayed, but can't be changed
-    let typeSelector = getByLabelText(container, "Object type");
-    expect(typeSelector.value).toEqual("link");
-    expect(typeSelector.disabled).toBeTruthy();
+    const objectTypeSelector = container.querySelector(".object-type-menu");
+    const linkButton = getByText(objectTypeSelector, "Link");
+    expect(linkButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // link button includes a check icon
+    const markdownButton = getByText(objectTypeSelector, "Markdown");
+    fireEvent.click(markdownButton);
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("link");
 
     // Check if link data is displayed
-    expect(getByLabelText(container, "Link").value).toEqual(objectData.object_data.link);
+    expect(getByPlaceholderText(container, "Link").value).toEqual(objectData.object_data.link);
 });
+
 
 test("Load a link object attributes from state and data from backend", async () => {
     let store = createStore({ enableDebugLogging: false });
@@ -94,22 +105,25 @@ test("Load a link object attributes from state and data from backend", async () 
     
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
-    let objectNameInput = getByLabelText(container, "Object name");
-    let objectDescriptionInput = getByLabelText(container, "Object description");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
     expect(objectNameInput.value).toEqual("object name");
     expect(objectDescriptionInput.value).toEqual("object description");
     getByText(container, object.created_at);
     getByText(container, object.modified_at);
 
     // Check if object type is displayed, but can't be changed
-    let typeSelector = getByLabelText(container, "Object type");
-    expect(typeSelector.value).toEqual("link");
-    expect(typeSelector.disabled).toBeTruthy();
+    const objectTypeSelector = container.querySelector(".object-type-menu");
+    const linkButton = getByText(objectTypeSelector, "Link");
+    expect(linkButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // link button includes a check icon
+    const markdownButton = getByText(objectTypeSelector, "Markdown");
+    fireEvent.click(markdownButton);
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("link");
 
     // Check if link data is displayed
     let objectData = store.getState().links[1];
     expect(objectData).toHaveProperty("link");
-    expect(getByLabelText(container, "Link").value).toEqual("https://website1.com");
+    expect(getByPlaceholderText(container, "Link").value).toEqual("https://website1.com");
 });
 
 
@@ -122,16 +136,17 @@ test("Load a link object from backend", async () => {
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
     let object = store.getState().objects[1];
-    let objectNameInput = getByLabelText(container, "Object name");
-    let objectDescriptionInput = getByLabelText(container, "Object description");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
     expect(objectNameInput.value).toEqual(object.object_name);
     expect(objectDescriptionInput.value).toEqual(object.object_description);
     getByText(container, object.created_at);
     getByText(container, object.modified_at);
 
     // Check if link is displayed (shortened verison of previous test)
-    expect(getByLabelText(container, "Link").value).toEqual("https://website1.com");
+    expect(getByPlaceholderText(container, "Link").value).toEqual("https://website1.com");
 });
+
 
 test("Modify a link and click cancel", async () => {
     let store = createStore({ enableDebugLogging: false });
@@ -150,14 +165,14 @@ test("Modify a link and click cancel", async () => {
     await waitFor(() => getByText(container, "Object Information"));
 
     // Check if changing object attributes modifies the currentObject in the state
-    let objectNameInput = getByLabelText(container, "Object name");
-    let objectDescriptionInput = getByLabelText(container, "Object description");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
     fireEvent.change(objectNameInput, { target: { value: "modified object name" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("modified object name"));
     fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
 
-    let linkInput = getByLabelText(container, "Link");
+    let linkInput = getByPlaceholderText(container, "Link");
     fireEvent.change(linkInput, { target: { value: "https://test.link.modified" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://test.link.modified"));
 
@@ -170,6 +185,7 @@ test("Modify a link and click cancel", async () => {
     }
     expect(store.getState().links[object["object_id"]].link).toEqual(objectData.object_data.link);
 });
+
 
 test("Delete a link object", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
@@ -199,6 +215,7 @@ test("Delete a link object", async () => {
     expect(store.getState().links[1]).toBeUndefined();
 });
 
+
 test("Delete a link object with fetch error", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
@@ -220,6 +237,7 @@ test("Delete a link object with fetch error", async () => {
     setFetchFailParams();   // reset fetch params
 });
 
+
 test("Save an existing link object", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
@@ -229,9 +247,9 @@ test("Save an existing link object", async () => {
     // Wait for object information to be displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
     let saveButton = getByText(container, "Save");
-    let objectNameInput = getByLabelText(container, "Object name");
-    let objectDescriptionInput = getByLabelText(container, "Object description");
-    let linkInput = getByLabelText(container, "Link");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+    let linkInput = getByPlaceholderText(container, "Link");
     let oldObject = {...store.getState().objects[1]};
     let oldObjectData = {...store.getState().links[1]};
 
@@ -261,6 +279,7 @@ test("Save an existing link object", async () => {
     expect(store.getState().links[1].link).toEqual(oldObjectData.link);
 });
 
+
 test("Update a link object", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
@@ -270,9 +289,9 @@ test("Update a link object", async () => {
     // Wait for object information to be displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
     let saveButton = getByText(container, "Save");
-    let objectNameInput = getByLabelText(container, "Object name");
-    let objectDescriptionInput = getByLabelText(container, "Object description");
-    let linkInput = getByLabelText(container, "Link");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+    let linkInput = getByPlaceholderText(container, "Link");
 
     // Modify object attributes and save
     fireEvent.change(objectNameInput, { target: { value: "modified object name" } });
@@ -287,6 +306,7 @@ test("Update a link object", async () => {
     expect(store.getState().links[1].link).toEqual("https://test.link.modified");
 });
 
+
 test("Update a link object with fetch error", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
@@ -298,9 +318,9 @@ test("Update a link object with fetch error", async () => {
     let oldObject = {...store.getState().objects[1]};
     let oldLink = {...store.getState().links[1]};
     let saveButton = getByText(container, "Save");
-    let objectNameInput = getByLabelText(container, "Object name");
-    let objectDescriptionInput = getByLabelText(container, "Object description");
-    let linkInput = getByLabelText(container, "Link");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+    let linkInput = getByPlaceholderText(container, "Link");
     fireEvent.change(objectNameInput, { target: { value: "error" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("error"));
     fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });

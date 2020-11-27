@@ -1,71 +1,19 @@
-/****** Side menu ******/
-.side-menu {
-    position: sticky;   /* Stck at the top of the page on scrolldown */
-    top: 0px;
-    padding: 10px;
-    border-right: double var(--border-color);
-}
+/************************
+    Side menu styles.
+************************/
 
-.side-menu-item, .side-menu-item-inactive, .side-menu-dialog {
+div.item.side-menu-item, div.disabled.item.side-menu-item {
     text-align: center;
-    font-weight: bold;
-    border-right: solid 1px var(--border-color);
-    border-bottom: solid 1px var(--border-color);
-    background-color: rgba(255, 255, 255, 1);
 }
 
-.side-menu-item, .side-menu-item-inactive {
-    padding: 10px;
-}
-
-.side-menu-item-inactive {
-    color: rgba(180, 180, 180, 1);
-}
-
-.side-menu-item:hover {
-    background-color: var(--hover-color);
+div.item.side-menu-item:not([rows]):hover {     /* not pseudoclass is required to get the higher priority over Semantic UI styles */
+    background-color: #cacbcd;
     cursor: pointer;
 }
 
-.side-menu-dialog {
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-}
-
-.side-menu-dialog-message, .side-menu-dialog-buttons {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.side-menu-dialog-buttons {
+div.ui.container.side-menu-dialog-buttons {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-evenly;
     align-items: center;
-}
-
-.side-menu-dialog-button, .side-menu-dialog-button-red {
-    min-width: 30%;
-    min-height: 40px;
-    font-weight: bold;
-}
-
-.side-menu-dialog-button {
-    background-color: rgba(255, 255, 255, 1);
-    border: solid 2px var(--border-color);
-}
-
-.side-menu-dialog-button:hover {
-    background-color: var(--hover-color);
-    cursor: pointer;
-}
-
-.side-menu-dialog-button-red {
-    border: solid 2px crimson;
-}
-
-.side-menu-dialog-button-red:hover {
-    background-color: crimson;
-    cursor: pointer;
 }

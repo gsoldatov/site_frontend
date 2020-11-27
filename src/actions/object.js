@@ -1,14 +1,15 @@
 import config from "../config";
 import { isFetchingObject, checkIfCurrentObjectNameExists, checkIfObjectDataExists } from "../store/state-check-functions";
 import { getCurrentObjectData, getObjectData } from "../store/state-util";
+import { setRedirectOnRender } from "./common";
 import { addObjects, addObjectData, deselectObjects, deleteObjects } from "./objects";
 
 const backendURL = config.backendURL;
 
+
 export const LOAD_ADD_OBJECT_PAGE = "LOAD_ADD_OBJECT_PAGE";
 export const LOAD_EDIT_OBJECT_PAGE = "LOAD_EDIT_OBJECT_PAGE";
 export const SET_CURRENT_OBJECT = "SET_CURRENT_OBJECT";
-export const SET_OBJECT_REDIRECT_ON_RENDER  = "SET_OBJECT_REDIRECT_ON_RENDER";
 export const SET_OBJECT_ON_LOAD_FETCH_STATE = "SET_OBJECT_ON_LOAD_FETCH_STATE";
 export const SET_OBJECT_ON_SAVE_FETCH_STATE = "SET_OBJECT_ON_SAVE_FETCH_STATE";
 export const SET_SHOW_DELETE_DIALOG_OBJECT = "SET_SHOW_DELETE_DIALOG_OBJECT";
@@ -16,7 +17,6 @@ export const SET_SHOW_DELETE_DIALOG_OBJECT = "SET_SHOW_DELETE_DIALOG_OBJECT";
 export const loadAddObjectPage      = () => ({ type: LOAD_ADD_OBJECT_PAGE });
 export const loadEditObjectPage     = () => ({ type: LOAD_EDIT_OBJECT_PAGE });
 export const setCurrentObject       = object => ({ type: SET_CURRENT_OBJECT, object: object });
-export const setObjectRedirectOnRender = (redirectOnRender = "") => ({ type: SET_OBJECT_REDIRECT_ON_RENDER, redirectOnRender: redirectOnRender });
 export const setShowDeleteDialogObject = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECT, showDeleteDialog: showDeleteDialog });
 
 export const setObjectOnLoadFetchState = (isFetching = false, fetchError = "") => {
@@ -77,7 +77,7 @@ export function addObjectOnSaveFetch() {
                     dispatch(addObjects([object]));
                     dispatch(addObjectData([{ object_id: object.object_id, object_type: object.object_type, object_data: object_data }]));
                     dispatch(setObjectOnSaveFetchState(false, ""));
-                    dispatch(setObjectRedirectOnRender(`/objects/${object.object_id}`));
+                    dispatch(setRedirectOnRender(`/objects/${object.object_id}`));
                     break;
                 case 400:
                     throw Error((await response.json())._error);
@@ -252,7 +252,7 @@ export function editObjectOnDeleteFetch() {
                     dispatch(setObjectOnSaveFetchState(false, response.status === 200 ? "" : "Object not found."));
                     dispatch(deselectObjects(object_ids));
                     dispatch(deleteObjects(object_ids));
-                    dispatch(setObjectRedirectOnRender("/objects"));
+                    dispatch(setRedirectOnRender("/objects"));
                     break;
                 case 400:
                     throw Error((await response.json())._error);

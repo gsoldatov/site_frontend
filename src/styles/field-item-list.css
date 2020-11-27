@@ -1,0 +1,60 @@
+/******************************
+    Field item list styles.
+******************************/
+
+/****** Field item list & wrapper ******/
+.field-item-list-wrapper {
+    background-color: white;
+    border-color: rgba(34, 36, 38, 0.15);
+    border-radius: 4px;
+    box-shadow: rgba(34, 36, 38, 0.15) 1px 1px 1px 1px;
+    margin-bottom: 1em;
+}
+
+.ui.header.field-item-list-header {
+    margin: 0.5em;
+    text-decoration: underline;
+}
+
+.field-item-list, .field-item-list-collapsed {
+    line-height: 1.5em;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: left;
+    align-items: center;
+}
+
+.field-item-list-collapsed {
+    max-height: 2em;
+    overflow: hidden;
+}
+
+/****** Expand/collapse ******/
+.field-item-list-expand-div {
+    text-align: center;
+    color: lightskyblue;
+    margin-top: 0.25em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    border-top: solid 1px lightskyblue;
+    border-bottom: solid 1px lightskyblue;
+    background-color: rgba(135, 206, 250, 0.1) ; /* lightskyblue, but with opacity */
+}
+
+.field-item-list-expand-div:hover {
+    cursor: pointer;
+}
+
+/****** Field item ******/
+.field-item {
+    margin: 4px;
+}
+
+.field-item-checkbox, .field-item-link {
+    margin: 2px;
+}
+
+.field-item-link {
+    color: black;
+    text-decoration: none;
+}

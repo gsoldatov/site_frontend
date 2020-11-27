@@ -2,23 +2,26 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByLabelText, waitFor, queryByText } from '@testing-library/dom'
+import { getByText, getByPlaceholderText, waitFor, queryByText } from '@testing-library/dom'
 
 import { mockFetch, setFetchFailParams } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
-import { EditTag } from "../src/components/tag/tag";
+import { EditTag } from "../src/components/tag";
 import { addTags, deleteTags } from "../src/actions/tags";
+
 
 beforeAll(() => {
     global.fetch = jest.fn(mockFetch);
 });
 
+
 afterAll(() => {
     setFetchFailParams();   // reset fetch params
     jest.resetAllMocks();
-})
+});
+
 
 test("Load a non-existing tag + check buttons", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -32,9 +35,12 @@ test("Load a non-existing tag + check buttons", async () => {
     // Check if save and delete buttons can't be clicked if tag fetch failed
     let saveButton = getByText(container, "Save");
     let deleteButton = getByText(container, "Delete");
-    expect(saveButton.onclick).toBeNull();
-    expect(deleteButton.onclick).toBeNull();
+    expect(saveButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(saveButton.onclick).toBeNull();  
+    expect(deleteButton.className.startsWith("disabled")).toBeTruthy();
+    // expect(deleteButton.onclick).toBeNull();
 });
+
 
 test("Load a tag with fetch error", async () => {
     setFetchFailParams(true, "Test view fetch error");
@@ -49,6 +55,7 @@ test("Load a tag with fetch error", async () => {
     setFetchFailParams();   // reset fetch params
 });
 
+
 test("Load a tag from state", async () => {
     let store = createStore({ enableDebugLogging: false });
     let tag = { tag_id: 1, tag_name: "tag name", tag_description: "tag description", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
@@ -61,13 +68,14 @@ test("Load a tag from state", async () => {
 
     // Check if tag information is displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
-    let tagNameInput = getByLabelText(container, "Tag name");
-    let tagDescriptionInput = getByLabelText(container, "Tag description");
+    let tagNameInput = getByPlaceholderText(container, "Tag name");
+    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
     expect(tagNameInput.value).toEqual("tag name");
     expect(tagDescriptionInput.value).toEqual("tag description");
     getByText(container, tag.created_at);
     getByText(container, tag.modified_at);
 });
+
 
 test("Load a tag from backend", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -78,13 +86,14 @@ test("Load a tag from backend", async () => {
     // Check if tag information is displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
     let tag = store.getState().tags[1];
-    let tagNameInput = getByLabelText(container, "Tag name");
-    let tagDescriptionInput = getByLabelText(container, "Tag description");
+    let tagNameInput = getByPlaceholderText(container, "Tag name");
+    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
     expect(tagNameInput.value).toEqual(tag.tag_name);
     expect(tagDescriptionInput.value).toEqual(tag.tag_description);
     getByText(container, tag.created_at);
     getByText(container, tag.modified_at);
 });
+
 
 test("Modify a tag and click cancel", async () => {
     let store = createStore({ enableDebugLogging: false });
@@ -100,8 +109,8 @@ test("Modify a tag and click cancel", async () => {
     await waitFor(() => getByText(container, "Tag Information"));
 
     // Check if changing tag attributes modifies the currentTag in the state
-    let tagNameInput = getByLabelText(container, "Tag name");
-    let tagDescriptionInput = getByLabelText(container, "Tag description");
+    let tagNameInput = getByPlaceholderText(container, "Tag name");
+    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
     fireEvent.change(tagNameInput, { target: { value: "modified tag name" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("modified tag name"));
     fireEvent.change(tagDescriptionInput, { target: { value: "modified tag description" } });
@@ -115,6 +124,7 @@ test("Modify a tag and click cancel", async () => {
         expect(store.getState().tags[tag["tag_id"]][attr]).toEqual(tag[attr]);
     }
 });
+
 
 test("Delete a tag", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -143,6 +153,7 @@ test("Delete a tag", async () => {
     expect(store.getState().tags[1]).toBeUndefined();
 });
 
+
 test("Delete a tag with fetch error", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
@@ -163,6 +174,7 @@ test("Delete a tag with fetch error", async () => {
     setFetchFailParams();   // reset fetch params
 });
 
+
 test("Save an existing tag", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
@@ -172,8 +184,8 @@ test("Save an existing tag", async () => {
     // Wait for tag information to be displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
     let saveButton = getByText(container, "Save");
-    let tagNameInput = getByLabelText(container, "Tag name");
-    let tagDescriptionInput = getByLabelText(container, "Tag description");
+    let tagNameInput = getByPlaceholderText(container, "Tag name");
+    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
     let oldTag = {...store.getState().tags[1]};
 
     // Check if existing tag name (in local state) is not saved
@@ -197,6 +209,7 @@ test("Save an existing tag", async () => {
     }
 });
 
+
 test("Update a tag", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
@@ -206,8 +219,8 @@ test("Update a tag", async () => {
     // Wait for tag information to be displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
     let saveButton = getByText(container, "Save");
-    let tagNameInput = getByLabelText(container, "Tag name");
-    let tagDescriptionInput = getByLabelText(container, "Tag description");
+    let tagNameInput = getByPlaceholderText(container, "Tag name");
+    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
 
     // Modify tag attributes and save
     fireEvent.change(tagNameInput, { target: { value: "modified tag name" } });
@@ -219,6 +232,7 @@ test("Update a tag", async () => {
     expect(store.getState().tags[1].tag_description).toEqual("modified tag description");
 });
 
+
 test("Update a tag with fetch error", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
@@ -229,8 +243,8 @@ test("Update a tag with fetch error", async () => {
     await waitFor(() => getByText(container, "Tag Information"));
     let tag = {...store.getState().tags[1]};
     let saveButton = getByText(container, "Save");
-    let tagNameInput = getByLabelText(container, "Tag name");
-    let tagDescriptionInput = getByLabelText(container, "Tag description");
+    let tagNameInput = getByPlaceholderText(container, "Tag name");
+    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
     fireEvent.change(tagNameInput, { target: { value: "error" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("error"));
     fireEvent.change(tagDescriptionInput, { target: { value: "modified tag description" } });

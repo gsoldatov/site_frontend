@@ -1,6 +1,7 @@
-import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, SET_OBJECT_REDIRECT_ON_RENDER, 
+import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, 
     SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE, SET_SHOW_DELETE_DIALOG_OBJECT
     } from "../actions/object";
+
 
 function loadAddObjectPage(state, action) {
     return {
@@ -18,7 +19,10 @@ function loadAddObjectPage(state, action) {
                 link: ""
             },
 
-            redirectOnRender: "",
+            objectOnLoadFetch: {
+                isFetching: false,
+                fetchError: ""
+            },
 
             objectOnSaveFetch: {
                 isFetching: false,
@@ -43,8 +47,6 @@ function loadEditObjectPage(state, action) {
                 
                 link: ""
             },
-            
-            redirectOnRender: "",
 
             objectOnLoadFetch: {
                 isFetching: false,
@@ -82,16 +84,6 @@ function setCurrentObject(state, action) {
     };
 }
 
-function setObjectRedirectOnRender(state, action) {
-    return {
-        ...state,
-        objectUI: {
-            ...state.objectUI,
-            redirectOnRender: action.redirectOnRender
-        }
-    };
-};
-
 function setObjectOnLoadFetchState(state, action) {
     return {
         ...state,
@@ -128,11 +120,11 @@ function setShowDeleteDialogObject(state, action) {
     }
 }
 
+
 const root = {
     LOAD_ADD_OBJECT_PAGE: loadAddObjectPage,
     LOAD_EDIT_OBJECT_PAGE: loadEditObjectPage,
     SET_CURRENT_OBJECT: setCurrentObject,
-    SET_OBJECT_REDIRECT_ON_RENDER: setObjectRedirectOnRender,
     SET_OBJECT_ON_LOAD_FETCH_STATE: setObjectOnLoadFetchState,
     SET_OBJECT_ON_SAVE_FETCH_STATE: setObjectOnSaveFetchState,
     SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject

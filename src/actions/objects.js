@@ -1,7 +1,9 @@
 import config from "../config";
 import { isFetchingObjects } from "../store/state-check-functions";
 
+
 const backendURL = config.backendURL;
+
 
 export const ADD_OBJECTS = "ADD_OBJECTS";
 export const ADD_OBJECT_DATA = "ADD_OBJECT_DATA";
@@ -11,9 +13,9 @@ export const TOGGLE_OBJECT_SELECTION = "TOGGLE_OBJECT_SELECTION";
 export const DESELECT_OBJECTS = "DESELECT_OBJECTS";
 export const CLEAR_SELECTED_OBJECTS = "CLEAR_SELECTED_OBJECTS";
 export const SET_OBJECTS_PAGINATION_INFO = "SET_OBJECTS_PAGINATION_INFO";
-export const SET_OBJECTS_REDIRECT_ON_RENDER = "SET_OBJECTS_REDIRECT_ON_RENDER";
 export const SET_SHOW_DELETE_DIALOG_OBJECTS = "SET_SHOW_DELETE_DIALOG_OBJECTS";
 export const SET_OBJECTS_FETCH = "SET_OBJECTS_FETCH";
+
 
 export const addObjects                     = objects => ({ type: ADD_OBJECTS, objects: objects });
 export const addObjectData                  = objectData => ({ type: ADD_OBJECT_DATA, objectData: objectData });
@@ -23,7 +25,6 @@ export const toggleObjectSelection       = object_id => ({ type: TOGGLE_OBJECT_S
 export const deselectObjects                = object_ids => ({ type: DESELECT_OBJECTS, object_ids: object_ids });
 export const clearSelectedObjects        = () => ({ type: CLEAR_SELECTED_OBJECTS });
 export const setObjectsPaginationInfo    = paginationInfo => ({ type: SET_OBJECTS_PAGINATION_INFO, paginationInfo: paginationInfo });
-export const setObjectsRedirectOnRender  = (redirectOnRender = "") => ({ type: SET_OBJECTS_REDIRECT_ON_RENDER, redirectOnRender: redirectOnRender });
 export const setShowDeleteDialogObjects  = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECTS, showDeleteDialog: showDeleteDialog });
 
 export const setObjectsFetch = (isFetching = false, fetchError = "") => { 

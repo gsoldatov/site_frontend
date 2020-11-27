@@ -9,23 +9,26 @@ import { getMockedPageObjectIDs } from "./mocks/mock-fetch-handlers-objects";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
-import ObjectContainer from "../src/components/objects/objects";
+import Objects from "../src/components/objects";
 import { setObjectsPaginationInfo } from "../src/actions/objects";
+
 
 beforeAll(() => {
     global.fetch = jest.fn(mockFetch);
 });
 
+
 afterAll(() => {
     setFetchFailParams();   // reset fetch params
     jest.resetAllMocks();
-})
+});
+
 
 test("Load page with a fetch error", async () => {
     setFetchFailParams(true, "Test objects fetch error");
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects"
     });
 
@@ -35,20 +38,23 @@ test("Load page with a fetch error", async () => {
     // Check if buttons are not enabled
     let editObjectButton = getByText(container, "Edit Object");
     let deleteButton = getByText(container, "Delete");
-    expect(editObjectButton.onclick).toBeNull();
-    expect(deleteButton.onclick).toBeNull();
+    expect(editObjectButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(editObjectButton.onclick).toBeNull();
+    expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(deleteButton.onclick).toBeNull();
 
     // Check if pagination is not rendered
     expect(container.querySelector(".field-pagination")).toBeNull();
     setFetchFailParams();   // reset fetch params
 });
 
+
 test("Load a page without pagination", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: 100}))
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -60,12 +66,13 @@ test("Load a page without pagination", async () => {
     expect(container.querySelector(".field-pagination")).toBeNull();
 });
 
+
 test("Load page 1 of 5 and click on page 5", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: 20}))
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -84,7 +91,7 @@ test("Load page 1 of 5 and click on page 5", async () => {
     // Check if pagination is correctly rendered
     let paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "4", "5", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "⟩"]) {
         getByText(paginationDiv, btn);
     }
     for (let btn of ["...", "6"]) {
@@ -99,12 +106,13 @@ test("Load page 1 of 5 and click on page 5", async () => {
     expect(queryByText(container, "object #101")).toBeNull();
 });
 
+
 test("Load page 1 of 10 and check pagination gaps", async () => {
     let store = createStore({ useLocalStorage: false });
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -112,27 +120,27 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
     // Wait for the objects to load
     await waitFor(() => getByText(container, "object #1"));
 
-    // Check if pagination is correctly rendered (p 1 2 3 . 10 n)
+    // Check if pagination is correctly rendered (p 1 2 3 4 5 6 7 . 10 n)
     let paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "...", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
-    for (let btn of ["4", "9"]) {
+    for (let btn of ["8", "9"]) {
         expect(queryByText(paginationDiv, btn)).toBeNull();
     }
 
-    // Move to page 3 and check if pagination is correctly rendered (p 1 2 3 4 5 . 10 n)
+    // Move to page 3 and check if pagination is correctly rendered (p 1 2 3 4 5 6 7 . 10 n)
     let pageThreeButton = getByText(paginationDiv, "3");
     fireEvent.click(pageThreeButton);
     await waitFor(() => getByText(container, "object #21"));
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "4", "5", "...", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
-    for (let btn of ["6", "9"]) {
+    for (let btn of ["8", "9"]) {
         expect(queryByText(paginationDiv, btn)).toBeNull();
     }
 
@@ -143,7 +151,7 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "4", "5", "6", "7", "...", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
     for (let btn of ["8", "9"]) {
@@ -151,13 +159,13 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
     }
 
     // Move to next page and check if pagination is correctly rendered (p 1 . 4 5 6 7 8 9 10 n)
-    let nextPageButton = getByText(paginationDiv, "Next");
+    let nextPageButton = getByText(paginationDiv, "⟩");
     fireEvent.click(nextPageButton);
     await waitFor(() => getByText(container, "object #51"));
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "...", "4", "5", "6", "7", "8", "9", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "...", "4", "5", "6", "7", "8", "9", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
     for (let btn of ["2", "3"]) {
@@ -165,40 +173,41 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
     }
 
     // Move to previous page and check if pagination is correctly rendered (p 1 2 3 4 5 6 7 . 10 n)
-    let previousPageButton = getByText(paginationDiv, "Previous");
+    let previousPageButton = getByText(paginationDiv, "⟨");
     fireEvent.click(previousPageButton);
     await waitFor(() => getByText(container, "object #41"));
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "4", "5", "6", "7", "...", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
     for (let btn of ["8", "9"]) {
         expect(queryByText(paginationDiv, btn)).toBeNull();
     }
 
-    // Move to page 10 and check if pagination is correctly rendered (p 1 . 8 9 10 n)
+    // Move to page 10 and check if pagination is correctly rendered (p 1 . 4 5 6 7 8 9 10 n)
     let pageTenButton = getByText(paginationDiv, "10");
     fireEvent.click(pageTenButton);
     await waitFor(() => getByText(container, "object #91"));
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "...", "8", "9", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "...", "4", "5", "6", "7", "8", "9", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
-    for (let btn of ["2", "7"]) {
+    for (let btn of ["2", "3"]) {
         expect(queryByText(paginationDiv, btn)).toBeNull();
     }
 });
+
 
 test("Side menu buttons during fetch", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -210,18 +219,22 @@ test("Side menu buttons during fetch", async () => {
     // Check if buttons can't be clicked during fetch
     await waitFor(() => expect(
         store.getState().objectsUI.fetch.isFetching === true
-        && addObjectButton.onclick === null
-        && editObjectButton.onclick === null
-        && deleteObjectButton.onclick === null
+        && addObjectButton.className.startsWith("disabled") // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        && editObjectButton.className.startsWith("disabled")
+        && deleteObjectButton.className.startsWith("disabled")
+        // && addObjectButton.onclick === null
+        // && editObjectButton.onclick === null
+        // && deleteObjectButton.onclick === null
     ).toBeTruthy());
 });
+
 
 test("Side menu add object button", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container, history } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container, history } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -235,12 +248,13 @@ test("Side menu add object button", async () => {
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/add"));
 });
 
+
 test("Side menu edit object button", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container, history } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container, history } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -250,7 +264,8 @@ test("Side menu edit object button", async () => {
 
     // Check if edit object button is disabled if a single object is not selected
     let editObjectButton = getByText(container, "Edit Object");
-    expect(editObjectButton.onclick).toBeNull();
+    expect(editObjectButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(editObjectButton.onclick).toBeNull();
 
     // Get objects
     let objects = container.querySelector(".field-item-list").querySelectorAll(".field-item");
@@ -271,12 +286,13 @@ test("Side menu edit object button", async () => {
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/1"));
 });
 
+
 test("Side menu delete button", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -286,7 +302,8 @@ test("Side menu delete button", async () => {
 
     // Check if edit object button is disabled if a single object is not selected
     let deleteButton = getByText(container, "Delete");
-    expect(deleteButton.onclick).toBeNull();
+    expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(deleteButton.onclick).toBeNull();
 
     // Select two objects
     let mainObjectField = container.querySelector(".field-item-list");
@@ -299,7 +316,7 @@ test("Side menu delete button", async () => {
     // Click delete button and check if a confirmation dialog appeared
     expect(deleteButton.onclick).toBeTruthy();
     fireEvent.click(deleteButton);
-    let sideMenu = container.querySelector("aside");
+    let sideMenu = container.querySelector(".vertical.menu");
     let dialog = sideMenu.querySelector(".side-menu-dialog");
     expect(dialog).toBeTruthy();
 
@@ -328,7 +345,7 @@ test("Field menu, select + deselect", async () => {
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -344,12 +361,13 @@ test("Field menu, select + deselect", async () => {
     }
 
     // Deselect all objects
-    let deselectAllButton = getByTitle(container, "Clear object selection");
+    let deselectAllButton = getByTitle(container, "Deselect all objects");
     fireEvent.click(deselectAllButton);
     for (let i = 1; i <= 10; i++) {
         expect(queryAllByText(container, `object #${i}`).length).toEqual(1);
     }
 });
+
 
 test("Field menu, sort buttons", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
@@ -357,7 +375,7 @@ test("Field menu, sort buttons", async () => {
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: objectsPerPage}))
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -390,12 +408,13 @@ test("Field menu, sort buttons", async () => {
     checkObjectsDisplay(store, container);
 });
 
+
 test("Field menu, object filter", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><ObjectContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
         route: "/objects",
         store: store
     });
@@ -404,7 +423,7 @@ test("Field menu, object filter", async () => {
     await waitFor(() => getByText(container, "object #1"));
 
     // Filter with matching objects and check if they are correctly displayed
-    let objectFilterInput = container.querySelector(".field-menu-filter");
+    let objectFilterInput = container.querySelector(".field-menu-filter").querySelector("input");
     expect(objectFilterInput).toBeTruthy();
     fireEvent.change(objectFilterInput, { target: { value: "some text" } });
     await waitForFetch(store);
@@ -415,11 +434,13 @@ test("Field menu, object filter", async () => {
     await waitFor(() => getByText(container, "No objects found.", { exact: false }));
 });
 
+
 async function waitForFetch(store) {
     // wait to fetch to start and end
     await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching).toBeTruthy());
     await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching).toBeFalsy());
 }
+
 
 function getPageObjectIDsFromMock(store) {
     // get object IDs which are returned by mock fetch handler
@@ -432,6 +453,7 @@ function getPageObjectIDsFromMock(store) {
         filter_text: pI.filterText
     });
 }
+
 
 function checkObjectsDisplay(store, container, objectsPerPage = 10) {
     // Check if objects are correctly displayed on the page (proper object IDs and object order)

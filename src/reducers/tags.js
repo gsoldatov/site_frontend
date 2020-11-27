@@ -1,5 +1,6 @@
-import { ADD_TAGS, DELETE_TAGS, SELECT_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, SET_TAGS_PAGINATION_INFO, SET_TAGS_REDIRECT_ON_RENDER,
+import { ADD_TAGS, DELETE_TAGS, SELECT_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, SET_TAGS_PAGINATION_INFO,
     SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_FETCH } from "../actions/tags";
+
 
 function addTags(state, action) {
     let newTags = {};
@@ -87,16 +88,6 @@ function setTagsPaginationInfo(state, action) {
     }
 }
 
-function setTagsRedirectOnRender(state, action) {
-    return {
-        ...state,
-        tagsUI: {
-            ...state.tagsUI,
-            redirectOnRender: action.redirectOnRender
-        }
-    }
-}
-
 function setShowDeleteDialogTags(state, action) {
     return {
         ...state,
@@ -120,6 +111,7 @@ function setTagsFetch(state, action) {
     }
 }
 
+
 const root = {
     ADD_TAGS: addTags,
     DELETE_TAGS: deleteTags,
@@ -128,7 +120,6 @@ const root = {
     DESELECT_TAGS: deselectTags,
     CLEAR_SELECTED_TAGS: clearSelectedTags,
     SET_TAGS_PAGINATION_INFO: setTagsPaginationInfo,
-    SET_TAGS_REDIRECT_ON_RENDER: setTagsRedirectOnRender,
     SET_SHOW_DELETE_DIALOG_TAGS: setShowDeleteDialogTags,
     SET_TAGS_FETCH: setTagsFetch
 };

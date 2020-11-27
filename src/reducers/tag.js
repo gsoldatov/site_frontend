@@ -1,6 +1,6 @@
-import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, SET_TAG_REDIRECT_ON_RENDER, 
-    SET_TAG_ON_LOAD_FETCH_STATE, SET_TAG_ON_SAVE_FETCH_STATE, SET_SHOW_DELETE_DIALOG
-    } from "../actions/tag";
+import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, 
+    SET_TAG_ON_LOAD_FETCH_STATE, SET_TAG_ON_SAVE_FETCH_STATE, SET_SHOW_DELETE_DIALOG } from "../actions/tag";
+
 
 function loadAddTagPage(state, action) {
     return {
@@ -15,7 +15,10 @@ function loadAddTagPage(state, action) {
                 modified_at: ""
             },
 
-            redirectOnRender: "",
+            tagOnLoadFetch: {
+                isFetching: false,
+                fetchError: ""
+            },
 
             tagOnSaveFetch: {
                 isFetching: false,
@@ -37,8 +40,6 @@ function loadEditTagPage(state, action) {
                 created_at: "",
                 modified_at: ""
             },
-            
-            redirectOnRender: "",
 
             tagOnLoadFetch: {
                 isFetching: false,
@@ -72,16 +73,6 @@ function setCurrentTag(state, action) {
         }
     };
 }
-
-function setTagRedirectOnRender(state, action) {
-    return {
-        ...state,
-        tagUI: {
-            ...state.tagUI,
-            redirectOnRender: action.redirectOnRender
-        }
-    };
-};
 
 function setTagOnLoadFetchState(state, action) {
     return {
@@ -119,12 +110,11 @@ function setShowDeleteDialogTag(state, action) {
     }
 }
 
+
 const root = {
     LOAD_ADD_TAG_PAGE: loadAddTagPage,
     LOAD_EDIT_TAG_PAGE: loadEditTagPage,
     SET_CURRENT_TAG: setCurrentTag,
-
-    SET_TAG_REDIRECT_ON_RENDER: setTagRedirectOnRender,
     SET_TAG_ON_LOAD_FETCH_STATE: setTagOnLoadFetchState,
     SET_TAG_ON_SAVE_FETCH_STATE: setTagOnSaveFetchState,
     SET_SHOW_DELETE_DIALOG_TAG: setShowDeleteDialogTag

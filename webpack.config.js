@@ -58,9 +58,13 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(png|svg|jpg|gif)$/,
+                test: /\.(png|svg|jpg|gif|eot)$/,
                 loader: "file-loader?name=static/icons/[name].[ext]"
             },
+            {   // required for imports is Semantic UI
+                test: /\.(ttf|woff|woff2)$/,
+                loader: "file-loader?name=static/fonts/[name].[ext]"
+            }
         ]
     },
 };

@@ -1,6 +1,6 @@
 import { ADD_OBJECTS, ADD_OBJECT_DATA, deleteObjectData, DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, 
-    CLEAR_SELECTED_OBJECTS, SET_OBJECTS_PAGINATION_INFO, SET_OBJECTS_REDIRECT_ON_RENDER,
-SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
+    CLEAR_SELECTED_OBJECTS, SET_OBJECTS_PAGINATION_INFO, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
+
 
 function addObjects(state, action) {
     let newObjects = {};
@@ -115,16 +115,6 @@ function setObjectsPaginationInfo(state, action) {
     }
 }
 
-function setObjectsRedirectOnRender(state, action) {
-    return {
-        ...state,
-        objectsUI: {
-            ...state.objectsUI,
-            redirectOnRender: action.redirectOnRender
-        }
-    }
-}
-
 function setShowDeleteDialogObjects(state, action) {
     return {
         ...state,
@@ -148,6 +138,7 @@ function setObjectsFetch(state, action) {
     }
 }
 
+
 const root = {
     ADD_OBJECTS: addObjects,
     ADD_OBJECT_DATA: addObjectData,
@@ -157,7 +148,6 @@ const root = {
     DESELECT_OBJECTS: deselectObjects,
     CLEAR_SELECTED_OBJECTS: clearSelectedObjects,
     SET_OBJECTS_PAGINATION_INFO: setObjectsPaginationInfo,
-    SET_OBJECTS_REDIRECT_ON_RENDER: setObjectsRedirectOnRender,
     SET_SHOW_DELETE_DIALOG_OBJECTS: setShowDeleteDialogObjects,
     SET_OBJECTS_FETCH: setObjectsFetch
 };

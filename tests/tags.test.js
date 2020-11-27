@@ -9,23 +9,26 @@ import { getMockedPageTagIDs } from "./mocks/mock-fetch-handlers-tags";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
-import TagsContainer from "../src/components/tags/tags";
+import Tags from "../src/components/tags";
 import { setTagsPaginationInfo } from "../src/actions/tags";
+
 
 beforeAll(() => {
     global.fetch = jest.fn(mockFetch);
 });
 
+
 afterAll(() => {
     setFetchFailParams();   // reset fetch params
     jest.resetAllMocks();
-})
+});
+
 
 test("Load page with a fetch error", async () => {
     setFetchFailParams(true, "Test tags fetch error");
 
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags"
     });
 
@@ -35,20 +38,24 @@ test("Load page with a fetch error", async () => {
     // Check if buttons are not enabled
     let editTagButton = getByText(container, "Edit Tag");
     let deleteButton = getByText(container, "Delete");
-    expect(editTagButton.onclick).toBeNull();
-    expect(deleteButton.onclick).toBeNull();
+    expect(editTagButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(editTagButton.onclick).toBeNull();
+    expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(deleteButton.onclick).toBeNull();
+    
 
     // Check if pagination is not rendered
     expect(container.querySelector(".field-pagination")).toBeNull();
     setFetchFailParams();   // reset fetch params
 });
 
+
 test("Load a page without pagination", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -60,12 +67,13 @@ test("Load a page without pagination", async () => {
     expect(container.querySelector(".field-pagination")).toBeNull();
 });
 
+
 test("Load page 1 of 5 and click on page 5", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 20}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -84,7 +92,7 @@ test("Load page 1 of 5 and click on page 5", async () => {
     // Check if pagination is correctly rendered
     let paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "4", "5", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "⟩"]) {
         getByText(paginationDiv, btn);
     }
     for (let btn of ["...", "6"]) {
@@ -99,12 +107,13 @@ test("Load page 1 of 5 and click on page 5", async () => {
     expect(queryByText(container, "tag #101")).toBeNull();
 });
 
+
 test("Load page 1 of 10 and check pagination gaps", async () => {
     let store = createStore({ useLocalStorage: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -112,27 +121,27 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
     // Wait for the tags to load
     await waitFor(() => getByText(container, "tag #1"));
 
-    // Check if pagination is correctly rendered (p 1 2 3 . 10 n)
+    // Check if pagination is correctly rendered (p 1 2 3 4 5 6 7 . 10 n)
     let paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "...", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
-    for (let btn of ["4", "9"]) {
+    for (let btn of ["8", "9"]) {
         expect(queryByText(paginationDiv, btn)).toBeNull();
     }
 
-    // Move to page 3 and check if pagination is correctly rendered (p 1 2 3 4 5 . 10 n)
+    // Move to page 3 and check if pagination is correctly rendered (p 1 2 3 4 5 6 7 . 10 n)
     let pageThreeButton = getByText(paginationDiv, "3");
     fireEvent.click(pageThreeButton);
     await waitFor(() => getByText(container, "tag #21"));
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "4", "5", "...", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
-    for (let btn of ["6", "9"]) {
+    for (let btn of ["8", "9"]) {
         expect(queryByText(paginationDiv, btn)).toBeNull();
     }
 
@@ -143,7 +152,7 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "4", "5", "6", "7", "...", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
     for (let btn of ["8", "9"]) {
@@ -151,13 +160,13 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
     }
 
     // Move to next page and check if pagination is correctly rendered (p 1 . 4 5 6 7 8 9 10 n)
-    let nextPageButton = getByText(paginationDiv, "Next");
+    let nextPageButton = getByText(paginationDiv, "⟩");
     fireEvent.click(nextPageButton);
     await waitFor(() => getByText(container, "tag #51"));
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "...", "4", "5", "6", "7", "8", "9", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "...", "4", "5", "6", "7", "8", "9", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
     for (let btn of ["2", "3"]) {
@@ -165,40 +174,41 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
     }
 
     // Move to previous page and check if pagination is correctly rendered (p 1 2 3 4 5 6 7 . 10 n)
-    let previousPageButton = getByText(paginationDiv, "Previous");
+    let previousPageButton = getByText(paginationDiv, "⟨");
     fireEvent.click(previousPageButton);
     await waitFor(() => getByText(container, "tag #41"));
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "2", "3", "4", "5", "6", "7", "...", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
     for (let btn of ["8", "9"]) {
         expect(queryByText(paginationDiv, btn)).toBeNull();
     }
 
-    // Move to page 10 and check if pagination is correctly rendered (p 1 . 8 9 10 n)
+    // Move to page 10 and check if pagination is correctly rendered (p 1 . 4 5 6 7 8 9 10 n)
     let pageTenButton = getByText(paginationDiv, "10");
     fireEvent.click(pageTenButton);
     await waitFor(() => getByText(container, "tag #91"));
 
     paginationDiv = container.querySelector(".field-pagination");
     expect(paginationDiv).toBeTruthy();
-    for (let btn of ["Previous", "1", "...", "8", "9", "10", "Next"]) {
+    for (let btn of ["⟨", "1", "...", "4", "5", "6", "7", "8", "9", "10", "⟩"]) {
         getByText(paginationDiv, btn);
     }
-    for (let btn of ["2", "7"]) {
+    for (let btn of ["2", "3"]) {
         expect(queryByText(paginationDiv, btn)).toBeNull();
     }
 });
+
 
 test("Side menu buttons during fetch", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -210,18 +220,22 @@ test("Side menu buttons during fetch", async () => {
     // Check if buttons can't be clicked during fetch
     await waitFor(() => expect(
         store.getState().tagsUI.fetch.isFetching === true
-        && addTagButton.onclick === null
-        && editTagButton.onclick === null
-        && deleteTagButton.onclick === null
+        && addTagButton.className.startsWith("disabled") // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        && editTagButton.className.startsWith("disabled")
+        && deleteTagButton.className.startsWith("disabled")
+        // && addTagButton.onclick === null
+        // && editTagButton.onclick === null
+        // && deleteTagButton.onclick === null
     ).toBeTruthy());
 });
+
 
 test("Side menu add tag button", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container, history } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -235,12 +249,13 @@ test("Side menu add tag button", async () => {
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/add"));
 });
 
+
 test("Side menu edit tag button", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container, history } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -250,7 +265,8 @@ test("Side menu edit tag button", async () => {
 
     // Check if edit tag button is disabled if a single tag is not selected
     let editTagButton = getByText(container, "Edit Tag");
-    expect(editTagButton.onclick).toBeNull();
+    expect(editTagButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(editTagButton.onclick).toBeNull();
 
     // Get tags
     let tags = container.querySelector(".field-item-list").querySelectorAll(".field-item");
@@ -271,12 +287,13 @@ test("Side menu edit tag button", async () => {
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/1"));
 });
 
+
 test("Side menu delete button", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -286,7 +303,8 @@ test("Side menu delete button", async () => {
 
     // Check if edit tag button is disabled if a single tag is not selected
     let deleteButton = getByText(container, "Delete");
-    expect(deleteButton.onclick).toBeNull();
+    expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // expect(deleteButton.onclick).toBeNull();
 
     // Select two tags
     let mainTagField = container.querySelector(".field-item-list");
@@ -299,7 +317,7 @@ test("Side menu delete button", async () => {
     // Click delete button and check if a confirmation dialog appeared
     expect(deleteButton.onclick).toBeTruthy();
     fireEvent.click(deleteButton);
-    let sideMenu = container.querySelector("aside");
+    let sideMenu = container.querySelector(".vertical.menu");
     let dialog = sideMenu.querySelector(".side-menu-dialog");
     expect(dialog).toBeTruthy();
 
@@ -328,7 +346,7 @@ test("Field menu, select + deselect", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -344,12 +362,13 @@ test("Field menu, select + deselect", async () => {
     }
 
     // Deselect all tags
-    let deselectAllButton = getByTitle(container, "Clear tag selection");
+    let deselectAllButton = getByTitle(container, "Deselect all tags");
     fireEvent.click(deselectAllButton);
     for (let i = 1; i <= 10; i++) {
         expect(queryAllByText(container, `tag #${i}`).length).toEqual(1);
     }
 });
+
 
 test("Field menu, sort buttons", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
@@ -357,7 +376,7 @@ test("Field menu, sort buttons", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: tagsPerPage}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -390,12 +409,13 @@ test("Field menu, sort buttons", async () => {
     checkTagsDisplay(store, container);
 });
 
+
 test("Field menu, tag filter", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><TagsContainer /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
         route: "/tags",
         store: store
     });
@@ -404,7 +424,7 @@ test("Field menu, tag filter", async () => {
     await waitFor(() => getByText(container, "tag #1"));
 
     // Filter with matching tags and check if they are correctly displayed
-    let tagFilterInput = container.querySelector(".field-menu-filter");
+    let tagFilterInput = container.querySelector(".field-menu-filter").querySelector("input");
     expect(tagFilterInput).toBeTruthy();
     fireEvent.change(tagFilterInput, { target: { value: "some text" } });
     await waitForFetch(store);
@@ -415,11 +435,13 @@ test("Field menu, tag filter", async () => {
     await waitFor(() => getByText(container, "No tags found.", { exact: false }));
 });
 
+
 async function waitForFetch(store) {
     // wait to fetch to start and end
     await waitFor(() => expect(store.getState().tagsUI.fetch.isFetching).toBeTruthy());
     await waitFor(() => expect(store.getState().tagsUI.fetch.isFetching).toBeFalsy());
 }
+
 
 function getPageTagIDsFromMock(store) {
     // get tag IDs which are returned by mock fetch handler
@@ -432,6 +454,7 @@ function getPageTagIDsFromMock(store) {
         filter_text: pI.filterText
     });
 }
+
 
 function checkTagsDisplay(store, container, tagsPerPage = 10) {
     // Check if tags are correctly displayed on the page (proper tag IDs and tag order)
