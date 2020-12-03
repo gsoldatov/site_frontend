@@ -47,6 +47,9 @@ const initialState = {
         }
     },
 
+    // objects' tags storage
+    objectsTags: {},
+
     // objects storages
     objects: {},    // general arributes
     links: {},
@@ -61,14 +64,14 @@ const initialState = {
             created_at: "",
             modified_at: "",
 
-            // currentTagIDs: [],   // objects tagging state (not implemented yet)
-            // addedTags: [],
-            // removedTagIDs: [],
-            // tagsInput: {
-            //     isDisplayed: true,
-            //     inputText: "",
-            //     matchingIDs: []
-            // },
+            currentTagIDs: [],   // object's tags state
+            addedTags: [],
+            removedTagIDs: [],
+            tagsInput: {
+                isDisplayed: false,
+                inputText: "",
+                matchingIDs: []
+            },
 
             link: ""
         },

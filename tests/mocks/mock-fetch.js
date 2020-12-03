@@ -1,6 +1,6 @@
 import config from "../../src/config";
-import { tagsHandlersList } from "./mock-fetch-handlers-tags";
-import { objectsHandlersList } from "./mock-fetch-handlers-objects";
+import { resetTagsCache, tagsHandlersList } from "./mock-fetch-handlers-tags";
+import { resetObjectsCaches, objectsHandlersList } from "./mock-fetch-handlers-objects";
 
 let isFailingFetch, failMessage;
 const handlerLists = [tagsHandlersList, objectsHandlersList];   // add new handler lists here
@@ -20,6 +20,12 @@ export function mockFetch(URL, {
         throw new Error(`Fetch handler not found for URL "${URLPath}" and method "${method}".`);
     }
     return Promise.resolve(handler(body));
+}
+
+export function resetMocks() {
+    resetTagsCache();       // reset cache objects
+    resetObjectsCaches();
+    setFetchFailParams();   // reset fetch fail parameters
 }
 
 export function setFetchFailParams(iff = false, fm = "Test fetch failed") {

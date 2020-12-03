@@ -4,23 +4,17 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, queryByText } from '@testing-library/dom'
 
-import { mockFetch, setFetchFailParams } from "./mocks/mock-fetch";
+import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
 import { EditObject } from "../src/components/object";
-import { addObjects, addObjectData, deleteObjects } from "../src/actions/objects";
+import { addObjects, addObjectData, setObjectsTags, deleteObjects } from "../src/actions/objects";
 
 
-beforeAll(() => {
-    global.fetch = jest.fn(mockFetch);
-});
-
-
-afterAll(() => {
-    setFetchFailParams();   // reset fetch params
-    jest.resetAllMocks();
-});
+beforeAll(() => { global.fetch = jest.fn(mockFetch); });
+afterAll(() => { jest.resetAllMocks(); });
+afterEach(() => { resetMocks(); });
 
 
 test("Load a non-existing object + check buttons", async () => {
@@ -53,22 +47,22 @@ test("Load an object with fetch error", async () => {
 
     // Check if error message if displayed
     await waitFor(() => getByText(container, "Test view fetch error", { exact: false }));
-    setFetchFailParams();   // reset fetch params
 });
 
 
 test("Load a link object from state", async () => {
     let store = createStore({ enableDebugLogging: false });
     let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
-                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
+                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
     let objectData = { object_id: 1, object_type: "link", object_data: {"link": "https://test.link"} };
     store.dispatch(addObjects([object]));
+    store.dispatch(setObjectsTags([object]));
     store.dispatch(addObjectData([objectData]));
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/1",
-            store: store
-        });
+        route: "/objects/1",
+        store: store
+    });
 
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
@@ -95,13 +89,14 @@ test("Load a link object from state", async () => {
 test("Load a link object attributes from state and data from backend", async () => {
     let store = createStore({ enableDebugLogging: false });
     let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
-                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
+                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
     store.dispatch(addObjects([object]));
+    store.dispatch(setObjectsTags([object]));
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/1",
-            store: store
-        });
+        route: "/objects/1",
+        store: store
+    });
     
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
@@ -151,15 +146,16 @@ test("Load a link object from backend", async () => {
 test("Modify a link and click cancel", async () => {
     let store = createStore({ enableDebugLogging: false });
     let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
-                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
+                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
     let objectData = { object_id: 1, object_type: "link", object_data: {"link": "https://test.link"} };
     store.dispatch(addObjects([object]));
+    store.dispatch(setObjectsTags([object]));
     store.dispatch(addObjectData([objectData]));
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container, history } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/1",
-            store: store
-        });
+        route: "/objects/1",
+        store: store
+    });
     
     // Wait for object information to be displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
@@ -234,7 +230,6 @@ test("Delete a link object with fetch error", async () => {
     await waitFor(() => getByText(container, "Test delete fetch error"));
     expect(store.getState().objects[1]).toBeTruthy();
     expect(store.getState().links[1]).toBeTruthy();
-    setFetchFailParams();   // reset fetch params
 });
 
 
@@ -336,5 +331,4 @@ test("Update a link object with fetch error", async () => {
         expect(store.getState().objects[1][attr]).toEqual(oldObject[attr]);
     }
     expect(store.getState().links[1].link).toEqual(oldLink.link);
-    setFetchFailParams();   // reset fetch params
 });

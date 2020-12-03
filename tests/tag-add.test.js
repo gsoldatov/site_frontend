@@ -4,22 +4,16 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor } from '@testing-library/dom'
 
-import { mockFetch, setFetchFailParams } from "./mocks/mock-fetch";
+import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 
 import { AddTag, EditTag } from "../src/components/tag";
 import { addTags } from "../src/actions/tags";
 
 
-beforeAll(() => {
-    global.fetch = jest.fn(mockFetch);
-});
-
-
-afterAll(() => {
-    setFetchFailParams();   // reset fetch params
-    jest.resetAllMocks();
-});
+beforeAll(() => { global.fetch = jest.fn(mockFetch); });
+afterAll(() => { jest.resetAllMocks(); });
+afterEach(() => { resetMocks(); });
 
 
 test("Render and click cancel button", async () => {
@@ -103,7 +97,6 @@ test("Handle fetch error", async () => {
     await waitFor(() => getByText(container, "Test add fetch error"));
     expect(history.entries[history.length - 1].pathname).toBe("/tags/add");
     expect(store.getState().tags[1000]).toBeUndefined();
-    setFetchFailParams();   // reset fetch params
 });
 
 

@@ -4,7 +4,7 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from '@testing-library/dom'
 
-import { mockFetch, setFetchFailParams } from "./mocks/mock-fetch";
+import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
 import { getMockedPageTagIDs } from "./mocks/mock-fetch-handlers-tags";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
@@ -13,15 +13,9 @@ import Tags from "../src/components/tags";
 import { setTagsPaginationInfo } from "../src/actions/tags";
 
 
-beforeAll(() => {
-    global.fetch = jest.fn(mockFetch);
-});
-
-
-afterAll(() => {
-    setFetchFailParams();   // reset fetch params
-    jest.resetAllMocks();
-});
+beforeAll(() => { global.fetch = jest.fn(mockFetch); });
+afterAll(() => { jest.resetAllMocks(); });
+afterEach(() => { resetMocks(); });
 
 
 test("Load page with a fetch error", async () => {
@@ -46,7 +40,6 @@ test("Load page with a fetch error", async () => {
 
     // Check if pagination is not rendered
     expect(container.querySelector(".field-pagination")).toBeNull();
-    setFetchFailParams();   // reset fetch params
 });
 
 

@@ -25,3 +25,11 @@ export function getObjectData(state, object_id) {
 
     return null;
 };
+
+
+/* Returns the ID corresponding to the provided tag name. */
+export function getTagIDByName(state, name) {
+    for (let id of Object.keys(state.tags)) {
+        if (state.tags[id].tag_name.toLowerCase() === name.toLowerCase()) return parseInt(id);
+    }
+};

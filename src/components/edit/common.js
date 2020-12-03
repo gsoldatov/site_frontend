@@ -77,7 +77,7 @@ export const NameDescriptionInput = ({ nameLabel, nameSelector, nameOnChange, ge
         <Form>
             <Form.Input label={nameLabel} placeholder={nameLabel} value={name} onChange={handleNameChange} />
             <Form.Field>
-                <label>Tag description</label>
+                <label>{descriptionLabel}</label>
                 <textarea className="edit-page-textarea" placeholder={descriptionLabel} ref={descriptionRef} value={description} onChange={handleDescriptionChange} />
             </Form.Field>
         </Form>

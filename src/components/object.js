@@ -1,16 +1,20 @@
 import React, { useEffect } from "react";
 import { Header } from "semantic-ui-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "./edit/common";
 import { ObjectTypeSelector, ObjectViewEditSwitch } from "./edit/object";
 import Layout from "./common/layout";
+import { InlineItemListBlock, InlineItemListWrapper } from "./inline/inline-item-list-containers";
+import { InlineItemList } from "./inline/inline-item-list";
+import { InlineItem } from "./inline/inline-item";
+import { InlineInput } from "./inline/inline-input";
 
 import { isFetchingObject, isFetchinOrShowingDialogObject } from "../store/state-check-functions";
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, setCurrentObject, setShowDeleteDialogObject, 
-    addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch } from "../actions/object";
+import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setTagsInput, setShowDeleteDialogObject, 
+    addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsFetch } from "../actions/object";
 
 
 /*
@@ -102,6 +106,7 @@ const _Object = ({ header, sideMenuItems, onLoad }) => {
             <ObjectTimeStamps />
             <ObjectSaveError />
             <ObjectInput />
+            <ObjectTags />
             <ObjectViewEditSwitch />
         </>
     );
@@ -132,3 +137,43 @@ const descriptionSelector = state => state.objectUI.currentObject.object_descrip
 const getDescriptionOnChangeParams = value => ({object_description: value });
 const ObjectInput = () => <NameDescriptionInput nameLabel="Object name" nameSelector={nameSelector} nameOnChange={setCurrentObject} getNameOnChangeParams={getNameOnChangeParams}
     descriptionLabel="Object description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentObject} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;
+
+
+// Object's tags
+const addedTagsSelector = state => state.objectUI.currentObject.addedTags;
+const AddedTagItem = ({ id }) => {
+    const dispatch = useDispatch();
+    const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
+    const itemClassName = typeof(id) === "number" ? "inline-item-green" : "inline-item-blue";
+    const onClick = () => dispatch(setCurrentObjectTags({ added: [id] }));
+    const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
+    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+};
+const currentTagsSelector = state => state.objectUI.currentObject.currentTagIDs;
+const CurrentTagItems = ({ id }) => {
+    const dispatch = useDispatch();
+    // const text = useSelector(state => state.tags[id].tag_name);
+    const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
+    const isRemoved = useSelector(state => state.objectUI.currentObject.removedTagIDs.includes(id));
+    const itemClassName = isRemoved ? "inline-item-red" : "inline-item";
+    const onClick = () => dispatch(setCurrentObjectTags({ removed: [id] }));
+    const itemLink = `/tags/${id}`;
+    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+};
+
+const inputStateSelector = state => state.objectUI.currentObject.tagsInput;
+const existingIDsSelector = state => state.objectUI.currentObject.currentTagIDs.concat(
+    state.objectUI.currentObject.addedTags.filter(tag => typeof(tag) === "number"));
+const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
+const ObjectTags = () => {
+    return (
+        <InlineItemListBlock header="Tags">
+            <InlineItemListWrapper>
+                <InlineItemList itemIDSelector={currentTagsSelector} ItemComponent={CurrentTagItems} />
+                <InlineItemList itemIDSelector={addedTagsSelector} ItemComponent={AddedTagItem} />
+                <InlineInput inputStateSelector={inputStateSelector} setInputState={setTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectTagsFetch} 
+                    existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectTags} />
+            </InlineItemListWrapper>
+        </InlineItemListBlock>
+    );
+};

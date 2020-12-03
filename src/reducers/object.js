@@ -1,6 +1,7 @@
-import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, 
-    SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE, SET_SHOW_DELETE_DIALOG_OBJECT
+import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, SET_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS,
+    SET_SHOW_DELETE_DIALOG_OBJECT, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
+import { getTagIDByName } from "../store/state-util";
 
 
 function loadAddObjectPage(state, action) {
@@ -15,6 +16,15 @@ function loadAddObjectPage(state, action) {
                 object_description: "",
                 created_at: "",
                 modified_at: "",
+
+                currentTagIDs: [],
+                addedTags: [],
+                removedTagIDs: [],
+                tagsInput: {
+                    isDisplayed: false,
+                    inputText: "",
+                    matchingIDs: []
+                },
 
                 link: ""
             },
@@ -44,6 +54,15 @@ function loadEditObjectPage(state, action) {
                 object_description: "",
                 created_at: "",
                 modified_at: "",
+
+                currentTagIDs: [],
+                addedTags: [],
+                removedTagIDs: [],
+                tagsInput: {
+                    isDisplayed: false,
+                    inputText: "",
+                    matchingIDs: []
+                },
                 
                 link: ""
             },
@@ -84,6 +103,87 @@ function setCurrentObject(state, action) {
     };
 }
 
+function setTagsInput(state, action) {
+    let oldObject = state.objectUI.currentObject;
+    return {
+        ...state,
+        objectUI: {
+            ...state.objectUI,
+            currentObject: {
+                ...oldObject,
+                tagsInput: {
+                    isDisplayed: action.tagsInput.isDisplayed !== undefined ? action.tagsInput.isDisplayed : oldObject.tagsInput.isDisplayed,
+                    inputText: action.tagsInput.inputText !== undefined ? action.tagsInput.inputText : oldObject.tagsInput.inputText,
+                    matchingIDs: action.tagsInput.matchingIDs !== undefined ? action.tagsInput.matchingIDs : oldObject.tagsInput.matchingIDs
+                }
+            }
+        }
+    }
+}
+
+/*
+    Updates currentTagIDs, addedTags & removedTagIDs in currentObject state.
+    currentTagIDs are set to provided currentTagIDs or remain unchanged if action.tagUpdates.currentTagIDs is undefined.
+    
+    addedTags can be reset to an empty list (if an empty list is passed as value) or updated with a list of values. 
+    In the second case, string values are replaced with corresponding tagIDs where possible. Existing values passed via action are removed from the new list.
+
+    removedTagIDs can be reset to an empty list (if an empty list is passed as value) or updated with with a list of values.
+    Existing values passed via action are removed from the new list.
+*/
+function setCurrentObjectTags(state, action) {
+    let oldObject = state.objectUI.currentObject;
+    let newAddedTags, newRemovedTagIDs;
+
+    if (action.tagUpdates.added instanceof Array && action.tagUpdates.added.length === 0) { // handle reset case
+        newAddedTags = [];
+    } else {    // handle general update case
+        const at = (action.tagUpdates.added || []).map(tag => {     // replace tag names by ids if there is a match in local state
+            if (typeof(tag) === "number") return tag;
+            return getTagIDByName(state, tag) || tag;
+        });
+        if (at) {
+            newAddedTags = oldObject.addedTags.slice();
+            newAddedTags = newAddedTags.filter(t => !at.includes(t));
+            newAddedTags = newAddedTags.concat(at.filter(t => !oldObject.addedTags.includes(t)));
+        }
+    }
+
+    if (action.tagUpdates.removed instanceof Array && action.tagUpdates.removed.length === 0) { // handle reset case
+        newRemovedTagIDs = [];
+    } else {    // handle general update case
+        const rt = action.tagUpdates.removed;
+        if (rt) {
+            newRemovedTagIDs = oldObject.removedTagIDs.slice();
+            newRemovedTagIDs = newRemovedTagIDs.filter(t => !rt.includes(t));
+            newRemovedTagIDs = newRemovedTagIDs.concat(rt.filter(t => !oldObject.removedTagIDs.includes(t)));
+        }
+    }
+
+    return {
+        ...state,
+        objectUI : {
+            ...state.objectUI,
+            currentObject: {
+                ...oldObject,
+                currentTagIDs: action.tagUpdates.currentTagIDs ? action.tagUpdates.currentTagIDs : oldObject.currentTagIDs,
+                addedTags: newAddedTags !== undefined ? newAddedTags : oldObject.addedTags,
+                removedTagIDs: newRemovedTagIDs !== undefined ? newRemovedTagIDs : oldObject.removedTagIDs,
+            }
+        }
+    };
+}
+
+function setShowDeleteDialogObject(state, action) {
+    return {
+        ...state,
+        objectUI: {
+            ...state.objectUI,
+            showDeleteDialog: action.showDeleteDialog
+        }
+    };
+}
+
 function setObjectOnLoadFetchState(state, action) {
     return {
         ...state,
@@ -110,24 +210,16 @@ function setObjectOnSaveFetchState(state, action) {
     };
 }
 
-function setShowDeleteDialogObject(state, action) {
-    return {
-        ...state,
-        objectUI: {
-            ...state.objectUI,
-            showDeleteDialog: action.showDeleteDialog
-        }
-    }
-}
-
 
 const root = {
     LOAD_ADD_OBJECT_PAGE: loadAddObjectPage,
     LOAD_EDIT_OBJECT_PAGE: loadEditObjectPage,
     SET_CURRENT_OBJECT: setCurrentObject,
+    SET_TAGS_INPUT: setTagsInput,
+    SET_CURRENT_OBJECT_TAGS: setCurrentObjectTags,
+    SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject,
     SET_OBJECT_ON_LOAD_FETCH_STATE: setObjectOnLoadFetchState,
-    SET_OBJECT_ON_SAVE_FETCH_STATE: setObjectOnSaveFetchState,
-    SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject
+    SET_OBJECT_ON_SAVE_FETCH_STATE: setObjectOnSaveFetchState
 };
 
 export default root;

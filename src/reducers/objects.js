@@ -1,10 +1,15 @@
-import { ADD_OBJECTS, ADD_OBJECT_DATA, deleteObjectData, DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, 
+import { ADD_OBJECTS, ADD_OBJECT_DATA, SET_OBJECTS_TAGS, DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, 
     CLEAR_SELECTED_OBJECTS, SET_OBJECTS_PAGINATION_INFO, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
 
 
+const _objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description"];
 function addObjects(state, action) {
     let newObjects = {};
-    action.objects.forEach(object => newObjects[object.object_id] = object);
+    action.objects.forEach(object => {
+        const object_id = object.object_id;
+        newObjects[object_id] = {};
+        _objectAttributes.forEach(attr => newObjects[object_id][attr] = object[attr]);
+    });
     return {
         ...state,
         objects: {
@@ -36,18 +41,54 @@ function addObjectData(state, action) {
     };
 }
 
+/*
+    Updates objectsTags store.
+    
+    Receives a list of {object_id, ...} like objects and updates the tags for the object_id.
+    
+    Update option 1: {...} part contains current_tag_ids list => objectsTags[object_id] is overwritten to current_tag_ids.
+
+    Update option 2: {...} part contains tag_updates object with added_tag_ids and/or removed_tag_ids lists in it
+                     => objectsTags[object_id] is updated from those lists, while keeping the unchanged tags.
+                     Existing tags from added_tag_ids and non-existing tags from removed_tag_ids are ignored.
+*/
+function setObjectsTags(state, action) {
+    const objectsTags = action.objectsTags;
+    const updates = {};
+    objectsTags.forEach(object => {
+        const object_id = object.object_id;
+        if (object.current_tag_ids instanceof Array) updates[object_id] = object.current_tag_ids;
+        else {
+            const at = object.tag_updates.added_tag_ids || [];
+            const rt = object.tag_updates.removed_tag_ids || [];
+
+            updates[object_id] = state.objectsTags[object_id] || [];
+            updates[object_id] = updates[object_id].filter(tagID => !rt.includes(tagID));
+            updates[object_id] = updates[object_id].concat(at.filter(tagID => !updates[object_id].includes(tagID)));
+        }
+    })
+
+    return {
+        ...state,
+        objectsTags: {...state.objectsTags, ...updates}
+    };
+}
+
 function deleteObjects(state, action) {
     let objects = {...state.objects};
     let links = {...state.links};
+    let objectsTags = {...state.objectsTags};
     for (let objectID of action.object_ids) {
         delete objects[objectID];
         delete links[objectID];
+        delete objectsTags[objectID];
     }
 
     return {
         ...state,
         objects: objects,
-        links: links
+        links: links,
+        objectsTags: objectsTags
     };
 }
 
@@ -142,6 +183,7 @@ function setObjectsFetch(state, action) {
 const root = {
     ADD_OBJECTS: addObjects,
     ADD_OBJECT_DATA: addObjectData,
+    SET_OBJECTS_TAGS: setObjectsTags,
     DELETE_OBJECTS: deleteObjects,
     SELECT_OBJECTS: selectObjects,
     TOGGLE_OBJECT_SELECTION: toggleObjectSelection,

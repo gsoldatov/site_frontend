@@ -2,9 +2,14 @@ import { ADD_TAGS, DELETE_TAGS, SELECT_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS
     SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_FETCH } from "../actions/tags";
 
 
+const _tagAttributes = ["tag_id", "created_at", "modified_at", "tag_name", "tag_description"];
 function addTags(state, action) {
     let newTags = {};
-    action.tags.forEach(tag => newTags[tag.tag_id] = tag);
+    action.tags.forEach(tag => {
+        const tag_id = tag.tag_id;
+        newTags[tag_id] = {};
+        _tagAttributes.forEach(attr => newTags[tag_id][attr] = tag[attr]);
+    });
     return {
         ...state,
         tags: {

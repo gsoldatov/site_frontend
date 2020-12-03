@@ -4,22 +4,16 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor } from '@testing-library/dom'
 
-import { mockFetch, setFetchFailParams } from "./mocks/mock-fetch";
+import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 
 import { AddObject, EditObject } from "../src/components/object";
 import { addObjects } from "../src/actions/objects";
 
 
-beforeAll(() => {
-    global.fetch = jest.fn(mockFetch);
-});
-
-
-afterAll(() => {
-    setFetchFailParams();   // reset fetch params
-    jest.resetAllMocks();
-});
+beforeAll(() => { global.fetch = jest.fn(mockFetch); });
+afterAll(() => { jest.resetAllMocks(); });
+afterEach(() => { resetMocks(); });
 
 
 test("Render and click cancel button", async () => {
@@ -75,18 +69,18 @@ test("Select different object types", async () => {
     // Select markdown object type and check if only markdown inputs are rendered
     fireEvent.click(markdownButton);
     const markdownInput = getByText(container, "Not implemented");
-    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 2]).toEqual(objectNameDescriptionInput);    // second to last node is NameDescr input
+    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 3]).toEqual(objectNameDescriptionInput);    // second to last node is NameDescr input
     expect(mainContentContainer.lastChild).toEqual(markdownInput);  // last node is Markdown input mock
 
     // Select to-do object type and check if only to-do inputs are rendered
     fireEvent.click(markdownButton);
     const tdInput = getByText(container, "Not implemented");
-    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 2]).toEqual(objectNameDescriptionInput);    // second to last node is NameDescr input
+    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 3]).toEqual(objectNameDescriptionInput);    // second to last node is NameDescr input
     expect(mainContentContainer.lastChild).toEqual(tdInput);  // last node is To-Do list input mock
     
     // Select link object type and check if only link inputs are rendered
     fireEvent.click(linkButton);
-    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 2]).toEqual(objectNameDescriptionInput);    // second to last node is NameDescr input
+    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 3]).toEqual(objectNameDescriptionInput);    // second to last node is NameDescr input
     const linkInput = getByPlaceholderText(mainContentContainer, "Link");
     expect(mainContentContainer.lastChild).toEqual(linkInput.parentNode.parentNode.parentNode);   // last node is link input form
 });

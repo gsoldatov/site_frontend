@@ -33,7 +33,7 @@ export const setTagsFetch = (isFetching = false, fetchError = "") => {
     };
 };
 
-function getTagsFetch(tag_ids) {
+export function getTagsFetch(tag_ids) {
     return async (dispatch, getState) => {
         let payload = JSON.stringify({ tag_ids: tag_ids });
         let response = await fetch(`${backendURL}/tags/view`, {
@@ -54,6 +54,16 @@ function getTagsFetch(tag_ids) {
             case 500:
                 throw new Error(await response.text());
                 return;
+        }
+    };
+};
+
+// Fetches missing data for a list of provided tag IDs
+export function getNonCachedTags(tagIDs) {
+    return async (dispatch, getState) => {
+        let nonCachedTags = tagIDs.filter(tag_id => !(tag_id in getState().tags));
+        if (nonCachedTags.length !== 0) {   // Fetch non-cached tags' data
+            await dispatch(getTagsFetch(nonCachedTags));
         }
     };
 };
@@ -103,10 +113,7 @@ export function pageFetch(currentPage) {
             dispatch(setTagsPaginationInfo({ currentPage: currentPage }));
             dispatch(setTagsFetch(true, ""));
             await dispatch(getPageTagIDs());
-            let nonCachedTags = getState().tagsUI.paginationInfo.currentPageTagIDs.filter(tag_id => !(tag_id in state.tags));
-            if (nonCachedTags.length !== 0) {   // Fetch tags of the current page which were not cached before
-                await dispatch(getTagsFetch(nonCachedTags));
-            }
+            await dispatch(getNonCachedTags(getState().tagsUI.paginationInfo.currentPageTagIDs));
             dispatch(setTagsFetch(false, ""));
         }
         catch(error) {

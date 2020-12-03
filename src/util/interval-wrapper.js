@@ -12,6 +12,10 @@ class IntervalRunner {
         this.triggerRun = this.triggerRun.bind(this);
     }
 
+    abort() {
+        clearTimeout(this.timerID);
+    }
+
     async run(...params) {
         this.lastExecTime = new Date();
         this.timerID = null;
@@ -33,6 +37,8 @@ class IntervalRunner {
                 this.timerID = setTimeout(this.run, this.interval - timeSinceLastExec, ...params);
             }            
         }
+
+        return this.abort;
     }
 }
 

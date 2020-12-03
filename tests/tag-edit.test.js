@@ -4,7 +4,7 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, queryByText } from '@testing-library/dom'
 
-import { mockFetch, setFetchFailParams } from "./mocks/mock-fetch";
+import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
@@ -12,15 +12,9 @@ import { EditTag } from "../src/components/tag";
 import { addTags, deleteTags } from "../src/actions/tags";
 
 
-beforeAll(() => {
-    global.fetch = jest.fn(mockFetch);
-});
-
-
-afterAll(() => {
-    setFetchFailParams();   // reset fetch params
-    jest.resetAllMocks();
-});
+beforeAll(() => { global.fetch = jest.fn(mockFetch); });
+afterAll(() => { jest.resetAllMocks(); });
+afterEach(() => { resetMocks(); });
 
 
 test("Load a non-existing tag + check buttons", async () => {
@@ -52,7 +46,6 @@ test("Load a tag with fetch error", async () => {
 
     // Check if error message if displayed
     await waitFor(() => getByText(container, "Test view fetch error", { exact: false }));
-    setFetchFailParams();   // reset fetch params
 });
 
 
@@ -171,7 +164,6 @@ test("Delete a tag with fetch error", async () => {
     // Check if error message is displayed and tag is not deleted from state
     await waitFor(() => getByText(container, "Test delete fetch error"));
     expect(store.getState().tags[1]).toBeTruthy();
-    setFetchFailParams();   // reset fetch params
 });
 
 
@@ -257,5 +249,4 @@ test("Update a tag with fetch error", async () => {
     for (let attr of ["tag_name", "tag_description", "created_at", "modified_at"]) {
         expect(store.getState().tags[1][attr]).toEqual(tag[attr]);
     }
-    setFetchFailParams();   // reset fetch params
 });
