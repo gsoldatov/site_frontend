@@ -25,9 +25,16 @@ function deleteTags(state, action) {
         delete tags[tagID];
     }
 
+    let objectsTags = {};
+    Object.keys(state.objectsTags).forEach(objectID => {
+        let tagIDs = state.objectsTags[objectID].filter(id => !action.tag_ids.includes(id));
+        if (tagIDs.length > 0) objectsTags[objectID] = tagIDs;
+    });
+
     return {
         ...state,
-        tags: tags
+        tags: tags,
+        objectsTags: objectsTags
     };
 }
 

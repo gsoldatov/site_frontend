@@ -4,7 +4,7 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, queryByTitle, queryByText } from '@testing-library/dom'
 
-import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
+import { mockFetch, resetMocks } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 
 import createStore from "../src/store/create-store";
