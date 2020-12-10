@@ -203,10 +203,27 @@ export function getMockedPageObjectIDs(pI) {
 };
 
 
+function handleUpdateTags(body) {
+    const parsedBody = JSON.parse(body);
+    const objectIDs = parsedBody.object_ids;
+    const addedTagIDs = (parsedBody.added_tags || []).map(tagID => typeof(tagID) === "number" ? tagID : autoGenerateTag({ tag_name: tagID }));  // autogenerate new tags for strings
+
+    let responseObj = {
+        tag_updates: {
+            added_tag_ids: addedTagIDs,
+            removed_tag_ids: parsedBody.removed_tag_ids || []
+        },
+        modified_at: (new Date(2001, 0, 1, 12, 30, 0)).toISOString()
+    };
+    return { status: 200, json: () => Promise.resolve(responseObj) };
+}
+
+
 export const objectsHandlersList = new Map([
     ["/objects/add", {"POST": handleAdd}],
     ["/objects/view", {"POST": handleView}],
     ["/objects/delete", {"DELETE": handleDelete}],
     ["/objects/update", {"PUT": handleUpdate}],
-    ["/objects/get_page_object_ids", {"POST": handleGetPageObjectIDs}]
+    ["/objects/get_page_object_ids", {"POST": handleGetPageObjectIDs}],
+    ["/objects/update_tags", {"PUT": handleUpdateTags}]
 ]);

@@ -2,7 +2,7 @@ import config from "../config";
 import { isFetchingObject, checkIfCurrentObjectNameExists } from "../store/state-check-functions";
 import { getCurrentObjectData, getObjectData } from "../store/state-util";
 import { setRedirectOnRender } from "./common";
-import { addObjects, addObjectData, setObjectsTags, deselectObjects, deleteObjects, setObjectsFetch } from "./objects";
+import { addObjects, addObjectData, setObjectsTags, deselectObjects, deleteObjects } from "./objects";
 import { getNonCachedTags } from "./tags";
 
 const backendURL = config.backendURL;
@@ -11,7 +11,7 @@ const backendURL = config.backendURL;
 export const LOAD_ADD_OBJECT_PAGE = "LOAD_ADD_OBJECT_PAGE";
 export const LOAD_EDIT_OBJECT_PAGE = "LOAD_EDIT_OBJECT_PAGE";
 export const SET_CURRENT_OBJECT = "SET_CURRENT_OBJECT";
-export const SET_TAGS_INPUT = "SET_TAGS_INPUT";
+export const SET_OBJECT_TAGS_INPUT = "SET_OBJECT_TAGS_INPUT";
 export const SET_CURRENT_OBJECT_TAGS = "SET_CURRENT_OBJECT_TAGS";
 export const SET_SHOW_DELETE_DIALOG_OBJECT = "SET_SHOW_DELETE_DIALOG_OBJECT";
 export const SET_OBJECT_ON_LOAD_FETCH_STATE = "SET_OBJECT_ON_LOAD_FETCH_STATE";
@@ -20,7 +20,7 @@ export const SET_OBJECT_ON_SAVE_FETCH_STATE = "SET_OBJECT_ON_SAVE_FETCH_STATE";
 export const loadAddObjectPage      = () => ({ type: LOAD_ADD_OBJECT_PAGE });
 export const loadEditObjectPage     = () => ({ type: LOAD_EDIT_OBJECT_PAGE });
 export const setCurrentObject       = object => ({ type: SET_CURRENT_OBJECT, object: object });
-export const setTagsInput           = inputState => ({ type: SET_TAGS_INPUT, tagsInput: inputState });
+export const setObjectTagsInput     = inputState => ({ type: SET_OBJECT_TAGS_INPUT, tagsInput: inputState });
 export const setCurrentObjectTags   = tagUpdates => ({ type: SET_CURRENT_OBJECT_TAGS, tagUpdates: tagUpdates });
 export const setShowDeleteDialogObject = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECT, showDeleteDialog: showDeleteDialog });
 
@@ -295,7 +295,7 @@ export function editObjectOnDeleteFetch() {
     };      
 };
 
-export function objectTagsFetch({queryText, existingIDs}) {
+export function objectTagsDropdownFetch({queryText, existingIDs}) {
     return async (dispatch, getState) => {
         // Check params
         if (queryText.length === 0 || queryText.length > 255 || existingIDs.length > 1000) return;
@@ -322,10 +322,10 @@ export function objectTagsFetch({queryText, existingIDs}) {
                     await dispatch(getNonCachedTags(tagIDs));
 
                     // Do not update if input text changed during fetch
-                    if (inputText === getState().objectUI.currentObject.tagsInput.inputText) dispatch(setTagsInput({ matchingIDs: tagIDs }));
+                    if (inputText === getState().objectUI.currentObject.tagsInput.inputText) dispatch(setObjectTagsInput({ matchingIDs: tagIDs }));
                     break;
                 case 404:
-                    dispatch(setTagsInput({ matchingIDs: [] }));
+                    dispatch(setObjectTagsInput({ matchingIDs: [] }));
                     break;
                 case 400:
                     throw Error((await response.json())._error);

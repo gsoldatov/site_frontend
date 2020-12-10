@@ -7,18 +7,29 @@ div.inline-item-list-block {
     margin-bottom: 1em;
 }
 
-div.inline-item-list-block-header {
+div.inline-item-list-block-header, div.inline-item-list-wrapper-header {
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 0.25em;
+}
+
+div.inline-item-list-wrapper-header {
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    padding-top: 0.3em;
+}
+
+div.inline-item-list-block {
+    border: solid 1px rgba(34, 36, 38, 0.15);
+    border-radius: 4px;
 }
 
 div.inline-item-list-wrapper {
     display: flex;
     flex-wrap: wrap; 
     vertical-align: middle;
-    border: solid 1px rgba(34, 36, 38, 0.15);
-    border-radius: 4px;
+    /* border: solid 1px rgba(34, 36, 38, 0.15);
+    border-radius: 4px; */
     padding-left: 0.4em;
     padding-right: 0.4em;
 

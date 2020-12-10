@@ -13,8 +13,8 @@ import { InlineInput } from "./inline/inline-input";
 
 import { isFetchingObject, isFetchinOrShowingDialogObject } from "../store/state-check-functions";
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setTagsInput, setShowDeleteDialogObject, 
-    addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsFetch } from "../actions/object";
+import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setObjectTagsInput, setShowDeleteDialogObject, 
+    addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../actions/object";
 
 
 /*
@@ -150,7 +150,7 @@ const AddedTagItem = ({ id }) => {
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 };
 const currentTagsSelector = state => state.objectUI.currentObject.currentTagIDs;
-const CurrentTagItems = ({ id }) => {
+const CurrentTagItem = ({ id }) => {
     const dispatch = useDispatch();
     // const text = useSelector(state => state.tags[id].tag_name);
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
@@ -169,9 +169,9 @@ const ObjectTags = () => {
     return (
         <InlineItemListBlock header="Tags">
             <InlineItemListWrapper>
-                <InlineItemList itemIDSelector={currentTagsSelector} ItemComponent={CurrentTagItems} />
+                <InlineItemList itemIDSelector={currentTagsSelector} ItemComponent={CurrentTagItem} />
                 <InlineItemList itemIDSelector={addedTagsSelector} ItemComponent={AddedTagItem} />
-                <InlineInput inputStateSelector={inputStateSelector} setInputState={setTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectTagsFetch} 
+                <InlineInput inputStateSelector={inputStateSelector} setInputState={setObjectTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectTagsDropdownFetch} 
                     existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectTags} />
             </InlineItemListWrapper>
         </InlineItemListBlock>

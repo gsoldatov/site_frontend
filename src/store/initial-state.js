@@ -104,6 +104,14 @@ const initialState = {
         selectedObjectIDs: [],
         showDeleteDialog: false,
 
+        addedTags: [],
+        removedTagIDs: [],
+        tagsInput: {
+            isDisplayed: false,
+            inputText: "",
+            matchingIDs: []
+        },
+
         fetch: {
             isFetching: false,
             fetchError: ""

@@ -1,5 +1,6 @@
 import config from "../config";
 import { isFetchingObjects } from "../store/state-check-functions";
+import { getNonCachedTags } from "./tags";
 
 
 const backendURL = config.backendURL;
@@ -8,6 +9,8 @@ const backendURL = config.backendURL;
 export const ADD_OBJECTS = "ADD_OBJECTS";
 export const ADD_OBJECT_DATA = "ADD_OBJECT_DATA";
 export const SET_OBJECTS_TAGS = "SET_OBJECTS_TAGS";
+export const SET_OBJECTS_TAGS_INPUT = "SET_OBJECTS_TAGS_INPUT";
+export const SET_CURRENT_OBJECTS_TAGS = "SET_CURRENT_OBJECTS_TAGS";
 export const DELETE_OBJECTS = "DELETE_OBJECTS";
 export const SELECT_OBJECTS = "SELECT_OBJECTS";
 export const TOGGLE_OBJECT_SELECTION = "TOGGLE_OBJECT_SELECTION";
@@ -21,6 +24,8 @@ export const SET_OBJECTS_FETCH = "SET_OBJECTS_FETCH";
 export const addObjects                  = objects => ({ type: ADD_OBJECTS, objects: objects });
 export const addObjectData               = objectData => ({ type: ADD_OBJECT_DATA, objectData: objectData });
 export const setObjectsTags              = objectsTags => ({ type: SET_OBJECTS_TAGS, objectsTags: objectsTags });
+export const setObjectsTagsInput         = inputState => ({ type: SET_OBJECTS_TAGS_INPUT, tagsInput: inputState });
+export const setCurrentObjectsTags       = tagUpdates => ({ type: SET_CURRENT_OBJECTS_TAGS, tagUpdates: tagUpdates });
 export const deleteObjects               = object_ids => ({ type: DELETE_OBJECTS, object_ids: object_ids });
 export const selectObjects               = object_ids => ({ type: SELECT_OBJECTS, object_ids: object_ids });
 export const toggleObjectSelection       = object_id => ({ type: TOGGLE_OBJECT_SELECTION, object_id: object_id });
@@ -49,8 +54,12 @@ function getObjectsFetch(object_ids) {
         switch (response.status) {
             case 200:
                 let objects = (await response.json())["objects"];
-                // TODO update objects tags
                 dispatch(addObjects(objects));
+                dispatch(setObjectsTags(objects));
+
+                let allObjectsTags = new Set();
+                objects.forEach(object => object.current_tag_ids.forEach(tagID => allObjectsTags.add(tagID)));
+                await dispatch(getNonCachedTags([...allObjectsTags]));
                 return;
             case 400:
             case 404:
@@ -99,9 +108,7 @@ export function pageFetch(currentPage) {
     return async (dispatch, getState) => {
         const state = getState();
 
-        if (isFetchingObjects(state)) {
-            return;
-        }
+        if (isFetchingObjects(state)) return;
 
         try {
             dispatch(setObjectsPaginationInfo({ currentPage: currentPage }));
@@ -125,7 +132,16 @@ export function setObjectsPaginationInfoAndFetchPage(paginationInfo){
         dispatch(setObjectsPaginationInfo(paginationInfo));
         dispatch(pageFetch(paginationInfo.currentPage));
     };
-}
+};
+
+export function objectsOnLoadFetch() {
+    return async (dispatch, getState) => {
+        const currentPage = getState().objectsUI.paginationInfo.currentPage;
+        dispatch(setObjectsTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
+        dispatch(setCurrentObjectsTags({ added: [], removed: [] }));
+        dispatch(pageFetch(currentPage));
+    };
+};
 
 export function onDeleteFetch() {
     return async (dispatch, getState) => {
@@ -135,9 +151,7 @@ export function onDeleteFetch() {
         // Exit if already fetching
         let state = getState();
 
-        if (isFetchingObjects(state)) {
-            return;
-        }
+        if (isFetchingObjects(state)) return;
         
         try {
             // Update fetch status
@@ -179,6 +193,107 @@ export function onDeleteFetch() {
                 dispatch(clearSelectedObjects());    // clear object selection
             }
             dispatch(setObjectsFetch(false, error));
+        } catch (error) {
+            dispatch(setObjectsFetch(false, error.message));
+        }
+    };
+};
+
+export function objectsTagsDropdownFetch({queryText, existingIDs}) {
+    return async (dispatch, getState) => {
+        // Check params
+        if (queryText.length === 0 || queryText.length > 255 || existingIDs.length > 1000) return;
+        const inputText = getState().objectsUI.tagsInput.inputText;
+
+        try {
+            let payload = JSON.stringify({
+                query: {
+                    query_text: queryText,
+                    maximum_values: 10,
+                    existing_ids: existingIDs || []
+                }
+            });
+
+            let response = await fetch(`${backendURL}/tags/search`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload
+            });
+                        
+            switch (response.status) {
+                case 200:
+                    let tagIDs = (await response.json()).tag_ids;
+                    await dispatch(getNonCachedTags(tagIDs));
+
+                    // Do not update if input text changed during fetch
+                    if (inputText === getState().objectsUI.tagsInput.inputText) dispatch(setObjectsTagsInput({ matchingIDs: tagIDs }));
+                    break;
+                case 404:
+                    dispatch(setObjectsTagsInput({ matchingIDs: [] }));
+                    break;
+                case 400:
+                    throw Error((await response.json())._error);
+                case 500:
+                    throw Error(await response.text());
+            }
+        } catch (error) {
+            throw error;
+        }
+    };
+}
+
+export function onObjectsTagsUpdateFetch() {
+    return async (dispatch, getState) => {
+        let state = getState();
+        if (isFetchingObjects(state)) return;
+
+        try {
+            // Reset tag input & update fetch status
+            dispatch(setObjectsTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
+            dispatch(setObjectsFetch(true, ""));
+
+            let payload = JSON.stringify({
+                object_ids: state.objectsUI.selectedObjectIDs,
+                added_tags: state.objectsUI.addedTags,
+                removed_tag_ids: state.objectsUI.removedTagIDs
+            });
+
+            let response = await fetch(`${backendURL}/objects/update_tags`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: payload
+            });
+                        
+            switch (response.status) {
+                case 200:
+                    let json = (await response.json());
+
+                    // Update objects tags & query missing tags
+                    let objects = state.objectsUI.selectedObjectIDs.map(objectID => ({ object_id: objectID, tag_updates: json.tag_updates }));
+                    dispatch(setObjectsTags(objects));
+                    await dispatch(getNonCachedTags(json.tag_updates.added_tag_ids));
+
+                    // Reset added & removed tags
+                    dispatch(setCurrentObjectsTags({ added: [], removed: [] }));
+
+                    // Update modified_at attributes of the objects
+                    let modifiedAt = json.modified_at;
+                    objects = [];
+                    state.objectsUI.selectedObjectIDs.forEach(objectID => {
+                        let object = {...state.objects[objectID]};
+                        object.modified_at = modifiedAt;
+                        objects.push(object);
+                    });
+                    dispatch(addObjects(objects));
+
+                    // End fetch
+                    dispatch(setObjectsFetch(false, ""));
+                    break;
+                case 400:
+                    throw Error((await response.json())._error);
+                case 500:
+                    throw Error(await response.text());
+            }
         } catch (error) {
             dispatch(setObjectsFetch(false, error.message));
         }

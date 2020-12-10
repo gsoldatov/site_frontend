@@ -13,7 +13,8 @@
 
 .ui.header.field-item-list-header {
     margin: 0.5em;
-    text-decoration: underline;
+    font-size: 13px;
+    /* text-decoration: underline; */
 }
 
 .field-item-list, .field-item-list-collapsed {

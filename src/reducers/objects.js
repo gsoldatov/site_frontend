@@ -1,5 +1,7 @@
-import { ADD_OBJECTS, ADD_OBJECT_DATA, SET_OBJECTS_TAGS, DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, 
+import { ADD_OBJECTS, ADD_OBJECT_DATA, SET_OBJECTS_TAGS, SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS,
+    DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, 
     CLEAR_SELECTED_OBJECTS, SET_OBJECTS_PAGINATION_INFO, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
+import { getTagIDByName, resetObjectCaches, objectsGetCommonTagIDs } from "../store/state-util";
 
 
 const _objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description"];
@@ -74,6 +76,78 @@ function setObjectsTags(state, action) {
     };
 }
 
+function setObjectsTagsInput(state, action) {
+    return {
+        ...state,
+        objectsUI: {
+            ...state.objectsUI,
+            tagsInput: {
+                isDisplayed: action.tagsInput.isDisplayed !== undefined ? action.tagsInput.isDisplayed : state.objectsUI.tagsInput.isDisplayed,
+                inputText: action.tagsInput.inputText !== undefined ? action.tagsInput.inputText : state.objectsUI.tagsInput.inputText,
+                matchingIDs: action.tagsInput.matchingIDs !== undefined ? action.tagsInput.matchingIDs : state.objectsUI.tagsInput.matchingIDs
+            }
+        }
+    };
+}
+
+/*
+    Updates addedTags & removedTagIDs in objectsUI state.
+    
+    addedTags can be reset to an empty list (if an empty list is passed as value) or updated with a list of values. 
+    In the second case, string values are replaced with corresponding tagIDs where possible. Existing values passed via action are removed from the new list.
+
+    removedTagIDs can be reset to an empty list (if an empty list is passed as value) or updated with with a list of values.
+    Existing values passed via action are removed from the new list.
+*/
+function setCurrentObjectsTags(state, action) {
+    let newAddedTags, newRemovedTagIDs, addedExistingTagIDs;
+
+    if (action.tagUpdates.added instanceof Array && action.tagUpdates.added.length === 0) { // handle reset case
+        newAddedTags = [];
+    } else {    // handle general update case
+        const at = (action.tagUpdates.added || []).map(tag => {     // replace tag names by ids if there is a match in local state
+            if (typeof(tag) === "number") return tag;
+            return getTagIDByName(state, tag) || tag;
+        });
+        if (at) {
+            newAddedTags = state.objectsUI.addedTags.slice();
+            newAddedTags = newAddedTags.filter(t => !at.includes(t));
+            newAddedTags = newAddedTags.concat(at.filter(t => !state.objectsUI.addedTags.includes(t)));
+
+            addedExistingTagIDs = newAddedTags.filter(t => objectsGetCommonTagIDs(state).includes(t));  // move added tag IDs which are already present in the common tags into removed
+            newAddedTags = newAddedTags.filter(t => !addedExistingTagIDs.includes(t));
+        }
+    }
+
+    if (action.tagUpdates.removed instanceof Array && action.tagUpdates.removed.length === 0) { // handle reset case
+        newRemovedTagIDs = [];
+    } else {    // handle general update case
+        let rt = action.tagUpdates.removed;
+        if (rt || addedExistingTagIDs) {
+            rt = rt || [];
+            addedExistingTagIDs = addedExistingTagIDs || [];
+            newRemovedTagIDs = state.objectsUI.removedTagIDs.slice();
+
+            // stop removing tags passed for the second time or added common tags already being removed
+            let removedExistingTagIDs = addedExistingTagIDs.filter(t => !newRemovedTagIDs.includes(t));
+            newRemovedTagIDs = newRemovedTagIDs.filter(t => !rt.includes(t) && !addedExistingTagIDs.includes(t));
+            
+            // remove tags passed for the first time or added common tags, which were not being removed
+            newRemovedTagIDs = newRemovedTagIDs.concat(rt.filter(t => !state.objectsUI.removedTagIDs.includes(t)));
+            newRemovedTagIDs = newRemovedTagIDs.concat(removedExistingTagIDs.filter(t => !newRemovedTagIDs.includes(t)));
+        }
+    }
+
+    return {
+        ...state,
+        objectsUI: {
+            ...state.objectsUI,
+            addedTags: newAddedTags !== undefined ? newAddedTags : state.objectsUI.addedTags,
+            removedTagIDs: newRemovedTagIDs !== undefined ? newRemovedTagIDs : state.objectsUI.removedTagIDs
+        }
+    };
+}
+
 function deleteObjects(state, action) {
     let objects = {...state.objects};
     let links = {...state.links};
@@ -91,7 +165,6 @@ function deleteObjects(state, action) {
         objectsTags: objectsTags
     };
 }
-
 
 function selectObjects(state, action) {
     return {
@@ -167,6 +240,7 @@ function setShowDeleteDialogObjects(state, action) {
 }
 
 function setObjectsFetch(state, action) {
+    if (!action.isFetching) resetObjectCaches();
     return {
         ...state,
         objectsUI: {
@@ -184,6 +258,8 @@ const root = {
     ADD_OBJECTS: addObjects,
     ADD_OBJECT_DATA: addObjectData,
     SET_OBJECTS_TAGS: setObjectsTags,
+    SET_OBJECTS_TAGS_INPUT: setObjectsTagsInput,
+    SET_CURRENT_OBJECTS_TAGS: setCurrentObjectsTags,
     DELETE_OBJECTS: deleteObjects,
     SELECT_OBJECTS: selectObjects,
     TOGGLE_OBJECT_SELECTION: toggleObjectSelection,

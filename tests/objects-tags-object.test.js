@@ -174,7 +174,7 @@ test("Edit object => load object tags from backend & test tag removal", async ()
 });
 
 
-test("Edit object => load object tags from backend & test tag removal", async () => {
+test("Edit object => load object tags from backend, add tags and update the object", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
         route: "/objects/1"
@@ -211,7 +211,30 @@ test("Edit object => load object tags from backend & test tag removal", async ()
 });
 
 
-test("Edit object => load object tags from backend & test tag removal", async () => {
+test("Edit object => check adding current tags with tag input", async () => {
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        route: "/objects/1"
+    });
+
+    // Wait for the page to load
+    await waitFor(() => getByText(container, "Object Information"));
+
+    // Add a current tag with input => check if it's toggled for removal
+    let inputToggle = getByTitle(container, "Click to add tags");
+    fireEvent.click(inputToggle);
+    let input = getByPlaceholderText(container, "Enter tag name...");
+    fireEvent.change(input, { target: { value: "tag #1" } });
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    expect(store.getState().objectUI.currentObject.removedTagIDs.includes(1)).toBeTruthy();
+
+    // Add the same tag again => check if it's no longer removed
+    fireEvent.change(input, { target: { value: "tag #1" } });
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    expect(store.getState().objectUI.currentObject.removedTagIDs.includes(1)).toBeFalsy();
+});
+
+
+test("Edit object => delete object", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
         route: "/objects/1"

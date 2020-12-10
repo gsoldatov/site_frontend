@@ -84,3 +84,8 @@ export function isFetchingObjects(state) {
 export function isFetchinOrShowingDialogObjects(state) {
     return isFetchingObjects(state) || state.objectsUI.showDeleteDialog;
 }
+
+/* Returns true if there are currently added or removed tags in objectsUI state */
+export function isObjectsTagsEditActive(state) {
+    return state.objectsUI.addedTags.length > 0 || state.objectsUI.removedTagIDs.length > 0;
+}

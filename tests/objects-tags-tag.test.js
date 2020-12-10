@@ -2,15 +2,14 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, queryByText } from '@testing-library/dom'
+import { getByText, waitFor } from '@testing-library/dom'
 
-import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
+import { mockFetch, resetMocks } from "./mocks/mock-fetch";
 import { renderWithWrappers, compareArrays } from "./test-utils";
 import createStore from "../src/store/create-store";
 
 import { EditTag } from "../src/components/tag";
 import Tags from "../src/components/tags";
-import { addTags, deleteTags } from "../src/actions/tags";
 import { addObjects, setObjectsTags } from "../src/actions/objects";
 
 

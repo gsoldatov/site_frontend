@@ -7,28 +7,34 @@ import Error from "./common/error";
 import FieldMenu from "./field/field-menu";
 import { FieldItemList, FieldItem } from "./field/field-item-list";
 import FieldPagination from "./field/field-pagination";
+import { InlineItemListBlock, InlineItemListWrapper } from "./inline/inline-item-list-containers";
+import { InlineItemList } from "./inline/inline-item-list";
+import { InlineItem } from "./inline/inline-item";
+import { InlineInput } from "./inline/inline-input";
 
 import { REDIRECT_ON_RENDER_PATH_CREATORS, setRedirectOnRender } from "../actions/common";
-import { selectObjects, clearSelectedObjects, pageFetch, setObjectsPaginationInfo, setObjectsPaginationInfoAndFetchPage,
-    setShowDeleteDialogObjects, toggleObjectSelection, onDeleteFetch } from "../actions/objects";
-import { isFetchingObjects, isFetchinOrShowingDialogObjects } from "../store/state-check-functions";
+import { objectsOnLoadFetch, selectObjects, clearSelectedObjects, pageFetch, setObjectsPaginationInfo, setObjectsPaginationInfoAndFetchPage,
+    setShowDeleteDialogObjects, toggleObjectSelection, onDeleteFetch,
+    setCurrentObjectsTags, setObjectsTagsInput, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch  } from "../actions/objects";
+import { isFetchingObjects, isFetchinOrShowingDialogObjects, isObjectsTagsEditActive } from "../store/state-check-functions";
+import { objectsGetCommonTagIDs, objectsGetPartiallyAppliedTagIDs, objectsGetAddedTags } from "../store/state-util";
 
 
 /* /objects page component */
 export default () => {
     const dispatch = useDispatch();
-    const currentPage = useSelector(state => state.objectsUI.paginationInfo.currentPage);
     const fetch = useSelector(state => state.objectsUI.fetch);
 
     // On load action
     useEffect(() => {
-        dispatch(pageFetch(currentPage));
+        dispatch(objectsOnLoadFetch());
     }, []);
 
     const loader = fetch.isFetching && <Loader active inline="centered">Loading objects...</Loader>;
     const error = !fetch.isFetching && fetch.fetchError && <Error text={fetch.fetchError}/>;
     const pageBody = loader || error || (
         <>
+        <ObjectsTags />
         <FieldItemList header="Selected Objects" itemIDsSelector={selectedObjectIDsSelector} ItemComponent={ObjectsFieldItem} isExpandable />
         <FieldItemList itemIDsSelector={pageObjectIDsSelector} ItemComponent={ObjectsFieldItem} />
         <FieldPagination paginationInfoSelector={paginationInfoSelector} setCurrentPage={pageFetch} />
@@ -51,19 +57,21 @@ const sideMenuItems = [
         type: "item",
         text: "Add Object",
         getIsActive: state => !isFetchinOrShowingDialogObjects(state),
+        getIsVisible: state => !isObjectsTagsEditActive(state),
         onClick: setRedirectOnRender("/objects/add")
     },
     {
         type: "item",
         text: "Edit Object",
         getIsActive: state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchinOrShowingDialogObjects(state),
+        getIsVisible: state => !isObjectsTagsEditActive(state),
         onClick: setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.objectsEdit)
     },
     {
         type: "item",
         text: "Delete",
         getIsActive: state => !isFetchinOrShowingDialogObjects(state) && state.objectsUI.selectedObjectIDs.length > 0,
-        getIsVisible: state => !state.objectsUI.showDeleteDialog,
+        getIsVisible: state => !state.objectsUI.showDeleteDialog && !isObjectsTagsEditActive(state),
         onClick: setShowDeleteDialogObjects(true)
     },
     {
@@ -80,6 +88,21 @@ const sideMenuItems = [
                 onClick: setShowDeleteDialogObjects(false)
             }
         ]
+    },
+
+    {
+        type: "item",
+        text: "Update Tags",
+        getIsActive: state => !isFetchingObjects(state),
+        getIsVisible: state => isObjectsTagsEditActive(state),
+        onClick: onObjectsTagsUpdateFetch()
+    },
+    {
+        type: "item",
+        text: "Cancel Tag Update",
+        getIsActive: state => !isFetchingObjects(state),
+        getIsVisible: state => isObjectsTagsEditActive(state),
+        onClick: setCurrentObjectsTags({ added: [], removed: [] })
     }
 ];
 
@@ -178,4 +201,61 @@ const ObjectsFieldItem = ({ id }) => {
     const link = useRef(`/objects/${id}`).current;
     return <FieldItem id={id} textSelector={textSelector} link={link} 
     isCheckedSelector={isCheckedSelector} onChange={toggleObjectSelection} />;
+};
+
+
+// Objects tags
+const CommonCurrentTagItem = ({ id }) => {
+    const dispatch = useDispatch();
+    const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
+    const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
+    const itemClassName = isRemoved ? "inline-item-red" : "inline-item";
+    const onClick = () => dispatch(setCurrentObjectsTags({ removed: [id] }));
+    const itemLink = `/tags/${id}`;
+    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+};
+const AddedTagItem = ({ id }) => {
+    const dispatch = useDispatch();
+    const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
+    const itemClassName = typeof(id) === "number" ? "inline-item-green" : "inline-item-blue";
+    const onClick = () => dispatch(setCurrentObjectsTags({ added: [id] }));
+    const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
+    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+};
+const PartiallyAppliedTagItem = ({ id }) => {
+    const dispatch = useDispatch();
+    const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
+    const isAdded = useSelector(state => state.objectsUI.addedTags.includes(id));
+    const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
+    const itemClassName = isAdded ? "inline-item-green" : isRemoved ? "inline-item-red" : "inline-item";
+    const onClick = isAdded ? () => dispatch(setCurrentObjectsTags({ added: [id], removed: [id] })) :   // current => added => removed => current
+                    isRemoved ? () => dispatch(setCurrentObjectsTags({ removed: [id] })) : 
+                    () => dispatch(setCurrentObjectsTags({ added: [id] }));
+    const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
+    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+};
+
+const inputStateSelector = state => state.objectsUI.tagsInput;
+const existingIDsSelector = state => objectsGetCommonTagIDs(state).concat(objectsGetPartiallyAppliedTagIDs(state)).concat(
+    state.objectsUI.addedTags.filter(tag => typeof(tag) === "number")); // common + partially applied + added existing tags
+const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
+
+const commonTagsWrapperIsDisplayedSelector = state => state.objectsUI.selectedObjectIDs.length > 0;
+const partiallyAppliedTagsWrapperIsDisplayedSelector = state => objectsGetPartiallyAppliedTagIDs(state).length > 0;
+
+const ObjectsTags = () => {
+    return (
+        <InlineItemListBlock>
+            <InlineItemListWrapper header="Common tags" isDisplayedSelector={commonTagsWrapperIsDisplayedSelector}>
+                <InlineItemList itemIDSelector={objectsGetCommonTagIDs} ItemComponent={CommonCurrentTagItem} />
+                <InlineItemList itemIDSelector={objectsGetAddedTags} ItemComponent={AddedTagItem} />
+                <InlineInput inputStateSelector={inputStateSelector} setInputState={setObjectsTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectsTagsDropdownFetch} 
+                    existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectsTags} />
+            </InlineItemListWrapper>
+
+            <InlineItemListWrapper header="Partially applied tags" isDisplayedSelector={partiallyAppliedTagsWrapperIsDisplayedSelector}>
+                <InlineItemList itemIDSelector={objectsGetPartiallyAppliedTagIDs} ItemComponent={PartiallyAppliedTagItem} />
+            </InlineItemListWrapper>
+        </InlineItemListBlock>
+    )
 };

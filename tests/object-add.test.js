@@ -69,18 +69,18 @@ test("Select different object types", async () => {
     // Select markdown object type and check if only markdown inputs are rendered
     fireEvent.click(markdownButton);
     const markdownInput = getByText(container, "Not implemented");
-    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 3]).toEqual(objectNameDescriptionInput);    // second to last node is NameDescr input
+    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input (before object data div, tag block, tag block header)
     expect(mainContentContainer.lastChild).toEqual(markdownInput);  // last node is Markdown input mock
 
     // Select to-do object type and check if only to-do inputs are rendered
     fireEvent.click(markdownButton);
     const tdInput = getByText(container, "Not implemented");
-    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 3]).toEqual(objectNameDescriptionInput);    // second to last node is NameDescr input
+    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
     expect(mainContentContainer.lastChild).toEqual(tdInput);  // last node is To-Do list input mock
     
     // Select link object type and check if only link inputs are rendered
     fireEvent.click(linkButton);
-    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 3]).toEqual(objectNameDescriptionInput);    // second to last node is NameDescr input
+    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
     const linkInput = getByPlaceholderText(mainContentContainer, "Link");
     expect(mainContentContainer.lastChild).toEqual(linkInput.parentNode.parentNode.parentNode);   // last node is link input form
 });
