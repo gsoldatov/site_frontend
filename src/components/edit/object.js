@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import { LinkInput } from "./link";
+import { MarkdownContainer } from "./markdown";
 
 import { setCurrentObject } from "../../actions/object";
 
@@ -54,6 +55,8 @@ export const ObjectViewEditSwitch = () => {
     switch (type) {
         case "link":
             return <LinkInput />;
+        case "markdown":
+            return <MarkdownContainer />;
         default:
             return <div>Not implemented</div>;
     }

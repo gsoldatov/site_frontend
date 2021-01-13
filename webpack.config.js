@@ -64,6 +64,15 @@ module.exports = {
             {   // required for imports is Semantic UI
                 test: /\.(ttf|woff|woff2)$/,
                 loader: "file-loader?name=static/fonts/[name].[ext]"
+            },
+            {
+                test: /\.worker\.js$/,
+                // use: [{ loader: "worker-loader", options: { publicPath: "/workers/" } }]
+                exclude: /(node_modules)/,
+                loader: 'worker-loader',
+                options: {
+                publicPath: '/scripts/workers/',
+                }
             }
         ]
     },

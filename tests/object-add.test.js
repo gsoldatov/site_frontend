@@ -2,7 +2,7 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor } from '@testing-library/dom'
+import { getByText, getByPlaceholderText, waitFor, getByTitle } from '@testing-library/dom'
 
 import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
@@ -57,7 +57,6 @@ test("Select different object types", async () => {
     let linkButton, markdownButton, tdButton;
     objectTypeSelector.querySelectorAll(".object-type").forEach(node => {
         const innerHTML = node.innerHTML;
-        // ["Link", "Markdown", "To-Do List"].forEach(type => {})
         if (innerHTML.includes("Link")) linkButton = node;
         else if (innerHTML.includes("Markdown")) markdownButton = node;
         else if (innerHTML.includes("To-Do List")) tdButton = node;
@@ -68,12 +67,13 @@ test("Select different object types", async () => {
 
     // Select markdown object type and check if only markdown inputs are rendered
     fireEvent.click(markdownButton);
-    const markdownInput = getByText(container, "Not implemented");
+    const markdownContainer = document.querySelector(".markdown-container");
+    expect(markdownContainer).toBeTruthy();
     expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input (before object data div, tag block, tag block header)
-    expect(mainContentContainer.lastChild).toEqual(markdownInput);  // last node is Markdown input mock
+    expect(mainContentContainer.lastChild).toEqual(markdownContainer);  // last node is Markdown input mock
 
     // Select to-do object type and check if only to-do inputs are rendered
-    fireEvent.click(markdownButton);
+    fireEvent.click(tdButton);
     const tdInput = getByText(container, "Not implemented");
     expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
     expect(mainContentContainer.lastChild).toEqual(tdInput);  // last node is To-Do list input mock
@@ -158,15 +158,103 @@ test("Save a new link", async () => {
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
     fireEvent.change(objectDescriptionInput, { target: { value: "new object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("new object description"));
-    fireEvent.change(linkInput, { target: { value: "https://google.com" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://google.com"));
+    const linkValue = "https://google.com"
+    fireEvent.change(linkInput, { target: { value: linkValue } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
     fireEvent.click(saveButton);
     const object_id = 1000; // mock object returned has this id
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
     expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
     expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
-    expect(getByPlaceholderText(container, "Link").value).toEqual("https://google.com");
+    expect(getByPlaceholderText(container, "Link").value).toEqual(linkValue);
     let object = store.getState().objects[object_id];
     getByText(container, object["created_at"]);
     getByText(container, object["modified_at"]);
+
+    expect(store.getState().links[object_id].link).toEqual(linkValue);
+});
+
+
+test("Change markdown display modes & render markdown", async () => {
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        route: "/objects/add"
+    });
+
+    // Change object type
+    let markdownButton;
+    container.querySelector(".object-type-menu").querySelectorAll(".object-type").forEach(node => {
+        if (node.innerHTML.includes("Markdown")) markdownButton = node;
+    });
+    fireEvent.click(markdownButton);
+    const markdownContainer = document.querySelector(".markdown-container");
+    expect(markdownContainer).toBeTruthy();
+
+    // Click on edit mode
+    let editModeButton = getByTitle(markdownContainer, "Display edit window")
+    fireEvent.click(editModeButton);
+    let inputForm = getByPlaceholderText(markdownContainer, "Enter text here...");
+    expect(inputForm.textLength).toEqual(0);
+
+    // Insert text
+    fireEvent.change(inputForm, { target: { value: "**Test text**" } });
+    expect(store.getState().objectUI.currentObject.markdown.raw_text).toEqual("**Test text**");
+
+    // Click on view mode & wait for rendered markdown to appear
+    let viewModeButton = getByTitle(markdownContainer, "Display parsed markdown");
+    fireEvent.click(viewModeButton);
+    await waitFor(() => expect(store.getState().objectUI.currentObject.markdown.parsed.indexOf("Test text")).toBeGreaterThan(-1));  // wait until there is rendered text to display
+    let viewContainer = markdownContainer.querySelector(".markdown-parsed-container");
+    getByText(viewContainer, "Test text");
+
+    // Click on both mode
+    let bothModeButton = getByTitle(markdownContainer, "Display edit window and parsed markdown");
+    fireEvent.click(bothModeButton);
+    inputForm = getByPlaceholderText(markdownContainer, "Enter text here...");
+    viewContainer = markdownContainer.querySelector(".markdown-parsed-container");
+    
+    // Update markdown & wait for it to appear
+    fireEvent.change(inputForm, { target: { value: "**Test text 2**" } });
+    await waitFor(() => getByText(viewContainer, "Test text 2"));
+});
+
+
+test("Save a new markdown object", async () => {
+    let { container, history, store } = renderWithWrappers(
+        <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
+        { route: "/objects/add" }
+    );
+
+    // Change object type & display mode
+    let markdownButton;
+    container.querySelector(".object-type-menu").querySelectorAll(".object-type").forEach(node => {
+        if (node.innerHTML.includes("Markdown")) markdownButton = node;
+    });
+    fireEvent.click(markdownButton);
+    let editModeButton = getByTitle(container, "Display edit window")
+    fireEvent.click(editModeButton);
+
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+    let inputForm = getByPlaceholderText(container, "Enter text here...");
+    let saveButton = getByText(container, "Save");
+
+    // Check if object is redirected after adding a correct object
+    fireEvent.change(objectNameInput, { target: { value: "new object" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
+    fireEvent.change(objectDescriptionInput, { target: { value: "new object description" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("new object description"));
+    const rawText = "**Test text**";
+    fireEvent.change(inputForm, { target: { value: rawText } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.markdown.raw_text).toEqual(rawText));
+    fireEvent.click(saveButton);
+    const object_id = 1000; // mock object returned has this id
+    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+    expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
+    expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
+    expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText);
+    let object = store.getState().objects[object_id];
+    getByText(container, object["created_at"]);
+    getByText(container, object["modified_at"]);
+
+    expect(store.getState().markdown[object_id].raw_text).toEqual(rawText);
 });

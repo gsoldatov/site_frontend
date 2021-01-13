@@ -1,4 +1,4 @@
-const LOGGING_ORDER = ["tagUI", "tagsUI", "objectUI", "objectsUI", "tags", "objects", "links"]
+const LOGGING_ORDER = ["tagUI", "tagsUI", "objectUI", "objectsUI", "tags", "objects", "links", "markdown"];
 
 
 export default (state, topLevelHeader) => {

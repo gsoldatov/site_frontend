@@ -1,0 +1,52 @@
+/*******************************************************
+    Markdown + markdown view & edit container styles.   
+*******************************************************/
+
+div.item.markdown-display-switch-menu-item.acitve {
+    background-color: rgba(0, 0, 0, 0.05);
+    border: solid 1px rgba(0, 0, 0, 0.25);
+}
+
+div.markdown-parsed-container {
+    word-wrap: break-word;
+    border: solid 2px rgba(34, 36, 38, 0.15);
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0.785714em;    /* same as the padding for SUI textareas inner text */
+    padding-bottom: 0.785714em;
+}
+
+h3.markdown-header {
+    padding-bottom: 0.25em;
+    border-bottom: solid 1px rgb(150, 150, 150);
+}
+
+blockquote.markdown-blockquote {
+    padding: 0.5em;
+    border: solid 1px rgb(150, 150, 150);
+    background-color: rgba(150, 150, 150, 0.15);
+}
+
+hr.markdown-hr {
+    border-top: solid 1px rgb(150, 150, 150);
+    border-bottom: none;
+}
+
+table.markdown-table, th.markdown-th, td.markdown-td {
+    border: solid 1px rgb(150, 150, 150);
+    border-collapse: collapse;
+}
+
+th.markdown-th, td.markdown-td {
+    padding: 0.25em;
+}
+
+/* code highlighting */
+pre code.hljs {
+    display: block;
+}
+  
+code.hljs {
+    display: inline;
+    padding: 0.1em;
+}

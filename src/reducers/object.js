@@ -1,5 +1,5 @@
 import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, SET_OBJECT_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS,
-    SET_SHOW_DELETE_DIALOG_OBJECT, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
+    SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
 import { getTagIDByName } from "../store/state-util";
 
@@ -26,7 +26,8 @@ function loadAddObjectPage(state, action) {
                     matchingIDs: []
                 },
 
-                link: ""
+                link: "",
+                markdown: { raw_text: "", parsed: "" }
             },
 
             objectOnLoadFetch: {
@@ -64,7 +65,8 @@ function loadEditObjectPage(state, action) {
                     matchingIDs: []
                 },
                 
-                link: ""
+                link: "",
+                markdown: { raw_text: "", parsed: "" }
             },
 
             objectOnLoadFetch: {
@@ -97,7 +99,8 @@ function setCurrentObject(state, action) {
                 created_at: action.object.created_at !== undefined ? action.object.created_at : oldObject.created_at,
                 modified_at: action.object.modified_at !== undefined ? action.object.modified_at : oldObject.modified_at,
 
-                link: action.object.link !== undefined ? action.object.link : oldObject.link
+                link: action.object.link !== undefined ? action.object.link : oldObject.link,
+                markdown: action.object.markdown !== undefined ? {...oldObject.markdown, ...action.object.markdown} : oldObject.markdown
             }
         }
     };
@@ -195,6 +198,16 @@ function setShowDeleteDialogObject(state, action) {
     };
 }
 
+function setMarkdownDisplayMode(state, action) {
+    return {
+        ...state,
+        objectUI: {
+            ...state.objectUI,
+            markdownDisplayMode: action.markdownDisplayMode
+        }
+    };
+}
+
 function setObjectOnLoadFetchState(state, action) {
     return {
         ...state,
@@ -229,6 +242,7 @@ const root = {
     SET_OBJECT_TAGS_INPUT: setObjectTagsInput,
     SET_CURRENT_OBJECT_TAGS: setCurrentObjectTags,
     SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject,
+    SET_MARKDOWN_DISPLAY_MODE: setMarkdownDisplayMode,
     SET_OBJECT_ON_LOAD_FETCH_STATE: setObjectOnLoadFetchState,
     SET_OBJECT_ON_SAVE_FETCH_STATE: setObjectOnSaveFetchState
 };

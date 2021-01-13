@@ -14,4 +14,5 @@ div.ui.compact.menu.object-type-menu {
 div.ui.menu > .item.active.object-type, div.ui.menu > .item.disabled.active.object-type { /* Selected object type style */
     font-weight: bold;
     color: black !important;
+    border: solid 1px rgba(0, 0, 0, 0.25);
 }

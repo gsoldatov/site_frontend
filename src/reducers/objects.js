@@ -22,13 +22,16 @@ function addObjects(state, action) {
 };
 
 function addObjectData(state, action) {
-    let newLinks = {};
+    let newLinks = {}, newMarkdown = {};
+
 
     for (let objectData of action.objectData){
         switch (objectData["object_type"]) {
             case "link":
                 newLinks[objectData["object_id"]] = {...objectData["object_data"]};
                 break;
+            case "markdown":
+                newMarkdown[objectData["object_id"]] = {...objectData["object_data"]};
             default:
                 break;
         }
@@ -39,6 +42,10 @@ function addObjectData(state, action) {
         links: {
             ...state.links,
             ...newLinks
+        },
+        markdown: {
+            ...state.markdown,
+            ...newMarkdown
         }
     };
 }
@@ -151,18 +158,21 @@ function setCurrentObjectsTags(state, action) {
 function deleteObjects(state, action) {
     let objects = {...state.objects};
     let links = {...state.links};
+    let markdown = {...state.markdown};
     let objectsTags = {...state.objectsTags};
     for (let objectID of action.object_ids) {
         delete objects[objectID];
         delete links[objectID];
+        delete markdown[objectID];
         delete objectsTags[objectID];
     }
 
     return {
         ...state,
-        objects: objects,
-        links: links,
-        objectsTags: objectsTags
+        objects,
+        links,
+        markdown,
+        objectsTags
     };
 }
 

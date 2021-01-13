@@ -1,4 +1,5 @@
 import { autoGenerateTag } from "./mock-fetch-handlers-tags";
+import { getObjectTypeFromID } from "../test-utils";
 
 let _cachedObjects = {};      // object & object data caches, which are used to pass object data from add/update to view handler
 let _cachedObjectData = {};
@@ -9,7 +10,7 @@ function handleAdd(body) {
     const object = JSON.parse(body).object;
 
     // Check object type
-    if (!["link"].includes(object["object_type"]))
+    if (!["link", "markdown"].includes(object["object_type"]))
         throw new Exception("Received unexpected object_type in handleAdd");
 
     // Handle existing object_name case
@@ -47,10 +48,10 @@ function handleView(body) {
     const bodyJSON = JSON.parse(body);
 
     if ("object_ids" in bodyJSON)
-        object_ids = bodyJSON["object_ids"].filter(id => (id >= 0 && id <= 1000) || _cachedObjects.hasOwnProperty(id));
+        object_ids = bodyJSON["object_ids"].filter(id => (id >= 0 && id <= 2000) || _cachedObjects.hasOwnProperty(id));
     
     if ("object_data_ids" in bodyJSON)
-        object_data_ids = bodyJSON["object_data_ids"].filter(id => (id >= 0 && id <= 1000) || _cachedObjectData.hasOwnProperty(id));
+        object_data_ids = bodyJSON["object_data_ids"].filter(id => (id >= 0 && id <= 2000) || _cachedObjectData.hasOwnProperty(id));
     
     // Return 404 response if both object_ids and object_data_ids do not "exist"
     if (object_ids.length === 0 && object_data_ids.length === 0)
@@ -68,7 +69,7 @@ function handleView(body) {
 
         return {
             object_id: id,
-            object_type: id <= 1000 ? "link" : "unknown",
+            object_type: getObjectTypeFromID(id),
             object_name: `object #${id}`,
             object_description: `object #${id} description`,
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(),
@@ -86,7 +87,9 @@ function handleView(body) {
         }
 
         // links
-        if ((id) <= 1000) return {object_id: id, object_type: "link", object_data: {"link": `https://website${id}.com`}};
+        if (id >= 0 && id <= 1000) return {object_id: id, object_type: "link", object_data: {link: `https://website${id}.com`}};
+        // markdown
+        else if (id >= 1001 && id <= 2000) return {object_id: id, object_type: "markdown", object_data: {raw_text: `# Markdown Object \\#${id}\n1. item 1;\n2. item 2;`}};
         // default
         else return {object_id: id, object_type: "unknown", object_data: {}};
     });
@@ -124,7 +127,7 @@ function handleUpdate(body) {
     // Set and send response
     const responseObj = { object: {
         ...object,
-        object_type: object.object_id <= 1000 ? "link" : "unknown",
+        object_type: getObjectTypeFromID(object.object_id),
         created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(),
         modified_at: (new Date()).toUTCString(),
         tag_updates: tagUpdates

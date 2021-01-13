@@ -10,20 +10,27 @@ export function getCurrentObjectData(state) {
     switch (currentObject.object_type) {
         case "link":
             return { "link": currentObject.link };
+        case "markdown":
+            return { "raw_text": currentObject.markdown.raw_text };
         default:
             return null;
     }
 }
 
-/* Returns object data for the provided object_id or null */
-export function getObjectData(state, object_id) {
-    for (let dataStore of ["links"]) {
-        if (object_id in state[dataStore]) {
-            return state[dataStore][object_id];
-        }
+/* Returns a new object with object data for the provided object_id or undefined */
+export function getObjectDataFromStore(state, object_id) {
+    if (!state.objects[object_id]) return undefined;
+    const objectType = state.objects[object_id].object_type;
+    switch (objectType) {
+        case "link":
+            if (!state.links[object_id]) return undefined;
+            return { ...state.links[object_id] };
+        case "markdown":
+            if (!state.markdown[object_id]) return undefined;
+            return state.markdown[object_id] ? { markdown: { raw_text: state.markdown[object_id].raw_text, parsed: "" }} : undefined;
+        default:
+            return undefined;
     }
-
-    return null;
 };
 
 

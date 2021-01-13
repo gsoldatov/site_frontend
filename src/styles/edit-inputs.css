@@ -5,6 +5,7 @@
 textarea.edit-page-textarea:not([rows]):not([cols]) {   /* sets default textarea size to the value it takes when it's empty and hides the scrollbar; */
     height: auto;                                       /* two "not" pseudoclasses are required to override Semantic UI styles for textarea          */
     overflow-y: hidden;
+    max-height: none;
 }
 
 form.ui.form > div.field:last-child:not([override]) {

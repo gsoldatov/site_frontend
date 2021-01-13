@@ -53,6 +53,7 @@ const initialState = {
     // objects storages
     objects: {},    // general arributes
     links: {},
+    markdown: {},
 
     // /objects/:id page UI controllers
     objectUI: {
@@ -73,8 +74,11 @@ const initialState = {
                 matchingIDs: []
             },
 
-            link: ""
+            link: "",
+            markdown: { raw_text: "", parsed: "" }
         },
+
+        markdownDisplayMode: "both",
 
         objectOnLoadFetch: {
             isFetching: false,

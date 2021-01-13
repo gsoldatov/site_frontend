@@ -1,6 +1,6 @@
 import config from "../config";
 import { isFetchingObject, checkIfCurrentObjectNameExists } from "../store/state-check-functions";
-import { getCurrentObjectData, getObjectData } from "../store/state-util";
+import { getCurrentObjectData, getObjectDataFromStore } from "../store/state-util";
 import { setRedirectOnRender } from "./common";
 import { addObjects, addObjectData, setObjectsTags, deselectObjects, deleteObjects } from "./objects";
 import { getNonCachedTags } from "./tags";
@@ -14,15 +14,17 @@ export const SET_CURRENT_OBJECT = "SET_CURRENT_OBJECT";
 export const SET_OBJECT_TAGS_INPUT = "SET_OBJECT_TAGS_INPUT";
 export const SET_CURRENT_OBJECT_TAGS = "SET_CURRENT_OBJECT_TAGS";
 export const SET_SHOW_DELETE_DIALOG_OBJECT = "SET_SHOW_DELETE_DIALOG_OBJECT";
+export const SET_MARKDOWN_DISPLAY_MODE = "SET_MARKDOWN_DISPLAY_MODE";
 export const SET_OBJECT_ON_LOAD_FETCH_STATE = "SET_OBJECT_ON_LOAD_FETCH_STATE";
 export const SET_OBJECT_ON_SAVE_FETCH_STATE = "SET_OBJECT_ON_SAVE_FETCH_STATE";
 
-export const loadAddObjectPage      = () => ({ type: LOAD_ADD_OBJECT_PAGE });
-export const loadEditObjectPage     = () => ({ type: LOAD_EDIT_OBJECT_PAGE });
-export const setCurrentObject       = object => ({ type: SET_CURRENT_OBJECT, object: object });
-export const setObjectTagsInput     = inputState => ({ type: SET_OBJECT_TAGS_INPUT, tagsInput: inputState });
-export const setCurrentObjectTags   = tagUpdates => ({ type: SET_CURRENT_OBJECT_TAGS, tagUpdates: tagUpdates });
+export const loadAddObjectPage         = () => ({ type: LOAD_ADD_OBJECT_PAGE });
+export const loadEditObjectPage        = () => ({ type: LOAD_EDIT_OBJECT_PAGE });
+export const setCurrentObject          = object => ({ type: SET_CURRENT_OBJECT, object: object });
+export const setObjectTagsInput        = inputState => ({ type: SET_OBJECT_TAGS_INPUT, tagsInput: inputState });
+export const setCurrentObjectTags      = tagUpdates => ({ type: SET_CURRENT_OBJECT_TAGS, tagUpdates: tagUpdates });
 export const setShowDeleteDialogObject = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECT, showDeleteDialog: showDeleteDialog });
+export const setMarkdownDisplayMode    = markdownDisplayMode => ({ type: SET_MARKDOWN_DISPLAY_MODE, markdownDisplayMode: markdownDisplayMode });
 
 export const setObjectOnLoadFetchState = (isFetching = false, fetchError = "") => {
     return {
@@ -121,11 +123,11 @@ export function editObjectOnLoadFetch(object_id) {
             payload["object_ids"] = [parseInt(object_id)];;
         }
 
-        let objectData = getObjectData(state, object_id);
-        if (objectData !== null) {
-            dispatch(setCurrentObject({...objectData}));
+        let objectData = getObjectDataFromStore(state, object_id);
+        if (objectData !== undefined) {
+            dispatch(setCurrentObject(objectData));
         } else {
-            payload["object_data_ids"] = [parseInt(object_id)];;
+            payload["object_data_ids"] = [parseInt(object_id)];
         }
 
         // End fetch if both attributes and data are in state
@@ -163,7 +165,7 @@ export function editObjectOnLoadFetch(object_id) {
 
                     if (data["object_data"].length > 0) {
                         dispatch(addObjectData(data["object_data"]));
-                        dispatch(setCurrentObject({...data["object_data"][0]["object_data"] }));
+                        dispatch(setCurrentObject(getObjectDataFromStore(getState(), object_id)));
                     }
 
                     dispatch(setObjectOnLoadFetchState(false, ""));
