@@ -277,6 +277,27 @@ test("Save an existing link object", async () => {
 });
 
 
+test("Save an empty link object", async () => {
+    // Route component is required for matching (getting :id part of the URL in the EditObject component)
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        route: "/objects/1"
+    });
+
+    // Wait for object information to be displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+    let saveButton = getByText(container, "Save");
+    let linkInput = getByPlaceholderText(container, "Link");
+    let oldObjectData = {...store.getState().links[1]};
+
+    // Check if an empty link is not saved
+    fireEvent.change(linkInput, { target: { value: "" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(""));
+    fireEvent.click(saveButton);
+    await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
+    expect(store.getState().links[1].link).toEqual(oldObjectData.link);
+});
+
+
 test("Update a link object", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
@@ -448,6 +469,28 @@ test("Delete a markdown object", async () => {
     expect(store.getState().objects[1001]).toBeUndefined();
     expect(store.getState().markdown[1001]).toBeUndefined();
 });
+
+
+test("Save an empty markdown object", async () => {
+    // Route component is required for matching (getting :id part of the URL in the EditObject component)
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        route: "/objects/1001"
+    });
+
+    // Wait for object information to be displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+    let saveButton = getByText(container, "Save");
+    let markdownInput = getByPlaceholderText(container, "Enter text here...");
+    let oldObjectData = {...store.getState().markdown[1001]};
+
+    // Check if an empty markdown is not saved
+    fireEvent.change(markdownInput, { target: { value: "" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.markdown.raw_text).toBe(""));
+    fireEvent.click(saveButton);
+    await waitFor(() => getByText(container, "Markdown text is required.", { exact: false }));
+    expect(store.getState().markdown[1001].raw_text).toEqual(oldObjectData.raw_text);
+});
+
 
 test("Update a markdown object", async () => {
     // Route component is required for matching (getting :id part of the URL in the EditObject component)

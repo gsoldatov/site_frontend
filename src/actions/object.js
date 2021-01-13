@@ -1,5 +1,5 @@
 import config from "../config";
-import { isFetchingObject, checkIfCurrentObjectNameExists } from "../store/state-check-functions";
+import { isFetchingObject, validateCurrentObject } from "../store/state-check-functions";
 import { getCurrentObjectData, getObjectDataFromStore } from "../store/state-util";
 import { setRedirectOnRender } from "./common";
 import { addObjects, addObjectData, setObjectsTags, deselectObjects, deleteObjects } from "./objects";
@@ -47,13 +47,13 @@ export function addObjectOnSaveFetch() {
         let state = getState();
 
         // Exit if already fetching
-        if (isFetchingObject(state)) {
-            return;
-        }
+        if (isFetchingObject(state)) return;
 
-        // Check if object_name already exists in local storage
-        if (checkIfCurrentObjectNameExists(state)) {
-            dispatch(setObjectOnSaveFetchState(false, "Object name already exists."));
+        // Validate current object
+        try {
+            validateCurrentObject(state);
+        } catch (e) {
+            dispatch(setObjectOnSaveFetchState(false, e.message));
             return;
         }
 
@@ -189,13 +189,13 @@ export function editObjectOnSaveFetch() {
         let state = getState();
 
         // Exit if already fetching
-        if (isFetchingObject(state)) {
-            return;
-        }
+        if (isFetchingObject(state)) return;
 
-        // Check if object_name already exists in local storage
-        if (checkIfCurrentObjectNameExists(state)) {
-            dispatch(setObjectOnSaveFetchState(false, "Object name already exists."));
+        // Validate current object
+        try {
+            validateCurrentObject(state);
+        } catch (e) {
+            dispatch(setObjectOnSaveFetchState(false, e.message));
             return;
         }
         
@@ -258,9 +258,7 @@ export function editObjectOnDeleteFetch() {
         // Exit if already fetching
         let state = getState();
 
-        if (isFetchingObject(state)) {
-            return;
-        }
+        if (isFetchingObject(state)) return;
         
         // Update fetch status
         dispatch(setObjectOnSaveFetchState(true, ""));

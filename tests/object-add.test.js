@@ -115,11 +115,53 @@ test("Try saving an existing (on backend) object name", async () => {
 
     // Check if existing object_name (on backend) is not added
     let objectNameInput = getByPlaceholderText(container, "Object name");
+    let linkInput = getByPlaceholderText(container, "Link");
     let saveButton = getByText(container, "Save");
     fireEvent.change(objectNameInput, { target: { value: "existing object_name" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("existing object_name"));  // wait for object_name to be updated in state
+    const linkValue = "https://google.com"
+    fireEvent.change(linkInput, { target: { value: linkValue } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "already exists", { exact: false }));
+});
+
+
+test("Try saving objects with incorrect data", async () => {
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        route: "/objects/add"
+    });
+
+    // Get object name input & save button
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let saveButton = getByText(container, "Save");
+
+    // Get link, markdown and to-do selecting elements
+    const objectTypeSelector = container.querySelector(".object-type-menu");
+    let linkButton, markdownButton, tdButton;
+    objectTypeSelector.querySelectorAll(".object-type").forEach(node => {
+        const innerHTML = node.innerHTML;
+        if (innerHTML.includes("Link")) linkButton = node;
+        else if (innerHTML.includes("Markdown")) markdownButton = node;
+        else if (innerHTML.includes("To-Do List")) tdButton = node;
+    });
+
+    // Set a valid object name
+    fireEvent.change(objectNameInput, { target: { value: "New object" } });
+
+    // Save an empty link
+    fireEvent.click(linkButton);
+    fireEvent.click(saveButton);
+    await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
+    expect(store.getState().objects[1]).toBeUndefined();
+    expect(store.getState().links[1]).toBeUndefined();
+
+    // Save an empty markdown object
+    fireEvent.click(markdownButton);
+    fireEvent.click(saveButton);
+    await waitFor(() => getByText(container, "Markdown text is required.", { exact: false }));
+    expect(store.getState().objects[1]).toBeUndefined();
+    expect(store.getState().markdown[1]).toBeUndefined();
 });
 
 
@@ -130,9 +172,13 @@ test("Handle fetch error", async () => {
 
     // Check if an error message is displayed and object is not added to the state
     let objectNameInput = getByPlaceholderText(container, "Object name");
+    let linkInput = getByPlaceholderText(container, "Link");
     let saveButton = getByText(container, "Save");
     fireEvent.change(objectNameInput, { target: { value: "error" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("error"));  // wait for object_name to be updated in state
+    const linkValue = "https://google.com"
+    fireEvent.change(linkInput, { target: { value: linkValue } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
     setFetchFailParams(true, "Test add fetch error");
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "Test add fetch error"));

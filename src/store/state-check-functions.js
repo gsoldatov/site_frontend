@@ -71,6 +71,27 @@ export function checkIfCurrentObjectNameExists(state) {
     return false;
 };
 
+/* Returns true is current object's data is valid or throws an Error if not */
+export function validateCurrentObject(state) {
+    const obj = state.objectUI.currentObject;
+    
+    if (obj.object_name.length === 0) throw Error("Object name is required.");
+    if (checkIfCurrentObjectNameExists(state)) throw Error("Object name already exists.");
+
+    switch (obj.object_type) {
+        case "link":
+            if(obj.link.length === 0) throw Error("Link value is required.");
+            break;
+        case "markdown":
+            if(obj.markdown.raw_text.length === 0) throw Error("Markdown text is required.");
+            break;
+        default:
+            break;
+    }
+
+    return true;
+};
+
 
 /* *********************************************************** */
 /*                        OBJECTS PAGE                         */
