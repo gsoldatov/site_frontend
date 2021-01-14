@@ -6,9 +6,9 @@
   "scripts": {
     "start": "set NODE_ENV=development&& webpack-dev-server --open",
     "build": "webpack",
-    "test______import_errors_and_not_parsing_JSX": "node_modules/.bin/jest --config tests/jest.config.js",
     "test": "node_modules/.bin/jest",
-    "preversion": "npm test"
+    "preversion": "npm test --runInBand",
+    "__preversion_comment": "--runInBand flag is used to run all tests sequentially and avoid possible collisions due to shared object usage"
   },
   "author": "",
   "license": "ISC",

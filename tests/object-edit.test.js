@@ -1,10 +1,31 @@
+/* 
+// Old imports and setup/teardown functions.
+// Tests sometimes fail because of using the shared state of mock fetch when they're run concurrently.
+
+// import React from "react";
+// import { Route } from "react-router-dom";
+
+// import { fireEvent } from "@testing-library/react";
+// import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle } from '@testing-library/dom'
+
+// import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
+// import { renderWithWrappers } from "./test-utils";
+// import createStore from "../src/store/create-store";
+
+// import { EditObject } from "../src/components/object";
+// import { addObjects, addObjectData, setObjectsTags, deleteObjects } from "../src/actions/objects";
+
+
+// beforeAll(() => { global.fetch = jest.fn(mockFetch); });
+// afterAll(() => { jest.resetAllMocks(); });
+// afterEach(() => { resetMocks(); });
+*/
 import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle } from '@testing-library/dom'
 
-import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
@@ -12,9 +33,16 @@ import { EditObject } from "../src/components/object";
 import { addObjects, addObjectData, setObjectsTags, deleteObjects } from "../src/actions/objects";
 
 
-beforeAll(() => { global.fetch = jest.fn(mockFetch); });
-afterAll(() => { jest.resetAllMocks(); });
-afterEach(() => { resetMocks(); });
+beforeEach(() => {
+    // isolate fetch mock to avoid tests state collision because of cached data in fetch
+    jest.isolateModules(() => {
+        const { mockFetch, setFetchFailParams } = require("./mocks/mock-fetch");
+        // reset fetch mocks
+        jest.resetAllMocks();
+        global.fetch = jest.fn(mockFetch);
+        global.setFetchFailParams = jest.fn(setFetchFailParams);
+    });
+});
 
 
 test("Load a non-existing object + check buttons", async () => {
@@ -480,8 +508,12 @@ test("Save an empty markdown object", async () => {
     // Wait for object information to be displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
     let saveButton = getByText(container, "Save");
-    let markdownInput = getByPlaceholderText(container, "Enter text here...");
     let oldObjectData = {...store.getState().markdown[1001]};
+    const markdownContainer = document.querySelector(".markdown-container");
+    expect(markdownContainer).toBeTruthy();
+    let bothModeButton = getByTitle(markdownContainer, "Display edit window and parsed markdown");
+    fireEvent.click(bothModeButton);
+    let markdownInput = getByPlaceholderText(container, "Enter text here...");
 
     // Check if an empty markdown is not saved
     fireEvent.change(markdownInput, { target: { value: "" } });
