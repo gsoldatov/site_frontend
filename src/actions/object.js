@@ -18,7 +18,7 @@ export const SET_MARKDOWN_DISPLAY_MODE = "SET_MARKDOWN_DISPLAY_MODE";
 export const SET_OBJECT_ON_LOAD_FETCH_STATE = "SET_OBJECT_ON_LOAD_FETCH_STATE";
 export const SET_OBJECT_ON_SAVE_FETCH_STATE = "SET_OBJECT_ON_SAVE_FETCH_STATE";
 
-export const loadAddObjectPage         = () => ({ type: LOAD_ADD_OBJECT_PAGE });
+export const loadAddObjectPage         = (forceReset = false) => ({ type: LOAD_ADD_OBJECT_PAGE, forceReset: forceReset });
 export const loadEditObjectPage        = () => ({ type: LOAD_EDIT_OBJECT_PAGE });
 export const setCurrentObject          = object => ({ type: SET_CURRENT_OBJECT, object: object });
 export const setObjectTagsInput        = inputState => ({ type: SET_OBJECT_TAGS_INPUT, tagsInput: inputState });

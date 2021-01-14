@@ -5,13 +5,16 @@ import { getTagIDByName } from "../store/state-util";
 
 
 function loadAddObjectPage(state, action) {
+    if (state.objectUI.saveAddObjectState && !action.forceReset) return state;
+    const newObjectType = action.forceReset ? state.objectUI.currentObject.object_type : "link";
+
     return {
         ...state,
         objectUI: {
             ...state.objectUI,
             currentObject: {
                 object_id: 0,
-                object_type: "link",
+                object_type: newObjectType,
                 object_name: "",
                 object_description: "",
                 created_at: "",
@@ -29,6 +32,8 @@ function loadAddObjectPage(state, action) {
                 link: "",
                 markdown: { raw_text: "", parsed: "" }
             },
+
+            saveAddObjectState: true,
 
             objectOnLoadFetch: {
                 isFetching: false,
@@ -68,6 +73,8 @@ function loadEditObjectPage(state, action) {
                 link: "",
                 markdown: { raw_text: "", parsed: "" }
             },
+
+            saveAddObjectState: false,
 
             objectOnLoadFetch: {
                 isFetching: false,

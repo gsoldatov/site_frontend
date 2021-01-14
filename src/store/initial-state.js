@@ -78,6 +78,8 @@ const initialState = {
             markdown: { raw_text: "", parsed: "" }
         },
 
+        saveAddObjectState: false,
+
         markdownDisplayMode: "both",
 
         objectOnLoadFetch: {

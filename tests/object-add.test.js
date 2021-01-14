@@ -27,6 +27,7 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle } from '@testing-l
 
 import { renderWithWrappers } from "./test-utils";
 
+import createStore from "../src/store/create-store";
 import { AddObject, EditObject } from "../src/components/object";
 import { addObjects } from "../src/actions/objects";
 
@@ -245,6 +246,9 @@ test("Save a new link", async () => {
     getByText(container, object["modified_at"]);
 
     expect(store.getState().links[object_id].link).toEqual(linkValue);
+    
+    // Check if saveAddObjectState property was set to false, which will cause current object reset on next /objects/add page render
+    expect(store.getState().objectUI.saveAddObjectState).toBeFalsy();
 });
 
 
@@ -331,3 +335,59 @@ test("Save a new markdown object", async () => {
 
     expect(store.getState().markdown[object_id].raw_text).toEqual(rawText);
 });
+
+
+test("Add object state saving & reload", async () => {
+    let store = createStore({ enableDebugLogging: false });
+
+    const render = () => renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        route: "/objects/add",
+        store
+    });
+
+    // Render /objects/add and update object name + object type
+    var { container } = render();
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    fireEvent.change(objectNameInput, { target: { value: "new object" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
+    let markdownObjectTypeButton = getByText(container.querySelector(".object-type-menu"), "Markdown");
+    fireEvent.click(markdownObjectTypeButton);
+
+    // Re-render the page with the same store and check if object name and type were not reset
+    var { container, debug } = render();
+    // debug();
+    // console.log(JSON.stringify(store.getState()))
+    objectNameInput = getByPlaceholderText(container, "Object name");
+    expect(objectNameInput.value).toEqual("new object");
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");
+
+    // Click reset button and check if object name was reset
+    const resetButton = getByText(container, "Reset");
+    fireEvent.click(resetButton);
+    expect(objectNameInput.value).toEqual("");
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");    // object type is not reset
+});
+
+
+test("Add object state reset when opening edit page", async () => {
+    let store = createStore({ enableDebugLogging: false });
+
+    const render = route => renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+        route,
+        store
+    });
+
+    // Render /objects/add and update object name + object type
+    var { container } = render("/objects/add");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    fireEvent.change(objectNameInput, { target: { value: "new object" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
+
+    // Render /objects/1, then render /objects/add and check if the state was reset
+    var { container } = render("/objects/1");
+    await waitFor(() => getByText(container, "Object Information"));
+    var { container } = render("/objects/add");
+    objectNameInput = getByPlaceholderText(container, "Object name");
+    expect(objectNameInput.value).toEqual("");
+});
+

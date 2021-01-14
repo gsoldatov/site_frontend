@@ -41,6 +41,12 @@ const addObjectSideMenuItems = [
     },
     {
         type: "item",
+        text: "Reset",
+        getIsActive: state => !isFetchingObject(state),
+        onClick: loadAddObjectPage(true)
+    },
+    {
+        type: "item",
         text: "Cancel",
         getIsActive: state => !isFetchingObject(state),
         onClick: setRedirectOnRender("/objects")
@@ -50,6 +56,12 @@ const addObjectSideMenuItems = [
 
 // Edit object page side menu items
 const editObjectSideMenuItems = [
+    {
+        type: "item",
+        text: "Add Object",
+        getIsActive: state => !isFetchingObject(state),
+        onClick: setRedirectOnRender("/objects/add")
+    },
     {
         type: "item",
         text: "Save",

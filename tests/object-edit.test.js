@@ -29,7 +29,7 @@ import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle } fro
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
-import { EditObject } from "../src/components/object";
+import { AddObject, EditObject } from "../src/components/object";
 import { addObjects, addObjectData, setObjectsTags, deleteObjects } from "../src/actions/objects";
 
 
@@ -168,6 +168,21 @@ test("Load a link object from backend", async () => {
 
     // Check if link is displayed (shortened verison of previous test)
     expect(getByPlaceholderText(container, "Link").value).toEqual("https://website1.com");
+});
+
+
+test("Check 'Add Object' button", async () => {
+    // Route component is required for matching (getting :id part of the URL in the EditObject component)
+    let { container, history } = renderWithWrappers(
+        <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
+        { route: "/objects/1" }
+    );
+
+    // Check if object information is displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+    let addObjectButton = getByText(container, "Add Object");
+    fireEvent.click(addObjectButton);
+    expect(history.entries[history.length - 1].pathname).toBe("/objects/add");
 });
 
 
