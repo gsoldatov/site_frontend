@@ -25,7 +25,7 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from '@testing-library/dom'
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from '@testing-library/dom'
 
 import { getMockedPageObjectIDs } from "./mocks/mock-fetch-handlers-objects";
 import { renderWithWrappers } from "./test-utils";
@@ -457,6 +457,72 @@ test("Field menu, object filter", async () => {
 });
 
 
+test("Field menu, object type filter", async () => {
+    const selectObjectType = async type => {
+        // Open dropdown menu
+        const dropdownIcon = dropdown.querySelector("i.dropdown");
+        expect(dropdownIcon).toBeTruthy();
+        fireEvent.click(dropdownIcon);
+        
+        // Click on the corresponding menu item to select object type
+        const menuItems = dropdown.querySelector(".visible.menu.transition");
+        expect(menuItems).toBeTruthy();
+        const typeItem = getByText(menuItems, type).parentNode;
+        fireEvent.click(typeItem);
+
+        // Close dropdown menu
+        await waitForFetch(store);
+        fireEvent.click(dropdownIcon);
+    };
+
+    const deselectObjectType = async type => {
+        // Deselect object type
+        const deselectIcon = getByText(dropdown, type).querySelector("i.delete.icon");
+        expect(deselectIcon).toBeTruthy();
+        fireEvent.click(deselectIcon);
+        await waitForFetch(store);
+    };
+    // Route component is required for matching (getting :id part of the URL in the Object component)
+    let { store, container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
+        route: "/objects"
+    });
+
+    const dropdown = getByText(container, "Filter by object type").parentNode;
+
+    // Check if object type filter is disabled during fetches
+    await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching && dropdown.className.indexOf("disabled") > -1).toBeTruthy());
+
+    // Wait for the objects to be loaded
+    await waitFor(() => getByText(container, "object #1"));
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.length).toEqual(0);
+
+    // Check if correct objects are displayed when links only are selected
+    await selectObjectType("Links");
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeTruthy();
+    checkObjectsDisplay(store, container);
+
+    // Check if correct objects are displayed when markdown only is selected
+    await deselectObjectType("Links");
+    await selectObjectType("Markdown");
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeFalsy();
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeTruthy();
+    checkObjectsDisplay(store, container);
+
+    // Check if correct objects are displayed when all object types are selected
+    await selectObjectType("Links");
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeTruthy();
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeTruthy();
+    checkObjectsDisplay(store, container);
+
+    // Check if correct objects are displayed when all object types are deselected
+    await deselectObjectType("Links");
+    await deselectObjectType("Markdown");
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeFalsy();
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeFalsy();
+    checkObjectsDisplay(store, container);
+});
+
+
 async function waitForFetch(store) {
     // wait to fetch to start and end
     await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching).toBeTruthy());
@@ -472,16 +538,16 @@ function getPageObjectIDsFromMock(store) {
         items_per_page: pI.itemsPerPage,
         order_by: pI.sortField,
         sort_order: pI.sortOrder,
-        filter_text: pI.filterText
+        filter_text: pI.filterText,
+        object_types: pI.objectTypes
     });
 }
 
 
-function checkObjectsDisplay(store, container, objectsPerPage = 10) {
+function checkObjectsDisplay(store, container) {
     // Check if objects are correctly displayed on the page (proper object IDs and object order)
     let objectIDs = getPageObjectIDsFromMock(store);
     let displayedObjects = queryAllByText(container, "object #", { exact: false });
-    expect(displayedObjects.length).toEqual(objectsPerPage);
     expect(objectIDs.length).toEqual(displayedObjects.length);
     for (let i = 0; i < objectIDs.length; i++) {
         expect(displayedObjects[i].textContent.replace(/\D/g, "")).toEqual(objectIDs[i].toString());

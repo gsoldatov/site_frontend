@@ -184,6 +184,18 @@ const fieldMenuItems = [
         onChange: params => setObjectsPaginationInfo(params),    // action for updating input input text (which is kept in state)
         onChangeDelayed: params => setObjectsPaginationInfoAndFetchPage(params),     // action for performing a fetch with a delay from the last onChange event
         getOnChangeParams: text => ({ filterText: text })
+    },
+    {
+        type: "dropdown",
+        placeholder: "Filter by object type",
+        disabledSelector: state => isFetchingObjects(state),
+        defaultValueSelector: state => state.objectsUI.paginationInfo.objectTypes,
+        options: [
+            { key: 1, text: "Links", value: "link" },
+            { key: 2, text: "Markdown", value: "markdown" },
+            // { key: 3, text: "To-Do Lists", value: "todo" }
+        ],
+        getOnChangeAction: (e, data) => setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })
     }
 ];
 

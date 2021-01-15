@@ -171,38 +171,52 @@ export function getMockedPageObjectIDs(pI) {
         return a;
     }
     
-    // Single page
-    if (pI.items_per_page === 100) {
-        return getList(1, 100);
-    }
+    // All object types are displayed
+    if (pI.object_types.length == 1) {
+        // Link object type
+        if (pI.object_types.includes("link")) {
+            return getList(6, 46, 2);
+        }
 
-    // Sort by modified_at asc
-    if (pI.order_by === "modified_at" && pI.sort_order === "asc") {
-        return getList(41, 50);
+        // Markdown object type
+        if (pI.object_types.includes("markdown")) {
+            return getList(1006, 1046, 2);
+        }
     }
+    else if (pI.object_types.length == 0 || pI.object_types.length == 2) {
+        // Single page
+        if (pI.items_per_page === 100) {
+            return getList(1, 100);
+        }
 
-    // Sort by modified_at desc
-    if (pI.order_by === "modified_at" && pI.sort_order === "desc") {
-        return getList(50, 41, -1);
-    }
-    // {"page":1,"items_per_page":10,"order_by":"object_name","sort_order":"desc","filter_text":""}
-    // Sort by object_name desc
-    if (pI.order_by === "object_name" && pI.sort_order === "desc") {
-        return getList(99, 9, -10);
-    }
+        // Sort by modified_at asc
+        if (pI.order_by === "modified_at" && pI.sort_order === "asc") {
+            return getList(41, 50);
+        }
 
-    // Filtered text without match
-    if (pI.filter_text === "no match") {
-        return [];
-    }
+        // Sort by modified_at desc
+        if (pI.order_by === "modified_at" && pI.sort_order === "desc") {
+            return getList(50, 41, -1);
+        }
+        // {"page":1,"items_per_page":10,"order_by":"object_name","sort_order":"desc","filter_text":""}
+        // Sort by object_name desc
+        if (pI.order_by === "object_name" && pI.sort_order === "desc") {
+            return getList(99, 9, -10);
+        }
 
-    // Filtered text
-    if (pI.filter_text !== "" && pI.filter_text !== "no match") {
-        return getList(2, 92, 10);
-    }
+        // Filtered text without match
+        if (pI.filter_text === "no match") {
+            return [];
+        }
 
-    // Multiple pages
-    return getList(pI.items_per_page * (pI.page - 1) + 1, pI.items_per_page * pI.page);
+        // Filtered text
+        if (pI.filter_text !== "" && pI.filter_text !== "no match") {
+            return getList(2, 92, 10);
+        }
+
+        // Multiple pages
+        return getList(pI.items_per_page * (pI.page - 1) + 1, pI.items_per_page * pI.page);
+    }
 };
 
 

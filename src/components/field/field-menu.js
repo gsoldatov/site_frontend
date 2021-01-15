@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Input, Menu } from "semantic-ui-react";
+import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
 import intervalWrapper from "../../util/interval-wrapper";
 
@@ -27,6 +27,8 @@ const FieldMenuElement = props => {
             return <FieldMenuFilter {...props} />;
         case "itemGroup":
             return <FieldMenuItemGroup {...props} />;
+        case "dropdown":
+            return <FieldMenuDropdown {...props} />;
         default:
             throw Error(`Received incorrect 'type' property for <FieldMenuElement> component: ${props.type}`);
     }
@@ -65,6 +67,22 @@ const FieldMenuFilter = ({ placeholder, disabledSelector, getValueSelector, onCh
 
     return <Input icon="search" disabled={disabled} className="field-menu-filter" placeholder={_placeholder} value={value} onChange={handleChange} />;
 };
+
+
+// Field menu dropdown
+const FieldMenuDropdown = ({ placeholder, disabledSelector, defaultValueSelector, options, getOnChangeAction }) => {
+    const dispatch = useDispatch();
+    const isDisabled = useSelector(disabledSelector);
+    const defaultValue = useSelector(defaultValueSelector);
+    
+    return <Dropdown multiple selection
+        placeholder={placeholder}
+        disabled={isDisabled}
+        defaultValue={defaultValue}
+        options={options}
+        onChange={(e, data) => dispatch(getOnChangeAction(e, data))} 
+    />;
+}
 
 
 // Field menu group
