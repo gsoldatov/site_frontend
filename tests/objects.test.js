@@ -394,7 +394,7 @@ test("Field menu, select + deselect", async () => {
 test("Field menu, sort buttons", async () => {
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
     const objectsPerPage = 10;
-    store.dispatch(setObjectsPaginationInfo({itemsPerPage: objectsPerPage}))
+    store.dispatch(setObjectsPaginationInfo({itemsPerPage: objectsPerPage}));
     
     // Route component is required for matching (getting :id part of the URL in the Object component)
     let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
@@ -523,6 +523,105 @@ test("Field menu, object type filter", async () => {
 });
 
 
+test("Field menu, tags filter", async () => {
+    const searchTag = async text => {    
+        let oldMatchingIDs = store.getState().objectsUI.tagsFilterInput.matchingIDs;
+        fireEvent.change(tagsFilterInput, { target: { value: text } });
+        await waitFor(() => expect(oldMatchingIDs).not.toBe(store.getState().objectsUI.tagsFilterInput.matchingIDs));
+    };
+
+    const checkIfTagIsAddedToFilter = async id => {
+        await waitFor(() => expect(store.getState().objectsUI.paginationInfo.tagsFilter.includes(id)).toBeTruthy());     // tag is added to tagsFilter
+        expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();      // dropdown list is not displayed
+        expect(tagsFilterInput.value).toEqual("");                                              // search text is reset
+        getByText(getByText(container, "Tags filter").parentNode, `tag #${id}`);                // tags filter block is displayed and contains the added tag
+        // if (store.getState().objectsUI.paginationInfo.tagsFilter.length < 3)
+        //     checkObjectsDisplay(store, container);                                                  // correct objects are displayed
+        // else
+        //     getByText(container, "No objects found.");      // no objects are found if 3 or more tags are in the filter
+        checkObjectsDisplay(store, container);                                                  // correct objects are displayed
+        if (store.getState().objectsUI.paginationInfo.tagsFilter.length > 2) getByText(container, "No objects found.");      // no objects are found if 3 or more tags are in the filter
+    };
+
+    // Route component is required for matching (getting :id part of the URL in the Object component)
+    let { store, container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
+        route: "/objects"
+    });
+
+    // Dropdown is disabled during fetch 
+    const tagsFilterContainer = getByText(container, "Filter objects by tags").parentNode;
+    await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching && tagsFilterContainer.className.indexOf("disabled") > -1).toBeTruthy());
+
+    // Wait for the objects to be loaded
+    await waitFor(() => getByText(container, "object #1"));
+
+    // Clear button is disabled when no tags are selected
+    const clearTagsFilterButton = getByTitle(container, "Clear tags filter");
+    expect(clearTagsFilterButton.className.indexOf("disabled")).toBeGreaterThan(-1);
+
+    // Filter tags list is not displayed when no tags are selected
+    container.querySelectorAll(".inline-item-list-wrapper-header").forEach(header => expect(header.textContent === "Tags filter").toBeFalsy());
+
+    // Try filtering with a non-existing tag
+    const tagsFilterInput = tagsFilterContainer.querySelector("input.search");
+    expect(tagsFilterInput).toBeTruthy();
+    await searchTag("not found");
+    fireEvent.keyDown(tagsFilterInput, { key: "Enter", code: "Enter" });
+    expect(store.getState().objectsUI.paginationInfo.tagsFilter.length).toEqual(0);     // no filter was added
+    expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();  // dropdown list is not displayed
+
+    // Add and item via Enter key press (tag #3)
+    await searchTag("tag #");
+    let dropdownList = tagsFilterContainer.querySelector(".visible.menu.transition");
+    expect(dropdownList).toBeTruthy();
+    fireEvent.keyDown(tagsFilterInput, { key: "ArrowDown", code: "ArrowDown" });
+    fireEvent.keyDown(tagsFilterInput, { key: "ArrowDown", code: "ArrowDown" });
+    fireEvent.keyDown(tagsFilterInput, { key: "Enter", code: "Enter" });
+    await checkIfTagIsAddedToFilter(3);
+
+    // Add and item via click (tag #4)
+    await searchTag("tag #");
+    dropdownList = tagsFilterContainer.querySelector(".visible.menu.transition");
+    expect(dropdownList).toBeTruthy();
+    fireEvent.click(getByText(dropdownList, "tag #4"));
+    await checkIfTagIsAddedToFilter(4);
+
+    // Add and item via click (tag #5) and check if no objects are found
+    await searchTag("tag #");
+    dropdownList = tagsFilterContainer.querySelector(".visible.menu.transition");
+    expect(dropdownList).toBeTruthy();
+    fireEvent.click(getByText(dropdownList, "tag #5"));
+    await checkIfTagIsAddedToFilter(5);
+
+    // Remove a tag from filter by clicking on it
+    fireEvent.click(getByText(getByText(container, "Tags filter").parentNode, `tag #5`));
+    await waitForFetch(store);
+    let tagsFilterListContainer = getByText(container, "Tags filter").parentNode;
+    getByText(tagsFilterListContainer, "tag #3");
+    getByText(tagsFilterListContainer, "tag #4");
+    expect(queryByText(tagsFilterListContainer, "tag #5")).toBeFalsy();
+    checkObjectsDisplay(store, container);
+
+    // Click on clear tag filter button
+    fireEvent.click(clearTagsFilterButton);
+    await waitForFetch(store);
+    checkObjectsDisplay(store, container);
+    expect(queryByText(container, "Tags filter")).toBeFalsy();
+
+    // Search text is reset on blur
+    await searchTag("tag #");
+    let eventHandlers;                                      // workaround to call onBlur event of the tags filter input container, which should reset tagsFilterInput state; 
+    Object.keys(tagsFilterContainer).forEach(key => {       // fireEvent.blur(clearTagsFilterButton) does not trigger the event
+        if (key.indexOf("reactEventHandlers") > -1) eventHandlers = tagsFilterContainer[key];
+    });
+    eventHandlers.onBlur();
+
+    expect(tagsFilterInput.value).toEqual("");                                          // search text is reset
+    expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();  // dropdown list is not displayed
+    expect(store.getState().objectsUI.tagsFilterInput.inputText).toEqual("");           // input text is reset in the state
+    expect(store.getState().objectsUI.tagsFilterInput.matchingIDs).toEqual([]);         // matching IDs are reset in the state
+});
+
 async function waitForFetch(store) {
     // wait to fetch to start and end
     await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching).toBeTruthy());
@@ -539,7 +638,8 @@ function getPageObjectIDsFromMock(store) {
         order_by: pI.sortField,
         sort_order: pI.sortOrder,
         filter_text: pI.filterText,
-        object_types: pI.objectTypes
+        object_types: pI.objectTypes,
+        tags_filter: pI.tagsFilter
     });
 }
 

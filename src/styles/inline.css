@@ -67,13 +67,13 @@ i.inline-item-link-icon {
     padding-right: 0.4em;
 }
 
-span.inline-item, span.inline-item-red, span.inline-item-green, span.inline-item-blue {
+span.inline-item, span.inline-item-red, span.inline-item-green, span.inline-item-blue, span.inline-item-orange {
     margin-top: 0.3em;
     margin-bottom: 0.3em;
 }
 
 /* Item colors & other */
-span.inline-item, span.inline-item-red, span.inline-item-green, span.inline-item-blue {
+span.inline-item, span.inline-item-red, span.inline-item-green, span.inline-item-blue, span.inline-item-orange {
     display: flex;      /* Sets inline item text height to 100% of the container's */
     align-items: center;
 
@@ -88,9 +88,9 @@ span.inline-item, span.inline-item-red, span.inline-item-green, span.inline-item
 }
 
 span.inline-item-red {
-    color: rgb(255, 0, 0);
-    background-color: rgba(255, 0, 0, 0.05);
-    border-color: rgba(255, 0, 0, 0.5);
+    color: rgba(255, 0, 0, 1);
+    background-color: rgba(255, 255, 255, 1);
+    border-color: rgba(255, 0, 0, 1);
 
     text-decoration: line-through;
 }
@@ -105,4 +105,10 @@ span.inline-item-blue {
     color: rgb(0, 0, 192);
     background-color: rgba(0, 0, 192, 0.05);
     border-color: rgba(0, 0, 192, 0.5);
+}
+
+span.inline-item-orange {
+    color: rgba(0, 0, 0, 1);
+    background-color: rgba(255, 165, 0, 0.5);
+    border-color: rgb(255, 165, 0);
 }

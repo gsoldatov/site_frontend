@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
@@ -29,6 +29,8 @@ const FieldMenuElement = props => {
             return <FieldMenuItemGroup {...props} />;
         case "dropdown":
             return <FieldMenuDropdown {...props} />;
+        case "updatableDropdown":
+            return <FieldMenuUpdatableDropdown {...props} />;
         default:
             throw Error(`Received incorrect 'type' property for <FieldMenuElement> component: ${props.type}`);
     }
@@ -80,9 +82,57 @@ const FieldMenuDropdown = ({ placeholder, disabledSelector, defaultValueSelector
         disabled={isDisabled}
         defaultValue={defaultValue}
         options={options}
-        onChange={(e, data) => dispatch(getOnChangeAction(e, data))} 
+        onChange={(e, data) => dispatch(getOnChangeAction(e, data))}
     />;
 }
+
+
+// Field menu dropdown with updatable options
+const FieldMenuUpdatableDropdown = ({ placeholder, disabledSelector, inputStateSelector, existingIDsSelector, onSearchChange, onSearchChangeDelayed, onChange, getDropdownItemTextSelectors }) => {
+    const dispatch = useDispatch();
+    const isDisabled = useSelector(disabledSelector);
+    const inputState = useSelector(inputStateSelector);
+    const existingIDs = useSelector(existingIDsSelector);
+
+    // Search text change handlers (updates state & runs a delayed fetch to get dropdown items)
+    const _onSearchChangeDelayed = useRef(intervalWrapper(params => dispatch(onSearchChangeDelayed(params))
+                                    , 250, true)).current;
+    const handleSearchChange = (e, data) => {
+        dispatch(onSearchChange({ inputText: data.searchQuery }));
+        _onSearchChangeDelayed({ queryText: data.searchQuery, existingIDs });
+    };
+
+    // Item selection handler (dispatches onChange action with selected value as argument & clears the value of the dropdown)
+    const [value, setValue] = useState("");
+    const handleChange = (e, data) => {
+        dispatch(onChange(data.value));
+        dispatch(onSearchChange({ inputText: "", matchingIDs: [] }));
+        setValue("");
+    };
+
+    // Clear input text & matchingIDs when focus is removed from the item (dropdown value is cleared automatically)
+    const handleBlur = (e, data) => {
+        dispatch(onSearchChange({ inputText: "", matchingIDs: [] }));
+    };
+
+    // Dropdown options (get item store => get item text from the store for each item id)
+    const itemStore = useSelector(getDropdownItemTextSelectors.itemStoreSelector);
+    const options = inputState.matchingIDs.map(id => ({ key: id, text: getDropdownItemTextSelectors.itemTextSelector(itemStore, id), value: id }));
+
+    return <Dropdown search selectOnNavigation={false} selection selectOnBlur={false}
+        placeholder={placeholder}
+        disabled={isDisabled}
+        open={options.length > 0}
+
+        defaultSearchQuery={inputState.inputText}
+        value={value}
+        options={options}
+
+        onSearchChange={handleSearchChange}
+        onChange={handleChange}
+        onBlur={handleBlur}
+    />;
+};
 
 
 // Field menu group

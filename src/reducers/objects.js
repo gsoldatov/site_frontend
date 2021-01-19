@@ -1,6 +1,6 @@
 import { ADD_OBJECTS, ADD_OBJECT_DATA, SET_OBJECTS_TAGS, SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS,
-    DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, 
-    CLEAR_SELECTED_OBJECTS, SET_OBJECTS_PAGINATION_INFO, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
+    DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, CLEAR_SELECTED_OBJECTS, 
+    SET_OBJECTS_PAGINATION_INFO, SET_TAGS_FILTER, SET_TAGS_FILTER_INPUT, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
 import { getTagIDByName, resetObjectCaches, objectsGetCommonTagIDs } from "../store/state-util";
 
 
@@ -233,10 +233,52 @@ function setObjectsPaginationInfo(state, action) {
                     sortOrder: pI.sortOrder !== undefined ? pI.sortOrder : oPI.sortOrder,
                     filterText: pI.filterText !== undefined ? pI.filterText : oPI.filterText,
                     objectTypes: pI.objectTypes !== undefined ? pI.objectTypes: oPI.objectTypes,
+                    tagsFilter: oPI.tagsFilter,     // tags filter is set in setTagsFilter action
                     currentPageObjectIDs: pI.currentPageObjectIDs !== undefined ? pI.currentPageObjectIDs : oPI.currentPageObjectIDs
             }
         }
     }
+}
+
+/*
+    Adds/removes provided tag ID to/from objectsUI.paginationInfo.tagsFilter list.
+    Clears the list if no tag ID is provided.
+*/
+function setTagsFilter(state, action) {
+    let tagsFilter, oldTagsFilter = state.objectsUI.paginationInfo.tagsFilter;
+    if (!action.tagID) tagsFilter = [];    // clear case
+    else {  // add/remove case
+        const i = oldTagsFilter.indexOf(action.tagID);
+        if (i > -1) tagsFilter = oldTagsFilter.slice(0, i).concat(oldTagsFilter.slice(i + 1));
+        else {
+            tagsFilter = oldTagsFilter.slice();
+            tagsFilter.push(action.tagID);
+        }
+    }
+    return {
+        ...state,
+        objectsUI: {
+            ...state.objectsUI,
+            paginationInfo: {
+                ...state.objectsUI.paginationInfo,
+                tagsFilter
+            }
+        }
+    };
+}
+
+function setTagsFilterInput(state, action) {
+    const { inputText, matchingIDs } = action.tagsFilterInput;
+    return {
+        ...state,
+        objectsUI: {
+            ...state.objectsUI,
+            tagsFilterInput: {
+                inputText: inputText !== undefined ? inputText : state.objectsUI.tagsFilterInput.inputText,
+                matchingIDs: matchingIDs !== undefined ? matchingIDs : state.objectsUI.tagsFilterInput.matchingIDs
+            }
+        }
+    };
 }
 
 function setShowDeleteDialogObjects(state, action) {
@@ -276,6 +318,8 @@ const root = {
     DESELECT_OBJECTS: deselectObjects,
     CLEAR_SELECTED_OBJECTS: clearSelectedObjects,
     SET_OBJECTS_PAGINATION_INFO: setObjectsPaginationInfo,
+    SET_TAGS_FILTER: setTagsFilter,
+    SET_TAGS_FILTER_INPUT: setTagsFilterInput,
     SET_SHOW_DELETE_DIALOG_OBJECTS: setShowDeleteDialogObjects,
     SET_OBJECTS_FETCH: setObjectsFetch
 };

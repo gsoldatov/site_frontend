@@ -17,30 +17,28 @@ export const TOGGLE_OBJECT_SELECTION = "TOGGLE_OBJECT_SELECTION";
 export const DESELECT_OBJECTS = "DESELECT_OBJECTS";
 export const CLEAR_SELECTED_OBJECTS = "CLEAR_SELECTED_OBJECTS";
 export const SET_OBJECTS_PAGINATION_INFO = "SET_OBJECTS_PAGINATION_INFO";
+export const SET_TAGS_FILTER = "SET_TAGS_FILTER";
+export const SET_TAGS_FILTER_INPUT = "SET_TAGS_FILTER_INPUT";
 export const SET_SHOW_DELETE_DIALOG_OBJECTS = "SET_SHOW_DELETE_DIALOG_OBJECTS";
 export const SET_OBJECTS_FETCH = "SET_OBJECTS_FETCH";
 
 
-export const addObjects                  = objects => ({ type: ADD_OBJECTS, objects: objects });
-export const addObjectData               = objectData => ({ type: ADD_OBJECT_DATA, objectData: objectData });
-export const setObjectsTags              = objectsTags => ({ type: SET_OBJECTS_TAGS, objectsTags: objectsTags });
-export const setObjectsTagsInput         = inputState => ({ type: SET_OBJECTS_TAGS_INPUT, tagsInput: inputState });
-export const setCurrentObjectsTags       = tagUpdates => ({ type: SET_CURRENT_OBJECTS_TAGS, tagUpdates: tagUpdates });
-export const deleteObjects               = object_ids => ({ type: DELETE_OBJECTS, object_ids: object_ids });
-export const selectObjects               = object_ids => ({ type: SELECT_OBJECTS, object_ids: object_ids });
-export const toggleObjectSelection       = object_id => ({ type: TOGGLE_OBJECT_SELECTION, object_id: object_id });
-export const deselectObjects             = object_ids => ({ type: DESELECT_OBJECTS, object_ids: object_ids });
+export const addObjects                  = objects => ({ type: ADD_OBJECTS, objects });
+export const addObjectData               = objectData => ({ type: ADD_OBJECT_DATA, objectData });
+export const setObjectsTags              = objectsTags => ({ type: SET_OBJECTS_TAGS, objectsTags });
+export const setObjectsTagsInput         = tagsInput => ({ type: SET_OBJECTS_TAGS_INPUT, tagsInput });
+export const setCurrentObjectsTags       = tagUpdates => ({ type: SET_CURRENT_OBJECTS_TAGS, tagUpdates });
+export const deleteObjects               = object_ids => ({ type: DELETE_OBJECTS, object_ids });
+export const selectObjects               = object_ids => ({ type: SELECT_OBJECTS, object_ids });
+export const toggleObjectSelection       = object_id => ({ type: TOGGLE_OBJECT_SELECTION, object_id });
+export const deselectObjects             = object_ids => ({ type: DESELECT_OBJECTS, object_ids });
 export const clearSelectedObjects        = () => ({ type: CLEAR_SELECTED_OBJECTS });
-export const setObjectsPaginationInfo    = paginationInfo => ({ type: SET_OBJECTS_PAGINATION_INFO, paginationInfo: paginationInfo });
-export const setShowDeleteDialogObjects  = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECTS, showDeleteDialog: showDeleteDialog });
+export const setObjectsPaginationInfo    = paginationInfo => ({ type: SET_OBJECTS_PAGINATION_INFO, paginationInfo });
+export const setTagsFilter               = tagID => ({ type: SET_TAGS_FILTER, tagID });
+export const setTagsFilterInput          = tagsFilterInput => ({ type: SET_TAGS_FILTER_INPUT, tagsFilterInput });
+export const setShowDeleteDialogObjects  = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECTS, showDeleteDialog });
+export const setObjectsFetch             = (isFetching = false, fetchError = "") => ({ type: SET_OBJECTS_FETCH, isFetching: isFetching, fetchError: fetchError });
 
-export const setObjectsFetch = (isFetching = false, fetchError = "") => { 
-    return {
-        type: SET_OBJECTS_FETCH, 
-        isFetching: isFetching, 
-        fetchError: fetchError
-    };
-};
 
 function getObjectsFetch(object_ids) {
     return async (dispatch, getState) => {
@@ -85,7 +83,8 @@ function getPageObjectIDs() {
                     order_by: pI.sortField,
                     sort_order: pI.sortOrder,
                     filter_text: pI.filterText,
-                    object_types: pI.objectTypes
+                    object_types: pI.objectTypes,
+                    tags_filter: pI.tagsFilter
                 }
             })
         });
@@ -131,6 +130,14 @@ export function setObjectsPaginationInfoAndFetchPage(paginationInfo){
         paginationInfo.currentPage = 1;
         dispatch(setObjectsPaginationInfo(paginationInfo));
         dispatch(pageFetch(paginationInfo.currentPage));
+    };
+};
+
+export function setTagsFilterAndFetchPage(tagID){
+    return async (dispatch, getState) => {
+        dispatch(setObjectsPaginationInfo({ currentPage: 1 }));
+        dispatch(setTagsFilter(tagID));
+        dispatch(pageFetch(1));
     };
 };
 
@@ -199,48 +206,99 @@ export function onDeleteFetch() {
     };
 };
 
-export function objectsTagsDropdownFetch({queryText, existingIDs}) {
-    return async (dispatch, getState) => {
-        // Check params
-        if (queryText.length === 0 || queryText.length > 255 || existingIDs.length > 1000) return;
-        const inputText = getState().objectsUI.tagsInput.inputText;
+/*
+    Creates a thunk creator, which queries /tags/search to retrieve matchingIDs and updates state with the provided actionCreator.
+*/
+const dropdownFetchThunkCreatorCreator = actionCreator => {
+    return function objectsTagsDropdownFetch({queryText, existingIDs}) {
+        return async (dispatch, getState) => {
+            // Check params
+            if (queryText.length === 0 || queryText.length > 255 || existingIDs.length > 1000) return;
+            const inputText = getState().objectsUI.tagsInput.inputText;
 
-        try {
-            let payload = JSON.stringify({
-                query: {
-                    query_text: queryText,
-                    maximum_values: 10,
-                    existing_ids: existingIDs || []
+            try {
+                let payload = JSON.stringify({
+                    query: {
+                        query_text: queryText,
+                        maximum_values: 10,
+                        existing_ids: existingIDs || []
+                    }
+                });
+
+                let response = await fetch(`${backendURL}/tags/search`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: payload
+                });
+                            
+                switch (response.status) {
+                    case 200:
+                        let tagIDs = (await response.json()).tag_ids;
+                        await dispatch(getNonCachedTags(tagIDs));
+
+                        // Do not update if input text changed during fetch
+                        if (inputText === getState().objectsUI.tagsInput.inputText) dispatch(actionCreator({ matchingIDs: tagIDs }));
+                        break;
+                    case 404:
+                        dispatch(actionCreator({ matchingIDs: [] }));
+                        break;
+                    case 400:
+                        throw Error((await response.json())._error);
+                    case 500:
+                        throw Error(await response.text());
                 }
-            });
-
-            let response = await fetch(`${backendURL}/tags/search`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: payload
-            });
-                        
-            switch (response.status) {
-                case 200:
-                    let tagIDs = (await response.json()).tag_ids;
-                    await dispatch(getNonCachedTags(tagIDs));
-
-                    // Do not update if input text changed during fetch
-                    if (inputText === getState().objectsUI.tagsInput.inputText) dispatch(setObjectsTagsInput({ matchingIDs: tagIDs }));
-                    break;
-                case 404:
-                    dispatch(setObjectsTagsInput({ matchingIDs: [] }));
-                    break;
-                case 400:
-                    throw Error((await response.json())._error);
-                case 500:
-                    throw Error(await response.text());
+            } catch (error) {
+                throw error;
             }
-        } catch (error) {
-            throw error;
-        }
+        };
     };
-}
+};
+
+export const objectsTagsDropdownFetch = dropdownFetchThunkCreatorCreator(setObjectsTagsInput);
+export const tagsFilterDropdownFetch = dropdownFetchThunkCreatorCreator(setTagsFilterInput);
+
+// export function objectsTagsDropdownFetch({queryText, existingIDs}) {
+//     return async (dispatch, getState) => {
+//         // Check params
+//         if (queryText.length === 0 || queryText.length > 255 || existingIDs.length > 1000) return;
+//         const inputText = getState().objectsUI.tagsInput.inputText;
+
+//         try {
+//             let payload = JSON.stringify({
+//                 query: {
+//                     query_text: queryText,
+//                     maximum_values: 10,
+//                     existing_ids: existingIDs || []
+//                 }
+//             });
+
+//             let response = await fetch(`${backendURL}/tags/search`, {
+//                 method: "POST",
+//                 headers: { "Content-Type": "application/json" },
+//                 body: payload
+//             });
+                        
+//             switch (response.status) {
+//                 case 200:
+//                     let tagIDs = (await response.json()).tag_ids;
+//                     await dispatch(getNonCachedTags(tagIDs));
+
+//                     // Do not update if input text changed during fetch
+//                     if (inputText === getState().objectsUI.tagsInput.inputText) dispatch(setObjectsTagsInput({ matchingIDs: tagIDs }));
+//                     break;
+//                 case 404:
+//                     dispatch(setObjectsTagsInput({ matchingIDs: [] }));
+//                     break;
+//                 case 400:
+//                     throw Error((await response.json())._error);
+//                 case 500:
+//                     throw Error(await response.text());
+//             }
+//         } catch (error) {
+//             throw error;
+//         }
+//     };
+// };
 
 export function onObjectsTagsUpdateFetch() {
     return async (dispatch, getState) => {

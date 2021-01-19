@@ -55,7 +55,10 @@ export const InlineInput = ({ inputStateSelector, setInputState, inputPlaceholde
     const inputDatalist = is.isDisplayed && (
         <datalist id="matching-tags">
             <>
-            {is.inputText.length === 0 ? null : is.matchingIDs.map(id => <InputDropDownItem key={id} id={id} textSelector={getItemTextSelector(id)} onClick={() => addItem(id)} />)}
+            {/* {is.inputText.length === 0 ? null : is.matchingIDs.map(id => <InputDropDownItem key={id} id={id} textSelector={getItemTextSelector(id)} onClick={() => addItem(id);} />)} */}
+            {is.inputText.length === 0 ? null : is.matchingIDs.map(id => {
+                return <InputDropDownItem key={id} id={id} textSelector={getItemTextSelector(id)} onClick={() => addItem(id) } />
+            })}
             </>
         </datalist>
     );

@@ -171,7 +171,14 @@ export function getMockedPageObjectIDs(pI) {
         return a;
     }
     
-    // All object types are displayed
+    // Tags filter is not empty
+    if (pI.tags_filter.length > 0) {
+        if (pI.tags_filter.length === 1) return getList(5, 55, 5);
+        if (pI.tags_filter.length === 2) return getList(15, 35, 5);
+        return [];
+    }
+
+    // Not all object types are displayed
     if (pI.object_types.length == 1) {
         // Link object type
         if (pI.object_types.includes("link")) {
@@ -183,6 +190,7 @@ export function getMockedPageObjectIDs(pI) {
             return getList(1006, 1046, 2);
         }
     }
+    // All object types are displayed
     else if (pI.object_types.length == 0 || pI.object_types.length == 2) {
         // Single page
         if (pI.items_per_page === 100) {

@@ -354,9 +354,7 @@ test("Add object state saving & reload", async () => {
     fireEvent.click(markdownObjectTypeButton);
 
     // Re-render the page with the same store and check if object name and type were not reset
-    var { container, debug } = render();
-    // debug();
-    // console.log(JSON.stringify(store.getState()))
+    var { container } = render();
     objectNameInput = getByPlaceholderText(container, "Object name");
     expect(objectNameInput.value).toEqual("new object");
     expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");

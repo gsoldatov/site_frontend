@@ -158,7 +158,11 @@ export function getMockedPageTagIDs(pI) {
 
 
 function handleTagsSearch(body) {
+    // Handle not found case
     const query = JSON.parse(body).query;
+    if (query.query_text === "not found") return {status: 404, json: () => Promise.resolve({ "_error": "Tags not found." })};
+
+    // Handle success case
     const maximumValues = query.maximum_values || 10;
     const existingIds = query.existing_ids || [];
     const tagIDs = [];

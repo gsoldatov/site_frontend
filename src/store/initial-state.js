@@ -105,6 +105,7 @@ const initialState = {
             sortOrder: "asc",               // sort order (asc, desc)
             filterText: "",                 // text by which objects are filtered
             objectTypes: [],
+            tagsFilter: [],
             currentPageObjectIDs: []
         },
         selectedObjectIDs: [],
@@ -114,6 +115,11 @@ const initialState = {
         removedTagIDs: [],
         tagsInput: {
             isDisplayed: false,
+            inputText: "",
+            matchingIDs: []
+        },
+
+        tagsFilterInput: {
             inputText: "",
             matchingIDs: []
         },

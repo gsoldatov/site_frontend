@@ -15,7 +15,8 @@ import { InlineInput } from "./inline/inline-input";
 import { REDIRECT_ON_RENDER_PATH_CREATORS, setRedirectOnRender } from "../actions/common";
 import { objectsOnLoadFetch, selectObjects, clearSelectedObjects, pageFetch, setObjectsPaginationInfo, setObjectsPaginationInfoAndFetchPage,
     setShowDeleteDialogObjects, toggleObjectSelection, onDeleteFetch,
-    setCurrentObjectsTags, setObjectsTagsInput, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch  } from "../actions/objects";
+    setCurrentObjectsTags, setObjectsTagsInput, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch, 
+    setTagsFilterAndFetchPage, tagsFilterDropdownFetch, setTagsFilterInput  } from "../actions/objects";
 import { isFetchingObjects, isFetchinOrShowingDialogObjects, isObjectsTagsEditActive } from "../store/state-check-functions";
 import { objectsGetCommonTagIDs, objectsGetPartiallyAppliedTagIDs, objectsGetAddedTags } from "../store/state-util";
 
@@ -43,6 +44,7 @@ export default () => {
     const pageBodyWithMenu = (
         <>
         <FieldMenu items={fieldMenuItems} />
+        <TagsFilter />
         {pageBody}
         </>
     );
@@ -196,7 +198,33 @@ const fieldMenuItems = [
             // { key: 3, text: "To-Do Lists", value: "todo" }
         ],
         getOnChangeAction: (e, data) => setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })
-    }
+    },
+    // {
+    //     type: "itemGroup",
+    //     // noBorder: true,
+        // items: [
+            {
+                type: "updatableDropdown",
+                placeholder: "Filter objects by tags", 
+                disabledSelector: state => isFetchingObjects(state), 
+                inputStateSelector: state => state.objectsUI.tagsFilterInput, 
+                existingIDsSelector: state => state.objectsUI.paginationInfo.tagsFilter,
+                onSearchChange: setTagsFilterInput,
+                onSearchChangeDelayed: tagsFilterDropdownFetch,
+                onChange: setTagsFilterAndFetchPage,
+                getDropdownItemTextSelectors: { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name }
+            },
+            {
+                type: "item",
+                icon: "remove",
+                title: "Clear tags filter",
+                onClick: params => setTagsFilterAndFetchPage(),
+                // onClickParams: { sortField: "object_name" },
+                getIsDisabled: state => isFetchingObjects(state) || state.objectsUI.paginationInfo.tagsFilter.length == 0,
+                // getIsActive: state => state.objectsUI.paginationInfo.sortField === "object_name"
+            }
+        // ]
+    // }
 ];
 
 
@@ -214,6 +242,30 @@ const ObjectsFieldItem = ({ id }) => {
     return <FieldItem id={id} textSelector={textSelector} link={link} 
     isCheckedSelector={isCheckedSelector} onChange={toggleObjectSelection} />;
 };
+
+
+// Tags filter
+const TagsFilterItem = ({ id }) => {
+    const dispatch = useDispatch();
+    const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
+    // const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
+    // const itemClassName = isRemoved ? "inline-item-red" : "inline-item";
+    const itemClassName = "inline-item-orange";
+    const onClick = () => dispatch(setTagsFilterAndFetchPage(id));
+    const itemLink = `/tags/${id}`;
+    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+};
+const tagsFilterIsDisplayedSelector = state => state.objectsUI.paginationInfo.tagsFilter.length > 0;
+const tagsFilterItemIDSelector = state => state.objectsUI.paginationInfo.tagsFilter;
+const TagsFilter = () => {
+    return (
+        <InlineItemListBlock>
+            <InlineItemListWrapper header="Tags filter" isDisplayedSelector={tagsFilterIsDisplayedSelector}>
+                <InlineItemList itemIDSelector={tagsFilterItemIDSelector} ItemComponent={TagsFilterItem} />
+            </InlineItemListWrapper>
+        </InlineItemListBlock>
+    )
+}
 
 
 // Objects tags
