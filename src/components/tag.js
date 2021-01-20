@@ -49,6 +49,12 @@ const addTagSideMenuItems = [
 const editTagSideMenuItems = [
     {
         type: "item",
+        text: "Add Tag",
+        getIsActive: state => !isFetchingTag(state),
+        onClick: setRedirectOnRender("/tags/add")
+    },
+    {
+        type: "item",
         text: "Save",
         getIsActive: state => !isFetchingTag(state) && 
                                 state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255,
