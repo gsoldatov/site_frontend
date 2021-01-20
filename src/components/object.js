@@ -16,6 +16,8 @@ import { setRedirectOnRender } from "../actions/common";
 import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setObjectTagsInput, setShowDeleteDialogObject, 
     addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../actions/object";
 
+import StyleCommon from "../styles/common.css";
+
 
 /*
     /objects/:id page components.
@@ -113,7 +115,7 @@ const _Object = ({ header, sideMenuItems, onLoad }) => {
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
     const pageBody = loadIndicatorAndError || (
         <>
-            <Header as="h3">{header}</Header>
+            <Header as="h3" className="add-edit-page-header">{header}</Header>
             <ObjectTypeSelector />
             <ObjectTimeStamps />
             <ObjectSaveError />

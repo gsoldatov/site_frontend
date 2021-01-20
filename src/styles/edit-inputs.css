@@ -1,7 +1,24 @@
 /***************************************************** 
-    Edit tag/object name & description form styles.
+    Edit tag/object element and form styles.
 ******************************************************/
 
+/* Timestamps */
+.ui.two.column.grid.created-modified-timestamps-container {
+    margin-top: 1em;
+    margin-bottom: 0em;
+}
+
+.ui.two.column.grid.created-modified-timestamps-container>.column {
+    padding-top: 0em;
+    padding-bottom: 0em;
+}
+
+/* Name + description form */
+.ui.form.name-description-form {
+    margin-top: 1em;
+}
+
+/* Textarea */
 textarea.edit-page-textarea:not([rows]):not([cols]) {   /* sets default textarea size to the value it takes when it's empty and hides the scrollbar; */
     height: auto;                                       /* two "not" pseudoclasses are required to override Semantic UI styles for textarea          */
     overflow-y: hidden;

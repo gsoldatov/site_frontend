@@ -3,13 +3,14 @@
 **************************/
 
 div.object-type-menu-header {
+    margin-top: 1em;
     font-weight: bold;
     margin-bottom: 0.25em;
 }
 
-div.ui.compact.menu.object-type-menu {
-    margin-bottom: 1em;
-}
+/* div.ui.compact.menu.object-type-menu {
+    margin-top: 1em;
+} */
 
 div.ui.menu > .item.active.object-type, div.ui.menu > .item.disabled.active.object-type { /* Selected object type style */
     font-weight: bold;

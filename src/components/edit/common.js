@@ -37,7 +37,7 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector }) => {
     const createdAt = new Date(useSelector(createdAtSelector) + "Z").toLocaleString();      // "Z" is required to indicate that the timestamp is in UTC timezone
     const modifiedAt = new Date(useSelector(modifiedAtSelector) + "Z").toLocaleString();    // (which is not added by Python's datetime.isoformat function)
     return (
-        <Grid padded="vertically" columns={2}>
+        <Grid className="created-modified-timestamps-container" columns={2}>
             <Grid.Column>
                 <p><b>Created at: </b> {createdAt}</p>
             </Grid.Column>
@@ -75,7 +75,7 @@ export const NameDescriptionInput = ({ nameLabel, namePlaceholder, nameSelector,
     const descriptionRef = useRef(null);
 
     return (
-        <Form>
+        <Form className="name-description-form">
             <Form.Input label={nameLabel} placeholder={namePlaceholder} value={name} onChange={handleNameChange} />
             <Form.Field>
                 <label>{descriptionLabel}</label>
