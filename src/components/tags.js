@@ -50,26 +50,26 @@ const sideMenuItems = [
     {
         type: "item",
         text: "Add Tag",
-        getIsActive: state => !isFetchinOrShowingDialogTags(state),
+        isActiveSelector: state => !isFetchinOrShowingDialogTags(state),
         onClick: setRedirectOnRender("/tags/add")
     },
     {
         type: "item",
         text: "Edit Tag",
-        getIsActive: state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state),
+        isActiveSelector: state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state),
         onClick: setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.tagsEdit)
     },
     {
         type: "item",
         text: "Delete",
-        getIsActive: state => !isFetchinOrShowingDialogTags(state) && state.tagsUI.selectedTagIDs.length > 0,
-        getIsVisible: state => !state.tagsUI.showDeleteDialog,
+        isActiveSelector: state => !isFetchinOrShowingDialogTags(state) && state.tagsUI.selectedTagIDs.length > 0,
+        isVisibleSelector: state => !state.tagsUI.showDeleteDialog,
         onClick: setShowDeleteDialogTags(true)
     },
     {
         type: "dialog",
         text: "Delete Selected Tags?",
-        getIsVisible: state => state.tagsUI.showDeleteDialog && !isFetchingTags(state),
+        isVisibleSelector: state => state.tagsUI.showDeleteDialog && !isFetchingTags(state),
         buttons: [
             {
                 text: "Yes",

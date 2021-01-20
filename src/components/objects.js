@@ -58,28 +58,28 @@ const sideMenuItems = [
     {
         type: "item",
         text: "Add Object",
-        getIsActive: state => !isFetchinOrShowingDialogObjects(state),
-        getIsVisible: state => !isObjectsTagsEditActive(state),
+        isActiveSelector: state => !isFetchinOrShowingDialogObjects(state),
+        isVisibleSelector: state => !isObjectsTagsEditActive(state),
         onClick: setRedirectOnRender("/objects/add")
     },
     {
         type: "item",
         text: "Edit Object",
-        getIsActive: state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchinOrShowingDialogObjects(state),
-        getIsVisible: state => !isObjectsTagsEditActive(state),
+        isActiveSelector: state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchinOrShowingDialogObjects(state),
+        isVisibleSelector: state => !isObjectsTagsEditActive(state),
         onClick: setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.objectsEdit)
     },
     {
         type: "item",
         text: "Delete",
-        getIsActive: state => !isFetchinOrShowingDialogObjects(state) && state.objectsUI.selectedObjectIDs.length > 0,
-        getIsVisible: state => !state.objectsUI.showDeleteDialog && !isObjectsTagsEditActive(state),
+        isActiveSelector: state => !isFetchinOrShowingDialogObjects(state) && state.objectsUI.selectedObjectIDs.length > 0,
+        isVisibleSelector: state => !state.objectsUI.showDeleteDialog && !isObjectsTagsEditActive(state),
         onClick: setShowDeleteDialogObjects(true)
     },
     {
         type: "dialog",
         text: "Delete Selected Objects?",
-        getIsVisible: state => state.objectsUI.showDeleteDialog && !isFetchingObjects(state),
+        isVisibleSelector: state => state.objectsUI.showDeleteDialog && !isFetchingObjects(state),
         buttons: [
             {
                 text: "Yes",
@@ -95,15 +95,15 @@ const sideMenuItems = [
     {
         type: "item",
         text: "Update Tags",
-        getIsActive: state => !isFetchingObjects(state),
-        getIsVisible: state => isObjectsTagsEditActive(state),
+        isActiveSelector: state => !isFetchingObjects(state),
+        isVisibleSelector: state => isObjectsTagsEditActive(state),
         onClick: onObjectsTagsUpdateFetch()
     },
     {
         type: "item",
         text: "Cancel Tag Update",
-        getIsActive: state => !isFetchingObjects(state),
-        getIsVisible: state => isObjectsTagsEditActive(state),
+        isActiveSelector: state => !isFetchingObjects(state),
+        isVisibleSelector: state => isObjectsTagsEditActive(state),
         onClick: setCurrentObjectsTags({ added: [], removed: [] })
     }
 ];

@@ -32,14 +32,14 @@ const addTagSideMenuItems = [
     {
         type: "item",
         text: "Save",
-        getIsActive: state => !isFetchingTag(state) && 
+        isActiveSelector: state => !isFetchingTag(state) && 
                                 state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255,
         onClick: addTagOnSaveFetch()
     },
     {
         type: "item",
         text: "Cancel",
-        getIsActive: state => !isFetchingTag(state),
+        isActiveSelector: state => !isFetchingTag(state),
         onClick: setRedirectOnRender("/tags")
     }
 ];
@@ -50,27 +50,27 @@ const editTagSideMenuItems = [
     {
         type: "item",
         text: "Add Tag",
-        getIsActive: state => !isFetchingTag(state),
+        isActiveSelector: state => !isFetchingTag(state),
         onClick: setRedirectOnRender("/tags/add")
     },
     {
         type: "item",
         text: "Save",
-        getIsActive: state => !isFetchingTag(state) && 
+        isActiveSelector: state => !isFetchingTag(state) && 
                                 state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255,
         onClick: editTagOnSaveFetch()
     },
     {
         type: "item",
         text: "Delete",
-        getIsVisible: state => !state.tagUI.showDeleteDialog,
-        getIsActive: state => !isFetchinOrShowingDialogTag(state) && state.tagUI.currentTag.tag_id !== 0,
+        isVisibleSelector: state => !state.tagUI.showDeleteDialog,
+        isActiveSelector: state => !isFetchinOrShowingDialogTag(state) && state.tagUI.currentTag.tag_id !== 0,
         onClick: setShowDeleteDialogTag(true)
     },
     {
         type: "dialog",
         text: "Delete This Tag?",
-        getIsVisible: state => state.tagUI.showDeleteDialog,
+        isVisibleSelector: state => state.tagUI.showDeleteDialog,
         buttons: [
             {
                 text: "Yes",
@@ -85,7 +85,7 @@ const editTagSideMenuItems = [
     {
         type: "item",
         text: "Cancel",
-        getIsActive: state => !isFetchingTag(state),
+        isActiveSelector: state => !isFetchingTag(state),
         onClick: setRedirectOnRender("/tags")
     }
 ];

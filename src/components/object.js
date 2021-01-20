@@ -37,20 +37,20 @@ const addObjectSideMenuItems = [
     {
         type: "item",
         text: "Save",
-        getIsActive: state => !isFetchingObject(state) && 
+        isActiveSelector: state => !isFetchingObject(state) && 
                                 state.objectUI.currentObject.object_name.length >= 1 && state.objectUI.currentObject.object_name.length <= 255,
         onClick: addObjectOnSaveFetch()
     },
     {
         type: "item",
         text: "Reset",
-        getIsActive: state => !isFetchingObject(state),
+        isActiveSelector: state => !isFetchingObject(state),
         onClick: loadAddObjectPage(true)
     },
     {
         type: "item",
         text: "Cancel",
-        getIsActive: state => !isFetchingObject(state),
+        isActiveSelector: state => !isFetchingObject(state),
         onClick: setRedirectOnRender("/objects")
     }
 ];
@@ -61,27 +61,27 @@ const editObjectSideMenuItems = [
     {
         type: "item",
         text: "Add Object",
-        getIsActive: state => !isFetchingObject(state),
+        isActiveSelector: state => !isFetchingObject(state),
         onClick: setRedirectOnRender("/objects/add")
     },
     {
         type: "item",
         text: "Save",
-        getIsActive: state => !isFetchingObject(state) && 
+        isActiveSelector: state => !isFetchingObject(state) && 
                                 state.objectUI.currentObject.object_name.length >= 1 && state.objectUI.currentObject.object_name.length <= 255,
         onClick: editObjectOnSaveFetch()
     },
     {
         type: "item",
         text: "Delete",
-        getIsVisible: state => !state.objectUI.showDeleteDialog,
-        getIsActive: state => !isFetchinOrShowingDialogObject(state) && state.objectUI.currentObject.object_id !== 0,
+        isVisibleSelector: state => !state.objectUI.showDeleteDialog,
+        isActiveSelector: state => !isFetchinOrShowingDialogObject(state) && state.objectUI.currentObject.object_id !== 0,
         onClick: setShowDeleteDialogObject(true)
     },
     {
         type: "dialog",
         text: "Delete This Object?",
-        getIsVisible: state => state.objectUI.showDeleteDialog,
+        isVisibleSelector: state => state.objectUI.showDeleteDialog,
         buttons: [
             {
                 text: "Yes",
@@ -96,7 +96,7 @@ const editObjectSideMenuItems = [
     {
         type: "item",
         text: "Cancel",
-        getIsActive: state => !isFetchingObject(state),
+        isActiveSelector: state => !isFetchingObject(state),
         onClick: setRedirectOnRender("/objects")
     }
 ];

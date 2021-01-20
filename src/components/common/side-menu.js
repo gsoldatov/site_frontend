@@ -21,7 +21,7 @@ export default ({ items }) => {
 
 // Component for switching between different types of side menu items
 const SideMenuElement = props => {
-    const isVisible = typeof(props.getIsVisible) === "function" ? useSelector(props.getIsVisible) : true;    
+    const isVisible = typeof(props.isVisibleSelector) === "function" ? useSelector(props.isVisibleSelector) : true;    
     if (!isVisible) {
         return null;
     }
@@ -38,9 +38,9 @@ const SideMenuElement = props => {
 
 
 // Basic side menu item
-const SideMenuItem = ({ text, getIsActive, onClick }) => {
+const SideMenuItem = ({ text, isActiveSelector, onClick }) => {
     const dispatch = useDispatch();
-    const isActive = typeof(getIsActive) === "function" ? useSelector(getIsActive) : true;
+    const isActive = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : true;
     const _onClick = isActive ? () => dispatch(onClick) : undefined;
     
     return <Menu.Item as="div" className="side-menu-item" disabled={!isActive} onClick={_onClick}>{text}</Menu.Item>;
@@ -48,9 +48,8 @@ const SideMenuItem = ({ text, getIsActive, onClick }) => {
 
 
 // Dialog (header + clickable buttons)
-const SideMenuDialog = ({ text, buttons, getIsVisible }) => {
+const SideMenuDialog = ({ text, buttons }) => {
     const dispatch = useDispatch();
-    const isVisible = typeof(getIsVisible) === "function" ? useSelector(getIsVisible) : true;
     let k = 0;
     const _buttons = buttons.map(btn => <Button key={k++} onClick={() => dispatch(btn.onClick)}>{btn.text}</Button>);
     
