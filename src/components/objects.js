@@ -258,9 +258,10 @@ const TagsFilterItem = ({ id }) => {
 const tagsFilterIsDisplayedSelector = state => state.objectsUI.paginationInfo.tagsFilter.length > 0;
 const tagsFilterItemIDSelector = state => state.objectsUI.paginationInfo.tagsFilter;
 const TagsFilter = () => {
-    return (
+    const shouldRender = useSelector(tagsFilterIsDisplayedSelector);
+    return shouldRender && (
         <InlineItemListBlock>
-            <InlineItemListWrapper header="Tags Filter" isDisplayedSelector={tagsFilterIsDisplayedSelector}>
+            <InlineItemListWrapper header="Tags Filter">
                 <InlineItemList itemIDSelector={tagsFilterItemIDSelector} ItemComponent={TagsFilterItem} />
             </InlineItemListWrapper>
         </InlineItemListBlock>
@@ -308,7 +309,11 @@ const commonTagsWrapperIsDisplayedSelector = state => state.objectsUI.selectedOb
 const partiallyAppliedTagsWrapperIsDisplayedSelector = state => objectsGetPartiallyAppliedTagIDs(state).length > 0;
 
 const ObjectsTags = () => {
-    return (
+    // const renderBlock = useSelector(commonTagsWrapperIsDisplayedSelector) || useSelector(partiallyAppliedTagsWrapperIsDisplayedSelector);
+    const shouldRenderCommonTags = useSelector(commonTagsWrapperIsDisplayedSelector);
+    const shouldRenderPartiallyAppliedTags = useSelector(partiallyAppliedTagsWrapperIsDisplayedSelector)
+
+    return (shouldRenderCommonTags || shouldRenderPartiallyAppliedTags) && (
         <InlineItemListBlock>
             <InlineItemListWrapper header="Common Tags" isDisplayedSelector={commonTagsWrapperIsDisplayedSelector}>
                 <InlineItemList itemIDSelector={objectsGetCommonTagIDs} ItemComponent={CommonCurrentTagItem} />

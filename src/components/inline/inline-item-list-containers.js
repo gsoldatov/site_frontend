@@ -22,7 +22,7 @@ export const InlineItemListBlock = ({header, children}) => {
 
 // Component for groupping inline item lists and input controls.
 export const InlineItemListWrapper = ({header, children, isDisplayedSelector}) => {
-    const isDisplayed = useSelector(isDisplayedSelector || (state => true));
+    const isDisplayed = isDisplayedSelector ? useSelector(isDisplayedSelector) : true;
     if (!isDisplayed) return null;
 
     const _header = header && <div className="inline-item-list-wrapper-header">{header}</div>;
