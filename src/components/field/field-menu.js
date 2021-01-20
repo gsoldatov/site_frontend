@@ -40,12 +40,12 @@ const FieldMenuElement = props => {
 
 
 // Field menu button
-const FieldMenuItem = ({ icon, title, getIsDisabled, getIsActive, onClick, getOnClickParams, onClickParams }) => {
+const FieldMenuItem = ({ icon, title, isDisabledSelector, isActiveSelector, onClick, onClickParamsSelector, onClickParams }) => {
     const dispatch = useDispatch();
-    const isDisabled = typeof(getIsDisabled) === "function" ? useSelector(getIsDisabled) : false;
-    const isActiveTemp = typeof(getIsActive) === "function" ? useSelector(getIsActive) : false;     // temp variable is used to avoid placing the hook in a condition block
+    const isDisabled = typeof(isDisabledSelector) === "function" ? useSelector(isDisabledSelector) : false;
+    const isActiveTemp = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : false;     // temp variable is used to avoid placing the hook in a condition block
     const isActive = isDisabled ? false : isActiveTemp;
-    const _onClickParams = useSelector(typeof(getOnClickParams) === "function" ? getOnClickParams : state => null) || onClickParams;
+    const _onClickParams = useSelector(typeof(onClickParamsSelector) === "function" ? onClickParamsSelector : state => null) || onClickParams;
     const handleClick = () => {
         if (isDisabled) return;
         dispatch(typeof(onClick) === "function" ? onClick(_onClickParams) : onClick);
@@ -56,11 +56,11 @@ const FieldMenuItem = ({ icon, title, getIsDisabled, getIsActive, onClick, getOn
 
 
 // Field menu filter
-const FieldMenuFilter = ({ placeholder, disabledSelector, getValueSelector, onChange, onChangeDelayed, getOnChangeParams }) => {
+const FieldMenuFilter = ({ placeholder, isDisabledSelector, valueSelector, onChange, onChangeDelayed, getOnChangeParams }) => {
     const dispatch = useDispatch();
     const _placeholder = placeholder || "Filter";
-    const disabled = useSelector(disabledSelector);
-    const value = useSelector(getValueSelector);
+    const isDisabled = useSelector(isDisabledSelector);
+    const value = useSelector(valueSelector);
     const _onChangeDelayed = useRef(intervalWrapper(params => dispatch(onChangeDelayed(params))
                                     , 250, true)).current;     // wrap onChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
     const handleChange = e => {
@@ -69,14 +69,14 @@ const FieldMenuFilter = ({ placeholder, disabledSelector, getValueSelector, onCh
         _onChangeDelayed(onChangeParams);                           // onChangeDelayed is called after a delay since last input value change (and dispatches a fetch)
     };
 
-    return <Input icon="search" disabled={disabled} className="field-menu-filter" placeholder={_placeholder} value={value} onChange={handleChange} />;
+    return <Input icon="search" disabled={isDisabled} className="field-menu-filter" placeholder={_placeholder} value={value} onChange={handleChange} />;
 };
 
 
 // Field menu dropdown
-const FieldMenuDropdown = ({ placeholder, disabledSelector, defaultValueSelector, options, getOnChangeAction }) => {
+const FieldMenuDropdown = ({ placeholder, isDisabledSelector, defaultValueSelector, options, getOnChangeAction }) => {
     const dispatch = useDispatch();
-    const isDisabled = useSelector(disabledSelector);
+    const isDisabled = useSelector(isDisabledSelector);
     const defaultValue = useSelector(defaultValueSelector);
     
     return <Dropdown multiple selection className="field-menu-dropdown"
@@ -90,9 +90,9 @@ const FieldMenuDropdown = ({ placeholder, disabledSelector, defaultValueSelector
 
 
 // Field menu dropdown with updatable options
-const FieldMenuUpdatableDropdown = ({ placeholder, disabledSelector, inputStateSelector, existingIDsSelector, onSearchChange, onSearchChangeDelayed, onChange, getDropdownItemTextSelectors }) => {
+const FieldMenuUpdatableDropdown = ({ placeholder, isDisabledSelector, inputStateSelector, existingIDsSelector, onSearchChange, onSearchChangeDelayed, onChange, getDropdownItemTextSelectors }) => {
     const dispatch = useDispatch();
-    const isDisabled = useSelector(disabledSelector);
+    const isDisabled = useSelector(isDisabledSelector);
     const inputState = useSelector(inputStateSelector);
     const existingIDs = useSelector(existingIDsSelector);
 
