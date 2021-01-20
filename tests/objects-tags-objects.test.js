@@ -54,8 +54,8 @@ test("Check page without selected objects", async () => {
 
     // Check if common and partially applied are not rendered
     expect(container.querySelector(".inline-item-list-wrapper")).toBeNull();
-    expect(queryByText(container, "Common tags")).toBeNull();
-    expect(queryByText(container, "Partially applied tags")).toBeNull();
+    expect(queryByText(container, "Common Tags")).toBeNull();
+    expect(queryByText(container, "Partially Applied Tags")).toBeNull();
 
     // Select & deselect all objects on the page
     let selectAllButton = getByTitle(container, "Select all objects on page");
@@ -65,8 +65,8 @@ test("Check page without selected objects", async () => {
 
     // Check if common and partially applied are not rendered
     expect(container.querySelector(".inline-item-list-wrapper")).toBeNull();
-    expect(queryByText(container, "Common tags")).toBeNull();
-    expect(queryByText(container, "Partially applied tags")).toBeNull();
+    expect(queryByText(container, "Common Tags")).toBeNull();
+    expect(queryByText(container, "Partially Applied Tags")).toBeNull();
 });
 
 
@@ -86,7 +86,7 @@ test("Check tags appearance for one selected object", async () => {
     fireEvent.click(firstObjectCheckbox);
 
     // Check if common tags block is rendered
-    getByText(container, "Common tags");
+    getByText(container, "Common Tags");
     let commonTagsWrapper = container.querySelector(".inline-item-list-wrapper");
     expect(commonTagsWrapper).toBeTruthy();
 
@@ -109,8 +109,8 @@ test("Check tags appearance for two selected objects", async () => {
     await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
 
     // Check if common and partially applied tag wrappers are rendered
-    getByText(container, "Common tags");
-    getByText(container, "Partially applied tags");
+    getByText(container, "Common Tags");
+    getByText(container, "Partially Applied Tags");
     let wrappers = container.querySelectorAll(".inline-item-list-wrapper");
     expect(wrappers.length).toEqual(2);
 

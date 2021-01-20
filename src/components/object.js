@@ -78,7 +78,7 @@ const editObjectSideMenuItems = [
     },
     {
         type: "dialog",
-        text: "Delete this object?",
+        text: "Delete This Object?",
         getIsVisible: state => state.objectUI.showDeleteDialog,
         buttons: [
             {
@@ -147,8 +147,8 @@ const nameSelector = state => state.objectUI.currentObject.object_name;
 const getNameOnChangeParams = value => ({object_name: value });
 const descriptionSelector = state => state.objectUI.currentObject.object_description;
 const getDescriptionOnChangeParams = value => ({object_description: value });
-const ObjectInput = () => <NameDescriptionInput nameLabel="Object name" nameSelector={nameSelector} nameOnChange={setCurrentObject} getNameOnChangeParams={getNameOnChangeParams}
-    descriptionLabel="Object description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentObject} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;
+const ObjectInput = () => <NameDescriptionInput nameLabel="Object Name" namePlaceholder="Object name" nameSelector={nameSelector} nameOnChange={setCurrentObject} getNameOnChangeParams={getNameOnChangeParams}
+    descriptionLabel="Object Description" descriptionPlaceholder="Object description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentObject} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;
 
 
 // Object's tags

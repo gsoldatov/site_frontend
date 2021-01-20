@@ -78,7 +78,7 @@ const sideMenuItems = [
     },
     {
         type: "dialog",
-        text: "Delete selected objects?",
+        text: "Delete Selected Objects?",
         getIsVisible: state => state.objectsUI.showDeleteDialog && !isFetchingObjects(state),
         buttons: [
             {
@@ -260,7 +260,7 @@ const tagsFilterItemIDSelector = state => state.objectsUI.paginationInfo.tagsFil
 const TagsFilter = () => {
     return (
         <InlineItemListBlock>
-            <InlineItemListWrapper header="Tags filter" isDisplayedSelector={tagsFilterIsDisplayedSelector}>
+            <InlineItemListWrapper header="Tags Filter" isDisplayedSelector={tagsFilterIsDisplayedSelector}>
                 <InlineItemList itemIDSelector={tagsFilterItemIDSelector} ItemComponent={TagsFilterItem} />
             </InlineItemListWrapper>
         </InlineItemListBlock>
@@ -310,14 +310,14 @@ const partiallyAppliedTagsWrapperIsDisplayedSelector = state => objectsGetPartia
 const ObjectsTags = () => {
     return (
         <InlineItemListBlock>
-            <InlineItemListWrapper header="Common tags" isDisplayedSelector={commonTagsWrapperIsDisplayedSelector}>
+            <InlineItemListWrapper header="Common Tags" isDisplayedSelector={commonTagsWrapperIsDisplayedSelector}>
                 <InlineItemList itemIDSelector={objectsGetCommonTagIDs} ItemComponent={CommonCurrentTagItem} />
                 <InlineItemList itemIDSelector={objectsGetAddedTags} ItemComponent={AddedTagItem} />
                 <InlineInput inputStateSelector={inputStateSelector} setInputState={setObjectsTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectsTagsDropdownFetch} 
                     existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectsTags} />
             </InlineItemListWrapper>
 
-            <InlineItemListWrapper header="Partially applied tags" isDisplayedSelector={partiallyAppliedTagsWrapperIsDisplayedSelector}>
+            <InlineItemListWrapper header="Partially Applied Tags" isDisplayedSelector={partiallyAppliedTagsWrapperIsDisplayedSelector}>
                 <InlineItemList itemIDSelector={objectsGetPartiallyAppliedTagIDs} ItemComponent={PartiallyAppliedTagItem} />
             </InlineItemListWrapper>
         </InlineItemListBlock>

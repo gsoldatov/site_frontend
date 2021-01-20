@@ -93,8 +93,10 @@ test("Load a tag from state", async () => {
     let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
     expect(tagNameInput.value).toEqual("tag name");
     expect(tagDescriptionInput.value).toEqual("tag description");
-    getByText(container, tag.created_at);
-    getByText(container, tag.modified_at);
+    // getByText(container, tag.created_at);
+    // getByText(container, tag.modified_at);
+    getByText(container, "Created at:");
+    getByText(container, "Modified at:");
 });
 
 
@@ -111,8 +113,10 @@ test("Load a tag from backend", async () => {
     let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
     expect(tagNameInput.value).toEqual(tag.tag_name);
     expect(tagDescriptionInput.value).toEqual(tag.tag_description);
-    getByText(container, tag.created_at);
-    getByText(container, tag.modified_at);
+    // getByText(container, tag.created_at);
+    // getByText(container, tag.modified_at);
+    getByText(container, "Created at:");
+    getByText(container, "Modified at:");
 });
 
 
@@ -159,10 +163,10 @@ test("Delete a tag", async () => {
     fireEvent.click(deleteButton);
 
     // Check if confirmation dialog has appeared
-    getByText(container, "Delete this tag?");
+    getByText(container, "Delete This Tag?");
     let confimationDialogButtonNo = getByText(container, "No");
     fireEvent.click(confimationDialogButtonNo);
-    expect(queryByText(container, "Delete this tag?")).toBeNull();
+    expect(queryByText(container, "Delete This Tag?")).toBeNull();
 
     // Check if delete removes the tag and redirects
     deleteButton = getByText(container, "Delete");

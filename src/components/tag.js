@@ -61,7 +61,7 @@ const editTagSideMenuItems = [
     },
     {
         type: "dialog",
-        text: "Delete this tag?",
+        text: "Delete This Tag?",
         getIsVisible: state => state.tagUI.showDeleteDialog,
         buttons: [
             {
@@ -127,5 +127,5 @@ const nameSelector = state => state.tagUI.currentTag.tag_name;
 const getNameOnChangeParams = value => ({tag_name: value });
 const descriptionSelector = state => state.tagUI.currentTag.tag_description;
 const getDescriptionOnChangeParams = value => ({tag_description: value });
-const TagInput = () => <NameDescriptionInput nameLabel="Tag name" nameSelector={nameSelector} nameOnChange={setCurrentTag} getNameOnChangeParams={getNameOnChangeParams}
-    descriptionLabel="Tag description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentTag} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;
+const TagInput = () => <NameDescriptionInput nameLabel="Tag Name" namePlaceholder="Tag name" nameSelector={nameSelector} nameOnChange={setCurrentTag} getNameOnChangeParams={getNameOnChangeParams}
+    descriptionLabel="Tag Description" descriptionPlaceholder="Tag description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentTag} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;

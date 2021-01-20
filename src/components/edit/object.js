@@ -39,7 +39,7 @@ export const ObjectTypeSelector = () => {
 
     return (
         <>
-            <div className="object-type-menu-header">Object type</div>
+            <div className="object-type-menu-header">Object Type</div>
             <Menu compact className="object-type-menu">
                 {items}
             </Menu>

@@ -18,9 +18,12 @@ export const MarkdownContainer = () => {
     const displayMode = useSelector(state => state.objectUI.markdownDisplayMode);
     const viewEditBlock = displayMode === "view" ? <MarkdownView /> :
         displayMode === "edit" ? <MarkdownEdit /> : <MarkdownViewEdit />;
+    const headerText = "Markdown " + (displayMode === "view" ? "(View)" :
+        displayMode === "edit" ? "(Edit)" : "(View & Edit)");
     
     return (
         <div className="markdown-container">
+            <div className="markdown-container-header">{headerText}</div>
             <MarkdownDisplaySwitch />
             <div className="markdown-view-edit-container">
                 {viewEditBlock}

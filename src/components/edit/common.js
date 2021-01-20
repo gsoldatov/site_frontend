@@ -33,10 +33,11 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector }) => {
     if (id === "add") {
         return null;
     }
-    const createdAt = useSelector(createdAtSelector);
-    const modifiedAt = useSelector(modifiedAtSelector);
+
+    const createdAt = new Date(useSelector(createdAtSelector) + "Z").toLocaleString();      // "Z" is required to indicate that the timestamp is in UTC timezone
+    const modifiedAt = new Date(useSelector(modifiedAtSelector) + "Z").toLocaleString();    // (which is not added by Python's datetime.isoformat function)
     return (
-        <Grid padded columns={2}>
+        <Grid padded="vertically" columns={2}>
             <Grid.Column>
                 <p><b>Created at: </b> {createdAt}</p>
             </Grid.Column>
@@ -49,8 +50,8 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector }) => {
 
 
 // Name and description input form
-export const NameDescriptionInput = ({ nameLabel, nameSelector, nameOnChange, getNameOnChangeParams,
-                    descriptionLabel, descriptionSelector, descriptionOnChange, getDescriptionOnChangeParams }) => {
+export const NameDescriptionInput = ({ nameLabel, namePlaceholder, nameSelector, nameOnChange, getNameOnChangeParams,
+                    descriptionLabel, descriptionPlaceholder, descriptionSelector, descriptionOnChange, getDescriptionOnChangeParams }) => {
     const dispatch = useDispatch();    
 
     // App state tag name and description
@@ -75,10 +76,10 @@ export const NameDescriptionInput = ({ nameLabel, nameSelector, nameOnChange, ge
 
     return (
         <Form>
-            <Form.Input label={nameLabel} placeholder={nameLabel} value={name} onChange={handleNameChange} />
+            <Form.Input label={nameLabel} placeholder={namePlaceholder} value={name} onChange={handleNameChange} />
             <Form.Field>
                 <label>{descriptionLabel}</label>
-                <textarea className="edit-page-textarea" placeholder={descriptionLabel} ref={descriptionRef} value={description} onChange={handleDescriptionChange} />
+                <textarea className="edit-page-textarea" placeholder={descriptionPlaceholder} ref={descriptionRef} value={description} onChange={handleDescriptionChange} />
             </Form.Field>
         </Form>
     );

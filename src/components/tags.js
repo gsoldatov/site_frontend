@@ -68,7 +68,7 @@ const sideMenuItems = [
     },
     {
         type: "dialog",
-        text: "Delete selected tags?",
+        text: "Delete Selected Tags?",
         getIsVisible: state => state.tagsUI.showDeleteDialog && !isFetchingTags(state),
         buttons: [
             {

@@ -241,9 +241,11 @@ test("Save a new link", async () => {
     expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
     expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
     expect(getByPlaceholderText(container, "Link").value).toEqual(linkValue);
-    let object = store.getState().objects[object_id];
-    getByText(container, object["created_at"]);
-    getByText(container, object["modified_at"]);
+    // let object = store.getState().objects[object_id];
+    // getByText(container, object["created_at"]);
+    // getByText(container, object["modified_at"]);
+    getByText(container, "Created at:");
+    getByText(container, "Modified at:");
 
     expect(store.getState().links[object_id].link).toEqual(linkValue);
     
@@ -329,9 +331,11 @@ test("Save a new markdown object", async () => {
     expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
     expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
     expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText);
-    let object = store.getState().objects[object_id];
-    getByText(container, object["created_at"]);
-    getByText(container, object["modified_at"]);
+    // let object = store.getState().objects[object_id];
+    // getByText(container, object["created_at"]);
+    // getByText(container, object["modified_at"]);
+    getByText(container, "Created at:");
+    getByText(container, "Modified at:");
 
     expect(store.getState().markdown[object_id].raw_text).toEqual(rawText);
 });

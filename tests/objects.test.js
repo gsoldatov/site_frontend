@@ -534,7 +534,7 @@ test("Field menu, tags filter", async () => {
         await waitFor(() => expect(store.getState().objectsUI.paginationInfo.tagsFilter.includes(id)).toBeTruthy());     // tag is added to tagsFilter
         expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();      // dropdown list is not displayed
         expect(tagsFilterInput.value).toEqual("");                                              // search text is reset
-        getByText(getByText(container, "Tags filter").parentNode, `tag #${id}`);                // tags filter block is displayed and contains the added tag
+        getByText(getByText(container, "Tags Filter").parentNode, `tag #${id}`);                // tags filter block is displayed and contains the added tag
         // if (store.getState().objectsUI.paginationInfo.tagsFilter.length < 3)
         //     checkObjectsDisplay(store, container);                                                  // correct objects are displayed
         // else
@@ -594,9 +594,9 @@ test("Field menu, tags filter", async () => {
     await checkIfTagIsAddedToFilter(5);
 
     // Remove a tag from filter by clicking on it
-    fireEvent.click(getByText(getByText(container, "Tags filter").parentNode, `tag #5`));
+    fireEvent.click(getByText(getByText(container, "Tags Filter").parentNode, `tag #5`));
     await waitForFetch(store);
-    let tagsFilterListContainer = getByText(container, "Tags filter").parentNode;
+    let tagsFilterListContainer = getByText(container, "Tags Filter").parentNode;
     getByText(tagsFilterListContainer, "tag #3");
     getByText(tagsFilterListContainer, "tag #4");
     expect(queryByText(tagsFilterListContainer, "tag #5")).toBeFalsy();
@@ -606,7 +606,7 @@ test("Field menu, tags filter", async () => {
     fireEvent.click(clearTagsFilterButton);
     await waitForFetch(store);
     checkObjectsDisplay(store, container);
-    expect(queryByText(container, "Tags filter")).toBeFalsy();
+    expect(queryByText(container, "Tags Filter")).toBeFalsy();
 
     // Search text is reset on blur
     await searchTag("tag #");
