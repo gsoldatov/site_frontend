@@ -115,6 +115,14 @@ const FieldMenuUpdatableDropdown = ({ placeholder, disabledSelector, inputStateS
         dispatch(onSearchChange({ inputText: "", matchingIDs: [] }));
     };
 
+    // Clos on Escape key press
+    const handleKeyDown = e => {
+        if (e.key === "Escape") {
+            dispatch(onSearchChange({ inputText: "", matchingIDs: [] }));
+            setValue("");
+        }
+    };
+
     // Dropdown options (get item store => get item text from the store for each item id)
     const itemStore = useSelector(getDropdownItemTextSelectors.itemStoreSelector);
     const options = inputState.matchingIDs.map(id => ({ key: id, text: getDropdownItemTextSelectors.itemTextSelector(itemStore, id), value: id }));
@@ -124,13 +132,15 @@ const FieldMenuUpdatableDropdown = ({ placeholder, disabledSelector, inputStateS
         disabled={isDisabled}
         open={options.length > 0}
 
-        defaultSearchQuery={inputState.inputText}
+        //defaultSearchQuery={inputState.inputText}
+        searchQuery={inputState.inputText}
         value={value}
         options={options}
 
         onSearchChange={handleSearchChange}
         onChange={handleChange}
         onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
     />;
 };
 
