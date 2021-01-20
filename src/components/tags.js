@@ -87,71 +87,67 @@ const sideMenuItems = [
 // Field menu items
 const fieldMenuItems = [
     {
-        type: "itemGroup",
-        items: [
-            {
-                type: "item",
-                icon: "check",
-                title: "Select all tags on page",
-                onClick: tagIDs => selectTags(tagIDs),
-                getOnClickParams: state => state.tagsUI.paginationInfo.currentPageTagIDs,
-                getIsDisabled: state => isFetchingTags(state)
-            },
-            {
-                type: "item",
-                icon: "cancel",
-                title: "Deselect all tags",
-                onClick: clearSelectedTags(),
-                getIsDisabled: state => isFetchingTags(state)
-            }
-        ]
+        type: "item",
+        icon: "check",
+        title: "Select all tags on page",
+        onClick: tagIDs => selectTags(tagIDs),
+        getOnClickParams: state => state.tagsUI.paginationInfo.currentPageTagIDs,
+        getIsDisabled: state => isFetchingTags(state)
     },
     {
-        type: "itemGroup",
-        items: [
-            {
-                type: "item",
-                icon: "sort content descending",
-                title: "Sort in ascending order",
-                onClick: params => setTagsPaginationInfoAndFetchPage(params),
-                onClickParams: { sortOrder: "asc" },
-                getIsDisabled: state => isFetchingTags(state),
-                getIsActive: state => state.tagsUI.paginationInfo.sortOrder === "asc"
-            },
-            {
-                type: "item",
-                icon: "sort content ascending",
-                title: "Sort in descending order",
-                onClick: params => setTagsPaginationInfoAndFetchPage(params),
-                onClickParams: { sortOrder: "desc" },
-                getIsDisabled: state => isFetchingTags(state),
-                getIsActive: state => state.tagsUI.paginationInfo.sortOrder === "desc"
-            }
-        ]
+        type: "item",
+        icon: "cancel",
+        title: "Deselect all tags",
+        onClick: clearSelectedTags(),
+        getIsDisabled: state => isFetchingTags(state)
+    },
+
+    {
+        type: "separator"
     },
     {
-        type: "itemGroup",
-        // noBorder: true,
-        items: [
-            {
-                type: "item",
-                icon: "font",
-                title: "Sort by tag name",
-                onClick: params => setTagsPaginationInfoAndFetchPage(params),
-                onClickParams: { sortField: "tag_name" },
-                getIsDisabled: state => isFetchingTags(state),
-                getIsActive: state => state.tagsUI.paginationInfo.sortField === "tag_name"
-            },
-            {
-                type: "item",
-                icon: "clock outline",
-                title: "Sort by modify time",
-                onClick: params => setTagsPaginationInfoAndFetchPage(params),
-                onClickParams: { sortField: "modified_at" },
-                getIsDisabled: state => isFetchingTags(state),
-                getIsActive: state => state.tagsUI.paginationInfo.sortField === "modified_at"
-            }
-        ]
+        type: "item",
+        icon: "sort content descending",
+        title: "Sort in ascending order",
+        onClick: params => setTagsPaginationInfoAndFetchPage(params),
+        onClickParams: { sortOrder: "asc" },
+        getIsDisabled: state => isFetchingTags(state),
+        getIsActive: state => state.tagsUI.paginationInfo.sortOrder === "asc"
+    },
+    {
+        type: "item",
+        icon: "sort content ascending",
+        title: "Sort in descending order",
+        onClick: params => setTagsPaginationInfoAndFetchPage(params),
+        onClickParams: { sortOrder: "desc" },
+        getIsDisabled: state => isFetchingTags(state),
+        getIsActive: state => state.tagsUI.paginationInfo.sortOrder === "desc"
+    },
+    
+    {
+        type: "separator"
+    },
+    {
+        type: "item",
+        icon: "font",
+        title: "Sort by tag name",
+        onClick: params => setTagsPaginationInfoAndFetchPage(params),
+        onClickParams: { sortField: "tag_name" },
+        getIsDisabled: state => isFetchingTags(state),
+        getIsActive: state => state.tagsUI.paginationInfo.sortField === "tag_name"
+    },
+    {
+        type: "item",
+        icon: "clock outline",
+        title: "Sort by modify time",
+        onClick: params => setTagsPaginationInfoAndFetchPage(params),
+        onClickParams: { sortField: "modified_at" },
+        getIsDisabled: state => isFetchingTags(state),
+        getIsActive: state => state.tagsUI.paginationInfo.sortField === "modified_at"
+    },
+
+    {
+        type: "separator"
     },
     {
         type: "filter",
@@ -163,6 +159,84 @@ const fieldMenuItems = [
         getOnChangeParams: text => ({ filterText: text })
     }
 ];
+// const fieldMenuItems = [
+//     {
+//         type: "itemGroup",
+//         items: [
+//             {
+//                 type: "item",
+//                 icon: "check",
+//                 title: "Select all tags on page",
+//                 onClick: tagIDs => selectTags(tagIDs),
+//                 getOnClickParams: state => state.tagsUI.paginationInfo.currentPageTagIDs,
+//                 getIsDisabled: state => isFetchingTags(state)
+//             },
+//             {
+//                 type: "item",
+//                 icon: "cancel",
+//                 title: "Deselect all tags",
+//                 onClick: clearSelectedTags(),
+//                 getIsDisabled: state => isFetchingTags(state)
+//             }
+//         ]
+//     },
+//     {
+//         type: "itemGroup",
+//         items: [
+//             {
+//                 type: "item",
+//                 icon: "sort content descending",
+//                 title: "Sort in ascending order",
+//                 onClick: params => setTagsPaginationInfoAndFetchPage(params),
+//                 onClickParams: { sortOrder: "asc" },
+//                 getIsDisabled: state => isFetchingTags(state),
+//                 getIsActive: state => state.tagsUI.paginationInfo.sortOrder === "asc"
+//             },
+//             {
+//                 type: "item",
+//                 icon: "sort content ascending",
+//                 title: "Sort in descending order",
+//                 onClick: params => setTagsPaginationInfoAndFetchPage(params),
+//                 onClickParams: { sortOrder: "desc" },
+//                 getIsDisabled: state => isFetchingTags(state),
+//                 getIsActive: state => state.tagsUI.paginationInfo.sortOrder === "desc"
+//             }
+//         ]
+//     },
+//     {
+//         type: "itemGroup",
+//         // noBorder: true,
+//         items: [
+//             {
+//                 type: "item",
+//                 icon: "font",
+//                 title: "Sort by tag name",
+//                 onClick: params => setTagsPaginationInfoAndFetchPage(params),
+//                 onClickParams: { sortField: "tag_name" },
+//                 getIsDisabled: state => isFetchingTags(state),
+//                 getIsActive: state => state.tagsUI.paginationInfo.sortField === "tag_name"
+//             },
+//             {
+//                 type: "item",
+//                 icon: "clock outline",
+//                 title: "Sort by modify time",
+//                 onClick: params => setTagsPaginationInfoAndFetchPage(params),
+//                 onClickParams: { sortField: "modified_at" },
+//                 getIsDisabled: state => isFetchingTags(state),
+//                 getIsActive: state => state.tagsUI.paginationInfo.sortField === "modified_at"
+//             }
+//         ]
+//     },
+//     {
+//         type: "filter",
+//         disabledSelector: state => isFetchingTags(state),
+//         placeholder: "Filter tags",
+//         getValueSelector: state => state.tagsUI.paginationInfo.filterText,
+//         onChange: params => setTagsPaginationInfo(params),    // action for updating input input text (which is kept in state)
+//         onChangeDelayed: params => setTagsPaginationInfoAndFetchPage(params),     // action for performing a fetch with a delay from the last onChange event
+//         getOnChangeParams: text => ({ filterText: text })
+//     }
+// ];
 
 
 // Immutable selectors

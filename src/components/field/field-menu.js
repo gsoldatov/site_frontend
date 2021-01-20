@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
+import { Button, Divider, Dropdown, Input, Menu } from "semantic-ui-react";
 
 import intervalWrapper from "../../util/interval-wrapper";
 
@@ -25,6 +25,8 @@ const FieldMenuElement = props => {
             return <FieldMenuItem {...props} />;
         case "filter":
             return <FieldMenuFilter {...props} />;
+        case "separator":
+            return <FieldMenuSeparator {...props} />;
         case "itemGroup":
             return <FieldMenuItemGroup {...props} />;
         case "dropdown":
@@ -49,7 +51,7 @@ const FieldMenuItem = ({ icon, title, getIsDisabled, getIsActive, onClick, getOn
         dispatch(typeof(onClick) === "function" ? onClick(_onClickParams) : onClick);
     };
 
-    return <Button basic icon={icon} title={title} active={isActive} disabled={isDisabled} onClick={handleClick} />;
+    return <Button basic className="field-menu-button" icon={icon} title={title} active={isActive} disabled={isDisabled} onClick={handleClick} />;
 };
 
 
@@ -77,7 +79,7 @@ const FieldMenuDropdown = ({ placeholder, disabledSelector, defaultValueSelector
     const isDisabled = useSelector(disabledSelector);
     const defaultValue = useSelector(defaultValueSelector);
     
-    return <Dropdown multiple selection
+    return <Dropdown multiple selection className="field-menu-dropdown"
         placeholder={placeholder}
         disabled={isDisabled}
         defaultValue={defaultValue}
@@ -127,7 +129,7 @@ const FieldMenuUpdatableDropdown = ({ placeholder, disabledSelector, inputStateS
     const itemStore = useSelector(getDropdownItemTextSelectors.itemStoreSelector);
     const options = inputState.matchingIDs.map(id => ({ key: id, text: getDropdownItemTextSelectors.itemTextSelector(itemStore, id), value: id }));
 
-    return <Dropdown search selectOnNavigation={false} selection selectOnBlur={false}
+    return <Dropdown search selectOnNavigation={false} selection selectOnBlur={false} className="field-menu-updatable-dropdown"
         placeholder={placeholder}
         disabled={isDisabled}
         open={options.length > 0}
@@ -143,6 +145,13 @@ const FieldMenuUpdatableDropdown = ({ placeholder, disabledSelector, inputStateS
         onKeyDown={handleKeyDown}
     />;
 };
+
+
+// Field menu separator
+const FieldMenuSeparator = () => {
+    // return <Divider vertical />;
+    return <div className="field-menu-separator" />;
+}
 
 
 // Field menu group

@@ -3,10 +3,22 @@
 *************************/
 
 .ui.menu.field-menu {
+    display: flex;
+    flex-wrap: wrap;
     margin-bottom: 1em;
 }
 
-.ui.buttons.field-menu-group, .ui.icon.input.field-menu-filter {
+/* .ui.buttons.field-menu-group, .ui.icon.input.field-menu-filter {
     margin-left: 3px;
     margin-right: 3px;
+} */
+
+.ui.button.field-menu-button {
+    margin-right: 0px;
+}
+
+.field-menu-separator {
+    margin: 0px;
+    padding: 0px;
+    border-left: solid 0.6em rgba(255, 255, 255, 1);
 }
