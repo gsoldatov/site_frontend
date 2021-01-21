@@ -101,7 +101,11 @@ const calculateCommonAndPartiallyAppliedTags = state => {
 export const objectsGetAddedTags = state => getAddedTags(state) || calculateAddedTags(state);
 
 export let addedTagsCache = {};
-const getAddedTagsCacheKey = state => state.objectsUI.addedTags.sort().join(",") + "|" + objectsGetPartiallyAppliedTagIDs(state).sort().join(",");     // addedTags + partially applied
+// const getAddedTagsCacheKey = state => state.objectsUI.addedTags.sort().join(",") + "|" + objectsGetPartiallyAppliedTagIDs(state).sort().join(",");     // addedTags + partially applied
+const getAddedTagsCacheKey = state => state.objectsUI.addedTags.sort().map(t => {
+    if (typeof(t) === "string" && t.replace(/\D/g, "").length === t.length) return `!@"${t}"@!`;    // handle strings consisting of digits only (which get the same key as numeric ids of the same value otherwise)
+    return t;
+}).join(",") + "|" + objectsGetPartiallyAppliedTagIDs(state).sort().join(",");     // addedTags + partially applied
 const getAddedTags = state => addedTagsCache[getAddedTagsCacheKey(state)];
 const calculateAddedTags = state => {
     let addedTags = state.objectsUI.addedTags.filter(tagID => !objectsGetPartiallyAppliedTagIDs(state).includes(tagID));
