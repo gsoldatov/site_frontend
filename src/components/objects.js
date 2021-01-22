@@ -277,7 +277,7 @@ const CommonCurrentTagItem = ({ id }) => {
 };
 const AddedTagItem = ({ id }) => {
     const dispatch = useDispatch();
-    const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
+    const text = useSelector(state => typeof(id) === "string" ? id : (state.tags[id] ? state.tags[id].tag_name : id));
     const itemClassName = typeof(id) === "number" ? "inline-item-green" : "inline-item-blue";
     const onClick = () => dispatch(setCurrentObjectsTags({ added: [id] }));
     const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
@@ -299,7 +299,8 @@ const PartiallyAppliedTagItem = ({ id }) => {
 const inputStateSelector = state => state.objectsUI.tagsInput;
 const existingIDsSelector = state => objectsGetCommonTagIDs(state).concat(objectsGetPartiallyAppliedTagIDs(state)).concat(
     state.objectsUI.addedTags.filter(tag => typeof(tag) === "number")); // common + partially applied + added existing tags
-const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
+// const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
+const inlineInputDropdownItemTextSelectors = { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name };
 
 const commonTagsWrapperIsDisplayedSelector = state => state.objectsUI.selectedObjectIDs.length > 0;
 const partiallyAppliedTagsWrapperIsDisplayedSelector = state => objectsGetPartiallyAppliedTagIDs(state).length > 0;
@@ -314,8 +315,10 @@ const ObjectsTags = () => {
             <InlineItemListWrapper header="Common Tags" isDisplayedSelector={commonTagsWrapperIsDisplayedSelector}>
                 <InlineItemList itemIDSelector={objectsGetCommonTagIDs} ItemComponent={CommonCurrentTagItem} />
                 <InlineItemList itemIDSelector={objectsGetAddedTags} ItemComponent={AddedTagItem} />
-                <InlineInput inputStateSelector={inputStateSelector} setInputState={setObjectsTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectsTagsDropdownFetch} 
-                    existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectsTags} />
+                {/* <InlineInput inputStateSelector={inputStateSelector} setInputState={setObjectsTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectsTagsDropdownFetch} 
+                    existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectsTags} /> */}
+                <InlineInput placeholder="Enter tag name..." inputStateSelector={inputStateSelector} setInputState={setObjectsTagsInput} onSearchChangeDelayed={objectsTagsDropdownFetch} 
+                    existingIDsSelector={existingIDsSelector} setItem={setCurrentObjectsTags} getDropdownItemTextSelectors={inlineInputDropdownItemTextSelectors} />
             </InlineItemListWrapper>
 
             <InlineItemListWrapper header="Partially Applied Tags" isDisplayedSelector={partiallyAppliedTagsWrapperIsDisplayedSelector}>

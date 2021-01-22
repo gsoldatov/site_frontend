@@ -209,12 +209,17 @@ export function onDeleteFetch() {
 /*
     Creates a thunk creator, which queries /tags/search to retrieve matchingIDs and updates state with the provided actionCreator.
 */
-const dropdownFetchThunkCreatorCreator = actionCreator => {
+const dropdownFetchThunkCreatorCreator = (actionCreator, inputTextSelector) => {
     return function objectsTagsDropdownFetch({queryText, existingIDs}) {
         return async (dispatch, getState) => {
             // Check params
+            const inputText = inputTextSelector(getState());
+            if (inputText.length === 0) {   // exit fetch if an item was added before the start of the fetch
+                dispatch(actionCreator({ matchingIDs: [] }));
+                return;
+            }
+            
             if (queryText.length === 0 || queryText.length > 255 || existingIDs.length > 1000) return;
-            const inputText = getState().objectsUI.tagsInput.inputText;
 
             try {
                 let payload = JSON.stringify({
@@ -237,7 +242,7 @@ const dropdownFetchThunkCreatorCreator = actionCreator => {
                         await dispatch(getNonCachedTags(tagIDs));
 
                         // Do not update if input text changed during fetch
-                        if (inputText === getState().objectsUI.tagsInput.inputText) dispatch(actionCreator({ matchingIDs: tagIDs }));
+                        if (inputText === inputTextSelector(getState())) dispatch(actionCreator({ matchingIDs: tagIDs }));
                         break;
                     case 404:
                         dispatch(actionCreator({ matchingIDs: [] }));
@@ -254,8 +259,8 @@ const dropdownFetchThunkCreatorCreator = actionCreator => {
     };
 };
 
-export const objectsTagsDropdownFetch = dropdownFetchThunkCreatorCreator(setObjectsTagsInput);
-export const tagsFilterDropdownFetch = dropdownFetchThunkCreatorCreator(setTagsFilterInput);
+export const objectsTagsDropdownFetch = dropdownFetchThunkCreatorCreator(setObjectsTagsInput, state => state.objectsUI.tagsInput.inputText);
+export const tagsFilterDropdownFetch = dropdownFetchThunkCreatorCreator(setTagsFilterInput, state => state.objectsUI.tagsFilterInput.inputText);
 
 // export function objectsTagsDropdownFetch({queryText, existingIDs}) {
 //     return async (dispatch, getState) => {

@@ -178,15 +178,18 @@ const CurrentTagItem = ({ id }) => {
 const inputStateSelector = state => state.objectUI.currentObject.tagsInput;
 const existingIDsSelector = state => state.objectUI.currentObject.currentTagIDs.concat(
     state.objectUI.currentObject.addedTags.filter(tag => typeof(tag) === "number"));
-const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
+// const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
+const inlineInputDropdownItemTextSelectors = { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name };
 const ObjectTags = () => {
     return (
         <InlineItemListBlock header="Tags">
             <InlineItemListWrapper>
                 <InlineItemList itemIDSelector={currentTagsSelector} ItemComponent={CurrentTagItem} />
                 <InlineItemList itemIDSelector={addedTagsSelector} ItemComponent={AddedTagItem} />
-                <InlineInput inputStateSelector={inputStateSelector} setInputState={setObjectTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectTagsDropdownFetch} 
-                    existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectTags} />
+                {/* <InlineInput inputStateSelector={inputStateSelector} setInputState={setObjectTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectTagsDropdownFetch} 
+                    existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectTags} /> */}
+                <InlineInput placeholder="Enter tag name..." inputStateSelector={inputStateSelector} setInputState={setObjectTagsInput} onSearchChangeDelayed={objectTagsDropdownFetch} 
+                    existingIDsSelector={existingIDsSelector} setItem={setCurrentObjectTags} getDropdownItemTextSelectors={inlineInputDropdownItemTextSelectors} />
             </InlineItemListWrapper>
         </InlineItemListBlock>
     );

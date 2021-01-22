@@ -29,7 +29,7 @@ import { getByText, getByPlaceholderText, waitFor, queryByText } from '@testing-
 import { renderWithWrappers } from "./test-utils";
 import createStore from "../src/store/create-store";
 
-import { EditTag } from "../src/components/tag";
+import { AddTag, EditTag } from "../src/components/tag";
 import { addTags, deleteTags } from "../src/actions/tags";
 
 
@@ -117,6 +117,21 @@ test("Load a tag from backend", async () => {
     // getByText(container, tag.modified_at);
     getByText(container, "Created at:");
     getByText(container, "Modified at:");
+});
+
+
+test("Check 'Add Tag' button", async () => {
+    // Route component is required for matching (getting :id part of the URL in the Tag component)
+    let { container, history } = renderWithWrappers(
+        <Route exact path="/tags/:id" render={ props => props.match.params.id === "add" ? <AddTag /> : <EditTag /> } />, 
+        { route: "/tags/1" }
+    );
+
+    // Check if object information is displayed on the page
+    await waitFor(() => getByText(container, "Tag Information"));
+    let addTagButton = getByText(container, "Add Tag");
+    fireEvent.click(addTagButton);
+    expect(history.entries[history.length - 1].pathname).toBe("/tags/add");
 });
 
 

@@ -298,8 +298,13 @@ export function editObjectOnDeleteFetch() {
 export function objectTagsDropdownFetch({queryText, existingIDs}) {
     return async (dispatch, getState) => {
         // Check params
-        if (queryText.length === 0 || queryText.length > 255 || existingIDs.length > 1000) return;
         const inputText = getState().objectUI.currentObject.tagsInput.inputText;
+        if (inputText.length === 0) {   // exit fetch if an item was added before the start of the fetch
+            dispatch(setObjectTagsInput({ matchingIDs: [] }));
+            return;
+        }
+
+        if (queryText.length === 0 || queryText.length > 255 || existingIDs.length > 1000) return;
 
         let payload = JSON.stringify({
             query: {

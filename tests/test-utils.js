@@ -3,6 +3,7 @@ import { Router } from "react-router-dom";
 import { Provider } from "react-redux";
 import { createMemoryHistory } from "history";
 import { render } from "@testing-library/react";
+import { queryByText, queryAllByText } from "@testing-library/dom";
 
 import createStore from "../src/store/create-store";
 
@@ -57,6 +58,35 @@ export async function getStoreWithTwoSelectedObjects() {
     await store.dispatch(getNonCachedTags([6]));
     return store;
 }
+
+
+// Returns the input node of the InlineInput component inside the container
+export const getInlineInputField = ({ container, currentQueryText }) => {
+    let placeholder = queryByText(container, "Enter tag name...");
+    if (!placeholder && currentQueryText) queryAllByText(container, currentQueryText).forEach(node => {
+        if (node.parentNode.className.indexOf("default") > -1 && node.parentNode.className.indexOf("text") > -1) placeholder = node.parentNode;
+    });
+    if (!placeholder) return null;
+    return placeholder.parentNode.querySelector("input");
+};
+
+
+// Returns the dropdown list node of the InlineInput component inside the container
+export const getDropdownOptionsContainer = ({ container, currentQueryText }) => {
+    const input = getInlineInputField({ container, currentQueryText });
+    if (!input) return null;
+    return input.parentNode.querySelector(".menu.transition");
+};
+
+
+// Returns the 
+export const getTagInlineItem = ({ container, text }) => {
+    let tag;
+    queryAllByText(container, text).forEach(node => {
+        if (node.className.indexOf("inline-item-text") > -1) tag = node;
+    });
+    return tag;
+};
 
 
 // Return mocked object type base on its ID

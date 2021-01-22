@@ -36,8 +36,8 @@ div.inline-item-list-wrapper {
     line-height: 1.8em;
 }
 
-/* Item input */
-span.inline-input-span {
+/* Item input (input + datalist version) */
+/* span.inline-input-span {
     margin-top: 0.3em;
     margin-bottom: 0.3em;
 }
@@ -55,6 +55,50 @@ i.input-toggle {
 
 i.input-toggle:hover {
     cursor: pointer;
+} */
+
+/* Inline input */
+span.inline-input-span {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+
+i.input-toggle {
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+}
+
+i.input-toggle:hover {
+    cursor: pointer;
+}
+
+.ui.search.selection.dropdown.inline-input {    /* SUIR container tag */
+    min-height: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.ui.search.selection.dropdown.inline-input>input.search, .ui.search.selection.dropdown.inline-input>.divider.text { /* SUIR inner input & search query display tags */
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    line-height: 1.8em;
+}
+
+.ui.search.selection.dropdown.inline-input>.divider.text {  /* Center query text vertically */
+    display: flex;
+    align-items: center;
+}
+
+div.visible.menu.transition>div.item:not([non-existing]) {
+    display: flex;
+    align-items: center;
+    line-height: 1.8em;
+    padding-top: 0 !important;
+    padding-bottom: 0!important;
+    padding-left: 0.4em !important;
+    padding-right: 0.4em !important;
 }
 
 /* Item margin & padding */
