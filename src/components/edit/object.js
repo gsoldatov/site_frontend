@@ -18,7 +18,7 @@ import StyleObject from "../../styles/object.css";
 const objectTypes = [
     { key: 1, name: "link", title: "Link" },
     { key: 2, name: "markdown", title: "Markdown" },
-    { key: 3, name: "todo", title: "To-Do List" }
+    { key: 3, name: "to_do_list", title: "To-Do List" }
 ];
 export const ObjectTypeSelector = () => {
     const dispatch = useDispatch();

@@ -195,7 +195,7 @@ const fieldMenuItems = [
         options: [
             { key: 1, text: "Links", value: "link" },
             { key: 2, text: "Markdown", value: "markdown" },
-            // { key: 3, text: "To-Do Lists", value: "todo" }
+            // { key: 3, text: "To-Do Lists", value: "to_do_list" }
         ],
         getOnChangeAction: (e, data) => setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })
     },
