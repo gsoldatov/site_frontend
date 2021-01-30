@@ -2,6 +2,7 @@ import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, SET_OB
     SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
 import { getTagIDByName } from "../store/state-util";
+import { updateToDoListItems } from "./object-to-do-lists";
 
 
 function loadAddObjectPage(state, action) {
@@ -30,7 +31,16 @@ function loadAddObjectPage(state, action) {
                 },
 
                 link: "",
-                markdown: { raw_text: "", parsed: "" }
+                markdown: { 
+                    raw_text: "", 
+                    parsed: "" 
+                },
+                toDoList: {
+                    itemOrder: [],
+                    setFocusOnID: -1,
+                    sort_type: "default",
+                    items: {}
+                }
             },
 
             saveAddObjectState: true,
@@ -71,7 +81,16 @@ function loadEditObjectPage(state, action) {
                 },
                 
                 link: "",
-                markdown: { raw_text: "", parsed: "" }
+                markdown: { 
+                    raw_text: "", 
+                    parsed: "" 
+                },
+                toDoList: {
+                    itemOrder: [],
+                    setFocusOnID: -1,
+                    sort_type: "default",
+                    items: {}
+                }
             },
 
             saveAddObjectState: false,
@@ -92,7 +111,40 @@ function loadEditObjectPage(state, action) {
 }
 
 function setCurrentObject(state, action) {
-    let oldObject = state.objectUI.currentObject;
+    const oldObject = state.objectUI.currentObject;
+
+    // Links
+    const link = action.object.link !== undefined ? action.object.link : oldObject.link;
+
+    // Markdown
+    const aMD = action.object.markdown;
+    const markdown = aMD !== undefined ? {
+        raw_text: aMD.raw_text !== undefined ? aMD.raw_text : oldObject.markdown.raw_text,
+        parsed: aMD.parsed !== undefined ? aMD.parsed : oldObject.markdown.parsed
+    } : oldObject.markdown;
+
+    // To-do lists
+    let toDoList;
+    const aTDL = action.object.toDoList;
+    const aTDLItemUpdate = action.object.toDoListItemUpdate;
+
+    if (aTDLItemUpdate !== undefined) {
+        toDoList = updateToDoListItems(oldObject.toDoList, aTDLItemUpdate)
+        // toDoList = {
+        //     ...oldObject.toDoList,
+        //     items: getNewToDoListItems(oldObject.toDoList.items, aTDLItemUpdate)
+        // }
+    } else if (aTDL !== undefined) {
+        toDoList = {
+            setFocusOnID: aTDL.setFocusOnID !== undefined ? aTDL.setFocusOnID : oldObject.toDoList.setFocusOnID,
+            itemOrder: aTDL.itemOrder !== undefined ? aTDL.itemOrder : oldObject.toDoList.itemOrder,
+            sort_type: aTDL.sort_type !== undefined ? aTDL.sort_type : oldObject.toDoList.sort_type,
+            items: aTDL.items !== undefined ? aTDL.items : oldObject.toDoList.items
+        };
+    } else {
+        toDoList = oldObject.toDoList;
+    }
+
     return {
         ...state,
         objectUI: {
@@ -106,8 +158,9 @@ function setCurrentObject(state, action) {
                 created_at: action.object.created_at !== undefined ? action.object.created_at : oldObject.created_at,
                 modified_at: action.object.modified_at !== undefined ? action.object.modified_at : oldObject.modified_at,
 
-                link: action.object.link !== undefined ? action.object.link : oldObject.link,
-                markdown: action.object.markdown !== undefined ? {...oldObject.markdown, ...action.object.markdown} : oldObject.markdown
+                link,
+                markdown,
+                toDoList
             }
         }
     };

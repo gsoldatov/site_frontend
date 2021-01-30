@@ -1,0 +1,62 @@
+/**************************************************
+                To-do lists styles.                
+**************************************************/
+
+
+/* Container */
+.to-do-list-container {
+    border: 1px solid black;
+    width: 100%;
+    padding: 0.5em;
+}
+
+/* Menu */
+.to-do-list-menu {
+    margin-bottom: 0.3em;
+}
+
+/* Item */
+.to-do-list-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-top: solid 1px rgba(34, 36, 38, 0.15);
+    /* margin-top: 0.3em; */
+    /* padding-top: 0.3em; */
+    /* margin-bottom: 0.3em; */
+}
+.to-do-list-item-input, .new-to-do-list-item-input {
+    /* border: solid 1px rgba(34, 36, 38, 0.15); */
+    outline: none;  /* don't border on edit */
+    padding: 0.3em;
+    line-break: auto;
+    word-break: break-word;
+    min-width: 100px;
+    /* max-width: 200px; */
+    max-width: 80%;
+}
+
+.new-to-do-list-item-input {
+    padding-left: calc(0.3em + 100px);  /* TODO set correct padding when left menu is fully implemented */
+    width: 80%;
+}
+
+.new-to-do-list-item-input:empty::before {
+    content: attr(placeholder);
+    pointer-events: none;
+    display: block; /* For Firefox */
+    color: rgba(191, 191, 191, 0.87);
+}
+
+.to-do-list-left-menu, .to-do-list-right-menu {
+    width: 100px;
+    background-color: darkgreen;
+    /* vertical-align: middle; */
+}
+
+.to-do-list-item-button:hover {
+    cursor: pointer;
+}
+/* .to-do-list-item-input::selection {
+    border: none;
+} */

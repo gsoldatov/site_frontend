@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 
 import { LinkInput } from "./link";
 import { MarkdownContainer } from "./markdown";
+import { ToDoListContainer } from "./to-do-list";
 
 import { setCurrentObject } from "../../actions/object";
 
@@ -57,6 +58,8 @@ export const ObjectViewEditSwitch = () => {
             return <LinkInput />;
         case "markdown":
             return <MarkdownContainer />;
+        case "to_do_list":
+            return <ToDoListContainer />;
         default:
             return <div>Not implemented</div>;
     }

@@ -54,6 +54,7 @@ const initialState = {
     objects: {},    // general arributes
     links: {},
     markdown: {},
+    toDoLists: {},
 
     // /objects/:id page UI controllers
     objectUI: {
@@ -75,7 +76,16 @@ const initialState = {
             },
 
             link: "",
-            markdown: { raw_text: "", parsed: "" }
+            markdown: { 
+                raw_text: "", 
+                parsed: "" 
+            },
+            toDoList: {
+                itemOrder: [],
+                setFocusOnID: -1,
+                sort_type: "default",
+                items: {}
+            }
         },
 
         saveAddObjectState: false,
