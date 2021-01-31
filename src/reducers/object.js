@@ -38,6 +38,8 @@ function loadAddObjectPage(state, action) {
                 toDoList: {
                     itemOrder: [],
                     setFocusOnID: -1,
+                    caretPositionOnFocus: -1,
+    
                     sort_type: "default",
                     items: {}
                 }
@@ -88,6 +90,8 @@ function loadEditObjectPage(state, action) {
                 toDoList: {
                     itemOrder: [],
                     setFocusOnID: -1,
+                    caretPositionOnFocus: -1,
+    
                     sort_type: "default",
                     items: {}
                 }
@@ -136,8 +140,10 @@ function setCurrentObject(state, action) {
         // }
     } else if (aTDL !== undefined) {
         toDoList = {
-            setFocusOnID: aTDL.setFocusOnID !== undefined ? aTDL.setFocusOnID : oldObject.toDoList.setFocusOnID,
             itemOrder: aTDL.itemOrder !== undefined ? aTDL.itemOrder : oldObject.toDoList.itemOrder,
+            setFocusOnID: aTDL.setFocusOnID !== undefined ? aTDL.setFocusOnID : oldObject.toDoList.setFocusOnID,
+            caretPositionOnFocus: aTDL.caretPositionOnFocus !== undefined ? aTDL.caretPositionOnFocus : oldObject.toDoList.caretPositionOnFocus,
+
             sort_type: aTDL.sort_type !== undefined ? aTDL.sort_type : oldObject.toDoList.sort_type,
             items: aTDL.items !== undefined ? aTDL.items : oldObject.toDoList.items
         };

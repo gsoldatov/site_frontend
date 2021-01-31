@@ -83,6 +83,8 @@ const initialState = {
             toDoList: {
                 itemOrder: [],
                 setFocusOnID: -1,
+                caretPositionOnFocus: -1,
+
                 sort_type: "default",
                 items: {}
             }
