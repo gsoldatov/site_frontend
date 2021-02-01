@@ -115,7 +115,7 @@ export const updateToDoListItems = (toDoList, update) => {
         newItemOrder.splice(position, 1, newCurrID, newCurrID + 1);
         
         const newItems = {...toDoList.items};
-        delete newItems[toDoList.id];
+        delete newItems[update.id];
         newItems[newCurrID] = {...itemDefaults, item_text: update.before};
         newItems[newCurrID + 1] = {...itemDefaults, item_text: update.after};
 
