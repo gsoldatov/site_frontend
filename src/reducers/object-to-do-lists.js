@@ -8,16 +8,11 @@ const itemDefaults = { item_state: "active", item_text: "", commentary: "", inde
 /*
     Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
     `update` is an object with `command` prop with the type of update to perform, as well as additional props specifying the update.
-    Possible combinations of `update` props and their values:
-    - `command` = "add", `position` = [position in the list], `id` = [id of the item to insert after, if position is not provided],
-        any prop specified in `itemDefaults` can be provided to override the default value;
-    - `command` = "update", `id` = [updated item id], any prop specified in `itemDefaults` with the new value;
-    - `command` = "delete", `id` = [updated item id], `setFocus` = ["prev"|"next" enum indicating which item should be focused after delete];
-    - `command` = "focusPrev", `focusLastItem` = [bool indicating that a last item should be focused], `id` = [id of item after the item to be focused];
-    - `command` = "focusNext", `id` = [id of item before the item to be focused];
-    - `command` = "swap" // TODO update when implemented
 */
 export const updateToDoListItems = (toDoList, update) => {
+    // Adds a new item after the item with provided `id`. 
+    // Sets the properties of the new item with provided properties or uses values stored in `itemDefaults`.
+    // Focuses the new item and sets the caret at the end of it.
     if (update.command === "add") {
         const newItem = {};
         Object.keys(itemDefaults).forEach(k => {
@@ -39,6 +34,7 @@ export const updateToDoListItems = (toDoList, update) => {
         };
     }
 
+    // Updates the properties of the item with provided `id` to values passed in the props.
     if (update.command === "update") {
         const newItem = {};
         Object.keys(itemDefaults).forEach(k => {
@@ -50,6 +46,8 @@ export const updateToDoListItems = (toDoList, update) => {
         };
     }
 
+    // Deletes the item with provided `id`.
+    // If `setFocus` is set to "prev" or "next", focuses the item before or after the deleted and places caret at the end of it.
     if (update.command === "delete") {
         const newItemOrder = toDoList.itemOrder.filter(id => id !== update.id);
         const newItems = {...toDoList.items};
@@ -77,6 +75,8 @@ export const updateToDoListItems = (toDoList, update) => {
         };
     }
 
+    // Focuses the item before the item with provided `id`.
+    // If `focusLastItem` is set to true, focuses the last item of the list.
     if (update.command === "focusPrev") {
         if (update.focusLastItem) {     // move from new item item to the last existing item
             if (toDoList.itemOrder.length === 0) return toDoList;
@@ -91,6 +91,8 @@ export const updateToDoListItems = (toDoList, update) => {
         };
     }
 
+    // Focuses the item after the item with provided `id`.
+    // If `id` refers to the last item in the list, new item input is focused.
     if (update.command === "focusNext") {
         const position = toDoList.itemOrder.indexOf(update.id);
         if (position < 0) return toDoList;
@@ -100,6 +102,81 @@ export const updateToDoListItems = (toDoList, update) => {
             caretPositionOnFocus: position < toDoList.itemOrder.length - 1 && update.caretPositionOnFocus > -1
                 ? update.caretPositionOnFocus       // update caretPositionOnFocus if it's provided and an existing item is selected
                 : toDoList.caretPositionOnFocus
+        };
+    }
+
+    // Replaces item with the provided `id` by two new items.
+    // New items receive the texts contained in `before` and `after` (which should contain the text before and after the caret in the old item).
+    // Focuses the second new item and places the caret at its beginning.
+    if (update.command === "split") {
+        const newCurrID = getNewID(toDoList.itemOrder);
+        const newItemOrder = [...toDoList.itemOrder];
+        const position = newItemOrder.indexOf(update.id);
+        newItemOrder.splice(position, 1, newCurrID, newCurrID + 1);
+        
+        const newItems = {...toDoList.items};
+        delete newItems[toDoList.id];
+        newItems[newCurrID] = {...itemDefaults, item_text: update.before};
+        newItems[newCurrID + 1] = {...itemDefaults, item_text: update.after};
+
+        return {
+            ...toDoList,
+            setFocusOnID: newCurrID + 1,
+            caretPositionOnFocus: 0,
+            itemOrder: newItemOrder,
+            items: newItems
+        };
+    }
+
+    // Replaces the item with provided `id` and the item before it with a new item.
+    // The new item text contains the merged texts of the replaced items.
+    // New item is focused and caret is placed between at the border of the old items' texts.
+    if (update.command === "mergeWithPrev") {
+        const position = toDoList.itemOrder.indexOf(update.id);
+        if (position === 0) return toDoList;
+
+        const newCurrID = getNewID(toDoList.itemOrder);
+        const newItemOrder = [...toDoList.itemOrder];
+        newItemOrder.splice(position - 1, 2, newCurrID);
+
+        const prevID = toDoList.itemOrder[position - 1];
+        const newItem = { ...itemDefaults, item_text: toDoList.items[prevID].item_text + toDoList.items[update.id].item_text };
+        const newItems = {...toDoList.items, [newCurrID]: newItem };
+        delete newItems[update.id];
+        delete newItems[prevID];
+
+        return {
+            ...toDoList,
+            setFocusOnID: newCurrID,
+            caretPositionOnFocus: toDoList.items[prevID].item_text.length,
+            itemOrder: newItemOrder,
+            items: newItems
+        };
+    }
+
+    // Replaces the item with provided `id` and the item after it with a new item.
+    // The new item text contains the merged texts of the replaced items.
+    // New item is focused and caret is placed between at the border of the old items' texts.
+    if (update.command === "mergeWithNext") {
+        const position = toDoList.itemOrder.indexOf(update.id);
+        if (position === toDoList.itemOrder.length - 1) return toDoList;
+
+        const newCurrID = getNewID(toDoList.itemOrder);
+        const newItemOrder = [...toDoList.itemOrder];
+        newItemOrder.splice(position, 2, newCurrID);
+
+        const nextID = toDoList.itemOrder[position + 1];
+        const newItem = { ...itemDefaults, item_text: toDoList.items[update.id].item_text + toDoList.items[nextID].item_text };
+        const newItems = {...toDoList.items, [newCurrID]: newItem };
+        delete newItems[update.id];
+        delete newItems[nextID];
+
+        return {
+            ...toDoList,
+            setFocusOnID: newCurrID,
+            caretPositionOnFocus: toDoList.items[update.id].item_text.length,
+            itemOrder: newItemOrder,
+            items: newItems
         };
     }
 };

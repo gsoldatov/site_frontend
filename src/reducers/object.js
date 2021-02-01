@@ -133,11 +133,7 @@ function setCurrentObject(state, action) {
     const aTDLItemUpdate = action.object.toDoListItemUpdate;
 
     if (aTDLItemUpdate !== undefined) {
-        toDoList = updateToDoListItems(oldObject.toDoList, aTDLItemUpdate)
-        // toDoList = {
-        //     ...oldObject.toDoList,
-        //     items: getNewToDoListItems(oldObject.toDoList.items, aTDLItemUpdate)
-        // }
+        toDoList = updateToDoListItems(oldObject.toDoList, aTDLItemUpdate);
     } else if (aTDL !== undefined) {
         toDoList = {
             itemOrder: aTDL.itemOrder !== undefined ? aTDL.itemOrder : oldObject.toDoList.itemOrder,

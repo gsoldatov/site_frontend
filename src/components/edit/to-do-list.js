@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Form, Icon } from "semantic-ui-react";
 
 import { setCurrentObject } from "../../actions/object";
-import { getCaretPosition } from "../../util/caret";
+import { getCaretPosition, getSplitText } from "../../util/caret";
 
 import StyleTDL from "../../styles/to-do-lists.css";
 
@@ -42,9 +42,6 @@ const TDLItems = () => {
 
                 const range = document.createRange(), sel = window.getSelection();
                 if (focusedInput.textContent.length > 0) {
-                    console.log("IN USE EFFECT, SETTING CARET")
-                    console.log(`caretPositionOnFocus = ${toDoList.caretPositionOnFocus}`)
-                    console.log(`focusedInput.textContent.length = ${focusedInput.textContent.length}`)
                     const caretPosition = toDoList.caretPositionOnFocus > -1 && toDoList.caretPositionOnFocus < focusedInput.textContent.length
                         ? toDoList.caretPositionOnFocus     // set caret position to specified value or to the end of the line (default)
                         : focusedInput.textContent.length;
@@ -131,19 +128,61 @@ class TDLItem extends React.PureComponent {
     };
 
     handleKeyDown = e => {
+        // On `Enter` split current item into two and focus the second (or add a new empty item and focus it if previous failed)
         if (e.key === "Enter") {
             e.preventDefault(); // disable adding new lines
-            this.props.updateCallback({ toDoListItemUpdate: { command: "add", id: this.props.id }});
-        } else if (e.key === "ArrowUp") {
+            const splitText = getSplitText(this.inputRef.current);
+            if (typeof(splitText) === "object") 
+                this.props.updateCallback({ toDoListItemUpdate: { command: "split", id: this.props.id, ...splitText }});
+            else 
+                this.props.updateCallback({ toDoListItemUpdate: { command: "add", id: this.props.id }});
+        }
+
+        // On `ArrowUp` focus the previous item (including when new item input is focused)
+        else if (e.key === "ArrowUp") {
             this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", id: this.props.id, caretPositionOnFocus: getCaretPosition(this.inputRef.current) }});
-        } else if (e.key === "ArrowDown") {
+        }
+
+        // On `ArrowUp` focus the next item (including new item input)
+        else if (e.key === "ArrowDown") {
             this.props.updateCallback({ toDoListItemUpdate: { command: "focusNext", id: this.props.id, caretPositionOnFocus: getCaretPosition(this.inputRef.current) }});
-        } else if (e.key === "Delete") {
-            if (this.inputRef.current.textContent.length === 0) this.deleteItem("next");
-        } else if (e.key === "Backspace") {
-            if (this.inputRef.current.textContent.length === 0) {
-                this.deleteItem("prev");
-                e.preventDefault();     // if not prevented, the event will cause a deletion of a char in the focused item
+        }
+        
+        // On `Backspace` delete a char before the caret if there is one or do one of the below:
+        // 1) merge current item with the previous one if no characters remain before the caret;
+        // 2) delete the current item if its text is empty.
+        else if (e.key === "Backspace") {
+            const splitText = getSplitText(this.inputRef.current);
+            if (splitText !== null) {   // merge item with previous
+                if (splitText.before.length === 0) {
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "mergeWithPrev", id: this.props.id }});
+                    e.preventDefault();     // backspace key press default handlers are run after this event
+                }
+            }
+            else {  // fallback to item delete if item text split failed
+                if (this.inputRef.current.textContent.length === 0) {
+                    this.deleteItem("prev");
+                    e.preventDefault();     // backspace key press default handlers are run after this event
+                }
+            }
+        }
+        
+        // On `Delete` delete a char after the caret if there is one or do one of the below:
+        // 1) merge current item with the next one if no characters remain after the caret;
+        // 2) delete the current item if its text is empty.
+        else if (e.key === "Delete") {
+            const splitText = getSplitText(this.inputRef.current);
+            if (splitText !== null) {   // merge item with next
+                if (splitText.after.length === 0) {
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "mergeWithNext", id: this.props.id }});
+                    e.preventDefault();
+                }
+            }
+            else {  // fallback to item delete if item text split failed
+                if (this.inputRef.current.textContent.length === 0) {
+                    this.deleteItem("next");
+                    e.preventDefault();
+                }
             }
         }
     };
@@ -223,7 +262,7 @@ class NewTDLItem extends React.PureComponent {
 /*
     TODO    
     ???
-
+    
     - update `itemOrder` and `key` props if:
         ? setCurrentObject is run with object_type or new object_type === "to_do_list":
             ? run after other updates were implemented;
