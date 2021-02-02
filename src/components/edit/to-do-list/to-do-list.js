@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import FieldMenu from "../../field/field-menu";
 import { TDLItem } from "./item";
 import { NewTDLItem } from "./new-item";
 import { setCurrentObject } from "../../../actions/object";
+import { getIDsSortedByState } from "../../../reducers/object-to-do-lists";
 
 import StyleTDL from "../../../styles/to-do-lists.css";
 
@@ -12,22 +14,47 @@ import StyleTDL from "../../../styles/to-do-lists.css";
     Edit & view components for to-do lists.
 */
 export const TDLContainer = () => {
+    const dispatch = useDispatch();
+    const updateCallback = useMemo(
+        () => params => dispatch(setCurrentObject(params))
+    , []);
+
     return (
         <div className="to-do-list-container">
             <div className="to-do-list-container-header">To-Do List</div>
-            <TDLMenu />
-            <TDLItems />    
+            <TDLMenu updateCallback={updateCallback} />
+            <TDLItems updateCallback={updateCallback} />    
         </div>
     );
 };
 
 
-const TDLMenu = () => {
-    return <div className="to-do-list-menu">Menu</div>;
+const TDLMenu = ({ updateCallback }) => {
+    const fieldMenuItems = [
+        {
+            type: "item",
+            icon: "ordered list",
+            title: "Default sort",
+            size: "tiny",
+            onClick: updateCallback,
+            onClickParams: { toDoList: { sort_type: "default" }},
+            isActiveSelector: state => state.objectUI.currentObject.toDoList.sort_type === "default"
+        },
+        {
+            type: "item",
+            icon: "tasks",
+            title: "Sort by state",
+            size: "tiny",
+            onClick: updateCallback,
+            onClickParams: { toDoList: { sort_type: "state" }},
+            isActiveSelector: state => state.objectUI.currentObject.toDoList.sort_type === "state"
+        }
+    ];
+
+    return <FieldMenu size="mini" className="to-do-list-menu" items={fieldMenuItems} />;
 };
 
-const TDLItems = () => {
-    const dispatch = useDispatch();
+const TDLItems = ({ updateCallback }) => {
     const itemsRef = useRef();
     const toDoList = useSelector(state => state.objectUI.currentObject.toDoList);
     const itemOrder = toDoList.itemOrder;
@@ -38,11 +65,9 @@ const TDLItems = () => {
             if (toDoList.setFocusOnID === "newItem") {  // new item input (focus)
                 itemsRef.current.querySelector(".to-do-list-item-input.new").focus();
             } else {    // existing item input (set caret at the end => focus)
-                const index = toDoList.itemOrder.indexOf(toDoList.setFocusOnID);
-                console.log(`IN ITEMS USE EFFECT, index = ${index}`)
-                console.log(`itemsRef.current.childNode[index] = ${itemsRef.current.childNodes[index]}`)
-                const focusedInput = itemsRef.current.childNodes[index].querySelector(".to-do-list-item-input");
-
+                const focusedInput = [...itemsRef.current.querySelectorAll(".to-do-list-item-id")]
+                    .filter(node => node.textContent === toDoList.setFocusOnID.toString())[0].parentNode.querySelector(".to-do-list-item-input");
+                
                 const range = document.createRange(), sel = window.getSelection();
                 if (focusedInput.textContent.length > 0) {
                     const caretPosition = toDoList.caretPositionOnFocus > -1 && toDoList.caretPositionOnFocus < focusedInput.textContent.length
@@ -57,21 +82,19 @@ const TDLItems = () => {
                 focusedInput.focus();
             }
 
-            itemUpdateCallback({ toDoList: { setFocusOnID: -1, caretPositionOnFocus: -1 }});
+            updateCallback({ toDoList: { setFocusOnID: -1, caretPositionOnFocus: -1 }});
         }
 
-    }, [toDoList.setFocusOnID])
-    
-    const itemUpdateCallback = useMemo(
-        () => params => dispatch(setCurrentObject(params))
-    , []);
+    }, [toDoList.setFocusOnID]);
 
-    const itemComponents = itemOrder.map(id => {
+    let sortedItems = toDoList.sort_type === "default" ? itemOrder : getIDsSortedByState(toDoList);
+
+    const itemComponents = sortedItems.map(id => {
         const item = toDoList.items[id];
-        return <TDLItem key={id} id={id} updateCallback={itemUpdateCallback} {...item} />;
+        return <TDLItem key={id} id={id} updateCallback={updateCallback} {...item} />;
     });
     
-    const newItem = <NewTDLItem position={itemOrder.length} updateCallback={itemUpdateCallback} /*onChange={newItemOnChange}*/ />;
+    const newItem = <NewTDLItem position={itemOrder.length} updateCallback={updateCallback} /*onChange={newItemOnChange}*/ />;
 
     return (
         <div className="to-do-list-items" ref={itemsRef}>
@@ -86,6 +109,13 @@ const TDLItems = () => {
 
 /*
     TODO
+    - `split` and `mergeWithPrev`|`mergeWithNext` commands keep old item state:
+        - `split` => new items have the state of the old item;
+        - `mergeWithPrev` => new item should have the state of the previous old item;
+        - `mergeWithNext` => new item should have the state of the current old item;
+    
+    - move not directly related to reducing functions from reducers to util;
+    - create a folder for reducer helping functions;
     
     ???
     

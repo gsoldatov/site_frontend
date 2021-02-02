@@ -7,8 +7,8 @@
 .to-do-list-container {
     /* border: 1px solid black; */
     width: 100%;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
+    /* padding-left: 0.5em;
+    padding-right: 0.5em; */
 }
 
 /* Header */
@@ -16,11 +16,14 @@ div.to-do-list-container-header {
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 0.25em;
-    margin-left: -0.5em;
+    /* margin-left: -0.5em; */
 }
 
 /* Menu */
-.to-do-list-menu {
+.ui.menu.to-do-list-menu {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 0.3em;
     margin-bottom: 0.3em;
 }
 
@@ -29,7 +32,13 @@ div.to-do-list-container-header {
     display: flex;
     align-items: center;
     width: 100%;
-    border-top: solid 1px rgba(34, 36, 38, 0.15);
+    /* border-top: solid 1px rgba(34, 36, 38, 0.15); */
+    border-bottom: solid 1px rgba(34, 36, 38, 0.15);
+}
+
+/* Item ID store */
+.to-do-list-item-id {
+    display: none;
 }
 
 /* Item input */

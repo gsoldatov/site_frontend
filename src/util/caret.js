@@ -16,7 +16,6 @@ export const getCaretPosition = element => {
         }
       }
     }
-    console.log("IN getCaretPosition, position =", position)
     return position;
 }
 

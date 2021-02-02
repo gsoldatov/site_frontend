@@ -77,28 +77,36 @@ export const updateToDoListItems = (toDoList, update) => {
 
     // Focuses the item before the item with provided `id`.
     // If `focusLastItem` is set to true, focuses the last item of the list.
+    // If current sort_type is "default", selects previous item in the default item order.
+    // If current sort_type is "state", selects the previous item with the same state, then selects the last item with the previous state type.
+    // State order is: "active" -> "optional" -> "completed" -> "cancelled".
     if (update.command === "focusPrev") {
+        const sortedItemIDs = toDoList.sort_type === "default" ? toDoList.itemOrder : getIDsSortedByState(toDoList);
+
         if (update.focusLastItem) {     // move from new item item to the last existing item
-            if (toDoList.itemOrder.length === 0) return toDoList;
-            return { ...toDoList, setFocusOnID: toDoList.itemOrder[toDoList.itemOrder.length - 1] };
+            if (sortedItemIDs.length === 0) return toDoList;
+            return { ...toDoList, setFocusOnID: sortedItemIDs[sortedItemIDs.length - 1] };
         }
 
-        const position = toDoList.itemOrder.indexOf(update.id);
+        const position = sortedItemIDs.indexOf(update.id);
         return {
             ...toDoList,
-            setFocusOnID: position <= 0 ? toDoList.itemOrder[0] : toDoList.itemOrder[position - 1],
+            setFocusOnID: position <= 0 ? sortedItemIDs[0] : sortedItemIDs[position - 1],
             caretPositionOnFocus: update.caretPositionOnFocus > -1 ? update.caretPositionOnFocus : toDoList.caretPositionOnFocus
         };
     }
 
     // Focuses the item after the item with provided `id`.
-    // If `id` refers to the last item in the list, new item input is focused.
+    // If current sort_type is "default", selects next item. If `id` refers to the last item in the list, new item input is focused.
+    // If current sort_type is "state", selects the next item with the same state, then selects the first item with the following state type or a new item input.
+    // State order is: "active" -> "optional" -> "completed" -> "cancelled".
     if (update.command === "focusNext") {
-        const position = toDoList.itemOrder.indexOf(update.id);
+        const sortedItemIDs = toDoList.sort_type === "default" ? toDoList.itemOrder : getIDsSortedByState(toDoList);
+        const position = sortedItemIDs.indexOf(update.id);
         if (position < 0) return toDoList;
         return {
             ...toDoList,
-            setFocusOnID: position < toDoList.itemOrder.length - 1 ? toDoList.itemOrder[position + 1] : "newItem",   // handle item -> item + 1 and item -> newItem cases
+            setFocusOnID: position < sortedItemIDs.length - 1 ? sortedItemIDs[position + 1] : "newItem",   // handle item -> item + 1 and item -> newItem cases
             caretPositionOnFocus: position < toDoList.itemOrder.length - 1 && update.caretPositionOnFocus > -1
                 ? update.caretPositionOnFocus       // update caretPositionOnFocus if it's provided and an existing item is selected
                 : toDoList.caretPositionOnFocus
@@ -182,5 +190,14 @@ export const updateToDoListItems = (toDoList, update) => {
 };
 
 
-// Get a new value to use as an item id
+// Accepts a to-do list object and returns the IDs of its items sorted by their state.
+export const getIDsSortedByState = toDoList => {
+    let sortedItems = [];
+    ["active", "optional", "completed", "cancelled"].forEach(state => {
+        sortedItems = sortedItems.concat(toDoList.itemOrder.filter(id => toDoList.items[id].item_state === state));
+    });
+    return sortedItems;
+};
+
+// Returns a new value to use as an item id
 const getNewID = itemOrder => itemOrder.length > 0 ? Math.max(...itemOrder) + 1 : 0;

@@ -129,6 +129,7 @@ export class TDLItem extends React.PureComponent {
 
         return (
             <div className="to-do-list-item"  onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
+                <div className="to-do-list-item-id">{id}</div>
                 {leftMenu}
                 {input}
                 {rightMenu}

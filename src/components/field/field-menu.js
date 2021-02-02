@@ -8,13 +8,13 @@ import StlyeFieldMenu from "../../styles/field-menu.css";
 
 
 /* Field menu component with customizable items. */
-export default ({ items }) => {
+export default ({ items, size, className="field-menu" }) => {
     let k = 0;
     const menuItems = items.map(item => <FieldMenuElement key={k++} {...item} />);
 
     return (
-        <Menu className="field-menu">{menuItems}</Menu>
-    )
+        <Menu className={className} size={size}>{menuItems}</Menu>
+    );
 }
 
 
@@ -40,7 +40,7 @@ const FieldMenuElement = props => {
 
 
 // Field menu button
-const FieldMenuItem = ({ icon, title, isDisabledSelector, isActiveSelector, onClick, onClickParamsSelector, onClickParams }) => {
+const FieldMenuItem = ({ icon, title, size = "medium", isDisabledSelector, isActiveSelector, onClick, onClickParamsSelector, onClickParams }) => {
     const dispatch = useDispatch();
     const isDisabled = typeof(isDisabledSelector) === "function" ? useSelector(isDisabledSelector) : false;
     const isActiveTemp = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : false;     // temp variable is used to avoid placing the hook in a condition block
@@ -51,7 +51,7 @@ const FieldMenuItem = ({ icon, title, isDisabledSelector, isActiveSelector, onCl
         dispatch(typeof(onClick) === "function" ? onClick(_onClickParams) : onClick);
     };
 
-    return <Button basic className="field-menu-button" icon={icon} title={title} active={isActive} disabled={isDisabled} onClick={handleClick} />;
+    return <Button basic className="field-menu-button" size={size} icon={icon} title={title} active={isActive} disabled={isDisabled} onClick={handleClick} />;
 };
 
 
