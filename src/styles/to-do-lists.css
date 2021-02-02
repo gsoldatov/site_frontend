@@ -5,9 +5,18 @@
 
 /* Container */
 .to-do-list-container {
-    border: 1px solid black;
+    /* border: 1px solid black; */
     width: 100%;
-    padding: 0.5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+/* Header */
+div.to-do-list-container-header {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 0.25em;
+    margin-left: -0.5em;
 }
 
 /* Menu */
@@ -21,13 +30,11 @@
     align-items: center;
     width: 100%;
     border-top: solid 1px rgba(34, 36, 38, 0.15);
-    /* margin-top: 0.3em; */
-    /* padding-top: 0.3em; */
-    /* margin-bottom: 0.3em; */
 }
-.to-do-list-item-input, .new-to-do-list-item-input {
-    /* border: solid 1px rgba(34, 36, 38, 0.15); */
-    outline: none;  /* don't border on edit */
+
+/* Item input */
+.to-do-list-item-input {
+    outline: none;  /* don't display border on edit */
     padding: 0.3em;
     line-break: auto;
     word-break: break-word;
@@ -36,27 +43,45 @@
     max-width: 80%;
 }
 
-.new-to-do-list-item-input {
+.to-do-list-item-input.completed {
+    text-decoration: line-through;
+}
+
+.to-do-list-item-input.optional {
+    color: rgba(110, 110, 110, 1);
+}
+
+.to-do-list-item-input.cancelled {
+    color: rgba(110, 110, 110, 1);
+    text-decoration: line-through;
+}
+
+.to-do-list-item-input.new {
     padding-left: calc(0.3em + 100px);  /* TODO set correct padding when left menu is fully implemented */
     width: 80%;
 }
 
-.new-to-do-list-item-input:empty::before {
+.to-do-list-item-input.new:empty::before {  /* Placeholder text */
     content: attr(placeholder);
     pointer-events: none;
     display: block; /* For Firefox */
     color: rgba(191, 191, 191, 0.87);
 }
 
+/* Item left and fight menus */
 .to-do-list-left-menu, .to-do-list-right-menu {
-    width: 100px;
-    background-color: darkgreen;
-    /* vertical-align: middle; */
+    height: calc(20em/14);  /* 1 line height */
 }
 
-.to-do-list-item-button:hover {
+.to-do-list-left-menu {
+    display: flex;
+}
+
+.to-do-list-right-menu {
+    width: 100px;
+    display: flex;
+}
+
+.icon.to-do-list-item-button {
     cursor: pointer;
 }
-/* .to-do-list-item-input::selection {
-    border: none;
-} */

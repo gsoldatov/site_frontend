@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 
 import { LinkInput } from "./link";
 import { MarkdownContainer } from "./markdown";
-import { TDLContainer } from "./to-do-list";
+import { TDLContainer } from "./to-do-list/to-do-list";
 
 import { setCurrentObject } from "../../actions/object";
 
