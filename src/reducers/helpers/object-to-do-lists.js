@@ -1,8 +1,9 @@
+import { getSortedItemIDs, getNewItemID } from "../../store/state-util/to-do-lists";
+
+
 /*
     Object page functions for manipulating to-do list's state.
 */
-
-
 // If a mutable prop is added, getNewToDoListItems should be updated to get its copy, rather than the original.
 const itemDefaults = { item_state: "active", item_text: "", commentary: "", indent: 0, is_expanded: true };
 /*
@@ -23,7 +24,7 @@ export const updateToDoListItems = (toDoList, update) => {
             ? update.position
             : toDoList.itemOrder.indexOf(update.id) + 1;
 
-        const newID = getNewID(toDoList.itemOrder);
+        const newID = getNewItemID(toDoList);
         const newItemOrder = [...toDoList.itemOrder];
         newItemOrder.splice(position, 0, newID);
         return {
@@ -118,7 +119,7 @@ export const updateToDoListItems = (toDoList, update) => {
     // New items have the same state as the replaced item.
     // Focuses the second new item and places the caret at its beginning.
     if (update.command === "split") {
-        const newCurrID = getNewID(toDoList.itemOrder);
+        const newCurrID = getNewItemID(toDoList);
         const newItemOrder = [...toDoList.itemOrder];
         const position = newItemOrder.indexOf(update.id);
         newItemOrder.splice(position, 1, newCurrID, newCurrID + 1);
@@ -149,7 +150,7 @@ export const updateToDoListItems = (toDoList, update) => {
         if (position === 0) return toDoList;
 
         const prevID = sortedItemIDs[position - 1];
-        const newCurrID = getNewID(toDoList.itemOrder);
+        const newCurrID = getNewItemID(toDoList);
         const newPosition = toDoList.itemOrder.indexOf(prevID);
         const newItemOrder = toDoList.itemOrder.filter(id => id !== prevID && id !== update.id);
         newItemOrder.splice(newPosition, 0, newCurrID);
@@ -183,7 +184,7 @@ export const updateToDoListItems = (toDoList, update) => {
         if (position === sortedItemIDs.length - 1) return toDoList;
 
         const nextID = sortedItemIDs[position + 1];
-        const newCurrID = getNewID(toDoList.itemOrder);
+        const newCurrID = getNewItemID(toDoList);
         const newItemOrder = toDoList.itemOrder.filter(id => id !== update.id && id !== nextID);
         newItemOrder.splice(position, 0, newCurrID);
         
@@ -205,33 +206,3 @@ export const updateToDoListItems = (toDoList, update) => {
         };
     }
 };
-
-
-// Accepts a to-do list object and returns the IDs of its items sorted according to its current sort_type.
-export const getSortedItemIDs = toDoList => {
-    let sortedItems;
-
-    if (toDoList.sort_type === "default") sortedItems = [...toDoList.itemOrder];
-
-    if (toDoList.sort_type === "state") {
-        sortedItems = [];
-        ["active", "optional", "completed", "cancelled"].forEach(state => {
-            sortedItems = sortedItems.concat(toDoList.itemOrder.filter(id => toDoList.items[id].item_state === state));
-        });
-    }
-
-    return sortedItems;
-};
-
-
-// Accepts a to-do list object and returns the IDs of its items sorted by their state.      // TODO replace
-export const getIDsSortedByState = toDoList => {
-    let sortedItems = [];
-    ["active", "optional", "completed", "cancelled"].forEach(state => {
-        sortedItems = sortedItems.concat(toDoList.itemOrder.filter(id => toDoList.items[id].item_state === state));
-    });
-    return sortedItems;
-};
-
-// Returns a new value to use as an item id
-const getNewID = itemOrder => itemOrder.length > 0 ? Math.max(...itemOrder) + 1 : 0;

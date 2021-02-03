@@ -1,5 +1,5 @@
 import config from "../config";
-import { isFetchingTags } from "../store/state-check-functions";
+import { isFetchingTags } from "../store/state-util/ui-tags";
 
 
 const backendURL = config.backendURL;

@@ -1,45 +1,18 @@
-import { isFetchingTags } from "./state-check-functions";
 /*
-    Utility functions for working with state.
+    Functions for checking/getting data from a /objects page UI state.
 */
 
-export function getCurrentObjectData(state) {
-    // Function must return a copy of the object if its data is mutable;
-    // This will prevent potential inconsistency in local storage due to user inputs during the add fetch.
-    const currentObject = state.objectUI.currentObject;
-    switch (currentObject.object_type) {
-        case "link":
-            return { "link": currentObject.link };
-        case "markdown":
-            return { "raw_text": currentObject.markdown.raw_text };
-        default:
-            return null;
-    }
-}
 
-/* Returns a new object with object data for the provided object_id or undefined */
-export function getObjectDataFromStore(state, object_id) {
-    if (!state.objects[object_id]) return undefined;
-    const objectType = state.objects[object_id].object_type;
-    switch (objectType) {
-        case "link":
-            if (!state.links[object_id]) return undefined;
-            return { ...state.links[object_id] };
-        case "markdown":
-            if (!state.markdown[object_id]) return undefined;
-            return state.markdown[object_id] ? { markdown: { raw_text: state.markdown[object_id].raw_text, parsed: "" }} : undefined;
-        default:
-            return undefined;
-    }
-};
+// Returns true if object page fetch is being performed.
+export const isFetchingObjects = state => state.objectsUI.fetch.isFetching;
 
 
-/* Returns the ID corresponding to the provided tag name. */
-export function getTagIDByName(state, name) {
-    for (let id of Object.keys(state.tags)) {
-        if (state.tags[id].tag_name.toLowerCase() === name.toLowerCase()) return parseInt(id);
-    }
-};
+// Returns true if object page fetch is being performed or a confirmation dialog is being displayed.
+export const isFetchinOrShowingDialogObjects = state => isFetchingObjects(state) || state.objectsUI.showDeleteDialog;
+
+
+// Returns true if there are currently added or removed tags in objectsUI state
+export const isObjectsTagsEditActive = state => state.objectsUI.addedTags.length > 0 || state.objectsUI.removedTagIDs.length > 0;
 
 
 /* Resets objects caches */

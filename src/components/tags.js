@@ -11,7 +11,7 @@ import FieldPagination from "./field/field-pagination";
 import { REDIRECT_ON_RENDER_PATH_CREATORS, setRedirectOnRender } from "../actions/common";
 import { selectTags, clearSelectedTags, pageFetch, setTagsPaginationInfo, setTagsPaginationInfoAndFetchPage,
     setShowDeleteDialogTags, toggleTagSelection, onDeleteFetch } from "../actions/tags";
-import { isFetchingTags, isFetchinOrShowingDialogTags } from "../store/state-check-functions";
+import { isFetchingTags, isFetchinOrShowingDialogTags } from "../store/state-util/ui-tags";
 
 
 /* /objects page component */

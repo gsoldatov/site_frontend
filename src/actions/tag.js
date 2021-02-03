@@ -1,5 +1,6 @@
 import config from "../config";
-import { isFetchingTag, checkIfCurrentTagNameExists } from "../store/state-check-functions";
+import { isFetchingTag } from "../store/state-util/ui-tag";
+import { checkIfCurrentTagNameExists } from "../store/state-util/tags";
 import { setRedirectOnRender } from "./common";
 import { addTags, deleteTags, deselectTags } from "./tags";
 

@@ -1,5 +1,5 @@
 import config from "../config";
-import { isFetchingObjects } from "../store/state-check-functions";
+import { isFetchingObjects } from "../store/state-util/ui-objects";
 import { getNonCachedTags } from "./tags";
 
 

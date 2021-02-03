@@ -5,7 +5,7 @@ import FieldMenu from "../../field/field-menu";
 import { TDLItem } from "./item";
 import { NewTDLItem } from "./new-item";
 import { setCurrentObject } from "../../../actions/object";
-import { getSortedItemIDs } from "../../../reducers/object-to-do-lists";
+import { getSortedItemIDs } from "../../../store/state-util/to-do-lists";
 
 import StyleTDL from "../../../styles/to-do-lists.css";
 
@@ -108,10 +108,7 @@ const TDLItems = ({ updateCallback }) => {
 
 
 /*
-    TODO   
-    - move not directly related to reducing functions from reducers to util;
-    - create a folder for reducer helping functions;
-    
+    TODO
     ???
     
     - update `itemOrder` and `key` props if:

@@ -1,6 +1,6 @@
 import config from "../config";
-import { isFetchingObject, validateCurrentObject } from "../store/state-check-functions";
-import { getCurrentObjectData, getObjectDataFromStore } from "../store/state-util";
+import { isFetchingObject } from "../store/state-util/ui-object";
+import { validateCurrentObject, getCurrentObjectData, getObjectDataFromStore } from "../store/state-util/objects";
 import { setRedirectOnRender } from "./common";
 import { addObjects, addObjectData, setObjectsTags, deselectObjects, deleteObjects } from "./objects";
 import { getNonCachedTags } from "./tags";

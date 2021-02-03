@@ -11,7 +11,7 @@ import { InlineItemList } from "./inline/inline-item-list";
 import { InlineItem } from "./inline/inline-item";
 import { InlineInput } from "./inline/inline-input";
 
-import { isFetchingObject, isFetchinOrShowingDialogObject } from "../store/state-check-functions";
+import { isFetchingObject, isFetchinOrShowingDialogObject } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
 import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setObjectTagsInput, setShowDeleteDialogObject, 
     addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../actions/object";

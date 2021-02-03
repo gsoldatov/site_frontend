@@ -17,8 +17,8 @@ import { objectsOnLoadFetch, selectObjects, clearSelectedObjects, pageFetch, set
     setShowDeleteDialogObjects, toggleObjectSelection, onDeleteFetch,
     setCurrentObjectsTags, setObjectsTagsInput, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch, 
     setTagsFilterAndFetchPage, tagsFilterDropdownFetch, setTagsFilterInput  } from "../actions/objects";
-import { isFetchingObjects, isFetchinOrShowingDialogObjects, isObjectsTagsEditActive } from "../store/state-check-functions";
-import { objectsGetCommonTagIDs, objectsGetPartiallyAppliedTagIDs, objectsGetAddedTags } from "../store/state-util";
+import { isFetchingObjects, isFetchinOrShowingDialogObjects, isObjectsTagsEditActive } from "../store/state-util/ui-objects";
+import { objectsGetCommonTagIDs, objectsGetPartiallyAppliedTagIDs, objectsGetAddedTags } from "../store/state-util/ui-objects";
 
 
 /* /objects page component */

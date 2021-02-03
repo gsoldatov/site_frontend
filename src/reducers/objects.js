@@ -1,7 +1,8 @@
 import { ADD_OBJECTS, ADD_OBJECT_DATA, SET_OBJECTS_TAGS, SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS,
     DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, CLEAR_SELECTED_OBJECTS, 
     SET_OBJECTS_PAGINATION_INFO, SET_TAGS_FILTER, SET_TAGS_FILTER_INPUT, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
-import { getTagIDByName, resetObjectCaches, objectsGetCommonTagIDs } from "../store/state-util";
+import { getTagIDByName } from "../store/state-util/tags";
+import { resetObjectCaches, objectsGetCommonTagIDs } from "../store/state-util/ui-objects";
 
 
 const _objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description"];

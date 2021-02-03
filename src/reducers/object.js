@@ -1,8 +1,8 @@
 import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, SET_OBJECT_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS,
     SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
-import { getTagIDByName } from "../store/state-util";
-import { updateToDoListItems } from "./object-to-do-lists";
+import { getTagIDByName } from "../store/state-util/tags";
+import { updateToDoListItems } from "./helpers/object-to-do-lists";
 
 
 function loadAddObjectPage(state, action) {

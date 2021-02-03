@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "./edit/common";
 import Layout from "./common/layout";
 
-import { isFetchingTag, isFetchinOrShowingDialogTag } from "../store/state-check-functions";
+import { isFetchingTag, isFetchinOrShowingDialogTag } from "../store/state-util/ui-tag";
 import { setRedirectOnRender } from "../actions/common";
 import { loadAddTagPage, setCurrentTag, setShowDeleteDialogTag, 
     addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../actions/tag";
