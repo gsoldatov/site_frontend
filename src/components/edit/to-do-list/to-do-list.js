@@ -108,11 +108,17 @@ const TDLItems = ({ updateCallback }) => {
 
 
 /*
-    TODO
-    - `split` and `mergeWithPrev`|`mergeWithNext` commands keep old item state:
-        - `split` => new items have the state of the old item;
-        - `mergeWithPrev` => new item should have the state of the previous old item;
-        - `mergeWithNext` => new item should have the state of the current old item;
+    TODO    
+    - `split` and `mergeWithPrev`|`mergeWithNext` commands correctly add/delete items when sort by state is active:
+        - `split`: add after current item;
+        - `mergeWithPrev`:
+            - get previous and current item IDs based on the state;
+            - delete previous and current items from state and itemOrder;
+            - add new item in the place of previous;
+        - `mergeWithNext`:
+            - get current and next item IDs based on the state;
+            - delete current and next items from state and itemOrder;
+            - add new item in the place of next;
     
     - move not directly related to reducing functions from reducers to util;
     - create a folder for reducer helping functions;
