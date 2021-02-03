@@ -81,7 +81,7 @@ export const updateToDoListItems = (toDoList, update) => {
     // If current sort_type is "state", selects the previous item with the same state, then selects the last item with the previous state type.
     // State order is: "active" -> "optional" -> "completed" -> "cancelled".
     if (update.command === "focusPrev") {
-        const sortedItemIDs = toDoList.sort_type === "default" ? toDoList.itemOrder : getIDsSortedByState(toDoList);
+        const sortedItemIDs = getSortedItemIDs(toDoList);
 
         if (update.focusLastItem) {     // move from new item item to the last existing item
             if (sortedItemIDs.length === 0) return toDoList;
@@ -101,7 +101,7 @@ export const updateToDoListItems = (toDoList, update) => {
     // If current sort_type is "state", selects the next item with the same state, then selects the first item with the following state type or a new item input.
     // State order is: "active" -> "optional" -> "completed" -> "cancelled".
     if (update.command === "focusNext") {
-        const sortedItemIDs = toDoList.sort_type === "default" ? toDoList.itemOrder : getIDsSortedByState(toDoList);
+        const sortedItemIDs = getSortedItemIDs(toDoList);
         const position = sortedItemIDs.indexOf(update.id);
         if (position < 0) return toDoList;
         return {
@@ -138,19 +138,22 @@ export const updateToDoListItems = (toDoList, update) => {
         };
     }
 
-    // Replaces the item with provided `id` and the item before it with a new item:
+    // Replaces the item with provided `id` and the item before it with a new item.
+    // Which item is before the item with `id` depends on the current sort_type.
     // New item text contains the merged texts of the replaced items.
     // New item state is the same as the state of replaced item, previous to the item with the `id`.
     // New item is focused and caret is placed between at the border of the old items' texts.
     if (update.command === "mergeWithPrev") {
-        const position = toDoList.itemOrder.indexOf(update.id);
+        const sortedItemIDs = getSortedItemIDs(toDoList);
+        const position = sortedItemIDs.indexOf(update.id);
         if (position === 0) return toDoList;
 
+        const prevID = sortedItemIDs[position - 1];
         const newCurrID = getNewID(toDoList.itemOrder);
-        const newItemOrder = [...toDoList.itemOrder];
-        newItemOrder.splice(position - 1, 2, newCurrID);
+        const newPosition = toDoList.itemOrder.indexOf(prevID);
+        const newItemOrder = toDoList.itemOrder.filter(id => id !== prevID && id !== update.id);
+        newItemOrder.splice(newPosition, 0, newCurrID);
 
-        const prevID = toDoList.itemOrder[position - 1];
         const newItem = {
             ...itemDefaults,
             item_text: toDoList.items[prevID].item_text + toDoList.items[update.id].item_text,
@@ -170,18 +173,20 @@ export const updateToDoListItems = (toDoList, update) => {
     }
 
     // Replaces the item with provided `id` and the item after it with a new item.
+    // Which item is after the item with `id` depends on the current sort_type.
     // New item text contains the merged texts of the replaced items.
     // New item state is the same as the state of replaced item with the `id`.
     // New item is focused and caret is placed between at the border of the old items' texts.
     if (update.command === "mergeWithNext") {
-        const position = toDoList.itemOrder.indexOf(update.id);
-        if (position === toDoList.itemOrder.length - 1) return toDoList;
+        const sortedItemIDs = getSortedItemIDs(toDoList);
+        const position = sortedItemIDs.indexOf(update.id);
+        if (position === sortedItemIDs.length - 1) return toDoList;
 
+        const nextID = sortedItemIDs[position + 1];
         const newCurrID = getNewID(toDoList.itemOrder);
-        const newItemOrder = [...toDoList.itemOrder];
-        newItemOrder.splice(position, 2, newCurrID);
-
-        const nextID = toDoList.itemOrder[position + 1];
+        const newItemOrder = toDoList.itemOrder.filter(id => id !== update.id && id !== nextID);
+        newItemOrder.splice(position, 0, newCurrID);
+        
         const newItem = {
             ...itemDefaults,
             item_text: toDoList.items[update.id].item_text + toDoList.items[nextID].item_text,
@@ -202,7 +207,24 @@ export const updateToDoListItems = (toDoList, update) => {
 };
 
 
-// Accepts a to-do list object and returns the IDs of its items sorted by their state.
+// Accepts a to-do list object and returns the IDs of its items sorted according to its current sort_type.
+export const getSortedItemIDs = toDoList => {
+    let sortedItems;
+
+    if (toDoList.sort_type === "default") sortedItems = [...toDoList.itemOrder];
+
+    if (toDoList.sort_type === "state") {
+        sortedItems = [];
+        ["active", "optional", "completed", "cancelled"].forEach(state => {
+            sortedItems = sortedItems.concat(toDoList.itemOrder.filter(id => toDoList.items[id].item_state === state));
+        });
+    }
+
+    return sortedItems;
+};
+
+
+// Accepts a to-do list object and returns the IDs of its items sorted by their state.      // TODO replace
 export const getIDsSortedByState = toDoList => {
     let sortedItems = [];
     ["active", "optional", "completed", "cancelled"].forEach(state => {

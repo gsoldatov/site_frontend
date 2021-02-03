@@ -5,7 +5,7 @@ import FieldMenu from "../../field/field-menu";
 import { TDLItem } from "./item";
 import { NewTDLItem } from "./new-item";
 import { setCurrentObject } from "../../../actions/object";
-import { getIDsSortedByState } from "../../../reducers/object-to-do-lists";
+import { getSortedItemIDs } from "../../../reducers/object-to-do-lists";
 
 import StyleTDL from "../../../styles/to-do-lists.css";
 
@@ -87,7 +87,7 @@ const TDLItems = ({ updateCallback }) => {
 
     }, [toDoList.setFocusOnID]);
 
-    let sortedItems = toDoList.sort_type === "default" ? itemOrder : getIDsSortedByState(toDoList);
+    let sortedItems = getSortedItemIDs(toDoList);
 
     const itemComponents = sortedItems.map(id => {
         const item = toDoList.items[id];
@@ -108,18 +108,7 @@ const TDLItems = ({ updateCallback }) => {
 
 
 /*
-    TODO    
-    - `split` and `mergeWithPrev`|`mergeWithNext` commands correctly add/delete items when sort by state is active:
-        - `split`: add after current item;
-        - `mergeWithPrev`:
-            - get previous and current item IDs based on the state;
-            - delete previous and current items from state and itemOrder;
-            - add new item in the place of previous;
-        - `mergeWithNext`:
-            - get current and next item IDs based on the state;
-            - delete current and next items from state and itemOrder;
-            - add new item in the place of next;
-    
+    TODO   
     - move not directly related to reducing functions from reducers to util;
     - create a folder for reducer helping functions;
     
