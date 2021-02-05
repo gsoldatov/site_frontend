@@ -5,10 +5,7 @@
 
 /* Container */
 .to-do-list-container {
-    /* border: 1px solid black; */
     width: 100%;
-    /* padding-left: 0.5em;
-    padding-right: 0.5em; */
 }
 
 /* Header */
@@ -16,7 +13,6 @@ div.to-do-list-container-header {
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 0.25em;
-    /* margin-left: -0.5em; */
 }
 
 /* Menu */
@@ -37,7 +33,6 @@ div.to-do-list-container-header {
     display: flex;
     align-items: center;
     width: 100%;
-    /* border-top: solid 1px rgba(34, 36, 38, 0.15); */
     border-bottom: solid 1px rgba(34, 36, 38, 0.15);
 }
 
@@ -53,8 +48,7 @@ div.to-do-list-container-header {
     line-break: auto;
     word-break: break-word;
     min-width: 100px;
-    /* max-width: 200px; */
-    max-width: 80%;
+    max-width: 80%;     /* TODO set correct width */
 }
 
 .to-do-list-item-input.completed {
@@ -82,12 +76,13 @@ div.to-do-list-container-header {
     color: rgba(191, 191, 191, 0.87);
 }
 
-/* Item left and fight menus */
+/* Item left and right menus */
 .to-do-list-left-menu, .to-do-list-right-menu {
     height: calc(20em/14);  /* 1 line height */
 }
 
 .to-do-list-left-menu {
+    padding-left: 1em;
     display: flex;
 }
 
@@ -98,4 +93,18 @@ div.to-do-list-container-header {
 
 .icon.to-do-list-item-button {
     cursor: pointer;
+}
+
+.icon.to-do-list-item-button.comment {
+    margin-right: 0.5em;
+    color:rgba(128, 128, 128, 0.5);
+}
+
+
+.icon.to-do-list-item-button.comment.has-comment {
+    color: rgba(0, 128, 0, 0.5);
+}
+
+.to-do-list-item-comment-input {
+    min-width: 100px;
 }

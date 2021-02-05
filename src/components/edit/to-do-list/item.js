@@ -3,6 +3,7 @@ import { DragSource, DropTarget } from "react-dnd";
 import { Icon } from "semantic-ui-react";
 
 import { StateControl, stateControlParams } from "./state-control";
+import { Comment } from "./comment";
 import { getCaretPosition, getSplitText } from "../../../util/caret";
 
 
@@ -18,12 +19,15 @@ class TDLItem extends React.PureComponent {
 
         this.handleInputFocus = this.handleInputFocus.bind(this);
         this.handleInputBlur = this.handleInputBlur.bind(this);
+        this.handleInputMouseEnter = this.handleInputMouseEnter.bind(this);
+        this.handleInputMouseLeave = this.handleInputMouseLeave.bind(this);
         this.handleItemMouseEnter = this.handleItemMouseEnter.bind(this);
         this.handleItemMouseLeave = this.handleItemMouseLeave.bind(this);
 
         this.state = {
             initialItemText: props.item_text,
             isItemHovered: false,
+            isInputHovered: false,
             isInputFocused: false
         };
     }
@@ -32,9 +36,11 @@ class TDLItem extends React.PureComponent {
 
     // Container event handlers
     handleItemMouseEnter() { this.setState({ ...this.state, isItemHovered: true }); }
-    handleItemMouseLeave() { this.setState({ ...this.state, isItemHovered: false }); }
+    handleItemMouseLeave() { this.setState({ ...this.state, isItemHovered: false, isInputHovered: false }); }   // also update input's isHovered, because state changes are not properly applied when its onMouseLeave handler is run at the same time with this one
 
     // Input event handlers
+    handleInputMouseEnter() { this.setState({ ...this.state, isItemHovered: true, isInputHovered: true }); }    // also update item's isHovered, because state changes are not properly applied when its onMouseEnter handler is run at the same time with this one
+    handleInputMouseLeave() { this.setState({ ...this.state, isInputHovered: false }); }
     handleInputFocus() { this.setState({ ...this.state, isInputFocused: true }); }
     handleInputBlur() { this.setState({ ...this.state, isInputFocused: false }); }
     handleInputChange = e => { this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_text: e.currentTarget.textContent }}); };
@@ -100,7 +106,7 @@ class TDLItem extends React.PureComponent {
     };
 
     render() {
-        const { id, item_state, updateCallback } = this.props;
+        const { id, item_state, commentary, updateCallback } = this.props;
         const { connectDragSource, isDragging, connectDropTarget, isHovered } = this.props;
         const { inputCSSClass } = stateControlParams[item_state];
 
@@ -122,21 +128,29 @@ class TDLItem extends React.PureComponent {
         // Input
         const input = <div className={inputCSSClass} ref={this.inputRef} contentEditable suppressContentEditableWarning spellCheck={false}
                         onInput={this.handleInputChange} onKeyDown={this.handleKeyDown} onFocus={this.handleInputFocus} onBlur={this.handleInputBlur}
+                        onMouseEnter={this.handleInputMouseEnter} onMouseLeave={this.handleInputMouseLeave}
                         dangerouslySetInnerHTML={{ __html: this.state.initialItemText }} />;    // setting item_text as inner content of <div> results
                                                                                                 // in the cursor being moved to the beginning of the <div> on every input
         
         // Right menu
-        const deleteButton = (this.state.isInputFocused || this.state.isItemHovered) && (
+        const itemIsFocusedOrHovered = this.state.isInputFocused || this.state.isItemHovered;
+        const deleteButton = itemIsFocusedOrHovered && (
             <Icon className="to-do-list-item-button" name="remove circle" title="Delete item" onClick={this.deleteItem} />
         );
 
+        const comment = (itemIsFocusedOrHovered || commentary.length > 0) && (
+            <Comment id={id} commentary={commentary} updateCallback={updateCallback} />
+        );
+        
         const rightMenu = (
             <div className="to-do-list-right-menu">
+                {comment}
                 {deleteButton}
             </div>
         );
-
-        return connectDropTarget(connectDragSource(
+        
+        // Render component with or without DnD enabled
+        const result = (
             <div className="to-do-list-item-container">
                 {onHoverSpace}
                 <div className="to-do-list-item"  onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
@@ -146,7 +160,11 @@ class TDLItem extends React.PureComponent {
                     {rightMenu}
                 </div>
             </div>
-        ));
+        );
+
+        // Disable dragging when hovering over input to allow text interaction (but still allow dragged items to be dropped)
+        if (this.state.isInputHovered) return connectDropTarget(result);
+        return connectDropTarget(connectDragSource(result));
     }
 }
 

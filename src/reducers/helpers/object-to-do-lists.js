@@ -116,7 +116,7 @@ export const updateToDoListItems = (toDoList, update) => {
 
     // Replaces item with the provided `id` by two new items.
     // New items receive the texts contained in `before` and `after` (which should contain the text before and after the caret in the replaced item).
-    // New items have the same state as the replaced item.
+    // New items have the same state and commentary as the replaced item.
     // Focuses the second new item and places the caret at its beginning.
     if (update.command === "split") {
         const newCurrID = getNewItemID(toDoList);
@@ -126,9 +126,9 @@ export const updateToDoListItems = (toDoList, update) => {
         
         const newItems = {...toDoList.items};
         delete newItems[update.id];
-        const item_state = toDoList.items[update.id].item_state;
-        newItems[newCurrID] = {...itemDefaults, item_text: update.before, item_state};
-        newItems[newCurrID + 1] = {...itemDefaults, item_text: update.after, item_state};
+        const { item_state, commentary } = toDoList.items[update.id];
+        newItems[newCurrID] = {...itemDefaults, item_text: update.before, item_state, commentary};
+        newItems[newCurrID + 1] = {...itemDefaults, item_text: update.after, item_state, commentary};
 
         return {
             ...toDoList,
@@ -142,7 +142,7 @@ export const updateToDoListItems = (toDoList, update) => {
     // Replaces the item with provided `id` and the item before it with a new item.
     // Which item is before the item with `id` depends on the current sort_type.
     // New item text contains the merged texts of the replaced items.
-    // New item state is the same as the state of replaced item, previous to the item with the `id`.
+    // New item state and commentary are the same as the state of replaced item, previous to the item with the `id`.
     // New item is focused and caret is placed between at the border of the old items' texts.
     if (update.command === "mergeWithPrev") {
         const sortedItemIDs = getSortedItemIDs(toDoList);
@@ -158,7 +158,8 @@ export const updateToDoListItems = (toDoList, update) => {
         const newItem = {
             ...itemDefaults,
             item_text: toDoList.items[prevID].item_text + toDoList.items[update.id].item_text,
-            item_state: toDoList.items[prevID].item_state
+            item_state: toDoList.items[prevID].item_state,
+            commentary: toDoList.items[prevID].commentary
         };
         const newItems = {...toDoList.items, [newCurrID]: newItem };
         delete newItems[update.id];
@@ -176,7 +177,7 @@ export const updateToDoListItems = (toDoList, update) => {
     // Replaces the item with provided `id` and the item after it with a new item.
     // Which item is after the item with `id` depends on the current sort_type.
     // New item text contains the merged texts of the replaced items.
-    // New item state is the same as the state of replaced item with the `id`.
+    // New item state and commentary are the same as the state of replaced item with the `id`.
     // New item is focused and caret is placed between at the border of the old items' texts.
     if (update.command === "mergeWithNext") {
         const sortedItemIDs = getSortedItemIDs(toDoList);
@@ -191,7 +192,8 @@ export const updateToDoListItems = (toDoList, update) => {
         const newItem = {
             ...itemDefaults,
             item_text: toDoList.items[update.id].item_text + toDoList.items[nextID].item_text,
-            item_state: toDoList.items[update.id].item_state
+            item_state: toDoList.items[update.id].item_state,
+            commentary: toDoList.items[update.id].commentary
         };
         const newItems = {...toDoList.items, [newCurrID]: newItem };
         delete newItems[update.id];
