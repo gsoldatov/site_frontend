@@ -28,6 +28,11 @@ div.to-do-list-container-header {
 }
 
 /* Item */
+.to-do-list-item-on-hover-space {
+    height: calc(30em/14);  /* 1.5 line heights */
+    border: solid 2px darkgreen;
+}
+
 .to-do-list-item {
     display: flex;
     align-items: center;

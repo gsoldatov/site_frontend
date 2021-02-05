@@ -205,4 +205,19 @@ export const updateToDoListItems = (toDoList, update) => {
             items: newItems
         };
     }
+
+    // Moves the item with id = `movedID` before the item with id = `targetID`.
+    // If `targetLastItem` == true, moves the item to the end of the item list (has a higher priority than `targetID`).
+    // Supports only the default sort_type of the list.
+    if (update.command === "moveItems") {
+        const newItemOrder = [...toDoList.itemOrder];
+        const movedPosition = newItemOrder.indexOf(update.movedID);
+        newItemOrder.splice(movedPosition, 1);
+        const targetPosition = update.targetLastItem ? newItemOrder.length : newItemOrder.indexOf(update.targetID);
+        newItemOrder.splice(targetPosition, 0, update.movedID);
+        return {
+            ...toDoList,
+            itemOrder: newItemOrder
+        };
+    }
 };

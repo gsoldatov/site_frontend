@@ -1,5 +1,9 @@
 import React from "react";
 import "semantic-ui-css/semantic.min.css";
+
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
+
 import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
@@ -26,12 +30,14 @@ export const App = () => {
 };
 
 
-export const AppWithRouterAndStore = () => {
+export const WrappedApp = () => {
     return (
         <Provider store={createStore({ enableDebugLogging: true })}>
-            <BrowserRouter>
-                <App />
-            </BrowserRouter>
+            <DndProvider backend={HTML5Backend}>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </DndProvider>
         </Provider>
     );
 };

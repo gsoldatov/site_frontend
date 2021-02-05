@@ -1,11 +1,12 @@
 import React from "react";
+import { DragSource, DropTarget } from "react-dnd";
 import { Icon } from "semantic-ui-react";
 
-import { StateControl, StateControlButton, stateControlParams } from "./state-control";
+import { StateControl, stateControlParams } from "./state-control";
 import { getCaretPosition, getSplitText } from "../../../util/caret";
 
 
-export class TDLItem extends React.PureComponent {
+class TDLItem extends React.PureComponent {
     constructor(props){
         super(props);
         this.inputRef = React.createRef();
@@ -100,12 +101,20 @@ export class TDLItem extends React.PureComponent {
 
     render() {
         const { id, item_state, updateCallback } = this.props;
+        const { connectDragSource, isDragging, connectDropTarget, isHovered } = this.props;
         const { inputCSSClass } = stateControlParams[item_state];
+
+        // Don't render the element which is being dragged
+        if (isDragging) return null;
+
+        // Additional element when hovered
+        const onHoverSpace = isHovered && (
+            <div className="to-do-list-item-on-hover-space" />
+        )
 
         // Left menu
         const leftMenu = (
             <div className="to-do-list-left-menu">
-                <StateControlButton state="active" />
                 <StateControl id={id} state={item_state} updateCallback={updateCallback} />
             </div>
         );
@@ -127,13 +136,48 @@ export class TDLItem extends React.PureComponent {
             </div>
         );
 
-        return (
-            <div className="to-do-list-item"  onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
-                <div className="to-do-list-item-id">{id}</div>
-                {leftMenu}
-                {input}
-                {rightMenu}
+        return connectDropTarget(connectDragSource(
+            <div className="to-do-list-item-container">
+                {onHoverSpace}
+                <div className="to-do-list-item"  onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
+                    <div className="to-do-list-item-id">{id}</div>
+                    {leftMenu}
+                    {input}
+                    {rightMenu}
+                </div>
             </div>
-        );
+        ));
     }
 }
+
+
+// Drag & drop specifications, collecting functions and wrapping
+const dragSourceSpec = {
+    beginDrag: props => ({ objectID: props.objectID, itemID: props.itemID }),
+    endDrag: (props, monitor) => {
+        if (!monitor.didDrop()) return;
+
+        const dropResult = monitor.getDropResult();
+        props.updateCallback({ toDoListItemUpdate: { command: "moveItems", movedID: props.id, targetID: dropResult.itemID, targetLastItem: dropResult.targetLastItem }});
+    },
+    canDrag: props => props.canDrag
+};
+
+const dragSourceCollect = (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+});
+
+
+const dropTargetSpec = {
+    drop: props => ({ objectID: props.objectID, itemID: props.id }),
+    canDrop: (props, monitor) => props.objectID === monitor.getItem().objectID
+};
+
+const dropTargetCollect = (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    isHovered: monitor.canDrop() && monitor.isOver()
+});
+
+
+export const DraggableTDLItem = DropTarget("to-do item", dropTargetSpec, dropTargetCollect)(DragSource("to-do item", dragSourceSpec, dragSourceCollect)(TDLItem));

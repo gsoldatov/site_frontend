@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import FieldMenu from "../../field/field-menu";
-import { TDLItem } from "./item";
-import { NewTDLItem } from "./new-item";
+import { DraggableTDLItem } from "./item";
+import { DroppableNewTDLItem } from "./new-item";
 import { setCurrentObject } from "../../../actions/object";
 import { getSortedItemIDs } from "../../../store/state-util/to-do-lists";
+import { isTDLDragAndDropEnabled } from "../../../store/state-util/ui-object";
 
 import StyleTDL from "../../../styles/to-do-lists.css";
 
@@ -15,6 +16,8 @@ import StyleTDL from "../../../styles/to-do-lists.css";
 */
 export const TDLContainer = () => {
     const dispatch = useDispatch();
+    const objectID = useSelector(state => state.objectUI.currentObject.object_id);
+    const canDrag = useSelector(isTDLDragAndDropEnabled);
     const updateCallback = useMemo(
         () => params => dispatch(setCurrentObject(params))
     , []);
@@ -23,7 +26,7 @@ export const TDLContainer = () => {
         <div className="to-do-list-container">
             <div className="to-do-list-container-header">To-Do List</div>
             <TDLMenu updateCallback={updateCallback} />
-            <TDLItems updateCallback={updateCallback} />    
+            <TDLItems updateCallback={updateCallback} objectID={objectID} canDrag={canDrag} />    
         </div>
     );
 };
@@ -54,7 +57,8 @@ const TDLMenu = ({ updateCallback }) => {
     return <FieldMenu size="mini" className="to-do-list-menu" items={fieldMenuItems} />;
 };
 
-const TDLItems = ({ updateCallback }) => {
+
+const TDLItems = ({ updateCallback, objectID, canDrag }) => {
     const itemsRef = useRef();
     const toDoList = useSelector(state => state.objectUI.currentObject.toDoList);
     const itemOrder = toDoList.itemOrder;
@@ -91,10 +95,10 @@ const TDLItems = ({ updateCallback }) => {
 
     const itemComponents = sortedItems.map(id => {
         const item = toDoList.items[id];
-        return <TDLItem key={id} id={id} updateCallback={updateCallback} {...item} />;
+        return <DraggableTDLItem key={id} id={id} updateCallback={updateCallback} objectID={objectID} canDrag={canDrag} {...item} />;
     });
     
-    const newItem = <NewTDLItem position={itemOrder.length} updateCallback={updateCallback} /*onChange={newItemOnChange}*/ />;
+    const newItem = <DroppableNewTDLItem position={itemOrder.length} updateCallback={updateCallback} objectID={objectID} />;
 
     return (
         <div className="to-do-list-items" ref={itemsRef}>
@@ -103,25 +107,3 @@ const TDLItems = ({ updateCallback }) => {
         </div>
     );
 };
-
-
-
-
-/*
-    TODO
-    ???
-    
-    - update `itemOrder` and `key` props if:
-        ? setCurrentObject is run with object_type or new object_type === "to_do_list":
-            ? run after other updates were implemented;
-        - when an item is added, generate a `key` for it;
-        - when an item is deleted, remove the key from it `itemOrder`;
-        - one of:
-            - A:
-                - when object data is loaded from backend for a to-do list, generate `itemOrder` list (and other frontend-only props) and convert array of items into an object;
-                - when saving data to backend, convert item object into array using `itemOrder`;
-            - B:
-                - when `items` is passed as a prop for toDoList in `SetCurrentObject`, convert it to an object with `key`: `item` structure and generate `itemOrder`;
-                - when saving data to backend, convert item object into array using `itemOrder`;
-                - when saving data to state storage, convert item object into array using `itemOrder`;
-*/

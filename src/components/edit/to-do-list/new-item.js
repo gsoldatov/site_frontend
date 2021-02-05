@@ -1,7 +1,8 @@
 import React from "react";
+import { DropTarget } from "react-dnd";
 
 
-export class NewTDLItem extends React.PureComponent {
+class NewTDLItem extends React.PureComponent {
     constructor(props) {
         super(props);
         this.inputRef = React.createRef();
@@ -23,13 +24,39 @@ export class NewTDLItem extends React.PureComponent {
     };
     
     render() {
+        const { connectDropTarget, isHovered } = this.props;
+
+        // Additional element when hovered
+        const onHoverSpace = isHovered && (
+            <div className="to-do-list-item-on-hover-space" />
+        )
+        
+        // Input
         const input = <div className="to-do-list-item-input new" ref={this.inputRef} contentEditable suppressContentEditableWarning placeholder="New item"
                 onInput={this.handleInputChange} onKeyDown={this.handleKeyDown} >{""}</div>;
         
-        return (
-            <div className="to-do-list-item">
-                {input}
+        return connectDropTarget(
+            <div className="to-do-list-item-container">
+                {onHoverSpace}
+                <div className="to-do-list-item">
+                    {input}
+                </div>
             </div>
         );
     }
 }
+
+
+// Drop specification, collecting functions and wrapping
+const dropTargetSpec = {
+    drop: props => ({ objectID: props.objectID, targetLastItem: true }),
+    canDrop: (props, monitor) => props.objectID === monitor.getItem().objectID
+};
+
+const dropTargetCollect = (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    isHovered: monitor.canDrop() && monitor.isOver()
+});
+
+
+export const DroppableNewTDLItem = DropTarget("to-do item", dropTargetSpec, dropTargetCollect)(NewTDLItem);
