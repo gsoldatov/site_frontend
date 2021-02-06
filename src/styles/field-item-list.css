@@ -48,11 +48,16 @@
 
 /****** Field item ******/
 .field-item {
-    margin: 4px;
+    display: flex;
+    align-items: center;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    margin-bottom: 0.4em;
 }
 
-.field-item-checkbox, .field-item-link {
-    margin: 2px;
+.field-item-checkbox {
+    margin-right: 0.4em;
+    transform: scale(1.5);
 }
 
 .field-item-link {
