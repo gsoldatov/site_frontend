@@ -48,7 +48,6 @@ div.to-do-list-container-header {
     line-break: auto;
     word-break: break-word;
     min-width: 100px;
-    max-width: 80%;     /* TODO set correct width */
 }
 
 .to-do-list-item-input.completed {
@@ -65,7 +64,7 @@ div.to-do-list-container-header {
 }
 
 .to-do-list-item-input.new {
-    padding-left: calc(0.3em + 100px);  /* TODO set correct padding when left menu is fully implemented */
+    padding-left: 2.5em;    /* = left menu min size + item input padding */
     width: 80%;
 }
 
@@ -79,20 +78,22 @@ div.to-do-list-container-header {
 /* Item left and right menus */
 .to-do-list-left-menu, .to-do-list-right-menu {
     height: calc(20em/14);  /* 1 line height */
+    flex-shrink: 0;     /* menus don't shrink when item input takes more space than available => only input height is adjusted to contain all item text */
 }
 
 .to-do-list-left-menu {
-    padding-left: 1em;
     display: flex;
+    padding-left: 1em;
+    min-width: 2.2em;       /* should be as close to default space taken as possible, to equalize spacing between item input and menus */
 }
 
 .to-do-list-right-menu {
-    width: 100px;
     display: flex;
 }
 
 .icon.to-do-list-item-button {
     cursor: pointer;
+    margin: 0;
 }
 
 .icon.to-do-list-item-button.comment {
