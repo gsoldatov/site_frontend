@@ -2,15 +2,11 @@
     Markdown + markdown view & edit container styles.   
 *******************************************************/
 
+/* Containers */
 div.markdown-container-header {
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 0.25em;
-}
-
-div.item.markdown-display-switch-menu-item.acitve {
-    background-color: rgba(0, 0, 0, 0.05);
-    border: solid 1px rgba(0, 0, 0, 0.25);
 }
 
 div.markdown-parsed-container {
@@ -22,6 +18,7 @@ div.markdown-parsed-container {
     padding-bottom: 0.785714em;
 }
 
+/* Parsed markdown */
 h3.markdown-header {
     padding-bottom: 0.25em;
     border-bottom: solid 1px rgb(150, 150, 150);
@@ -47,7 +44,7 @@ th.markdown-th, td.markdown-td {
     padding: 0.25em;
 }
 
-/* code highlighting */
+/* Code highlighting */
 pre code.hljs {
     display: block;
 }

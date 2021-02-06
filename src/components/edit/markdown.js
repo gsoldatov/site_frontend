@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Grid, Menu } from "semantic-ui-react";
+import { Form, Grid } from "semantic-ui-react";
+
+import FieldMenu from "../field/field-menu";
 
 import { setCurrentObject, setMarkdownDisplayMode } from "../../actions/object";
 import intervalWrapper from "../../util/interval-wrapper";
@@ -34,28 +36,35 @@ export const MarkdownContainer = () => {
 
 
 const MarkdownDisplaySwitch = () => {
-    const dispatch = useDispatch();
-    const markdownDisplayMode = useSelector(state => state.objectUI.markdownDisplayMode);
+    const fieldMenuItems = [
+        {
+            type: "item",
+            icon: "square outline",
+            title: "Display parsed markdown",
+            onClick: setMarkdownDisplayMode,
+            onClickParams: "view",
+            isActiveSelector: state => state.objectUI.markdownDisplayMode === "view"
+        },
+        {
+            type: "item",
+            icon: "pencil",
+            title: "Display edit window",
+            onClick: setMarkdownDisplayMode,
+            onClickParams: "edit",
+            isActiveSelector: state => state.objectUI.markdownDisplayMode === "edit"
+        },
+        {
+            type: "item",
+            icon: "clone outline",
+            title: "Display edit window and parsed markdown",
+            onClick: setMarkdownDisplayMode,
+            onClickParams: "both",
+            isActiveSelector: state => state.objectUI.markdownDisplayMode === "both"
+        }
+    ];
 
-    const items = displayModeItems.map(i => {
-        const isActive = markdownDisplayMode === i.mode;
-        const className = isActive ? "acitve markdown-display-switch-menu-item" : "markdown-display-switch-menu-item";
-        return <Menu.Item as="div" key={i.key} className={className} title={i.title} icon={i.icon} onClick={() => dispatch(i.action)} />;
-    });
-    
-    return (
-        <Menu compact size="tiny" className="markdown-display-switch-menu">
-            {items}
-        </Menu>
-    );
+    return <FieldMenu size="mini" compact className="markdown-display-switch-menu" items={fieldMenuItems} />;
 };
-
-
-const displayModeItems = [
-    { key: 1, mode: "view", title: "Display parsed markdown", icon: "square outline", action: setMarkdownDisplayMode("view") },
-    { key: 2, mode: "edit", title: "Display edit window", icon: "pencil", action: setMarkdownDisplayMode("edit") },
-    { key: 3, mode: "both", title: "Display edit window and parsed markdown", icon: "clone outline", action: setMarkdownDisplayMode("both") }
-];
 
 
 const useMarkdownParseWorker = () => {

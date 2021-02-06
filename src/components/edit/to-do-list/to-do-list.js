@@ -38,7 +38,6 @@ const TDLMenu = ({ updateCallback }) => {
             type: "item",
             icon: "ordered list",
             title: "Default sort",
-            size: "tiny",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "default" }},
             isActiveSelector: state => state.objectUI.currentObject.toDoList.sort_type === "default"
@@ -47,7 +46,6 @@ const TDLMenu = ({ updateCallback }) => {
             type: "item",
             icon: "tasks",
             title: "Sort by state",
-            size: "tiny",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "state" }},
             isActiveSelector: state => state.objectUI.currentObject.toDoList.sort_type === "state"
