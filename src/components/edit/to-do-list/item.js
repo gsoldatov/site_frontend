@@ -172,11 +172,12 @@ class TDLItem extends React.PureComponent {
 // Drag & drop specifications, collecting functions and wrapping
 const dragSourceSpec = {
     beginDrag: props => ({ objectID: props.objectID, itemID: props.itemID }),
-    endDrag: (props, monitor) => {
+    endDrag: (props, monitor, component) => {
         if (!monitor.didDrop()) return;
 
         const dropResult = monitor.getDropResult();
         props.updateCallback({ toDoListItemUpdate: { command: "moveItems", movedID: props.id, targetID: dropResult.itemID, targetLastItem: dropResult.targetLastItem }});
+        component.setState({...component.state, initialItemText: props.item_text });    // inner HTML value must be updated or it will render the item_text passed in the component's constructor
     },
     canDrag: props => props.canDrag
 };
