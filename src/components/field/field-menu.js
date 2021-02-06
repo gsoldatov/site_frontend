@@ -8,12 +8,12 @@ import StlyeFieldMenu from "../../styles/field-menu.css";
 
 
 /* Field menu component with customizable items. */
-export default ({ items, size, className="field-menu" }) => {
+export default ({ items, className = "field-menu", compact, size }) => {
     let k = 0;
-    const menuItems = items.map(item => <FieldMenuElement key={k++} {...item} />);
+    const menuItems = items.map(item => <FieldMenuElement key={k++} {...item} size={size} />);
 
     return (
-        <Menu className={className} size={size}>{menuItems}</Menu>
+        <Menu className={className} compact={compact} size={size}>{menuItems}</Menu>
     );
 }
 
