@@ -25,7 +25,7 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from '@testing-library/dom'
 
-import { renderWithWrappers } from "./test-utils";
+import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils";
 
 import createStore from "../src/store/create-store";
 import { AddObject, EditObject } from "../src/components/object";
@@ -69,7 +69,7 @@ test("Render and click cancel button", async () => {
 
 
 test("Select different object types", async () => {
-    let { container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+    let { container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
         route: "/objects/add"
     });
 
@@ -82,16 +82,16 @@ test("Select different object types", async () => {
     expect(objectNameDescriptionInput).toBeTruthy();
     
     // Get link, markdown and to-do selecting elements
-    let linkButton, markdownButton, tdButton;
+    let linkButton, markdownButton, TDLButton;
     objectTypeSelector.querySelectorAll(".object-type").forEach(node => {
         const innerHTML = node.innerHTML;
         if (innerHTML.includes("Link")) linkButton = node;
         else if (innerHTML.includes("Markdown")) markdownButton = node;
-        else if (innerHTML.includes("To-Do List")) tdButton = node;
+        else if (innerHTML.includes("To-Do List")) TDLButton = node;
     });
     expect(linkButton).toBeTruthy();
     expect(markdownButton).toBeTruthy();
-    expect(tdButton).toBeTruthy();
+    expect(TDLButton).toBeTruthy();
 
     // Select markdown object type and check if only markdown inputs are rendered
     fireEvent.click(markdownButton);
@@ -101,10 +101,18 @@ test("Select different object types", async () => {
     expect(mainContentContainer.lastChild).toEqual(markdownContainer);  // last node is Markdown input mock
 
     // Select to-do object type and check if only to-do inputs are rendered
-    fireEvent.click(tdButton);
-    const tdInput = getByText(container, "Not implemented");
+    fireEvent.click(TDLButton);
+    const TDLContainer = container.querySelector(".to-do-list-container");
+    expect(TDLContainer).toBeTruthy();
     expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
-    expect(mainContentContainer.lastChild).toEqual(tdInput);  // last node is To-Do list input mock
+    expect(mainContentContainer.lastChild).toEqual(TDLContainer);  // last node is To-Do list input mock
+
+
+    // // Select to-do object type and check if only to-do inputs are rendered
+    // fireEvent.click(TDLButton);
+    // const tdInput = getByText(container, "Not implemented");
+    // expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
+    // expect(mainContentContainer.lastChild).toEqual(tdInput);  // last node is To-Do list input mock
     
     // Select link object type and check if only link inputs are rendered
     fireEvent.click(linkButton);
@@ -166,12 +174,12 @@ test("Try saving objects with incorrect data", async () => {
 
     // Get link, markdown and to-do selecting elements
     const objectTypeSelector = container.querySelector(".object-type-menu");
-    let linkButton, markdownButton, tdButton;
+    let linkButton, markdownButton, TDLButton;
     objectTypeSelector.querySelectorAll(".object-type").forEach(node => {
         const innerHTML = node.innerHTML;
         if (innerHTML.includes("Link")) linkButton = node;
         else if (innerHTML.includes("Markdown")) markdownButton = node;
-        else if (innerHTML.includes("To-Do List")) tdButton = node;
+        else if (innerHTML.includes("To-Do List")) TDLButton = node;
     });
 
     // Set a valid object name

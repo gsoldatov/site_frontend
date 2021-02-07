@@ -5,10 +5,39 @@ import { createMemoryHistory } from "history";
 import { render } from "@testing-library/react";
 import { queryByText, queryAllByText } from "@testing-library/dom";
 
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
+
 import createStore from "../src/store/create-store";
 
 import { addObjects, selectObjects, setObjectsTags } from "../src/actions/objects";
 import { getNonCachedTags } from "../src/actions/tags";
+
+
+export function renderWithWrappersAndDnDProvider(ui, {
+    store = createStore({ enableDebugLogging: false }),
+    route = "/",
+    history = createMemoryHistory({ initialEntries: [route] })
+} = {}
+) {
+    function wrapper({ children }) {
+        return (
+            <Provider store={store}>
+                <DndProvider backend={HTML5Backend}>
+                    <Router history={history}>
+                        {children}
+                    </Router>
+                </DndProvider>
+            </Provider>
+        );
+    }
+
+    return { 
+        ...render(ui, { wrapper: wrapper }),
+        history,
+        store
+    };
+}
 
 
 export function renderWithWrappers(ui, {
