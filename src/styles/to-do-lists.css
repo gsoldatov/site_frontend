@@ -107,5 +107,6 @@ div.to-do-list-container-header {
 }
 
 .to-do-list-item-comment-input {
+    outline: none;  /* don't display border on edit */
     min-width: 100px;
 }
