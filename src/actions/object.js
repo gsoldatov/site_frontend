@@ -68,7 +68,7 @@ export function addObjectOnSaveFetch() {
                 object_name: state.objectUI.currentObject.object_name,
                 object_description: state.objectUI.currentObject.object_description,
                 added_tags: state.objectUI.currentObject.addedTags,
-                object_data: object_data
+                object_data
             }
         });
 

@@ -27,10 +27,13 @@ export const validateCurrentObject = state => {
 
     switch (obj.object_type) {
         case "link":
-            if(obj.link.length === 0) throw Error("Link value is required.");
+            if (obj.link.length === 0) throw Error("Link value is required.");
             break;
         case "markdown":
-            if(obj.markdown.raw_text.length === 0) throw Error("Markdown text is required.");
+            if (obj.markdown.raw_text.length === 0) throw Error("Markdown text is required.");
+            break;
+        case "to_do_list":
+            if (Object.keys(obj.toDoList.items).length === 0) throw Error("At least one item is required in the to-do list.");
             break;
         default:
             break;
@@ -47,9 +50,14 @@ export const getCurrentObjectData = state => {
     const currentObject = state.objectUI.currentObject;
     switch (currentObject.object_type) {
         case "link":
-            return { "link": currentObject.link };
+            return { link: currentObject.link };
         case "markdown":
-            return { "raw_text": currentObject.markdown.raw_text };
+            return { raw_text: currentObject.markdown.raw_text };
+        case "to_do_list":
+            return {
+                sort_type: currentObject.toDoList.sort_type,
+                items: currentObject.toDoList.itemOrder.map((id, index) => ({ item_number: index, ...currentObject.toDoList.items[id] }))
+            };
         default:
             return null;
     }
@@ -67,6 +75,9 @@ export const getObjectDataFromStore = (state, object_id) => {
         case "markdown":
             if (!state.markdown[object_id]) return undefined;
             return state.markdown[object_id] ? { markdown: { raw_text: state.markdown[object_id].raw_text, parsed: "" }} : undefined;
+        case "to_do_list":
+            if (!state.toDoLists[object_id]) return undefined;
+            return { toDoList: {...state.toDoLists[object_id] }};
         default:
             return undefined;
     }

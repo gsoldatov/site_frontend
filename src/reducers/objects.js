@@ -23,7 +23,7 @@ function addObjects(state, action) {
 };
 
 function addObjectData(state, action) {
-    let newLinks = {}, newMarkdown = {};
+    let newLinks = {}, newMarkdown = {}, newTDL = {};
 
 
     for (let objectData of action.objectData){
@@ -33,6 +33,23 @@ function addObjectData(state, action) {
                 break;
             case "markdown":
                 newMarkdown[objectData["object_id"]] = {...objectData["object_data"]};
+                break;
+            case "to_do_list":
+                let itemOrder = [], items = {};
+                objectData["object_data"].items.forEach((item, index) => {
+                    itemOrder.push(index);
+                    items[index] = {...item};
+                    delete items[index].item_number;
+                });
+
+                newTDL[objectData["object_id"]] = {
+                    itemOrder,
+                    setFocusOnID: -1,
+                    caretPositionOnFocus: -1,
+                    sort_type: objectData["object_data"].sort_type,
+                    items
+                };
+                break;
             default:
                 break;
         }
@@ -47,6 +64,10 @@ function addObjectData(state, action) {
         markdown: {
             ...state.markdown,
             ...newMarkdown
+        },
+        toDoLists: {
+            ...state.toDoLists,
+            ...newTDL
         }
     };
 }
@@ -160,11 +181,13 @@ function deleteObjects(state, action) {
     let objects = {...state.objects};
     let links = {...state.links};
     let markdown = {...state.markdown};
+    let toDoLists = {...state.toDoLists};
     let objectsTags = {...state.objectsTags};
     for (let objectID of action.object_ids) {
         delete objects[objectID];
         delete links[objectID];
         delete markdown[objectID];
+        delete toDoLists[objectID];
         delete objectsTags[objectID];
     }
 
@@ -173,6 +196,7 @@ function deleteObjects(state, action) {
         objects,
         links,
         markdown,
+        toDoLists,
         objectsTags
     };
 }
