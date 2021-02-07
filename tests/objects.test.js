@@ -507,18 +507,29 @@ test("Field menu, object type filter", async () => {
     expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeFalsy();
     expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeTruthy();
     checkObjectsDisplay(store, container);
+    
+    // Check if correct objects are displayed when markdown only is selected
+    await deselectObjectType("Markdown");
+    await selectObjectType("To-Do Lists");
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeFalsy();
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("to_do_list")).toBeTruthy();
+    checkObjectsDisplay(store, container);
 
     // Check if correct objects are displayed when all object types are selected
     await selectObjectType("Links");
+    await selectObjectType("Markdown");
     expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeTruthy();
     expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeTruthy();
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("to_do_list")).toBeTruthy();
     checkObjectsDisplay(store, container);
 
     // Check if correct objects are displayed when all object types are deselected
     await deselectObjectType("Links");
     await deselectObjectType("Markdown");
+    await deselectObjectType("To-Do Lists");
     expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeFalsy();
     expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeFalsy();
+    expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("to_do_list")).toBeFalsy();
     checkObjectsDisplay(store, container);
 });
 
@@ -621,6 +632,7 @@ test("Field menu, tags filter", async () => {
     expect(store.getState().objectsUI.tagsFilterInput.inputText).toEqual("");           // input text is reset in the state
     expect(store.getState().objectsUI.tagsFilterInput.matchingIDs).toEqual([]);         // matching IDs are reset in the state
 });
+
 
 async function waitForFetch(store) {
     // wait to fetch to start and end

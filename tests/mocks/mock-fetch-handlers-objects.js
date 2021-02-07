@@ -10,7 +10,7 @@ function handleAdd(body) {
     const object = JSON.parse(body).object;
 
     // Check object type
-    if (!["link", "markdown"].includes(object["object_type"]))
+    if (!["link", "markdown", "to_do_list"].includes(object["object_type"]))
         throw new Exception("Received unexpected object_type in handleAdd");
 
     // Handle existing object_name case
@@ -48,10 +48,10 @@ function handleView(body) {
     const bodyJSON = JSON.parse(body);
 
     if ("object_ids" in bodyJSON)
-        object_ids = bodyJSON["object_ids"].filter(id => (id >= 0 && id <= 2000) || _cachedObjects.hasOwnProperty(id));
+        object_ids = bodyJSON["object_ids"].filter(id => (id >= 0 && id <= 3000) || _cachedObjects.hasOwnProperty(id));
     
     if ("object_data_ids" in bodyJSON)
-        object_data_ids = bodyJSON["object_data_ids"].filter(id => (id >= 0 && id <= 2000) || _cachedObjectData.hasOwnProperty(id));
+        object_data_ids = bodyJSON["object_data_ids"].filter(id => (id >= 0 && id <= 3000) || _cachedObjectData.hasOwnProperty(id));
     
     // Return 404 response if both object_ids and object_data_ids do not "exist"
     if (object_ids.length === 0 && object_data_ids.length === 0)
@@ -90,6 +90,20 @@ function handleView(body) {
         if (id >= 0 && id <= 1000) return {object_id: id, object_type: "link", object_data: {link: `https://website${id}.com`}};
         // markdown
         else if (id >= 1001 && id <= 2000) return {object_id: id, object_type: "markdown", object_data: {raw_text: `# Markdown Object \\#${id}\n1. item 1;\n2. item 2;`}};
+        // to-do lists
+        else if (id >= 2001 && id <= 3000) return {object_id: id, object_type: "to_do_list", object_data: {
+            sort_type: "default",
+            items: [
+                { item_number: 0, item_state: "active", item_text: "item 0", commentary: "comment 0", indent: 0, is_expanded: true },
+                { item_number: 1, item_state: "optional", item_text: "item 1", commentary: "", indent: 0, is_expanded: true },
+                { item_number: 2, item_state: "completed", item_text: "item 2", commentary: "", indent: 0, is_expanded: true },
+                { item_number: 3, item_state: "cancelled", item_text: "item 3", commentary: "", indent: 0, is_expanded: true },
+                { item_number: 4, item_state: "active", item_text: "item 4", commentary: "comment 4", indent: 0, is_expanded: true },
+                { item_number: 5, item_state: "optional", item_text: "item 5", commentary: "", indent: 0, is_expanded: true },
+                { item_number: 6, item_state: "completed", item_text: "item 6", commentary: "", indent: 0, is_expanded: true },
+                { item_number: 7, item_state: "cancelled", item_text: "item 7", commentary: "", indent: 0, is_expanded: true }
+            ]
+        }};
         // default
         else return {object_id: id, object_type: "unknown", object_data: {}};
     });
@@ -189,9 +203,14 @@ export function getMockedPageObjectIDs(pI) {
         if (pI.object_types.includes("markdown")) {
             return getList(1006, 1046, 2);
         }
+
+        // To-do list object type
+        if (pI.object_types.includes("to_do_list")) {
+            return getList(2006, 2046, 2);
+        }
     }
     // All object types are displayed
-    else if (pI.object_types.length == 0 || pI.object_types.length == 2) {
+    else if (pI.object_types.length !== 1) {
         // Single page
         if (pI.items_per_page === 100) {
             return getList(1, 100);
