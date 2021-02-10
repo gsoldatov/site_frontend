@@ -23,15 +23,18 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle } from '@testing-library/dom'
+import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
-import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils";
+import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
 
 import createStore from "../src/store/create-store";
 import { AddObject, EditObject } from "../src/components/object";
 import { addObjects } from "../src/actions/objects";
 
 
+/*
+    /objects/add page tests.
+*/
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
@@ -69,7 +72,7 @@ test("Render and click cancel button", async () => {
 
 
 test("Select different object types", async () => {
-    let { container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+    let { store, container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
         route: "/objects/add"
     });
 
@@ -99,6 +102,7 @@ test("Select different object types", async () => {
     expect(markdownContainer).toBeTruthy();
     expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input (before object data div, tag block, tag block header)
     expect(mainContentContainer.lastChild).toEqual(markdownContainer);  // last node is Markdown input mock
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");
 
     // Select to-do object type and check if only to-do inputs are rendered
     fireEvent.click(TDLButton);
@@ -106,6 +110,7 @@ test("Select different object types", async () => {
     expect(TDLContainer).toBeTruthy();
     expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
     expect(mainContentContainer.lastChild).toEqual(TDLContainer);  // last node is To-Do list input mock
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("to_do_list");
 
 
     // // Select to-do object type and check if only to-do inputs are rendered
@@ -119,6 +124,83 @@ test("Select different object types", async () => {
     expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
     const linkInput = getByPlaceholderText(mainContentContainer, "Link");
     expect(mainContentContainer.lastChild).toEqual(linkInput.parentNode.parentNode.parentNode);   // last node is link input form
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("link");
+});
+
+
+test("Add object state saving & reload", async () => {
+    let store = createStore({ enableDebugLogging: false });
+
+    const render = () => renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        route: "/objects/add",
+        store
+    });
+
+    // Render /objects/add and update object name + object type
+    var { container } = render();
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    fireEvent.change(objectNameInput, { target: { value: "new object" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
+    let markdownObjectTypeButton = getByText(container.querySelector(".object-type-menu"), "Markdown");
+    fireEvent.click(markdownObjectTypeButton);
+
+    // Re-render the page with the same store and check if object name and type were not reset
+    var { container } = render();
+    objectNameInput = getByPlaceholderText(container, "Object name");
+    expect(objectNameInput.value).toEqual("new object");
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");
+
+    // Click reset button and check if object name was reset
+    const resetButton = getByText(container, "Reset");
+    fireEvent.click(resetButton);
+    expect(objectNameInput.value).toEqual("");
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");    // object type is not reset
+});
+
+
+test("Add object state reset when opening edit page", async () => {
+    let store = createStore({ enableDebugLogging: false });
+
+    const render = route => renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+        route,
+        store
+    });
+
+    // Render /objects/add and update object name + object type
+    var { container } = render("/objects/add");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    fireEvent.change(objectNameInput, { target: { value: "new object" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
+
+    // Render /objects/1, then render /objects/add and check if the state was reset
+    var { container } = render("/objects/1");
+    await waitFor(() => getByText(container, "Object Information"));
+    var { container } = render("/objects/add");
+    objectNameInput = getByPlaceholderText(container, "Object name");
+    expect(objectNameInput.value).toEqual("");
+});
+
+
+test("Handle save fetch error", async () => {
+    let { container, history, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        route: "/objects/add"
+    });
+
+    // Check if an error message is displayed and object is not added to the state
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let linkInput = getByPlaceholderText(container, "Link");
+    let saveButton = getByText(container, "Save");
+    fireEvent.change(objectNameInput, { target: { value: "error" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("error"));  // wait for object_name to be updated in state
+    const linkValue = "https://google.com"
+    fireEvent.change(linkInput, { target: { value: linkValue } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
+    setFetchFailParams(true, "Test add fetch error");
+    fireEvent.click(saveButton);
+    await waitFor(() => getByText(container, "Test add fetch error"));
+    expect(history.entries[history.length - 1].pathname).toBe("/objects/add");
+    expect(store.getState().objects[1000]).toBeUndefined(); // mock object returned has this id
+    setFetchFailParams();   // reset fetch params
 });
 
 
@@ -163,24 +245,15 @@ test("Try saving an existing (on backend) object name", async () => {
 });
 
 
-test("Try saving objects with incorrect data", async () => {
+test("Try saving link with incorrect data", async () => {
     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
         route: "/objects/add"
     });
 
-    // Get object name input & save button
-    let objectNameInput = getByPlaceholderText(container, "Object name");
-    let saveButton = getByText(container, "Save");
-
-    // Get link, markdown and to-do selecting elements
-    const objectTypeSelector = container.querySelector(".object-type-menu");
-    let linkButton, markdownButton, TDLButton;
-    objectTypeSelector.querySelectorAll(".object-type").forEach(node => {
-        const innerHTML = node.innerHTML;
-        if (innerHTML.includes("Link")) linkButton = node;
-        else if (innerHTML.includes("Markdown")) markdownButton = node;
-        else if (innerHTML.includes("To-Do List")) TDLButton = node;
-    });
+    // Get object name input, link object type button & save button
+    const objectNameInput = getByPlaceholderText(container, "Object name");
+    const linkButton = getByText(container.querySelector(".object-type-menu"), "Link");
+    const saveButton = getByText(container, "Save");
 
     // Set a valid object name
     fireEvent.change(objectNameInput, { target: { value: "New object" } });
@@ -191,36 +264,6 @@ test("Try saving objects with incorrect data", async () => {
     await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
     expect(store.getState().objects[1]).toBeUndefined();
     expect(store.getState().links[1]).toBeUndefined();
-
-    // Save an empty markdown object
-    fireEvent.click(markdownButton);
-    fireEvent.click(saveButton);
-    await waitFor(() => getByText(container, "Markdown text is required.", { exact: false }));
-    expect(store.getState().objects[1]).toBeUndefined();
-    expect(store.getState().markdown[1]).toBeUndefined();
-});
-
-
-test("Handle fetch error", async () => {
-    let { container, history, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add"
-    });
-
-    // Check if an error message is displayed and object is not added to the state
-    let objectNameInput = getByPlaceholderText(container, "Object name");
-    let linkInput = getByPlaceholderText(container, "Link");
-    let saveButton = getByText(container, "Save");
-    fireEvent.change(objectNameInput, { target: { value: "error" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("error"));  // wait for object_name to be updated in state
-    const linkValue = "https://google.com"
-    fireEvent.change(linkInput, { target: { value: linkValue } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
-    setFetchFailParams(true, "Test add fetch error");
-    fireEvent.click(saveButton);
-    await waitFor(() => getByText(container, "Test add fetch error"));
-    expect(history.entries[history.length - 1].pathname).toBe("/objects/add");
-    expect(store.getState().objects[1000]).toBeUndefined(); // mock object returned has this id
-    setFetchFailParams();   // reset fetch params
 });
 
 
@@ -305,6 +348,28 @@ test("Change markdown display modes & render markdown", async () => {
 });
 
 
+test("Try saving markdown with incorrect data", async () => {
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        route: "/objects/add"
+    });
+
+    // Get object name input, link object type button & save button
+    const objectNameInput = getByPlaceholderText(container, "Object name");
+    const markdownButton = getByText(container.querySelector(".object-type-menu"), "Markdown");
+    const saveButton = getByText(container, "Save");
+
+    // Set a valid object name
+    fireEvent.change(objectNameInput, { target: { value: "New object" } });
+
+    // Save an empty markdown object
+    fireEvent.click(markdownButton);
+    fireEvent.click(saveButton);
+    await waitFor(() => getByText(container, "Markdown text is required.", { exact: false }));
+    expect(store.getState().objects[1]).toBeUndefined();
+    expect(store.getState().markdown[1]).toBeUndefined();
+});
+
+
 test("Save a new markdown object", async () => {
     let { container, history, store } = renderWithWrappers(
         <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
@@ -349,55 +414,60 @@ test("Save a new markdown object", async () => {
 });
 
 
-test("Add object state saving & reload", async () => {
-    let store = createStore({ enableDebugLogging: false });
-
-    const render = () => renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add",
-        store
+test("Try saving to-do list with incorrect data", async () => {
+    let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        route: "/objects/add"
     });
 
-    // Render /objects/add and update object name + object type
-    var { container } = render();
-    let objectNameInput = getByPlaceholderText(container, "Object name");
-    fireEvent.change(objectNameInput, { target: { value: "new object" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
-    let markdownObjectTypeButton = getByText(container.querySelector(".object-type-menu"), "Markdown");
-    fireEvent.click(markdownObjectTypeButton);
+    // Get object name input, link object type button & save button
+    const objectNameInput = getByPlaceholderText(container, "Object name");
+    const TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
+    const saveButton = getByText(container, "Save");
 
-    // Re-render the page with the same store and check if object name and type were not reset
-    var { container } = render();
-    objectNameInput = getByPlaceholderText(container, "Object name");
-    expect(objectNameInput.value).toEqual("new object");
-    expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");
+    // Set a valid object name
+    fireEvent.change(objectNameInput, { target: { value: "New object" } });
 
-    // Click reset button and check if object name was reset
-    const resetButton = getByText(container, "Reset");
-    fireEvent.click(resetButton);
-    expect(objectNameInput.value).toEqual("");
-    expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");    // object type is not reset
+    // Save an empty to-do list object
+    fireEvent.click(TDLButton);
+    fireEvent.click(saveButton);
+    await waitFor(() => getByText(container, "At least one item is required in the to-do list.", { exact: false }));
+    expect(store.getState().objects[1]).toBeUndefined();
+    expect(store.getState().toDoLists[1]).toBeUndefined();
 });
 
 
-test("Add object state reset when opening edit page", async () => {
-    let store = createStore({ enableDebugLogging: false });
+test("Save a new to-do list object", async () => {
+    let { container, history, store } = renderWithWrappersAndDnDProvider(
+        <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
+        { route: "/objects/add" }
+    );
 
-    const render = route => renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-        route,
-        store
-    });
+    // Change object type
+    let TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
+    fireEvent.click(TDLButton);
 
-    // Render /objects/add and update object name + object type
-    var { container } = render("/objects/add");
     let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+    // let inputForm = getByPlaceholderText(container, "Enter text here...");
+    let newItemInput = getByPlaceholderText(container.querySelector(".to-do-list-item-container"), "New item");
+    let saveButton = getByText(container, "Save");
+
+    // Check if object is redirected after adding a correct object
     fireEvent.change(objectNameInput, { target: { value: "new object" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
-
-    // Render /objects/1, then render /objects/add and check if the state was reset
-    var { container } = render("/objects/1");
-    await waitFor(() => getByText(container, "Object Information"));
-    var { container } = render("/objects/add");
-    objectNameInput = getByPlaceholderText(container, "Object name");
-    expect(objectNameInput.value).toEqual("");
+    fireEvent.change(objectDescriptionInput, { target: { value: "new object description" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("new object description"));
+    fireEvent.input(newItemInput, { target: { innerHTML: "new value" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.toDoList.items[0].item_text).toBe("new value"));
+    fireEvent.click(saveButton);
+    const object_id = 1000; // mock object returned has this id
+    
+    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+    expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
+    expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
+    let TDLContainer = container.querySelector(".to-do-list-container");
+    getByText(TDLContainer, "new value");
+    getByText(container, "Created at:");
+    getByText(container, "Modified at:");
+    expect(store.getState().toDoLists[object_id].items[0].item_text).toEqual("new value");
 });
-

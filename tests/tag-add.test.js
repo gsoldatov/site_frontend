@@ -23,14 +23,17 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor } from '@testing-library/dom'
+import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 
-import { renderWithWrappers } from "./test-utils";
+import { renderWithWrappers } from "./test-utils/render";
 
 import { AddTag, EditTag } from "../src/components/tag";
 import { addTags } from "../src/actions/tags";
 
 
+/*
+    /tags/add page tests.
+*/
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {

@@ -25,16 +25,19 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from '@testing-library/dom'
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from "@testing-library/dom";
 
 import { getMockedPageTagIDs } from "./mocks/mock-fetch-handlers-tags";
-import { renderWithWrappers } from "./test-utils";
+import { renderWithWrappers } from "./test-utils/render";
 import createStore from "../src/store/create-store";
 
 import Tags from "../src/components/tags";
 import { setTagsPaginationInfo } from "../src/actions/tags";
 
 
+/*
+    /tags page tests.
+*/
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {

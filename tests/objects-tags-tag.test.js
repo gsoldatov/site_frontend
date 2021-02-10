@@ -25,9 +25,10 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, waitFor } from '@testing-library/dom'
+import { getByText, waitFor } from "@testing-library/dom";
 
-import { renderWithWrappers, compareArrays } from "./test-utils";
+import { compareArrays } from "./test-utils/data-checks";
+import { renderWithWrappers} from "./test-utils/render";
 import createStore from "../src/store/create-store";
 
 import { EditTag } from "../src/components/tag";
@@ -35,6 +36,9 @@ import Tags from "../src/components/tags";
 import { addObjects, setObjectsTags } from "../src/actions/objects";
 
 
+/*
+    Object tagging tests for /tags/:id page.
+*/
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {

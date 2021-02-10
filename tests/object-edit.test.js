@@ -24,15 +24,21 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle } from '@testing-library/dom'
+import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle, queryByPlaceholderText } from "@testing-library/dom";
 
-import { renderWithWrappers } from "./test-utils";
+import { compareArrays } from "./test-utils/data-checks";
+import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
+import { getTDLByObjectID } from "./mocks/data-to-do-lists";
+
 import createStore from "../src/store/create-store";
 
 import { AddObject, EditObject } from "../src/components/object";
 import { addObjects, addObjectData, setObjectsTags, deleteObjects } from "../src/actions/objects";
 
 
+/*
+    /objects/edit page tests.
+*/
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
@@ -480,10 +486,9 @@ test("Load a markdown object attributes from state and data from backend", async
     fireEvent.click(linkButton);
     expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");
 
-    // Check if link data is displayed
+    // Check if markdown data is displayed
     let objectData = store.getState().markdown[1001];
     expect(objectData).toHaveProperty("raw_text");
-    // expect(getByPlaceholderText(container, "Link").value).toEqual("https://website1.com");
     const markdownContainer = document.querySelector(".markdown-container");
     expect(markdownContainer).toBeTruthy();
     await waitFor(() => {
@@ -567,4 +572,162 @@ test("Update a markdown object", async () => {
     await waitFor(() => expect(store.getState().objects[1001].object_name).toEqual("modified object name"));
     expect(store.getState().objects[1001].object_description).toEqual("modified object description");
     expect(store.getState().markdown[1001].raw_text).toEqual("# Modified Markdown");
+});
+
+
+test("Load a to-do list object from state", async () => {
+    let store = createStore();
+    let object = { object_id: 1, object_type: "to_do_list", object_name: "object name", object_description: "object description", 
+                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
+    let objectData = { object_id: 1, object_type: "to_do_list", object_data: getTDLByObjectID(2001) };
+    store.dispatch(addObjects([object]));
+    store.dispatch(setObjectsTags([object]));
+    store.dispatch(addObjectData([objectData]));
+    // Route component is required for matching (getting :id part of the URL in the EditObject component)
+    let { container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        route: "/objects/1",
+        store: store
+    });
+
+    // Check if object information is displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+    expect(objectNameInput.value).toEqual("object name");
+    expect(objectDescriptionInput.value).toEqual("object description");
+    // getByText(container, object.created_at);
+    // getByText(container, object.modified_at);
+
+    // Check if object type is displayed, but can't be changed
+    const objectTypeSelector = container.querySelector(".object-type-menu");
+    const TDLButton = getByText(objectTypeSelector, "To-Do List");
+    expect(TDLButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // markdown button includes a check icon
+    const linkButton = getByText(objectTypeSelector, "Link");
+    fireEvent.click(linkButton);
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("to_do_list");
+
+    // Check if all items are displayed (detailed interface checks are performed in to-do-lists.test.js)
+    const TDLContainer = container.querySelector(".to-do-list-container");
+    expect(TDLContainer).toBeTruthy();
+    for (let item of objectData.object_data.items) getByText(TDLContainer, item.item_text);
+    getByPlaceholderText(TDLContainer, "New item");
+});
+
+
+test("Load a to-do list object attributes from state and data from backend", async () => {
+    let store = createStore({ enableDebugLogging: false });
+    let object = { object_id: 2001, object_type: "to_do_list", object_name: "object name", object_description: "object description", 
+                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
+    store.dispatch(addObjects([object]));
+    store.dispatch(setObjectsTags([object]));
+    // Route component is required for matching (getting :id part of the URL in the EditObject component)
+    let { container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        route: "/objects/2001",
+        store: store
+    });
+    
+    // Check if object information is displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+    expect(objectNameInput.value).toEqual("object name");
+    expect(objectDescriptionInput.value).toEqual("object description");
+    // getByText(container, object.created_at);
+    // getByText(container, object.modified_at);
+
+    // Check if object type is displayed, but can't be changed
+    const objectTypeSelector = container.querySelector(".object-type-menu");
+    const TDLButton = getByText(objectTypeSelector, "To-Do List");
+    expect(TDLButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // to-do list button includes a check icon
+    const linkButton = getByText(objectTypeSelector, "Link");
+    fireEvent.click(linkButton);
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("to_do_list");
+
+    // Check if all items are displayed (detailed interface checks are performed in to-do-lists.test.js)
+    const TDLContainer = container.querySelector(".to-do-list-container");
+    expect(TDLContainer).toBeTruthy();
+    for (let key of store.getState().objectUI.currentObject.toDoList.itemOrder) getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[key].item_text);
+    getByPlaceholderText(TDLContainer, "New item");
+});
+
+
+test("Delete a to-do list object", async () => {
+    // Route component is required for matching (getting :id part of the URL in the EditObject component)
+    let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        route: "/objects/2001"
+    });
+
+    // Wait for object information to be displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+
+    // Check if delete removes the object and redirects
+    let deleteButton = getByText(container, "Delete");
+    fireEvent.click(deleteButton);
+    let confimationDialogButtonYes = getByText(container, "Yes");
+    fireEvent.click(confimationDialogButtonYes);
+
+    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+    expect(store.getState().objects[2001]).toBeUndefined();
+    expect(store.getState().toDoLists[2001]).toBeUndefined();
+});
+
+
+test("Save an empty to-do list object", async () => {
+    // Route component is required for matching (getting :id part of the URL in the EditObject component)
+    let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        route: "/objects/2001"
+    });
+
+    // Wait for object information to be displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+    let saveButton = getByText(container, "Save");
+    let oldObjectData = {...store.getState().toDoLists[2001]};
+    const TDLContainer = container.querySelector(".to-do-list-container");
+    expect(TDLContainer).toBeTruthy();
+    
+    // Delete all items
+    TDLContainer.querySelectorAll(".to-do-list-item").forEach(item => {
+        if (!queryByPlaceholderText(item, "New item")) {    // skip new item input
+            fireEvent.mouseEnter(item);
+            const deleteButton = getByTitle(item, "Delete item");
+            fireEvent.click(deleteButton);
+        }
+    });
+    expect(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length).toEqual(0);
+
+    // Check if an empty to-do list is not saved
+    fireEvent.click(saveButton);
+    await waitFor(() => getByText(container, "At least one item is required in the to-do list.", { exact: false }));
+    expect(compareArrays(Object.keys(store.getState().toDoLists[2001].items).sort(), Object.keys(oldObjectData.items).sort())).toBeTruthy();
+});
+
+
+test("Update a to-do list object", async () => {
+    // Route component is required for matching (getting :id part of the URL in the EditObject component)
+    let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        route: "/objects/2001"
+    });
+
+    // Wait for object information to be displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+    let saveButton = getByText(container, "Save");
+    let objectNameInput = getByPlaceholderText(container, "Object name");
+    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+    const TDLContainer = container.querySelector(".to-do-list-container");
+    expect(TDLContainer).toBeTruthy();
+    let newItemInput = getByPlaceholderText(TDLContainer, "New item");
+
+    // Modify object attributes and save
+    fireEvent.change(objectNameInput, { target: { value: "modified object name" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("modified object name"));
+    fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
+    const newItemIndex = Math.max(...store.getState().objectUI.currentObject.toDoList.itemOrder) + 1;
+    fireEvent.input(newItemInput, { target: { innerHTML: "new to-do list item" }});
+    await waitFor(() => expect(store.getState().objectUI.currentObject.toDoList.items[newItemIndex].item_text).toBe("new to-do list item"));
+
+    fireEvent.click(saveButton);
+    await waitFor(() => expect(store.getState().objects[2001].object_name).toEqual("modified object name"));
+    expect(store.getState().objects[2001].object_description).toEqual("modified object description");
+    expect(store.getState().toDoLists[2001].items[newItemIndex].item_text).toEqual("new to-do list item");
 });

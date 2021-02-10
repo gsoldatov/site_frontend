@@ -23,14 +23,20 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText, queryByTitle } from '@testing-library/dom'
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText, queryByTitle } from "@testing-library/dom";
 
-import { renderWithWrappers, getStoreWithTwoSelectedObjects, compareArrays, getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils";
+import { getStoreWithTwoSelectedObjects } from "./mocks/data-objects-tags";
+import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils/ui-objects-tags";
+import { compareArrays } from "./test-utils/data-checks";
+import { renderWithWrappers } from "./test-utils/render";
 
 import Objects from "../src/components/objects";
 import { getNonCachedTags } from "../src/actions/tags";
 
 
+/*
+    Object tagging tests for /objects page.
+*/
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {

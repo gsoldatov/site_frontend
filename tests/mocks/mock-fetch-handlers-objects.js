@@ -1,5 +1,6 @@
 import { autoGenerateTag } from "./mock-fetch-handlers-tags";
-import { getObjectTypeFromID } from "../test-utils";
+import { getObjectTypeFromID } from "./data-objects";
+import { getTDLByObjectID } from "./data-to-do-lists";
 
 let _cachedObjects = {};      // object & object data caches, which are used to pass object data from add/update to view handler
 let _cachedObjectData = {};
@@ -91,19 +92,7 @@ function handleView(body) {
         // markdown
         else if (id >= 1001 && id <= 2000) return {object_id: id, object_type: "markdown", object_data: {raw_text: `# Markdown Object \\#${id}\n1. item 1;\n2. item 2;`}};
         // to-do lists
-        else if (id >= 2001 && id <= 3000) return {object_id: id, object_type: "to_do_list", object_data: {
-            sort_type: "default",
-            items: [
-                { item_number: 0, item_state: "active", item_text: "item 0", commentary: "comment 0", indent: 0, is_expanded: true },
-                { item_number: 1, item_state: "optional", item_text: "item 1", commentary: "", indent: 0, is_expanded: true },
-                { item_number: 2, item_state: "completed", item_text: "item 2", commentary: "", indent: 0, is_expanded: true },
-                { item_number: 3, item_state: "cancelled", item_text: "item 3", commentary: "", indent: 0, is_expanded: true },
-                { item_number: 4, item_state: "active", item_text: "item 4", commentary: "comment 4", indent: 0, is_expanded: true },
-                { item_number: 5, item_state: "optional", item_text: "item 5", commentary: "", indent: 0, is_expanded: true },
-                { item_number: 6, item_state: "completed", item_text: "item 6", commentary: "", indent: 0, is_expanded: true },
-                { item_number: 7, item_state: "cancelled", item_text: "item 7", commentary: "", indent: 0, is_expanded: true }
-            ]
-        }};
+        else if (id >= 2001 && id <= 3000) return {object_id: id, object_type: "to_do_list", object_data: getTDLByObjectID(id) };
         // default
         else return {object_id: id, object_type: "unknown", object_data: {}};
     });

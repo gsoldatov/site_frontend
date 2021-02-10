@@ -25,13 +25,17 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
-import { renderWithWrappers, getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils";
+import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils/ui-objects-tags";
+import { renderWithWrappers } from "./test-utils/render";
 
 import createStore from "../src/store/create-store";
 import { AddObject, EditObject } from "../src/components/object";
 import { addObjects, addObjectData, setObjectsTags } from "../src/actions/objects";
 
 
+/*
+    Object tagging tests for /objects/:id page.
+*/
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {

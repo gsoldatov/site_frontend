@@ -25,16 +25,19 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from '@testing-library/dom'
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from "@testing-library/dom";
 
 import { getMockedPageObjectIDs } from "./mocks/mock-fetch-handlers-objects";
-import { renderWithWrappers } from "./test-utils";
+import { renderWithWrappers } from "./test-utils/render";
 import createStore from "../src/store/create-store";
 
 import Objects from "../src/components/objects";
 import { setObjectsPaginationInfo } from "../src/actions/objects";
 
 
+/*
+    /objects page tests.
+*/
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
