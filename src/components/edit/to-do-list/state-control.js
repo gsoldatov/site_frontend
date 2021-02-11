@@ -6,9 +6,9 @@ import { Icon } from "semantic-ui-react";
     To-do list item state control menu & buttons.
 */
 export const stateControlParams = {
-    completed: { icon: "check square outline", title: "Set item as complete", iconColor: "green", inputCSSClass: "to-do-list-item-input completed" },
+    completed: { icon: "check square outline", title: "Set item as completed", iconColor: "green", inputCSSClass: "to-do-list-item-input completed" },
     active: { icon: "square outline", title: "Set item as active", iconColor: "black", inputCSSClass: "to-do-list-item-input" },
-    optional: { icon: "question circle outline", title: "Set item as opitonal", iconColor: "blue", inputCSSClass: "to-do-list-item-input optional" },
+    optional: { icon: "question circle outline", title: "Set item as optional", iconColor: "blue", inputCSSClass: "to-do-list-item-input optional" },
     cancelled: { icon: "ban", title: "Set item as cancelled", iconColor: "red", inputCSSClass: "to-do-list-item-input cancelled" }
 };
 

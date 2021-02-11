@@ -4,10 +4,10 @@ import thunkMiddleware from "redux-thunk";
 import { LocalStorageProxy } from "./local-storage";
 import getRootReducer from "../reducers/root";
 
-const createStoreFunc = ({
-    useLocalStorage = true,
-    enableDebugLogging = false
-} = {}) => {
+
+const createStoreFunc = (params = {}) => {
+    const useLocalStorage = params.useLocalStorage || false,
+          enableDebugLogging = params.enableDebugLogging || false;
     const proxy = new LocalStorageProxy(useLocalStorage, enableDebugLogging);
     const store = createStore(
         getRootReducer(enableDebugLogging),

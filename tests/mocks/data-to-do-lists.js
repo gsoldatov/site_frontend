@@ -1,12 +1,22 @@
+/*
+    Mock to-do lists.
+*/
 export const getTDLByObjectID = objectID => {
-    if (objectID.toString() === "2901") return enterKeyDownDefaultSortTDL;
-    if (objectID.toString() === "2902") return deleteKeyDownDefaultSortTDL;
+    const strID = objectID.toString();
+    switch (strID) {
+        case "2901": return enterKeyDownDefaultSortTDL;
+        case "2902": return deleteKeyDownDefaultSortTDL;
+        case "2903": return backspaceKeyDownDefaultSortTDL;
+        case "2904": return defaultTDLWithSortByState;
+        case "2905": return enterKeyDownTDLWithSortByState;
+        case "2906": return deleteKeyDownTDLWithSortByState;
+        case "2907": return backspaceKeyDownTDLWithSortByState;
+        default: return defaultTDL;
+    }
+};
 
-    return defaultTDL;
-}
 
-
-export const defaultTDL = {
+const defaultTDL = {
     sort_type: "default",
     items: [
         { item_number: 0, item_state: "active", item_text: "item 0", commentary: "comment 0", indent: 0, is_expanded: true },
@@ -21,31 +31,54 @@ export const defaultTDL = {
 };
 
 
-export const enterKeyDownDefaultSortTDL = {
+const enterKeyDownDefaultSortTDL = {
     sort_type: "default",
     items: [
         { item_number: 0, item_state: "completed", item_text: "item 0", commentary: "commentary 0", indent: 0, is_expanded: true },
-        { item_number: 1, item_state: "active", item_text: "item 1", commentary: "", indent: 0, is_expanded: true },
+        { item_number: 1, item_state: "active", item_text: "item 1", commentary: "", indent: 0, is_expanded: true }
     ]
 };
 
-export const deleteKeyDownDefaultSortTDL = {
+
+const deleteKeyDownDefaultSortTDL = {
     sort_type: "default",
     items: [
         { item_number: 0, item_state: "completed", item_text: "f", commentary: "commentary 0", indent: 0, is_expanded: true },
-        { item_number: 1, item_state: "active", item_text: "item 1", commentary: "", indent: 0, is_expanded: true },
+        { item_number: 1, item_state: "active", item_text: "item 1", commentary: "commentary 1", indent: 0, is_expanded: true }
     ]
 };
 
-// export const upDownDefaultSortTDL = {
-//     sort_type: "default",
-//     items: [
-//         { item_number: 0, item_state: "active", item_text: "00", commentary: "", indent: 0, is_expanded: true },
-//         { item_number: 1, item_state: "active", item_text: "1111", commentary: "", indent: 0, is_expanded: true },
-//         { item_number: 2, item_state: "active", item_text: "222222", commentary: "", indent: 0, is_expanded: true },
-//         { item_number: 3, item_state: "active", item_text: "3333", commentary: "", indent: 0, is_expanded: true },
-//         { item_number: 4, item_state: "active", item_text: "44", commentary: "", indent: 0, is_expanded: true },
-//     ]
-// }
 
-// export const TDLWithSortByState = {...defaultTDL, sort_type: "state"};
+const backspaceKeyDownDefaultSortTDL = {
+    sort_type: "default",
+    items: [
+        { item_number: 0, item_state: "completed", item_text: "item 0", commentary: "commentary 0", indent: 0, is_expanded: true },
+        { item_number: 1, item_state: "active", item_text: "item 1", commentary: "commentary 1", indent: 0, is_expanded: true }
+    ]
+};
+
+
+const defaultTDLWithSortByState = {...defaultTDL, sort_type: "state"};
+
+
+const enterKeyDownTDLWithSortByState = {...enterKeyDownDefaultSortTDL, sort_type: "state"};
+
+
+const deleteKeyDownTDLWithSortByState = {
+    sort_type: "state",
+    items: [
+        { item_number: 0, item_state: "completed", item_text: "", commentary: "commentary 0", indent: 0, is_expanded: true },
+        { item_number: 1, item_state: "active", item_text: "item 1", commentary: "commentary 1", indent: 0, is_expanded: true },
+        { item_number: 2, item_state: "completed", item_text: "item 2", commentary: "commentary 2", indent: 0, is_expanded: true }
+    ]
+};
+
+
+const backspaceKeyDownTDLWithSortByState = {
+    sort_type: "state",
+    items: [
+        { item_number: 0, item_state: "completed", item_text: "item 0", commentary: "commentary 0", indent: 0, is_expanded: true },
+        { item_number: 1, item_state: "active", item_text: "item 1", commentary: "commentary 1", indent: 0, is_expanded: true },
+        { item_number: 2, item_state: "completed", item_text: "item 2", commentary: "commentary 2", indent: 0, is_expanded: true }
+    ]
+};

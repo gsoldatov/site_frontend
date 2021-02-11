@@ -17,7 +17,7 @@ export const getCaretPosition = element => {
       }
     }
     return position;
-}
+};
 
 
 // Returns text before and after caret position in the element

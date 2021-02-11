@@ -32,7 +32,7 @@ export const App = () => {
 
 export const WrappedApp = () => {
     return (
-        <Provider store={createStore({ enableDebugLogging: true })}>
+        <Provider store={createStore({ useLocalStorage: true, enableDebugLogging: true })}>
             <DndProvider backend={HTML5Backend}>
                 <BrowserRouter>
                     <App />

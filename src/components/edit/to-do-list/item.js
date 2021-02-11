@@ -171,7 +171,7 @@ class TDLItem extends React.PureComponent {
 
 // Drag & drop specifications, collecting functions and wrapping
 const dragSourceSpec = {
-    beginDrag: props => ({ objectID: props.objectID, itemID: props.itemID }),
+    beginDrag: props => ({ objectID: props.objectID, itemID: props.id }),
     endDrag: (props, monitor, component) => {
         if (!monitor.didDrop()) return;
 
