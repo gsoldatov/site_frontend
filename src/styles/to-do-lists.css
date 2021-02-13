@@ -75,6 +75,22 @@ div.to-do-list-container-header {
     color: rgba(191, 191, 191, 0.87);
 }
 
+/* Indent */
+.to-do-list-item-indent.one {
+    /* width: 3em; */
+    width: min(3em, 5%);
+}
+
+.to-do-list-item-indent.two {
+    /* width: 6em; */
+    width: calc(2 * min(3em, 5%));
+}
+
+.to-do-list-item-indent.three {
+    /* width: 9em; */
+    width: calc(3 * min(3em, 5%));
+}
+
 /* Item left and right menus */
 .to-do-list-left-menu, .to-do-list-right-menu {
     height: calc(20em/14);  /* 1 line height */

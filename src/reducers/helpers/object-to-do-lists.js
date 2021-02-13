@@ -1,4 +1,4 @@
-import { getSortedItemIDs, getNewItemID } from "../../store/state-util/to-do-lists";
+import { getSortedItemIDs, getNewItemID, getPreviousItemIndent } from "../../store/state-util/to-do-lists";
 
 
 /*
@@ -220,6 +220,32 @@ export const updateToDoListItems = (toDoList, update) => {
         return {
             ...toDoList,
             itemOrder: newItemOrder
+        };
+    }
+
+    // Updates indent of the item with provided `id` and its children (TODO).
+    // Supports only the default sort_type of the list.
+    // If `id` = "newItem", sets indent of new item input.
+    // Accepts `increase`/`decrease` boolean arguments to increase/decrease indent by 1 or a new value passed in `indent` argument.
+    if (update.command === "setIndent") {
+        if (toDoList.sort_type !== "default") return toDoList;
+        let { id, increase, decrease, indent } = update;
+
+        if (id === "newItem") {     // Update new item indent (TODO)
+            return toDoList;
+        }
+        
+        const newItems = {...toDoList.items};   // Update existing items
+
+        const item = toDoList.items[id];
+        if (increase) indent = item.indent + 1;
+        else if (decrease) indent = item.indent - 1;
+        indent = Math.min(Math.max(indent, 0), 3);
+        indent = Math.min(indent, getPreviousItemIndent(toDoList, id) + 1);
+        newItems[id] = {...item, indent};
+        return {
+            ...toDoList,
+            items: newItems
         };
     }
 };

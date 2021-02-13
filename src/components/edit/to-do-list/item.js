@@ -103,10 +103,17 @@ class TDLItem extends React.PureComponent {
                 }
             }
         }
+
+        // On `Tab`/ `Shift + Tab` increase/decrease indent of the item and its children by 1.
+        else if (e.key === "Tab") {
+            e.preventDefault();
+            if (e.shiftKey) this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: this.props.id, decrease: true }});
+            else this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: this.props.id, increase: true }});
+        }
     };
 
     render() {
-        const { id, item_state, commentary, updateCallback } = this.props;
+        const { id, item_state, commentary, updateCallback, indent } = this.props;
         const { connectDragSource, isDragging, connectDropTarget, isHovered } = this.props;
         const { inputCSSClass } = stateControlParams[item_state];
 
@@ -117,6 +124,9 @@ class TDLItem extends React.PureComponent {
         const onHoverSpace = isHovered && (
             <div className="to-do-list-item-on-hover-space" />
         )
+
+        // Indent space
+        const indentSpace = <div className={indentClassNames[indent]} />;
 
         // Left menu
         const leftMenu = (
@@ -155,6 +165,7 @@ class TDLItem extends React.PureComponent {
                 {onHoverSpace}
                 <div className="to-do-list-item"  onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
                     <div className="to-do-list-item-id">{id}</div>
+                    {indentSpace}
                     {leftMenu}
                     {input}
                     {rightMenu}
@@ -167,6 +178,16 @@ class TDLItem extends React.PureComponent {
         return connectDropTarget(connectDragSource(result));
     }
 }
+
+
+// indent class names
+const indentBaseClassName = "to-do-list-item-indent";
+const indentClassNames = {
+    "0": indentBaseClassName,
+    "1": indentBaseClassName + " one",
+    "2": indentBaseClassName + " two",
+    "3": indentBaseClassName + " three"
+};
 
 
 // Drag & drop specifications, collecting functions and wrapping
