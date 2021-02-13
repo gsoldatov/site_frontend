@@ -84,6 +84,7 @@ const initialState = {
                 itemOrder: [],
                 setFocusOnID: -1,
                 caretPositionOnFocus: -1,
+                newItemInputIndent: 0,
 
                 sort_type: "default",
                 items: {}

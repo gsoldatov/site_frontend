@@ -46,6 +46,7 @@ function addObjectData(state, action) {
                     itemOrder,
                     setFocusOnID: -1,
                     caretPositionOnFocus: -1,
+                    newItemInputIndent: 0,
                     sort_type: objectData["object_data"].sort_type,
                     items
                 };

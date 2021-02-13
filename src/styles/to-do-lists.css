@@ -41,6 +41,23 @@ div.to-do-list-container-header {
     display: none;
 }
 
+/* Indent */
+.to-do-list-item-indent {
+    flex-shrink: 0;
+}
+
+.to-do-list-item-indent.one {
+    width: min(3em, 5%);
+}
+
+.to-do-list-item-indent.two {
+    width: calc(2 * min(3em, 5%));
+}
+
+.to-do-list-item-indent.three {
+    width: calc(3 * min(3em, 5%));
+}
+
 /* Item input */
 .to-do-list-item-input {
     outline: none;  /* don't display border on edit */
@@ -64,8 +81,9 @@ div.to-do-list-container-header {
 }
 
 .to-do-list-item-input.new {
-    padding-left: 2.5em;    /* = left menu min size + item input padding */
-    width: 80%;
+    /*padding-left: 2.5em;    / * = left menu min size + item input padding */
+    width: 100%;
+    /* border-left: solid 1px rgba(191, 191, 191, 0.87); */
 }
 
 .to-do-list-item-input.new:empty::before {  /* Placeholder text */
@@ -73,22 +91,6 @@ div.to-do-list-container-header {
     pointer-events: none;
     display: block; /* For Firefox */
     color: rgba(191, 191, 191, 0.87);
-}
-
-/* Indent */
-.to-do-list-item-indent.one {
-    /* width: 3em; */
-    width: min(3em, 5%);
-}
-
-.to-do-list-item-indent.two {
-    /* width: 6em; */
-    width: calc(2 * min(3em, 5%));
-}
-
-.to-do-list-item-indent.three {
-    /* width: 9em; */
-    width: calc(3 * min(3em, 5%));
 }
 
 /* Item left and right menus */
@@ -110,6 +112,11 @@ div.to-do-list-container-header {
 .icon.to-do-list-item-button {
     cursor: pointer;
     margin: 0;
+}
+
+.icon.to-do-list-item-button.new {
+    cursor: default;
+    color:rgba(191, 191, 191, 0.87);
 }
 
 .icon.to-do-list-item-button.comment {

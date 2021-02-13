@@ -182,7 +182,7 @@ class TDLItem extends React.PureComponent {
 
 // indent class names
 const indentBaseClassName = "to-do-list-item-indent";
-const indentClassNames = {
+export const indentClassNames = {
     "0": indentBaseClassName,
     "1": indentBaseClassName + " one",
     "2": indentBaseClassName + " two",

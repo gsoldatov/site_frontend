@@ -25,9 +25,16 @@ export const getNewItemID = toDoList => toDoList.itemOrder.length > 0 ? Math.max
 
 
 // Returns the indent of the item previous to the item with provided `id` (TODO filter collapsed items?).
+// If `id` = "newItem", returns the indent of the last item in the list.
 // If item is first in the list, returns -1.
 export const getPreviousItemIndent = (toDoList, id) => {
     const itemOrder = getSortedItemIDs(toDoList);
+
+    if (id === "newItem"){
+        const prevID = itemOrder[itemOrder.length - 1];
+        return toDoList.items[prevID].indent;
+    }
+
     const index = itemOrder.indexOf(id);
     if (index === 0) return -1;
     else {

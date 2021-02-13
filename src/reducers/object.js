@@ -39,6 +39,7 @@ function loadAddObjectPage(state, action) {
                     itemOrder: [],
                     setFocusOnID: -1,
                     caretPositionOnFocus: -1,
+                    newItemInputIndent: 0,
     
                     sort_type: "default",
                     items: {}
@@ -91,6 +92,7 @@ function loadEditObjectPage(state, action) {
                     itemOrder: [],
                     setFocusOnID: -1,
                     caretPositionOnFocus: -1,
+                    newItemInputIndent: 0,
     
                     sort_type: "default",
                     items: {}
@@ -139,6 +141,7 @@ function setCurrentObject(state, action) {
             itemOrder: aTDL.itemOrder !== undefined ? aTDL.itemOrder : oldObject.toDoList.itemOrder,
             setFocusOnID: aTDL.setFocusOnID !== undefined ? aTDL.setFocusOnID : oldObject.toDoList.setFocusOnID,
             caretPositionOnFocus: aTDL.caretPositionOnFocus !== undefined ? aTDL.caretPositionOnFocus : oldObject.toDoList.caretPositionOnFocus,
+            newItemInputIndent: aTDL.newItemInputIndent !== undefined ? aTDL.newItemInputIndent : oldObject.toDoList.newItemInputIndent,
 
             sort_type: aTDL.sort_type !== undefined ? aTDL.sort_type : oldObject.toDoList.sort_type,
             items: aTDL.items !== undefined ? aTDL.items : oldObject.toDoList.items

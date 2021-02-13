@@ -231,8 +231,12 @@ export const updateToDoListItems = (toDoList, update) => {
         if (toDoList.sort_type !== "default") return toDoList;
         let { id, increase, decrease, indent } = update;
 
-        if (id === "newItem") {     // Update new item indent (TODO)
-            return toDoList;
+        if (id === "newItem") {     // Update new item indent
+            if (increase) indent = toDoList.newItemInputIndent + 1;
+            else if (decrease) indent = toDoList.newItemInputIndent - 1;
+            indent = Math.min(Math.max(indent, 0), 3);
+            indent = Math.min(indent, getPreviousItemIndent(toDoList, id) + 1);
+            return { ...toDoList, newItemInputIndent: indent };
         }
         
         const newItems = {...toDoList.items};   // Update existing items
@@ -243,9 +247,6 @@ export const updateToDoListItems = (toDoList, update) => {
         indent = Math.min(Math.max(indent, 0), 3);
         indent = Math.min(indent, getPreviousItemIndent(toDoList, id) + 1);
         newItems[id] = {...item, indent};
-        return {
-            ...toDoList,
-            items: newItems
-        };
+        return { ...toDoList, items: newItems };
     }
 };

@@ -96,7 +96,7 @@ const TDLItems = ({ updateCallback, objectID, canDrag }) => {
         return <DraggableTDLItem key={id} id={id} updateCallback={updateCallback} objectID={objectID} canDrag={canDrag} {...item} />;
     });
     
-    const newItem = <DroppableNewTDLItem position={itemOrder.length} updateCallback={updateCallback} objectID={objectID} />;
+    const newItem = <DroppableNewTDLItem position={itemOrder.length} indent={toDoList.newItemInputIndent} updateCallback={updateCallback} objectID={objectID} />;
 
     return (
         <div className="to-do-list-items" ref={itemsRef}>
