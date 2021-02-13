@@ -91,9 +91,12 @@ const TDLItems = ({ updateCallback, objectID, canDrag }) => {
 
     let sortedItems = getSortedItemIDs(toDoList);
 
-    const itemComponents = sortedItems.map(id => {
+    const itemComponents = sortedItems.map((id, index) => {
         const item = toDoList.items[id];
-        return <DraggableTDLItem key={id} id={id} updateCallback={updateCallback} objectID={objectID} canDrag={canDrag} {...item} />;
+        
+        const nextID = sortedItems[index + 1];
+        const hasChildren = toDoList.items[nextID] !== undefined && toDoList.items[nextID].indent > toDoList.items[id].indent;
+        return <DraggableTDLItem key={id} id={id} updateCallback={updateCallback} objectID={objectID} canDrag={canDrag} hasChildren={hasChildren} {...item} />;
     });
     
     const newItem = <DroppableNewTDLItem position={itemOrder.length} indent={toDoList.newItemInputIndent} updateCallback={updateCallback} objectID={objectID} />;

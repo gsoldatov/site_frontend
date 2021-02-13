@@ -42,3 +42,16 @@ export const getPreviousItemIndent = (toDoList, id) => {
         return toDoList.items[prevID].indent;
     }
 };
+
+
+// Returns an array of children item IDs for a provided `id`.
+export const getChildrenIDs = (toDoList, id) => {
+    let childrenIDs = [];
+    const index = toDoList.itemOrder.indexOf(id);
+    for (let i = index + 1; i < toDoList.itemOrder.length; i++) {
+        const currentID = toDoList.itemOrder[i];
+        if (toDoList.items[currentID].indent <= toDoList.items[id].indent) break;
+        childrenIDs.push(currentID);
+    }
+    return childrenIDs;
+};

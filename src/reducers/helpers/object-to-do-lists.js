@@ -1,4 +1,4 @@
-import { getSortedItemIDs, getNewItemID, getPreviousItemIndent } from "../../store/state-util/to-do-lists";
+import { getSortedItemIDs, getNewItemID, getPreviousItemIndent, getChildrenIDs } from "../../store/state-util/to-do-lists";
 
 
 /*
@@ -49,17 +49,30 @@ export const updateToDoListItems = (toDoList, update) => {
 
     // Deletes the item with provided `id`.
     // If `setFocus` is set to "prev" or "next", focuses the item before or after the deleted and places caret at the end of it.
+    // Reduces the indent of deleted item's children by 1.
+    // If `deleteChildren` = true, deletes the children instead.
+    // Updates new item input's indent, so it can't be greater than new last item' indent + 1
     if (update.command === "delete") {
-        const newItemOrder = toDoList.itemOrder.filter(id => id !== update.id);
+        const { id, setFocus, deleteChildren } = update;
+        let newItemOrder = toDoList.itemOrder.filter(i => i !== id);
         const newItems = {...toDoList.items};
-        delete newItems[update.id];
+        delete newItems[id];
+
+        // Update children indent or delete them
+        const childrenIDs = getChildrenIDs(toDoList, id);
+        if (deleteChildren) {
+            childrenIDs.forEach(i => { delete newItems[i] });
+            newItemOrder = newItemOrder.filter(i => !childrenIDs.includes(i));
+        }
+        else 
+            childrenIDs.forEach(i => { newItems[i].indent -= 1 });
 
         // Set focus (for Delete & Backspace key press handling)
         let setFocusOnID = toDoList.setFocusOnID;
-        if (["prev", "next"].includes(update.setFocus)) {
+        if (["prev", "next"].includes(setFocus)) {
             if (toDoList.itemOrder.length > 1) {
-                const deletedPosition = toDoList.itemOrder.indexOf(update.id);
-                const focusedPosition = update.setFocus === "prev"                  // position to focus after item is deleted
+                const deletedPosition = toDoList.itemOrder.indexOf(id);
+                const focusedPosition = setFocus === "prev"                         // position to focus after item is deleted
                     ? Math.max(deletedPosition - 1, 0)                              // prev: 0 => 0, i => i - 1, max => max - 1
                     : Math.min(deletedPosition, toDoList.itemOrder.length - 2);     // next: 0 => 0, i => i, max => max - 1 (-2 in a new list)
                 setFocusOnID = newItemOrder[focusedPosition];
@@ -68,12 +81,22 @@ export const updateToDoListItems = (toDoList, update) => {
             }
         }
 
-        return {
+        let newToDoList = {
             ...toDoList,
             setFocusOnID,
             itemOrder: newItemOrder,
             items: newItems
         };
+
+        // Update new item input's indent (it can't be greater than new last item's indent + 1)
+        const sortedItemIDs = getSortedItemIDs(newToDoList);
+        if (sortedItemIDs.length > 0) {
+            const newLastItemID = sortedItemIDs[sortedItemIDs.length - 1];
+            newToDoList.newItemInputIndent = Math.min(newToDoList.newItemInputIndent, newToDoList.items[newLastItemID].indent + 1);
+        } else
+            newToDoList.newItemInputIndent = 0;
+
+        return newToDoList;
     }
 
     // Focuses the item before the item with provided `id`.

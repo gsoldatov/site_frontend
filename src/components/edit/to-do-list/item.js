@@ -16,6 +16,7 @@ class TDLItem extends React.PureComponent {
         this.handleKeyDown = this.handleKeyDown.bind(this);
 
         this.deleteItem = this.deleteItem.bind(this);
+        this.deleteItemWithChildren = this.deleteItemWithChildren.bind(this);
 
         this.handleInputFocus = this.handleInputFocus.bind(this);
         this.handleInputBlur = this.handleInputBlur.bind(this);
@@ -33,6 +34,7 @@ class TDLItem extends React.PureComponent {
     }
 
     deleteItem(setFocus) { this.props.updateCallback({ toDoListItemUpdate: { command: "delete", id: this.props.id, setFocus }}); }
+    deleteItemWithChildren() { this.props.updateCallback({ toDoListItemUpdate: { command: "delete", id: this.props.id, deleteChildren: true }}); }
 
     // Container event handlers
     handleItemMouseEnter() { this.setState({ ...this.state, isItemHovered: true }); }
@@ -113,9 +115,8 @@ class TDLItem extends React.PureComponent {
     };
 
     render() {
-        const { id, item_state, commentary, updateCallback, indent } = this.props;
+        const { id, item_state, commentary, updateCallback, indent, hasChildren } = this.props;
         const { connectDragSource, isDragging, connectDropTarget, isHovered } = this.props;
-        const { inputCSSClass } = stateControlParams[item_state];
 
         // Don't render the element which is being dragged
         if (isDragging) return null;
@@ -136,6 +137,7 @@ class TDLItem extends React.PureComponent {
         );
 
         // Input
+        const { inputCSSClass } = stateControlParams[item_state];
         const input = <div className={inputCSSClass} ref={this.inputRef} contentEditable suppressContentEditableWarning spellCheck={false}
                         onInput={this.handleInputChange} onKeyDown={this.handleKeyDown} onFocus={this.handleInputFocus} onBlur={this.handleInputBlur}
                         onMouseEnter={this.handleInputMouseEnter} onMouseLeave={this.handleInputMouseLeave}
@@ -144,18 +146,24 @@ class TDLItem extends React.PureComponent {
         
         // Right menu
         const itemIsFocusedOrHovered = this.state.isInputFocused || this.state.isItemHovered;
+
+        const comment = (itemIsFocusedOrHovered || commentary.length > 0) && (
+            <Comment id={id} commentary={commentary} updateCallback={updateCallback} />
+        );
+
         const deleteButton = itemIsFocusedOrHovered && (
             <Icon className="to-do-list-item-button" name="remove circle" title="Delete item" onClick={this.deleteItem} />
         );
 
-        const comment = (itemIsFocusedOrHovered || commentary.length > 0) && (
-            <Comment id={id} commentary={commentary} updateCallback={updateCallback} />
+        const deleteAllChildren = itemIsFocusedOrHovered && hasChildren && (
+            <Icon className="to-do-list-item-button" name="remove circle" color="red" title="Delete item and its children" onClick={this.deleteItemWithChildren} />
         );
         
         const rightMenu = (
             <div className="to-do-list-right-menu">
                 {comment}
                 {deleteButton}
+                {deleteAllChildren}
             </div>
         );
         
