@@ -51,7 +51,7 @@ export const updateToDoListItems = (toDoList, update) => {
     // If `setFocus` is set to "prev" or "next", focuses the item before or after the deleted and places caret at the end of it.
     // Reduces the indent of deleted item's children by 1.
     // If `deleteChildren` = true, deletes the children instead.
-    // Updates new item input's indent, so it can't be greater than new last item' indent + 1
+    // Updates new item input's indent, so it can't be greater than new last item' indent + 1.
     if (update.command === "delete") {
         const { id, setFocus, deleteChildren } = update;
         let newItemOrder = toDoList.itemOrder.filter(i => i !== id);
@@ -88,13 +88,8 @@ export const updateToDoListItems = (toDoList, update) => {
             items: newItems
         };
 
-        // Update new item input's indent (it can't be greater than new last item's indent + 1)
-        const sortedItemIDs = getSortedItemIDs(newToDoList);
-        if (sortedItemIDs.length > 0) {
-            const newLastItemID = sortedItemIDs[sortedItemIDs.length - 1];
-            newToDoList.newItemInputIndent = Math.min(newToDoList.newItemInputIndent, newToDoList.items[newLastItemID].indent + 1);
-        } else
-            newToDoList.newItemInputIndent = 0;
+        // Update new item input's indent
+        setNewItemInputIndent(newToDoList);
 
         return newToDoList;
     }
@@ -246,30 +241,59 @@ export const updateToDoListItems = (toDoList, update) => {
         };
     }
 
-    // Updates indent of the item with provided `id` and its children (TODO).
+    // Updates indent of the item with provided `id` and its children.
     // Supports only the default sort_type of the list.
     // If `id` = "newItem", sets indent of new item input.
     // Accepts `increase`/`decrease` boolean arguments to increase/decrease indent by 1 or a new value passed in `indent` argument.
+    // Updates new item input's indent, so it can't be greater than new last item' indent + 1.
     if (update.command === "setIndent") {
         if (toDoList.sort_type !== "default") return toDoList;
         let { id, increase, decrease, indent } = update;
 
-        if (id === "newItem") {     // Update new item indent
+        // Update new item indent
+        if (id === "newItem") {
             if (increase) indent = toDoList.newItemInputIndent + 1;
             else if (decrease) indent = toDoList.newItemInputIndent - 1;
             indent = Math.min(Math.max(indent, 0), 3);
             indent = Math.min(indent, getPreviousItemIndent(toDoList, id) + 1);
             return { ...toDoList, newItemInputIndent: indent };
         }
-        
-        const newItems = {...toDoList.items};   // Update existing items
 
-        const item = toDoList.items[id];
+        // Update existing items
+        const newItems = {...toDoList.items};   // item
+        let item = toDoList.items[id];
         if (increase) indent = item.indent + 1;
         else if (decrease) indent = item.indent - 1;
         indent = Math.min(Math.max(indent, 0), 3);
         indent = Math.min(indent, getPreviousItemIndent(toDoList, id) + 1);
         newItems[id] = {...item, indent};
-        return { ...toDoList, items: newItems };
+
+        const indentDifference = indent - item.indent;      // children
+        console.log(`indentDifference = ${indentDifference}`)
+        console.log(`getChildrenIDs(toDoList, id) = ${getChildrenIDs(toDoList, id)}`)
+        getChildrenIDs(toDoList, id).forEach(i => {
+            let item = toDoList.items[i];
+            let indent = Math.min(Math.max(item.indent + indentDifference, 0), 3);
+            newItems[i] = {...item, indent};
+        });
+
+        // Update new item input's indent
+        const newToDoList = { ...toDoList, items: newItems };
+        setNewItemInputIndent(newToDoList);
+
+        return newToDoList;
     }
+};
+
+
+// Updates the new item input's indent in the provided `toDoList`, based on the current indent of the last item in the list.
+// The update is performed in the original object.
+// New item input's indent can't be > than last item's indent + 1.
+const setNewItemInputIndent = toDoList => {
+    const sortedItemIDs = getSortedItemIDs(toDoList);
+    if (sortedItemIDs.length > 0) {
+        const lastItemID = sortedItemIDs[sortedItemIDs.length - 1];
+        toDoList.newItemInputIndent = Math.min(toDoList.newItemInputIndent, toDoList.items[lastItemID].indent + 1);
+    } else
+        toDoList.newItemInputIndent = 0;
 };
