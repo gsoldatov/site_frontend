@@ -56,7 +56,6 @@ class NewTDLItem extends React.PureComponent {
                 </div>
             </div>
         );
-        // <Icon className="to-do-list-item-button" color={iconColor} name={icon} title={title} onClick={() => onClick(state)} />;
         
         // Input
         const input = <div className="to-do-list-item-input new" ref={this.inputRef} contentEditable suppressContentEditableWarning placeholder="New item"

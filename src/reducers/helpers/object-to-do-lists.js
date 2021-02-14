@@ -11,10 +11,12 @@ const itemDefaults = { item_state: "active", item_text: "", commentary: "", inde
     `update` is an object with `command` prop with the type of update to perform, as well as additional props specifying the update.
 */
 export const updateToDoListItems = (toDoList, update) => {
+    const command = update.command;
     // Adds a new item after the item with provided `id`. 
     // Sets the properties of the new item with provided properties or uses values stored in `itemDefaults`.
+    //
     // Focuses the new item and sets the caret at the end of it.
-    if (update.command === "add") {
+    if (command === "add") {
         const newItem = {};
         Object.keys(itemDefaults).forEach(k => {
             newItem[k] = update[k] !== undefined ? update[k] : itemDefaults[k];
@@ -36,7 +38,7 @@ export const updateToDoListItems = (toDoList, update) => {
     }
 
     // Updates the properties of the item with provided `id` to values passed in the props.
-    if (update.command === "update") {
+    if (command === "update") {
         const newItem = {};
         Object.keys(itemDefaults).forEach(k => {
             newItem[k] = update[k] !== undefined ? update[k] : toDoList.items[update.id][k];
@@ -49,10 +51,12 @@ export const updateToDoListItems = (toDoList, update) => {
 
     // Deletes the item with provided `id`.
     // If `setFocus` is set to "prev" or "next", focuses the item before or after the deleted and places caret at the end of it.
-    // Reduces the indent of deleted item's children by 1.
-    // If `deleteChildren` = true, deletes the children instead.
-    // Updates new item input's indent, so it can't be greater than new last item' indent + 1.
-    if (update.command === "delete") {
+    // If `deleteChildren` = true, deletes the children of the item.
+    //
+    // Reduces the indent of deleted item's children by 1 (if they are not deleted).
+    //
+    // Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
+    if (command === "delete") {
         const { id, setFocus, deleteChildren } = update;
         let newItemOrder = toDoList.itemOrder.filter(i => i !== id);
         const newItems = {...toDoList.items};
@@ -95,11 +99,13 @@ export const updateToDoListItems = (toDoList, update) => {
     }
 
     // Focuses the item before the item with provided `id`.
-    // If `focusLastItem` is set to true, focuses the last item of the list.
     // If current sort_type is "default", selects previous item in the default item order.
     // If current sort_type is "state", selects the previous item with the same state, then selects the last item with the previous state type.
+    //
+    // If `focusLastItem` is set to true, focuses the last item of the list instead.
+    //
     // State order is: "active" -> "optional" -> "completed" -> "cancelled".
-    if (update.command === "focusPrev") {
+    if (command === "focusPrev") {
         const sortedItemIDs = getSortedItemIDs(toDoList);
 
         if (update.focusLastItem) {     // move from new item item to the last existing item
@@ -118,8 +124,9 @@ export const updateToDoListItems = (toDoList, update) => {
     // Focuses the item after the item with provided `id`.
     // If current sort_type is "default", selects next item. If `id` refers to the last item in the list, new item input is focused.
     // If current sort_type is "state", selects the next item with the same state, then selects the first item with the following state type or a new item input.
+    //
     // State order is: "active" -> "optional" -> "completed" -> "cancelled".
-    if (update.command === "focusNext") {
+    if (command === "focusNext") {
         const sortedItemIDs = getSortedItemIDs(toDoList);
         const position = sortedItemIDs.indexOf(update.id);
         if (position < 0) return toDoList;
@@ -134,9 +141,10 @@ export const updateToDoListItems = (toDoList, update) => {
 
     // Replaces item with the provided `id` by two new items.
     // New items receive the texts contained in `before` and `after` (which should contain the text before and after the caret in the replaced item).
-    // New items have the same state and commentary as the replaced item.
+    // New items have the same state, commentary and indent as the replaced item.
+    //
     // Focuses the second new item and places the caret at its beginning.
-    if (update.command === "split") {
+    if (command === "split") {
         const newCurrID = getNewItemID(toDoList);
         const newItemOrder = [...toDoList.itemOrder];
         const position = newItemOrder.indexOf(update.id);
@@ -144,9 +152,9 @@ export const updateToDoListItems = (toDoList, update) => {
         
         const newItems = {...toDoList.items};
         delete newItems[update.id];
-        const { item_state, commentary } = toDoList.items[update.id];
-        newItems[newCurrID] = {...itemDefaults, item_text: update.before, item_state, commentary};
-        newItems[newCurrID + 1] = {...itemDefaults, item_text: update.after, item_state, commentary};
+        const { item_state, commentary, indent } = toDoList.items[update.id];
+        newItems[newCurrID] = {...itemDefaults, item_text: update.before, item_state, commentary, indent};
+        newItems[newCurrID + 1] = {...itemDefaults, item_text: update.after, item_state, commentary, indent};
 
         return {
             ...toDoList,
@@ -159,77 +167,121 @@ export const updateToDoListItems = (toDoList, update) => {
 
     // Replaces the item with provided `id` and the item before it with a new item.
     // Which item is before the item with `id` depends on the current sort_type.
+    //
     // New item text contains the merged texts of the replaced items.
     // New item state and commentary are the same as the state of replaced item, previous to the item with the `id`.
+    //
+    // Reduces the indent of the item's children by 1, if it was > the indent of previous item.
+    // Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
+    //
     // New item is focused and caret is placed between at the border of the old items' texts.
-    if (update.command === "mergeWithPrev") {
+    if (command === "mergeWithPrev") {
+        const { id } = update;
         const sortedItemIDs = getSortedItemIDs(toDoList);
-        const position = sortedItemIDs.indexOf(update.id);
+        const position = sortedItemIDs.indexOf(id);
+        // Do nothing if first item is focused
         if (position === 0) return toDoList;
 
+        // Update itemOrder
         const prevID = sortedItemIDs[position - 1];
         const newCurrID = getNewItemID(toDoList);
         const newPosition = toDoList.itemOrder.indexOf(prevID);
-        const newItemOrder = toDoList.itemOrder.filter(id => id !== prevID && id !== update.id);
+        const newItemOrder = toDoList.itemOrder.filter(i => i !== prevID && i !== id);
         newItemOrder.splice(newPosition, 0, newCurrID);
 
+        // Replace merged items with a new one
         const newItem = {
             ...itemDefaults,
-            item_text: toDoList.items[prevID].item_text + toDoList.items[update.id].item_text,
+            item_text: toDoList.items[prevID].item_text + toDoList.items[id].item_text,
             item_state: toDoList.items[prevID].item_state,
             commentary: toDoList.items[prevID].commentary
         };
         const newItems = {...toDoList.items, [newCurrID]: newItem };
-        delete newItems[update.id];
+        delete newItems[id];
         delete newItems[prevID];
 
-        return {
+        // Reduce indent of the item's children, if it indent was > previous item's indent
+        if (toDoList.items[prevID].indent < toDoList.items[id].indent) {
+            getChildrenIDs(toDoList, id).forEach(i => {
+                let indent = toDoList.items[i].indent - 1;
+                newItems[i] = {...toDoList.items[i], indent};
+            });
+        }
+
+        // Update new item input's indent
+        const newToDoList = {
             ...toDoList,
             setFocusOnID: newCurrID,
             caretPositionOnFocus: toDoList.items[prevID].item_text.length,
             itemOrder: newItemOrder,
             items: newItems
         };
+        setNewItemInputIndent(newToDoList);
+
+        return newToDoList;
     }
 
     // Replaces the item with provided `id` and the item after it with a new item.
     // Which item is after the item with `id` depends on the current sort_type.
+    //
     // New item text contains the merged texts of the replaced items.
-    // New item state and commentary are the same as the state of replaced item with the `id`.
+    // New item state, commentary and indent are the same as the state of replaced item with the `id`.
+    //
+    // Reduces the indent of second merged item's children by 1, if it was > the indent of item with the `id`.
+    // Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
+    //
     // New item is focused and caret is placed between at the border of the old items' texts.
-    if (update.command === "mergeWithNext") {
+    if (command === "mergeWithNext") {
+        const { id } = update;
         const sortedItemIDs = getSortedItemIDs(toDoList);
-        const position = sortedItemIDs.indexOf(update.id);
+        const position = sortedItemIDs.indexOf(id);
+        // Do nothing if last item is focused
         if (position === sortedItemIDs.length - 1) return toDoList;
 
+        // Update itemOrder
         const nextID = sortedItemIDs[position + 1];
         const newCurrID = getNewItemID(toDoList);
-        const newItemOrder = toDoList.itemOrder.filter(id => id !== update.id && id !== nextID);
+        const newItemOrder = toDoList.itemOrder.filter(i => i !== id && i !== nextID);
         newItemOrder.splice(position, 0, newCurrID);
-        
+
+        // Replace merged items with a new one
         const newItem = {
             ...itemDefaults,
-            item_text: toDoList.items[update.id].item_text + toDoList.items[nextID].item_text,
-            item_state: toDoList.items[update.id].item_state,
-            commentary: toDoList.items[update.id].commentary
+            item_text: toDoList.items[id].item_text + toDoList.items[nextID].item_text,
+            item_state: toDoList.items[id].item_state,
+            commentary: toDoList.items[id].commentary,
+            indent: toDoList.items[id].indent
         };
         const newItems = {...toDoList.items, [newCurrID]: newItem };
-        delete newItems[update.id];
+        delete newItems[id];
         delete newItems[nextID];
 
-        return {
+        // Reduce indent of next item's children, if current item's indent was < next item's indent
+        if (toDoList.items[id].indent < toDoList.items[nextID].indent) {
+            getChildrenIDs(toDoList, nextID).forEach(i => {
+                let indent = toDoList.items[i].indent - 1;
+                newItems[i] = {...toDoList.items[i], indent};
+            });
+        }
+
+        // Update new item input's indent
+        const newToDoList = {
             ...toDoList,
             setFocusOnID: newCurrID,
-            caretPositionOnFocus: toDoList.items[update.id].item_text.length,
+            caretPositionOnFocus: toDoList.items[id].item_text.length,
             itemOrder: newItemOrder,
             items: newItems
         };
+        setNewItemInputIndent(newToDoList);
+
+        return newToDoList;
     }
 
     // Moves the item with id = `movedID` before the item with id = `targetID`.
     // If `targetLastItem` == true, moves the item to the end of the item list (has a higher priority than `targetID`).
+    //
     // Supports only the default sort_type of the list.
-    if (update.command === "moveItems") {
+    if (command === "moveItems") {
         const newItemOrder = [...toDoList.itemOrder];
         const movedPosition = newItemOrder.indexOf(update.movedID);
         newItemOrder.splice(movedPosition, 1);
@@ -242,11 +294,13 @@ export const updateToDoListItems = (toDoList, update) => {
     }
 
     // Updates indent of the item with provided `id` and its children.
-    // Supports only the default sort_type of the list.
     // If `id` = "newItem", sets indent of new item input.
     // Accepts `increase`/`decrease` boolean arguments to increase/decrease indent by 1 or a new value passed in `indent` argument.
-    // Updates new item input's indent, so it can't be greater than new last item' indent + 1.
-    if (update.command === "setIndent") {
+    //
+    // Supports only the default sort_type of the list.
+    //
+    // Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
+    if (command === "setIndent") {
         if (toDoList.sort_type !== "default") return toDoList;
         let { id, increase, decrease, indent } = update;
 
@@ -269,8 +323,6 @@ export const updateToDoListItems = (toDoList, update) => {
         newItems[id] = {...item, indent};
 
         const indentDifference = indent - item.indent;      // children
-        console.log(`indentDifference = ${indentDifference}`)
-        console.log(`getChildrenIDs(toDoList, id) = ${getChildrenIDs(toDoList, id)}`)
         getChildrenIDs(toDoList, id).forEach(i => {
             let item = toDoList.items[i];
             let indent = Math.min(Math.max(item.indent + indentDifference, 0), 5);
@@ -287,8 +339,9 @@ export const updateToDoListItems = (toDoList, update) => {
 
 
 // Updates the new item input's indent in the provided `toDoList`, based on the current indent of the last item in the list.
-// The update is performed in the original object.
 // New item input's indent can't be > than last item's indent + 1.
+//
+// The update is performed in the original object.
 const setNewItemInputIndent = toDoList => {
     const sortedItemIDs = getSortedItemIDs(toDoList);
     if (sortedItemIDs.length > 0) {
