@@ -194,7 +194,9 @@ export const indentClassNames = {
     "0": indentBaseClassName,
     "1": indentBaseClassName + " one",
     "2": indentBaseClassName + " two",
-    "3": indentBaseClassName + " three"
+    "3": indentBaseClassName + " three",
+    "4": indentBaseClassName + " four",
+    "5": indentBaseClassName + " five"
 };
 
 

@@ -254,7 +254,7 @@ export const updateToDoListItems = (toDoList, update) => {
         if (id === "newItem") {
             if (increase) indent = toDoList.newItemInputIndent + 1;
             else if (decrease) indent = toDoList.newItemInputIndent - 1;
-            indent = Math.min(Math.max(indent, 0), 3);
+            indent = Math.min(Math.max(indent, 0), 5);
             indent = Math.min(indent, getPreviousItemIndent(toDoList, id) + 1);
             return { ...toDoList, newItemInputIndent: indent };
         }
@@ -264,7 +264,7 @@ export const updateToDoListItems = (toDoList, update) => {
         let item = toDoList.items[id];
         if (increase) indent = item.indent + 1;
         else if (decrease) indent = item.indent - 1;
-        indent = Math.min(Math.max(indent, 0), 3);
+        indent = Math.min(Math.max(indent, 0), 5);
         indent = Math.min(indent, getPreviousItemIndent(toDoList, id) + 1);
         newItems[id] = {...item, indent};
 
@@ -273,7 +273,7 @@ export const updateToDoListItems = (toDoList, update) => {
         console.log(`getChildrenIDs(toDoList, id) = ${getChildrenIDs(toDoList, id)}`)
         getChildrenIDs(toDoList, id).forEach(i => {
             let item = toDoList.items[i];
-            let indent = Math.min(Math.max(item.indent + indentDifference, 0), 3);
+            let indent = Math.min(Math.max(item.indent + indentDifference, 0), 5);
             newItems[i] = {...item, indent};
         });
 

@@ -58,6 +58,14 @@ div.to-do-list-container-header {
     width: calc(3 * min(3em, 5%));
 }
 
+.to-do-list-item-indent.four {
+    width: calc(4 * min(3em, 5%));
+}
+
+.to-do-list-item-indent.five {
+    width: calc(5 * min(3em, 5%));
+}
+
 /* Item input */
 .to-do-list-item-input {
     outline: none;  /* don't display border on edit */
