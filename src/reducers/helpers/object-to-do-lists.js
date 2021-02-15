@@ -1,4 +1,4 @@
-import { getSortedItemIDs, getNewItemID, getPreviousItemIndent, getChildrenIDs } from "../../store/state-util/to-do-lists";
+import { getSortedItemIDs, getNewItemID, getPreviousItemIndent, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
 
 
 /*
@@ -99,8 +99,7 @@ export const updateToDoListItems = (toDoList, update) => {
     }
 
     // Focuses the item before the item with provided `id`.
-    // If current sort_type is "default", selects previous item in the default item order.
-    // If current sort_type is "state", selects the previous item with the same state, then selects the last item with the previous state type.
+    // Previous item is calculated based on the current sort_type.
     //
     // If `focusLastItem` is set to true, focuses the last item of the list instead.
     //
@@ -122,8 +121,7 @@ export const updateToDoListItems = (toDoList, update) => {
     }
 
     // Focuses the item after the item with provided `id`.
-    // If current sort_type is "default", selects next item. If `id` refers to the last item in the list, new item input is focused.
-    // If current sort_type is "state", selects the next item with the same state, then selects the first item with the following state type or a new item input.
+    // Next item is calculated based on the current sort_type.
     //
     // State order is: "active" -> "optional" -> "completed" -> "cancelled".
     if (command === "focusNext") {
@@ -178,23 +176,25 @@ export const updateToDoListItems = (toDoList, update) => {
     if (command === "mergeWithPrev") {
         const { id } = update;
         const sortedItemIDs = getSortedItemIDs(toDoList);
-        const position = sortedItemIDs.indexOf(id);
+        const sortedPosition = sortedItemIDs.indexOf(id);
         // Do nothing if first item is focused
-        if (position === 0) return toDoList;
+        if (sortedPosition === 0) return toDoList;
 
         // Update itemOrder
-        const prevID = sortedItemIDs[position - 1];
+        const prevID = sortedItemIDs[sortedPosition - 1];
         const newCurrID = getNewItemID(toDoList);
-        const newPosition = toDoList.itemOrder.indexOf(prevID);
-        const newItemOrder = toDoList.itemOrder.filter(i => i !== prevID && i !== id);
-        newItemOrder.splice(newPosition, 0, newCurrID);
+        const itemChildren = getChildrenIDs(toDoList, id);
+        const newItemOrder = toDoList.itemOrder.filter(i => i !== prevID && i !== id && !itemChildren.includes(i));     // delete prev and current items + current item children
+        const insertPosition = getMergedItemInsertPosition(toDoList, prevID, id);
+        newItemOrder.splice(insertPosition, 0, newCurrID, ...itemChildren);
 
         // Replace merged items with a new one
         const newItem = {
             ...itemDefaults,
             item_text: toDoList.items[prevID].item_text + toDoList.items[id].item_text,
             item_state: toDoList.items[prevID].item_state,
-            commentary: toDoList.items[prevID].commentary
+            commentary: toDoList.items[prevID].commentary,
+            indent: toDoList.items[prevID].indent
         };
         const newItems = {...toDoList.items, [newCurrID]: newItem };
         delete newItems[id];
@@ -234,15 +234,17 @@ export const updateToDoListItems = (toDoList, update) => {
     if (command === "mergeWithNext") {
         const { id } = update;
         const sortedItemIDs = getSortedItemIDs(toDoList);
-        const position = sortedItemIDs.indexOf(id);
+        const sortedPosition = sortedItemIDs.indexOf(id);
         // Do nothing if last item is focused
-        if (position === sortedItemIDs.length - 1) return toDoList;
+        if (sortedPosition === sortedItemIDs.length - 1) return toDoList;
 
         // Update itemOrder
-        const nextID = sortedItemIDs[position + 1];
+        const nextID = sortedItemIDs[sortedPosition + 1];
         const newCurrID = getNewItemID(toDoList);
-        const newItemOrder = toDoList.itemOrder.filter(i => i !== id && i !== nextID);
-        newItemOrder.splice(position, 0, newCurrID);
+        const nextItemChildren = getChildrenIDs(toDoList, nextID);
+        const newItemOrder = toDoList.itemOrder.filter(i => i !== id && i !== nextID && !nextItemChildren.includes(i));     // delete curr and next items + next item children
+        const insertPosition = getMergedItemInsertPosition(toDoList, id, nextID);
+        newItemOrder.splice(insertPosition, 0, newCurrID, ...nextItemChildren);
 
         // Replace merged items with a new one
         const newItem = {
