@@ -91,15 +91,43 @@ const TDLItems = ({ updateCallback, objectID, canDrag }) => {
 
     let sortedItems = getSortedItemIDs(toDoList);
 
+    // Existing items
     const itemComponents = sortedItems.map((id, index) => {
         const item = toDoList.items[id];
-        
+
         const nextID = sortedItems[index + 1];
         const hasChildren = toDoList.items[nextID] !== undefined && toDoList.items[nextID].indent > toDoList.items[id].indent;
-        return <DraggableTDLItem key={id} id={id} updateCallback={updateCallback} objectID={objectID} canDrag={canDrag} hasChildren={hasChildren} {...item} />;
+        const isParentDragged = toDoList.draggedChildren.includes(id);
+        
+        let prevNonDraggedID;   
+        for (let i = index - 1; i >= 0; i--) {  // get maximum allowed drop indent from a previous non-dragged item
+            const checkedID = sortedItems[i];
+            if (checkedID !== toDoList.draggedParent && !toDoList.draggedChildren.includes(checkedID)) {
+                prevNonDraggedID = checkedID;
+                break;
+            }
+        }
+        const maxIndent = prevNonDraggedID !== undefined ? toDoList.items[prevNonDraggedID].indent + 1 : 0;
+        const dropIndent = toDoList.draggedOver === id ? toDoList.dropIndent : undefined;     // don't pass dropIndent if an item is not dragged over to avoid re-renders
+
+        return <DraggableTDLItem key={id} id={id} updateCallback={updateCallback} objectID={objectID} canDrag={canDrag} hasChildren={hasChildren} 
+            isParentDragged={isParentDragged} dropIndent={dropIndent} maxIndent={maxIndent} {...item} />;
     });
     
-    const newItem = <DroppableNewTDLItem position={itemOrder.length} indent={toDoList.newItemInputIndent} updateCallback={updateCallback} objectID={objectID} />;
+    // New item input
+    let lastNonDraggedID;   // get maximum allowed drop indent from a last non-dragged item
+    for (let i = sortedItems.length - 1; i >= 0; i--) {
+        const checkedID = sortedItems[i];
+        if (checkedID !== toDoList.draggedParent && !toDoList.draggedChildren.includes(checkedID)) {
+            lastNonDraggedID = checkedID;
+            break;
+        }
+    }
+    const maxIndent = lastNonDraggedID !== undefined ? toDoList.items[lastNonDraggedID].indent + 1 : 0;
+    const dropIndent = toDoList.draggedOver === "newItem" ? toDoList.dropIndent : undefined;     // don't pass dropIndent if new item is not dragged over to avoid re-renders
+
+    const newItem = <DroppableNewTDLItem position={itemOrder.length} indent={toDoList.newItemInputIndent} updateCallback={updateCallback} objectID={objectID} 
+        dropIndent={dropIndent} maxIndent={maxIndent}  />;
 
     return (
         <div className="to-do-list-items" ref={itemsRef}>

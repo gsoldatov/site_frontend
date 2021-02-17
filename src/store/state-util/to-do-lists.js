@@ -6,9 +6,7 @@
 // Accepts a to-do list object and returns the IDs of its items sorted according to its current sort_type.
 export const getSortedItemIDs = toDoList => {
     let sortedItems;
-
     if (toDoList.sort_type === "default") sortedItems = [...toDoList.itemOrder];
-
     if (toDoList.sort_type === "state") sortedItems = sortByState(toDoList, toDoList.itemOrder);
 
     return sortedItems;
@@ -60,6 +58,14 @@ const sortByState = (toDoList, items) => {
 
 // Returns a new value to use as an item id
 export const getNewItemID = toDoList => toDoList.itemOrder.length > 0 ? Math.max(...toDoList.itemOrder) + 1 : 0;
+
+
+// Returns a deep copy of toDoList items
+export const getItemsCopy = toDoList => {
+    let items = {};
+    Object.keys(toDoList.items).map(i => parseInt(i)).forEach(i => { items[i] = { ...toDoList.items[i] }});
+    return items;
+};
 
 
 // Returns the indent of the item previous to the item with provided `id` (TODO filter collapsed items?).

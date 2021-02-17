@@ -57,7 +57,7 @@
 
 .field-item-checkbox {
     margin-right: 0.4em;
-    transform: scale(1.5);
+    /* transform: scale(1.5); */
 }
 
 .field-item-link {

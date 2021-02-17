@@ -40,6 +40,10 @@ function loadAddObjectPage(state, action) {
                     setFocusOnID: -1,
                     caretPositionOnFocus: -1,
                     newItemInputIndent: 0,
+                    draggedParent: -1,
+                    draggedChildren: [],
+                    draggedOver: -1,
+                    dropIndent: 0,
     
                     sort_type: "default",
                     items: {}
@@ -93,6 +97,10 @@ function loadEditObjectPage(state, action) {
                     setFocusOnID: -1,
                     caretPositionOnFocus: -1,
                     newItemInputIndent: 0,
+                    draggedParent: -1,
+                    draggedChildren: [],
+                    draggedOver: -1,
+                    dropIndent: 0,
     
                     sort_type: "default",
                     items: {}
@@ -142,6 +150,10 @@ function setCurrentObject(state, action) {
             setFocusOnID: aTDL.setFocusOnID !== undefined ? aTDL.setFocusOnID : oldObject.toDoList.setFocusOnID,
             caretPositionOnFocus: aTDL.caretPositionOnFocus !== undefined ? aTDL.caretPositionOnFocus : oldObject.toDoList.caretPositionOnFocus,
             newItemInputIndent: aTDL.newItemInputIndent !== undefined ? aTDL.newItemInputIndent : oldObject.toDoList.newItemInputIndent,
+            draggedParent: aTDL.draggedParent !== undefined ? aTDL.draggedParent : oldObject.toDoList.draggedParent,
+            draggedChildren: aTDL.draggedChildren !== undefined ? aTDL.draggedChildren : oldObject.toDoList.draggedChildren,
+            draggedOver: aTDL.draggedOver !== undefined ? aTDL.draggedOver : oldObject.toDoList.draggedOver,
+            dropIndent: aTDL.dropIndent !== undefined ? aTDL.dropIndent : oldObject.toDoList.dropIndent,
 
             sort_type: aTDL.sort_type !== undefined ? aTDL.sort_type : oldObject.toDoList.sort_type,
             items: aTDL.items !== undefined ? aTDL.items : oldObject.toDoList.items

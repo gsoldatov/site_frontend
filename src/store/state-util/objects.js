@@ -1,3 +1,4 @@
+import { getItemsCopy } from "./to-do-lists";
 /*
     Functions for checking/getting objects state.
 */
@@ -77,7 +78,10 @@ export const getObjectDataFromStore = (state, object_id) => {
             return state.markdown[object_id] ? { markdown: { raw_text: state.markdown[object_id].raw_text, parsed: "" }} : undefined;
         case "to_do_list":
             if (!state.toDoLists[object_id]) return undefined;
-            return { toDoList: {...state.toDoLists[object_id] }};
+            return { toDoList: {
+                ...state.toDoLists[object_id],
+                items: getItemsCopy(state.toDoLists[object_id])
+            }};
         default:
             return undefined;
     }

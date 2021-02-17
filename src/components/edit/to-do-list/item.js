@@ -4,6 +4,7 @@ import { Icon } from "semantic-ui-react";
 
 import { StateControl, stateControlParams } from "./state-control";
 import { Comment } from "./comment";
+import { ItemDropzone } from "./item-dropzone";
 import { getCaretPosition, getSplitText } from "../../../util/caret";
 
 
@@ -17,6 +18,7 @@ class TDLItem extends React.PureComponent {
 
         this.deleteItem = this.deleteItem.bind(this);
         this.deleteItemWithChildren = this.deleteItemWithChildren.bind(this);
+        this.setDropIndent = this.setDropIndent.bind(this);
 
         this.handleInputFocus = this.handleInputFocus.bind(this);
         this.handleInputBlur = this.handleInputBlur.bind(this);
@@ -35,6 +37,7 @@ class TDLItem extends React.PureComponent {
 
     deleteItem(setFocus) { this.props.updateCallback({ toDoListItemUpdate: { command: "delete", id: this.props.id, setFocus }}); }
     deleteItemWithChildren() { this.props.updateCallback({ toDoListItemUpdate: { command: "delete", id: this.props.id, deleteChildren: true }}); }
+    setDropIndent(newIndent) { this.props.updateCallback({ toDoList: { draggedOver: this.props.id, dropIndent: newIndent }}); }
 
     // Container event handlers
     handleItemMouseEnter() { this.setState({ ...this.state, isItemHovered: true }); }
@@ -115,16 +118,14 @@ class TDLItem extends React.PureComponent {
     };
 
     render() {
-        const { id, item_state, commentary, updateCallback, indent, hasChildren } = this.props;
-        const { connectDragSource, isDragging, connectDropTarget, isHovered } = this.props;
+        const { id, item_state, commentary, updateCallback, indent, hasChildren, dropIndent, isParentDragged, maxIndent } = this.props;
+        const { connectDragSource, connectDropTarget, isDragging, isDraggedOver } = this.props;
 
         // Don't render the element which is being dragged
-        if (isDragging) return null;
+        if (isDragging || isParentDragged) return null;
 
-        // Additional element when hovered
-        const onHoverSpace = isHovered && (
-            <div className="to-do-list-item-on-hover-space" />
-        )
+        // Dropzones and additional space when item item is being dragged over
+        const dropZones = isDraggedOver && <ItemDropzone currentIndent={dropIndent} maxIndent={maxIndent} indentUpdateCallback={this.setDropIndent} />;
 
         // Indent space
         const indentSpace = <div className={indentClassNames[indent]} />;
@@ -170,8 +171,8 @@ class TDLItem extends React.PureComponent {
         // Render component with or without DnD enabled
         const result = (
             <div className="to-do-list-item-container">
-                {onHoverSpace}
-                <div className="to-do-list-item"  onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
+                {dropZones}
+                <div className="to-do-list-item" onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
                     <div className="to-do-list-item-id">{id}</div>
                     {indentSpace}
                     {leftMenu}
@@ -202,8 +203,12 @@ export const indentClassNames = {
 
 // Drag & drop specifications, collecting functions and wrapping
 const dragSourceSpec = {
-    beginDrag: props => ({ objectID: props.objectID, itemID: props.id }),
+    beginDrag: props => {
+        props.updateCallback({ toDoListItemUpdate: { command: "startDrag", id: props.id }});
+        return { objectID: props.objectID, itemID: props.id };
+    },
     endDrag: (props, monitor, component) => {
+        props.updateCallback({ toDoListItemUpdate: { command: "endDrag" }});
         if (!monitor.didDrop()) return;
 
         const dropResult = monitor.getDropResult();
@@ -226,7 +231,7 @@ const dropTargetSpec = {
 
 const dropTargetCollect = (connect, monitor) => ({
     connectDropTarget: connect.dropTarget(),
-    isHovered: monitor.canDrop() && monitor.isOver()
+    isDraggedOver: monitor.canDrop() && monitor.isOver()
 });
 
 

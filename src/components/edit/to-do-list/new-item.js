@@ -2,6 +2,7 @@ import React from "react";
 import { DropTarget } from "react-dnd";
 import { Icon } from "semantic-ui-react";
 
+import { ItemDropzone } from "./item-dropzone";
 import { indentClassNames } from "./item";
 
 
@@ -10,9 +11,12 @@ class NewTDLItem extends React.PureComponent {
         super(props);
         this.inputRef = React.createRef();
 
+        this.setDropIndent = this.setDropIndent.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
     }
+
+    setDropIndent(newIndent) { this.props.updateCallback({ toDoList: { draggedOver: "newItem", dropIndent: newIndent }}); }
 
     handleInputChange = e => {
         this.props.updateCallback({ toDoListItemUpdate: { command: "add", position: this.props.position, item_text: e.currentTarget.textContent, indent: this.props.indent }})
@@ -37,13 +41,11 @@ class NewTDLItem extends React.PureComponent {
     };
     
     render() {
-        const { connectDropTarget, isHovered } = this.props;
+        const { connectDropTarget, isDraggedOver, dropIndent, maxIndent } = this.props;
         const { indent } = this.props;
 
-        // Additional element when hovered
-        const onHoverSpace = isHovered && (
-            <div className="to-do-list-item-on-hover-space" />
-        )
+        // Dropzones and additional space when item item is being dragged over
+        const dropZones = isDraggedOver && <ItemDropzone currentIndent={dropIndent} maxIndent={maxIndent} indentUpdateCallback={this.setDropIndent} />;
 
         // Indent space
         const indentSpace = <div className={indentClassNames[indent]} />;
@@ -63,7 +65,7 @@ class NewTDLItem extends React.PureComponent {
         
         return connectDropTarget(
             <div className="to-do-list-item-container">
-                {onHoverSpace}
+                {dropZones}
                 <div className="to-do-list-item">
                     {indentSpace}
                     {leftMenu}
@@ -83,7 +85,7 @@ const dropTargetSpec = {
 
 const dropTargetCollect = (connect, monitor) => ({
     connectDropTarget: connect.dropTarget(),
-    isHovered: monitor.canDrop() && monitor.isOver()
+    isDraggedOver: monitor.canDrop() && monitor.isOver()
 });
 
 
