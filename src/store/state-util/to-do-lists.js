@@ -89,6 +89,11 @@ export const getVisibleItemIDs = (toDoList, itemIDs) => {
 export const getNewItemID = toDoList => toDoList.itemOrder.length > 0 ? Math.max(...toDoList.itemOrder) + 1 : 0;
 
 
+// Returns a new item state based on its current (for state toggling).
+const itemStates = ["active", "optional", "completed", "cancelled"];
+export const getNewItemState = state => itemStates[(itemStates.indexOf(state) + 1) % 4];
+
+
 // Returns a deep copy of toDoList items
 export const getItemsCopy = toDoList => {
     let items = {};

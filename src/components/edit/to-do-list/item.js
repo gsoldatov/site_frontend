@@ -6,6 +6,8 @@ import { StateControl, stateControlParams } from "./state-control";
 import { Comment } from "./comment";
 import { ExpandControl } from "./expand-control";
 import { ItemDropzone } from "./item-dropzone";
+
+import { getNewItemState } from "../../../store/state-util/to-do-lists";
 import { getCaretPosition, getSplitText } from "../../../util/caret";
 
 
@@ -115,6 +117,21 @@ class TDLItem extends React.PureComponent {
             e.preventDefault();
             if (e.shiftKey) this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: this.props.id, decrease: true }});
             else this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: this.props.id, increase: true }});
+        }
+        
+        // On `Shift + Space` toggle item state.
+        // On `Ctrl + Space` expand/collapse item.
+        else if (e.key === " ") {
+            if (e.shiftKey) {
+                e.preventDefault();
+                console.log(`getNewItemState(this.props.item_state) = ${getNewItemState(this.props.item_state)}`)
+                this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_state: getNewItemState(this.props.item_state) }});
+            }
+
+            if (e.ctrlKey) {
+                e.preventDefault();
+                this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, is_expanded: !this.props.is_expanded }});
+            }
         }
     };
 
