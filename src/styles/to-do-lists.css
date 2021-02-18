@@ -58,6 +58,10 @@ div.to-do-list-container-header {
     flex-shrink: 0;
 }
 
+.to-do-list-item-drop-zone.first, .to-do-list-item-indent-indicator.first {
+    width: calc(min(3em, 5%) + 3.2em - 1.18em);    /* indent width + left-menu min-width */
+}
+
 .to-do-list-item-drop-zone.last, .to-do-list-item-indent-indicator.last {
     width: 100%;
     flex-shrink: 1;
@@ -144,8 +148,9 @@ div.to-do-list-container-header {
 
 .to-do-list-left-menu {
     display: flex;
-    padding-left: 1em;
-    min-width: 2.2em;       /* should be as close to default space taken as possible, to equalize spacing between item input and menus */
+    justify-content: end;
+    /* padding-left: 1em; */
+    min-width: 3.2em;       /* should be as close to default space taken as possible, to equalize spacing between item input and menus */
 }
 
 .to-do-list-right-menu {

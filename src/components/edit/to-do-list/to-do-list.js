@@ -5,7 +5,7 @@ import FieldMenu from "../../field/field-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 import { setCurrentObject } from "../../../actions/object";
-import { getSortedItemIDs } from "../../../store/state-util/to-do-lists";
+import { getSortedItemIDs, getVisibleItemIDs } from "../../../store/state-util/to-do-lists";
 import { isTDLDragAndDropEnabled } from "../../../store/state-util/ui-object";
 
 import StyleTDL from "../../../styles/to-do-lists.css";
@@ -47,7 +47,7 @@ const TDLMenu = ({ updateCallback }) => {
             icon: "tasks",
             title: "Sort by state",
             onClick: updateCallback,
-            onClickParams: { toDoList: { sort_type: "state" }},
+            onClickParams: { toDoList: { sort_type: "state", newItemInputIndent: 0 }},     // also reset new item input indent when sorting by state
             isActiveSelector: state => state.objectUI.currentObject.toDoList.sort_type === "state"
         }
     ];
@@ -90,18 +90,20 @@ const TDLItems = ({ updateCallback, objectID, canDrag }) => {
     }, [toDoList.setFocusOnID]);
 
     let sortedItems = getSortedItemIDs(toDoList);
+    let visibleSortedItems = getVisibleItemIDs(toDoList, sortedItems);
 
     // Existing items
-    const itemComponents = sortedItems.map((id, index) => {
+    const itemComponents = visibleSortedItems.map((id, index) => {
         const item = toDoList.items[id];
 
-        const nextID = sortedItems[index + 1];
+        const sortedItemsIndex = sortedItems.indexOf(id);
+        const nextID = sortedItems[sortedItemsIndex + 1];
         const hasChildren = toDoList.items[nextID] !== undefined && toDoList.items[nextID].indent > toDoList.items[id].indent;
         const isParentDragged = toDoList.draggedChildren.includes(id);
         
         let prevNonDraggedID;   
         for (let i = index - 1; i >= 0; i--) {  // get maximum allowed drop indent from a previous non-dragged item
-            const checkedID = sortedItems[i];
+            const checkedID = visibleSortedItems[i];
             if (checkedID !== toDoList.draggedParent && !toDoList.draggedChildren.includes(checkedID)) {
                 prevNonDraggedID = checkedID;
                 break;
@@ -116,8 +118,8 @@ const TDLItems = ({ updateCallback, objectID, canDrag }) => {
     
     // New item input
     let lastNonDraggedID;   // get maximum allowed drop indent from a last non-dragged item
-    for (let i = sortedItems.length - 1; i >= 0; i--) {
-        const checkedID = sortedItems[i];
+    for (let i = visibleSortedItems.length - 1; i >= 0; i--) {
+        const checkedID = visibleSortedItems[i];
         if (checkedID !== toDoList.draggedParent && !toDoList.draggedChildren.includes(checkedID)) {
             lastNonDraggedID = checkedID;
             break;

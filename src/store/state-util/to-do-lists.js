@@ -56,6 +56,35 @@ const sortByState = (toDoList, items) => {
 }
 
 
+// Returns sorted item IDs of visible items (parents of which are not collapsed)
+export const getVisibleSortedItemIDs = toDoList => {
+    const sortedItemIDs = getSortedItemIDs(toDoList);
+    return getVisibleItemIDs(toDoList, sortedItemIDs);
+};
+
+
+// Returns a list of visible item IDs, which are present in `itemIDs` list
+export const getVisibleItemIDs = (toDoList, itemIDs) => {
+    let visibleItems = [];
+    let collapsedParentIndent;
+    for (let i = 0; i < itemIDs.length; i++) {
+        const id = itemIDs[i];
+        const item = toDoList.items[id];
+        if (isNaN(collapsedParentIndent)) {     // add visible items and check if they are collapsed
+            visibleItems.push(id);
+            if (!item.is_expanded) collapsedParentIndent = item.indent;
+        } else {    // filter children of collapsed parent item
+            if (item.indent <= collapsedParentIndent) {    // if filtered all children of a collapsed item
+                visibleItems.push(id);                                                  // add item
+                collapsedParentIndent = item.is_expanded ? undefined : item.indent;     // stop filtering if item is expanded
+            }
+        }
+    }
+
+    return visibleItems;
+}
+
+
 // Returns a new value to use as an item id
 export const getNewItemID = toDoList => toDoList.itemOrder.length > 0 ? Math.max(...toDoList.itemOrder) + 1 : 0;
 
@@ -68,7 +97,7 @@ export const getItemsCopy = toDoList => {
 };
 
 
-// Returns the indent of the item previous to the item with provided `id` (TODO filter collapsed items?).
+// Returns the indent of the item previous to the item with provided `id`.
 // If `id` = "newItem", returns the indent of the last item in the list.
 // If item is first in the list, returns -1.
 export const getPreviousItemIndent = (toDoList, id) => {
@@ -85,6 +114,24 @@ export const getPreviousItemIndent = (toDoList, id) => {
         const prevID = itemOrder[index - 1];
         return toDoList.items[prevID].indent;
     }
+};
+
+// Returns an array of parent item IDs for a provided `id`.
+export const getParentIDs = (toDoList, id) => {
+    let parentIDs = [];
+    let currentIndent = toDoList.items[id].indent;
+    let i = toDoList.itemOrder.indexOf(id);
+    while (currentIndent > 0 && i >= 0) {
+        let itemID = toDoList.itemOrder[i];
+        let itemIndent = toDoList.items[itemID].indent;
+        if (itemIndent < currentIndent) {
+            parentIDs.push(itemID);
+            currentIndent = itemIndent;
+        }
+        i--;
+    }
+
+    return parentIDs;
 };
 
 

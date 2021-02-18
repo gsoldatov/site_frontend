@@ -1,4 +1,5 @@
-import { getSortedItemIDs, getNewItemID, getItemsCopy, getPreviousItemIndent, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
+import { getSortedItemIDs, getVisibleSortedItemIDs, getNewItemID, getItemsCopy, getPreviousItemIndent, 
+        getParentIDs, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
 
 
 /*
@@ -16,6 +17,8 @@ export const updateToDoListItems = (toDoList, update) => {
     // Sets the properties of the new item with provided properties or uses values stored in `itemDefaults`.
     //
     // Focuses the new item and sets the caret at the end of it.
+    //
+    // Expands all parents of the new item.
     if (command === "add") {
         const newItem = {};
         Object.keys(itemDefaults).forEach(k => {
@@ -31,12 +34,17 @@ export const updateToDoListItems = (toDoList, update) => {
         newItemOrder.splice(position, 0, newID);
         const newItems = getItemsCopy(toDoList);
         newItems[newID] = newItem;
-        return {
+
+        // Expand parents of the new item
+        let newToDoList = {
             ...toDoList,
             setFocusOnID: newID,
             itemOrder: newItemOrder,
             items: newItems
         };
+        expandParents(newToDoList, newID);
+        
+        return newToDoList;
     }
 
     // Updates the properties of the item with provided `id` to values passed in the props.
@@ -102,14 +110,14 @@ export const updateToDoListItems = (toDoList, update) => {
         return newToDoList;
     }
 
-    // Focuses the item before the item with provided `id`.
+    // Focuses the next visible item before the item with provided `id`.
     // Previous item is calculated based on the current sort_type.
     //
     // If `focusLastItem` is set to true, focuses the last item of the list instead.
     //
     // State order is: "active" -> "optional" -> "completed" -> "cancelled".
     if (command === "focusPrev") {
-        const sortedItemIDs = getSortedItemIDs(toDoList);
+        const sortedItemIDs = getVisibleSortedItemIDs(toDoList);
 
         if (update.focusLastItem) {     // move from new item item to the last existing item
             if (sortedItemIDs.length === 0) return toDoList;
@@ -124,12 +132,12 @@ export const updateToDoListItems = (toDoList, update) => {
         };
     }
 
-    // Focuses the item after the item with provided `id`.
+    // Focuses the next visible item after the item with provided `id`.
     // Next item is calculated based on the current sort_type.
     //
     // State order is: "active" -> "optional" -> "completed" -> "cancelled".
     if (command === "focusNext") {
-        const sortedItemIDs = getSortedItemIDs(toDoList);
+        const sortedItemIDs = getVisibleSortedItemIDs(toDoList);
         const position = sortedItemIDs.indexOf(update.id);
         if (position < 0) return toDoList;
         return {
@@ -177,6 +185,8 @@ export const updateToDoListItems = (toDoList, update) => {
     // Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
     //
     // New item is focused and caret is placed between at the border of the old items' texts.
+    //
+    // Expands all parents of the new item.
     if (command === "mergeWithPrev") {
         const { id } = update;
         const sortedItemIDs = getSortedItemIDs(toDoList);
@@ -222,6 +232,9 @@ export const updateToDoListItems = (toDoList, update) => {
             items: newItems
         };
         setNewItemInputIndent(newToDoList);
+
+        // Expand parent of the new item
+        expandParents(newToDoList, newCurrID);
 
         return newToDoList;
     }
@@ -300,6 +313,7 @@ export const updateToDoListItems = (toDoList, update) => {
 
     // Moves the item with id = `movedID` and its children before the item with id = `targetID`.
     // If `targetLastItem` == true, moves the item to the end of the item list (has a higher priority than `targetID`).
+    // Expands new parents of the moved item (to avoid errors caused by React DnD trying to update state of an unmounted component).
     //
     // Supports only the default sort_type of the list.
     if (command === "moveItems") {
@@ -324,6 +338,9 @@ export const updateToDoListItems = (toDoList, update) => {
         // Update new item input's indent
         const newToDoList = { ...toDoList, itemOrder: newItemOrder, items: newItems };
         setNewItemInputIndent(newToDoList);
+
+        // Expand parent of the new item
+        expandParents(newToDoList, movedID);
 
         return newToDoList;
     }
@@ -376,7 +393,7 @@ export const updateToDoListItems = (toDoList, update) => {
 // Updates the new item input's indent in the provided `toDoList`, based on the current indent of the last item in the list.
 // New item input's indent can't be > than last item's indent + 1.
 //
-// The update is performed in the original object.
+// The update is performed in the original toDoList object.
 const setNewItemInputIndent = toDoList => {
     const sortedItemIDs = getSortedItemIDs(toDoList);
     if (sortedItemIDs.length > 0) {
@@ -384,4 +401,15 @@ const setNewItemInputIndent = toDoList => {
         toDoList.newItemInputIndent = Math.min(toDoList.newItemInputIndent, toDoList.items[lastItemID].indent + 1);
     } else
         toDoList.newItemInputIndent = 0;
+};
+
+
+// Expands all parent items of the parent with the provided `id`.
+//
+// The update is performed in the original toDoList object.
+const expandParents = (toDoList, id) => {
+    const parentIDs = getParentIDs(toDoList, id);
+    parentIDs.forEach(id => {
+        toDoList.items[id].is_expanded = true;
+    });
 };

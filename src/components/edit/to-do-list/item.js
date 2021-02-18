@@ -4,6 +4,7 @@ import { Icon } from "semantic-ui-react";
 
 import { StateControl, stateControlParams } from "./state-control";
 import { Comment } from "./comment";
+import { ExpandControl } from "./expand-control";
 import { ItemDropzone } from "./item-dropzone";
 import { getCaretPosition, getSplitText } from "../../../util/caret";
 
@@ -118,7 +119,7 @@ class TDLItem extends React.PureComponent {
     };
 
     render() {
-        const { id, item_state, commentary, updateCallback, indent, hasChildren, dropIndent, isParentDragged, maxIndent } = this.props;
+        const { id, item_state, commentary, indent, is_expanded, updateCallback, hasChildren, dropIndent, isParentDragged, maxIndent } = this.props;
         const { connectDragSource, connectDropTarget, isDragging, isDraggedOver } = this.props;
 
         // Don't render the element which is being dragged
@@ -131,8 +132,10 @@ class TDLItem extends React.PureComponent {
         const indentSpace = <div className={indentClassNames[indent]} />;
 
         // Left menu
+        const expandControl = hasChildren && <ExpandControl id={id} is_expanded={is_expanded} updateCallback={updateCallback} />;
         const leftMenu = (
             <div className="to-do-list-left-menu">
+                {expandControl}
                 <StateControl id={id} state={item_state} updateCallback={updateCallback} />
             </div>
         );
