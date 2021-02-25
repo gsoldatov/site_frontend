@@ -8,7 +8,7 @@ import { ExpandControl } from "./expand-control";
 import { ItemDropzone } from "./item-dropzone";
 
 import { getNewItemState } from "../../../store/state-util/to-do-lists";
-import { getCaretPosition, getSplitText } from "../../../util/caret";
+import * as caret from "../../../util/caret";   // wrapped into an object to make functions mockable in tests
 
 
 class TDLItem extends React.PureComponent {
@@ -57,7 +57,7 @@ class TDLItem extends React.PureComponent {
         // On `Enter` split current item into two and focus the second (or add a new empty item and focus it if previous failed)
         if (e.key === "Enter") {
             e.preventDefault(); // disable adding new lines
-            const splitText = getSplitText(this.inputRef.current);
+            const splitText = caret.getSplitText(this.inputRef.current);
             if (typeof(splitText) === "object") 
                 this.props.updateCallback({ toDoListItemUpdate: { command: "split", id: this.props.id, ...splitText }});
             else 
@@ -66,19 +66,19 @@ class TDLItem extends React.PureComponent {
 
         // On `ArrowUp` focus the previous item (including when new item input is focused)
         else if (e.key === "ArrowUp") {
-            this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", id: this.props.id, caretPositionOnFocus: getCaretPosition(this.inputRef.current) }});
+            this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", id: this.props.id, caretPositionOnFocus: caret.getCaretPosition(this.inputRef.current) }});
         }
 
         // On `ArrowUp` focus the next item (including new item input)
         else if (e.key === "ArrowDown") {
-            this.props.updateCallback({ toDoListItemUpdate: { command: "focusNext", id: this.props.id, caretPositionOnFocus: getCaretPosition(this.inputRef.current) }});
+            this.props.updateCallback({ toDoListItemUpdate: { command: "focusNext", id: this.props.id, caretPositionOnFocus: caret.getCaretPosition(this.inputRef.current) }});
         }
         
         // On `Backspace` delete a char before the caret if there is one or do one of the below:
         // 1) merge current item with the previous one if no characters remain before the caret;
         // 2) delete the current item if its text is empty.
         else if (e.key === "Backspace") {
-            const splitText = getSplitText(this.inputRef.current);
+            const splitText = caret.getSplitText(this.inputRef.current);
             if (splitText !== null) {   // merge item with previous
                 if (splitText.before.length === 0) {
                     this.props.updateCallback({ toDoListItemUpdate: { command: "mergeWithPrev", id: this.props.id }});
@@ -97,7 +97,7 @@ class TDLItem extends React.PureComponent {
         // 1) merge current item with the next one if no characters remain after the caret;
         // 2) delete the current item if its text is empty.
         else if (e.key === "Delete") {
-            const splitText = getSplitText(this.inputRef.current);
+            const splitText = caret.getSplitText(this.inputRef.current);
             if (splitText !== null) {   // merge item with next
                 if (splitText.after.length === 0) {
                     this.props.updateCallback({ toDoListItemUpdate: { command: "mergeWithNext", id: this.props.id }});
@@ -124,7 +124,6 @@ class TDLItem extends React.PureComponent {
         else if (e.key === " ") {
             if (e.shiftKey) {
                 e.preventDefault();
-                console.log(`getNewItemState(this.props.item_state) = ${getNewItemState(this.props.item_state)}`)
                 this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_state: getNewItemState(this.props.item_state) }});
             }
 

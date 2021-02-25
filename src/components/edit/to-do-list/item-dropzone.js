@@ -10,7 +10,7 @@ export const ItemDropzone = ({ currentIndent, maxIndent, indentUpdateCallback })
         const className = "to-do-list-item-drop-zone"
                         .concat(indent === 0 ? " first" : "")
                         .concat(indent === 5 ? " last" : "");
-        const onDragEnter = e => { 
+        const onDragEnter = e => {
             indentUpdateCallback(Math.min(indent, maxIndent !== undefined ? maxIndent : 6));
         };
         return <div key={indent} className={className} onDragEnter={onDragEnter} />;

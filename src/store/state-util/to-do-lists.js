@@ -110,6 +110,7 @@ export const getPreviousItemIndent = (toDoList, id) => {
 
     if (id === "newItem"){
         const prevID = itemOrder[itemOrder.length - 1];
+        if (prevID === undefined) return -1;
         return toDoList.items[prevID].indent;
     }
 
