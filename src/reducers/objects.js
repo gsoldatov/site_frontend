@@ -1,7 +1,7 @@
 import { ADD_OBJECTS, ADD_OBJECT_DATA, SET_OBJECTS_TAGS, SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS,
     DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, CLEAR_SELECTED_OBJECTS, 
     SET_OBJECTS_PAGINATION_INFO, SET_TAGS_FILTER, SET_TAGS_FILTER_INPUT, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
-import { getTagIDByName } from "../store/state-util/tags";
+import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
 import { resetObjectCaches, objectsGetCommonTagIDs } from "../store/state-util/ui-objects";
 
 
@@ -139,14 +139,20 @@ function setCurrentObjectsTags(state, action) {
     if (action.tagUpdates.added instanceof Array && action.tagUpdates.added.length === 0) { // handle reset case
         newAddedTags = [];
     } else {    // handle general update case
+        const lowerCaseOldAddedTags = state.objectsUI.addedTags.map(t => getLowerCaseTagNameOrID(t));
         const at = (action.tagUpdates.added || []).map(tag => {     // replace tag names by ids if there is a match in local state
-            if (typeof(tag) === "number") return tag;
+            if (typeof(tag) === "number") {
+                if (lowerCaseOldAddedTags.includes(getLowerCaseTagNameOrID(state.tags[tag].tag_name))) return state.tags[tag].tag_name;    // If existing tag was added by tag_name, add it by tag name a second time
+                return tag;
+            }
+            if (lowerCaseOldAddedTags.includes(getLowerCaseTagNameOrID(tag))) return tag;   // If existing tag was added by tag_name, add it by tag name a second time
             return getTagIDByName(state, tag) || tag;
         });
         if (at) {
+            const lowerCaseAT = at.map(t => getLowerCaseTagNameOrID(t));
             newAddedTags = state.objectsUI.addedTags.slice();
-            newAddedTags = newAddedTags.filter(t => !at.includes(t));
-            newAddedTags = newAddedTags.concat(at.filter(t => !state.objectsUI.addedTags.includes(t)));
+            newAddedTags = newAddedTags.filter(t => !lowerCaseAT.includes(getLowerCaseTagNameOrID(t)));
+            newAddedTags = newAddedTags.concat(at.filter(t => !lowerCaseOldAddedTags.includes(getLowerCaseTagNameOrID(t))));
 
             addedExistingTagIDs = newAddedTags.filter(t => objectsGetCommonTagIDs(state).includes(t));  // move added tag IDs which are already present in the common tags into removed
             newAddedTags = newAddedTags.filter(t => !addedExistingTagIDs.includes(t));
