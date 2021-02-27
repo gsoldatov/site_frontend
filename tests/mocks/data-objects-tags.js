@@ -1,6 +1,6 @@
 import createStore from "../../src/store/create-store";
 import { addObjects, selectObjects, setObjectsTags } from "../../src/actions/objects";
-import { getNonCachedTags } from "../../src/actions/tags";
+import { getNonCachedTags } from "../../src/fetches/ui-tags";
 
 
 // Creats a store with 2 selected objects in the state (for /objects page)

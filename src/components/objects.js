@@ -13,10 +13,10 @@ import { InlineItem } from "./inline/inline-item";
 import { InlineInput } from "./inline/inline-input";
 
 import { REDIRECT_ON_RENDER_PATH_CREATORS, setRedirectOnRender } from "../actions/common";
-import { objectsOnLoadFetch, selectObjects, clearSelectedObjects, pageFetch, setObjectsPaginationInfo, setObjectsPaginationInfoAndFetchPage,
-    setShowDeleteDialogObjects, toggleObjectSelection, onDeleteFetch,
-    setCurrentObjectsTags, setObjectsTagsInput, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch, 
-    setTagsFilterAndFetchPage, tagsFilterDropdownFetch, setTagsFilterInput  } from "../actions/objects";
+import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo,
+        setShowDeleteDialogObjects, toggleObjectSelection, setCurrentObjectsTags, setObjectsTagsInput, setTagsFilterInput  } from "../actions/objects";
+import { objectsOnLoadFetch, pageFetch, setObjectsPaginationInfoAndFetchPage, onDeleteFetch, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch, 
+        setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../fetches/ui-objects";
 import { isFetchingObjects, isFetchinOrShowingDialogObjects, isObjectsTagsEditActive } from "../store/state-util/ui-objects";
 import { objectsGetCommonTagIDs, objectsGetPartiallyAppliedTagIDs, objectsGetAddedTags } from "../store/state-util/ui-objects";
 

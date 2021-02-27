@@ -9,8 +9,8 @@ import { FieldItemList, FieldItem } from "./field/field-item-list";
 import FieldPagination from "./field/field-pagination";
 
 import { REDIRECT_ON_RENDER_PATH_CREATORS, setRedirectOnRender } from "../actions/common";
-import { selectTags, clearSelectedTags, pageFetch, setTagsPaginationInfo, setTagsPaginationInfoAndFetchPage,
-    setShowDeleteDialogTags, toggleTagSelection, onDeleteFetch } from "../actions/tags";
+import { selectTags, clearSelectedTags, setTagsPaginationInfo, setShowDeleteDialogTags, toggleTagSelection } from "../actions/tags";
+import { setTagsPaginationInfoAndFetchPage, pageFetch, onDeleteFetch } from "../fetches/ui-tags";
 import { isFetchingTags, isFetchinOrShowingDialogTags } from "../store/state-util/ui-tags";
 
 

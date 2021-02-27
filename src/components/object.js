@@ -13,8 +13,8 @@ import { InlineInput } from "./inline/inline-input";
 
 import { isFetchingObject, isFetchinOrShowingDialogObject } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setObjectTagsInput, setShowDeleteDialogObject, 
-    addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../actions/object";
+import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setObjectTagsInput, setShowDeleteDialogObject } from "../actions/object";
+import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
 
 import StyleCommon from "../styles/common.css";
 
