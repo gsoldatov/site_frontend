@@ -51,7 +51,7 @@ beforeEach(() => {
 
 
 test("Load page with a fetch error", async () => {
-    setFetchFailParams(true, "Test tags fetch error");
+    setFetchFailParams(true);
 
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
@@ -59,7 +59,7 @@ test("Load page with a fetch error", async () => {
     });
 
     // Check if error message if displayed
-    await waitFor(() => getByText(container, "Test tags fetch error", { exact: false }));
+    await waitFor(() => getByText(container, "Failed to fetch data.", { exact: false }));
 
     // Check if buttons are not enabled
     let editTagButton = getByText(container, "Edit Tag");

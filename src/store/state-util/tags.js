@@ -3,17 +3,14 @@
 */
 
 
-// Returns true if currentTag's tag_name is already taken by another tag, which is present in the local storage.
-export const checkIfCurrentTagNameExists = state => {
-    let tags = state.tags;
-    let currentTagNameLowered = state.tagUI.currentTag.tag_name.toLowerCase();
+// Returns true if `tag.tag_name` value is already taken by another tag, which is present in the local storage.
+export const checkIfTagNameExists = (state, tag) => {
+    const tags = state.tags;
+    let loweredName = tag.tag_name.toLowerCase();
 
     for (let i in tags) {
-        if (currentTagNameLowered === tags[i].tag_name.toLowerCase() && state.tagUI.currentTag.tag_id !== tags[i].tag_id) {
-            return true;
-        }
+        if (loweredName === tags[i].tag_name.toLowerCase() && state.tagUI.currentTag.tag_id !== tags[i].tag_id) return true;
     }
-
     return false;
 };
 

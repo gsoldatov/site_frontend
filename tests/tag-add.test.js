@@ -22,7 +22,7 @@
 import React from "react";
 import { Route } from "react-router-dom";
 
-import { fireEvent } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { renderWithWrappers } from "./test-utils/render";
@@ -91,7 +91,7 @@ test("Modify tag name and try saving an existing (in local state) tag name", asy
     store.dispatch(addTags([{ tag_id: 1, tag_name: "existing tag_name", tag_description: "", created_at: new Date(), modified_at: new Date() }]));
     saveButton = getByText(container, "Save");
     fireEvent.click(saveButton);
-    let errorMessage = getByText(container, "already exists", { exact: false });
+    await waitFor(() => getByText(container, "already exists", { exact: false }));
 });
 
 
@@ -122,9 +122,9 @@ test("Handle fetch error", async () => {
     let saveButton = getByText(container, "Save");
     fireEvent.change(tagNameInput, { target: { value: "error" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("error"));  // wait for tag_name to be updated in state
-    setFetchFailParams(true, "Test add fetch error");
+    setFetchFailParams(true);
     fireEvent.click(saveButton);
-    await waitFor(() => getByText(container, "Test add fetch error"));
+    await waitFor(() => getByText(container, "Failed to fetch data."));
     expect(history.entries[history.length - 1].pathname).toBe("/tags/add");
     expect(store.getState().tags[1000]).toBeUndefined();
 });

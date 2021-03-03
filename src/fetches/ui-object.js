@@ -5,7 +5,7 @@ import { setRedirectOnRender } from "../actions/common";
 import { loadEditObjectPage, setObjectOnLoadFetchState, setObjectOnSaveFetchState, setShowDeleteDialogObject, setCurrentObject, 
         setCurrentObjectTags, setObjectTagsInput } from "../actions/object";
 import { addObjects, addObjectData, setObjectsTags, deselectObjects, deleteObjects } from "../actions/objects";
-import { getNonCachedTags } from "./ui-tags";
+import { getNonCachedTags } from "./data-tags";
 
 
 const backendURL = config.backendURL;

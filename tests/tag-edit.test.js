@@ -68,7 +68,7 @@ test("Load a non-existing tag + check buttons", async () => {
 
 
 test("Load a tag with fetch error", async () => {
-    setFetchFailParams(true, "Test view fetch error");
+    setFetchFailParams(true);
 
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
@@ -76,7 +76,7 @@ test("Load a tag with fetch error", async () => {
     });
 
     // Check if error message if displayed
-    await waitFor(() => getByText(container, "Test view fetch error", { exact: false }));
+    await waitFor(() => getByText(container, "Failed to fetch data.", { exact: false }));
 });
 
 
@@ -205,14 +205,14 @@ test("Delete a tag with fetch error", async () => {
 
     // Wait for tag information to be displayed on the page and try to delete the tag
     await waitFor(() => getByText(container, "Tag Information"));
-    setFetchFailParams(true, "Test delete fetch error");
+    setFetchFailParams(true);
     let deleteButton = getByText(container, "Delete");
     fireEvent.click(deleteButton);
     let confimationDialogButtonYes = getByText(container, "Yes");
     fireEvent.click(confimationDialogButtonYes);
 
     // Check if error message is displayed and tag is not deleted from state
-    await waitFor(() => getByText(container, "Test delete fetch error"));
+    await waitFor(() => getByText(container, "Failed to fetch data."));
     expect(store.getState().tags[1]).toBeTruthy();
 });
 
@@ -291,11 +291,11 @@ test("Update a tag with fetch error", async () => {
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("error"));
     fireEvent.change(tagDescriptionInput, { target: { value: "modified tag description" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_description).toBe("modified tag description"));
-    setFetchFailParams(true, "Test update fetch error");
+    setFetchFailParams(true);
     fireEvent.click(saveButton);
 
     // Check error message is displayed and tag is not modified in the state
-    await waitFor(() => getByText(container, "Test update fetch error"));
+    await waitFor(() => getByText(container, "Failed to fetch data."));
     for (let attr of ["tag_name", "tag_description", "created_at", "modified_at"]) {
         expect(store.getState().tags[1][attr]).toEqual(tag[attr]);
     }

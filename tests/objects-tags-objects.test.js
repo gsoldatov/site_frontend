@@ -31,7 +31,7 @@ import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers } from "./test-utils/render";
 
 import Objects from "../src/components/objects";
-import { getNonCachedTags } from "../src/fetches/ui-tags";
+import { getNonCachedTags } from "../src/fetches/data-tags";
 
 
 /*

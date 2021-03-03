@@ -1,54 +1,50 @@
 import config from "../config";
+import { runFetch, getErrorFromResponse } from "./common";
+import { deleteTagsFetch, getNonCachedTags } from "./data-tags";
 import { isFetchingTags } from "../store/state-util/ui-tags";
-import { addTags, deleteTags, setTagsFetch, setShowDeleteDialogTags, setTagsPaginationInfo, clearSelectedTags } from "../actions/tags";
+import { setTagsFetch, setShowDeleteDialogTags, setTagsPaginationInfo } from "../actions/tags";
 
 
 const backendURL = config.backendURL;
 
 
-export function getTagsFetch(tag_ids) {
+// Fetches tags to display on provided `currentPage`.
+export const pageFetch = currentPage => {
     return async (dispatch, getState) => {
-        let payload = JSON.stringify({ tag_ids: tag_ids });
-        let response = await fetch(`${backendURL}/tags/view`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: payload
-        });
+        const state = getState();
 
-        switch (response.status) {
-            case 200:
-                let tags = (await response.json())["tags"];
-                dispatch(addTags(tags));
-                return;
-            case 400:
-            case 404:
-                throw new Error((await response.json())["_error"]);
-                return;
-            case 500:
-                throw new Error(await response.text());
-                return;
+        if (isFetchingTags(state)) return;
+
+        dispatch(setTagsPaginationInfo({ currentPage: currentPage }));
+        dispatch(setTagsFetch(true, ""));
+
+        let result = await dispatch(getPageTagIDs());   // Fetch IDs of tags to display on the page
+        if (result !== undefined) dispatch(setTagsFetch(false, result.error));
+        else {  // Fetch missing tag data
+            result = await dispatch(getNonCachedTags(getState().tagsUI.paginationInfo.currentPageTagIDs));
+            dispatch(setTagsFetch(false, result !== undefined ? result.error : ""));
         }
     };
 };
 
 
-// Fetches missing data for a list of provided tag IDs
-export function getNonCachedTags(tagIDs) {
+// Updates pagination info, resets current displayed page to 1 and fetches tags to display on it.
+export const setTagsPaginationInfoAndFetchPage = paginationInfo => {
     return async (dispatch, getState) => {
-        let nonCachedTags = tagIDs.filter(tag_id => !(tag_id in getState().tags));
-        if (nonCachedTags.length !== 0) {   // Fetch non-cached tags' data
-            await dispatch(getTagsFetch(nonCachedTags));
-        }
+        paginationInfo.currentPage = 1;
+        dispatch(setTagsPaginationInfo(paginationInfo));
+        dispatch(pageFetch(paginationInfo.currentPage));
     };
 };
 
 
-function getPageTagIDs() {
+// Fetches backend and sets tag IDs of the current page based on the current pagination info settings.
+const getPageTagIDs = () => {
     return async (dispatch, getState) => {
         dispatch(setTagsPaginationInfo({ totalItems: 0, currentPageTagIDs: [] }));
 
-        let pI = getState().tagsUI.paginationInfo;
-        let response = await fetch(`${backendURL}/tags/get_page_tag_ids`, {
+        const pI = getState().tagsUI.paginationInfo;
+        let response = await runFetch(`${backendURL}/tags/get_page_tag_ids`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -61,107 +57,39 @@ function getPageTagIDs() {
                 }
             })
         });
+        if (response.error !== undefined) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
                 let json = await response.json();
                 dispatch(setTagsPaginationInfo({ totalItems: json["total_items"], currentPageTagIDs: json["tag_ids"] }));
-                return;
             case 400:
             case 404:
-                throw new Error((await response.json())["_error"]);
             case 500:
-                throw new Error(await response.text());
+                return getErrorFromResponse(response);
         }
     };
 }
 
 
-export function pageFetch(currentPage) {
+// Delete selected tags from state and stop displaying them on the current page.
+export const onDeleteFetch = () => {
     return async (dispatch, getState) => {
-        const state = getState();
+        // Exit if already fetching
+        let state = getState();
+        if (isFetchingTags(state)) return;
 
-        if (isFetchingTags(state)) {
-            return;
-        }
-
-        try {
-            dispatch(setTagsPaginationInfo({ currentPage: currentPage }));
-            dispatch(setTagsFetch(true, ""));
-            await dispatch(getPageTagIDs());
-            await dispatch(getNonCachedTags(getState().tagsUI.paginationInfo.currentPageTagIDs));
-            dispatch(setTagsFetch(false, ""));
-        }
-        catch(error) {
-            dispatch(setTagsFetch(false, error.message));
-        }
-    };
-};
-
-
-export function setTagsPaginationInfoAndFetchPage(paginationInfo){
-    return async (dispatch, getState) => {
-        paginationInfo.currentPage = 1;
-        dispatch(setTagsPaginationInfo(paginationInfo));
-        dispatch(pageFetch(paginationInfo.currentPage));
-    };
-}
-
-
-export function onDeleteFetch() {
-    return async (dispatch, getState) => {
         // Hide delete dialog
         dispatch(setShowDeleteDialogTags(false));
 
-        // Exit if already fetching
-        let state = getState();
-
-        if (isFetchingTags(state)) {
-            return;
-        }
-        
-        try {
-            // Update fetch status
-            dispatch(setTagsFetch(true, ""));
-
-            // Fetch tag data and handle response
-            let payload = JSON.stringify({ 
-                tag_ids: state.tagsUI.selectedTagIDs
-            });
-
-            let response = await fetch(`${backendURL}/tags/delete`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: payload
-            });
-
-            let deleteFromState = true;
-            let error = "";
-
-            switch (response.status) {
-                case 200:
-                    break;
-                case 400:
-                    error = (await response.json())._error;
-                    deleteFromState = false;
-                    break;
-                case 404:
-                    // error = "Tags not found.";
-                    break;
-                case 500:
-                    error = await response.text();
-                    deleteFromState = false;
-                    break;
-            }
-
-            if (deleteFromState) {
-                dispatch(setTagsPaginationInfo({ currentPageTagIDs: state.tagsUI.paginationInfo.currentPageTagIDs.filter(id => !state.tagsUI.selectedTagIDs.includes(id)) }));  // delete from current page
-                dispatch(deleteTags(state.tagsUI.selectedTagIDs));  // delete from tag storage
-                dispatch(clearSelectedTags());    // clear tag selection
-            }
-            dispatch(setTagsFetch(false, error));
-        } catch (error) {
-            dispatch(setTagsFetch(false, error.message));
+        // Run view fetch & delete tags data
+        dispatch(setTagsFetch(true, ""));
+        const result = await dispatch(deleteTagsFetch(state.tagsUI.selectedTagIDs));
+        if (result.error === undefined) {
+            dispatch(setTagsPaginationInfo({ currentPageTagIDs: state.tagsUI.paginationInfo.currentPageTagIDs.filter(id => !state.tagsUI.selectedTagIDs.includes(id)) }));  // delete from current page
+            dispatch(setTagsFetch(false, ""));
+        } else {
+            dispatch(setTagsFetch(false, result.error));
         }
     };
 };

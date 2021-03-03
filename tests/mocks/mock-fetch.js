@@ -11,7 +11,7 @@ export function mockFetch(URL, {
     body = undefined
 } = {}) {
     if (isFailingFetch) {
-        throw Error(failMessage);
+        throw TypeError(failMessage);   // Network errors are instances of TypeError
     }
 
     const URLPath = URL.replace(config["backendURL"], "");
@@ -28,7 +28,7 @@ export function resetMocks() {
     setFetchFailParams();   // reset fetch fail parameters
 }
 
-export function setFetchFailParams(iff = false, fm = "Test fetch failed") {
+export function setFetchFailParams(iff = false, fm = "NetworkError") {  // TODO delete message param after fixing all tests for new fetches
     isFailingFetch = iff;
     failMessage = fm;
 }

@@ -1,6 +1,6 @@
 import config from "../config";
 import { isFetchingObjects } from "../store/state-util/ui-objects";
-import { getNonCachedTags } from "./ui-tags";
+import { getNonCachedTags } from "./data-tags";
 import { setObjectsFetch, addObjects, deleteObjects, setObjectsPaginationInfo, clearSelectedObjects, setObjectsTags, setObjectsTagsInput, setCurrentObjectsTags, 
         setShowDeleteDialogObjects, setTagsFilterInput, setTagsFilter } from "../actions/objects";
 
