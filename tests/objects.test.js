@@ -1,26 +1,3 @@
-/*
-// Old imports and setup/teardown functions.
-// Tests sometimes fail because of using the shared state of mock fetch when they're run concurrently.
-
-// import React from "react";
-// import { Route } from "react-router-dom";
-
-// import { fireEvent } from "@testing-library/react";
-// import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from '@testing-library/dom'
-
-// import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
-// import { getMockedPageObjectIDs } from "./mocks/mock-fetch-handlers-objects";
-// import { renderWithWrappers } from "./test-utils";
-// import createStore from "../src/store/create-store";
-
-// import Objects from "../src/components/objects";
-// import { setObjectsPaginationInfo } from "../src/actions/objects";
-
-
-// beforeAll(() => { global.fetch = jest.fn(mockFetch); });
-// afterAll(() => { jest.resetAllMocks(); });
-// afterEach(() => { resetMocks(); });
-*/
 import React from "react";
 import { Route } from "react-router-dom";
 
@@ -41,17 +18,17 @@ import { setObjectsPaginationInfo } from "../src/actions/objects";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFailParams } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
-        global.setFetchFailParams = jest.fn(setFetchFailParams);
+        global.setFetchFail = jest.fn(setFetchFail);
     });
 });
 
 
 test("Load page with a fetch error", async () => {
-    setFetchFailParams(true, "Test objects fetch error");
+    setFetchFail(true);
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
     let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
@@ -59,7 +36,7 @@ test("Load page with a fetch error", async () => {
     });
 
     // Check if error message if displayed
-    await waitFor(() => getByText(container, "Test objects fetch error", { exact: false }));
+    await waitFor(() => getByText(container, "Failed to fetch data."));
 
     // Check if buttons are not enabled
     let editObjectButton = getByText(container, "Edit Object");

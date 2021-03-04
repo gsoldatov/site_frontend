@@ -1,25 +1,3 @@
-/*
-// Old imports and setup/teardown functions.
-// Tests sometimes fail because of using the shared state of mock fetch when they're run concurrently.
-
-// import React from "react";
-// import { Route } from "react-router-dom";
-
-// import { fireEvent } from "@testing-library/react";
-// import { getByText, getByPlaceholderText, waitFor, queryByText } from '@testing-library/dom'
-
-// import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
-// import { renderWithWrappers } from "./test-utils";
-// import createStore from "../src/store/create-store";
-
-// import { EditTag } from "../src/components/tag";
-// import { addTags, deleteTags } from "../src/actions/tags";
-
-
-// beforeAll(() => { global.fetch = jest.fn(mockFetch); });
-// afterAll(() => { jest.resetAllMocks(); });
-// afterEach(() => { resetMocks(); });
-*/
 import React from "react";
 import { Route } from "react-router-dom";
 
@@ -30,7 +8,7 @@ import { renderWithWrappers } from "./test-utils/render";
 import createStore from "../src/store/create-store";
 
 import { AddTag, EditTag } from "../src/components/tag";
-import { addTags, deleteTags } from "../src/actions/tags";
+import { addTags, deleteTags } from "../src/actions/data-tags";
 
 
 /*
@@ -39,11 +17,11 @@ import { addTags, deleteTags } from "../src/actions/tags";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFailParams } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
-        global.setFetchFailParams = jest.fn(setFetchFailParams);
+        global.setFetchFail = jest.fn(setFetchFail);
     });
 });
 
@@ -68,7 +46,7 @@ test("Load a non-existing tag + check buttons", async () => {
 
 
 test("Load a tag with fetch error", async () => {
-    setFetchFailParams(true);
+    setFetchFail(true);
 
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
@@ -205,7 +183,7 @@ test("Delete a tag with fetch error", async () => {
 
     // Wait for tag information to be displayed on the page and try to delete the tag
     await waitFor(() => getByText(container, "Tag Information"));
-    setFetchFailParams(true);
+    setFetchFail(true);
     let deleteButton = getByText(container, "Delete");
     fireEvent.click(deleteButton);
     let confimationDialogButtonYes = getByText(container, "Yes");
@@ -291,7 +269,7 @@ test("Update a tag with fetch error", async () => {
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("error"));
     fireEvent.change(tagDescriptionInput, { target: { value: "modified tag description" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_description).toBe("modified tag description"));
-    setFetchFailParams(true);
+    setFetchFail(true);
     fireEvent.click(saveButton);
 
     // Check error message is displayed and tag is not modified in the state

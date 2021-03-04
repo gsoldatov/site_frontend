@@ -1,26 +1,3 @@
-/*
-// Old imports and setup/teardown functions.
-// Tests sometimes fail because of using the shared state of mock fetch when they're run concurrently.
-
-// import React from "react";
-// import { Route } from "react-router-dom";
-
-// import { fireEvent } from "@testing-library/react";
-// import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from '@testing-library/dom'
-
-// import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
-// import { getMockedPageTagIDs } from "./mocks/mock-fetch-handlers-tags";
-// import { renderWithWrappers } from "./test-utils";
-// import createStore from "../src/store/create-store";
-
-// import Tags from "../src/components/tags";
-// import { setTagsPaginationInfo } from "../src/actions/tags";
-
-
-// beforeAll(() => { global.fetch = jest.fn(mockFetch); });
-// afterAll(() => { jest.resetAllMocks(); });
-// afterEach(() => { resetMocks(); });
-*/
 import React from "react";
 import { Route } from "react-router-dom";
 
@@ -41,17 +18,17 @@ import { setTagsPaginationInfo } from "../src/actions/tags";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFailParams } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
-        global.setFetchFailParams = jest.fn(setFetchFailParams);
+        global.setFetchFail = jest.fn(setFetchFail);
     });
 });
 
 
 test("Load page with a fetch error", async () => {
-    setFetchFailParams(true);
+    setFetchFail(true);
 
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {

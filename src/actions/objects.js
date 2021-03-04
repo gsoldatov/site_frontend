@@ -1,9 +1,5 @@
-export const ADD_OBJECTS = "ADD_OBJECTS";
-export const ADD_OBJECT_DATA = "ADD_OBJECT_DATA";
-export const SET_OBJECTS_TAGS = "SET_OBJECTS_TAGS";
 export const SET_OBJECTS_TAGS_INPUT = "SET_OBJECTS_TAGS_INPUT";
 export const SET_CURRENT_OBJECTS_TAGS = "SET_CURRENT_OBJECTS_TAGS";
-export const DELETE_OBJECTS = "DELETE_OBJECTS";
 export const SELECT_OBJECTS = "SELECT_OBJECTS";
 export const TOGGLE_OBJECT_SELECTION = "TOGGLE_OBJECT_SELECTION";
 export const DESELECT_OBJECTS = "DESELECT_OBJECTS";
@@ -15,12 +11,8 @@ export const SET_SHOW_DELETE_DIALOG_OBJECTS = "SET_SHOW_DELETE_DIALOG_OBJECTS";
 export const SET_OBJECTS_FETCH = "SET_OBJECTS_FETCH";
 
 
-export const addObjects                  = objects => ({ type: ADD_OBJECTS, objects });
-export const addObjectData               = objectData => ({ type: ADD_OBJECT_DATA, objectData });
-export const setObjectsTags              = objectsTags => ({ type: SET_OBJECTS_TAGS, objectsTags });
 export const setObjectsTagsInput         = tagsInput => ({ type: SET_OBJECTS_TAGS_INPUT, tagsInput });
 export const setCurrentObjectsTags       = tagUpdates => ({ type: SET_CURRENT_OBJECTS_TAGS, tagUpdates });
-export const deleteObjects               = object_ids => ({ type: DELETE_OBJECTS, object_ids });
 export const selectObjects               = object_ids => ({ type: SELECT_OBJECTS, object_ids });
 export const toggleObjectSelection       = object_id => ({ type: TOGGLE_OBJECT_SELECTION, object_id });
 export const deselectObjects             = object_ids => ({ type: DESELECT_OBJECTS, object_ids });

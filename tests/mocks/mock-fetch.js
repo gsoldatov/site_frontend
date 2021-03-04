@@ -2,7 +2,7 @@ import config from "../../src/config";
 import { resetTagsCache, tagsHandlersList } from "./mock-fetch-handlers-tags";
 import { resetObjectsCaches, objectsHandlersList } from "./mock-fetch-handlers-objects";
 
-let isFailingFetch, failMessage;
+let isFailingFetch;
 const handlerLists = [tagsHandlersList, objectsHandlersList];   // add new handler lists here
 
 export function mockFetch(URL, {
@@ -11,7 +11,7 @@ export function mockFetch(URL, {
     body = undefined
 } = {}) {
     if (isFailingFetch) {
-        throw TypeError(failMessage);   // Network errors are instances of TypeError
+        throw TypeError("NetworkError");   // Network errors are instances of TypeError
     }
 
     const URLPath = URL.replace(config["backendURL"], "");
@@ -25,12 +25,11 @@ export function mockFetch(URL, {
 export function resetMocks() {
     resetTagsCache();       // reset cache objects
     resetObjectsCaches();
-    setFetchFailParams();   // reset fetch fail parameters
+    setFetchFail();   // reset fetch fail parameters
 }
 
-export function setFetchFailParams(iff = false, fm = "NetworkError") {  // TODO delete message param after fixing all tests for new fetches
+export function setFetchFail(iff = false) {
     isFailingFetch = iff;
-    failMessage = fm;
 }
 
 function getHandler(URL, method) {

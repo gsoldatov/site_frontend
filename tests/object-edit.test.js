@@ -1,25 +1,3 @@
-/* 
-// Old imports and setup/teardown functions.
-// Tests sometimes fail because of using the shared state of mock fetch when they're run concurrently.
-
-// import React from "react";
-// import { Route } from "react-router-dom";
-
-// import { fireEvent } from "@testing-library/react";
-// import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle } from '@testing-library/dom'
-
-// import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
-// import { renderWithWrappers } from "./test-utils";
-// import createStore from "../src/store/create-store";
-
-// import { EditObject } from "../src/components/object";
-// import { addObjects, addObjectData, setObjectsTags, deleteObjects } from "../src/actions/objects";
-
-
-// beforeAll(() => { global.fetch = jest.fn(mockFetch); });
-// afterAll(() => { jest.resetAllMocks(); });
-// afterEach(() => { resetMocks(); });
-*/
 import React from "react";
 import { Route } from "react-router-dom";
 
@@ -33,7 +11,8 @@ import { getTDLByObjectID } from "./mocks/data-to-do-lists";
 import createStore from "../src/store/create-store";
 
 import { AddObject, EditObject } from "../src/components/object";
-import { addObjects, addObjectData, setObjectsTags, deleteObjects } from "../src/actions/objects";
+import { setObjectsTags } from "../src/actions/data-tags";
+import { addObjects, addObjectData, deleteObjects } from "../src/actions/data-objects";
 
 
 /*
@@ -42,11 +21,11 @@ import { addObjects, addObjectData, setObjectsTags, deleteObjects } from "../src
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFailParams } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
-        global.setFetchFailParams = jest.fn(setFetchFailParams);
+        global.setFetchFail = jest.fn(setFetchFail);
     });
 });
 
@@ -72,7 +51,7 @@ test("Load a non-existing object + check buttons", async () => {
 
 
 test("Load an object with fetch error", async () => {
-    setFetchFailParams(true, "Test view fetch error");
+    setFetchFail(true);
 
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
     let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
@@ -80,7 +59,7 @@ test("Load an object with fetch error", async () => {
     });
 
     // Check if error message if displayed
-    await waitFor(() => getByText(container, "Test view fetch error", { exact: false }));
+    await waitFor(() => getByText(container, "Failed to fetch data."));
 });
 
 
@@ -270,14 +249,14 @@ test("Delete a link object with fetch error", async () => {
 
     // Wait for object information to be displayed on the page and try to delete the object
     await waitFor(() => getByText(container, "Object Information"));
-    setFetchFailParams(true, "Test delete fetch error");
+    setFetchFail(true);
     let deleteButton = getByText(container, "Delete");
     fireEvent.click(deleteButton);
     let confimationDialogButtonYes = getByText(container, "Yes");
     fireEvent.click(confimationDialogButtonYes);
 
     // Check if error message is displayed and object is not deleted from state
-    await waitFor(() => getByText(container, "Test delete fetch error"));
+    await waitFor(() => getByText(container, "Failed to fetch data."));
     expect(store.getState().objects[1]).toBeTruthy();
     expect(store.getState().objectsTags[1]).toBeTruthy();
     expect(store.getState().links[1]).toBeTruthy();
@@ -394,11 +373,11 @@ test("Update a link object with fetch error", async () => {
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
     fireEvent.change(linkInput, { target: { value: "https://test.link.modified" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://test.link.modified"));
-    setFetchFailParams(true, "Test update fetch error");
+    setFetchFail(true);
     fireEvent.click(saveButton);
 
     // Check error message is displayed and object is not modified in the state
-    await waitFor(() => getByText(container, "Test update fetch error"));
+    await waitFor(() => getByText(container, "Failed to fetch data."));
     for (let attr of ["object_name", "object_description", "created_at", "modified_at"]) {
         expect(store.getState().objects[1][attr]).toEqual(oldObject[attr]);
     }

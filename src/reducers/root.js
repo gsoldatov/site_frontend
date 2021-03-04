@@ -1,5 +1,8 @@
 import logState from "../store/log-state";
 
+import dataTags from "./data-tags";
+import dataObjects from "./data-objects";
+
 import common from "./common";
 import tag from "./tag";
 import tags from "./tags";
@@ -25,13 +28,7 @@ function getActionHandlers(rootObjects) {
     return actionHandlers;
 }
 
-const ACTION_HANDLERS = getActionHandlers({
-    "common": common,
-    "tag": tag,
-    "tags": tags,
-    "object": object,
-    "objects": objects
-});
+const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, common, tag, tags, object, objects });
 
 export default function getRootReducer (enableDebugLogging) {
     return (state, action) => {

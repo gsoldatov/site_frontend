@@ -1,26 +1,3 @@
-/*
-// Old imports and setup/teardown functions.
-// Tests sometimes fail because of using the shared state of mock fetch when they're run concurrently.
-
-// import React from "react";
-// import { Route } from "react-router-dom";
-
-// import { fireEvent } from "@testing-library/react";
-// import { getByText, waitFor } from '@testing-library/dom'
-
-// import { mockFetch, resetMocks } from "./mocks/mock-fetch";
-// import { renderWithWrappers, compareArrays } from "./test-utils";
-// import createStore from "../src/store/create-store";
-
-// import { EditTag } from "../src/components/tag";
-// import Tags from "../src/components/tags";
-// import { addObjects, setObjectsTags } from "../src/actions/objects";
-
-
-beforeAll(() => { global.fetch = jest.fn(mockFetch); });
-afterAll(() => { jest.resetAllMocks(); });
-afterEach(() => { resetMocks(); });
-*/
 import React from "react";
 import { Route } from "react-router-dom";
 
@@ -33,7 +10,8 @@ import createStore from "../src/store/create-store";
 
 import { EditTag } from "../src/components/tag";
 import Tags from "../src/components/tags";
-import { addObjects, setObjectsTags } from "../src/actions/objects";
+import { setObjectsTags } from "../src/actions/data-tags";
+import { addObjects } from "../src/actions/data-objects";
 
 
 /*
@@ -42,11 +20,11 @@ import { addObjects, setObjectsTags } from "../src/actions/objects";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFailParams } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
-        global.setFetchFailParams = jest.fn(setFetchFailParams);
+        global.setFetchFail = jest.fn(setFetchFail);
     });
 });
 

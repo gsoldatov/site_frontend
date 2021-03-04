@@ -1,24 +1,3 @@
-/*
-// Old imports and setup/teardown functions.
-// Tests sometimes fail because of using the shared state of mock fetch when they're run concurrently.
-
-// import React from "react";
-// import { Route } from "react-router-dom";
-
-// import { fireEvent } from "@testing-library/react";
-// import { getByText, getByPlaceholderText, waitFor } from '@testing-library/dom'
-
-// import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
-// import { renderWithWrappers } from "./test-utils";
-
-// import { AddTag, EditTag } from "../src/components/tag";
-// import { addTags } from "../src/actions/tags";
-
-
-// beforeAll(() => { global.fetch = jest.fn(mockFetch); });
-// afterAll(() => { jest.resetAllMocks(); });
-// afterEach(() => { resetMocks(); });
-*/
 import React from "react";
 import { Route } from "react-router-dom";
 
@@ -28,7 +7,7 @@ import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 import { renderWithWrappers } from "./test-utils/render";
 
 import { AddTag, EditTag } from "../src/components/tag";
-import { addTags } from "../src/actions/tags";
+import { addTags } from "../src/actions/data-tags";
 
 
 /*
@@ -37,11 +16,11 @@ import { addTags } from "../src/actions/tags";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFailParams } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
-        global.setFetchFailParams = jest.fn(setFetchFailParams);
+        global.setFetchFail = jest.fn(setFetchFail);
     });
 });
 
@@ -122,7 +101,7 @@ test("Handle fetch error", async () => {
     let saveButton = getByText(container, "Save");
     fireEvent.change(tagNameInput, { target: { value: "error" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("error"));  // wait for tag_name to be updated in state
-    setFetchFailParams(true);
+    setFetchFail(true);
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "Failed to fetch data."));
     expect(history.entries[history.length - 1].pathname).toBe("/tags/add");

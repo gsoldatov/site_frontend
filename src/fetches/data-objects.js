@@ -3,8 +3,10 @@ import config from "../config";
 import { runFetch, getErrorFromResponse, responseHasError } from "./common";
 import { getNonCachedTags } from "./data-tags";
 
+import { setObjectsTags } from "../actions/data-tags";
+import { addObjects, addObjectData, deleteObjects } from "../actions/data-objects";
 import { setObjectOnSaveFetchState } from "../actions/object";
-import { addObjects, addObjectData, setObjectsTags, deselectObjects, deleteObjects } from "../actions/objects";
+import { deselectObjects } from "../actions/objects";
 
 import { validateObject, serializeObjectData } from "../store/state-util/objects";
 

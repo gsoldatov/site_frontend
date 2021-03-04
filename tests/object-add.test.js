@@ -1,24 +1,3 @@
-/* 
-// Old imports and setup/teardown functions.
-// Tests sometimes fail because of using the shared state of mock fetch when they're run concurrently.
-
-// import React from "react";
-// import { Route } from "react-router-dom";
-
-// import { fireEvent } from "@testing-library/react";
-// import { getByText, getByPlaceholderText, waitFor, getByTitle } from '@testing-library/dom'
-
-// import { mockFetch, setFetchFailParams, resetMocks } from "./mocks/mock-fetch";
-// import { renderWithWrappers } from "./test-utils";
-
-// import { AddObject, EditObject } from "../src/components/object";
-// import { addObjects } from "../src/actions/objects";
-
-
-// beforeAll(() => { global.fetch = jest.fn(mockFetch); });
-// afterAll(() => { jest.resetAllMocks(); });
-// afterEach(() => { resetMocks(); });
-*/
 import React from "react";
 import { Route } from "react-router-dom";
 
@@ -29,7 +8,7 @@ import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-uti
 
 import createStore from "../src/store/create-store";
 import { AddObject, EditObject } from "../src/components/object";
-import { addObjects } from "../src/actions/objects";
+import { addObjects } from "../src/actions/data-objects";
 
 
 /*
@@ -38,11 +17,11 @@ import { addObjects } from "../src/actions/objects";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFailParams } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
-        global.setFetchFailParams = jest.fn(setFetchFailParams);
+        global.setFetchFail = jest.fn(setFetchFail);
     });
 });
 
@@ -195,12 +174,12 @@ test("Handle save fetch error", async () => {
     const linkValue = "https://google.com"
     fireEvent.change(linkInput, { target: { value: linkValue } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
-    setFetchFailParams(true, "Test add fetch error");
+    setFetchFail(true);
     fireEvent.click(saveButton);
-    await waitFor(() => getByText(container, "Test add fetch error"));
+    await waitFor(() => getByText(container, "Failed to fetch data."));
     expect(history.entries[history.length - 1].pathname).toBe("/objects/add");
     expect(store.getState().objects[1000]).toBeUndefined(); // mock object returned has this id
-    setFetchFailParams();   // reset fetch params
+    setFetchFail();   // reset fetch fail
 });
 
 

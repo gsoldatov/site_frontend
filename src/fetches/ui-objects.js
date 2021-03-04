@@ -2,11 +2,12 @@ import config from "../config";
 
 import { runFetch, getErrorFromResponse, responseHasError } from "./common";
 import { viewObjectsFetch, deleteObjectsFetch } from "./data-objects";
-import { getNonCachedTags, tagsSearchFetch, objectsTagsUpdateFetch } from "./data-tags";
+import { tagsSearchFetch, objectsTagsUpdateFetch } from "./data-tags";
+
+import { setObjectsFetch, setObjectsPaginationInfo, setObjectsTagsInput, setCurrentObjectsTags, 
+        setShowDeleteDialogObjects, setTagsFilterInput, setTagsFilter } from "../actions/objects";
 
 import { isFetchingObjects } from "../store/state-util/ui-objects";
-import { setObjectsFetch, addObjects, deleteObjects, setObjectsPaginationInfo, clearSelectedObjects, setObjectsTags, setObjectsTagsInput, setCurrentObjectsTags, 
-        setShowDeleteDialogObjects, setTagsFilterInput, setTagsFilter } from "../actions/objects";
 
 
 const backendURL = config.backendURL;
@@ -173,62 +174,3 @@ export function onObjectsTagsUpdateFetch() {
             dispatch(setObjectsFetch(false, result.error));
     };
 };
-
-
-// export function onObjectsTagsUpdateFetch() {
-//     return async (dispatch, getState) => {
-//         let state = getState();
-//         if (isFetchingObjects(state)) return;
-
-//         try {
-//             // Reset tag input & update fetch status
-//             dispatch(setObjectsTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
-//             dispatch(setObjectsFetch(true, ""));
-
-//             let payload = JSON.stringify({
-//                 object_ids: state.objectsUI.selectedObjectIDs,
-//                 added_tags: state.objectsUI.addedTags,
-//                 removed_tag_ids: state.objectsUI.removedTagIDs
-//             });
-
-//             let response = await fetch(`${backendURL}/objects/update_tags`, {
-//                 method: "PUT",
-//                 headers: { "Content-Type": "application/json" },
-//                 body: payload
-//             });
-                        
-//             switch (response.status) {
-//                 case 200:
-//                     let json = (await response.json());
-
-//                     // Update objects tags & query missing tags
-//                     let objects = state.objectsUI.selectedObjectIDs.map(objectID => ({ object_id: objectID, tag_updates: json.tag_updates }));
-//                     dispatch(setObjectsTags(objects));
-//                     await dispatch(getNonCachedTags(json.tag_updates.added_tag_ids));
-
-//                     // Reset added & removed tags
-//                     dispatch(setCurrentObjectsTags({ added: [], removed: [] }));
-
-//                     // Update modified_at attributes of the objects
-//                     let modifiedAt = json.modified_at;
-//                     objects = [];
-//                     state.objectsUI.selectedObjectIDs.forEach(objectID => {
-//                         let object = {...state.objects[objectID]};
-//                         object.modified_at = modifiedAt;
-//                         objects.push(object);
-//                     });
-//                     dispatch(addObjects(objects));
-
-//                     // End fetch
-//                     dispatch(setObjectsFetch(false, ""));
-//                     break;
-//                 case 400:
-//                     throw Error((await response.json())._error);
-//                 case 500:
-//                     throw Error(await response.text());
-//             }
-//         } catch (error) {
-//             dispatch(setObjectsFetch(false, error.message));
-//         }
-//     };
-// };

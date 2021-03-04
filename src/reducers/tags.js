@@ -1,42 +1,6 @@
-import { ADD_TAGS, DELETE_TAGS, SELECT_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, SET_TAGS_PAGINATION_INFO,
+import { SELECT_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, SET_TAGS_PAGINATION_INFO,
     SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_FETCH } from "../actions/tags";
 
-
-const _tagAttributes = ["tag_id", "created_at", "modified_at", "tag_name", "tag_description"];
-function addTags(state, action) {
-    let newTags = {};
-    action.tags.forEach(tag => {
-        const tag_id = tag.tag_id;
-        newTags[tag_id] = {};
-        _tagAttributes.forEach(attr => newTags[tag_id][attr] = tag[attr]);
-    });
-    return {
-        ...state,
-        tags: {
-            ...state.tags,
-            ...newTags
-        }
-    };
-};
-
-function deleteTags(state, action) {
-    let tags = {...state.tags};
-    for (let tagID of action.tag_ids) {
-        delete tags[tagID];
-    }
-
-    let objectsTags = {};
-    Object.keys(state.objectsTags).forEach(objectID => {
-        let tagIDs = state.objectsTags[objectID].filter(id => !action.tag_ids.includes(id));
-        if (tagIDs.length > 0) objectsTags[objectID] = tagIDs;
-    });
-
-    return {
-        ...state,
-        tags: tags,
-        objectsTags: objectsTags
-    };
-}
 
 function selectTags(state, action) {
     return {
@@ -125,8 +89,6 @@ function setTagsFetch(state, action) {
 
 
 const root = {
-    ADD_TAGS: addTags,
-    DELETE_TAGS: deleteTags,
     SELECT_TAGS: selectTags,
     TOGGLE_TAG_SELECTION: toggleTagSelection,
     DESELECT_TAGS: deselectTags,

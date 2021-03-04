@@ -1,114 +1,8 @@
-import { ADD_OBJECTS, ADD_OBJECT_DATA, SET_OBJECTS_TAGS, SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS,
-    DELETE_OBJECTS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, CLEAR_SELECTED_OBJECTS, 
+import { SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, CLEAR_SELECTED_OBJECTS, 
     SET_OBJECTS_PAGINATION_INFO, SET_TAGS_FILTER, SET_TAGS_FILTER_INPUT, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
 import { resetObjectCaches, objectsGetCommonTagIDs } from "../store/state-util/ui-objects";
 
-
-const _objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description"];
-function addObjects(state, action) {
-    let newObjects = {};
-    action.objects.forEach(object => {
-        const object_id = object.object_id;
-        newObjects[object_id] = {};
-        _objectAttributes.forEach(attr => newObjects[object_id][attr] = object[attr]);
-    });
-    return {
-        ...state,
-        objects: {
-            ...state.objects,
-            ...newObjects
-        }
-    };
-};
-
-function addObjectData(state, action) {
-    let newLinks = {}, newMarkdown = {}, newTDL = {};
-
-
-    for (let objectData of action.objectData){
-        switch (objectData["object_type"]) {
-            case "link":
-                newLinks[objectData["object_id"]] = {...objectData["object_data"]};
-                break;
-            case "markdown":
-                newMarkdown[objectData["object_id"]] = {...objectData["object_data"]};
-                break;
-            case "to_do_list":
-                let itemOrder = [], items = {};
-                objectData["object_data"].items.forEach((item, index) => {
-                    itemOrder.push(index);
-                    items[index] = {...item};
-                    delete items[index].item_number;
-                });
-
-                newTDL[objectData["object_id"]] = {
-                    itemOrder,
-                    setFocusOnID: -1,
-                    caretPositionOnFocus: -1,
-                    newItemInputIndent: 0,
-                    draggedParent: -1,
-                    draggedChildren: [],
-                    draggedOver: -1,
-                    dropIndent: 0,
-                    sort_type: objectData["object_data"].sort_type,
-                    items
-                };
-                break;
-            default:
-                break;
-        }
-    }
-    
-    return {
-        ...state,
-        links: {
-            ...state.links,
-            ...newLinks
-        },
-        markdown: {
-            ...state.markdown,
-            ...newMarkdown
-        },
-        toDoLists: {
-            ...state.toDoLists,
-            ...newTDL
-        }
-    };
-}
-
-/*
-    Updates objectsTags store.
-    
-    Receives a list of {object_id, ...} like objects and updates the tags for the object_id.
-    
-    Update option 1: {...} part contains current_tag_ids list => objectsTags[object_id] is overwritten to current_tag_ids.
-
-    Update option 2: {...} part contains tag_updates object with added_tag_ids and/or removed_tag_ids lists in it
-                     => objectsTags[object_id] is updated from those lists, while keeping the unchanged tags.
-                     Existing tags from added_tag_ids and non-existing tags from removed_tag_ids are ignored.
-*/
-function setObjectsTags(state, action) {
-    const objectsTags = action.objectsTags;
-    const updates = {};
-    objectsTags.forEach(object => {
-        const object_id = object.object_id;
-        if (object.current_tag_ids instanceof Array) updates[object_id] = object.current_tag_ids;
-        else {
-            const at = object.tag_updates.added_tag_ids || [];
-            const rt = object.tag_updates.removed_tag_ids || [];
-
-            updates[object_id] = state.objectsTags[object_id] || [];
-            updates[object_id] = updates[object_id].filter(tagID => !rt.includes(tagID));
-            updates[object_id] = updates[object_id].concat(at.filter(tagID => !updates[object_id].includes(tagID)));
-        }
-    })
-
-    return {
-        ...state,
-        objectsTags: {...state.objectsTags, ...updates}
-    };
-}
 
 function setObjectsTagsInput(state, action) {
     return {
@@ -185,30 +79,6 @@ function setCurrentObjectsTags(state, action) {
             addedTags: newAddedTags !== undefined ? newAddedTags : state.objectsUI.addedTags,
             removedTagIDs: newRemovedTagIDs !== undefined ? newRemovedTagIDs : state.objectsUI.removedTagIDs
         }
-    };
-}
-
-function deleteObjects(state, action) {
-    let objects = {...state.objects};
-    let links = {...state.links};
-    let markdown = {...state.markdown};
-    let toDoLists = {...state.toDoLists};
-    let objectsTags = {...state.objectsTags};
-    for (let objectID of action.object_ids) {
-        delete objects[objectID];
-        delete links[objectID];
-        delete markdown[objectID];
-        delete toDoLists[objectID];
-        delete objectsTags[objectID];
-    }
-
-    return {
-        ...state,
-        objects,
-        links,
-        markdown,
-        toDoLists,
-        objectsTags
     };
 }
 
@@ -343,12 +213,8 @@ function setObjectsFetch(state, action) {
 
 
 const root = {
-    ADD_OBJECTS: addObjects,
-    ADD_OBJECT_DATA: addObjectData,
-    SET_OBJECTS_TAGS: setObjectsTags,
     SET_OBJECTS_TAGS_INPUT: setObjectsTagsInput,
     SET_CURRENT_OBJECTS_TAGS: setCurrentObjectsTags,
-    DELETE_OBJECTS: deleteObjects,
     SELECT_OBJECTS: selectObjects,
     TOGGLE_OBJECT_SELECTION: toggleObjectSelection,
     DESELECT_OBJECTS: deselectObjects,

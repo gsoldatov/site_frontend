@@ -1,8 +1,9 @@
 import config from "../config";
 import { runFetch, getErrorFromResponse, responseHasError } from "./common";
 
-import { addTags, deleteTags, deselectTags } from "../actions/tags";
-import { addObjects, setObjectsTags } from "../actions/objects";
+import { addTags, deleteTags, setObjectsTags } from "../actions/data-tags";
+import { addObjects } from "../actions/data-objects";
+import { deselectTags } from "../actions/tags";
 
 import { checkIfTagNameExists } from "../store/state-util/tags";
 
