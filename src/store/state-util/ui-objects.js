@@ -50,10 +50,17 @@ const calculateCommonAndPartiallyAppliedTags = state => {
             commonTagIDs = new Set(state.objectsTags[objectID]);
             allTagIDs = new Set(state.objectsTags[objectID]);
         } else {    // update common and partially applied tag ID sets
-            if (commonTagIDs.size > 0) commonTagIDs.forEach(tagID => {
-                if (!state.objectsTags[objectID].includes(tagID)) commonTagIDs.delete(tagID);
-            });
-            state.objectsTags[objectID].forEach(tagID => allTagIDs.add(tagID));
+            if (commonTagIDs.size > 0) {
+                if (state.objectsTags[objectID] === undefined) commonTagIDs.clear();
+                else commonTagIDs.forEach(tagID => {
+                    if (!state.objectsTags[objectID].includes(tagID)) commonTagIDs.delete(tagID);
+                });
+            }
+            if (state.objectsTags[objectID] !== undefined) state.objectsTags[objectID].forEach(tagID => allTagIDs.add(tagID));
+            // if (commonTagIDs.size > 0) commonTagIDs.forEach(tagID => {
+            //     if (!state.objectsTags[objectID].includes(tagID)) commonTagIDs.delete(tagID);
+            // });
+            // state.objectsTags[objectID].forEach(tagID => allTagIDs.add(tagID));
         }
     });
     // Prepare, cache and return result
