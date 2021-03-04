@@ -24,5 +24,5 @@ export const getTagIDByName = (state, name) => {
 };
 
 
-// Returns lowercase `tag` if its string or `tag` otherwise
+// Returns lowercase `tag` if its type = string or `tag` otherwise
 export const getLowerCaseTagNameOrID = tag => typeof(tag) === "string" ? tag.toLowerCase() : tag;

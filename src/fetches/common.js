@@ -20,3 +20,7 @@ export const getErrorFromResponse = async response => {
             return { error: await response.text() };
     }
 };
+
+
+// Returns true if provided `response` contains an error
+export const responseHasError = response => (response || {}).error !== undefined ? true : false;

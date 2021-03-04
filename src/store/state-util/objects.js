@@ -4,13 +4,13 @@ import { getItemsCopy } from "./to-do-lists";
 */
 
 
-// Returns true if currentObject's object_name is already taken by another object, which is present in the local storage.
-export const checkIfCurrentObjectNameExists = state => {
-    let objects = state.objects;
-    let currentObjectNameLowered = state.objectUI.currentObject.object_name.toLowerCase();
+// Returns true if object_name of `obj` is already taken by another object, which is present in the local storage, or false otherwise.
+export const checkIfObjectNameExists = (state, obj) => {
+    const objects = state.objects;
+    const loweredName = obj.object_name.toLowerCase();
 
     for (let i in objects) {
-        if (currentObjectNameLowered === objects[i].object_name.toLowerCase() && state.objectUI.currentObject.object_id !== objects[i].object_id) {
+        if (loweredName === objects[i].object_name.toLowerCase() && obj.object_id !== objects[i].object_id) {
             return true;
         }
     }
@@ -19,12 +19,10 @@ export const checkIfCurrentObjectNameExists = state => {
 };
 
 
-// Returns true is current object's data is valid or throws an error if not.
-export const validateCurrentObject = state => {
-    const obj = state.objectUI.currentObject;
-    
+// Returns true is `obj` data is valid or throws an error if not.
+export const validateObject = (state, obj) => {
     if (obj.object_name.length === 0) throw Error("Object name is required.");
-    if (checkIfCurrentObjectNameExists(state)) throw Error("Object name already exists.");
+    if (checkIfObjectNameExists(state, obj)) throw Error("Object name already exists.");
 
     switch (obj.object_type) {
         case "link":
@@ -44,20 +42,19 @@ export const validateCurrentObject = state => {
 };
 
 
-// Returns current object's object data in a format required by backed API.
-export const getCurrentObjectData = state => {
+// Returns `obj` object data serialized into a format required by backed API.
+export const serializeObjectData = obj => {
     // Function must return a copy of the object if its data is mutable;
     // This will prevent potential inconsistency in local storage due to user inputs during the add fetch.
-    const currentObject = state.objectUI.currentObject;
-    switch (currentObject.object_type) {
+    switch (obj.object_type) {
         case "link":
-            return { link: currentObject.link };
+            return { link: obj.link };
         case "markdown":
-            return { raw_text: currentObject.markdown.raw_text };
+            return { raw_text: obj.markdown.raw_text };
         case "to_do_list":
             return {
-                sort_type: currentObject.toDoList.sort_type,
-                items: currentObject.toDoList.itemOrder.map((id, index) => ({ item_number: index, ...currentObject.toDoList.items[id] }))
+                sort_type: obj.toDoList.sort_type,
+                items: obj.toDoList.itemOrder.map((id, index) => ({ item_number: index, ...obj.toDoList.items[id] }))
             };
         default:
             return null;

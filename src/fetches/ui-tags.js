@@ -1,31 +1,14 @@
 import config from "../config";
-import { runFetch, getErrorFromResponse } from "./common";
+
+import { runFetch, getErrorFromResponse, responseHasError } from "./common";
 import { deleteTagsFetch, getNonCachedTags } from "./data-tags";
-import { isFetchingTags } from "../store/state-util/ui-tags";
+
 import { setTagsFetch, setShowDeleteDialogTags, setTagsPaginationInfo } from "../actions/tags";
+
+import { isFetchingTags } from "../store/state-util/ui-tags";
 
 
 const backendURL = config.backendURL;
-
-
-// Fetches tags to display on provided `currentPage`.
-export const pageFetch = currentPage => {
-    return async (dispatch, getState) => {
-        const state = getState();
-
-        if (isFetchingTags(state)) return;
-
-        dispatch(setTagsPaginationInfo({ currentPage: currentPage }));
-        dispatch(setTagsFetch(true, ""));
-
-        let result = await dispatch(getPageTagIDs());   // Fetch IDs of tags to display on the page
-        if (result !== undefined) dispatch(setTagsFetch(false, result.error));
-        else {  // Fetch missing tag data
-            result = await dispatch(getNonCachedTags(getState().tagsUI.paginationInfo.currentPageTagIDs));
-            dispatch(setTagsFetch(false, result !== undefined ? result.error : ""));
-        }
-    };
-};
 
 
 // Updates pagination info, resets current displayed page to 1 and fetches tags to display on it.
@@ -38,11 +21,28 @@ export const setTagsPaginationInfoAndFetchPage = paginationInfo => {
 };
 
 
+// Fetches tags to display on provided `currentPage`.
+export const pageFetch = currentPage => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        if (isFetchingTags(state)) return;
+
+        dispatch(setTagsPaginationInfo({ currentPage: currentPage }));
+        dispatch(setTagsFetch(true, ""));
+
+        let result = await dispatch(getPageTagIDs());   // Fetch IDs of tags to display on the page
+        if (responseHasError(result)) dispatch(setTagsFetch(false, result.error));
+        else {  // Fetch missing tag data
+            result = await dispatch(getNonCachedTags(getState().tagsUI.paginationInfo.currentPageTagIDs));
+            dispatch(setTagsFetch(false, responseHasError(result) ? result.error : ""));
+        }
+    };
+};
+
+
 // Fetches backend and sets tag IDs of the current page based on the current pagination info settings.
 const getPageTagIDs = () => {
     return async (dispatch, getState) => {
-        dispatch(setTagsPaginationInfo({ totalItems: 0, currentPageTagIDs: [] }));
-
         const pI = getState().tagsUI.paginationInfo;
         let response = await runFetch(`${backendURL}/tags/get_page_tag_ids`, {
             method: "POST",
@@ -57,7 +57,7 @@ const getPageTagIDs = () => {
                 }
             })
         });
-        if (response.error !== undefined) return response;  // return error message in case of network error
+        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
@@ -66,7 +66,7 @@ const getPageTagIDs = () => {
             case 400:
             case 404:
             case 500:
-                return getErrorFromResponse(response);
+                return await getErrorFromResponse(response);
         }
     };
 }
@@ -85,8 +85,8 @@ export const onDeleteFetch = () => {
         // Run view fetch & delete tags data
         dispatch(setTagsFetch(true, ""));
         const result = await dispatch(deleteTagsFetch(state.tagsUI.selectedTagIDs));
-        if (result.error === undefined) {
-            dispatch(setTagsPaginationInfo({ currentPageTagIDs: state.tagsUI.paginationInfo.currentPageTagIDs.filter(id => !state.tagsUI.selectedTagIDs.includes(id)) }));  // delete from current page
+        if (!responseHasError(result)) {
+            dispatch(setTagsPaginationInfo({ currentPageTagIDs: state.tagsUI.paginationInfo.currentPageTagIDs.filter(id => !result.includes(id)) }));  // delete from current page
             dispatch(setTagsFetch(false, ""));
         } else {
             dispatch(setTagsFetch(false, result.error));
