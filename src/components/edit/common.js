@@ -33,9 +33,9 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector }) => {
     if (id === "add") {
         return null;
     }
-
-    const createdAt = new Date(useSelector(createdAtSelector) + "Z").toLocaleString();      // "Z" is required to indicate that the timestamp is in UTC timezone
-    const modifiedAt = new Date(useSelector(modifiedAtSelector) + "Z").toLocaleString();    // (which is not added by Python's datetime.isoformat function)
+    
+    const createdAt = new Date(useSelector(createdAtSelector)).toLocaleString();
+    const modifiedAt = new Date(useSelector(modifiedAtSelector)).toLocaleString();
     return (
         <Grid className="created-modified-timestamps-container" columns={2}>
             <Grid.Column>
