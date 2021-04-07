@@ -22,7 +22,7 @@ export const checkIfObjectNameExists = (state, obj) => {
 // Returns true is `obj` data is valid or throws an error if not.
 export const validateObject = (state, obj) => {
     if (obj.object_name.length === 0) throw Error("Object name is required.");
-    if (checkIfObjectNameExists(state, obj)) throw Error("Object name already exists.");
+    // if (checkIfObjectNameExists(state, obj)) throw Error("Object name already exists.");
 
     switch (obj.object_type) {
         case "link":

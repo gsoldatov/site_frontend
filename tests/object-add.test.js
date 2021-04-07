@@ -183,6 +183,7 @@ test("Handle save fetch error", async () => {
 });
 
 
+/*  // Unique constraint on lowered object_name is removed now
 test("Modify object name and try saving an existing (in local state) object name", async () => {
     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
         route: "/objects/add"
@@ -221,7 +222,7 @@ test("Try saving an existing (on backend) object name", async () => {
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "already exists", { exact: false }));
-});
+}); */
 
 
 test("Try saving link with incorrect data", async () => {
