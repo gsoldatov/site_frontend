@@ -5,6 +5,7 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils/ui-objects-tags";
+import { clickDataTabButton, clickGeneralTabButton } from "./test-utils/ui-object";
 import { renderWithWrappers } from "./test-utils/render";
 
 import createStore from "../src/store/create-store";
@@ -128,22 +129,28 @@ test("Add object => add tags & save object", async () => {
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
     expect(getTagInlineItem({ container, text: "new tag" })).toBeTruthy();
 
-    // Set the object values and save the object
+    // Set object attributes
     let objectNameInput = getByPlaceholderText(container, "Object name");
     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    let linkInput = getByPlaceholderText(container, "Link");
-    let saveButton = getByText(container, "Save");
     fireEvent.change(objectNameInput, { target: { value: "new object" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
     fireEvent.change(objectDescriptionInput, { target: { value: "new object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("new object description"));
+
+    // Set object data
+    clickDataTabButton(container);
+    let linkInput = getByPlaceholderText(container, "Link");
     fireEvent.change(linkInput, { target: { value: "https://google.com" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://google.com"));
+
+    // Save object
+    let saveButton = getByText(container, "Save");   
     fireEvent.click(saveButton);
     const object_id = 1000; // mock object returned has this id
 
     // Wait for redirect and tag fetch
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+    clickGeneralTabButton(container);
     await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toEqual(3)); // 2 tags + input
 });
 

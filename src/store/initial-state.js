@@ -95,6 +95,8 @@ const initialState = {
             }
         },
 
+        selectedTab: 0,
+
         saveAddObjectState: false,
 
         markdownDisplayMode: "both",

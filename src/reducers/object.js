@@ -1,4 +1,4 @@
-import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, SET_OBJECT_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS,
+import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, SET_SELECTED_TAB, SET_OBJECT_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS,
     SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
@@ -49,6 +49,8 @@ function loadAddObjectPage(state, action) {
                     items: {}
                 }
             },
+
+            selectedTab: 0,
 
             saveAddObjectState: true,
 
@@ -181,6 +183,16 @@ function setCurrentObject(state, action) {
             }
         }
     };
+}
+
+function setSelectedTab(state, action) {
+    return {
+        ...state,
+        objectUI: {
+            ...state.objectUI,
+            selectedTab: action.selectedTab
+        }
+    }
 }
 
 function setObjectTagsInput(state, action) {
@@ -322,6 +334,7 @@ const root = {
     LOAD_ADD_OBJECT_PAGE: loadAddObjectPage,
     LOAD_EDIT_OBJECT_PAGE: loadEditObjectPage,
     SET_CURRENT_OBJECT: setCurrentObject,
+    SET_SELECTED_TAB: setSelectedTab,
     SET_OBJECT_TAGS_INPUT: setObjectTagsInput,
     SET_CURRENT_OBJECT_TAGS: setCurrentObjectTags,
     SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject,

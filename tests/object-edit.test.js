@@ -6,6 +6,7 @@ import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle, quer
 
 import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
+import { clickGeneralTabButton, clickDataTabButton } from "./test-utils/ui-object";
 import { getTDLByObjectID } from "./mocks/data-to-do-lists";
 
 import createStore from "../src/store/create-store";
@@ -95,6 +96,7 @@ test("Load a link object from state", async () => {
     expect(store.getState().objectUI.currentObject.object_type).toEqual("link");
 
     // Check if link data is displayed
+    clickDataTabButton(container);
     expect(getByPlaceholderText(container, "Link").value).toEqual(objectData.object_data.link);
 });
 
@@ -131,6 +133,7 @@ test("Load a link object attributes from state and data from backend", async () 
     // Check if link data is displayed
     let objectData = store.getState().links[1];
     expect(objectData).toHaveProperty("link");
+    clickDataTabButton(container);
     expect(getByPlaceholderText(container, "Link").value).toEqual("https://website1.com");
 });
 
@@ -152,6 +155,7 @@ test("Load a link object from backend", async () => {
     getByText(container, "Modified at:");
 
     // Check if link is displayed (shortened verison of previous test)
+    clickDataTabButton(container);
     expect(getByPlaceholderText(container, "Link").value).toEqual("https://website1.com");
 });
 
@@ -196,6 +200,7 @@ test("Modify a link and click cancel", async () => {
     fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
 
+    clickDataTabButton(container);
     let linkInput = getByPlaceholderText(container, "Link");
     fireEvent.change(linkInput, { target: { value: "https://test.link.modified" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://test.link.modified"));
@@ -262,47 +267,54 @@ test("Delete a link object with fetch error", async () => {
     expect(store.getState().links[1]).toBeTruthy();
 });
 
+// // unique constraint on lowered object_name is removed
+// test("Save an existing link object", async () => {
+//     // Route component is required for matching (getting :id part of the URL in the EditObject component)
+//     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+//         route: "/objects/1"
+//     });
 
-test("Save an existing link object", async () => {
-    // Route component is required for matching (getting :id part of the URL in the EditObject component)
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/1"
-    });
+//     // Add an existing object
+//     store.dispatch(addObjects([ { object_id: 2, object_type: "link", object_name: "existing object name", object_description: "", 
+//                     created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() } ]));
 
-    // Wait for object information to be displayed on the page
-    await waitFor(() => getByText(container, "Object Information"));
-    let saveButton = getByText(container, "Save");
-    let objectNameInput = getByPlaceholderText(container, "Object name");
-    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    let linkInput = getByPlaceholderText(container, "Link");
-    let oldObject = {...store.getState().objects[1]};
-    let oldObjectData = {...store.getState().links[1]};
+//     // Wait for object information to be displayed on the page
+//     await waitFor(() => getByText(container, "Object Information"));
+//     let saveButton = getByText(container, "Save");
+//     let objectNameInput = getByPlaceholderText(container, "Object name");
+//     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+//     let oldObject = {...store.getState().objects[1]};
+//     let oldObjectData = {...store.getState().links[1]};
 
-    // Check if existing object name (in local state) is not saved
-    store.dispatch(addObjects([ { object_id: 2, object_type: "link", object_name: "existing object name", object_description: "", 
-                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() } ]));
-    fireEvent.change(objectNameInput, { target: { value: "existing object name" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("existing object name"));
-    fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
-    fireEvent.change(linkInput, { target: { value: "https://test.link.modified" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://test.link.modified"));
-    fireEvent.click(saveButton);
-    await waitFor(() => getByText(container, "already exists", { exact: false }));
-    for (let attr of ["object_name", "object_description", "created_at", "modified_at"]) {
-        expect(store.getState().objects[1][attr]).toEqual(oldObject[attr]);
-    }
-    expect(store.getState().links[1].link).toEqual(oldObjectData.link);
+//     // Modify attributes
+//     fireEvent.change(objectNameInput, { target: { value: "existing object name" } });
+//     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("existing object name"));
+//     fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
+//     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
 
-    // Check if existing object name (on backend) is not saved
-    store.dispatch(deleteObjects([2]));
-    fireEvent.click(saveButton);
-    await waitFor(() => getByText(container, "already exists", { exact: false }));
-    for (let attr of ["object_name", "object_name", "created_at", "modified_at"]) {
-        expect(store.getState().objects[1][attr]).toEqual(oldObject[attr]);
-    }
-    expect(store.getState().links[1].link).toEqual(oldObjectData.link);
-});
+//     // Modify data
+//     clickDataTabButton(container);
+//     let linkInput = getByPlaceholderText(container, "Link");
+//     fireEvent.change(linkInput, { target: { value: "https://test.link.modified" } });
+//     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://test.link.modified"));
+
+//     // Check if existing object name (in local state) is not saved
+//     fireEvent.click(saveButton);
+//     await waitFor(() => getByText(container, "already exists", { exact: false }));
+//     for (let attr of ["object_name", "object_description", "created_at", "modified_at"]) {
+//         expect(store.getState().objects[1][attr]).toEqual(oldObject[attr]);
+//     }
+//     expect(store.getState().links[1].link).toEqual(oldObjectData.link);
+
+//     // Check if existing object name (on backend) is not saved
+//     store.dispatch(deleteObjects([2]));
+//     fireEvent.click(saveButton);
+//     await waitFor(() => getByText(container, "already exists", { exact: false }));
+//     for (let attr of ["object_name", "object_name", "created_at", "modified_at"]) {
+//         expect(store.getState().objects[1][attr]).toEqual(oldObject[attr]);
+//     }
+//     expect(store.getState().links[1].link).toEqual(oldObjectData.link);
+// });
 
 
 test("Save an empty link object", async () => {
@@ -314,10 +326,11 @@ test("Save an empty link object", async () => {
     // Wait for object information to be displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
     let saveButton = getByText(container, "Save");
-    let linkInput = getByPlaceholderText(container, "Link");
     let oldObjectData = {...store.getState().links[1]};
 
     // Check if an empty link is not saved
+    clickDataTabButton(container);
+    let linkInput = getByPlaceholderText(container, "Link");
     fireEvent.change(linkInput, { target: { value: "" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(""));
     fireEvent.click(saveButton);
@@ -337,15 +350,20 @@ test("Update a link object", async () => {
     let saveButton = getByText(container, "Save");
     let objectNameInput = getByPlaceholderText(container, "Object name");
     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    let linkInput = getByPlaceholderText(container, "Link");
 
-    // Modify object attributes and save
+    // Modify attributes
     fireEvent.change(objectNameInput, { target: { value: "modified object name" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("modified object name"));
     fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
+
+    // Modify data
+    clickDataTabButton(container);
+    let linkInput = getByPlaceholderText(container, "Link");
     fireEvent.change(linkInput, { target: { value: "https://test.link.modified" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://test.link.modified"));
+
+    //  Save object
     fireEvent.click(saveButton);
     await waitFor(() => expect(store.getState().objects[1].object_name).toEqual("modified object name"));
     expect(store.getState().objects[1].object_description).toEqual("modified object description");
@@ -366,17 +384,22 @@ test("Update a link object with fetch error", async () => {
     let saveButton = getByText(container, "Save");
     let objectNameInput = getByPlaceholderText(container, "Object name");
     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    let linkInput = getByPlaceholderText(container, "Link");
+
+    // Modify attributes
     fireEvent.change(objectNameInput, { target: { value: "error" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("error"));
     fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
+
+    // Modify data
+    clickDataTabButton(container);
+    let linkInput = getByPlaceholderText(container, "Link");
     fireEvent.change(linkInput, { target: { value: "https://test.link.modified" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://test.link.modified"));
-    setFetchFail(true);
-    fireEvent.click(saveButton);
 
     // Check error message is displayed and object is not modified in the state
+    setFetchFail(true);
+    fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "Failed to fetch data."));
     for (let attr of ["object_name", "object_description", "created_at", "modified_at"]) {
         expect(store.getState().objects[1][attr]).toEqual(oldObject[attr]);
@@ -417,6 +440,7 @@ test("Load a markdown object from state", async () => {
     expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");
 
     // Check if markdown data is displayed in "both" mode
+    clickDataTabButton(container);
     const markdownContainer = document.querySelector(".markdown-container");
     expect(markdownContainer).toBeTruthy();
     let bothModeButton = getByTitle(markdownContainer, "Display edit window and parsed markdown");
@@ -466,6 +490,7 @@ test("Load a markdown object attributes from state and data from backend", async
     expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");
 
     // Check if markdown data is displayed
+    clickDataTabButton(container);
     let objectData = store.getState().markdown[1001];
     expect(objectData).toHaveProperty("raw_text");
     const markdownContainer = document.querySelector(".markdown-container");
@@ -508,15 +533,18 @@ test("Save an empty markdown object", async () => {
     await waitFor(() => getByText(container, "Object Information"));
     let saveButton = getByText(container, "Save");
     let oldObjectData = {...store.getState().markdown[1001]};
+
+    // Clear raw text
+    clickDataTabButton(container);
     const markdownContainer = document.querySelector(".markdown-container");
     expect(markdownContainer).toBeTruthy();
     let bothModeButton = getByTitle(markdownContainer, "Display edit window and parsed markdown");
     fireEvent.click(bothModeButton);
     let markdownInput = getByPlaceholderText(container, "Enter text here...");
-
-    // Check if an empty markdown is not saved
     fireEvent.change(markdownInput, { target: { value: "" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.markdown.raw_text).toBe(""));
+
+    // Check if an empty markdown is not saved
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "Markdown text is required.", { exact: false }));
     expect(store.getState().markdown[1001].raw_text).toEqual(oldObjectData.raw_text);
@@ -532,21 +560,26 @@ test("Update a markdown object", async () => {
     // Wait for object information to be displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
     let saveButton = getByText(container, "Save");
+
+    // Modify attributes
     let objectNameInput = getByPlaceholderText(container, "Object name");
     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+    fireEvent.change(objectNameInput, { target: { value: "modified object name" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("modified object name"));
+    fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
+    await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
+    
+    // Modify data
+    clickDataTabButton(container);
     const markdownContainer = document.querySelector(".markdown-container");
     expect(markdownContainer).toBeTruthy();
     let bothModeButton = getByTitle(markdownContainer, "Display edit window and parsed markdown");
     fireEvent.click(bothModeButton);
     let inputForm = getByPlaceholderText(markdownContainer, "Enter text here...");
-
-    // Modify object attributes and save
-    fireEvent.change(objectNameInput, { target: { value: "modified object name" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("modified object name"));
-    fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
     fireEvent.change(inputForm, { target: { value: "# Modified Markdown" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.markdown.raw_text).toBe("# Modified Markdown"));
+
+    // Save object    
     fireEvent.click(saveButton);
     await waitFor(() => expect(store.getState().objects[1001].object_name).toEqual("modified object name"));
     expect(store.getState().objects[1001].object_description).toEqual("modified object description");
@@ -586,6 +619,7 @@ test("Load a to-do list object from state", async () => {
     expect(store.getState().objectUI.currentObject.object_type).toEqual("to_do_list");
 
     // Check if all items are displayed (detailed interface checks are performed in to-do-lists.test.js)
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
     for (let item of objectData.object_data.items) getByText(TDLContainer, item.item_text);
@@ -623,6 +657,7 @@ test("Load a to-do list object attributes from state and data from backend", asy
     expect(store.getState().objectUI.currentObject.object_type).toEqual("to_do_list");
 
     // Check if all items are displayed (detailed interface checks are performed in to-do-lists.test.js)
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
     for (let key of store.getState().objectUI.currentObject.toDoList.itemOrder) getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[key].item_text);
@@ -661,6 +696,7 @@ test("Save an empty to-do list object", async () => {
     await waitFor(() => getByText(container, "Object Information"));
     let saveButton = getByText(container, "Save");
     let oldObjectData = {...store.getState().toDoLists[2001]};
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
     
@@ -690,21 +726,25 @@ test("Update a to-do list object", async () => {
     // Wait for object information to be displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
     let saveButton = getByText(container, "Save");
+
+    // Modify attributes
     let objectNameInput = getByPlaceholderText(container, "Object name");
     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    const TDLContainer = container.querySelector(".to-do-list-container");
-    expect(TDLContainer).toBeTruthy();
-    let newItemInput = getByPlaceholderText(TDLContainer, "New item");
-
-    // Modify object attributes and save
     fireEvent.change(objectNameInput, { target: { value: "modified object name" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("modified object name"));
     fireEvent.change(objectDescriptionInput, { target: { value: "modified object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("modified object description"));
+
+    // Modify data
+    clickDataTabButton(container);
+    const TDLContainer = container.querySelector(".to-do-list-container");
+    expect(TDLContainer).toBeTruthy();
+    let newItemInput = getByPlaceholderText(TDLContainer, "New item");
     const newItemIndex = Math.max(...store.getState().objectUI.currentObject.toDoList.itemOrder) + 1;
     fireEvent.input(newItemInput, { target: { innerHTML: "new to-do list item" }});
     await waitFor(() => expect(store.getState().objectUI.currentObject.toDoList.items[newItemIndex].item_text).toBe("new to-do list item"));
 
+    // Save object
     fireEvent.click(saveButton);
     await waitFor(() => expect(store.getState().objects[2001].object_name).toEqual("modified object name"));
     expect(store.getState().objects[2001].object_description).toEqual("modified object description");

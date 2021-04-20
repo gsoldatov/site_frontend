@@ -7,6 +7,7 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholde
 import { compareItemData, getDefaultSortOrder, getRenderedItemIndent, checkRenderedItemsOrder } from "./test-utils/to-do-lists";
 import { defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "./mocks/data-to-do-lists";
 import { renderWithWrappersAndDnDProvider } from "./test-utils/render";
+import { clickDataTabButton } from "./test-utils/ui-object";
 
 import { AddObject, EditObject } from "../src/components/object";
 import * as caret from "../src/util/caret";
@@ -35,6 +36,7 @@ test("Load a new to-do list", async () => {
     // Select to-do list object type
     const TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
     fireEvent.click(TDLButton);
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
 
@@ -57,6 +59,7 @@ test("Load an existing to-do list", async () => {
 
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
 
@@ -120,6 +123,7 @@ test("Add, edit & delete items", async () => {
     // Select to-do list object type
     const TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
     fireEvent.click(TDLButton);
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
     const newItemInput = getByPlaceholderText(TDLContainer, "New item");
@@ -154,6 +158,7 @@ test("Delete with children button", async () => {
 
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
     const itemOrder = getDefaultSortOrder(store.getState().objectUI.currentObject.toDoList);
@@ -184,6 +189,7 @@ test("Change item states", async () => {
 
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
 
@@ -208,6 +214,7 @@ test("Change item sort", async () => {
 
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
     expect(store.getState().objectUI.currentObject.toDoList.sort_type).toEqual("default");
@@ -247,6 +254,7 @@ test("Expand/collapse button", async () => {
 
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
 
@@ -295,6 +303,7 @@ test("New item input indenation", async () => {
     // Select to-do list object type
     const TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
     fireEvent.click(TDLButton);
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
 
@@ -367,6 +376,7 @@ test("Item input indenation", async () => {
 
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Object Information"));
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
 
@@ -458,6 +468,7 @@ describe("Commentaries", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         
@@ -506,6 +517,7 @@ describe("Commentaries", () => {
     
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -548,6 +560,7 @@ describe("Keybinds (default sort)", () => {
     
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         const itemOrder = expectedUpDownTDLItemOrder;    // default item order without children of collapsed items
@@ -601,6 +614,7 @@ describe("Keybinds (default sort)", () => {
     
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -654,6 +668,7 @@ describe("Keybinds (default sort)", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -713,6 +728,7 @@ describe("Keybinds (default sort)", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -774,6 +790,7 @@ describe("Keybinds (default sort)", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -812,6 +829,7 @@ describe("Keybinds (default sort)", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         expect(store.getState().objectUI.currentObject.toDoList.items[0].item_state).toEqual("active");
@@ -841,6 +859,7 @@ describe("Keybinds (default sort)", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         expect(store.getState().objectUI.currentObject.toDoList.items[0].is_expanded).toBeTruthy();
@@ -875,6 +894,7 @@ describe("Keybinds (sort by state)", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         // const itemOrder = getSortByStateOrder(store.getState().objectUI.currentObject.toDoList);
@@ -925,6 +945,7 @@ describe("Keybinds (sort by state)", () => {
     
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -971,6 +992,7 @@ describe("Keybinds (sort by state)", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -1034,6 +1056,7 @@ describe("Keybinds (sort by state)", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -1091,6 +1114,7 @@ describe("Keybinds (sort by state)", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -1131,6 +1155,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         
@@ -1179,6 +1204,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         let items = TDLContainer.querySelectorAll(".to-do-list-item-container");
@@ -1234,6 +1260,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -1285,6 +1312,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -1332,6 +1360,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -1377,6 +1406,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -1407,6 +1437,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 
@@ -1442,6 +1473,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         let items = TDLContainer.querySelectorAll(".to-do-list-item-container");
@@ -1472,6 +1504,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         
@@ -1491,6 +1524,7 @@ describe("Drag and drop", () => {
 
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
 

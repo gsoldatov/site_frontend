@@ -5,6 +5,7 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
 import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
+import { getObjectTypeSelectingElements, clickGeneralTabButton, clickDataTabButton } from "./test-utils/ui-object";
 
 import createStore from "../src/store/create-store";
 import { AddObject, EditObject } from "../src/components/object";
@@ -51,58 +52,40 @@ test("Render and click cancel button", async () => {
 
 
 test("Select different object types", async () => {
+
     let { store, container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
         route: "/objects/add"
     });
 
-    // Check if object types selector is rendered and enabled
-    const objectTypeSelector = container.querySelector(".object-type-menu");
-    const mainContentContainer = container.querySelector("div.twelve.wide.column");
-    const objectNameDescriptionInput = container.querySelector(".edit-page-textarea").parentNode.parentNode;  // name + descr form
-    expect(objectTypeSelector).toBeTruthy();
-    expect(mainContentContainer).toBeTruthy();
-    expect(objectNameDescriptionInput).toBeTruthy();
-    
-    // Get link, markdown and to-do selecting elements
-    let linkButton, markdownButton, TDLButton;
-    objectTypeSelector.querySelectorAll(".object-type").forEach(node => {
-        const innerHTML = node.innerHTML;
-        if (innerHTML.includes("Link")) linkButton = node;
-        else if (innerHTML.includes("Markdown")) markdownButton = node;
-        else if (innerHTML.includes("To-Do List")) TDLButton = node;
-    });
-    expect(linkButton).toBeTruthy();
-    expect(markdownButton).toBeTruthy();
-    expect(TDLButton).toBeTruthy();
-
-    // Select markdown object type and check if only markdown inputs are rendered
+    // Select markdown object type and check if markdown inputs are rendered
+    let { markdownButton } = getObjectTypeSelectingElements(container);
     fireEvent.click(markdownButton);
+    clickDataTabButton(container);
     const markdownContainer = document.querySelector(".markdown-container");
     expect(markdownContainer).toBeTruthy();
-    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input (before object data div, tag block, tag block header)
-    expect(mainContentContainer.lastChild).toEqual(markdownContainer);  // last node is Markdown input mock
+    // expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input (before object data div, tag block, tag block header)
+    // expect(mainContentContainer.lastChild).toEqual(markdownContainer);  // last node is Markdown input mock
     expect(store.getState().objectUI.currentObject.object_type).toEqual("markdown");
 
-    // Select to-do object type and check if only to-do inputs are rendered
+    // Select to-do object type and check if to-do inputs are rendered
+    clickGeneralTabButton(container);
+    let { TDLButton } = getObjectTypeSelectingElements(container);
     fireEvent.click(TDLButton);
+    clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
-    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
-    expect(mainContentContainer.lastChild).toEqual(TDLContainer);  // last node is To-Do list input mock
-    expect(store.getState().objectUI.currentObject.object_type).toEqual("to_do_list");
-
-
-    // // Select to-do object type and check if only to-do inputs are rendered
-    // fireEvent.click(TDLButton);
-    // const tdInput = getByText(container, "Not implemented");
     // expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
-    // expect(mainContentContainer.lastChild).toEqual(tdInput);  // last node is To-Do list input mock
+    // expect(mainContentContainer.lastChild).toEqual(TDLContainer);  // last node is To-Do list input mock
+    expect(store.getState().objectUI.currentObject.object_type).toEqual("to_do_list");
     
-    // Select link object type and check if only link inputs are rendered
+    // Select link object type and check if link inputs are rendered    
+    clickGeneralTabButton(container);
+    let { linkButton } = getObjectTypeSelectingElements(container);
     fireEvent.click(linkButton);
-    expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
-    const linkInput = getByPlaceholderText(mainContentContainer, "Link");
-    expect(mainContentContainer.lastChild).toEqual(linkInput.parentNode.parentNode.parentNode);   // last node is link input form
+    clickDataTabButton(container);
+    // expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
+    // const linkInput = getByPlaceholderText(mainContentContainer, "Link");
+    // expect(mainContentContainer.lastChild).toEqual(linkInput.parentNode.parentNode.parentNode);   // last node is link input form
     expect(store.getState().objectUI.currentObject.object_type).toEqual("link");
 });
 
@@ -167,10 +150,12 @@ test("Handle save fetch error", async () => {
 
     // Check if an error message is displayed and object is not added to the state
     let objectNameInput = getByPlaceholderText(container, "Object name");
-    let linkInput = getByPlaceholderText(container, "Link");
     let saveButton = getByText(container, "Save");
     fireEvent.change(objectNameInput, { target: { value: "error" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("error"));  // wait for object_name to be updated in state
+
+    clickDataTabButton(container);
+    let linkInput = getByPlaceholderText(container, "Link");
     const linkValue = "https://google.com"
     fireEvent.change(linkInput, { target: { value: linkValue } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
@@ -183,46 +168,46 @@ test("Handle save fetch error", async () => {
 });
 
 
-/*  // Unique constraint on lowered object_name is removed now
-test("Modify object name and try saving an existing (in local state) object name", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add"
-    });
+// // Unique constraint on lowered object_name is removed now
+// test("Modify object name and try saving an existing (in local state) object name", async () => {
+//     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+//         route: "/objects/add"
+//     });
 
-    // Check if input is updating the state
-    let objectNameInput = getByPlaceholderText(container, "Object name");
-    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    let saveButton = getByText(container, "Save");
-    fireEvent.change(objectNameInput, { target: { value: "existing object_name" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("existing object_name"));
-    fireEvent.change(objectDescriptionInput, { target: { value: "object description" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("object description"));
+//     // Check if input is updating the state
+//     let objectNameInput = getByPlaceholderText(container, "Object name");
+//     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+//     let saveButton = getByText(container, "Save");
+//     fireEvent.change(objectNameInput, { target: { value: "existing object_name" } });
+//     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("existing object_name"));
+//     fireEvent.change(objectDescriptionInput, { target: { value: "object description" } });
+//     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("object description"));
     
-    // Check if existing object_name (in store) is not added
-    store.dispatch(addObjects([{ object_id: 1, object_type: "link", object_name: "existing object_name", object_description: "", created_at: new Date(), modified_at: new Date() }]));
-    saveButton = getByText(container, "Save");
-    fireEvent.click(saveButton);
-    let errorMessage = getByText(container, "already exists", { exact: false });
-});
+//     // Check if existing object_name (in store) is not added
+//     store.dispatch(addObjects([{ object_id: 1, object_type: "link", object_name: "existing object_name", object_description: "", created_at: new Date(), modified_at: new Date() }]));
+//     saveButton = getByText(container, "Save");
+//     fireEvent.click(saveButton);
+//     let errorMessage = getByText(container, "already exists", { exact: false });
+// });
 
 
-test("Try saving an existing (on backend) object name", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add"
-    });
+// test("Try saving an existing (on backend) object name", async () => {
+//     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+//         route: "/objects/add"
+//     });
 
-    // Check if existing object_name (on backend) is not added
-    let objectNameInput = getByPlaceholderText(container, "Object name");
-    let linkInput = getByPlaceholderText(container, "Link");
-    let saveButton = getByText(container, "Save");
-    fireEvent.change(objectNameInput, { target: { value: "existing object_name" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("existing object_name"));  // wait for object_name to be updated in state
-    const linkValue = "https://google.com"
-    fireEvent.change(linkInput, { target: { value: linkValue } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
-    fireEvent.click(saveButton);
-    await waitFor(() => getByText(container, "already exists", { exact: false }));
-}); */
+//     // Check if existing object_name (on backend) is not added
+//     let objectNameInput = getByPlaceholderText(container, "Object name");
+//     let linkInput = getByPlaceholderText(container, "Link");
+//     let saveButton = getByText(container, "Save");
+//     fireEvent.change(objectNameInput, { target: { value: "existing object_name" } });
+//     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("existing object_name"));  // wait for object_name to be updated in state
+//     const linkValue = "https://google.com"
+//     fireEvent.change(linkInput, { target: { value: linkValue } });
+//     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
+//     fireEvent.click(saveButton);
+//     await waitFor(() => getByText(container, "already exists", { exact: false }));
+// });
 
 
 test("Try saving link with incorrect data", async () => {
@@ -255,7 +240,6 @@ test("Save a new link", async () => {
 
     let objectNameInput = getByPlaceholderText(container, "Object name");
     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    let linkInput = getByPlaceholderText(container, "Link");
     let saveButton = getByText(container, "Save");
 
     // Check if object is redirected after adding a correct object
@@ -263,18 +247,20 @@ test("Save a new link", async () => {
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
     fireEvent.change(objectDescriptionInput, { target: { value: "new object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("new object description"));
+
+    clickDataTabButton(container);
+    let linkInput = getByPlaceholderText(container, "Link");
     const linkValue = "https://google.com"
     fireEvent.change(linkInput, { target: { value: linkValue } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe(linkValue));
     fireEvent.click(saveButton);
     const object_id = 1000; // mock object returned has this id
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+    expect(getByPlaceholderText(container, "Link").value).toEqual(linkValue);
+        
+    clickGeneralTabButton(container);
     expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
     expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
-    expect(getByPlaceholderText(container, "Link").value).toEqual(linkValue);
-    // let object = store.getState().objects[object_id];
-    // getByText(container, object["created_at"]);
-    // getByText(container, object["modified_at"]);
     getByText(container, "Created at:");
     getByText(container, "Modified at:");
 
@@ -289,13 +275,12 @@ test("Change markdown display modes & render markdown", async () => {
     let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
         route: "/objects/add"
     });
-
     // Change object type
-    let markdownButton;
-    container.querySelector(".object-type-menu").querySelectorAll(".object-type").forEach(node => {
-        if (node.innerHTML.includes("Markdown")) markdownButton = node;
-    });
+    let { markdownButton } = getObjectTypeSelectingElements(container);
     fireEvent.click(markdownButton);
+
+    // Select data tab
+    clickDataTabButton(container);
     const markdownContainer = document.querySelector(".markdown-container");
     expect(markdownContainer).toBeTruthy();
 
@@ -335,7 +320,7 @@ test("Try saving markdown with incorrect data", async () => {
 
     // Get object name input, link object type button & save button
     const objectNameInput = getByPlaceholderText(container, "Object name");
-    const markdownButton = getByText(container.querySelector(".object-type-menu"), "Markdown");
+    const { markdownButton } = getObjectTypeSelectingElements(container);
     const saveButton = getByText(container, "Save");
 
     // Set a valid object name
@@ -356,37 +341,38 @@ test("Save a new markdown object", async () => {
         { route: "/objects/add" }
     );
 
-    // Change object type & display mode
-    let markdownButton;
-    container.querySelector(".object-type-menu").querySelectorAll(".object-type").forEach(node => {
-        if (node.innerHTML.includes("Markdown")) markdownButton = node;
-    });
+    // Change object type
+    const { markdownButton } = getObjectTypeSelectingElements(container);
     fireEvent.click(markdownButton);
-    let editModeButton = getByTitle(container, "Display edit window")
-    fireEvent.click(editModeButton);
 
     let objectNameInput = getByPlaceholderText(container, "Object name");
     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    let inputForm = getByPlaceholderText(container, "Enter text here...");
     let saveButton = getByText(container, "Save");
-
-    // Check if object is redirected after adding a correct object
+    
+    // Enter attributes
     fireEvent.change(objectNameInput, { target: { value: "new object" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
     fireEvent.change(objectDescriptionInput, { target: { value: "new object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("new object description"));
+
+    // Change display mode and enter MD text
+    clickDataTabButton(container);
+    let editModeButton = getByTitle(container, "Display edit window")
+    fireEvent.click(editModeButton);
+    let inputForm = getByPlaceholderText(container, "Enter text here...");
     const rawText = "**Test text**";
     fireEvent.change(inputForm, { target: { value: rawText } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.markdown.raw_text).toEqual(rawText));
+
+    // Check if object is redirected after adding a correct object
     fireEvent.click(saveButton);
     const object_id = 1000; // mock object returned has this id
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+    expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText);
+    
+    clickGeneralTabButton(container);
     expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
     expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
-    expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText);
-    // let object = store.getState().objects[object_id];
-    // getByText(container, object["created_at"]);
-    // getByText(container, object["modified_at"]);
     getByText(container, "Created at:");
     getByText(container, "Modified at:");
 
@@ -423,30 +409,36 @@ test("Save a new to-do list object", async () => {
     );
 
     // Change object type
-    let TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
+    const { TDLButton } = getObjectTypeSelectingElements(container);
     fireEvent.click(TDLButton);
 
     let objectNameInput = getByPlaceholderText(container, "Object name");
     let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    // let inputForm = getByPlaceholderText(container, "Enter text here...");
-    let newItemInput = getByPlaceholderText(container.querySelector(".to-do-list-item-container"), "New item");
     let saveButton = getByText(container, "Save");
 
-    // Check if object is redirected after adding a correct object
+    // Enter attributes
     fireEvent.change(objectNameInput, { target: { value: "new object" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
     fireEvent.change(objectDescriptionInput, { target: { value: "new object description" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("new object description"));
+
+    // Add a to-do list item
+    clickDataTabButton(container);
+    let newItemInput = getByPlaceholderText(container.querySelector(".to-do-list-item-container"), "New item");
     fireEvent.input(newItemInput, { target: { innerHTML: "new value" } });
     await waitFor(() => expect(store.getState().objectUI.currentObject.toDoList.items[0].item_text).toBe("new value"));
+
+    // Check if object is redirected after adding a correct object
     fireEvent.click(saveButton);
     const object_id = 1000; // mock object returned has this id
-    
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
-    expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
-    expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
+    
     let TDLContainer = container.querySelector(".to-do-list-container");
     getByText(TDLContainer, "new value");
+
+    clickGeneralTabButton(container);
+    expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
+    expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
     getByText(container, "Created at:");
     getByText(container, "Modified at:");
     expect(store.getState().toDoLists[object_id].items[0].item_text).toEqual("new value");

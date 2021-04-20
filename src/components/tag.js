@@ -11,7 +11,7 @@ import { setRedirectOnRender } from "../actions/common";
 import { loadAddTagPage, setCurrentTag, setShowDeleteDialogTag } from "../actions/tag";
 import { addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../fetches/ui-tag";
 
-import StyleCommon from "../styles/common.css";
+import StyleTag from "../styles/tag.css";
 
 
 /*

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Header } from "semantic-ui-react";
+import { Header, Tab } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
@@ -13,10 +13,8 @@ import { InlineInput } from "./inline/inline-input";
 
 import { isFetchingObject, isFetchinOrShowingDialogObject } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setObjectTagsInput, setShowDeleteDialogObject } from "../actions/object";
+import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setSelectedTab, setObjectTagsInput, setShowDeleteDialogObject } from "../actions/object";
 import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
-
-import StyleCommon from "../styles/common.css";
 
 
 /*
@@ -115,17 +113,42 @@ const _Object = ({ header, sideMenuItems, onLoad }) => {
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
     const pageBody = loadIndicatorAndError || (
         <>
-            <Header as="h3" className="add-edit-page-header">{header}</Header>
-            <ObjectTypeSelector />
-            <ObjectTimeStamps />
+            <Header as="h3">{header}</Header>
             <ObjectSaveError />
-            <ObjectInput />
-            <ObjectTags />
-            <ObjectViewEditSwitch />
+            <ObjectTabPanes />
         </>
     );
 
     return <Layout sideMenuItems={sideMenuItems} body={pageBody} />;
+};
+
+
+// Object attribute & data tabs
+const tabPanes = [
+    { menuItem: "General", render: () => 
+        <Tab.Pane>
+            <ObjectTypeSelector />
+            <ObjectTimeStamps />
+            <ObjectInput />
+            <ObjectTags />
+        </Tab.Pane> 
+    },
+    { menuItem: "Data", render: () =>
+        <Tab.Pane>
+            <ObjectViewEditSwitch />
+        </Tab.Pane>
+    }
+];
+
+const selectedTabSelector = state => state.objectUI.selectedTab;
+const ObjectTabPanes = () => {
+    const activeIndex = useSelector(selectedTabSelector);
+    const dispatch = useDispatch();
+    const onTabChange = (e, data) => {
+        dispatch(setSelectedTab(data.activeIndex));
+    };
+
+    return <Tab panes={tabPanes} activeIndex={activeIndex} onTabChange={onTabChange} />;
 };
 
 

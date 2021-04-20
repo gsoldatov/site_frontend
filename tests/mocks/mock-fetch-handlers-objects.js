@@ -14,9 +14,9 @@ function handleAdd(body) {
     if (!["link", "markdown", "to_do_list"].includes(object["object_type"]))
         throw new Exception("Received unexpected object_type in handleAdd");
 
-    // Handle existing object_name case
-    if (object["object_name"] === "existing object_name")
-        return {status: 400, json: () => Promise.resolve({_error: "Submitted object name already exists."})};
+    // // Handle existing object_name case  // unique constraint on lowered object_name is removed
+    // if (object["object_name"] === "existing object_name")
+    //     return {status: 400, json: () => Promise.resolve({_error: "Submitted object name already exists."})};
 
     // Set attributes of the new object
     const objectID = 1000;
@@ -116,9 +116,9 @@ function handleDelete(body) {
 function handleUpdate(body) {
     const object = JSON.parse(body).object;
 
-    // Handle existing name case
-    if (object.object_name === "existing object name")
-        return { status: 400, json: () => Promise.resolve({_error: "Object name already exists."}) };
+    // // Handle existing name case // unique constraint on lowered object_name is removed
+    // if (object.object_name === "existing object name")
+    //     return { status: 400, json: () => Promise.resolve({_error: "Object name already exists."}) };
     
     // Set object's tags (autogenerate & cache tag_ids for provided tag names => add all tag_ids to the object)
     const tagUpdates = { added_tag_ids: [], removed_tag_ids: object.removed_tag_ids };
