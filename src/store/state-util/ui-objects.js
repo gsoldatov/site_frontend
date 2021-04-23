@@ -8,7 +8,7 @@ export const isFetchingObjects = state => state.objectsUI.fetch.isFetching;
 
 
 // Returns true if object page fetch is being performed or a confirmation dialog is being displayed.
-export const isFetchinOrShowingDialogObjects = state => isFetchingObjects(state) || state.objectsUI.showDeleteDialog;
+export const isFetchingOrShowingDeleteDialogObjects = state => isFetchingObjects(state) || state.objectsUI.showDeleteDialog;
 
 
 // Returns true if there are currently added or removed tags in objectsUI state

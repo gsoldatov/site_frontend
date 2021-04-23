@@ -17,7 +17,7 @@ import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo,
         setShowDeleteDialogObjects, toggleObjectSelection, setCurrentObjectsTags, setObjectsTagsInput, setTagsFilterInput  } from "../actions/objects";
 import { objectsOnLoadFetch, pageFetch, setObjectsPaginationInfoAndFetchPage, onDeleteFetch, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch, 
         setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../fetches/ui-objects";
-import { isFetchingObjects, isFetchinOrShowingDialogObjects, isObjectsTagsEditActive } from "../store/state-util/ui-objects";
+import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive } from "../store/state-util/ui-objects";
 import { objectsGetCommonTagIDs, objectsGetPartiallyAppliedTagIDs, objectsGetAddedTags } from "../store/state-util/ui-objects";
 
 
@@ -58,21 +58,21 @@ const sideMenuItems = [
     {
         type: "item",
         text: "Add Object",
-        isActiveSelector: state => !isFetchinOrShowingDialogObjects(state),
+        isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state),
         isVisibleSelector: state => !isObjectsTagsEditActive(state),
         onClick: setRedirectOnRender("/objects/add")
     },
     {
         type: "item",
         text: "Edit Object",
-        isActiveSelector: state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchinOrShowingDialogObjects(state),
+        isActiveSelector: state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchingOrShowingDeleteDialogObjects(state),
         isVisibleSelector: state => !isObjectsTagsEditActive(state),
         onClick: setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.objectsEdit)
     },
     {
         type: "item",
         text: "Delete",
-        isActiveSelector: state => !isFetchinOrShowingDialogObjects(state) && state.objectsUI.selectedObjectIDs.length > 0,
+        isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state) && state.objectsUI.selectedObjectIDs.length > 0,
         isVisibleSelector: state => !state.objectsUI.showDeleteDialog && !isObjectsTagsEditActive(state),
         onClick: setShowDeleteDialogObjects(true)
     },
