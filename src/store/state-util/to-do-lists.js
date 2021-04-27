@@ -94,14 +94,6 @@ const itemStates = ["active", "optional", "completed", "cancelled"];
 export const getNewItemState = state => itemStates[(itemStates.indexOf(state) + 1) % 4];
 
 
-// Returns a deep copy of toDoList items
-export const getItemsCopy = toDoList => {
-    let items = {};
-    Object.keys(toDoList.items).map(i => parseInt(i)).forEach(i => { items[i] = { ...toDoList.items[i] }});
-    return items;
-};
-
-
 // Returns the indent of the item previous to the item with provided `id`.
 // If `id` = "newItem", returns the indent of the last item in the list.
 // If item is first in the list, returns -1.

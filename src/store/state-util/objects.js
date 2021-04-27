@@ -1,4 +1,4 @@
-import { getItemsCopy } from "./to-do-lists";
+import { deepCopy } from "../../util/copy";
 /*
     Functions for checking/getting objects state.
 */
@@ -77,7 +77,7 @@ export const getObjectDataFromStore = (state, object_id) => {
             if (!state.toDoLists[object_id]) return undefined;
             return { toDoList: {
                 ...state.toDoLists[object_id],
-                items: getItemsCopy(state.toDoLists[object_id])
+                items: deepCopy(state.toDoLists[object_id].items)
             }};
         default:
             return undefined;

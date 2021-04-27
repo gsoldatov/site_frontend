@@ -1,5 +1,6 @@
-import { getSortedItemIDs, getVisibleSortedItemIDs, getNewItemID, getItemsCopy, getPreviousItemIndent, 
+import { getSortedItemIDs, getVisibleSortedItemIDs, getNewItemID, getPreviousItemIndent, 
         getParentIDs, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
+import { deepCopy } from "../../util/copy";
 
 
 /*
@@ -32,7 +33,7 @@ export const updateToDoListItems = (toDoList, update) => {
         const newID = getNewItemID(toDoList);
         const newItemOrder = [...toDoList.itemOrder];
         newItemOrder.splice(position, 0, newID);
-        const newItems = getItemsCopy(toDoList);
+        const newItems = deepCopy(toDoList.items);
         newItems[newID] = newItem;
 
         // Expand parents of the new item
@@ -53,7 +54,7 @@ export const updateToDoListItems = (toDoList, update) => {
         Object.keys(itemDefaults).forEach(k => {
             newItem[k] = update[k] !== undefined ? update[k] : toDoList.items[update.id][k];
         });
-        const newItems = getItemsCopy(toDoList);
+        const newItems = deepCopy(toDoList.items);
         newItems[update.id] = newItem;
         return {
             ...toDoList,
@@ -71,7 +72,7 @@ export const updateToDoListItems = (toDoList, update) => {
     if (command === "delete") {
         const { id, setFocus, deleteChildren } = update;
         let newItemOrder = toDoList.itemOrder.filter(i => i !== id);
-        const newItems = getItemsCopy(toDoList);
+        const newItems = deepCopy(toDoList.items);
         delete newItems[id];
 
         // Update children indent or delete them
@@ -160,7 +161,7 @@ export const updateToDoListItems = (toDoList, update) => {
         const position = newItemOrder.indexOf(update.id);
         newItemOrder.splice(position, 1, newCurrID, newCurrID + 1);
         
-        const newItems = getItemsCopy(toDoList);
+        const newItems = deepCopy(toDoList.items);
         delete newItems[update.id];
         const { item_state, commentary, indent } = toDoList.items[update.id];
         newItems[newCurrID] = {...itemDefaults, item_text: update.before, item_state, commentary, indent};
@@ -210,7 +211,7 @@ export const updateToDoListItems = (toDoList, update) => {
             commentary: toDoList.items[prevID].commentary,
             indent: toDoList.items[prevID].indent
         };
-        const newItems = getItemsCopy(toDoList);
+        const newItems = deepCopy(toDoList.items);
         newItems[newCurrID] = newItem;
         delete newItems[id];
         delete newItems[prevID];
@@ -272,7 +273,7 @@ export const updateToDoListItems = (toDoList, update) => {
             commentary: toDoList.items[id].commentary,
             indent: toDoList.items[id].indent
         };
-        const newItems = getItemsCopy(toDoList);
+        const newItems = deepCopy(toDoList.items);
         newItems[newCurrID] = newItem;
         delete newItems[id];
         delete newItems[nextID];
@@ -328,7 +329,7 @@ export const updateToDoListItems = (toDoList, update) => {
         newItemOrder.splice(targetPosition, 0, movedID, ...movedChildren);
 
         // Update indent of item and children
-        const newItems = getItemsCopy(toDoList);
+        const newItems = deepCopy(toDoList.items);
         newItems[movedID].indent = toDoList.dropIndent;
         const indentDifference = toDoList.dropIndent - toDoList.items[movedID].indent;
         movedChildren.forEach(i => {
