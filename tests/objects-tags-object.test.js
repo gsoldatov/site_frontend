@@ -1,15 +1,16 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils/ui-objects-tags";
-import { clickDataTabButton, clickGeneralTabButton } from "./test-utils/ui-object";
+import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "./test-utils/ui-object";
 import { renderWithWrappers } from "./test-utils/render";
 
 import createStore from "../src/store/create-store";
 import { AddObject, EditObject } from "../src/components/object";
+import Objects from "../src/components/objects";
 import { setObjectsTags } from "../src/actions/data-tags";
 import { addObjects, addObjectData } from "../src/actions/data-objects";
 
@@ -29,247 +30,386 @@ beforeEach(() => {
 });
 
 
-test("Add object => check tag input elements", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add"
+
+describe("Add object page", () => {
+    test("Check tag input elements", async () => {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+    
+        // Input is not rendered by default
+        expect(getInlineInputField({ container })).toBeFalsy();
+    
+        // Click the tag input toggle icon
+        let inputToggle = getByTitle(container, "Click to add tags");
+        expect(inputToggle).toBeTruthy();
+        fireEvent.click(inputToggle);
+    
+        // Check if input is rendered
+        let input = getInlineInputField({ container });
+    
+        // Change input value
+        fireEvent.change(input, { target: { value: "some text" } });
+        expect(store.getState().objectUI.tagsInput.inputText).toEqual("some text");
+    
+        // Click Escape & check if input is not rendered
+        fireEvent.keyDown(input, { key: "Escape", code: "Escape" });
+        expect(getInlineInputField({ container })).toBeFalsy();
     });
-
-    // Input is not rendered by default
-    expect(getInlineInputField({ container })).toBeFalsy();
-
-    // Click the tag input toggle icon
-    let inputToggle = getByTitle(container, "Click to add tags");
-    expect(inputToggle).toBeTruthy();
-    fireEvent.click(inputToggle);
-
-    // Check if input is rendered
-    let input = getInlineInputField({ container });
-
-    // Change input value
-    fireEvent.change(input, { target: { value: "some text" } });
-    expect(store.getState().objectUI.currentObject.tagsInput.inputText).toEqual("some text");
-
-    // Click Escape & check if input is not rendered
-    fireEvent.keyDown(input, { key: "Escape", code: "Escape" });
-    expect(getInlineInputField({ container })).toBeFalsy();
-});
-
-
-test("Add object => check input dropdown", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add"
+    
+    
+    test("Check input dropdown", async () => {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+    
+        // Change input text
+        let inputToggle = getByTitle(container, "Click to add tags");
+        fireEvent.click(inputToggle);
+        let input = getInlineInputField({ container });
+        fireEvent.change(input, { target: { value: "some text" } });
+    
+        // Check if filtered options appeared
+        await waitFor(() => {
+            expect(store.getState().objectUI.tagsInput.matchingIDs.length).toEqual(10);
+            let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "some text" });
+            expect(dropdown).toBeTruthy();
+            // expect(dropdown.childNodes.length).toEqual(11); // add new + 10 existing tags    // dropdown list <div> tags are not rendered in tests, despite the options being passed into Dropdown component
+        });
     });
-
-    // Change input text
-    let inputToggle = getByTitle(container, "Click to add tags");
-    fireEvent.click(inputToggle);
-    let input = getInlineInputField({ container });
-    fireEvent.change(input, { target: { value: "some text" } });
-
-    // Check if filtered options appeared
-    await waitFor(() => {
-        expect(store.getState().objectUI.currentObject.tagsInput.matchingIDs.length).toEqual(10);
-        let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "some text" });
+    
+    
+    test("Add & remove tags", async () => {
+        let { store, container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+    
+        let inputToggle = getByTitle(container, "Click to add tags");
+        expect(inputToggle).toBeTruthy();
+        fireEvent.click(inputToggle);
+        let input = getInlineInputField({ container });
+    
+        // Add and remove an "existing" tag
+        fireEvent.change(input, { target: { value: "tag #1" } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
+        let addedTag = getTagInlineItem({ container, text: "tag #1" });
+        expect(addedTag).toBeTruthy();
+        expect(input.value).toEqual("");
+        fireEvent.click(addedTag);
+        expect(getTagInlineItem({ container, text: "tag #1" })).toBeFalsy();
+        
+        // Add and remove a new tag
+        fireEvent.change(input, { target: { value: "new tag" } });
+        await waitFor(() => expect(store.getState().objectUI.tagsInput.matchingIDs.length).toEqual(10));
+        let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
         expect(dropdown).toBeTruthy();
-        // expect(dropdown.childNodes.length).toEqual(11); // add new + 10 existing tags    // dropdown list <div> tags are not rendered in tests, despite the options being passed into Dropdown component
-    });
-});
-
-
-test("Add object => add & remove tags", async () => {
-    let { store, container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add"
+        fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
+        addedTag = getTagInlineItem({ container, text: "new tag" });
+        expect(addedTag).toBeTruthy();
+        fireEvent.click(addedTag);
+        expect(getTagInlineItem({ container, text: "new tag" })).toBeFalsy();
     });
 
-    let inputToggle = getByTitle(container, "Click to add tags");
-    expect(inputToggle).toBeTruthy();
-    fireEvent.click(inputToggle);
-    let input = getInlineInputField({ container });
 
-    // Add and remove an "existing" tag
-    fireEvent.change(input, { target: { value: "tag #1" } });
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
-    let addedTag = getTagInlineItem({ container, text: "tag #1" });
-    expect(addedTag).toBeTruthy();
-    expect(input.value).toEqual("");
-    fireEvent.click(addedTag);
-    expect(getTagInlineItem({ container, text: "tag #1" })).toBeFalsy();
+    test("Reset tags", async () => {
+        let { store, container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+
+        // Add an "existing" tag
+        const inputToggle = getByTitle(container, "Click to add tags");
+        expect(inputToggle).toBeTruthy();
+        fireEvent.click(inputToggle);
+        const input = getInlineInputField({ container });
+        
+        const tagText = "new tag";
+        fireEvent.change(input, { target: { value: tagText } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
+
+        // Reset a check if added tag was removed
+        resetObject(container);
+
+        expect(getTagInlineItem({ container, text: tagText })).toBeFalsy();
+        expect(getCurrentObject(store.getState()).addedTags.length).toEqual(0);
+    });
+
+
+    test("Persist added tags", async () => {
+        // Render switch with /objects/:id and /objects page at /objects/add
+        let { container, store } = renderWithWrappers(
+            <Switch>
+                <Route exact path="/objects"><Objects /></Route>
+                <Route exact path="/objects/:id"><AddObject /></Route>
+            </Switch>
+        , { route: "/objects/add" });
+
+        // Add a tag
+        const inputToggle = getByTitle(container, "Click to add tags");
+        expect(inputToggle).toBeTruthy();
+        fireEvent.click(inputToggle);
+        const input = getInlineInputField({ container });
+        
+        const tagText = "new tag";
+        fireEvent.change(input, { target: { value: tagText } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
+
+        // Get to /objects page and back
+        const cancelButton = getByText(container, "Cancel");
+        fireEvent.click(cancelButton);
+        await waitFor(() => getByText(container, "object #1"));
+
+        const addObjectButton = getByText(container, "Add Object");
+        fireEvent.click(addObjectButton);
+
+        // Check if added tag is displayed
+        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
+        expect(getCurrentObject(store.getState()).addedTags.length).toEqual(1);
+    });
     
-    // Add and remove a new tag
-    fireEvent.change(input, { target: { value: "new tag" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.tagsInput.matchingIDs.length).toEqual(10));
-    let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
-    expect(dropdown).toBeTruthy();
-    fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
-    addedTag = getTagInlineItem({ container, text: "new tag" });
-    expect(addedTag).toBeTruthy();
-    fireEvent.click(addedTag);
-    expect(getTagInlineItem({ container, text: "new tag" })).toBeFalsy();
-});
-
-
-test("Add object => add tags & save object", async () => {
-    let { container, history, store } = renderWithWrappers(
-        <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
-        { route: "/objects/add" }
-    );
-
-    let inputToggle = getByTitle(container, "Click to add tags");
-    expect(inputToggle).toBeTruthy();
-    fireEvent.click(inputToggle);
-    let input = getInlineInputField({ container });
-
-    // // Add an "existing" tag
-    fireEvent.change(input, { target: { value: "tag #1" } });
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
-    expect(getTagInlineItem({ container, text: "tag #1" })).toBeTruthy();
-
-    // // Add a new tag
-    fireEvent.change(input, { target: { value: "new tag" } });
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
-    expect(getTagInlineItem({ container, text: "new tag" })).toBeTruthy();
-
-    // Set object attributes
-    let objectNameInput = getByPlaceholderText(container, "Object name");
-    let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-    fireEvent.change(objectNameInput, { target: { value: "new object" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_name).toBe("new object"));
-    fireEvent.change(objectDescriptionInput, { target: { value: "new object description" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.object_description).toBe("new object description"));
-
-    // Set object data
-    clickDataTabButton(container);
-    let linkInput = getByPlaceholderText(container, "Link");
-    fireEvent.change(linkInput, { target: { value: "https://google.com" } });
-    await waitFor(() => expect(store.getState().objectUI.currentObject.link).toBe("https://google.com"));
-
-    // Save object
-    let saveButton = getByText(container, "Save");   
-    fireEvent.click(saveButton);
-    const object_id = 1000; // mock object returned has this id
-
-    // Wait for redirect and tag fetch
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
-    clickGeneralTabButton(container);
-    await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toEqual(3)); // 2 tags + input
-});
-
-
-test("Edit object => load object tags from state", async () => {
-    let store = createStore({ enableDebugLogging: false });
-    let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
-                    created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
-    let objectData = { object_id: 1, object_type: "link", object_data: {"link": "https://test.link"} };
-    store.dispatch(addObjects([object]));
-    store.dispatch(setObjectsTags([object]));
-    store.dispatch(addObjectData([objectData]));
     
-    // Route component is required for matching (getting :id part of the URL in the EditObject component)
-    let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/1",
-        store: store
-    });
-
-    // Check if tags are rendered on the page
-    await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toBeGreaterThan(1));
-    for(let i = 1; i <= 5; i++)
-        getByText(container, `tag #${i}`);
-});
-
-
-test("Edit object => load object tags from backend & test tag removal", async () => {
-    // Route component is required for matching (getting :id part of the URL in the EditObject component)
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/1"
-    });
-
-    // Check if tags are rendered on the page
-    await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toBeGreaterThan(1));
-    for(let i = 1; i <= 5; i++) getByText(container, `tag #${i}`);
+    test("Add tags & save object", async () => {
+        let { container, history, store } = renderWithWrappers(
+            <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
+            { route: "/objects/add" }
+        );
     
-    // Check tag removal
-    let tag = getByText(container, "tag #1");
-    fireEvent.click(tag);
-    expect(store.getState().objectUI.currentObject.removedTagIDs.includes(1)).toBeTruthy();
-    fireEvent.click(tag);
-    expect(store.getState().objectUI.currentObject.removedTagIDs.includes(1)).toBeFalsy();
+        let inputToggle = getByTitle(container, "Click to add tags");
+        expect(inputToggle).toBeTruthy();
+        fireEvent.click(inputToggle);
+        let input = getInlineInputField({ container });
+    
+        // // Add an "existing" tag
+        fireEvent.change(input, { target: { value: "tag #1" } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
+        expect(getTagInlineItem({ container, text: "tag #1" })).toBeTruthy();
+    
+        // // Add a new tag
+        fireEvent.change(input, { target: { value: "new tag" } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
+        expect(getTagInlineItem({ container, text: "new tag" })).toBeTruthy();
+    
+        // Set object attributes
+        let objectNameInput = getByPlaceholderText(container, "Object name");
+        let objectDescriptionInput = getByPlaceholderText(container, "Object description");
+        fireEvent.change(objectNameInput, { target: { value: "new object" } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("new object"));
+        fireEvent.change(objectDescriptionInput, { target: { value: "new object description" } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_description).toBe("new object description"));
+    
+        // Set object data
+        clickDataTabButton(container);
+        let linkInput = getByPlaceholderText(container, "Link");
+        fireEvent.change(linkInput, { target: { value: "https://google.com" } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe("https://google.com"));
+    
+        // Save object
+        let saveButton = getByText(container, "Save");   
+        fireEvent.click(saveButton);
+        const object_id = 1000; // mock object returned has this id
+    
+        // Wait for redirect and tag fetch
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+        clickGeneralTabButton(container);
+        await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toEqual(3)); // 2 tags + input
+    });
 });
 
 
-test("Edit object => load object tags from backend, add tags and update the object", async () => {
-    // Route component is required for matching (getting :id part of the URL in the EditObject component)
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/1"
+describe("Edit object page", () => {
+    test("Load object tags from state", async () => {
+        let store = createStore({ enableDebugLogging: false });
+        let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
+                        created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
+        let objectData = { object_id: 1, object_type: "link", object_data: {"link": "https://test.link"} };
+        store.dispatch(addObjects([object]));
+        store.dispatch(setObjectsTags([object]));
+        store.dispatch(addObjectData([objectData]));
+        
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/1",
+            store: store
+        });
+    
+        // Check if tags are rendered on the page
+        await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toBeGreaterThan(1));
+        for(let i = 1; i <= 5; i++)
+            getByText(container, `tag #${i}`);
+    });
+    
+    
+    test("Load object tags from backend & test tag removal", async () => {
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/1"
+        });
+    
+        // Check if tags are rendered on the page
+        await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toBeGreaterThan(1));
+        for(let i = 1; i <= 5; i++) getByText(container, `tag #${i}`);
+        
+        // Check tag removal
+        let tag = getByText(container, "tag #1");
+        fireEvent.click(tag);
+        expect(getCurrentObject(store.getState()).removedTagIDs.includes(1)).toBeTruthy();
+        fireEvent.click(tag);
+        expect(getCurrentObject(store.getState()).removedTagIDs.includes(1)).toBeFalsy();
+    });
+    
+    
+    test("Load object tags from backend, add tags and update the object", async () => {
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/1"
+        });
+    
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Object Information"));
+        let inputToggle = getByTitle(container, "Click to add tags");
+        expect(inputToggle).toBeTruthy();
+        fireEvent.click(inputToggle);
+        let input = getInlineInputField({ container });
+    
+        // Add an "existing" tag
+        fireEvent.change(input, { target: { value: "tag #6" } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    
+        // Add a new tag
+        fireEvent.change(input, { target: { value: "new tag" } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    
+        let deletedTag = getTagInlineItem({ container, text: "tag #1" });
+        fireEvent.click(deletedTag);
+    
+        // Update the tag and check if tags are updated
+        let saveButton = getByText(container, "Save");
+        fireEvent.click(saveButton);
+    
+        await waitFor(() => getCurrentObject(store.getState()).currentTagIDs.includes(6));
+        expect(getTagInlineItem({ container, text: "tag #1" })).toBeFalsy();
+        for(let i = 2; i <= 6; i++) expect(getTagInlineItem({ container, text: `tag #${i}` })).toBeTruthy();
+        expect(getTagInlineItem({ container, text: "new tag" })).toBeTruthy();
+    });
+    
+    
+    test("Check adding current tags with tag input", async () => {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/1"
+        });
+    
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Object Information"));
+    
+        // Add a current tag with input => check if it's toggled for removal
+        let inputToggle = getByTitle(container, "Click to add tags");
+        fireEvent.click(inputToggle);
+        let input = getInlineInputField({ container });
+        fireEvent.change(input, { target: { value: "tag #1" } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+        expect(getCurrentObject(store.getState()).removedTagIDs.includes(1)).toBeTruthy();
+    
+        // Add the same tag again => check if it's no longer removed
+        fireEvent.change(input, { target: { value: "tag #1" } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+        expect(getCurrentObject(store.getState()).removedTagIDs.includes(1)).toBeFalsy();
+    });
+    
+    
+    test("Delete object", async () => {
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/1"
+        });
+    
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Object Information"));
+        expect(store.getState().objectsTags.hasOwnProperty("1")).toBeTruthy();
+    
+        // Delete the object and check if its tags were removed
+        let deleteButton = getByText(container, "Delete");
+        fireEvent.click(deleteButton);
+        let confimationDialogButtonYes = getByText(container, "Yes");
+        fireEvent.click(confimationDialogButtonYes);
+    
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+        expect(store.getState().objectsTags.hasOwnProperty("1")).toBeFalsy();
     });
 
-    // Wait for the page to load
-    await waitFor(() => getByText(container, "Object Information"));
-    let inputToggle = getByTitle(container, "Click to add tags");
-    expect(inputToggle).toBeTruthy();
-    fireEvent.click(inputToggle);
-    let input = getInlineInputField({ container });
 
-    // Add an "existing" tag
-    fireEvent.change(input, { target: { value: "tag #6" } });
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    test("Reset added & removed tags", async () => {
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/1"
+        });
 
-    // Add a new tag
-    fireEvent.change(input, { target: { value: "new tag" } });
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Object Information"));
+        const inputToggle = getByTitle(container, "Click to add tags");
+        expect(inputToggle).toBeTruthy();
+        fireEvent.click(inputToggle);
+        const input = getInlineInputField({ container });
+    
+        // Add a tag
+        const tagText = "new tag";
+        fireEvent.change(input, { target: { value: tagText } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+        expect(getCurrentObject(store.getState()).addedTags.length).toEqual(1);
 
-    let deletedTag = getTagInlineItem({ container, text: "tag #1" });
-    fireEvent.click(deletedTag);
+        // Remove a tag
+        const deletedTag = getTagInlineItem({ container, text: "tag #1" });
+        fireEvent.click(deletedTag);
+        expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(1);
 
-    // Update the tag and check if tags are updated
-    let saveButton = getByText(container, "Save");
-    fireEvent.click(saveButton);
+        // Reset a check if added tag was removed
+        resetObject(container);
 
-    await waitFor(() => store.getState().objectUI.currentObject.currentTagIDs.includes(6));
-    expect(getTagInlineItem({ container, text: "tag #1" })).toBeFalsy();
-    for(let i = 2; i <= 6; i++) expect(getTagInlineItem({ container, text: `tag #${i}` })).toBeTruthy();
-    expect(getTagInlineItem({ container, text: "new tag" })).toBeTruthy();
-});
-
-
-test("Edit object => check adding current tags with tag input", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/1"
+        expect(getTagInlineItem({ container, text: tagText })).toBeFalsy();
+        expect(getCurrentObject(store.getState()).addedTags.length).toEqual(0);
+        expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(0);
     });
 
-    // Wait for the page to load
-    await waitFor(() => getByText(container, "Object Information"));
 
-    // Add a current tag with input => check if it's toggled for removal
-    let inputToggle = getByTitle(container, "Click to add tags");
-    fireEvent.click(inputToggle);
-    let input = getInlineInputField({ container });
-    fireEvent.change(input, { target: { value: "tag #1" } });
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-    expect(store.getState().objectUI.currentObject.removedTagIDs.includes(1)).toBeTruthy();
+    test("Persist added and removed tags", async () => {
+        // Render switch with /objects/:id and /objects page at /objects/add
+        let { container, store } = renderWithWrappers(
+            <Switch>
+                <Route exact path="/objects"><Objects /></Route>
+                <Route exact path="/objects/:id"><EditObject /></Route>
+            </Switch>
+        , { route: "/objects/1" });
 
-    // Add the same tag again => check if it's no longer removed
-    fireEvent.change(input, { target: { value: "tag #1" } });
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-    expect(store.getState().objectUI.currentObject.removedTagIDs.includes(1)).toBeFalsy();
-});
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Object Information"));
+        let inputToggle = getByTitle(container, "Click to add tags");
+        expect(inputToggle).toBeTruthy();
+        fireEvent.click(inputToggle);
+        const input = getInlineInputField({ container });
 
+        // Add a tag
+        const tagText = "new tag";
+        fireEvent.change(input, { target: { value: tagText } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
 
-test("Edit object => delete object", async () => {
-    // Route component is required for matching (getting :id part of the URL in the EditObject component)
-    let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/1"
+        // Remove a tag
+        const deletedTag = getTagInlineItem({ container, text: "tag #1" });
+        fireEvent.click(deletedTag);
+        expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(1);
+
+        // Get to /objects page and back
+        const cancelButton = getByText(container, "Cancel");
+        fireEvent.click(cancelButton);
+        await waitFor(() => getByText(container, "object #1"));
+
+        fireEvent.click(getByText(container, "object #1"));
+        await waitFor(() => getByText(container, "Object Information"));
+
+        // Check if added and removed tags are displayed
+        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
+        expect(getCurrentObject(store.getState()).addedTags.length).toEqual(1);
+        expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(1);
     });
-
-    // Wait for the page to load
-    await waitFor(() => getByText(container, "Object Information"));
-    expect(store.getState().objectsTags.hasOwnProperty("1")).toBeTruthy();
-
-    // Delete the object and check if its tags were removed
-    let deleteButton = getByText(container, "Delete");
-    fireEvent.click(deleteButton);
-    let confimationDialogButtonYes = getByText(container, "Yes");
-    fireEvent.click(confimationDialogButtonYes);
-
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
-    expect(store.getState().objectsTags.hasOwnProperty("1")).toBeFalsy();
 });
+

@@ -32,6 +32,7 @@ class TDLItem extends React.PureComponent {
 
         this.state = {
             initialItemText: props.item_text,
+            forceInitialItemTextUpdate: 0,  // a value which is updated with initialItemText to guarantee a rerender of item text input innerHTML with the correct text after edited object state reset
             isItemHovered: false,
             isInputHovered: false,
             isInputFocused: false
@@ -134,8 +135,15 @@ class TDLItem extends React.PureComponent {
         }
     };
 
+    componentDidUpdate(prevProps) {
+        // Reset inner HTML of item text input after edited object was reset
+        if (this.props.updateInnerHTMLRequired && !prevProps.updateInnerHTMLRequired) { // prevProps should be checked to avoid multiple reset while parent component is not rerendered
+            this.setState((state, props) => ({ initialItemText: props.item_text, forceInitialItemTextUpdate: Math.random() }));
+        }
+    }
+
     render() {
-        const { id, item_state, commentary, indent, is_expanded, updateCallback, hasChildren, dropIndent, isParentDragged, maxIndent } = this.props;
+        const { id, item_state, commentary, indent, is_expanded, updateCallback, hasChildren, dropIndent, isParentDragged, maxIndent, updateInnerHTMLRequired } = this.props;
         const { connectDragSource, connectDropTarget, isDragging, isDraggedOver } = this.props;
 
         // Don't render the element which is being dragged
@@ -161,14 +169,15 @@ class TDLItem extends React.PureComponent {
         const input = <div className={inputCSSClass} ref={this.inputRef} contentEditable suppressContentEditableWarning spellCheck={false}
                         onInput={this.handleInputChange} onKeyDown={this.handleKeyDown} onFocus={this.handleInputFocus} onBlur={this.handleInputBlur}
                         onMouseEnter={this.handleInputMouseEnter} onMouseLeave={this.handleInputMouseLeave}
-                        dangerouslySetInnerHTML={{ __html: this.state.initialItemText }} />;    // setting item_text as inner content of <div> results
+                        dangerouslySetInnerHTML={{ __html: this.state.initialItemText }}        // setting item_text as inner content of <div> results
                                                                                                 // in the cursor being moved to the beginning of the <div> on every input
-        
+                        key={this.state.forceInitialItemTextUpdate}  />;
+
         // Right menu
         const itemIsFocusedOrHovered = this.state.isInputFocused || this.state.isItemHovered;
 
         const comment = (itemIsFocusedOrHovered || commentary.length > 0) && (
-            <Comment id={id} commentary={commentary} updateCallback={updateCallback} />
+            <Comment id={id} commentary={commentary} updateCallback={updateCallback} updateInnerHTMLRequired={updateInnerHTMLRequired} />
         );
 
         const deleteButton = itemIsFocusedOrHovered && (

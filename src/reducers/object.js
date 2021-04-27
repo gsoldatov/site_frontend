@@ -1,58 +1,31 @@
-import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, SET_CURRENT_OBJECT, SET_SELECTED_TAB, SET_OBJECT_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS,
-    SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
+import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, ADD_DEFAULT_EDITED_OBJECT, RESET_EDITED_OBJECT,
+    SET_CURRENT_OBJECT, SET_OBJECT_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS, SET_SELECTED_TAB, 
+    SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, 
+    SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
+import { deepCopy } from "../util/copy";
+
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
+import { getCurrentObject } from "../store/state-util/ui-object";
+import { getObjectDataFromStore } from "../store/state-util/objects";
+
+import { defaultEditedObjectState } from "./helpers/object";
 import { updateToDoListItems } from "./helpers/object-to-do-lists";
 
 
 function loadAddObjectPage(state, action) {
-    if (state.objectUI.saveAddObjectState && !action.forceReset) return state;
-    const newObjectType = action.forceReset ? state.objectUI.currentObject.object_type : "link";
-
     return {
         ...state,
         objectUI: {
             ...state.objectUI,
-            currentObject: {
-                object_id: 0,
-                object_type: newObjectType,
-                object_name: "",
-                object_description: "",
-                created_at: "",
-                modified_at: "",
 
-                currentTagIDs: [],
-                addedTags: [],
-                removedTagIDs: [],
-                tagsInput: {
-                    isDisplayed: false,
-                    inputText: "",
-                    matchingIDs: []
-                },
-
-                link: "",
-                markdown: { 
-                    raw_text: "", 
-                    parsed: "" 
-                },
-                toDoList: {
-                    itemOrder: [],
-                    setFocusOnID: -1,
-                    caretPositionOnFocus: -1,
-                    newItemInputIndent: 0,
-                    draggedParent: -1,
-                    draggedChildren: [],
-                    draggedOver: -1,
-                    dropIndent: 0,
-    
-                    sort_type: "default",
-                    items: {}
-                }
+            currentObjectID: 0,
+            
+            tagsInput: {
+                isDisplayed: false,
+                inputText: "",
+                matchingIDs: []
             },
-
-            selectedTab: 0,
-
-            saveAddObjectState: true,
 
             objectOnLoadFetch: {
                 isFetching: false,
@@ -62,7 +35,10 @@ function loadAddObjectPage(state, action) {
             objectOnSaveFetch: {
                 isFetching: false,
                 fetchError: ""
-            }
+            },
+
+            selectedTab: 0,
+            showResetDialog: false
         }
     };
 }
@@ -72,44 +48,14 @@ function loadEditObjectPage(state, action) {
         ...state,
         objectUI: {
             ...state.objectUI,
-            currentObject: {
-                object_id: 0,
-                object_type: "link",
-                object_name: "",
-                object_description: "",
-                created_at: "",
-                modified_at: "",
 
-                currentTagIDs: [],
-                addedTags: [],
-                removedTagIDs: [],
-                tagsInput: {
-                    isDisplayed: false,
-                    inputText: "",
-                    matchingIDs: []
-                },
-                
-                link: "",
-                markdown: { 
-                    raw_text: "", 
-                    parsed: "" 
-                },
-                toDoList: {
-                    itemOrder: [],
-                    setFocusOnID: -1,
-                    caretPositionOnFocus: -1,
-                    newItemInputIndent: 0,
-                    draggedParent: -1,
-                    draggedChildren: [],
-                    draggedOver: -1,
-                    dropIndent: 0,
-    
-                    sort_type: "default",
-                    items: {}
-                }
+            currentObjectID: action.currentObjectID,
+            
+            tagsInput: {
+                isDisplayed: false,
+                inputText: "",
+                matchingIDs: []
             },
-
-            saveAddObjectState: false,
 
             objectOnLoadFetch: {
                 isFetching: false,
@@ -121,13 +67,73 @@ function loadEditObjectPage(state, action) {
                 fetchError: ""
             },
 
+            // selectedTab: 0,  // not reset on edit object page
+            showResetDialog: false,
             showDeleteDialog: false
         }
     };
 }
 
+// Sets a default state in state.editedObjects for the provided `objectID`
+function addDefaultEditedObject(state, action) {
+    const { objectID } = action;
+    const defaultState = deepCopy(defaultEditedObjectState);
+    defaultState.object_id = objectID;
+
+    return {
+        ...state,
+        objectUI: {
+            ...state.objectUI,
+            selectedTab: 0,         // switch to the attributes tab on the /object/:id page
+            showResetDialog: false  // hide reset dialog on the /object/:id page
+        },
+        editedObjects: {
+            ...state.editedObjects,
+            [objectID]: defaultState
+        }
+    };
+}
+
+// Resets state of the currently edited object to last saved state
+function resetEditedObject(state, action) {
+    const objectID = state.objectUI.currentObjectID;
+    let stateAfterReset = deepCopy(defaultEditedObjectState);
+    stateAfterReset.object_id = objectID;
+
+    if (objectID in state.objects)  // set attributes
+        stateAfterReset = {
+            ...stateAfterReset, 
+            ...deepCopy(state.objects[objectID])
+        };
+    
+    if (objectID in state.objectsTags)  // set current object tags (added & removed tags are already reset)
+        stateAfterReset = {
+            ...stateAfterReset,
+            currentTagIDs: state.objectsTags[objectID].slice()
+        };
+    
+    const objectData = getObjectDataFromStore(state, objectID);     // set object data
+    if (objectData !== undefined)
+        stateAfterReset = {
+            ...stateAfterReset,
+            ...objectData
+        };
+    
+    return {
+        ...state,
+        objectUI: {
+            ...state.objectUI,
+            showResetDialog: false  // hide reset dialog on the /object/:id page
+        },
+        editedObjects: {
+            ...state.editedObjects,
+            [objectID]: stateAfterReset
+        }
+    };
+}
+
 function setCurrentObject(state, action) {
-    const oldObject = state.objectUI.currentObject;
+    const oldObject = getCurrentObject(state);
 
     // Links
     const link = action.object.link !== undefined ? action.object.link : oldObject.link;
@@ -164,50 +170,39 @@ function setCurrentObject(state, action) {
         toDoList = oldObject.toDoList;
     }
 
+    const newObject = {
+        ...oldObject,
+        object_id: action.object.object_id !== undefined ? action.object.object_id : oldObject.object_id,
+        object_type: action.object.object_type !== undefined ? action.object.object_type : oldObject.object_type,
+        object_name: action.object.object_name !== undefined ? action.object.object_name : oldObject.object_name,
+        object_description: action.object.object_description !== undefined ? action.object.object_description : oldObject.object_description,
+        created_at: action.object.created_at !== undefined ? action.object.created_at : oldObject.created_at,
+        modified_at: action.object.modified_at !== undefined ? action.object.modified_at : oldObject.modified_at,
+
+        link,
+        markdown,
+        toDoList
+    };
+
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
-            currentObject: {
-                ...oldObject,
-                object_id: action.object.object_id !== undefined ? action.object.object_id : oldObject.object_id,
-                object_type: action.object.object_type !== undefined ? action.object.object_type : oldObject.object_type,
-                object_name: action.object.object_name !== undefined ? action.object.object_name : oldObject.object_name,
-                object_description: action.object.object_description !== undefined ? action.object.object_description : oldObject.object_description,
-                created_at: action.object.created_at !== undefined ? action.object.created_at : oldObject.created_at,
-                modified_at: action.object.modified_at !== undefined ? action.object.modified_at : oldObject.modified_at,
-
-                link,
-                markdown,
-                toDoList
-            }
+        editedObjects: {
+            ...state.editedObjects,
+            [state.objectUI.currentObjectID]: newObject
         }
     };
 }
 
-function setSelectedTab(state, action) {
-    return {
-        ...state,
-        objectUI: {
-            ...state.objectUI,
-            selectedTab: action.selectedTab
-        }
-    }
-}
-
 function setObjectTagsInput(state, action) {
-    let oldObject = state.objectUI.currentObject;
+    const oldTagsInput = state.objectUI.tagsInput;
     return {
         ...state,
         objectUI: {
             ...state.objectUI,
-            currentObject: {
-                ...oldObject,
-                tagsInput: {
-                    isDisplayed: action.tagsInput.isDisplayed !== undefined ? action.tagsInput.isDisplayed : oldObject.tagsInput.isDisplayed,
-                    inputText: action.tagsInput.inputText !== undefined ? action.tagsInput.inputText : oldObject.tagsInput.inputText,
-                    matchingIDs: action.tagsInput.matchingIDs !== undefined ? action.tagsInput.matchingIDs : oldObject.tagsInput.matchingIDs
-                }
+            tagsInput: {
+                isDisplayed: action.tagsInput.isDisplayed !== undefined ? action.tagsInput.isDisplayed : oldTagsInput.isDisplayed,
+                inputText: action.tagsInput.inputText !== undefined ? action.tagsInput.inputText : oldTagsInput.inputText,
+                matchingIDs: action.tagsInput.matchingIDs !== undefined ? action.tagsInput.matchingIDs : oldTagsInput.matchingIDs
             }
         }
     }
@@ -224,7 +219,7 @@ function setObjectTagsInput(state, action) {
     Existing values passed via action are removed from the new list.
 */
 function setCurrentObjectTags(state, action) {
-    let oldObject = state.objectUI.currentObject;
+    let oldObject = getCurrentObject(state);
     let newAddedTags, newRemovedTagIDs, addedExistingTagIDs;
 
     if (action.tagUpdates.added instanceof Array && action.tagUpdates.added.length === 0) { // handle reset case
@@ -269,16 +264,38 @@ function setCurrentObjectTags(state, action) {
         }
     }
 
+    const newObject = {
+        ...oldObject,
+        currentTagIDs: action.tagUpdates.currentTagIDs ? action.tagUpdates.currentTagIDs : oldObject.currentTagIDs,
+        addedTags: newAddedTags !== undefined ? newAddedTags : oldObject.addedTags,
+        removedTagIDs: newRemovedTagIDs !== undefined ? newRemovedTagIDs : oldObject.removedTagIDs
+    };
+
+    return {
+        ...state,
+        editedObjects: {
+            ...state.editedObjects,
+            [state.objectUI.currentObjectID]: newObject
+        }
+    };
+}
+
+function setSelectedTab(state, action) {
     return {
         ...state,
         objectUI: {
             ...state.objectUI,
-            currentObject: {
-                ...oldObject,
-                currentTagIDs: action.tagUpdates.currentTagIDs ? action.tagUpdates.currentTagIDs : oldObject.currentTagIDs,
-                addedTags: newAddedTags !== undefined ? newAddedTags : oldObject.addedTags,
-                removedTagIDs: newRemovedTagIDs !== undefined ? newRemovedTagIDs : oldObject.removedTagIDs
-            }
+            selectedTab: action.selectedTab
+        }
+    }
+}
+
+function setShowResetDialogObject(state, action) {
+    return {
+        ...state,
+        objectUI: {
+            ...state.objectUI,
+            showResetDialog: action.showResetDialog
         }
     };
 }
@@ -333,10 +350,13 @@ function setObjectOnSaveFetchState(state, action) {
 const root = {
     LOAD_ADD_OBJECT_PAGE: loadAddObjectPage,
     LOAD_EDIT_OBJECT_PAGE: loadEditObjectPage,
+    ADD_DEFAULT_EDITED_OBJECT: addDefaultEditedObject,
+    RESET_EDITED_OBJECT: resetEditedObject,
     SET_CURRENT_OBJECT: setCurrentObject,
-    SET_SELECTED_TAB: setSelectedTab,
     SET_OBJECT_TAGS_INPUT: setObjectTagsInput,
     SET_CURRENT_OBJECT_TAGS: setCurrentObjectTags,
+    SET_SELECTED_TAB: setSelectedTab,
+    SET_SHOW_RESET_DIALOG_OBJECT: setShowResetDialogObject,
     SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject,
     SET_MARKDOWN_DISPLAY_MODE: setMarkdownDisplayMode,
     SET_OBJECT_ON_LOAD_FETCH_STATE: setObjectOnLoadFetchState,

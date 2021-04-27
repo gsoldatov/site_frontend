@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import FieldMenu from "../../field/field-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
+
 import { setCurrentObject } from "../../../actions/object";
+import { getCurrentObject } from "../../../store/state-util/ui-object";
 import { getSortedItemIDs, getVisibleItemIDs } from "../../../store/state-util/to-do-lists";
 import { isTDLDragAndDropEnabled } from "../../../store/state-util/ui-object";
 
@@ -16,7 +18,7 @@ import StyleTDL from "../../../styles/to-do-lists.css";
 */
 export const TDLContainer = () => {
     const dispatch = useDispatch();
-    const objectID = useSelector(state => state.objectUI.currentObject.object_id);
+    const objectID = useSelector(state => getCurrentObject(state).object_id);
     const canDrag = useSelector(isTDLDragAndDropEnabled);
     const updateCallback = useMemo(
         () => params => dispatch(setCurrentObject(params))
@@ -40,7 +42,7 @@ const TDLMenu = ({ updateCallback }) => {
             title: "Default sort",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "default" }},
-            isActiveSelector: state => state.objectUI.currentObject.toDoList.sort_type === "default"
+            isActiveSelector: state => getCurrentObject(state).toDoList.sort_type === "default"
         },
         {
             type: "item",
@@ -48,7 +50,7 @@ const TDLMenu = ({ updateCallback }) => {
             title: "Sort by state",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "state", newItemInputIndent: 0 }},     // also reset new item input indent when sorting by state
-            isActiveSelector: state => state.objectUI.currentObject.toDoList.sort_type === "state"
+            isActiveSelector: state => getCurrentObject(state).toDoList.sort_type === "state"
         }
     ];
 
@@ -58,8 +60,20 @@ const TDLMenu = ({ updateCallback }) => {
 
 const TDLItems = ({ updateCallback, objectID, canDrag }) => {
     const itemsRef = useRef();
-    const toDoList = useSelector(state => state.objectUI.currentObject.toDoList);
+    const toDoList = useSelector(state => getCurrentObject(state).toDoList);
     const itemOrder = toDoList.itemOrder;
+
+    // State checks performed to update dangerouslySetInnerHTML of <TDLItem> and <Comment> components when needed
+    // (currently checks if a reset side menu dialog was closed, because innerHTML of the components may need to be updated to the values restored by reset)
+    const showResetDialog = useSelector(state => state.objectUI.showResetDialog);
+    const [previousShowResetDialog, setPreviousShowResetDialog] = useState(showResetDialog);
+    const [updateInnerHTMLRequired, setUpdateInnerHTMLRequired] = useState(false);
+    
+    useEffect(() => {
+        setUpdateInnerHTMLRequired(!showResetDialog && previousShowResetDialog);
+        setPreviousShowResetDialog(showResetDialog);
+    }); // update after each render to set updateInnerHTMLRequired = false as soon as possible
+    // }, [showResetDialog]);
 
     // Focus item specified in setFocusOnID
     useEffect(() => {
@@ -113,7 +127,7 @@ const TDLItems = ({ updateCallback, objectID, canDrag }) => {
         const dropIndent = toDoList.draggedOver === id ? toDoList.dropIndent : undefined;     // don't pass dropIndent if an item is not dragged over to avoid re-renders
 
         return <DraggableTDLItem key={id} id={id} updateCallback={updateCallback} objectID={objectID} canDrag={canDrag} hasChildren={hasChildren} 
-            isParentDragged={isParentDragged} dropIndent={dropIndent} maxIndent={maxIndent} {...item} />;
+            isParentDragged={isParentDragged} dropIndent={dropIndent} maxIndent={maxIndent} updateInnerHTMLRequired={updateInnerHTMLRequired} {...item} />;
     });
     
     // New item input

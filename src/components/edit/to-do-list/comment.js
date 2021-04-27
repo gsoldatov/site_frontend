@@ -1,12 +1,18 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Icon, Popup } from "semantic-ui-react";
 
 
 /*
     To-do list item comment button & edit window.
 */
-export const Comment = ({ id, commentary, updateCallback }) => {
+export const Comment = ({ id, commentary, updateCallback, updateInnerHTMLRequired }) => {
     const [initialCommentary, setInitialCommentary] = useState(commentary);
+
+    // Reset innerHTML of an open commentary (it shouldn't be open, but in case it is) after edited object was reset
+    // If the comment becomes displayable during reset button click, it may be needed to pass a random `key` prop into contentEditable <div> to force rerender (see <TDLItem> component)
+    useEffect(() => {
+        if (updateInnerHTMLRequired) setInitialCommentary(commentary);
+    }, [updateInnerHTMLRequired]);
 
     const handleKeyDown = useMemo(
         () => e => { if (e.key === "Enter") e.preventDefault(); }

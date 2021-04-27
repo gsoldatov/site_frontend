@@ -79,12 +79,14 @@ function deleteObjects(state, action) {
     let markdown = {...state.markdown};
     let toDoLists = {...state.toDoLists};
     let objectsTags = {...state.objectsTags};
+    let editedObjects = {...state.editedObjects};
     for (let objectID of action.object_ids) {
         delete objects[objectID];
         delete links[objectID];
         delete markdown[objectID];
         delete toDoLists[objectID];
         delete objectsTags[objectID];
+        delete editedObjects[objectID];
     }
 
     return {
@@ -93,7 +95,8 @@ function deleteObjects(state, action) {
         links,
         markdown,
         toDoLists,
-        objectsTags
+        objectsTags,
+        editedObjects
     };
 }
 

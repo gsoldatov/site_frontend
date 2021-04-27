@@ -7,7 +7,7 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholde
 import { compareItemData, getDefaultSortOrder, getRenderedItemIndent, checkRenderedItemsOrder } from "./test-utils/to-do-lists";
 import { defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "./mocks/data-to-do-lists";
 import { renderWithWrappersAndDnDProvider } from "./test-utils/render";
-import { clickDataTabButton } from "./test-utils/ui-object";
+import { getCurrentObject, clickDataTabButton } from "./test-utils/ui-object";
 
 import { AddObject, EditObject } from "../src/components/object";
 import * as caret from "../src/util/caret";
@@ -68,16 +68,16 @@ test("Load an existing to-do list", async () => {
     
     // Check existing items (text and state)
     const items = TDLContainer.querySelectorAll(".to-do-list-item");
-    expect(items.length).toEqual(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length + 1);   // items + new item input
+    expect(items.length).toEqual(Object.keys(getCurrentObject(store.getState()).toDoList.items).length + 1);   // items + new item input
     expect(items.length).toEqual(defaultTDL.items.length + 1);
 
-    const itemOrder = getDefaultSortOrder(store.getState().objectUI.currentObject.toDoList);
+    const itemOrder = getDefaultSortOrder(getCurrentObject(store.getState()).toDoList);
     items.forEach(async item => {
         if (!queryByPlaceholderText(item, "New item")) {    // skip new item input
             const id = parseInt(item.querySelector(".to-do-list-item-id").textContent);
-            const itemData = store.getState().objectUI.currentObject.toDoList.items[id];
+            const itemData = getCurrentObject(store.getState()).toDoList.items[id];
             const nextID = itemOrder[itemOrder.indexOf(id) + 1];
-            const hasChildren = nextID !== undefined && itemData.indent < store.getState().objectUI.currentObject.toDoList.items[nextID].indent;
+            const hasChildren = nextID !== undefined && itemData.indent < getCurrentObject(store.getState()).toDoList.items[nextID].indent;
 
             // text & state
             getByText(item, itemData.item_text);
@@ -138,14 +138,14 @@ test("Add, edit & delete items", async () => {
 
     // Update item
     fireEvent.input(firstItem, { target: { innerHTML: "updated first item" }});
-    expect(store.getState().objectUI.currentObject.toDoList.items[0].item_text).toEqual("updated first item");
-    expect(store.getState().objectUI.currentObject.toDoList.items[1].item_text).toEqual("second item");
+    expect(getCurrentObject(store.getState()).toDoList.items[0].item_text).toEqual("updated first item");
+    expect(getCurrentObject(store.getState()).toDoList.items[1].item_text).toEqual("second item");
 
     // Delete item
     fireEvent.focus(firstItem);
     let deleteButton = getByTitle(firstItem.parentNode, "Delete item");
     fireEvent.click(deleteButton);
-    expect(store.getState().objectUI.currentObject.toDoList.items[0]).toBeUndefined();
+    expect(getCurrentObject(store.getState()).toDoList.items[0]).toBeUndefined();
     expect(queryByText(TDLContainer, "updated first item")).toBeNull();
     getByText(TDLContainer, "second item");
 });
@@ -161,7 +161,7 @@ test("Delete with children button", async () => {
     clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
-    const itemOrder = getDefaultSortOrder(store.getState().objectUI.currentObject.toDoList);
+    const itemOrder = getDefaultSortOrder(getCurrentObject(store.getState()).toDoList);
     
     // Select item with children and delete them
     const firstItem = TDLContainer.querySelectorAll(".to-do-list-item")[0];
@@ -199,7 +199,7 @@ test("Change item states", async () => {
         fireEvent.mouseEnter(stateControl);     // select state
         const stateButton = getByTitle(stateControl, `Set item as ${state}`);
         fireEvent.click(stateButton);
-        expect(store.getState().objectUI.currentObject.toDoList.items[1].item_state).toEqual(state);
+        expect(getCurrentObject(store.getState()).toDoList.items[1].item_state).toEqual(state);
         fireEvent.mouseLeave(stateControl);     // check if correct state icon is displayed after state control stopped being hovered
         expect(stateControl.querySelectorAll(".to-do-list-item-button").length).toEqual(1);
         getByTitle(stateControl, `Set item as ${state}`);
@@ -217,11 +217,11 @@ test("Change item sort", async () => {
     clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
-    expect(store.getState().objectUI.currentObject.toDoList.sort_type).toEqual("default");
+    expect(getCurrentObject(store.getState()).toDoList.sort_type).toEqual("default");
     const defaultSortButton = getByTitle(TDLContainer.querySelector(".to-do-list-menu"), "Default sort");
     const sortByStateButton = getByTitle(TDLContainer.querySelector(".to-do-list-menu"), "Sort by state");
 
-    const defaultItemOrder = getDefaultSortOrder(store.getState().objectUI.currentObject.toDoList);
+    const defaultItemOrder = getDefaultSortOrder(getCurrentObject(store.getState()).toDoList);
 
     // Sort by state and check order in which items are displayed
     // Also check if item indenation is correctly rendered
@@ -229,8 +229,8 @@ test("Change item sort", async () => {
     TDLContainer.querySelectorAll(".to-do-list-item").forEach((item, index) => {
         if (!queryByPlaceholderText(item, "New item")) {
             const expectedID = expectedSortTestTDLStateSortOrder[index];
-            getByText(item, store.getState().objectUI.currentObject.toDoList.items[expectedID].item_text);
-            expect(getRenderedItemIndent(item)).toEqual(store.getState().objectUI.currentObject.toDoList.items[expectedID].indent);
+            getByText(item, getCurrentObject(store.getState()).toDoList.items[expectedID].item_text);
+            expect(getRenderedItemIndent(item)).toEqual(getCurrentObject(store.getState()).toDoList.items[expectedID].indent);
         }
     });
 
@@ -240,8 +240,8 @@ test("Change item sort", async () => {
     TDLContainer.querySelectorAll(".to-do-list-item").forEach((item, index) => {
         if (!queryByPlaceholderText(item, "New item")) {
             const expectedID = defaultItemOrder[index];
-            getByText(item, store.getState().objectUI.currentObject.toDoList.items[expectedID].item_text);
-            expect(getRenderedItemIndent(item)).toEqual(store.getState().objectUI.currentObject.toDoList.items[expectedID].indent);
+            getByText(item, getCurrentObject(store.getState()).toDoList.items[expectedID].item_text);
+            expect(getRenderedItemIndent(item)).toEqual(getCurrentObject(store.getState()).toDoList.items[expectedID].indent);
         }
     });
 });
@@ -264,33 +264,33 @@ test("Expand/collapse button", async () => {
     fireEvent.click(expandCollapseButton);
 
     // Check if first item is collapsed and its children are not displayed
-    expect(store.getState().objectUI.currentObject.toDoList.items[0].is_expanded).toBeFalsy();
+    expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeFalsy();
     checkRenderedItemsOrder(TDLContainer, [0, 4, 5, 6, 7]);
 
     // Expand first item
     fireEvent.click(expandCollapseButton);
 
     // Check if first item is expanded and its children are not displayed
-    expect(store.getState().objectUI.currentObject.toDoList.items[0].is_expanded).toBeTruthy();
+    expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeTruthy();
     checkRenderedItemsOrder(TDLContainer, [0, 1, 2, 3, 4, 5, 6, 7]);
 
     // Sort by state
     const sortByStateButton = getByTitle(TDLContainer.querySelector(".to-do-list-menu"), "Sort by state");
     fireEvent.click(sortByStateButton);
-    expect(store.getState().objectUI.currentObject.toDoList.sort_type).toEqual("state");
+    expect(getCurrentObject(store.getState()).toDoList.sort_type).toEqual("state");
 
     // Collapse first item
     fireEvent.click(expandCollapseButton);
 
     // Check if first item is collapsed and its children are not displayed
-    expect(store.getState().objectUI.currentObject.toDoList.items[0].is_expanded).toBeFalsy();
+    expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeFalsy();
     checkRenderedItemsOrder(TDLContainer, [0, 4, 5, 6, 7]);     // default and state sort order are the same in default TDL mock
 
     // Expand first item
     fireEvent.click(expandCollapseButton);
 
     // Check if first item is expanded and its children are not displayed
-    expect(store.getState().objectUI.currentObject.toDoList.items[0].is_expanded).toBeTruthy();
+    expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeTruthy();
     checkRenderedItemsOrder(TDLContainer, [0, 1, 2, 3, 4, 5, 6, 7]);
 });
 
@@ -476,7 +476,7 @@ describe("Commentaries", () => {
         TDLContainer.querySelectorAll(".to-do-list-item").forEach(async item => {
             if (!queryByPlaceholderText(item, "New item")) {    // skip new item input
                 const id = item.querySelector(".to-do-list-item-id").textContent;
-                const itemData = store.getState().objectUI.currentObject.toDoList.items[id];
+                const itemData = getCurrentObject(store.getState()).toDoList.items[id];
                 
                 // Comment button display logic
                 const rightMenu = item.querySelector(".to-do-list-right-menu");
@@ -526,9 +526,9 @@ describe("Commentaries", () => {
         const rightMenu = item.querySelector(".to-do-list-right-menu");
         let commentButton = getByTitle(rightMenu, "Item comment");
         fireEvent.click(commentButton);
-        let commentInput = getByText(container.parentNode.querySelector(".to-do-list-item-comment-input"), store.getState().objectUI.currentObject.toDoList.items[0].commentary);
+        let commentInput = getByText(container.parentNode.querySelector(".to-do-list-item-comment-input"), getCurrentObject(store.getState()).toDoList.items[0].commentary);
         fireEvent.input(commentInput, { target: { innerHTML: "updated comment" }});
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].commentary).toEqual("updated comment");
+        expect(getCurrentObject(store.getState()).toDoList.items[0].commentary).toEqual("updated comment");
 
         // Close and open input & check if input value remains equal to updated text
         fireEvent.click(commentButton);
@@ -566,7 +566,7 @@ describe("Keybinds (default sort)", () => {
         const itemOrder = expectedUpDownTDLItemOrder;    // default item order without children of collapsed items
         
         // Select first element
-        let itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[0]].item_text);
+        let itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[0]].item_text);
         fireEvent.focus(itemInput);
 
         // Move down the list (and check if children of collapsed items are ignored)
@@ -574,7 +574,7 @@ describe("Keybinds (default sort)", () => {
         while (n < itemOrder.length - 1) {
             fireEvent.keyDown(itemInput, { key: "ArrowDown", code: "ArrowDown" });
             n++;
-            itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[n]].item_text);
+            itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[n]].item_text);
             expect(document.activeElement).toEqual(itemInput);
         }
 
@@ -585,20 +585,20 @@ describe("Keybinds (default sort)", () => {
 
         // Move up to the last item
         fireEvent.keyDown(itemInput, { key: "ArrowUp", code: "ArrowUp" });
-        itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[n]].item_text);
+        itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[n]].item_text);
         expect(document.activeElement).toEqual(itemInput);
 
         // Move up the list (and check if children of collapsed items are ignored)
         while (n > 0) {
             fireEvent.keyDown(itemInput, { key: "ArrowUp", code: "ArrowUp" });
             n--;
-            itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[n]].item_text);
+            itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[n]].item_text);
             expect(document.activeElement).toEqual(itemInput);
         }
 
         // Move up from the first item (first item is still focused)
         fireEvent.keyDown(itemInput, { key: "ArrowUp", code: "ArrowUp" });
-        itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[0]].item_text);
+        itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[0]].item_text);
         expect(document.activeElement).toEqual(itemInput);
     });
 
@@ -621,8 +621,8 @@ describe("Keybinds (default sort)", () => {
         // Get initial values
         let items = TDLContainer.querySelectorAll(".to-do-list-item");
         expect(items.length).toEqual(enterKeyDownDefaultSortTDL.items.length + 1);  // 6 items + new item input
-        let firstItemData = {...store.getState().objectUI.currentObject.toDoList.items[1]};     // get item 1 and 2 data
-        let secondItemData = {...store.getState().objectUI.currentObject.toDoList.items[2]};
+        let firstItemData = {...getCurrentObject(store.getState()).toDoList.items[1]};     // get item 1 and 2 data
+        let secondItemData = {...getCurrentObject(store.getState()).toDoList.items[2]};
         
         // Focus item 1 and split it
         let firstItemInput = items[1].querySelector(".to-do-list-item-input");
@@ -630,7 +630,7 @@ describe("Keybinds (default sort)", () => {
         fireEvent.keyDown(firstItemInput, { key: "Enter", code: "Enter" });
 
         // Check if state was correctly updated
-        let newItemsData = store.getState().objectUI.currentObject.toDoList.items;
+        let newItemsData = getCurrentObject(store.getState()).toDoList.items;
         expect(compareItemData(newItemsData[6], {...firstItemData, item_text: ""})).toBeTruthy();   // new first item has no text, but has the same state, indent and comment as the old one
         expect(compareItemData( newItemsData[7], firstItemData ));                                  // new second item has the same text, state, indent and comment as the old one
         expect(compareItemData( newItemsData[2], secondItemData ));                                 // second item of the list was not changed
@@ -679,24 +679,24 @@ describe("Keybinds (default sort)", () => {
         expect(getRenderedItemIndent(newItemInput.parentNode)).toEqual(4);
 
         // Get initial state
-        const firstItemData = {...store.getState().objectUI.currentObject.toDoList.items[1]};
-        const secondItemData = {...store.getState().objectUI.currentObject.toDoList.items[2]};
+        const firstItemData = {...getCurrentObject(store.getState()).toDoList.items[1]};
+        const secondItemData = {...getCurrentObject(store.getState()).toDoList.items[2]};
         
         // // Delete a character in a non-empty item (*) SET ITEM TEXT TO 1 CHAR LONG IN MOCK   // delete keypress does not update the textContent of the input in testing environment
-        // let firstItemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[1].item_text);
+        // let firstItemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[1].item_text);
         // screen.debug(firstItemInput)
         // fireEvent.keyDown(firstItemInput, { key: "Delete", code: "Delete" });
-        // expect(store.getState().objectUI.currentObject.toDoList.items[1].item_text).toEqual("");        // initial text is 1 char long
-        // expect(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length).toEqual(2);  // no items were deleted
+        // expect(getCurrentObject(store.getState()).toDoList.items[1].item_text).toEqual("");        // initial text is 1 char long
+        // expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(2);  // no items were deleted
 
         // Merge empty item with another
-        const firstItemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[1].item_text);
+        const firstItemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[1].item_text);
         fireEvent.input(firstItemInput, { target: { innerHTML: "" }});     // set empty text
         fireEvent.keyDown(firstItemInput, { key: "Delete", code: "Delete" });
 
         // Check if state was correctly updated
-        expect(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length).toEqual(3);      // one less item in the state
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[4], 
+        expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(3);      // one less item in the state
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[4], 
             {...firstItemData, item_text: secondItemData.item_text} ));    // new item has merged text ("" + second) and keeps the state, indent and comment of the first old item
 
         // New item is displayed and focused
@@ -740,16 +740,16 @@ describe("Keybinds (default sort)", () => {
         
         ///////////////////////// Merge 2 parents of the last item /////////////////////////
         // Get initial state
-        let firstItemData = {...store.getState().objectUI.currentObject.toDoList.items[3]};
-        let secondItemData = {...store.getState().objectUI.currentObject.toDoList.items[4]};
+        let firstItemData = {...getCurrentObject(store.getState()).toDoList.items[3]};
+        let secondItemData = {...getCurrentObject(store.getState()).toDoList.items[4]};
 
         // Select the second item and press backspace
-        let secondItemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[4].item_text);
+        let secondItemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[4].item_text);
         fireEvent.keyDown(secondItemInput, { key: "Backspace", code: "Backspace" });
 
         // Check if state was correctly updated
-        expect(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length).toEqual(5);      // one less item in the state
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[6], 
+        expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(5);      // one less item in the state
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[6], 
             {...firstItemData, item_text: firstItemData.item_text + secondItemData.item_text} ));    // new item has merged text and keeps the state and comment of the first old item
 
         // New item is displayed and focused
@@ -766,20 +766,20 @@ describe("Keybinds (default sort)", () => {
 
         ///////////////////////// Merge with a collapsed item's child /////////////////////////
         // Get initial state
-        firstItemData = {...store.getState().objectUI.currentObject.toDoList.items[1]};
-        secondItemData = {...store.getState().objectUI.currentObject.toDoList.items[2]};
+        firstItemData = {...getCurrentObject(store.getState()).toDoList.items[1]};
+        secondItemData = {...getCurrentObject(store.getState()).toDoList.items[2]};
 
         // Select the second item and press backspace
-        secondItemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[2].item_text);
+        secondItemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[2].item_text);
         fireEvent.keyDown(secondItemInput, { key: "Backspace", code: "Backspace" });
 
         // Check if state was correctly updated
-        expect(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length).toEqual(4);      // one less item in the state
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[7], 
+        expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(4);      // one less item in the state
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[7], 
             {...firstItemData, item_text: firstItemData.item_text + secondItemData.item_text} ));    // new item has merged text and keeps the state and comment of the first old item
         
         // Parent of first item is expanded
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].is_expanded).toBeTruthy();
+        expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeTruthy();
     });
 
 
@@ -795,29 +795,29 @@ describe("Keybinds (default sort)", () => {
         expect(TDLContainer).toBeTruthy();
 
         // Focus an item and increase its indent
-        let oldIndent = store.getState().objectUI.currentObject.toDoList.items[2].indent;
-        const itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[2].item_text);
+        let oldIndent = getCurrentObject(store.getState()).toDoList.items[2].indent;
+        const itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[2].item_text);
         fireEvent.focus(itemInput);
         fireEvent.keyDown(itemInput, { key: "Tab", code: "Tab" });
-        expect(store.getState().objectUI.currentObject.toDoList.items[2].indent).toEqual(oldIndent + 1);
+        expect(getCurrentObject(store.getState()).toDoList.items[2].indent).toEqual(oldIndent + 1);
         expect(getRenderedItemIndent(itemInput.parentNode)).toEqual(oldIndent + 1);
 
         // Decrease item indent
         fireEvent.keyDown(itemInput, { key: "Tab", code: "Tab", shiftKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.items[2].indent).toEqual(oldIndent);
+        expect(getCurrentObject(store.getState()).toDoList.items[2].indent).toEqual(oldIndent);
         expect(getRenderedItemIndent(itemInput.parentNode)).toEqual(oldIndent);
 
         // Increase new item input indent
-        oldIndent = store.getState().objectUI.currentObject.toDoList.newItemInputIndent;
+        oldIndent = getCurrentObject(store.getState()).toDoList.newItemInputIndent;
         const newItemInput = getByPlaceholderText(TDLContainer, "New item");
         fireEvent.focus(newItemInput);
         fireEvent.keyDown(newItemInput, { key: "Tab", code: "Tab" });
-        expect(store.getState().objectUI.currentObject.toDoList.newItemInputIndent).toEqual(oldIndent + 1);
+        expect(getCurrentObject(store.getState()).toDoList.newItemInputIndent).toEqual(oldIndent + 1);
         expect(getRenderedItemIndent(newItemInput.parentNode)).toEqual(oldIndent + 1);
 
         // Decrease new item input indent
         fireEvent.keyDown(newItemInput, { key: "Tab", code: "Tab", shiftKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.newItemInputIndent).toEqual(oldIndent);
+        expect(getCurrentObject(store.getState()).toDoList.newItemInputIndent).toEqual(oldIndent);
         expect(getRenderedItemIndent(newItemInput.parentNode)).toEqual(oldIndent);
     });
 
@@ -832,23 +832,23 @@ describe("Keybinds (default sort)", () => {
         clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].item_state).toEqual("active");
+        expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual("active");
 
         // Select an item and change its state repeatedly
-        const itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[0].item_text);
+        const itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[0].item_text);
         fireEvent.focus(itemInput);
 
         fireEvent.keyDown(itemInput, { key: " ", code: "Space", shiftKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].item_state).toEqual("optional");
+        expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual("optional");
 
         fireEvent.keyDown(itemInput, { key: " ", code: "Space", shiftKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].item_state).toEqual("completed");
+        expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual("completed");
 
         fireEvent.keyDown(itemInput, { key: " ", code: "Space", shiftKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].item_state).toEqual("cancelled");
+        expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual("cancelled");
 
         fireEvent.keyDown(itemInput, { key: " ", code: "Space", shiftKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].item_state).toEqual("active");
+        expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual("active");
     });
 
 
@@ -862,17 +862,17 @@ describe("Keybinds (default sort)", () => {
         clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].is_expanded).toBeTruthy();
+        expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeTruthy();
 
         // Select an item and toggle expand/collapse
-        const itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[0].item_text);
+        const itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[0].item_text);
         fireEvent.focus(itemInput);
 
         fireEvent.keyDown(itemInput, { key: " ", code: "Space", ctrlKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].is_expanded).toBeFalsy();
+        expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeFalsy();
 
         fireEvent.keyDown(itemInput, { key: " ", code: "Space", ctrlKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].is_expanded).toBeTruthy();
+        expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeTruthy();
     });
 });
 
@@ -897,11 +897,11 @@ describe("Keybinds (sort by state)", () => {
         clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
-        // const itemOrder = getSortByStateOrder(store.getState().objectUI.currentObject.toDoList);
+        // const itemOrder = getSortByStateOrder(getCurrentObject(store.getState()).toDoList);
         const itemOrder = expectedUpDownTDLItemOrder;    // state sort item order without children of collapsed items
         
         // Select first element
-        let itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[0]].item_text);
+        let itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[0]].item_text);
         fireEvent.focus(itemInput);
 
         // Move down the list
@@ -909,7 +909,7 @@ describe("Keybinds (sort by state)", () => {
         while (n < itemOrder.length - 1) {
             fireEvent.keyDown(itemInput, { key: "ArrowDown", code: "ArrowDown" });
             n++;
-            itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[n]].item_text);
+            itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[n]].item_text);
             expect(document.activeElement).toEqual(itemInput);
         }
 
@@ -920,20 +920,20 @@ describe("Keybinds (sort by state)", () => {
 
         // Move up to the last item
         fireEvent.keyDown(itemInput, { key: "ArrowUp", code: "ArrowUp" });
-        itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[n]].item_text);
+        itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[n]].item_text);
         expect(document.activeElement).toEqual(itemInput);
 
         // Move up the list
         while (n > 0) {
             fireEvent.keyDown(itemInput, { key: "ArrowUp", code: "ArrowUp" });
             n--;
-            itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[n]].item_text);
+            itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[n]].item_text);
             expect(document.activeElement).toEqual(itemInput);
         }
 
         // Move up from the first item (first item is still focused)
         fireEvent.keyDown(itemInput, { key: "ArrowUp", code: "ArrowUp" });
-        itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[itemOrder[0]].item_text);
+        itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[itemOrder[0]].item_text);
         expect(document.activeElement).toEqual(itemInput);
     });
 
@@ -952,8 +952,8 @@ describe("Keybinds (sort by state)", () => {
         // Get initial values
         let items = TDLContainer.querySelectorAll(".to-do-list-item");
         expect(items.length).toEqual(7);    // 6 items + new input          // state sort order: [3, 4, 5, 0, 1, 2]
-        let firstItemData = {...store.getState().objectUI.currentObject.toDoList.items[3]};
-        let secondItemData = {...store.getState().objectUI.currentObject.toDoList.items[4]};
+        let firstItemData = {...getCurrentObject(store.getState()).toDoList.items[3]};
+        let secondItemData = {...getCurrentObject(store.getState()).toDoList.items[4]};
 
         // Focus second item input and split it
         let secondtItemInput = items[1].querySelector(".to-do-list-item-input");
@@ -961,7 +961,7 @@ describe("Keybinds (sort by state)", () => {
         fireEvent.keyDown(secondtItemInput, { key: "Enter", code: "Enter" });
 
         // Check if state was correctly updated
-        let newItemsData = store.getState().objectUI.currentObject.toDoList.items;
+        let newItemsData = getCurrentObject(store.getState()).toDoList.items;
         expect(compareItemData( newItemsData[3], firstItemData ));      // first item is unchanged
         expect(compareItemData( newItemsData[6], {...secondItemData, item_text: ""} ));      // new first item has no text, but has the same state and comment as the old one
         expect(compareItemData( newItemsData[7], secondItemData ));                          // new second item has the same text, state and comment as the old one
@@ -997,10 +997,10 @@ describe("Keybinds (sort by state)", () => {
         expect(TDLContainer).toBeTruthy();
 
         ///////////////////////// Merge items 3 and 0 (0 is after 3 in state sort) /////////////////////////
-        let firstItemData = {...store.getState().objectUI.currentObject.toDoList.items[1]};     // state sort order: [1, 2, 3, 0]
-        let secondItemData = {...store.getState().objectUI.currentObject.toDoList.items[2]};
-        let thirdItemData = {...store.getState().objectUI.currentObject.toDoList.items[3]};
-        let zeroItemData = {...store.getState().objectUI.currentObject.toDoList.items[0]};
+        let firstItemData = {...getCurrentObject(store.getState()).toDoList.items[1]};     // state sort order: [1, 2, 3, 0]
+        let secondItemData = {...getCurrentObject(store.getState()).toDoList.items[2]};
+        let thirdItemData = {...getCurrentObject(store.getState()).toDoList.items[3]};
+        let zeroItemData = {...getCurrentObject(store.getState()).toDoList.items[0]};
 
         // Delete an item
         const thirdItemInput = TDLContainer.querySelectorAll(".to-do-list-item-input")[2];
@@ -1008,10 +1008,10 @@ describe("Keybinds (sort by state)", () => {
         fireEvent.keyDown(thirdItemInput, { key: "Delete", code: "Delete" });
 
         // Check if state was correctly updated (state sort: [1, 2, 3, 0] => [1, 2, 4])
-        expect(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length).toEqual(3);          // 3 items remain
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[1], firstItemData));    // first item remains unchanged
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[2], secondItemData));    // second item remains unchanged
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[4],
+        expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(3);          // 3 items remain
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[1], firstItemData));    // first item remains unchanged
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[2], secondItemData));    // second item remains unchanged
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[4],
             {...thirdItemData, item_text: zeroItemData.item_text} ));    // new item has merged text ("" + 0 item's text) and keeps the state, indent and comment of the third old item
 
         // Items are displayed in correct order. New item is displayed and focused.
@@ -1023,7 +1023,7 @@ describe("Keybinds (sort by state)", () => {
         expect(document.activeElement).toEqual(newItemInput);
 
         ///////////////////////// Merge items 1 and 2 (1 is before 2 in state sort) /////////////////////////
-        let fourthItemData = {...store.getState().objectUI.currentObject.toDoList.items[4]};
+        let fourthItemData = {...getCurrentObject(store.getState()).toDoList.items[4]};
 
         // Delete an item
         const firstItemInput = TDLContainer.querySelectorAll(".to-do-list-item-input")[0];
@@ -1031,10 +1031,10 @@ describe("Keybinds (sort by state)", () => {
         fireEvent.keyDown(firstItemInput, { key: "Delete", code: "Delete" });
 
         // Check if state was correctly updated (state sort: [1, 2, 4] => [5, 4])
-        expect(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length).toEqual(2);          // 2 items remain
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[5],
+        expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(2);          // 2 items remain
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[5],
             {...firstItemData, item_text: secondItemData.item_text} ));    // new item has merged text ("" + 2th text) and keeps the state, indent and comment of the first old item
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[4], fourthItemData));    // fourth item remains unchanged
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[4], fourthItemData));    // fourth item remains unchanged
         
          // Items are displayed in correct order. New item is displayed and focused.
          newItems = TDLContainer.querySelectorAll(".to-do-list-item");
@@ -1061,20 +1061,20 @@ describe("Keybinds (sort by state)", () => {
         expect(TDLContainer).toBeTruthy();
 
         ///////////////////////// Merge items 3 and 0 (0 is after 3 in state sort) /////////////////////////
-        let firstItemData = {...store.getState().objectUI.currentObject.toDoList.items[1]};     // state sort order: [1, 2, 3, 0]
-        let secondItemData = {...store.getState().objectUI.currentObject.toDoList.items[2]};
-        let thirdItemData = {...store.getState().objectUI.currentObject.toDoList.items[3]};
-        let zeroItemData = {...store.getState().objectUI.currentObject.toDoList.items[0]};
+        let firstItemData = {...getCurrentObject(store.getState()).toDoList.items[1]};     // state sort order: [1, 2, 3, 0]
+        let secondItemData = {...getCurrentObject(store.getState()).toDoList.items[2]};
+        let thirdItemData = {...getCurrentObject(store.getState()).toDoList.items[3]};
+        let zeroItemData = {...getCurrentObject(store.getState()).toDoList.items[0]};
 
         // Delete an item
         const zeroItemInput = TDLContainer.querySelectorAll(".to-do-list-item-input")[3];
         fireEvent.keyDown(zeroItemInput, { key: "Backspace", code: "Backspace" });
 
         // Check if state was correctly updated (state sort: [1, 2, 3, 0] => [1, 2, 4])
-        expect(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length).toEqual(3);          // 3 items remain
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[1], firstItemData));    // first item remains unchanged
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[2], secondItemData));    // second item remains unchanged
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[4],
+        expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(3);          // 3 items remain
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[1], firstItemData));    // first item remains unchanged
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[2], secondItemData));    // second item remains unchanged
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[4],
             {...thirdItemData, item_text: thirdItemData.item_text + zeroItemData.item_text} ));    // new item has merged text (3 + 0 items' texts) and keeps the state, indent and comment of the third old item
 
         // Items are displayed in correct order. New item is displayed and focused.
@@ -1086,17 +1086,17 @@ describe("Keybinds (sort by state)", () => {
         expect(document.activeElement).toEqual(newItemInput);
 
         ///////////////////////// Merge items 1 and 2 (1 is before 2 in state sort) /////////////////////////
-        let fourthItemData = {...store.getState().objectUI.currentObject.toDoList.items[4]};
+        let fourthItemData = {...getCurrentObject(store.getState()).toDoList.items[4]};
 
         // Delete an item
         const firstItemInput = TDLContainer.querySelectorAll(".to-do-list-item-input")[0];
         fireEvent.keyDown(firstItemInput, { key: "Delete", code: "Delete" });
 
         // Check if state was correctly updated (state sort: [1, 2, 4] => [5, 4])
-        expect(Object.keys(store.getState().objectUI.currentObject.toDoList.items).length).toEqual(2);          // 2 items remain
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[5],
+        expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(2);          // 2 items remain
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[5],
             {...firstItemData, item_text: firstItemData.item_text + secondItemData.item_text} ));    // new item has merged text (1 + 2 texts) and keeps the state, indent and comment of the first old item
-        expect(compareItemData( store.getState().objectUI.currentObject.toDoList.items[4], fourthItemData));    // fourth item remains unchanged
+        expect(compareItemData( getCurrentObject(store.getState()).toDoList.items[4], fourthItemData));    // fourth item remains unchanged
         
          // Items are displayed in correct order. New item is displayed and focused.
          newItems = TDLContainer.querySelectorAll(".to-do-list-item");
@@ -1119,29 +1119,29 @@ describe("Keybinds (sort by state)", () => {
         expect(TDLContainer).toBeTruthy();
 
         // Focus an item and try to increase its indent
-        let oldIndent = store.getState().objectUI.currentObject.toDoList.items[2].indent;
-        const itemInput = getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[2].item_text);
+        let oldIndent = getCurrentObject(store.getState()).toDoList.items[2].indent;
+        const itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[2].item_text);
         fireEvent.focus(itemInput);
         fireEvent.keyDown(itemInput, { key: "Tab", code: "Tab" });
-        expect(store.getState().objectUI.currentObject.toDoList.items[2].indent).toEqual(oldIndent);
+        expect(getCurrentObject(store.getState()).toDoList.items[2].indent).toEqual(oldIndent);
         expect(getRenderedItemIndent(itemInput.parentNode)).toEqual(oldIndent);
 
         // Try to decrease item indent
         fireEvent.keyDown(itemInput, { key: "Tab", code: "Tab", shiftKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.items[2].indent).toEqual(oldIndent);
+        expect(getCurrentObject(store.getState()).toDoList.items[2].indent).toEqual(oldIndent);
         expect(getRenderedItemIndent(itemInput.parentNode)).toEqual(oldIndent);
 
         // Try to increase new item input indent
-        oldIndent = store.getState().objectUI.currentObject.toDoList.newItemInputIndent;
+        oldIndent = getCurrentObject(store.getState()).toDoList.newItemInputIndent;
         const newItemInput = getByPlaceholderText(TDLContainer, "New item");
         fireEvent.focus(newItemInput);
         fireEvent.keyDown(newItemInput, { key: "Tab", code: "Tab" });
-        expect(store.getState().objectUI.currentObject.toDoList.newItemInputIndent).toEqual(oldIndent);
+        expect(getCurrentObject(store.getState()).toDoList.newItemInputIndent).toEqual(oldIndent);
         expect(getRenderedItemIndent(newItemInput.parentNode)).toEqual(oldIndent);
 
         // Try to decrease new item input indent
         fireEvent.keyDown(newItemInput, { key: "Tab", code: "Tab", shiftKey: true });
-        expect(store.getState().objectUI.currentObject.toDoList.newItemInputIndent).toEqual(oldIndent);
+        expect(getCurrentObject(store.getState()).toDoList.newItemInputIndent).toEqual(oldIndent);
         expect(getRenderedItemIndent(newItemInput.parentNode)).toEqual(oldIndent);
     });
 });
@@ -1160,11 +1160,11 @@ describe("Drag and drop", () => {
         expect(TDLContainer).toBeTruthy();
         
         const items = TDLContainer.querySelectorAll(".to-do-list-item-container");
-        const itemOrder = getDefaultSortOrder(store.getState().objectUI.currentObject.toDoList);
+        const itemOrder = getDefaultSortOrder(getCurrentObject(store.getState()).toDoList);
 
         // Change first item text
         const draggedItem = items[0];
-        const draggedItemInput = getByText(draggedItem, store.getState().objectUI.currentObject.toDoList.items[itemOrder[0]].item_text);
+        const draggedItemInput = getByText(draggedItem, getCurrentObject(store.getState()).toDoList.items[itemOrder[0]].item_text);
         fireEvent.input(draggedItemInput, { target: { innerHTML: "updated item 0" }});
         
         // Start dragging first item
@@ -1190,7 +1190,7 @@ describe("Drag and drop", () => {
                 expect(item.querySelector(".to-do-list-item-id").textContent).toEqual(newItemOrder[index].toString());
             }
         });
-        expect(store.getState().objectUI.currentObject.toDoList.items[0].indent).toEqual(0);
+        expect(getCurrentObject(store.getState()).toDoList.items[0].indent).toEqual(0);
         
         // Check if updated text is displayed after drag end
         getByText(draggedItem, "updated item 0");
@@ -1212,21 +1212,21 @@ describe("Drag and drop", () => {
         // Start dragging an item
         let draggedItem = items[0];
         fireEvent.dragStart(draggedItem);
-        await waitFor(() => expect(queryByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[0].item_text)).toBeFalsy());
+        await waitFor(() => expect(queryByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[0].item_text)).toBeFalsy());
 
         // Check if indent can't be > 0 if dropping before the first item
         let dropTarget = items[1];
         fireEvent.dragEnter(dropTarget);
         fireEvent.dragEnter(dropTarget.querySelector(".to-do-list-item-drop-zone.last"));
-        expect(store.getState().objectUI.currentObject.toDoList.dropIndent).toEqual(0);
+        expect(getCurrentObject(store.getState()).toDoList.dropIndent).toEqual(0);
 
         // Check if indent can't be prev item's indent + 1
         for (let i = 3; i < 8; i++) {
-            let maxIndent = store.getState().objectUI.currentObject.toDoList.items[i - 1].indent + 1;
+            let maxIndent = getCurrentObject(store.getState()).toDoList.items[i - 1].indent + 1;
             dropTarget = items[i];
             fireEvent.dragEnter(dropTarget);
             fireEvent.dragEnter(dropTarget.querySelector(".to-do-list-item-drop-zone.last"));
-            expect(store.getState().objectUI.currentObject.toDoList.dropIndent).toEqual(maxIndent);
+            expect(getCurrentObject(store.getState()).toDoList.dropIndent).toEqual(maxIndent);
         }
 
         // Check if drop indicators correctly display the current drop indent
@@ -1236,7 +1236,7 @@ describe("Drag and drop", () => {
         const dropZoneIndicators = dropTarget.querySelectorAll(".to-do-list-item-indent-indicator");
         for (let i = 0; i < 6; i++) {
             fireEvent.dragEnter(dropZones[i]);
-            expect(store.getState().objectUI.currentObject.toDoList.dropIndent).toEqual(i);
+            expect(getCurrentObject(store.getState()).toDoList.dropIndent).toEqual(i);
             for (let j = 0; j < i; j++) expect(dropZoneIndicators[j].className.indexOf("active")).toEqual(-1);
             for (let j = i; j < 6; j++) expect(dropZoneIndicators[j].className.indexOf("active")).toBeGreaterThan(-1);
         }
@@ -1269,7 +1269,7 @@ describe("Drag and drop", () => {
         const lastItem = items[items.length - 2];
         const lastItemInput = lastItem.querySelector(".to-do-list-item-input");
         const newItem = items[items.length - 1];
-        const itemOrder = getDefaultSortOrder(store.getState().objectUI.currentObject.toDoList);
+        const itemOrder = getDefaultSortOrder(getCurrentObject(store.getState()).toDoList);
         const incorrectDropTarget = getByText(container, "Object Information");
 
         // Set last item indent to 0
@@ -1281,7 +1281,7 @@ describe("Drag and drop", () => {
             fireEvent.dragStart(draggedItem);   // drag item and check if its indent is correct (<= last item's indent + 1)
             fireEvent.dragEnter(newItem);
             fireEvent.dragEnter(newItem.querySelector(".to-do-list-item-drop-zone.last"));
-            expect(store.getState().objectUI.currentObject.toDoList.dropIndent).toEqual(i);
+            expect(getCurrentObject(store.getState()).toDoList.dropIndent).toEqual(i);
 
             fireEvent.drop(incorrectDropTarget);    // abort dragging
             fireEvent.dragEnd(draggedItem);
@@ -1323,21 +1323,21 @@ describe("Drag and drop", () => {
         fireEvent.dragStart(draggedItem);
 
         // Check if item and its children are not displayed
-        await waitFor(() => expect(queryByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[0].item_text)).toBeFalsy());
-        for (let i = 1; i < 4; i ++) expect(queryByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[i].item_text)).toBeFalsy();
-        for (let i = 5; i < 8; i ++) getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[i].item_text);
+        await waitFor(() => expect(queryByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[0].item_text)).toBeFalsy());
+        for (let i = 1; i < 4; i ++) expect(queryByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[i].item_text)).toBeFalsy();
+        for (let i = 5; i < 8; i ++) getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[i].item_text);
 
         // Check if dropzones are rendered correctly (indent can't be > 0)
         const firstNonDraggedItem = items[4];
         fireEvent.dragEnter(firstNonDraggedItem);
         fireEvent.dragEnter(firstNonDraggedItem.querySelector(".to-do-list-item-drop-zone.last"));
-        expect(store.getState().objectUI.currentObject.toDoList.dropIndent).toEqual(0);
+        expect(getCurrentObject(store.getState()).toDoList.dropIndent).toEqual(0);
 
         // Drop dragged items before last item
         const lastItem = items[items.length - 2];
         fireEvent.dragEnter(lastItem);
         fireEvent.dragEnter(lastItem.querySelector(".to-do-list-item-drop-zone.last"));
-        expect(store.getState().objectUI.currentObject.toDoList.dropIndent).toEqual(3);
+        expect(getCurrentObject(store.getState()).toDoList.dropIndent).toEqual(3);
         fireEvent.drop(lastItem);
         fireEvent.dragEnter(draggedItem);
 
@@ -1376,8 +1376,8 @@ describe("Drag and drop", () => {
         fireEvent.dragStart(draggedItem);
 
         // Check if item and its children are not rendered
-        await waitFor(() => expect(queryByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[5].item_text)).toBeFalsy());
-        for (let i = 6; i < 8; i++) expect(queryByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[i].item_text)).toBeFalsy();
+        await waitFor(() => expect(queryByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[5].item_text)).toBeFalsy());
+        for (let i = 6; i < 8; i++) expect(queryByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[i].item_text)).toBeFalsy();
 
         // Drop before first item
         const dropTarget = items[0];
@@ -1417,8 +1417,8 @@ describe("Drag and drop", () => {
 
         // Start dragging an item with children and check if they're not rendered
         fireEvent.dragStart(draggedItem);
-        await waitFor(() => expect(queryByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[0].item_text)).toBeFalsy());
-        for (let i = 1; i < 4; i++) expect(queryByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[i].item_text)).toBeFalsy();
+        await waitFor(() => expect(queryByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[0].item_text)).toBeFalsy());
+        for (let i = 1; i < 4; i++) expect(queryByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[i].item_text)).toBeFalsy();
 
         // Abort dragging (drop on an incorrect target)
         fireEvent.dragEnter(correctDropTarget);
@@ -1448,7 +1448,7 @@ describe("Drag and drop", () => {
         // Start draggining a collapsed item with children
         const draggedItem = items[0];
         fireEvent.dragStart(draggedItem);
-        await waitFor(() => expect(queryByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[0].item_text)).toBeFalsy());
+        await waitFor(() => expect(queryByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[0].item_text)).toBeFalsy());
 
         // Drop the item with a non-zero indent
         const dropTarget = items[2];
@@ -1461,8 +1461,8 @@ describe("Drag and drop", () => {
         checkRenderedItemsOrder(TDLContainer, [4, 0, 5, 6, 7]);
 
         // Check if item and children indents were updated
-        expect(getRenderedItemIndent(getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[0].item_text).parentNode)).toEqual(1);
-        for (let i = 0; i < 4; i++) expect(store.getState().objectUI.currentObject.toDoList.items[i].indent).toEqual(i + 1);
+        expect(getRenderedItemIndent(getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[0].item_text).parentNode)).toEqual(1);
+        for (let i = 0; i < 4; i++) expect(getCurrentObject(store.getState()).toDoList.items[i].indent).toEqual(i + 1);
     });
 
 
@@ -1482,7 +1482,7 @@ describe("Drag and drop", () => {
 
         // Drag and drop an item with children after a collapsed item with non-zero indent
         fireEvent.dragStart(draggedItem);
-        await waitFor(() => expect(queryByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[5].item_text)).toBeFalsy());
+        await waitFor(() => expect(queryByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[5].item_text)).toBeFalsy());
         fireEvent.dragEnter(dropTarget);
         fireEvent.dragEnter(dropTarget.querySelector(".to-do-list-item-drop-zone.last"));
         fireEvent.drop(dropTarget);
@@ -1492,8 +1492,8 @@ describe("Drag and drop", () => {
         checkRenderedItemsOrder(TDLContainer, [0, 1, 5, 6, 7, 4]);  // 2 and 3 are still hidden
 
         // Check if item indent is correct
-        expect(getRenderedItemIndent(getByText(TDLContainer, store.getState().objectUI.currentObject.toDoList.items[5].item_text).parentNode)).toEqual(1);
-        for (let i = 0; i < 3; i++) expect(store.getState().objectUI.currentObject.toDoList.items[i + 5].indent).toEqual(i + 1);
+        expect(getRenderedItemIndent(getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[5].item_text).parentNode)).toEqual(1);
+        for (let i = 0; i < 3; i++) expect(getCurrentObject(store.getState()).toDoList.items[i + 5].indent).toEqual(i + 1);
     });
 
 
@@ -1513,7 +1513,7 @@ describe("Drag and drop", () => {
         
         // Try to drag an item
         fireEvent.dragStart(draggedItem);
-        expect(store.getState().objectUI.currentObject.toDoList.draggedParent).toEqual(-1);     // dragStart event wasn't fired and draggedParent remains equal to -1
+        expect(getCurrentObject(store.getState()).toDoList.draggedParent).toEqual(-1);     // dragStart event wasn't fired and draggedParent remains equal to -1
     });
 
 
@@ -1530,13 +1530,13 @@ describe("Drag and drop", () => {
 
         const items = TDLContainer.querySelectorAll(".to-do-list-item-container");
         const draggedItem = items[0];
-        const draggedItemInput = getByText(draggedItem, store.getState().objectUI.currentObject.toDoList.items[0].item_text);
+        const draggedItemInput = getByText(draggedItem, getCurrentObject(store.getState()).toDoList.items[0].item_text);
 
         // Hover over first item input
         fireEvent.mouseEnter(draggedItemInput);
         
         // Try to drag an item
         fireEvent.dragStart(draggedItem);
-        expect(store.getState().objectUI.currentObject.toDoList.draggedParent).toEqual(-1);     // dragStart event wasn't fired and draggedParent remains equal to -1
+        expect(getCurrentObject(store.getState()).toDoList.draggedParent).toEqual(-1);     // dragStart event wasn't fired and draggedParent remains equal to -1
     });
 });

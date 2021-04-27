@@ -5,11 +5,12 @@ import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch
 import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
 
 import { setRedirectOnRender } from "../actions/common";
-import { loadEditObjectPage, setObjectOnLoadFetchState, setObjectOnSaveFetchState, setShowDeleteDialogObject, setCurrentObject, 
+import { loadEditObjectPage, resetEditedObject, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
+        setShowDeleteDialogObject, setCurrentObject, 
         setCurrentObjectTags, setObjectTagsInput } from "../actions/object";
 
-import { isFetchingObject } from "../store/state-util/ui-object";
-import { getObjectDataFromStore } from "../store/state-util/objects";
+import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-object";
+import { objectDataIsInState } from "../store/state-util/objects";
 
 
 const backendURL = config.backendURL;
@@ -25,11 +26,11 @@ export const addObjectOnSaveFetch = () => {
 
         // Run fetch & add object
         dispatch(setObjectOnSaveFetchState(true, ""));
-        const result = await dispatch(addObjectFetch(state.objectUI.currentObject));
+        const result = await dispatch(addObjectFetch(getCurrentObject(state)));
 
         if (!responseHasError(result)) {
             dispatch(setObjectOnSaveFetchState(false, ""));
-            dispatch(setRedirectOnRender(`/objects/${result.object_id}`));
+            dispatch(setRedirectOnRender(`/objects/${result.object_id}`, true));
         } else {
             dispatch(setObjectOnSaveFetchState(false, result.error));
         }
@@ -37,47 +38,47 @@ export const addObjectOnSaveFetch = () => {
 };
 
 
-// Loads object attributes & data on existing object page
+// Fetches attributes, tags and data of an existing object and adds them to state.editedObjects, if the object was not already edited
 export const editObjectOnLoadFetch = object_id => {
     return async (dispatch, getState) => {
         // Set initial page state
-        dispatch(loadEditObjectPage());
+        object_id = parseInt(object_id);
+        dispatch(loadEditObjectPage(object_id));
 
         // Update fetch status
         dispatch(setObjectOnLoadFetchState(true, ""));
-
-        // Check state for object attributes, tags and data
-        let state = getState();
-        let objectIDs, objectDataIDs;
-        if (object_id in state.objects && object_id in state.objectsTags) {
-            dispatch(setCurrentObject({ ...state.objects[object_id] }));
-            dispatch(setCurrentObjectTags({ currentTagIDs: state.objectsTags[object_id] }));
-            await dispatch(getNonCachedTags(state.objectsTags[object_id]));
-        } else objectIDs = [parseInt(object_id)];
         
-        let objectData = getObjectDataFromStore(state, object_id);
-        if (objectData !== undefined) dispatch(setCurrentObject(objectData));
-        else objectDataIDs = [parseInt(object_id)];
+        // Check if object attributes, tags and data should be fetched and/or added to state.editedObjects
+        let state = getState();
+        let setEditedObjects = true, fetchAttributesAndTags = true, fetchData = true;
+        if (object_id in state.editedObjects) setEditedObjects = false;
+        if (object_id in state.objects && object_id in state.objectsTags) fetchAttributesAndTags = false;
+        if (objectDataIsInState(state, object_id)) fetchData = false;
 
-        // End fetch if both attributes and data are in state
-        if (!objectIDs && !objectDataIDs) {
-            dispatch(setObjectOnLoadFetchState(false, ""));
+        // Fetch object attributes, tags and/or data if they are missing
+        if (fetchAttributesAndTags || fetchData) {
+            let objectIDs = fetchAttributesAndTags ? [object_id] : undefined;
+            let objectDataIDs = fetchData ? [object_id] : undefined;
+            let result = await dispatch(viewObjectsFetch(objectIDs, objectDataIDs));
+            if (responseHasError(result)) {
+                dispatch(setObjectOnLoadFetchState(false, result.error));
+                return;
+            }
+        }
+
+        // Fetch non-cached tags
+        let objectTags = getState().objectsTags[object_id];
+        let result = await dispatch(getNonCachedTags(objectTags));
+        if (responseHasError(result)) {
+            dispatch(setObjectOnLoadFetchState(false, result.error));
             return;
         }
 
-        // Run fetch & set current object
-        const result = await dispatch(viewObjectsFetch(objectIDs, objectDataIDs));
+        // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
+        if (setEditedObjects) dispatch(resetEditedObject());  // object_id is taken from state.objectUI.currentObjectID (which was set by loadEditObjectPage)
 
-        if (!responseHasError(result)) {
-            const object = getState().objects[object_id];
-            const objectTags = getState().objectsTags[object_id];
-            dispatch(setCurrentObject(object));
-            dispatch(setCurrentObjectTags({ currentTagIDs: objectTags }));
-            dispatch(setCurrentObject(getObjectDataFromStore(getState(), object_id)));
-            dispatch(setObjectOnLoadFetchState(false, ""));
-        } else {
-            dispatch(setObjectOnLoadFetchState(false, result.error));
-        }
+        // End fetch
+        dispatch(setObjectOnLoadFetchState(false, ""));
     };
 };
 
@@ -92,7 +93,7 @@ export const editObjectOnSaveFetch = () => {
 
         // Run fetch & update object
         dispatch(setObjectOnSaveFetchState(true, ""));
-        const result = await dispatch(updateObjectFetch(state.objectUI.currentObject));
+        const result = await dispatch(updateObjectFetch(getCurrentObject(state)));
         
         if (!responseHasError(result)) {
             dispatch(setCurrentObjectTags({ currentTagIDs: getState().objectsTags[result.object_id], added: [], removed: [] }));
@@ -117,7 +118,7 @@ export const editObjectOnDeleteFetch = () => {
 
         // Run fetch & delete object data from state
         dispatch(setObjectOnSaveFetchState(true, ""));
-        const result = await dispatch(deleteObjectsFetch( [state.objectUI.currentObject.object_id] ));
+        const result = await dispatch(deleteObjectsFetch( [state.objectUI.currentObjectID] ));
 
         if (!responseHasError(result)) {
             dispatch(setRedirectOnRender("/objects"));
@@ -132,7 +133,7 @@ export const editObjectOnDeleteFetch = () => {
 export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
     return async (dispatch, getState) => {
         // Exit fetch if an item was added before the start of the fetch
-        const inputText = getState().objectUI.currentObject.tagsInput.inputText;
+        const inputText = getState().objectUI.tagsInput.inputText;
         if (inputText.length === 0) {
             dispatch(setObjectTagsInput({ matchingIDs: [] }));
             return;
@@ -143,7 +144,7 @@ export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
 
         if (!responseHasError(result)) {
             // Update matching tags if input text didn't change during fetch
-            if (inputText === getState().objectUI.currentObject.tagsInput.inputText) dispatch(setObjectTagsInput({ matchingIDs: result }));
+            if (inputText === getState().objectUI.tagsInput.inputText) dispatch(setObjectTagsInput({ matchingIDs: result }));
         }
     };
 }

@@ -83,3 +83,20 @@ export const getObjectDataFromStore = (state, object_id) => {
             return undefined;
     }
 };
+
+
+// Returns true if object data for the provided `object_id` exists in state or false otherwise.
+export const objectDataIsInState = (state, object_id) => {
+    if (!state.objects[object_id]) return false;
+    const objectType = state.objects[object_id].object_type;
+    switch (objectType) {
+        case "link":
+            return object_id in state.links;
+        case "markdown":
+            return object_id in state.markdown;
+        case "to_do_list":
+            return object_id in state.toDoLists;
+        default:
+            return false;
+    }
+};

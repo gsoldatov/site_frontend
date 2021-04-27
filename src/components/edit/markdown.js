@@ -5,6 +5,7 @@ import { Form, Grid } from "semantic-ui-react";
 import FieldMenu from "../field/field-menu";
 
 import { setCurrentObject, setMarkdownDisplayMode } from "../../actions/object";
+import { getCurrentObject } from "../../store/state-util/ui-object";
 import intervalWrapper from "../../util/interval-wrapper";
 
 import ParseMarkdownWorker from "../../util/parse-markdown.worker";
@@ -85,8 +86,8 @@ const useMarkdownParseWorker = () => {
 
 const MarkdownView = () => {
     const parseMarkdown = useMarkdownParseWorker();
-    const text = useSelector(state => state.objectUI.currentObject.markdown.parsed);
-    const rawText = useSelector(state => state.objectUI.currentObject.markdown.raw_text);
+    const text = useSelector(state => getCurrentObject(state).markdown.parsed);
+    const rawText = useSelector(state => getCurrentObject(state).markdown.raw_text);
 
     useEffect(() => {   // Parse after first render
         if (text === undefined || text === "")
@@ -99,7 +100,7 @@ const MarkdownView = () => {
 
 const MarkdownEdit = () => {
     const dispatch = useDispatch();
-    const rawText = useSelector(state => state.objectUI.currentObject.markdown.raw_text);
+    const rawText = useSelector(state => getCurrentObject(state).markdown.raw_text);
 
     const parseMarkdown = useMarkdownParseWorker();
 

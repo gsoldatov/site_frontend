@@ -11,9 +11,10 @@ import { InlineItemList } from "./inline/inline-item-list";
 import { InlineItem } from "./inline/inline-item";
 import { InlineInput } from "./inline/inline-input";
 
-import { isFetchingObject, isFetchinOrShowingDialogObject } from "../store/state-util/ui-object";
+import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, setCurrentObject, setCurrentObjectTags, setSelectedTab, setObjectTagsInput, setShowDeleteDialogObject } from "../actions/object";
+import { loadAddObjectPage, addDefaultEditedObject, resetEditedObject, setCurrentObject, setCurrentObjectTags, setSelectedTab, setObjectTagsInput, 
+         setShowResetDialogObject, setShowDeleteDialogObject } from "../actions/object";
 import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
 
 
@@ -36,15 +37,33 @@ const addObjectSideMenuItems = [
         type: "item",
         text: "Save",
         isActiveSelector: state => !isFetchingObject(state) && 
-                                state.objectUI.currentObject.object_name.length >= 1 && state.objectUI.currentObject.object_name.length <= 255,
+                                getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255,
         onClick: addObjectOnSaveFetch()
     },
+
     {
         type: "item",
         text: "Reset",
+        isVisibleSelector: state => !state.objectUI.showResetDialog,
         isActiveSelector: state => !isFetchingObject(state),
-        onClick: loadAddObjectPage(true)
+        onClick: setShowResetDialogObject(true)
     },
+    {
+        type: "dialog",
+        text: "Reset This Object?",
+        isVisibleSelector: state => state.objectUI.showResetDialog,
+        buttons: [
+            {
+                text: "Yes",
+                onClick: addDefaultEditedObject(0)
+            },
+            {
+                text: "No",
+                onClick: setShowResetDialogObject(false)
+            }
+        ]
+    },
+
     {
         type: "item",
         text: "Cancel",
@@ -62,18 +81,43 @@ const editObjectSideMenuItems = [
         isActiveSelector: state => !isFetchingObject(state),
         onClick: setRedirectOnRender("/objects/add")
     },
+
     {
         type: "item",
         text: "Save",
         isActiveSelector: state => !isFetchingObject(state) && 
-                                state.objectUI.currentObject.object_name.length >= 1 && state.objectUI.currentObject.object_name.length <= 255,
+                                getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255,
         onClick: editObjectOnSaveFetch()
     },
+
+    {
+        type: "item",
+        text: "Reset",
+        isVisibleSelector: state => !state.objectUI.showResetDialog,
+        isActiveSelector: state => !isFetchingOrOnLoadFetchFailed(state),
+        onClick: setShowResetDialogObject(true)
+    },
+    {
+        type: "dialog",
+        text: "Reset This Object?",
+        isVisibleSelector: state => state.objectUI.showResetDialog,
+        buttons: [
+            {
+                text: "Yes",
+                onClick: resetEditedObject()
+            },
+            {
+                text: "No",
+                onClick: setShowResetDialogObject(false)
+            }
+        ]
+    },
+    
     {
         type: "item",
         text: "Delete",
         isVisibleSelector: state => !state.objectUI.showDeleteDialog,
-        isActiveSelector: state => !isFetchinOrShowingDialogObject(state) && state.objectUI.currentObject.object_id !== 0,
+        isActiveSelector: state => !isFetchingOrOnLoadFetchFailed(state),
         onClick: setShowDeleteDialogObject(true)
     },
     {
@@ -91,6 +135,7 @@ const editObjectSideMenuItems = [
             }
         ]
     },
+
     {
         type: "item",
         text: "Cancel",
@@ -157,8 +202,8 @@ const onLoadFetchSelector = state => state.objectUI.objectOnLoadFetch;
 
 
 // Created at & modified at timestamps
-const createdAtSelector = state => state.objectUI.currentObject.created_at;
-const modifiedAtSelector = state => state.objectUI.currentObject.modified_at;
+const createdAtSelector = state => getCurrentObject(state).created_at;
+const modifiedAtSelector = state => getCurrentObject(state).modified_at;
 const ObjectTimeStamps = () => <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} />;
 
 
@@ -168,16 +213,16 @@ const ObjectSaveError = () => <SaveError fetchSelector={fetchSelector} />;
 
 
 // Object input form
-const nameSelector = state => state.objectUI.currentObject.object_name;
+const nameSelector = state => getCurrentObject(state).object_name;
 const getNameOnChangeParams = value => ({object_name: value });
-const descriptionSelector = state => state.objectUI.currentObject.object_description;
+const descriptionSelector = state => getCurrentObject(state).object_description;
 const getDescriptionOnChangeParams = value => ({object_description: value });
 const ObjectInput = () => <NameDescriptionInput nameLabel="Object Name" namePlaceholder="Object name" nameSelector={nameSelector} nameOnChange={setCurrentObject} getNameOnChangeParams={getNameOnChangeParams}
     descriptionLabel="Object Description" descriptionPlaceholder="Object description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentObject} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;
 
 
 // Object's tags
-const addedTagsSelector = state => state.objectUI.currentObject.addedTags;
+const addedTagsSelector = state => getCurrentObject(state).addedTags;
 const AddedTagItem = ({ id }) => {
     const dispatch = useDispatch();
     const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
@@ -186,21 +231,21 @@ const AddedTagItem = ({ id }) => {
     const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 };
-const currentTagsSelector = state => state.objectUI.currentObject.currentTagIDs;
+const currentTagsSelector = state => getCurrentObject(state).currentTagIDs;
 const CurrentTagItem = ({ id }) => {
     const dispatch = useDispatch();
     // const text = useSelector(state => state.tags[id].tag_name);
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
-    const isRemoved = useSelector(state => state.objectUI.currentObject.removedTagIDs.includes(id));
+    const isRemoved = useSelector(state => getCurrentObject(state).removedTagIDs.includes(id));
     const itemClassName = isRemoved ? "inline-item-red" : "inline-item";
     const onClick = () => dispatch(setCurrentObjectTags({ removed: [id] }));
     const itemLink = `/tags/${id}`;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 };
 
-const inputStateSelector = state => state.objectUI.currentObject.tagsInput;
-const existingIDsSelector = state => state.objectUI.currentObject.currentTagIDs.concat(
-    state.objectUI.currentObject.addedTags.filter(tag => typeof(tag) === "number"));
+const inputStateSelector = state => state.objectUI.tagsInput;
+const existingIDsSelector = state => getCurrentObject(state).currentTagIDs.concat(
+    getCurrentObject(state).addedTags.filter(tag => typeof(tag) === "number"));
 // const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
 const inlineInputDropdownItemTextSelectors = { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name };
 const ObjectTags = () => {

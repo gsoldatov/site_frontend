@@ -8,6 +8,7 @@ import { MarkdownContainer } from "./markdown";
 import { TDLContainer } from "./to-do-list/to-do-list";
 
 import { setCurrentObject } from "../../actions/object";
+import { getCurrentObject } from "../../store/state-util/ui-object";
 
 import StyleObject from "../../styles/object.css";
 
@@ -25,7 +26,7 @@ export const ObjectTypeSelector = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
     const isDisabled = id !== "add";
-    const objectType = useSelector(state => state.objectUI.currentObject.object_type);
+    const objectType = useSelector(state => getCurrentObject(state).object_type);
 
     const items = objectTypes.map(t => {
         const isActive = t.name === objectType;
@@ -51,7 +52,7 @@ export const ObjectTypeSelector = () => {
 
 // Component for switching type-specific view/edit components
 export const ObjectViewEditSwitch = () => {
-    const type = useSelector(state => state.objectUI.currentObject.object_type);
+    const type = useSelector(state => getCurrentObject(state).object_type);
 
     switch (type) {
         case "link":

@@ -50,56 +50,24 @@ const initialState = {
     // objects' tags storage
     objectsTags: {},
 
-    // objects storages
+    // objects' storages
     objects: {},    // general arributes
     links: {},
     markdown: {},
     toDoLists: {},
 
+    // edited objects
+    editedObjects: {},
+
     // /objects/:id page UI controllers
     objectUI: {
-        currentObject: {       // current state of the tag being added/edited
-            object_id: 0,
-            object_type: "url",
-            object_name: "",
-            object_description: "",
-            created_at: "",
-            modified_at: "",
+        currentObjectID: -1,
 
-            currentTagIDs: [],   // object's tags state
-            addedTags: [],
-            removedTagIDs: [],
-            tagsInput: {
-                isDisplayed: false,
-                inputText: "",
-                matchingIDs: []
-            },
-
-            link: "",
-            markdown: { 
-                raw_text: "", 
-                parsed: "" 
-            },
-            toDoList: {
-                itemOrder: [],
-                setFocusOnID: -1,
-                caretPositionOnFocus: -1,
-                newItemInputIndent: 0,
-                draggedParent: -1,
-                draggedChildren: [],
-                draggedOver: -1,
-                dropIndent: 0,
-
-                sort_type: "default",
-                items: {}
-            }
+        tagsInput: {
+            isDisplayed: false,
+            inputText: "",
+            matchingIDs: []
         },
-
-        selectedTab: 0,
-
-        saveAddObjectState: false,
-
-        markdownDisplayMode: "both",
 
         objectOnLoadFetch: {
             isFetching: false,
@@ -111,6 +79,10 @@ const initialState = {
             fetchError: ""
         },
 
+        selectedTab: 0,
+        markdownDisplayMode: "both",
+
+        showResetDialog: false,
         showDeleteDialog: false
     },
 

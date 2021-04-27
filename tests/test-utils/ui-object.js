@@ -2,6 +2,9 @@ import { fireEvent } from "@testing-library/react";
 import { getByText } from "@testing-library/dom";
 
 
+export const getCurrentObject = state => state.editedObjects[state.objectUI.currentObjectID];
+
+
 export const getObjectTypeSelectingElements = container => {
     // Check if object types selector is rendered and enabled
     const objectTypeSelector = container.querySelector(".object-type-menu");
@@ -45,4 +48,12 @@ export const clickGeneralTabButton = container => {
 export const clickDataTabButton = container => {
     const { dataTabButton } = getObjectTabMenuButtons(container);
     fireEvent.click(dataTabButton);
+}
+
+
+export const resetObject = container => {
+    const resetButton = getByText(container, "Reset");
+    fireEvent.click(resetButton);
+    const confimationDialogButtonYes = getByText(container, "Yes");
+    fireEvent.click(confimationDialogButtonYes);
 }

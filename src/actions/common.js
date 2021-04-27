@@ -6,4 +6,4 @@ export const REDIRECT_ON_RENDER_PATH_CREATORS = {
 
 export const SET_REDIRECT_ON_RENDER = "SET_REDIRECT_ON_RENDER";
 
-export const setRedirectOnRender = (redirectOnRender = "") => ({ type: SET_REDIRECT_ON_RENDER, redirectOnRender: redirectOnRender });
+export const setRedirectOnRender = (redirectOnRender = "", deleteNewObject = false) => ({ type: SET_REDIRECT_ON_RENDER, redirectOnRender, deleteNewObject });
