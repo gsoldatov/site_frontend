@@ -4,6 +4,7 @@ import { runFetch, getErrorFromResponse, responseHasError } from "./common";
 import { addTags, deleteTags, setObjectsTags } from "../actions/data-tags";
 import { addObjects } from "../actions/data-objects";
 import { deselectTags } from "../actions/tags";
+import { resetEditedObjectsTags } from "../actions/object";
 
 import { checkIfTagNameExists } from "../store/state-util/tags";
 
@@ -214,6 +215,9 @@ export const objectsTagsUpdateFetch = (object_ids, added_tags, removed_tag_ids) 
                     objects.push(object);
                 });
                 dispatch(addObjects(objects));
+
+                // Reset all updated objects' tags and modified_at in state.editedObjects
+                dispatch(resetEditedObjectsTags(object_ids, modifiedAt));
 
                 // Fetch non-cahced tags
                 response = await dispatch(getNonCachedTags(json.tag_updates.added_tag_ids));

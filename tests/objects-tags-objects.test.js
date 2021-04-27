@@ -1,15 +1,17 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from "@testing-library/dom";
 
 import { getStoreWithTwoSelectedObjects } from "./mocks/data-objects-tags";
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils/ui-objects-tags";
+import { addAndRemoveTags } from "./test-utils/ui-object";
 import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers } from "./test-utils/render";
 
 import Objects from "../src/components/objects";
+import { EditObject } from "../src/components/object";
 import { getNonCachedTags } from "../src/fetches/data-tags";
 
 
@@ -327,17 +329,28 @@ test("Check side menu", async () => {
 });
 
 
-test("Check update tags", async () => {
+test("Check tags update + editedObjects reset", async () => {
     let store = await getStoreWithTwoSelectedObjects();
     await store.dispatch(getNonCachedTags([7]));    // additional tags is required to test adding of an existing tag
 
-    // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-        route: "/objects",
-        store: store
-    });
+    const render = route => renderWithWrappers(
+        <Switch>
+            <Route exact path="/objects"><Objects /></Route>
+            <Route exact path="/objects/:id"><EditObject /></Route>
+        </Switch>
+    , { route, store });
 
-    // Wait for the objects to be loaded
+    // Add & remove tags for two objects on the /objects/:id page without saving the changes
+    var {container } = render("/objects/1");
+    await waitFor(() => getByText(container, "Object Information"));
+    await addAndRemoveTags(container, store);
+
+    var {container } = render("/objects/3");
+    await waitFor(() => getByText(container, "Object Information"));
+    await addAndRemoveTags(container, store);
+
+    // Wait for the /objects page to be loaded
+    var {container } = render("/objects");
     await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
 
     // Add an existing tag
@@ -390,4 +403,15 @@ test("Check update tags", async () => {
 
     expect(wrappers[0].childNodes.length).toEqual(5);   // 4 tags + input toggle
     expect(wrappers[1].childNodes.length).toEqual(2);   // 2 tags
+
+    // Check if object with id = 1 was reset in state.editedObjects (tags and modified_at)
+    const objectOneTags = store.getState().objectsTags[1].slice(), objectOneEditedTags = store.getState().editedObjects[1].currentTagIDs.slice();
+    expect(compareArrays(objectOneTags.sort(), objectOneEditedTags.sort())).toBeTruthy();
+    expect(store.getState().editedObjects[1].addedTags.length).toEqual(0);
+    expect(store.getState().editedObjects[1].removedTagIDs.length).toEqual(0);
+    expect(store.getState().editedObjects[1].modified_at).toEqual(expectedModifiedAt);
+
+    // Check if object with id = 3 was not reset in state.editedObjects
+    expect(store.getState().editedObjects[3].addedTags.length).toEqual(1);
+    expect(store.getState().editedObjects[3].removedTagIDs.length).toEqual(1);
 });

@@ -1,5 +1,5 @@
 import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, ADD_DEFAULT_EDITED_OBJECT, RESET_EDITED_OBJECT,
-    SET_CURRENT_OBJECT, SET_OBJECT_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS, SET_SELECTED_TAB, 
+    SET_CURRENT_OBJECT, SET_OBJECT_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
     SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, 
     SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
@@ -280,6 +280,32 @@ function setCurrentObjectTags(state, action) {
     };
 }
 
+
+// Resets objects' tags and `modified_at` for all object from `action.objectIDs` present in state.editedObjects.
+// Sets `currentTagIDs` to the last saved values and `addedTags` & `removedTagIDs`.
+// `modified_at` is set to `action.modified_at` for all objects, if it's passed.
+function resetEditedObjectsTags(state, action) {
+    const objectIDs = (action.objectIDs || []).filter(id => state.editedObjects[id] !== undefined);
+    if (objectIDs.length === 0) return state;
+
+    const newEditedObjects = {...state.editedObjects};
+    objectIDs.forEach(objectID => {
+        // Don't reset if object is not present in state.objectsTags
+        if (state.objectsTags[objectID] === undefined) return;
+
+        const newEditedObject = {
+            ...state.editedObjects[objectID],
+            modified_at: action.modified_at ? action.modified_at : state.editedObjects[objectID].modified_at,
+            currentTagIDs: state.objectsTags[objectID].slice(),
+            addedTags: [],
+            removedTagIDs: []
+        };
+        newEditedObjects[objectID] = newEditedObject;
+    });
+
+    return { ...state, editedObjects: newEditedObjects };
+}
+
 function setSelectedTab(state, action) {
     return {
         ...state,
@@ -355,6 +381,7 @@ const root = {
     SET_CURRENT_OBJECT: setCurrentObject,
     SET_OBJECT_TAGS_INPUT: setObjectTagsInput,
     SET_CURRENT_OBJECT_TAGS: setCurrentObjectTags,
+    RESET_EDITED_OBJECTS_TAGS: resetEditedObjectsTags,
     SET_SELECTED_TAB: setSelectedTab,
     SET_SHOW_RESET_DIALOG_OBJECT: setShowResetDialogObject,
     SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject,
