@@ -21,7 +21,7 @@ export default ({ sideMenuItems, body }) => {
             history.push(redirectOnRender);
             dispatch(setRedirectOnRender(""));
         }
-    });
+    }, [redirectOnRender]);
 
     return (
         <Grid celled>
