@@ -1,5 +1,5 @@
 import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, ADD_DEFAULT_EDITED_OBJECT, RESET_EDITED_OBJECT,
-    SET_CURRENT_OBJECT, SET_OBJECT_TAGS_INPUT, SET_CURRENT_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
+    SET_CURRENT_OBJECT, SET_OBJECT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
     SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, 
     SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
@@ -218,7 +218,7 @@ function setObjectTagsInput(state, action) {
     removedTagIDs can be reset to an empty list (if an empty list is passed as value) or updated with with a list of values.
     Existing values passed via action are removed from the new list.
 */
-function setCurrentObjectTags(state, action) {
+function setEditedObjectTags(state, action) {
     let oldObject = getCurrentObject(state);
     let newAddedTags, newRemovedTagIDs, addedExistingTagIDs;
 
@@ -380,7 +380,7 @@ const root = {
     RESET_EDITED_OBJECT: resetEditedObject,
     SET_CURRENT_OBJECT: setCurrentObject,
     SET_OBJECT_TAGS_INPUT: setObjectTagsInput,
-    SET_CURRENT_OBJECT_TAGS: setCurrentObjectTags,
+    SET_EDITED_OBJECT_TAGS: setEditedObjectTags,
     RESET_EDITED_OBJECTS_TAGS: resetEditedObjectsTags,
     SET_SELECTED_TAB: setSelectedTab,
     SET_SHOW_RESET_DIALOG_OBJECT: setShowResetDialogObject,

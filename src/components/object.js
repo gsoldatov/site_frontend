@@ -13,7 +13,7 @@ import { InlineInput } from "./inline/inline-input";
 
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, addDefaultEditedObject, resetEditedObject, setCurrentObject, setCurrentObjectTags, setSelectedTab, setObjectTagsInput, 
+import { loadAddObjectPage, addDefaultEditedObject, resetEditedObject, setCurrentObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
          setShowResetDialogObject, setShowDeleteDialogObject } from "../actions/object";
 import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
 
@@ -227,7 +227,7 @@ const AddedTagItem = ({ id }) => {
     const dispatch = useDispatch();
     const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
     const itemClassName = typeof(id) === "number" ? "inline-item-green" : "inline-item-blue";
-    const onClick = () => dispatch(setCurrentObjectTags({ added: [id] }));
+    const onClick = () => dispatch(setEditedObjectTags({ added: [id] }));
     const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 };
@@ -238,7 +238,7 @@ const CurrentTagItem = ({ id }) => {
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     const isRemoved = useSelector(state => getCurrentObject(state).removedTagIDs.includes(id));
     const itemClassName = isRemoved ? "inline-item-red" : "inline-item";
-    const onClick = () => dispatch(setCurrentObjectTags({ removed: [id] }));
+    const onClick = () => dispatch(setEditedObjectTags({ removed: [id] }));
     const itemLink = `/tags/${id}`;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 };
@@ -255,9 +255,9 @@ const ObjectTags = () => {
                 <InlineItemList itemIDSelector={currentTagsSelector} ItemComponent={CurrentTagItem} />
                 <InlineItemList itemIDSelector={addedTagsSelector} ItemComponent={AddedTagItem} />
                 {/* <InlineInput inputStateSelector={inputStateSelector} setInputState={setObjectTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectTagsDropdownFetch} 
-                    existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectTags} /> */}
+                    existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setEditedObjectTags} /> */}
                 <InlineInput placeholder="Enter tag name..." inputStateSelector={inputStateSelector} setInputState={setObjectTagsInput} onSearchChangeDelayed={objectTagsDropdownFetch} 
-                    existingIDsSelector={existingIDsSelector} setItem={setCurrentObjectTags} getDropdownItemTextSelectors={inlineInputDropdownItemTextSelectors} />
+                    existingIDsSelector={existingIDsSelector} setItem={setEditedObjectTags} getDropdownItemTextSelectors={inlineInputDropdownItemTextSelectors} />
             </InlineItemListWrapper>
         </InlineItemListBlock>
     );

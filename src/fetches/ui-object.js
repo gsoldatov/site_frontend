@@ -7,7 +7,7 @@ import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
 import { setRedirectOnRender } from "../actions/common";
 import { loadEditObjectPage, resetEditedObject, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
         setShowDeleteDialogObject, setCurrentObject, 
-        setCurrentObjectTags, setObjectTagsInput } from "../actions/object";
+        setEditedObjectTags, setObjectTagsInput } from "../actions/object";
 
 import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-object";
 import { objectDataIsInState } from "../store/state-util/objects";
@@ -96,7 +96,7 @@ export const editObjectOnSaveFetch = () => {
         const result = await dispatch(updateObjectFetch(getCurrentObject(state)));
         
         if (!responseHasError(result)) {
-            dispatch(setCurrentObjectTags({ currentTagIDs: getState().objectsTags[result.object_id], added: [], removed: [] }));
+            dispatch(setEditedObjectTags({ currentTagIDs: getState().objectsTags[result.object_id], added: [], removed: [] }));
             dispatch(setCurrentObject(result));
             dispatch(setObjectOnSaveFetchState(false, ""));
         } else {
