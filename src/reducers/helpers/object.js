@@ -1,5 +1,18 @@
+import { deepCopy } from "../../util/copy";
+
+
+/*
+    Returns a deep copy of default edited object state.
+    Sets `object_id` in the returned object if it's provided.
+*/
+export const getDefaultEditedObjectState = object_id => {
+    const defaultState = deepCopy(defaultEditedObjectState);
+    if (object_id !== undefined) defaultState.object_id = object_id;
+    return defaultState;
+}
+
 // Default state of edited object
-export const defaultEditedObjectState = {
+const defaultEditedObjectState = {
     // attributes
     object_id: -1,
     object_type: "link",

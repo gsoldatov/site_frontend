@@ -1,5 +1,5 @@
 import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, ADD_DEFAULT_EDITED_OBJECT, RESET_EDITED_OBJECT,
-    SET_CURRENT_OBJECT, SET_OBJECT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
+    SET_EDITED_OBJECT, SET_OBJECT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
     SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, 
     SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
@@ -9,13 +9,23 @@ import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tag
 import { getCurrentObject } from "../store/state-util/ui-object";
 import { getObjectDataFromStore } from "../store/state-util/objects";
 
-import { defaultEditedObjectState } from "./helpers/object";
+import { getDefaultEditedObjectState } from "./helpers/object";
 import { updateToDoListItems } from "./helpers/object-to-do-lists";
 
 
 function loadAddObjectPage(state, action) {
+    // Add a new edited object if it's missing
+    let editedObjects = state.editedObjects;
+    if (editedObjects[0] === undefined) {
+        editedObjects = deepCopy(editedObjects);
+        editedObjects[0] = getDefaultEditedObjectState(0);
+    }
+
     return {
         ...state,
+
+        editedObjects,
+
         objectUI: {
             ...state.objectUI,
 
@@ -77,8 +87,7 @@ function loadEditObjectPage(state, action) {
 // Sets a default state in state.editedObjects for the provided `objectID`
 function addDefaultEditedObject(state, action) {
     const { objectID } = action;
-    const defaultState = deepCopy(defaultEditedObjectState);
-    defaultState.object_id = objectID;
+    const defaultState = getDefaultEditedObjectState(objectID);
 
     return {
         ...state,
@@ -97,8 +106,7 @@ function addDefaultEditedObject(state, action) {
 // Resets state of the currently edited object to last saved state
 function resetEditedObject(state, action) {
     const objectID = state.objectUI.currentObjectID;
-    let stateAfterReset = deepCopy(defaultEditedObjectState);
-    stateAfterReset.object_id = objectID;
+    let stateAfterReset = getDefaultEditedObjectState(objectID);
 
     if (objectID in state.objects)  // set attributes
         stateAfterReset = {
@@ -132,8 +140,17 @@ function resetEditedObject(state, action) {
     };
 }
 
-function setCurrentObject(state, action) {
-    const oldObject = getCurrentObject(state);
+/*
+    Updates an object in state.editedObjects store with attributes/data passed in `action.object` prop.
+    
+    If `action.objectID` is provided, updates the object with the provided ID, otherwise updates the object with ID == state.objectUI.currentObjectID.
+
+    To-do lists can be updated with commands specified in `updateToDoListItems` function by passing an `action.object.toDoListItemUpdate` prop.
+*/
+function setEditedObject(state, action) {
+    const objectID = action.objectID !== undefined ? action.objectID : state.objectUI.currentObjectID;
+    const oldObject = state.editedObjects[objectID];
+    // const oldObject // TODO use getCurrentObject if objectID is not passed?
 
     // Links
     const link = action.object.link !== undefined ? action.object.link : oldObject.link;
@@ -188,7 +205,7 @@ function setCurrentObject(state, action) {
         ...state,
         editedObjects: {
             ...state.editedObjects,
-            [state.objectUI.currentObjectID]: newObject
+            [objectID]: newObject
         }
     };
 }
@@ -378,7 +395,7 @@ const root = {
     LOAD_EDIT_OBJECT_PAGE: loadEditObjectPage,
     ADD_DEFAULT_EDITED_OBJECT: addDefaultEditedObject,
     RESET_EDITED_OBJECT: resetEditedObject,
-    SET_CURRENT_OBJECT: setCurrentObject,
+    SET_EDITED_OBJECT: setEditedObject,
     SET_OBJECT_TAGS_INPUT: setObjectTagsInput,
     SET_EDITED_OBJECT_TAGS: setEditedObjectTags,
     RESET_EDITED_OBJECTS_TAGS: resetEditedObjectsTags,

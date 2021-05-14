@@ -7,7 +7,7 @@ import { LinkInput } from "./link";
 import { MarkdownContainer } from "./markdown";
 import { TDLContainer } from "./to-do-list/to-do-list";
 
-import { setCurrentObject } from "../../actions/object";
+import { setEditedObject } from "../../actions/object";
 import { getCurrentObject } from "../../store/state-util/ui-object";
 
 import StyleObject from "../../styles/object.css";
@@ -32,7 +32,7 @@ export const ObjectTypeSelector = () => {
         const isActive = t.name === objectType;
         return (
             <Menu.Item as="div" key={t.key} name={t.name} className={isActive ? "active object-type" : "object-type"} disabled={isDisabled}
-                onClick={(e, props) => dispatch(setCurrentObject({ object_type: props.name}))} >
+                onClick={(e, props) => dispatch(setEditedObject({ object_type: props.name}))} >
                 {isActive ? <Icon name="check" /> : null}
                     {t.title}
             </Menu.Item>

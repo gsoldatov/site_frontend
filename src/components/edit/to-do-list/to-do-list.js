@@ -5,7 +5,7 @@ import FieldMenu from "../../field/field-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 
-import { setCurrentObject } from "../../../actions/object";
+import { setEditedObject } from "../../../actions/object";
 import { getCurrentObject } from "../../../store/state-util/ui-object";
 import { getSortedItemIDs, getVisibleItemIDs } from "../../../store/state-util/to-do-lists";
 import { isTDLDragAndDropEnabled } from "../../../store/state-util/ui-object";
@@ -21,7 +21,7 @@ export const TDLContainer = () => {
     const objectID = useSelector(state => getCurrentObject(state).object_id);
     const canDrag = useSelector(isTDLDragAndDropEnabled);
     const updateCallback = useMemo(
-        () => params => dispatch(setCurrentObject(params))
+        () => params => dispatch(setEditedObject(params))
     , []);
 
     return (

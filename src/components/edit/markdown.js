@@ -4,7 +4,7 @@ import { Form, Grid } from "semantic-ui-react";
 
 import FieldMenu from "../field/field-menu";
 
-import { setCurrentObject, setMarkdownDisplayMode } from "../../actions/object";
+import { setEditedObject, setMarkdownDisplayMode } from "../../actions/object";
 import { getCurrentObject } from "../../store/state-util/ui-object";
 import intervalWrapper from "../../util/interval-wrapper";
 
@@ -75,7 +75,7 @@ const useMarkdownParseWorker = () => {
     return useRef(intervalWrapper(raw => {
         const w = new ParseMarkdownWorker();
         w.onmessage = e => {    // Dispatch parsed text change & terminate worker after parsing is complete
-            dispatch(setCurrentObject({ markdown: { parsed: e.data }}));
+            dispatch(setEditedObject({ markdown: { parsed: e.data }}));
             w.terminate();
         };
 
@@ -105,7 +105,7 @@ const MarkdownEdit = () => {
     const parseMarkdown = useMarkdownParseWorker();
 
     const handleDescriptionChange = e => {
-        dispatch(setCurrentObject({ markdown: { raw_text: e.target.value }}));
+        dispatch(setEditedObject({ markdown: { raw_text: e.target.value }}));
         
         if (rawTextRef.current) {
             rawTextRef.current.style.height = "inherit";  // Reset

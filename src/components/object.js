@@ -13,7 +13,7 @@ import { InlineInput } from "./inline/inline-input";
 
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, addDefaultEditedObject, resetEditedObject, setCurrentObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
+import { loadAddObjectPage, addDefaultEditedObject, resetEditedObject, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
          setShowResetDialogObject, setShowDeleteDialogObject } from "../actions/object";
 import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
 
@@ -217,8 +217,8 @@ const nameSelector = state => getCurrentObject(state).object_name;
 const getNameOnChangeParams = value => ({object_name: value });
 const descriptionSelector = state => getCurrentObject(state).object_description;
 const getDescriptionOnChangeParams = value => ({object_description: value });
-const ObjectInput = () => <NameDescriptionInput nameLabel="Object Name" namePlaceholder="Object name" nameSelector={nameSelector} nameOnChange={setCurrentObject} getNameOnChangeParams={getNameOnChangeParams}
-    descriptionLabel="Object Description" descriptionPlaceholder="Object description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentObject} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;
+const ObjectInput = () => <NameDescriptionInput nameLabel="Object Name" namePlaceholder="Object name" nameSelector={nameSelector} nameOnChange={setEditedObject} getNameOnChangeParams={getNameOnChangeParams}
+    descriptionLabel="Object Description" descriptionPlaceholder="Object description" descriptionSelector={descriptionSelector} descriptionOnChange={setEditedObject} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;
 
 
 // Object's tags

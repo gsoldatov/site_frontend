@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form } from "semantic-ui-react";
 
-import { setCurrentObject } from "../../actions/object";
+import { setEditedObject } from "../../actions/object";
 import { getCurrentObject } from "../../store/state-util/ui-object";
 
 /*
@@ -12,7 +12,7 @@ import { getCurrentObject } from "../../store/state-util/ui-object";
 export const LinkInput = () => {
     const dispatch = useDispatch();
     const link = useSelector(state => getCurrentObject(state).link);
-    const handleLinkChange = e => dispatch(setCurrentObject({ link: e.target.value }));
+    const handleLinkChange = e => dispatch(setEditedObject({ link: e.target.value }));
 
     return (
         <Form>
