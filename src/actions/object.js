@@ -24,7 +24,7 @@ export const resetEditedObjectsTags    = (objectIDs, modified_at) => ({ type: RE
 export const setSelectedTab            = selectedTab => ({ type: SET_SELECTED_TAB, selectedTab });
 export const setShowResetDialogObject  = (showResetDialog = false) => ({ type: SET_SHOW_RESET_DIALOG_OBJECT, showResetDialog });
 export const setShowDeleteDialogObject = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECT, showDeleteDialog });
-export const setMarkdownDisplayMode    = markdownDisplayMode => ({ type: SET_MARKDOWN_DISPLAY_MODE, markdownDisplayMode });
+export const setMarkdownDisplayMode    = ({ objectID, markdownDisplayMode }) => ({ type: SET_MARKDOWN_DISPLAY_MODE, objectID, markdownDisplayMode });
 
 export const setObjectOnLoadFetchState = (isFetching = false, fetchError = "") => {
     return {

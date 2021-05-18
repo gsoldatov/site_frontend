@@ -61,7 +61,7 @@ export const ObjectViewEditSwitch = ({ objectID }) => {
         case "link":
             return <LinkInput objectID={objectID} />;
         case "markdown":
-            return <MarkdownContainer />;
+            return <MarkdownContainer objectID={objectID} />;
         case "to_do_list":
             return <TDLContainer />;
         default:

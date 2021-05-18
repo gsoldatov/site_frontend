@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Divider, Dropdown, Input, Menu } from "semantic-ui-react";
+import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
 import intervalWrapper from "../../util/interval-wrapper";
 
@@ -149,9 +149,8 @@ const FieldMenuUpdatableDropdown = ({ placeholder, isDisabledSelector, inputStat
 
 // Field menu separator
 const FieldMenuSeparator = () => {
-    // return <Divider vertical />;
     return <div className="field-menu-separator" />;
-}
+};
 
 
 // Field menu group

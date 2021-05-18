@@ -359,11 +359,15 @@ function setShowDeleteDialogObject(state, action) {
 }
 
 function setMarkdownDisplayMode(state, action) {
+    const { markdownDisplayMode, objectID } = action;
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
-            markdownDisplayMode: action.markdownDisplayMode
+        editedObjects: {
+            ...state.editedObjects,
+            [objectID]: {
+                ...state.editedObjects[objectID],
+                markdownDisplayMode
+            }
         }
     };
 }

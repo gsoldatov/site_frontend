@@ -44,5 +44,8 @@ const defaultEditedObjectState = {
 
         sort_type: "default",
         items: {}
-    }
+    },
+
+    // object UI
+    markdownDisplayMode: "both"
 };

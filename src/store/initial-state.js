@@ -80,7 +80,6 @@ const initialState = {
         },
 
         selectedTab: 0,
-        markdownDisplayMode: "both",
 
         showResetDialog: false,
         showDeleteDialog: false
