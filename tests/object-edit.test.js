@@ -6,7 +6,7 @@ import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle, quer
 
 import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
-import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "./test-utils/ui-object";
+import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, resetObject } from "./test-utils/ui-object";
 import { getTDLByObjectID } from "./mocks/data-to-do-lists";
 
 import createStore from "../src/store/create-store";
@@ -470,14 +470,12 @@ describe("Persist edited object state", () => {
 
 
     test("Attributes and link", async () => {
-        let store = createStore({ enableDebugLogging: false });
-        const render = route => renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route, store
-        });
-        
         // Render page of the first object
-        var { container } = render("/objects/1");
-        await waitFor(() => getByText(container, "Object Information"));
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/1", store
+        });
+        // await waitFor(() => getByText(container, "Object Information"));
+        await waitForEditObjectPageLoad(container, store);
 
         // Modify attributes and link
         let objectNameInput = getByPlaceholderText(container, "Object name");
@@ -494,15 +492,14 @@ describe("Persist edited object state", () => {
         fireEvent.change(linkInput, { target: { value: linkValue } });
         await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
 
-        // Render another object page, then returns to the original object
-        var { container } = render("/objects/2");
-        await waitFor(() => getByText(container, "Object Information"));
-        var { container } = render("/objects/1");
-        await waitFor(() => getByText(container, "Object Information"));
+        // Render another object page, then return to the original object
+        history.push("/objects/2");
+        await waitForEditObjectPageLoad(container, store);
+        history.push("/objects/1");
+        // await waitForEditObjectPageLoad(container, store);   // wait function can't catch fetch changing to true and false if data is present in the state
         
         // Check if modified values are displayed
-        linkInput = getByPlaceholderText(container, "Link");
-        expect(linkInput.value).toEqual(linkValue);
+        await waitFor(() => expect(getByPlaceholderText(container, "Link").value).toEqual(linkValue));
 
         clickGeneralTabButton(container);
         objectNameInput = getByPlaceholderText(container, "Object name");
@@ -513,14 +510,12 @@ describe("Persist edited object state", () => {
 
 
     test("Markdown", async () => {
-        let store = createStore({ enableDebugLogging: false });
-        const render = route => renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route, store
-        });
-
         // Render page of the first object
-        var { container } = render("/objects/1001");
-        await waitFor(() => getByText(container, "Object Information"));
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/1001", store
+        });
+        // await waitFor(() => getByText(container, "Object Information"));
+        await waitForEditObjectPageLoad(container, store);
 
         // Modify markdown
         clickDataTabButton(container);
@@ -531,27 +526,24 @@ describe("Persist edited object state", () => {
         fireEvent.change(inputForm, { target: { value: rawText } });
         await waitFor(() => expect(getCurrentObject(store.getState()).markdown.raw_text).toEqual(rawText));
 
-        // Render another object page, then returns to the original object
-        var { container } = render("/objects/2");
-        await waitFor(() => getByText(container, "Object Information"));
-        var { container } = render("/objects/1001");
-        await waitFor(() => getByText(container, "Object Information"));
-
+        // Render another object page, then return to the original object
+        history.push("/objects/2");
+        await waitForEditObjectPageLoad(container, store);
+        history.push("/objects/1001");
+        // await waitForEditObjectPageLoad(container, store);   // wait function can't catch fetch changing to true and false if data is present in the state
+        
         // Check if modified Markdown is displayed
-        inputForm = getByPlaceholderText(container, "Enter text here...");
-        expect(inputForm.value).toEqual(rawText);
+        await waitFor(() => expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText));
     });
 
 
     test("To-do list", async () => {
-        let store = createStore({ enableDebugLogging: false });
-        const render = route => renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route, store
-        });
-
         // Render page of the first object
-        var { container } = render("/objects/2001");
-        await waitFor(() => getByText(container, "Object Information"));
+        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/2001", store
+        });
+        // await waitFor(() => getByText(container, "Object Information"));
+        await waitForEditObjectPageLoad(container, store);
         const firstItemText = store.getState().toDoLists[2001].items[0].item_text;
 
         // Modify to-do list
@@ -561,14 +553,14 @@ describe("Persist edited object state", () => {
         fireEvent.input(firstItemInput, { target: { innerHTML: newItemText } });
         await waitFor(() => expect(getCurrentObject(store.getState()).toDoList.items[0].item_text).toBe(newItemText));
 
-        // Render another object page, then returns to the original object
-        var { container } = render("/objects/2");
-        await waitFor(() => getByText(container, "Object Information"));
-        var { container } = render("/objects/2001");
-        await waitFor(() => getByText(container, "Object Information"));
-
-        // Check if modified to-do list is displayed
-        getByText(container.querySelector(".to-do-list-container"), newItemText);
+        // Render another object page, then return to the original object
+        history.push("/objects/2");
+        await waitForEditObjectPageLoad(container, store);
+        history.push("/objects/2001");
+        // await waitForEditObjectPageLoad(container, store);   // wait function can't catch fetch changing to true and false if data is present in the state
+        
+        // Check if modified Markdown is displayed
+        await waitFor(() => getByText(container.querySelector(".to-do-list-container"), newItemText));
     });
 });
 

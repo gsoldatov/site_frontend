@@ -7,6 +7,15 @@ import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } fr
 export const getCurrentObject = state => state.editedObjects[state.objectUI.currentObjectID];
 
 
+// Wait for existing page to be loaded
+export const waitForEditObjectPageLoad = async (container, store) => {
+    await waitFor(() => expect(store.getState().objectUI.objectOnLoadFetch.isFetching).toBeTruthy());
+    await waitFor(() => expect(store.getState().objectUI.objectOnLoadFetch.isFetching).toBeFalsy());
+    await waitFor(() => getByText(container, "Object Information"));
+}
+
+
+// Return object type switching elements
 export const getObjectTypeSelectingElements = container => {
     // Check if object types selector is rendered and enabled
     const objectTypeSelector = container.querySelector(".object-type-menu");
@@ -31,8 +40,8 @@ export const getObjectTypeSelectingElements = container => {
 };
 
 
+// Get general and data tab panes
 const getObjectTabMenuButtons = container => {
-    // Get general and data tab panes
     const tabMenu = container.querySelector(".ui.attached.tabular.menu");
     expect(tabMenu).toBeTruthy();
     const generalTabButton = getByText(tabMenu, "General");
@@ -41,18 +50,21 @@ const getObjectTabMenuButtons = container => {
 }
 
 
+// Click on general tab pane
 export const clickGeneralTabButton = container => {
     const { generalTabButton } = getObjectTabMenuButtons(container);
     fireEvent.click(generalTabButton);
 }
 
 
+// Click on data tab pane
 export const clickDataTabButton = container => {
     const { dataTabButton } = getObjectTabMenuButtons(container);
     fireEvent.click(dataTabButton);
 }
 
 
+// Click reset object button and accept a confirmation dialog in the side menu
 export const resetObject = container => {
     const resetButton = getByText(container, "Reset");
     fireEvent.click(resetButton);

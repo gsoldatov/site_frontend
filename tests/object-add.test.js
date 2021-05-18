@@ -5,11 +5,10 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
 import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
-import { getCurrentObject, getObjectTypeSelectingElements, clickGeneralTabButton, clickDataTabButton, resetObject } from "./test-utils/ui-object";
+import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSelectingElements, clickGeneralTabButton, clickDataTabButton, resetObject } from "./test-utils/ui-object";
 
-import createStore from "../src/store/create-store";
 import { AddObject, EditObject } from "../src/components/object";
-import { addObjects } from "../src/actions/data-objects";
+
 
 
 /*
@@ -222,13 +221,11 @@ describe("Reset new object state", () => {
 
 describe("Persist new object state", () => {
     test("Attributes and link data", async () => {
-        let store = createStore({ enableDebugLogging: false });
-        const render = route => renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route, store
+        // Render /objects/add and update object name + link
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/add", store
         });
 
-        // Render /objects/add and update object name + link
-        var { container } = render("/objects/add");
         let objectNameInput = getByPlaceholderText(container, "Object name");
         const objectNameValue = "new object";
         fireEvent.change(objectNameInput, { target: { value: objectNameValue } });
@@ -241,11 +238,14 @@ describe("Persist new object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
 
         // Render /objects/1, then render /objects/add and check if the state was saved
-        var { container } = render("/objects/1");
-        await waitFor(() => getByText(container, "Object Information"));
-        var { container } = render("/objects/add");
+        history.push("/objects/1");
+        await waitForEditObjectPageLoad(container, store);
+
+        history.push("/objects/add");
+        await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
+        clickGeneralTabButton(container);
         objectNameInput = getByPlaceholderText(container, "Object name");
-        expect(objectNameInput.value).toEqual(objectNameValue);
+        await waitFor(() => expect(objectNameInput.value).toEqual(objectNameValue));
 
         clickDataTabButton(container);
         linkInput = getByPlaceholderText(container, "Link");
@@ -254,13 +254,11 @@ describe("Persist new object state", () => {
 
 
     test("Markdown data", async () => {
-        let store = createStore({ enableDebugLogging: false });
-        const render = route => renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route, store
+        // Render /objects/add and update markdown text
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/add", store
         });
 
-        // Render /objects/add and update markdown text
-        var { container } = render("/objects/add");
         const { markdownButton } = getObjectTypeSelectingElements(container);
         fireEvent.click(markdownButton);
         clickDataTabButton(container);
@@ -272,24 +270,22 @@ describe("Persist new object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).markdown.raw_text).toEqual(rawText));
 
         // Render /objects/1, then render /objects/add and check if the state was saved
-        var { container } = render("/objects/1");
-        await waitFor(() => getByText(container, "Object Information"));
-        var { container } = render("/objects/add");
+        history.push("/objects/1");
+        await waitForEditObjectPageLoad(container, store);
 
+        history.push("/objects/add");
+        await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
         clickDataTabButton(container);
-        inputForm = getByPlaceholderText(container, "Enter text here...");
-        expect(inputForm.value).toEqual(rawText);
+        await waitFor(() => expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText));
     });
 
 
     test("To-do list data", async () => {
-        let store = createStore({ enableDebugLogging: false });
-        const render = route => renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route, store
+        // Render /objects/add and update to-do list items
+        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/add", store
         });
 
-        // Render /objects/add and update markdown text
-        var { container } = render("/objects/add");
         const { TDLButton } = getObjectTypeSelectingElements(container);
         fireEvent.click(TDLButton);
         clickDataTabButton(container);
@@ -299,9 +295,11 @@ describe("Persist new object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).toDoList.items[0].item_text).toBe(newItemText));
 
         // Render /objects/1, then render /objects/add and check if the state was saved
-        var { container } = render("/objects/1");
-        await waitFor(() => getByText(container, "Object Information"));
-        var { container } = render("/objects/add");
+        history.push("/objects/1");
+        await waitForEditObjectPageLoad(container, store);
+
+        history.push("/objects/add");
+        await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
 
         clickDataTabButton(container);
         getByText(container.querySelector(".to-do-list-container"), newItemText);
