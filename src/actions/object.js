@@ -16,7 +16,7 @@ export const SET_OBJECT_ON_SAVE_FETCH_STATE = "SET_OBJECT_ON_SAVE_FETCH_STATE";
 export const loadAddObjectPage         = () => ({ type: LOAD_ADD_OBJECT_PAGE });
 export const loadEditObjectPage        = currentObjectID => ({ type: LOAD_EDIT_OBJECT_PAGE, currentObjectID });
 export const addDefaultEditedObject    = objectID => ({ type: ADD_DEFAULT_EDITED_OBJECT, objectID });
-export const resetEditedObject         = () => ({ type: RESET_EDITED_OBJECT });
+export const resetEditedObject         = objectID => ({ type: RESET_EDITED_OBJECT, objectID });
 export const setEditedObject           = (object, objectID) => ({ type: SET_EDITED_OBJECT, object, objectID })
 export const setObjectTagsInput        = inputState => ({ type: SET_OBJECT_TAGS_INPUT, tagsInput: inputState });
 export const setEditedObjectTags       = tagUpdates => ({ type: SET_EDITED_OBJECT_TAGS, tagUpdates });

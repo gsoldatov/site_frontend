@@ -103,9 +103,15 @@ function addDefaultEditedObject(state, action) {
     };
 }
 
-// Resets state of the currently edited object to last saved state
+/*
+    Resets state of an edited object to last saved state.
+    If `objectID` is provided, resets the object with this ID; otherwise, resets currently edited object.
+    Does not reset new subobjects (with `objectID` < 0).
+*/
 function resetEditedObject(state, action) {
-    const objectID = state.objectUI.currentObjectID;
+    const objectID = action.objectID || state.objectUI.currentObjectID;
+    if (objectID < 0) return state;
+
     let stateAfterReset = getDefaultEditedObjectState(objectID);
 
     if (objectID in state.objects)  // set attributes
@@ -150,7 +156,6 @@ function resetEditedObject(state, action) {
 function setEditedObject(state, action) {
     const objectID = action.objectID !== undefined ? action.objectID : state.objectUI.currentObjectID;
     const oldObject = state.editedObjects[objectID];
-    // const oldObject // TODO use getCurrentObject if objectID is not passed?
 
     // Links
     const link = action.object.link !== undefined ? action.object.link : oldObject.link;
