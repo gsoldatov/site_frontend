@@ -205,7 +205,8 @@ const onLoadFetchSelector = state => state.objectUI.objectOnLoadFetch;
 // Created at & modified at timestamps
 const createdAtSelector = state => getCurrentObject(state).created_at;
 const modifiedAtSelector = state => getCurrentObject(state).modified_at;
-const ObjectTimeStamps = () => <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} />;
+const isDisplayedSelector = state => state.objectUI.currentObjectID > 0;
+const ObjectTimeStamps = () => <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} isDisplayedSelector={isDisplayedSelector} />;
 
 
 // Save fetch error message

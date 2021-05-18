@@ -28,14 +28,13 @@ export const SaveError = ({ fetchSelector }) => {
 
 
 // Created at & modified at timestamps
-export const TimeStamps = ({ createdAtSelector, modifiedAtSelector }) => {
-    const { id } = useParams();
-    if (id === "add") {
-        return null;
-    }
-    
+export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedSelector }) => {
     const createdAt = new Date(useSelector(createdAtSelector)).toLocaleString();
     const modifiedAt = new Date(useSelector(modifiedAtSelector)).toLocaleString();
+    const isDisplayed = useSelector(isDisplayedSelector);
+    
+    if (!isDisplayed) return null;
+    
     return (
         <Grid className="created-modified-timestamps-container" columns={2}>
             <Grid.Column>

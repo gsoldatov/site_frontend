@@ -122,7 +122,8 @@ const onLoadFetchSelector = state => state.tagUI.tagOnLoadFetch;
 // Created at & modified at timestamps
 const createdAtSelector = state => state.tagUI.currentTag.created_at;
 const modifiedAtSelector = state => state.tagUI.currentTag.modified_at;
-const TagTimeStamps = () => <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} />;
+const isDisplayedSelector = state => state.tagUI.currentTag.tag_id > 0;
+const TagTimeStamps = () => <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} isDisplayedSelector={isDisplayedSelector} />;
 
 
 // Save fetch error message
