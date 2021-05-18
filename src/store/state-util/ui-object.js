@@ -12,7 +12,10 @@ import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
 // a workaround for the first case is to reimplement <Layout> as a class component and invoke on load effects in constructor (before first render).
 // Another option is to refactor all selectors dependant on the `getCurrentObject` function to use default value when the function returns `undefined`.
 export const getCurrentObject = state => state.editedObjects[state.objectUI.currentObjectID] || getDefaultEditedObjectState();
-// export const getCurrentObject = state => state.editedObjects[state.objectUI.currentObjectID];
+
+
+// Returns the object data from state.editedObjects for the provided `objectID` or default edited object state.
+export const getEditedOrDefaultObjectSelector = objectID => state => state.editedObjects[objectID] || getDefaultEditedObjectState();
 
 
 // Returns true if any of object page fetches are being performed.

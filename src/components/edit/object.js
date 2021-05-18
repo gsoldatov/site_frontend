@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Icon, Menu } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 
 import { LinkInput } from "./link";
 import { MarkdownContainer } from "./markdown";
 import { TDLContainer } from "./to-do-list/to-do-list";
 
 import { setEditedObject } from "../../actions/object";
-import { getCurrentObject } from "../../store/state-util/ui-object";
+import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-object";
 
 import StyleObject from "../../styles/object.css";
 
@@ -20,13 +19,16 @@ import StyleObject from "../../styles/object.css";
 const objectTypes = [
     { key: 1, name: "link", title: "Link" },
     { key: 2, name: "markdown", title: "Markdown" },
-    { key: 3, name: "to_do_list", title: "To-Do List" }
+    { key: 3, name: "to_do_list", title: "To-Do List" },
+    { key: 4, name: "composite", title: "Composite" }
 ];
-export const ObjectTypeSelector = () => {
+export const ObjectTypeSelector = ({ objectID }) => {
     const dispatch = useDispatch();
-    const { id } = useParams();
-    const isDisabled = id !== "add";
-    const objectType = useSelector(state => getCurrentObject(state).object_type);
+
+    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
+    
+    const isDisabled = objectID > 0;
+    const objectType = useSelector(objectSelector).object_type;
 
     const items = objectTypes.map(t => {
         const isActive = t.name === objectType;
@@ -51,10 +53,11 @@ export const ObjectTypeSelector = () => {
 
 
 // Component for switching type-specific view/edit components
-export const ObjectViewEditSwitch = () => {
-    const type = useSelector(state => getCurrentObject(state).object_type);
+export const ObjectViewEditSwitch = ({ objectID }) => {
+    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
+    const objectType = useSelector(objectSelector).object_type;
 
-    switch (type) {
+    switch (objectType) {
         case "link":
             return <LinkInput />;
         case "markdown":

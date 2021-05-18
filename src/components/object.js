@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Header, Tab } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -23,12 +23,14 @@ import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, edi
 */
 // Exports
 export const AddObject = () => {
-    return <_Object sideMenuItems={addObjectSideMenuItems} onLoad={loadAddObjectPage()} header="Add a New Object" />;
+    const id = 0;
+    return <_Object sideMenuItems={addObjectSideMenuItems} objectID={id} onLoad={loadAddObjectPage()} header="Add a New Object" />;
 };
 
 export const EditObject = () => {
-    const { id } = useParams();
-    return <_Object sideMenuItems={editObjectSideMenuItems} onLoad={editObjectOnLoadFetch(id)} header="Object Information" />;
+    let { id } = useParams();
+    id = parseInt(id);
+    return <_Object sideMenuItems={editObjectSideMenuItems} objectID={id} onLoad={editObjectOnLoadFetch(id)} header="Object Information" />;
 };
 
 // Add object page side menu items
@@ -146,21 +148,20 @@ const editObjectSideMenuItems = [
 
 
 // Basic add/edit object page
-const _Object = ({ header, sideMenuItems, onLoad }) => {
+const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     const dispatch = useDispatch();
-    const { id } = useParams();
 
     // On load action (also triggers when object ids change)
     useEffect(() => {
         dispatch(onLoad);
-    }, [id]);
+    }, [objectID]);
 
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
     const pageBody = loadIndicatorAndError || (
         <>
             <Header as="h3">{header}</Header>
             <ObjectSaveError />
-            <ObjectTabPanes />
+            <ObjectTabPanes objectID={objectID} />
         </>
     );
 
@@ -168,30 +169,30 @@ const _Object = ({ header, sideMenuItems, onLoad }) => {
 };
 
 
-// Object attribute & data tabs
-const tabPanes = [
-    { menuItem: "General", render: () => 
-        <Tab.Pane>
-            <ObjectTypeSelector />
-            <ObjectTimeStamps />
-            <ObjectInput />
-            <ObjectTags />
-        </Tab.Pane> 
-    },
-    { menuItem: "Data", render: () =>
-        <Tab.Pane>
-            <ObjectViewEditSwitch />
-        </Tab.Pane>
-    }
-];
-
 const selectedTabSelector = state => state.objectUI.selectedTab;
-const ObjectTabPanes = () => {
+const ObjectTabPanes = ({ objectID }) => {
+    // Object attribute & data tabs
+    const tabPanes = useMemo(() => [
+        { menuItem: "General", render: () => 
+            <Tab.Pane>
+                <ObjectTypeSelector objectID={objectID} />
+                <ObjectTimeStamps />
+                <ObjectInput />
+                <ObjectTags />
+            </Tab.Pane> 
+        },
+        { menuItem: "Data", render: () =>
+            <Tab.Pane>
+                <ObjectViewEditSwitch objectID={objectID} />
+            </Tab.Pane>
+        }
+    ], [objectID]);
+
     const activeIndex = useSelector(selectedTabSelector);
     const dispatch = useDispatch();
-    const onTabChange = (e, data) => {
+    const onTabChange = useRef((e, data) => {
         dispatch(setSelectedTab(data.activeIndex));
-    };
+    }).current;
 
     return <Tab panes={tabPanes} activeIndex={activeIndex} onTabChange={onTabChange} />;
 };
