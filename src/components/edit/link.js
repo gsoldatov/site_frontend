@@ -1,18 +1,21 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form } from "semantic-ui-react";
 
 import { setEditedObject } from "../../actions/object";
-import { getCurrentObject } from "../../store/state-util/ui-object";
+import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-object";
 
 /*
     Link-specific edit & view components
 */
 // Link input form
-export const LinkInput = () => {
+export const LinkInput = ({ objectID }) => {
     const dispatch = useDispatch();
-    const link = useSelector(state => getCurrentObject(state).link);
-    const handleLinkChange = e => dispatch(setEditedObject({ link: e.target.value }));
+
+    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
+    const link = useSelector(objectSelector).link;
+
+    const handleLinkChange = useRef(e => dispatch(setEditedObject({ link: e.target.value }, objectID))).current;
 
     return (
         <Form>
