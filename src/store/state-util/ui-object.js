@@ -14,7 +14,7 @@ import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
 export const getCurrentObject = state => state.editedObjects[state.objectUI.currentObjectID] || getDefaultEditedObjectState();
 
 
-// Returns the object data from state.editedObjects for the provided `objectID` or default edited object state.
+// Returns a selector for the object data from state.editedObjects for the provided `objectID` or default edited object state.
 export const getEditedOrDefaultObjectSelector = objectID => state => state.editedObjects[objectID] || getDefaultEditedObjectState();
 
 
@@ -30,5 +30,5 @@ export const isFetchingObject = state => state.objectUI.objectOnLoadFetch.isFetc
 export const isFetchingOrOnLoadFetchFailed = state => isFetchingObject(state) || state.objectUI.objectOnLoadFetch.fetchError;
 
 
-// Returns true if to-do list items can be dragged and dropped over each other
-export const isTDLDragAndDropEnabled = state => !isFetchingObject(state) && getCurrentObject(state).toDoList.sort_type === "default";
+// Returns a selector for checking if to-do list drag and drop functionality is enabled
+export const getIsTDLDragAndDropEnabledSelector = objectID => state => !isFetchingObject(state) && state.editedObjects[objectID].toDoList.sort_type === "default";

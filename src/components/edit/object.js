@@ -63,7 +63,7 @@ export const ObjectViewEditSwitch = ({ objectID }) => {
         case "markdown":
             return <MarkdownContainer objectID={objectID} />;
         case "to_do_list":
-            return <TDLContainer />;
+            return <TDLContainer objectID={objectID} />;
         default:
             return <div>Not implemented</div>;
     }
