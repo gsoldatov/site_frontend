@@ -58,18 +58,18 @@ export const NameDescriptionInput = ({ nameLabel, namePlaceholder, nameSelector,
     const description = useSelector(descriptionSelector);
 
 
-    const handleNameChange = e => {
+    const handleNameChange = useRef(e => {
         dispatch(nameOnChange(getNameOnChangeParams(e.target.value)));
-    };
+    }).current;
 
-    const handleDescriptionChange = e => {
+    const handleDescriptionChange = useRef(e => {
         dispatch(descriptionOnChange(getDescriptionOnChangeParams(e.target.value)));
 
         if (descriptionRef.current) {
             descriptionRef.current.style.height = "inherit";  // reset
             descriptionRef.current.style.height = descriptionRef.current.scrollHeight + "px";   // set to text height
         }
-    };
+    }).current;
 
     const descriptionRef = useRef(null);
 
