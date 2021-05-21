@@ -8,9 +8,32 @@ div.object-type-menu-header {
     margin-bottom: 0.25em;
 }
 
-/* div.ui.compact.menu.object-type-menu {
-    margin-top: 1em;
-} */
+/* Object type switch, full */
+div.ui.compact.menu.object-type-menu {
+    display: inline-flex;
+    flex-wrap: wrap;
+}
+
+div.ui.compact.menu.object-type-menu>.object-type {
+    width: 125px;   /* update onResize check in <ObjectTypeSelector> if this value is updated */
+    display: inline-flex;
+    justify-content: center;
+}
+
+/* Object type switch, small */
+@media (max-width: 800px) {
+    div.ui.compact.menu.object-type-menu {
+        display: flex;
+        flex-direction: column;
+    }
+
+    div.ui.compact.menu.object-type-menu>.object-type {
+        width: 100%;
+        display: inline-flex;
+        justify-content: center;
+    }
+}
+
 
 div.ui.menu > .item.active.object-type, div.ui.menu > .item.disabled.active.object-type { /* Selected object type style */
     font-weight: bold;
