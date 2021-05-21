@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
-import { Form, Loader, Grid } from "semantic-ui-react";
-import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Form, Loader } from "semantic-ui-react";
+import { useSelector } from "react-redux";
 
 import Error from "../common/error";
 
@@ -34,16 +33,16 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedS
     const isDisplayed = useSelector(isDisplayedSelector);
     
     if (!isDisplayed) return null;
-    
+
     return (
-        <Grid className="created-modified-timestamps-container" columns={2}>
-            <Grid.Column>
+        <div className="created-modified-timestamps-container">
+            <div className="created-modified-timestamps-item">
                 <p><b>Created at: </b> {createdAt}</p>
-            </Grid.Column>
-            <Grid.Column>
+            </div>
+            <div className="created-modified-timestamps-item">
                 <p><b>Modified at: </b> {modifiedAt}</p>
-            </Grid.Column>
-        </Grid>
+            </div>
+        </div>
     );
 }
 

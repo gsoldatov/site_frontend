@@ -3,12 +3,18 @@
 ******************************************************/
 
 /* Timestamps */
-.ui.two.column.grid.created-modified-timestamps-container {
+div.created-modified-timestamps-container {
     margin-top: 1em;
     margin-bottom: 0em;
+    
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.ui.two.column.grid.created-modified-timestamps-container>.column {
+div.created-modified-timestamps-item {
+    flex: 1 0 50%;
+    text-align: left;
+    white-space: nowrap;
     padding-top: 0em;
     padding-bottom: 0em;
 }
