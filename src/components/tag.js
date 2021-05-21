@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Header } from "semantic-ui-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "./edit/common";
@@ -132,9 +132,29 @@ const TagSaveError = () => <SaveError fetchSelector={fetchSelector} />;
 
 
 // Tag input form
-const nameSelector = state => state.tagUI.currentTag.tag_name;
-const getNameOnChangeParams = value => ({tag_name: value });
-const descriptionSelector = state => state.tagUI.currentTag.tag_description;
-const getDescriptionOnChangeParams = value => ({tag_description: value });
-const TagInput = () => <NameDescriptionInput nameLabel="Tag Name" namePlaceholder="Tag name" nameSelector={nameSelector} nameOnChange={setCurrentTag} getNameOnChangeParams={getNameOnChangeParams}
-    descriptionLabel="Tag Description" descriptionPlaceholder="Tag description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentTag} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;
+const TagInput = () => {
+    const dispatch = useDispatch();
+    const name = useSelector(state => state.tagUI.currentTag.tag_name);
+    const description = useSelector(state => state.tagUI.currentTag.tag_description);
+
+    const nameOnChange = useRef(tag_name => {
+        dispatch(setCurrentTag({ tag_name }));
+    }).current;
+
+    const descriptionOnChange = useRef(tag_description => {
+        dispatch(setCurrentTag({ tag_description }));
+    }).current;
+
+    return (
+        <NameDescriptionInput nameLabel="Tag Name" namePlaceholder="Tag name" name={name} nameOnChange={nameOnChange}
+            descriptionLabel="Tag Description" descriptionPlaceholder="Tag description" description={description} descriptionOnChange={descriptionOnChange} />
+    );
+};
+
+// // Tag input form
+// const nameSelector = state => state.tagUI.currentTag.tag_name;
+// const getNameOnChangeParams = value => ({tag_name: value });
+// const descriptionSelector = state => state.tagUI.currentTag.tag_description;
+// const getDescriptionOnChangeParams = value => ({tag_description: value });
+// const TagInput = () => <NameDescriptionInput nameLabel="Tag Name" namePlaceholder="Tag name" nameSelector={nameSelector} nameOnChange={setCurrentTag} getNameOnChangeParams={getNameOnChangeParams}
+//     descriptionLabel="Tag Description" descriptionPlaceholder="Tag description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentTag} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;

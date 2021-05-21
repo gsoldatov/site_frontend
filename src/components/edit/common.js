@@ -49,21 +49,15 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedS
 
 
 // Name and description input form
-export const NameDescriptionInput = ({ nameLabel, namePlaceholder, nameSelector, nameOnChange, getNameOnChangeParams,
-                    descriptionLabel, descriptionPlaceholder, descriptionSelector, descriptionOnChange, getDescriptionOnChangeParams }) => {
-    const dispatch = useDispatch();    
-
-    // App state tag name and description
-    const name = useSelector(nameSelector);
-    const description = useSelector(descriptionSelector);
-
+export const NameDescriptionInput = ({ nameLabel, namePlaceholder, name, nameOnChange,
+    descriptionLabel, descriptionPlaceholder, description, descriptionOnChange }) => {
 
     const handleNameChange = useRef(e => {
-        dispatch(nameOnChange(getNameOnChangeParams(e.target.value)));
+        nameOnChange(e.target.value);
     }).current;
 
     const handleDescriptionChange = useRef(e => {
-        dispatch(descriptionOnChange(getDescriptionOnChangeParams(e.target.value)));
+        descriptionOnChange(e.target.value);
 
         if (descriptionRef.current) {
             descriptionRef.current.style.height = "inherit";  // reset

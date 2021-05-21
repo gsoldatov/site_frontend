@@ -215,12 +215,24 @@ const ObjectSaveError = () => <SaveError fetchSelector={fetchSelector} />;
 
 
 // Object input form
-const nameSelector = state => getCurrentObject(state).object_name;
-const getNameOnChangeParams = value => ({object_name: value });
-const descriptionSelector = state => getCurrentObject(state).object_description;
-const getDescriptionOnChangeParams = value => ({object_description: value });
-const ObjectInput = () => <NameDescriptionInput nameLabel="Object Name" namePlaceholder="Object name" nameSelector={nameSelector} nameOnChange={setEditedObject} getNameOnChangeParams={getNameOnChangeParams}
-    descriptionLabel="Object Description" descriptionPlaceholder="Object description" descriptionSelector={descriptionSelector} descriptionOnChange={setEditedObject} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;
+const ObjectInput = () => {
+    const dispatch = useDispatch();
+    const name = useSelector(state => getCurrentObject(state).object_name);
+    const description = useSelector(state => getCurrentObject(state).object_description);
+
+    const nameOnChange = useRef(object_name => {
+        dispatch(setEditedObject({ object_name }));
+    }).current;
+
+    const descriptionOnChange = useRef(object_description => {
+        dispatch(setEditedObject({ object_description }));
+    }).current;
+
+    return (
+        <NameDescriptionInput nameLabel="Object Name" namePlaceholder="Object name" name={name} nameOnChange={nameOnChange}
+            descriptionLabel="Object Description" descriptionPlaceholder="Object description" description={description} descriptionOnChange={descriptionOnChange} />
+    );
+};
 
 
 // Object's tags
