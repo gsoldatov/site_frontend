@@ -45,7 +45,24 @@ const defaultEditedObjectState = {
         sort_type: "default",
         items: {}
     },
+    composite: {
+        subobjects: {}
+    },
 
     // object UI
     markdownDisplayMode: "both"
+};
+
+
+// Inserts an object with default state into state.editedObjects
+export const addEditedObject = (state, objectID) => {
+    const defaultState = getDefaultEditedObjectState(objectID);
+
+    return {
+        ...state,
+        editedObjects: {
+            ...state.editedObjects,
+            [objectID]: defaultState
+        }
+    };
 };

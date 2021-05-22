@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Grid } from "semantic-ui-react";
 
 import FieldMenu from "../field/field-menu";
+import { OnResizeWrapper } from "../common/on-resize-wrapper";
 
 import { setEditedObject, setMarkdownDisplayMode } from "../../actions/object";
 import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-object";
@@ -30,7 +31,7 @@ export const MarkdownContainer = ({ objectID }) => {
         <div className="markdown-container">
             <div className="markdown-container-header">{headerText}</div>
             <MarkdownDisplaySwitch objectID={objectID} />
-            <div className="markdown-view-edit-container">
+            <div className="markdown-display-container">
                 {viewEditBlock}
             </div>
         </div>
@@ -91,7 +92,7 @@ const useMarkdownParseWorker = (objectID) => {
 const MarkdownView = ({ objectID }) => {
     const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
 
-    const parseMarkdown = useMarkdownParseWorker();
+    const parseMarkdown = useMarkdownParseWorker(objectID);
     const text = useSelector(objectSelector).markdown.parsed;
     const rawText = useSelector(objectSelector).markdown.raw_text;
 
@@ -110,26 +111,34 @@ const MarkdownEdit = ({ objectID }) => {
     const dispatch = useDispatch();
     const rawText = useSelector(objectSelector).markdown.raw_text;
 
-    const parseMarkdown = useMarkdownParseWorker();
+    const parseMarkdown = useMarkdownParseWorker(objectID);
 
-    const handleDescriptionChange = useRef(e => {
-        dispatch(setEditedObject({ markdown: { raw_text: e.target.value }}, objectID));
-        
+    // Resize
+    const resize = useRef(() => {
         if (rawTextRef.current) {
             rawTextRef.current.style.height = "inherit";  // Reset
             rawTextRef.current.style.height = rawTextRef.current.scrollHeight + "px";   // Set to text height
         }
+    }).current;
 
+    // Resize after first render
+    useEffect(() => { resize(); }, []);
+
+
+    // On text change
+    const handleChange = useRef(e => {
+        dispatch(setEditedObject({ markdown: { raw_text: e.target.value }}, objectID));
+        resize();
         parseMarkdown(e.target.value);  // Trigger markdown parsing
     }).current;
 
     const rawTextRef = useRef(null);
     
     return (
-        <Form>
+        <Form className="markdown-edit-form">
             <Form.Field>
                 {/* <label>Raw Markdown</label> */}
-                <textarea className="edit-page-textarea" placeholder="Enter text here..." ref={rawTextRef} value={rawText} onChange={handleDescriptionChange} />
+                <textarea className="edit-page-textarea" placeholder="Enter text here..." ref={rawTextRef} value={rawText} onChange={handleChange} />
             </Form.Field>
         </Form>
     );
@@ -137,14 +146,32 @@ const MarkdownEdit = ({ objectID }) => {
 
 
 const MarkdownViewEdit = ({ objectID }) => {
+    // Fullscreen style state
+    const [isFullscreenStyle, setIsFullscreenStyle] = useState(true);
+    const containerClassName = isFullscreenStyle ? "markdown-view-edit-container" : "markdown-view-edit-container small";
+    const columnClassName = isFullscreenStyle ? "markdown-view-edit-item" : "markdown-view-edit-item small";
+
     return (
-        <Grid>
-            <Grid.Column width={8}>
-                <MarkdownEdit objectID={objectID} />
-            </Grid.Column>
-            <Grid.Column width={8}>
-                <MarkdownView objectID={objectID} />
-            </Grid.Column>
-        </Grid>
+        <OnResizeWrapper threshold={500} callback={setIsFullscreenStyle}>
+            <div className={containerClassName}>
+                <div className={columnClassName}>
+                    <MarkdownEdit objectID={objectID} />
+                </div>
+                <div className={columnClassName}>
+                    <MarkdownView objectID={objectID} />
+                </div>
+            </div>
+        </OnResizeWrapper>
     );
+
+    // return (
+    //     <Grid>
+    //         <Grid.Column width={8}>
+    //             <MarkdownEdit objectID={objectID} />
+    //         </Grid.Column>
+    //         <Grid.Column width={8}>
+    //             <MarkdownView objectID={objectID} />
+    //         </Grid.Column>
+    //     </Grid>
+    // );
 };

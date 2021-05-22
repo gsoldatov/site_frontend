@@ -2,7 +2,11 @@
     Markdown + markdown view & edit container styles.   
 *******************************************************/
 
-/* Containers */
+div.markdown-display-container {
+    display: flex;
+}
+
+/* View & edit containers */
 div.markdown-container-header {
     font-size: 13px;
     font-weight: bold;
@@ -10,12 +14,40 @@ div.markdown-container-header {
 }
 
 div.markdown-parsed-container {
+    width: 100%;
     word-wrap: break-word;
     border: solid 2px rgba(34, 36, 38, 0.15);
     padding-left: 1em;
     padding-right: 1em;
     padding-top: 0.785714em;    /* same as the padding for SUI textareas inner text */
     padding-bottom: 0.785714em;
+}
+
+.markdown-edit-form {
+    width: 100%;
+}
+
+/* View + Edit rendered at the same time, fullscreen */
+div.markdown-view-edit-container {
+    display: flex;
+    flex-basis: 100%;   /* take full width of container */
+}
+
+div.markdown-view-edit-item {
+    flex: 1 1 50%;
+}
+
+div.markdown-view-edit-item:last-child {
+    margin-left: 2em;
+}
+
+/* View + Edit rendered at the same time, small */
+div.markdown-view-edit-container.small {
+    flex-direction: column;
+}
+
+div.markdown-view-edit-item.small:last-child {
+    margin-left: 0;
 }
 
 /* Parsed markdown */

@@ -19,12 +19,17 @@ export const OnResizeWrapper = ({ threshold, callback, children }) => {
         }
     }, 200, false)).current;
 
-    // Run onResize after first render and initialize a ResizeObserver object, which will trigger onResize function
+    // Run onResize after first render and initialize a ResizeObserver object (if it's supported), which will trigger onResize function
     useEffect(() => {
         onResize();
-        resizeObserver.current = new ResizeObserver(onResize);
-        resizeObserver.current.observe(innerRef.current);
-        return () => { resizeObserver.current.disconnect(); };
+        if (window.ResizeObserver) {
+            resizeObserver.current = new ResizeObserver(onResize);
+            resizeObserver.current.observe(innerRef.current);
+        }
+        return () => { 
+            if (resizeObserver.current) 
+                resizeObserver.current.disconnect(); 
+        };
 
         // // Implementation with window event (does not trigger when the viewport size is not changed)
         // window.addEventListener("resize", onResize);

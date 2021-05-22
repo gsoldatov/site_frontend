@@ -9,8 +9,9 @@ import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tag
 import { getCurrentObject } from "../store/state-util/ui-object";
 import { getObjectDataFromStore } from "../store/state-util/objects";
 
-import { getDefaultEditedObjectState } from "./helpers/object";
+import { getDefaultEditedObjectState, addEditedObject } from "./helpers/object";
 import { updateToDoListItems } from "./helpers/object-to-do-lists";
+import { updateComposite } from "./helpers/object-composite";
 
 
 function loadAddObjectPage(state, action) {
@@ -87,20 +88,15 @@ function loadEditObjectPage(state, action) {
 // Sets a default state in state.editedObjects for the provided `objectID`
 function addDefaultEditedObject(state, action) {
     const { objectID } = action;
-    const defaultState = getDefaultEditedObjectState(objectID);
-
-    return {
-        ...state,
-        objectUI: {
-            ...state.objectUI,
-            selectedTab: 0,         // switch to the attributes tab on the /object/:id page
-            showResetDialog: false  // hide reset dialog on the /object/:id page
-        },
-        editedObjects: {
-            ...state.editedObjects,
-            [objectID]: defaultState
-        }
+    
+    let newState = addEditedObject(state, objectID);
+    newState.objectUI = {
+        ...newState.objectUI,
+        selectedTab: 0,         // switch to the attributes tab on the /object/:id page
+        showResetDialog: false  // hide reset dialog on the /object/:id page
     };
+
+    return newState;
 }
 
 /*
@@ -156,6 +152,11 @@ function resetEditedObject(state, action) {
 function setEditedObject(state, action) {
     const objectID = action.objectID !== undefined ? action.objectID : state.objectUI.currentObjectID;
     const oldObject = state.editedObjects[objectID];
+    if (oldObject === undefined) return state;      // don't update non-existing objects (i.e. when saving new Markdown object & redirecting to its pag before it's data was parsed after last update)
+
+    // Composite
+    const aCompositeUpdate = action.object.compositeUpdate;
+    if (aCompositeUpdate !== undefined) return updateComposite(state, objectID, aCompositeUpdate);
 
     // Links
     const link = action.object.link !== undefined ? action.object.link : oldObject.link;

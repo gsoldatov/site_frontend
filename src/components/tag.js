@@ -104,7 +104,7 @@ const Tag = ({ header, sideMenuItems, onLoad }) => {
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
     const pageBody = loadIndicatorAndError || (
         <>
-            <Header as="h3" className="add-edit-page-header">{header}</Header>
+            <Header as="h1" className="add-edit-page-header">{header}</Header>
             <TagTimeStamps />
             <TagSaveError />
             <TagInput />

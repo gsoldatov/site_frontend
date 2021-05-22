@@ -1,0 +1,16 @@
+/*******************************************************
+        Subobjects grid, card & menu styling.  
+*******************************************************/
+
+div.composite-subobject-grid {
+    margin: -0.5em; /* reduce padding of SUIR div.tab (1em) by half */
+}
+
+div.composite-subobject-card, div.composite-subobject-add-menu-container {
+    margin: 0.5em;
+    margin-bottom: 1em;
+}
+
+div.composite-subobject-card {
+    min-height: 391.233px; /* minumum card height required to display general tab (without tags) */
+}

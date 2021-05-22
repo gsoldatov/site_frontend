@@ -159,7 +159,7 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
     const pageBody = loadIndicatorAndError || (
         <>
-            <Header as="h3">{header}</Header>
+            <Header as="h1">{header}</Header>
             <ObjectSaveError />
             <ObjectTabPanes objectID={objectID} />
         </>

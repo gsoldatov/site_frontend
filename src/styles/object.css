@@ -20,20 +20,21 @@ div.ui.compact.menu.object-type-menu>.object-type {
     justify-content: center;
 }
 
-/* Object type switch, small */
-@media (max-width: 800px) {
-    div.ui.compact.menu.object-type-menu {
-        display: flex;
-        flex-direction: column;
-    }
-
-    div.ui.compact.menu.object-type-menu>.object-type {
-        width: 100%;
-        display: inline-flex;
-        justify-content: center;
-    }
+div.ui.compact.menu.object-type-menu>.object-type:hover {
+    cursor: pointer;
 }
 
+/* Object type switch, small */
+div.ui.compact.menu.object-type-menu.small {
+    display: flex;
+    flex-direction: column;
+}
+
+div.ui.compact.menu.object-type-menu>.object-type.small {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+}
 
 div.ui.menu > .item.active.object-type, div.ui.menu > .item.disabled.active.object-type { /* Selected object type style */
     font-weight: bold;

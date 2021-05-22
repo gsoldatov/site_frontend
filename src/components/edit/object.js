@@ -39,8 +39,11 @@ export const ObjectTypeSelector = ({ objectID }) => {
     // Items
     const items = objectTypes.map(t => {
         const isActive = t.name === objectType;
+        let className = isActive ? "active object-type" : "object-type";
+        if (!isFullscreenStyle) className += " small";
+        
         return (
-            <Menu.Item as="div" key={t.key} name={t.name} className={isActive ? "active object-type" : "object-type"} disabled={isDisabled}
+            <Menu.Item as="div" key={t.key} name={t.name} className={className} disabled={isDisabled}
                 onClick={(e, props) => dispatch(setEditedObject({ object_type: props.name}, objectID))} >
                 {isActive ? <Icon name="check" /> : null}
                     {t.title}
