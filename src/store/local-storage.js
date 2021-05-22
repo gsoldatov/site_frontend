@@ -1,4 +1,4 @@
-import initialState from "./initial-state";
+import initialState from "./state-templates/initial-state";
 import intervalWrapper from "../util/interval-wrapper";
 
 /*
