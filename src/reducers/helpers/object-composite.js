@@ -1,14 +1,13 @@
 import { addEditedObject } from "./object";
 import { getNewSubobjectID } from "../../store/state-util/composite";
 import { deepCopy } from "../../util/copy";
+import { subobjectDefaults } from "../../store/state-templates/subobject-defaults";
 
 
 /*
     Object page functions for updating state of composite objects' and their subobjects.
     Return a fully modified instance of state.
 */
-const subobjectDefaults = { row: -1, column: -1, isDeleted: false, deleteMode: "none", showResetDialog: false, selectedTab: 0, fetchError: "" };
-
 export const updateComposite = (state, objectID, update) => {
     const { command } = update;
 

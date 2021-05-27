@@ -1,13 +1,12 @@
 import { getSortedItemIDs, getVisibleSortedItemIDs, getNewItemID, getPreviousItemIndent, 
         getParentIDs, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
 import { deepCopy } from "../../util/copy";
+import { itemDefaults } from "../../store/state-templates/to-do-list-item";
 
 
 /*
     Object page functions for manipulating to-do list's state.
 */
-// If a mutable prop is added, getNewToDoListItems should be updated to get its copy, rather than the original.
-const itemDefaults = { item_state: "active", item_text: "", commentary: "", indent: 0, is_expanded: true };
 /*
     Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
     `update` is an object with `command` prop with the type of update to perform, as well as additional props specifying the update.

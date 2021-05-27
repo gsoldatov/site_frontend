@@ -103,7 +103,6 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
             open={options.length > 0}
 
             searchQuery={inputState.inputText}
-            // value={value}    // TODO check if value may not be stored separately from the state
             options={options}
 
             onSearchChange={handleSearchChange}
