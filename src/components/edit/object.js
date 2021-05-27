@@ -28,9 +28,8 @@ const objectTypes = [
 export const ObjectTypeSelector = ({ objectID }) => {
     const dispatch = useDispatch();
 
-    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
     const isDisabled = objectID > 0;
-    const objectType = useSelector(objectSelector).object_type;
+    const objectType = useSelector(getEditedOrDefaultObjectSelector(objectID)).object_type;
 
     // Fullscreen style state
     const [isFullscreenStyle, setIsFullscreenStyle] = useState(true);
@@ -68,8 +67,7 @@ export const ObjectTypeSelector = ({ objectID }) => {
 // Component for switching type-specific view/edit components.
 // If `disableComposite` is true, displays default component for composite objects.
 export const ObjectViewEditSwitch = ({ objectID, disableComposite = false }) => {
-    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
-    const objectType = useSelector(objectSelector).object_type;
+    const objectType = useSelector(getEditedOrDefaultObjectSelector(objectID)).object_type;
 
     switch (objectType) {
         case "link":

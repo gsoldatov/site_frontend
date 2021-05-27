@@ -17,13 +17,11 @@ import StyleTDL from "../../../styles/to-do-lists.css";
     Edit & view components for to-do lists.
 */
 export const TDLContainer = ({ objectID }) => {
-    const isTDLDragAndDropEnabledSelector = useRef(getIsTDLDragAndDropEnabledSelector(objectID)).current;
-
     const dispatch = useDispatch();
-    const canDrag = useSelector(isTDLDragAndDropEnabledSelector);
+    const canDrag = useSelector(getIsTDLDragAndDropEnabledSelector(objectID));
     const updateCallback = useMemo(
         () => params => dispatch(setEditedObject(params, objectID))
-    , []);
+    , [objectID]);
 
     return (
         <div className="to-do-list-container">
@@ -36,16 +34,14 @@ export const TDLContainer = ({ objectID }) => {
 
 
 const TDLMenu = ({ objectID, updateCallback }) => {
-    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
-
-    const fieldMenuItems = useRef([
+    const fieldMenuItems = [
         {
             type: "item",
             icon: "ordered list",
             title: "Default sort",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "default" }},
-            isActiveSelector: state => objectSelector(state).toDoList.sort_type === "default"
+            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).toDoList.sort_type === "default"
         },
         {
             type: "item",
@@ -53,19 +49,17 @@ const TDLMenu = ({ objectID, updateCallback }) => {
             title: "Sort by state",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "state", newItemInputIndent: 0 }},     // also reset new item input indent when sorting by state
-            isActiveSelector: state => objectSelector(state).toDoList.sort_type === "state"
+            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).toDoList.sort_type === "state"
         }
-    ]).current;
+    ];
 
     return <FieldMenu size="mini" className="to-do-list-menu" items={fieldMenuItems} />;
 };
 
 
 const TDLItems = ({ updateCallback, objectID, canDrag }) => {
-    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
-
     const itemsRef = useRef();
-    const toDoList = useSelector(objectSelector).toDoList;
+    const toDoList = useSelector(getEditedOrDefaultObjectSelector(objectID)).toDoList;
     const itemOrder = toDoList.itemOrder;
 
     // State checks performed to update dangerouslySetInnerHTML of <TDLItem> and <Comment> components when needed

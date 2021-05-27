@@ -70,12 +70,14 @@ export const addObjectFetch = obj => {
 // Returns the arrays of object attributes and data returned by backend or an object with `error` attribute containing error message in case of failure.
 export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
     return async (dispatch, getState) => {
-        if ((objectIDs || []).length === 0 && (objectDataIDs || []).length === 0) return {};
+        const objectIDsLength = (objectIDs || []).length;
+        const objectDataIDsLength = (objectDataIDs || []).length;
+        if (objectIDsLength === 0 && objectDataIDsLength === 0) return {};
 
         // Fetch object attributes & data
         let payload = {};
-        if (objectIDs) payload["object_ids"] = objectIDs;
-        if (objectDataIDs) payload["object_data_ids"] = objectDataIDs;
+        if (objectIDsLength > 0) payload["object_ids"] = objectIDs;
+        if (objectDataIDsLength > 0) payload["object_data_ids"] = objectDataIDs;
 
         let response = await runFetch(`${backendURL}/objects/view`, {
             method: "POST",
@@ -195,4 +197,52 @@ export const deleteObjectsFetch = objectIDs => {
                 return await getErrorFromResponse(response);
         }
     }; 
+};
+
+
+// Fetches backend to get objects which match provided `queryText` and are not present in `existingIDs`.
+// Fetches non-cached objects' attributes & tags in case of success.
+// Returns the array of matching object IDs or an object with `error` attribute containing error message in case of failure.
+export const objectsSearchFetch = ({queryText, existingIDs}) => {
+    return async (dispatch, getState) => {
+        // Check params
+        if (queryText.length === 0 || queryText.length > 255) return { error: "queryText is empty or too long." };
+        if (existingIDs.length > 1000) return { error: "existingIDs list is too long." };
+
+        // Run fetch & return object IDs
+        let payload = JSON.stringify({
+            query: {
+                query_text: queryText,
+                maximum_values: 10,
+                existing_ids: existingIDs || []
+            }
+        });
+
+        let response = await runFetch(`${backendURL}/objects/search`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: payload
+        });
+        if (responseHasError(response)) return response;  // return error message in case of network error
+
+        switch (response.status) {
+            case 200:
+                let objectIDs = (await response.json()).object_ids;
+
+                // Fetch non-cached objects
+                let state = getState();
+                let nonCachedObjectIDs = objectIDs.filter(objectID => !(objectID in state.objects && objectID in state.objectsTags))
+                if (nonCachedObjectIDs.length > 0) {
+                    let result = await dispatch(viewObjectsFetch(nonCachedObjectIDs, undefined));
+                    if (responseHasError(result)) return result;
+                }
+
+                return objectIDs;
+            case 404:
+                return [];
+            case 400:
+            case 500:
+                return await getErrorFromResponse(response);
+        }
+    };
 };

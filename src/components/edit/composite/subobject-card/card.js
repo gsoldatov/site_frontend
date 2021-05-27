@@ -1,5 +1,5 @@
 import React from "react";
-import { Segment } from "semantic-ui-react";
+import { Header, Segment } from "semantic-ui-react";
 
 import { CardMenu } from "./menu";
 import { CardGeneralTab } from "./general-tab";
@@ -11,8 +11,26 @@ import { CardDataTab } from "./data-tab";
 */
 export class SubobjectCard extends React.PureComponent {
     render() {
-        const { objectID, subobjectID, updateCallback, selectedTab } = this.props;
+        const { objectID, subobjectID, updateCallback, selectedTab, isObjectEdited, fetchError } = this.props;
+        
+        // Render fetch error message, when object could not 
+        if (!isObjectEdited && fetchError.length > 0) {
+            return (
+                <>
+                    <Header as="h3">Object is unavailable.</Header>
+                    <div>{fetchError}</div>
+                </>
+            );
+        }
 
+        // Render placeholder if object is not added into state.editedObjects
+        if (!isObjectEdited) {
+            return (
+                <div>Loading object...</div>
+            );
+        }
+
+        // Render object card
         // Menu
         const menu = <CardMenu objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} />;
 

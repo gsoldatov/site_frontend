@@ -16,6 +16,9 @@ export async function getStoreWithTwoSelectedObjects() {
     store.dispatch(addObjects(objects));
     store.dispatch(setObjectsTags(objects));
     store.dispatch(selectObjects([1, 2]));
-    await store.dispatch(getNonCachedTags([6]));
+    for (let object of objects)
+        for (let tag_id of object.current_tag_ids)
+            await store.dispatch(getNonCachedTags([tag_id]));
+    // await store.dispatch(getNonCachedTags([6]));
     return store;
 }

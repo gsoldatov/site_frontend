@@ -13,9 +13,9 @@ import { InlineInput } from "./inline/inline-input";
 
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, addDefaultEditedObject, resetEditedObject, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
+import { loadAddObjectPage, addDefaultEditedObject, resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
          setShowResetDialogObject, setShowDeleteDialogObject } from "../actions/object";
-import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
+import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch, loadCompositeSubobjectsFetch } from "../fetches/ui-object";
 
 
 /*
@@ -106,7 +106,7 @@ const editObjectSideMenuItems = [
         buttons: [
             {
                 text: "Yes",
-                onClick: resetEditedObject()
+                onClick: resetEditedObjects(undefined, true)
             },
             {
                 text: "No",
@@ -154,6 +154,7 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     // On load action (also triggers when object ids change)
     useEffect(() => {
         dispatch(onLoad);
+        dispatch(loadCompositeSubobjectsFetch(objectID));   // load missing subobjects' data for composite objects
     }, [objectID]);
 
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
@@ -172,21 +173,39 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
 const selectedTabSelector = state => state.objectUI.selectedTab;
 const ObjectTabPanes = ({ objectID }) => {
     // Object attribute & data tabs
-    const tabPanes = useMemo(() => [
-        { menuItem: "General", render: () => 
-            <Tab.Pane>
-                <ObjectTypeSelector objectID={objectID} />
-                <ObjectTimeStamps />
-                <ObjectInput />
-                <ObjectTags />
-            </Tab.Pane> 
-        },
-        { menuItem: "Data", render: () =>
-            <Tab.Pane>
-                <ObjectViewEditSwitch objectID={objectID} />
-            </Tab.Pane>
-        }
-    ], [objectID]);
+    // const tabPanes = useMemo(() => [
+    //     { menuItem: "General", render: () => 
+    //         <Tab.Pane>
+    //             <ObjectTypeSelector objectID={objectID} />
+    //             <ObjectTimeStamps />
+    //             <ObjectInput />
+    //             <ObjectTags />
+    //         </Tab.Pane> 
+    //     },
+    //     { menuItem: "Data", render: () =>
+    //         <Tab.Pane>
+    //             <ObjectViewEditSwitch objectID={objectID} />
+    //         </Tab.Pane>
+    //     }
+    // ], [objectID]);
+
+    const tabPanes = useMemo(() => {
+        return [
+            { menuItem: "General", render: () => 
+                <Tab.Pane>
+                    <ObjectTypeSelector objectID={objectID} />
+                    <ObjectTimeStamps />
+                    <ObjectInput />
+                    <ObjectTags />
+                </Tab.Pane> 
+            },
+            { menuItem: "Data", render: () =>
+                <Tab.Pane>
+                    <ObjectViewEditSwitch objectID={objectID} />
+                </Tab.Pane>
+            }
+        ];
+    }, [objectID]);
 
     const activeIndex = useSelector(selectedTabSelector);
     const dispatch = useDispatch();

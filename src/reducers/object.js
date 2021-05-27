@@ -1,15 +1,14 @@
-import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, ADD_DEFAULT_EDITED_OBJECT, RESET_EDITED_OBJECT,
+import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, ADD_DEFAULT_EDITED_OBJECT, RESET_EDITED_OBJECTS,
     SET_EDITED_OBJECT, SET_OBJECT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
-    SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, 
+    SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
     SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/object";
 import { deepCopy } from "../util/copy";
 
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
 import { getCurrentObject } from "../store/state-util/ui-object";
-import { getObjectDataFromStore } from "../store/state-util/objects";
 
-import { getDefaultEditedObjectState, addEditedObject } from "./helpers/object";
+import { getDefaultEditedObjectState, addEditedObject, resetEditedObjects as _resetEditedObjects  } from "./helpers/object";
 import { updateToDoListItems } from "./helpers/object-to-do-lists";
 import { updateComposite } from "./helpers/object-composite";
 
@@ -49,7 +48,14 @@ function loadAddObjectPage(state, action) {
             },
 
             selectedTab: 0,
-            showResetDialog: false
+            showResetDialog: false,
+
+            addCompositeSubobjectMenu: {
+                row: -1,
+                column: -1,
+                inputText: "",
+                matchingIDs: []
+            }
         }
     };
 }
@@ -80,7 +86,14 @@ function loadEditObjectPage(state, action) {
 
             // selectedTab: 0,  // not reset on edit object page
             showResetDialog: false,
-            showDeleteDialog: false
+            showDeleteDialog: false,
+
+            addCompositeSubobjectMenu: {
+                row: -1,
+                column: -1,
+                inputText: "",
+                matchingIDs: []
+            }
         }
     };
 }
@@ -100,46 +113,27 @@ function addDefaultEditedObject(state, action) {
 }
 
 /*
-    Resets state of an edited object to last saved state.
-    If `objectID` is provided, resets the object with this ID; otherwise, resets currently edited object.
+    Resets state of edited objects with provided `objectIDs` to their last saved states.
+    If `objectIDs` is provided, resets the object with these IDs; otherwise, resets currently edited object.
     Does not reset new subobjects (with `objectID` < 0).
+
+    If `hideObjectResetDialog` is true, hides reset dialog on /objects/:id page.
 */
-function resetEditedObject(state, action) {
-    const objectID = action.objectID || state.objectUI.currentObjectID;
-    if (objectID < 0) return state;
+function resetEditedObjects(state, action) {
+    const objectIDs = action.objectIDs || [state.objectUI.currentObjectID];
 
-    let stateAfterReset = getDefaultEditedObjectState(objectID);
+    let newState = _resetEditedObjects(state, objectIDs);
 
-    if (objectID in state.objects)  // set attributes
-        stateAfterReset = {
-            ...stateAfterReset, 
-            ...deepCopy(state.objects[objectID])
-        };
-    
-    if (objectID in state.objectsTags)  // set current object tags (added & removed tags are already reset)
-        stateAfterReset = {
-            ...stateAfterReset,
-            currentTagIDs: state.objectsTags[objectID].slice()
-        };
-    
-    const objectData = getObjectDataFromStore(state, objectID);     // set object data
-    if (objectData !== undefined)
-        stateAfterReset = {
-            ...stateAfterReset,
-            ...objectData
-        };
-    
-    return {
-        ...state,
-        objectUI: {
-            ...state.objectUI,
-            showResetDialog: false  // hide reset dialog on the /object/:id page
-        },
-        editedObjects: {
-            ...state.editedObjects,
-            [objectID]: stateAfterReset
+    if (action.hideObjectResetDialog)
+        newState = {
+            ...newState,
+            objectUI: {
+                ...state.objectUI,
+                showResetDialog: false  // hide reset dialog on the /object/:id page
+            }
         }
-    };
+
+    return newState;
 }
 
 /*
@@ -373,6 +367,24 @@ function setMarkdownDisplayMode(state, action) {
     };
 }
 
+function setAddCompositeSubobjectMenu(state, action) {
+    const oldAddCompositeSubobjectMenu = state.objectUI.addCompositeSubobjectMenu;
+    const newAddCompositeSubobjectMenu = {};
+    ["row", "column", "inputText", "matchingIDs"].forEach(attr => {
+        if (action.addCompositeSubobjectMenu[attr] !== undefined) newAddCompositeSubobjectMenu[attr] = action.addCompositeSubobjectMenu[attr];
+    });
+    return {
+        ...state,
+        objectUI: {
+            ...state.objectUI,
+            addCompositeSubobjectMenu: {
+                ...oldAddCompositeSubobjectMenu,
+                ...newAddCompositeSubobjectMenu
+            }
+        }
+    };
+}
+
 function setObjectOnLoadFetchState(state, action) {
     return {
         ...state,
@@ -404,7 +416,7 @@ const root = {
     LOAD_ADD_OBJECT_PAGE: loadAddObjectPage,
     LOAD_EDIT_OBJECT_PAGE: loadEditObjectPage,
     ADD_DEFAULT_EDITED_OBJECT: addDefaultEditedObject,
-    RESET_EDITED_OBJECT: resetEditedObject,
+    RESET_EDITED_OBJECTS: resetEditedObjects,
     SET_EDITED_OBJECT: setEditedObject,
     SET_OBJECT_TAGS_INPUT: setObjectTagsInput,
     SET_EDITED_OBJECT_TAGS: setEditedObjectTags,
@@ -413,6 +425,7 @@ const root = {
     SET_SHOW_RESET_DIALOG_OBJECT: setShowResetDialogObject,
     SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject,
     SET_MARKDOWN_DISPLAY_MODE: setMarkdownDisplayMode,
+    SET_ADD_COMPOSITE_SUBOBJECT_MENU: setAddCompositeSubobjectMenu,
     SET_OBJECT_ON_LOAD_FETCH_STATE: setObjectOnLoadFetchState,
     SET_OBJECT_ON_SAVE_FETCH_STATE: setObjectOnSaveFetchState
 };

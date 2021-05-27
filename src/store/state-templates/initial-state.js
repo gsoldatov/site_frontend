@@ -82,7 +82,14 @@ const initialState = {
         selectedTab: 0,
 
         showResetDialog: false,
-        showDeleteDialog: false
+        showDeleteDialog: false,
+
+        addCompositeSubobjectMenu: {
+            row: -1,
+            column: -1,
+            inputText: "",
+            matchingIDs: []
+        }
     },
 
     // /objects page UI controllers

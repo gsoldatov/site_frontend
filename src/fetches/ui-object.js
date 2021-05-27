@@ -1,13 +1,13 @@
 import config from "../config";
 
 import { responseHasError } from "./common";
-import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch } from "./data-objects";
+import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch, objectsSearchFetch } from "./data-objects";
 import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
 
 import { setRedirectOnRender } from "../actions/common";
-import { loadEditObjectPage, resetEditedObject, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
+import { loadEditObjectPage, resetEditedObjects, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
         setShowDeleteDialogObject, setEditedObject, 
-        setEditedObjectTags, setObjectTagsInput } from "../actions/object";
+        setEditedObjectTags, setObjectTagsInput, setAddCompositeSubobjectMenu } from "../actions/object";
 
 import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-object";
 import { objectDataIsInState } from "../store/state-util/objects";
@@ -66,16 +66,16 @@ export const editObjectOnLoadFetch = object_id => {
             }
         }
 
-        // Fetch non-cached tags
-        let objectTags = getState().objectsTags[object_id];
-        let result = await dispatch(getNonCachedTags(objectTags));
-        if (responseHasError(result)) {
-            dispatch(setObjectOnLoadFetchState(false, result.error));
-            return;
-        }
+        // // Fetch non-cached tags     // tags are fetched in viewObjectsFetch
+        // let objectTags = getState().objectsTags[object_id];
+        // let result = await dispatch(getNonCachedTags(objectTags));
+        // if (responseHasError(result)) {
+        //     dispatch(setObjectOnLoadFetchState(false, result.error));
+        //     return;
+        // }
 
         // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
-        if (setEditedObjects) dispatch(resetEditedObject());  // object_id is taken from state.objectUI.currentObjectID (which was set by loadEditObjectPage)
+        if (setEditedObjects) dispatch(resetEditedObjects());  // object_id is taken from state.objectUI.currentObjectID (which was set by loadEditObjectPage)
 
         // End fetch
         dispatch(setObjectOnLoadFetchState(false, ""));
@@ -148,3 +148,72 @@ export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
         }
     };
 }
+
+
+// Handles composite object add subobject dropdown values update
+export const compositeSubobjectDropdownFetch = ({queryText, existingIDs}) => {
+    return async (dispatch, getState) => {
+        // Exit fetch if an item was added before the start of the fetch
+        const inputText = getState().objectUI.addCompositeSubobjectMenu.inputText;
+        if (inputText.length === 0) return;
+
+        // Run fetch & update matching tags
+        const result = await dispatch(objectsSearchFetch({queryText, existingIDs}));
+
+        if (!responseHasError(result)) {
+            // Update matching tags if input text didn't change during fetch
+            if (inputText === getState().objectUI.addCompositeSubobjectMenu.inputText) dispatch(setAddCompositeSubobjectMenu({ matchingIDs: result }));
+        }
+    };
+}
+
+
+// Fetches missing attributes/tags/data of composite object's subobjects
+export const loadCompositeSubobjectsFetch = objectID => {
+    return async (dispatch, getState) => {
+        let state = getState();
+        
+        // Exit if object is not composite or not being edited
+        if (state.editedObjects[objectID] === undefined || state.editedObjects[objectID].object_type !== "composite") return;
+
+        // Get subobjects, which should be fetched
+        let existingSubobjectIDs = Object.keys(state.editedObjects[objectID].composite.subobjects).map(objID => parseInt(objID)).filter(objID => objID > 0);
+        let subobjectIDsWithMissingAttributesOrTags = existingSubobjectIDs.filter(objID => !(objID in state.objects && objID in state.objectsTags));
+        let subobjectIDsWithMissingData = existingSubobjectIDs.filter(objID => !objectDataIsInState(state, objID));
+
+        // Fetch missing attributes/tags/data
+        if (subobjectIDsWithMissingAttributesOrTags.length > 0 || subobjectIDsWithMissingData.length > 0) {
+            // Update fetch status
+            let nonCachedSubobjectIDs = new Set(subobjectIDsWithMissingAttributesOrTags.concat(subobjectIDsWithMissingData));
+            dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "", subobjectIDs: nonCachedSubobjectIDs }}, objectID));
+            
+            // Fetch subobjects from backend
+            let result = await dispatch(viewObjectsFetch(subobjectIDsWithMissingAttributesOrTags, subobjectIDsWithMissingData));
+
+            // Handle fetch error
+            if (responseHasError(result)) {
+                dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "Could not fetch object data.", subobjectIDs: nonCachedSubobjectIDs }}, objectID));
+                return;
+            }
+
+            // Set fetch error for subobjects which were not fetched
+            let returnedObjectIDs = result["objects"].map(object => object.object_id);
+            let notFoundObjectIDs = subobjectIDsWithMissingAttributesOrTags.filter(objectID => returnedObjectIDs.indexOf(objectID) === -1);
+            let returndedObjectDataIDs = result["object_data"].map(object => object.object_id);
+            notFoundObjectIDs = notFoundObjectIDs.concat(subobjectIDsWithMissingData.filter(objectID => returndedObjectDataIDs.indexOf(objectID) === -1));
+            if (notFoundObjectIDs.length > 0)
+                dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "Could not fetch object data.", subobjectIDs: notFoundObjectIDs }}, objectID));
+            
+            // Set which objects should be added to state.editedObjects (successfully fetched & not already present there)
+            // state = getState();
+            // subobjectIDsToAddToEditedObjects = [...nonCachedSubobjectIDs].filter(objectID => notFoundObjectIDs.indexOf(objectID) === -1 && !(objectID in state.editedObjects));
+        }
+
+        state = getState();
+        let subobjectIDsToAddToEditedObjects = existingSubobjectIDs.filter(objID => objID in state.objects && objID in state.objectsTags && objectDataIsInState(state, objID));
+
+        // Add objects to state.editedObjects
+        if (subobjectIDsToAddToEditedObjects.length > 0)
+            dispatch(resetEditedObjects(subobjectIDsToAddToEditedObjects));
+    };
+};

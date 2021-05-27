@@ -12,6 +12,7 @@ import createStore from "../src/store/create-store";
 import { AddObject, EditObject } from "../src/components/object";
 import Objects from "../src/components/objects";
 import { setObjectsTags } from "../src/actions/data-tags";
+import { getNonCachedTags } from "../src/fetches/data-tags";
 import { addObjects, addObjectData } from "../src/actions/data-objects";
 
 
@@ -226,6 +227,8 @@ describe("Edit object page", () => {
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
+        for (let tag_id of object.current_tag_ids)
+            await store.dispatch(getNonCachedTags([tag_id]));
         
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
         let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {

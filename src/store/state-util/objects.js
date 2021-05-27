@@ -89,6 +89,7 @@ export const getObjectDataFromStore = (state, object_id) => {
 export const objectDataIsInState = (state, object_id) => {
     if (!state.objects[object_id]) return false;
     const objectType = state.objects[object_id].object_type;
+
     switch (objectType) {
         case "link":
             return object_id in state.links;

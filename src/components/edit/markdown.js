@@ -19,9 +19,7 @@ import StyleHighlight from "highlight.js/styles/a11y-dark.css";
     Markdown-specific edit & view components
 */
 export const MarkdownContainer = ({ objectID }) => {
-    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
-
-    const displayMode = useSelector(objectSelector).markdownDisplayMode;
+    const displayMode = useSelector(getEditedOrDefaultObjectSelector(objectID)).markdownDisplayMode;
     const viewEditBlock = displayMode === "view" ? <MarkdownView objectID={objectID} /> :
         displayMode === "edit" ? <MarkdownEdit objectID={objectID} /> : <MarkdownViewEdit objectID={objectID} />;
     const headerText = "Markdown " + (displayMode === "view" ? "(View)" :
@@ -40,16 +38,14 @@ export const MarkdownContainer = ({ objectID }) => {
 
 
 const MarkdownDisplaySwitch = ({ objectID }) => {
-    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
-
-    const fieldMenuItems = useRef([
+    const fieldMenuItems = [
         {
             type: "item",
             icon: "square outline",
             title: "Display parsed markdown",
             onClick: setMarkdownDisplayMode,
             onClickParams: { objectID, markdownDisplayMode: "view" },
-            isActiveSelector: state => objectSelector(state).markdownDisplayMode === "view"
+            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "view"
         },
         {
             type: "item",
@@ -57,7 +53,7 @@ const MarkdownDisplaySwitch = ({ objectID }) => {
             title: "Display edit window",
             onClick: setMarkdownDisplayMode,
             onClickParams: { objectID, markdownDisplayMode: "edit" },
-            isActiveSelector: state => objectSelector(state).markdownDisplayMode === "edit"
+            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "edit"
         },
         {
             type: "item",
@@ -65,9 +61,9 @@ const MarkdownDisplaySwitch = ({ objectID }) => {
             title: "Display edit window and parsed markdown",
             onClick: setMarkdownDisplayMode,
             onClickParams: { objectID, markdownDisplayMode: "both" },
-            isActiveSelector: state => objectSelector(state).markdownDisplayMode === "both"
+            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "both"
         }
-    ]).current;
+    ];
 
     return <FieldMenu size="mini" compact className="markdown-display-switch-menu" items={fieldMenuItems} />;
 };
@@ -90,11 +86,9 @@ const useMarkdownParseWorker = (objectID) => {
 
 
 const MarkdownView = ({ objectID }) => {
-    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
-
     const parseMarkdown = useMarkdownParseWorker(objectID);
-    const text = useSelector(objectSelector).markdown.parsed;
-    const rawText = useSelector(objectSelector).markdown.raw_text;
+    const text = useSelector(getEditedOrDefaultObjectSelector(objectID)).markdown.parsed;
+    const rawText = useSelector(getEditedOrDefaultObjectSelector(objectID)).markdown.raw_text;
 
     useEffect(() => {   // Parse after first render
         if (text === undefined || text === "")
@@ -106,10 +100,8 @@ const MarkdownView = ({ objectID }) => {
 
 
 const MarkdownEdit = ({ objectID }) => {
-    const objectSelector = useRef(getEditedOrDefaultObjectSelector(objectID)).current;
-
     const dispatch = useDispatch();
-    const rawText = useSelector(objectSelector).markdown.raw_text;
+    const rawText = useSelector(getEditedOrDefaultObjectSelector(objectID)).markdown.raw_text;
 
     const parseMarkdown = useMarkdownParseWorker(objectID);
 
