@@ -5,11 +5,13 @@ import StyleError from "../../styles/error.css";
 
 
 /* Error message component */
-export default ({ header, text }) => {
+export default ({ header, text, containerClassName, messageClassName }) => {
     const _header = header === undefined ? "Error" : header;
+    const _containerClassName = containerClassName !== undefined ? containerClassName : "error-container";
+    const _messageClassName = messageClassName !== undefined ? messageClassName : "error-message";
     return (
-        <Container className="error-container">
-            <Message negative>
+        <Container className={_containerClassName}>
+            <Message negative className={_messageClassName}>
                 <Message.Header>{_header}</Message.Header>
                 {text}
             </Message>

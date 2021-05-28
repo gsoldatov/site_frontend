@@ -1,7 +1,9 @@
 import React from "react";
-import { Header, Segment } from "semantic-ui-react";
+import { Loader, Segment } from "semantic-ui-react";
 
-import { CardMenu } from "./menu";
+import Error from "../../../common/error";
+import { Heading } from "./heading";
+import { CardMenu } from "./card-menu";
 import { CardGeneralTab } from "./general-tab";
 import { CardDataTab } from "./data-tab";
 
@@ -16,17 +18,22 @@ export class SubobjectCard extends React.PureComponent {
         // Render fetch error message, when object could not 
         if (!isObjectEdited && fetchError.length > 0) {
             return (
-                <>
-                    <Header as="h3">Object is unavailable.</Header>
-                    <div>{fetchError}</div>
-                </>
+                <div className="composite-subobject-card no-padding">
+                    <div className="composite-subobject-loader-error-container">
+                        <Error header="Object is unavailable." text={fetchError} containerClassName="subobject-error-container" messageClassName="subobject-error-message" />
+                    </div>
+                </div>
             );
         }
 
         // Render placeholder if object is not added into state.editedObjects
         if (!isObjectEdited) {
             return (
-                <div>Loading object...</div>
+                <div className="composite-subobject-card no-padding">
+                    <div className="composite-subobject-loader-error-container">
+                        <Loader active inline="centered">Loading object...</Loader>
+                    </div>
+                </div>
             );
         }
 
@@ -41,11 +48,10 @@ export class SubobjectCard extends React.PureComponent {
         // Segment is used to style menu and tabs as <Tab> component
         return (
             <div className="composite-subobject-card">
+                <Heading subobjectID={subobjectID} />
                 {menu}
-                <Segment attached="bottom" className="composite-subobject-card-segment">
-                    {generalTab}
-                    {dataTab}
-                </Segment>
+                {generalTab}
+                {dataTab}
             </div>
         );
     }

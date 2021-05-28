@@ -2,10 +2,15 @@
     Object page styles.
 **************************/
 
+/* Object type switch header */
 div.object-type-menu-header {
     margin-top: 1em;
     font-weight: bold;
     margin-bottom: 0.25em;
+}
+
+div.object-type-menu-header.subobject {
+    margin-top: 0;
 }
 
 /* Object type switch, full */

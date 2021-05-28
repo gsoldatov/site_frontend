@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { SubobjectCard } from "./subobject-card/card";
+import { SubobjectCard } from "./subobject-card/subobject-card";
 import { AddSubobjectMenu } from "./add-subobject-menu";
 
 import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../actions/object";

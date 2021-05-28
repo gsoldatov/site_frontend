@@ -31,7 +31,7 @@ export const CardGeneralTab = ({ subobjectID }) => {
 
     return (
         <div className="composite-subobject-card-tab">
-            <ObjectTypeSelector objectID={subobjectID} />
+            <ObjectTypeSelector objectID={subobjectID} isSubobject />
             <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} isDisplayedSelector={isDisplayedSelector} />
             <NameDescriptionInput nameLabel="Object Name" namePlaceholder="Object name" name={name} nameOnChange={nameOnChange}
                 descriptionLabel="Object Description" descriptionPlaceholder="Object description" description={description} descriptionOnChange={descriptionOnChange} />

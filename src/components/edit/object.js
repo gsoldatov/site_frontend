@@ -25,11 +25,14 @@ const objectTypes = [
     { key: 3, name: "to_do_list", title: "To-Do List" },
     { key: 4, name: "composite", title: "Composite" }
 ];
-export const ObjectTypeSelector = ({ objectID }) => {
+export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
     const dispatch = useDispatch();
 
     const isDisabled = objectID > 0;
     const objectType = useSelector(getEditedOrDefaultObjectSelector(objectID)).object_type;
+
+    // Header style
+    const headerClassName = "object-type-menu-header" + (isSubobject ? " subobject": "");
 
     // Fullscreen style state
     const [isFullscreenStyle, setIsFullscreenStyle] = useState(true);
@@ -53,7 +56,7 @@ export const ObjectTypeSelector = ({ objectID }) => {
     // each item has a fixed width of 125px in fullscreen mode; update CSS if this is updated
     return (
         <>
-            <div className="object-type-menu-header">Object Type</div>
+            <div className={headerClassName}>Object Type</div>
             <OnResizeWrapper threshold={125 * objectTypes.length} callback={setIsFullscreenStyle}>
                 <Menu compact className={menuClassName}>
                     {items}

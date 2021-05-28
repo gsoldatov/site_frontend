@@ -1,16 +1,143 @@
 /*******************************************************
         Subobjects grid, card & menu styling.  
 *******************************************************/
+:root {
+    --subobject-card-min-height: 100px;
+    --subobject-card-padding-top-bottom: 0.5em;
+    --subobject-card-padding-left-right: 0.75em;
+}
 
+/* Grid */
 div.composite-subobject-grid {
     margin: -0.5em; /* reduce padding of SUIR div.tab (1em) by half */
 }
 
-div.composite-subobject-card, div.composite-subobject-add-menu-container {
+/* Card */
+div.composite-subobject-card {
+    /* min-height: 391.233px; / * minumum card height required to display general tab (without tags) */
+    min-height: var(--subobject-card-min-height);
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+
     margin: 0.5em;
-    margin-bottom: 1em;
+    margin-bottom: 2em;
+
+    padding-top: var(--subobject-card-padding-top-bottom);
+    padding-bottom: var(--subobject-card-padding-top-bottom);
+    padding-left: var(--subobject-card-padding-left-right);
+    padding-right: var(--subobject-card-padding-left-right);
 }
 
-div.composite-subobject-card {
-    min-height: 391.233px; /* minumum card height required to display general tab (without tags) */
+div.composite-subobject-card:last-child {
+    margin: 0.5em;  /* Override bottom margin */
+}
+
+div.composite-subobject-card.no-padding {
+    padding: 0;
+
+    /* Center content vertically */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Card loader & error */
+div.composite-subobject-loader-error-container {
+    min-height: 100%;
+}
+
+div.ui.container.subobject-error-container {
+    width: 100%;
+    height: var(--subobject-card-min-height);
+
+    margin: 0 !important;   /* override SUIR margin left & right which appear at small widths (<500px) */
+}
+
+div.ui.message.subobject-error-message {
+    height: 100%;
+}
+
+/* Card heading */
+div.composite-subobjct-card-heading-container {
+    background-color: rgba(0, 0, 0, 0.04);
+    /* Remove the padding of div.composite-subobject-card to make a correct line */
+    margin-top: calc(-1 * var(--subobject-card-padding-top-bottom));
+    margin-left: calc(-1 * var(--subobject-card-padding-left-right));
+    margin-right: calc(-1 * var(--subobject-card-padding-left-right));
+}
+
+div.composite-subobjct-card-heading {
+    width: 100%;
+    height: 32px;   /* set fixed height close no actual height it takes; also equals to SUIR <Loader> component with default size prop height (which is not rendered anymore) */
+    display: inline-flex;
+}
+
+div.composite-subobject-card-heading-left, div.composite-subobject-card-heading-right {
+    display: inline-flex;
+    align-items: center;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+}
+
+div.composite-subobject-card-heading-right {
+    margin-left: auto;  /* align div to the right side of its parent */
+    margin-right: 0.5rem;
+}
+
+div.composite-subobject-card-heading-object-type-icon {
+    margin-left: 0.5em;
+}
+
+div.composite-subobject-card-heading-text {
+    margin-left: 0.5em;
+    font-size: 1.2em;
+    font-weight: bold;
+    /* text-decoration: underline; */
+
+    /* Disable displaying object name on multiple lines */
+    height: 1.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div.composite-subobject-card-heading-text.unnamed {
+    font-weight: normal;
+    color: gray;
+    /* text-decoration: none; */
+}
+
+/* Card menu */
+div.menu.composite-subobject-card-menu {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* div.item.composite-subobject-secondary-menu-item { */
+.ui.secondary.menu div.item.composite-subobject-secondary-menu-item {
+    padding: 0;
+}
+
+.ui.menu div.menu.composite-subobject-card-secondary-sub-menu {
+    margin-left: 0.5rem;
+}
+
+/* Add menu */
+div.composite-subobject-card.add-menu {
+    min-height: min-content;    /* Override fixed min-height */
+
+    text-align: center;
+
+    /* Center content vertically */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+button.ui.composite-subobject-add-menu-button {
+    padding-left: 1em;
+    padding-right: 1em;
+    width: 120px;   /* min size which fits the text of each button */
+}
+
+div.ui.search.selection.dropdown.composite-object-add-menu-dropdown {
+    width: 100%;
 }

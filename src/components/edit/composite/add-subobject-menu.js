@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Dropdown } from "semantic-ui-react";
+import { Button, Dropdown, Icon } from "semantic-ui-react";
 
 import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../fetches/ui-object";
 
@@ -18,26 +18,33 @@ export class AddSubobjectMenu extends React.PureComponent {
         this.addExistingOnClick = this.addExistingOnClick.bind(this);
     }
 
+    // Button click handlers
     addNewOnClick() { this.props.updateCallback({ compositeUpdate: { command: "addNew", row: this.props.row, column: this.props.column }}); }
     addExistingOnClick() { this.props.setAddMenuCallback({ row: this.props.row, column: this.props.column, inputText: "", matchingIDs: [] }); }
 
     render() {
         const { isObjectInputDisplayed, objectID, setAddMenuCallback, updateCallback, row, column } = this.props;
 
+        // Object search dropdown
         if (isObjectInputDisplayed) {
             return (
-                <NewObjectDropdown objectID={objectID} setAddMenuCallback={setAddMenuCallback} updateCallback={updateCallback} row={row} column={column} />
+                <div className="composite-subobject-card add-menu">
+                    <NewObjectDropdown objectID={objectID} setAddMenuCallback={setAddMenuCallback} updateCallback={updateCallback} row={row} column={column} />
+                </div>
             );
         }
 
+        // "Add New" + "Add Existing" buttons
         return (
-            <div className="composite-subobject-add-menu-container">
-                <Button onClick={this.addNewOnClick}>
-                    Add a New Subobject
-                </Button>
-                <Button onClick={this.addExistingOnClick}>
-                    Add an Existing Subobject
-                </Button>
+            <div className="composite-subobject-card add-menu">
+                <div className="composite-subobject-add-menu-button-container">
+                    <Button color="blue" onClick={this.addNewOnClick} className="composite-subobject-add-menu-button">
+                        Add New
+                    </Button>
+                    <Button color="teal" onClick={this.addExistingOnClick} className="composite-subobject-add-menu-button">
+                        Add Existing
+                    </Button>
+                </div>
             </div>
         );
     }
