@@ -6,6 +6,7 @@ import { AddSubobjectMenu } from "./add-subobject-menu";
 
 import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../actions/object";
 import { getSubobjectDisplayOrder } from "../../../store/state-util/composite";
+import { enumDeleteModes } from "../../../store/state-templates/subobjects";
 
 import StyleSubobjects from "../../../styles/subobjects.css";
 
@@ -35,11 +36,13 @@ export const SubobjectsContainer = ({ objectID }) => {
         let columnItems = [];
 
         for (let subobjectID of subobjectOrder[i]) {
-            let isObjectEdited = editedObjects[subobjectID] !== undefined;
             let fetchError = composite.subobjects[subobjectID].fetchError;
             let selectedTab = composite.subobjects[subobjectID].selectedTab;
+            let isSubbjectEdited = editedObjects[subobjectID] !== undefined;
+            let isSubobjectDeleted = composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none;
+
             columnItems.push(<SubobjectCard key={subobjectID} objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback}
-                selectedTab={selectedTab} isObjectEdited={isObjectEdited} fetchError={fetchError} />);
+                selectedTab={selectedTab} isSubbjectEdited={isSubbjectEdited} fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} />);
         }
         
         // <AddSubobjectMenu> at the bottom of the column

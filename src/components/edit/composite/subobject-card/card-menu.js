@@ -2,6 +2,8 @@ import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Button, Menu } from "semantic-ui-react";
 
+import { enumDeleteModes } from "../../../../store/state-templates/subobjects";
+
 
 /*
     Subobject card top menu.
@@ -10,52 +12,70 @@ const _tabIndexes = { "general": 0, "data": 1 };
 
 export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
     const selectedTab = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].selectedTab);
-    const onTabChange = (e, data) => { updateCallback({ compositeUpdate: { command: "selectTab", subobjectID, selectedTab: _tabIndexes[data.name] }}); };
+    const isTabChangeDisabled = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none);
+    const onTabChange = (e, data) => { updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, selectedTab: _tabIndexes[data.name] }}); };
 
-    const secondaryMenuButtonProps = useMemo(() => [
+    // Menu button callbacks
+    const editObjectPageCallback = useMemo(() => () => { console.log("Clicked button 1") }, [objectID, subobjectID]);
+    const resetSubbjectCallback = useMemo(() => () => { console.log("Clicked button 1") }, [objectID, subobjectID]);
+    const deleteSubobjectCallback = useMemo(() => () => { 
+        updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, deleteMode: enumDeleteModes.subobjectOnly }}); 
+    }, [objectID, subobjectID]);
+    const fullyDeleteSubobjectCallback = useMemo(() => () => {
+        updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, deleteMode: enumDeleteModes.full }}); 
+    }, [objectID, subobjectID]);
+    const restoreDeletedSubobjectCallback = useMemo(() => () => { 
+        updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, deleteMode: enumDeleteModes.none }}); 
+    }, [objectID, subobjectID]);
+
+    const secondaryMenuButtonProps = [
         { 
-            icon: "edit outline", title: "Edit object page", 
-            isDisabledSelector: state => false, 
-            isVisibleSelector: state => true, 
-            onClick: () => console.log("Clicked button 1") },
-        { 
-            icon: "undo", title: "Reset object", 
-            isDisabledSelector: state => true, 
-            isVisibleSelector: state => true, 
-            onClick: () => console.log("Clicked button 2") 
+            icon: "edit outline", 
+            title: "Open edit object page", 
+            onClick: editObjectPageCallback
         },
         { 
-            icon: "trash alternate", title: "Delete object", 
-            isDisabledSelector: state => false, 
-            isVisibleSelector: state => true, 
-            onClick: () => console.log("Clicked button 3") 
+            icon: "undo", 
+            title: "Reset object", 
+            onClick: resetSubbjectCallback
         },
         { 
-            icon: "trash alternate", title: "Delete object", 
-            isDisabledSelector: state => false, 
-            isVisibleSelector: state => false, 
-            onClick: () => console.log("Clicked button 3") 
+            icon: "trash alternate", 
+            title: "Delete subobject", 
+            isVisibleSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none,
+            onClick: deleteSubobjectCallback
+        },
+        { 
+            icon: "trash alternate", 
+            title: "Fully delete subobject", 
+            color: "red",
+            isVisibleSelector: state => subobjectID > 0 && state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none,
+            onClick: fullyDeleteSubobjectCallback
+        },
+        { 
+            icon: "undo", 
+            title: "Restore deleted subobject", 
+            color: "green",
+            isVisibleSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none,
+            onClick: restoreDeletedSubobjectCallback
         }
-    ], [objectID, subobjectID]);
+    ];
 
-    const menuButtonsIsVisible = secondaryMenuButtonProps.map(btn => useSelector(btn.isVisibleSelector));
-    const menuButtonsIsDisabled = secondaryMenuButtonProps.map(btn => useSelector(btn.isDisabledSelector));
-
-    const secondaryMenuButtons = secondaryMenuButtonProps.map((btn, k) =>
-        menuButtonsIsVisible[k] && (
-            <Menu.Item key={k} className="composite-subobject-secondary-menu-item">
-                <Button basic size="mini" icon={btn.icon} title={btn.title} disabled={menuButtonsIsDisabled[k]} onClick={btn.onClick} />
-            </Menu.Item>
-        )
-    );
+    const secondaryMenuButtons = secondaryMenuButtonProps.map((btn, k) => {
+        const isVisible = useSelector(btn.isVisibleSelector || (state => true));
+        const isDisabled = useSelector(btn.isDisabledSelector || (state => false));
+        return (
+            <MenuButton key={k} isVisible={isVisible} isDisabled={isDisabled} icon={btn.icon} color={btn.color} title={btn.title} onClick={btn.onClick} />
+        );
+    });
 
     return (
         <Menu secondary size="mini" className="composite-subobject-card-menu">
-            <Menu.Item name="general" active={selectedTab === _tabIndexes["general"]} onClick={onTabChange}>
+            <Menu.Item name="general" active={selectedTab === _tabIndexes["general"]} disabled={isTabChangeDisabled} onClick={onTabChange} >
                 General
             </Menu.Item>
 
-            <Menu.Item name="data" active={selectedTab === _tabIndexes["data"]} onClick={onTabChange}>
+            <Menu.Item name="data" active={selectedTab === _tabIndexes["data"]} disabled={isTabChangeDisabled} onClick={onTabChange}>
                 Data
             </Menu.Item>
 
@@ -65,3 +85,16 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
         </Menu>
     );
 };
+
+
+class MenuButton extends React.PureComponent {
+    render() {
+        const { isVisible, isDisabled, icon, color, title, onClick } = this.props;
+
+        return isVisible && (
+            <Menu.Item className="composite-subobject-secondary-menu-item">
+               <Button basic size="mini" icon={icon} color={color} title={title} disabled={isDisabled} onClick={onClick} />
+            </Menu.Item>
+        );
+    }
+}

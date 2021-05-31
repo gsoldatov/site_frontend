@@ -8,3 +8,11 @@ export const subobjectDefaults = {
     selectedTab: 0, 
     fetchError: ""
 };
+
+
+// Subobject's `deleteMode` values
+export const enumDeleteModes = {
+    none: 0,
+    subobjectOnly: 1,
+    full: 2
+};

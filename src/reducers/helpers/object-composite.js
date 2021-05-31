@@ -1,7 +1,7 @@
 import { addEditedObject } from "./object";
 import { getNewSubobjectID } from "../../store/state-util/composite";
 import { deepCopy } from "../../util/copy";
-import { subobjectDefaults } from "../../store/state-templates/subobject-defaults";
+import { subobjectDefaults } from "../../store/state-templates/subobjects";
 
 
 /*
@@ -56,11 +56,16 @@ export const updateComposite = (state, objectID, update) => {
         };
     }
 
-    // Sets selected tab of the subobject card
-    if (command === "selectTab") {
-        const { subobjectID, selectedTab } = update;
-        const newSubobjectState = { ...state.editedObjects[objectID].composite.subobjects[subobjectID], selectedTab };
-
+    // updates the state of the provided `subobjectID` with the provided attribute values
+    if (command === "updateSubobject") {
+        const { subobjectID } = update;
+        const oldSubobjectState = state.editedObjects[objectID].composite.subobjects[subobjectID];
+        if (oldSubobjectState === undefined) return state;
+        
+        const newSubobjectState = { ...oldSubobjectState };
+        for (let attr of Object.keys(subobjectDefaults))
+            if (update[attr] !== undefined) newSubobjectState[attr] = update[attr];
+        
         return {
             ...state,
             editedObjects: {

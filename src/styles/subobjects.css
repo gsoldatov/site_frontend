@@ -40,10 +40,17 @@ div.composite-subobject-card.no-padding {
     justify-content: center;
 }
 
-/* Card loader & error */
-div.composite-subobject-loader-error-container {
+/* Card loader, error & deleted placeholders  */
+div.composite-subobject-placeholder-container {
     min-height: 100%;
 }
+
+/* div.composite-subobject-placeholder-container.deleted-subobject {
+    /* Remove the padding of div.composite-subobject-card to make a correct line * /
+    margin-bottom: calc(-1 * var(--subobject-card-padding-top-bottom));
+    margin-left: calc(-1 * var(--subobject-card-padding-left-right));
+    margin-right: calc(-1 * var(--subobject-card-padding-left-right));
+} */
 
 div.ui.container.subobject-error-container {
     width: 100%;

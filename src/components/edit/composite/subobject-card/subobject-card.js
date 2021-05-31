@@ -6,6 +6,7 @@ import { Heading } from "./heading";
 import { CardMenu } from "./card-menu";
 import { CardGeneralTab } from "./general-tab";
 import { CardDataTab } from "./data-tab";
+import { DeletedPlaceholder } from "./placeholders/deleted";
 
 
 /*
@@ -13,13 +14,13 @@ import { CardDataTab } from "./data-tab";
 */
 export class SubobjectCard extends React.PureComponent {
     render() {
-        const { objectID, subobjectID, updateCallback, selectedTab, isObjectEdited, fetchError } = this.props;
+        const { objectID, subobjectID, updateCallback, selectedTab, isSubbjectEdited, fetchError, isSubobjectDeleted } = this.props;
         
         // Render fetch error message, when object could not 
-        if (!isObjectEdited && fetchError.length > 0) {
+        if (!isSubbjectEdited && fetchError.length > 0) {
             return (
                 <div className="composite-subobject-card no-padding">
-                    <div className="composite-subobject-loader-error-container">
+                    <div className="composite-subobject-placeholder-container">
                         <Error header="Object is unavailable." text={fetchError} containerClassName="subobject-error-container" messageClassName="subobject-error-message" />
                     </div>
                 </div>
@@ -27,10 +28,10 @@ export class SubobjectCard extends React.PureComponent {
         }
 
         // Render placeholder if object is not added into state.editedObjects
-        if (!isObjectEdited) {
+        if (!isSubbjectEdited) {
             return (
                 <div className="composite-subobject-card no-padding">
-                    <div className="composite-subobject-loader-error-container">
+                    <div className="composite-subobject-placeholder-container">
                         <Loader active inline="centered">Loading object...</Loader>
                     </div>
                 </div>
@@ -38,20 +39,22 @@ export class SubobjectCard extends React.PureComponent {
         }
 
         // Render object card
-        // Menu
+        // Heading & menu
+        const heading = <Heading subobjectID={subobjectID} />;
         const menu = <CardMenu objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} />;
 
-        // Tabs
-        const generalTab = selectedTab === 0 && <CardGeneralTab subobjectID={subobjectID} />;
-        const dataTab = selectedTab === 1 && <CardDataTab subobjectID={subobjectID} />;
-        
-        // Segment is used to style menu and tabs as <Tab> component
+        // Card body
+        const body = 
+            isSubobjectDeleted ? <DeletedPlaceholder />
+            : selectedTab === 0 ? <CardGeneralTab subobjectID={subobjectID} />
+            : selectedTab === 1 ? <CardDataTab subobjectID={subobjectID} />
+            : null;
+
         return (
             <div className="composite-subobject-card">
-                <Heading subobjectID={subobjectID} />
+                {heading}
                 {menu}
-                {generalTab}
-                {dataTab}
+                {body}
             </div>
         );
     }
