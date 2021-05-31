@@ -86,9 +86,7 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
                 Data
             </Menu.Item>
 
-            <Menu.Menu className="composite-subobject-card-secondary-sub-menu">
-                {secondaryMenuButtons}
-            </Menu.Menu>
+            {secondaryMenuButtons}
         </Menu>
     );
 };

@@ -114,17 +114,19 @@ div.composite-subobject-card-heading-text.unnamed {
 
 /* Card menu */
 div.menu.composite-subobject-card-menu {
+    /* Allow multiline display of children */
+    display: flex;
+    flex-wrap: wrap;
+
+    /* Reduce margin */
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }
 
 /* div.item.composite-subobject-secondary-menu-item { */
 .ui.secondary.menu div.item.composite-subobject-secondary-menu-item {
-    padding: 0;
-}
-
-.ui.menu div.menu.composite-subobject-card-secondary-sub-menu {
-    margin-left: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* Add menu */
