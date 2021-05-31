@@ -1,7 +1,9 @@
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
 import { Button, Menu } from "semantic-ui-react";
 
+import { setRedirectOnRender } from "../../../../actions/common";
 import { enumDeleteModes } from "../../../../store/state-templates/subobjects";
 
 
@@ -11,12 +13,16 @@ import { enumDeleteModes } from "../../../../store/state-templates/subobjects";
 const _tabIndexes = { "general": 0, "data": 1 };
 
 export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
+    const dispatch = useDispatch();
+
     const selectedTab = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].selectedTab);
     const isTabChangeDisabled = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none);
     const onTabChange = (e, data) => { updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, selectedTab: _tabIndexes[data.name] }}); };
 
     // Menu button callbacks
-    const editObjectPageCallback = useMemo(() => () => { console.log("Clicked button 1") }, [objectID, subobjectID]);
+    const editObjectPageCallback = useMemo(() => () => {
+        dispatch(setRedirectOnRender(`/objects/${subobjectID}`))
+    }, [objectID, subobjectID]);
     const resetSubbjectCallback = useMemo(() => () => { console.log("Clicked button 1") }, [objectID, subobjectID]);
     const deleteSubobjectCallback = useMemo(() => () => { 
         updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, deleteMode: enumDeleteModes.subobjectOnly }}); 
@@ -31,8 +37,9 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
     const secondaryMenuButtonProps = [
         { 
             icon: "edit outline", 
-            title: "Open edit object page", 
-            onClick: editObjectPageCallback
+            title: "Open edit page of this object", 
+            onClick: editObjectPageCallback,
+            isVisibleSelector: state => subobjectID > 0
         },
         { 
             icon: "undo", 
