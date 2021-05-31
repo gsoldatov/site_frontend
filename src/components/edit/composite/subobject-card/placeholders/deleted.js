@@ -2,6 +2,9 @@ import React from "react";
 import { Container, Message } from "semantic-ui-react";
 
 
+/*
+    Subobject tab placeholder displayed when subobject is deleted.
+*/
 export const DeletedPlaceholder = () => {
     return (
         <div className="composite-subobject-placeholder-container deleted-subobject">

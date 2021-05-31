@@ -1,11 +1,11 @@
 import React from "react";
-import { Loader, Segment } from "semantic-ui-react";
 
-import Error from "../../../common/error";
 import { Heading } from "./heading";
 import { CardMenu } from "./card-menu";
 import { CardGeneralTab } from "./general-tab";
 import { CardDataTab } from "./data-tab";
+import { ErrorPlaceholder } from "./placeholders/error";
+import { LoadingPlaceholder } from "./placeholders/loading";
 import { DeletedPlaceholder } from "./placeholders/deleted";
 
 
@@ -17,26 +17,10 @@ export class SubobjectCard extends React.PureComponent {
         const { objectID, subobjectID, updateCallback, selectedTab, isSubbjectEdited, fetchError, isSubobjectDeleted } = this.props;
         
         // Render fetch error message, when object could not 
-        if (!isSubbjectEdited && fetchError.length > 0) {
-            return (
-                <div className="composite-subobject-card no-padding">
-                    <div className="composite-subobject-placeholder-container">
-                        <Error header="Object is unavailable." text={fetchError} containerClassName="subobject-error-container" messageClassName="subobject-error-message" />
-                    </div>
-                </div>
-            );
-        }
+        if (!isSubbjectEdited && fetchError.length > 0) return <ErrorPlaceholder fetchError={fetchError} />;
 
         // Render placeholder if object is not added into state.editedObjects
-        if (!isSubbjectEdited) {
-            return (
-                <div className="composite-subobject-card no-padding">
-                    <div className="composite-subobject-placeholder-container">
-                        <Loader active inline="centered">Loading object...</Loader>
-                    </div>
-                </div>
-            );
-        }
+        if (!isSubbjectEdited) return <LoadingPlaceholder />;
 
         // Render object card
         // Heading & menu
