@@ -117,7 +117,6 @@ div.menu.composite-subobject-card-menu {
     margin-bottom: 0.5rem;
 }
 
-/* div.item.composite-subobject-secondary-menu-item { */
 .ui.secondary.menu div.item.composite-subobject-secondary-menu-item {
     padding-left: 0;
     padding-right: 0;
@@ -127,6 +126,29 @@ div.menu.composite-subobject-card-menu {
 /* Deleted subobject message */
 div.ui.message.deleted-subobject-message {
     margin: 0;
+}
+
+
+/* Subobject dialog */
+div.subobject-card-dialog-container {
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    padding: 1rem;
+}
+
+div.subobject-card-dialog-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.ui.header.subobject-card-dialog-header {
+    margin-bottom: 0.5rem;
+}
+
+button.ui.button.subobject-card-dialog-button {
+    width: 64px;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
 }
 
 

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Menu } from "semantic-ui-react";
 
 import { setRedirectOnRender } from "../../../../actions/common";
-import { enumDeleteModes } from "../../../../store/state-templates/subobjects";
+import { enumDeleteModes } from "../../../../store/state-templates/composite-subobjects";
 
 
 /*
@@ -12,7 +12,7 @@ import { enumDeleteModes } from "../../../../store/state-templates/subobjects";
 */
 const _tabIndexes = { "general": 0, "data": 1 };
 
-export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
+export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogDisplayed, setIsResetDialogDisplayed }) => {
     const dispatch = useDispatch();
 
     const selectedTab = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].selectedTab);
@@ -23,7 +23,7 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
     const editObjectPageCallback = useMemo(() => () => {
         dispatch(setRedirectOnRender(`/objects/${subobjectID}`))
     }, [objectID, subobjectID]);
-    const resetSubbjectCallback = useMemo(() => () => { console.log("Clicked button 1") }, [objectID, subobjectID]);
+    const resetSubbjectCallback = useMemo(() => () => { setIsResetDialogDisplayed(true) }, [objectID, subobjectID]);
     const deleteSubobjectCallback = useMemo(() => () => { 
         updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, deleteMode: enumDeleteModes.subobjectOnly }}); 
     }, [objectID, subobjectID]);
@@ -44,12 +44,14 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
         { 
             icon: "undo", 
             title: "Reset object", 
+            isDisabledSelector: state => isResetDialogDisplayed,
             onClick: resetSubbjectCallback
         },
         { 
             icon: "trash alternate", 
             title: "Delete subobject", 
             isVisibleSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none,
+            isDisabledSelector: state => isResetDialogDisplayed,
             onClick: deleteSubobjectCallback
         },
         { 
@@ -57,6 +59,7 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
             title: "Fully delete subobject", 
             color: "red",
             isVisibleSelector: state => subobjectID > 0 && state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none,
+            isDisabledSelector: state => isResetDialogDisplayed,
             onClick: fullyDeleteSubobjectCallback
         },
         { 
@@ -64,6 +67,7 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback }) => {
             title: "Restore deleted subobject", 
             color: "green",
             isVisibleSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none,
+            isDisabledSelector: state => isResetDialogDisplayed,
             onClick: restoreDeletedSubobjectCallback
         }
     ];

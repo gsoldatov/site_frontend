@@ -1,7 +1,7 @@
-import { addEditedObject } from "./object";
+import { addEditedObject, resetEditedObjects } from "./object";
 import { getNewSubobjectID } from "../../store/state-util/composite";
 import { deepCopy } from "../../util/copy";
-import { subobjectDefaults } from "../../store/state-templates/subobjects";
+import { subobjectDefaults } from "../../store/state-templates/composite-subobjects";
 
 
 /*
@@ -14,7 +14,7 @@ export const updateComposite = (state, objectID, update) => {
     // Adds a new subobject with default state to state.editedObjects & composite object data.
     if (command === "addNew") {
         // Add a new edited object
-        const newID = getNewSubobjectID(state);
+        const newID = update.subobjectID !== undefined ? update.subobjectID : getNewSubobjectID(state);     // take existing subobjectID if it's passed
         let newState = addEditedObject(state, newID);
         
         // Add the new object to composite data
@@ -35,20 +35,23 @@ export const updateComposite = (state, objectID, update) => {
     }
 
     // Adds an existing subobject to the composite object
+    // If `resetEditedObject` is set to true, resets the object in state.editedObjects
     if (command === "addExisting") {
-        const { subobjectID, row, column } = update;
+        const { resetEditedObject, subobjectID, row, column } = update;
+        let newState = state;
 
-        const newSubobjects = { ...state.editedObjects[objectID].composite.subobjects };
+        if (resetEditedObject) newState = resetEditedObjects(state, [subobjectID]);
+        const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };
         newSubobjects[subobjectID] = { ...deepCopy(subobjectDefaults), row, column };
         
         return {
-            ...state,
+            ...newState,
             editedObjects: {
-                ...state.editedObjects,
+                ...newState.editedObjects,
                 [objectID]: {
-                    ...state.editedObjects[objectID],
+                    ...newState.editedObjects[objectID],
                     composite: {
-                        ...state.editedObjects[objectID].composite,
+                        ...newState.editedObjects[objectID].composite,
                         subobjects: newSubobjects
                     }
                 }
@@ -56,7 +59,7 @@ export const updateComposite = (state, objectID, update) => {
         };
     }
 
-    // updates the state of the provided `subobjectID` with the provided attribute values
+    // Updates the state of the provided `subobjectID` with the provided attribute values
     if (command === "updateSubobject") {
         const { subobjectID } = update;
         const oldSubobjectState = state.editedObjects[objectID].composite.subobjects[subobjectID];

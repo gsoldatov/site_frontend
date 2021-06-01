@@ -6,7 +6,7 @@ import { AddSubobjectMenu } from "./add-subobject-menu";
 
 import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../actions/object";
 import { getSubobjectDisplayOrder } from "../../../store/state-util/composite";
-import { enumDeleteModes } from "../../../store/state-templates/subobjects";
+import { enumDeleteModes } from "../../../store/state-templates/composite-subobjects";
 
 import StyleSubobjects from "../../../styles/subobjects.css";
 
