@@ -8,9 +8,7 @@ import { Loader } from "semantic-ui-react";
 export const LoadingPlaceholder = () => {
     return (
         <div className="composite-subobject-card no-padding">
-            <div className="composite-subobject-placeholder-container">
-                <Loader active inline="centered">Loading object...</Loader>
-            </div>
+            <Loader active inline="centered">Loading object...</Loader>
         </div>
     );
 }

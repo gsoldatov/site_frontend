@@ -7,9 +7,7 @@ import Error from "../../../../common/error";
 export const ErrorPlaceholder = ({ fetchError }) => {
     return (
         <div className="composite-subobject-card no-padding">
-            <div className="composite-subobject-placeholder-container">
-                <Error header="Object is unavailable." text={fetchError} containerClassName="subobject-error-container" messageClassName="subobject-error-message" />
-            </div>
+            <Error header="Object is unavailable." text={fetchError} containerClassName="subobject-error-container" messageClassName="subobject-error-message" />
         </div>
     );
 };

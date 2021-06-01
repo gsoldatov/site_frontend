@@ -7,10 +7,12 @@
     --subobject-card-padding-left-right: 0.75em;
 }
 
+
 /* Grid */
 div.composite-subobject-grid {
     margin: -0.5em; /* reduce padding of SUIR div.tab (1em) by half */
 }
+
 
 /* Card */
 div.composite-subobject-card {
@@ -40,18 +42,8 @@ div.composite-subobject-card.no-padding {
     justify-content: center;
 }
 
-/* Card loader, error & deleted placeholders  */
-div.composite-subobject-placeholder-container {
-    min-height: 100%;
-}
 
-/* div.composite-subobject-placeholder-container.deleted-subobject {
-    /* Remove the padding of div.composite-subobject-card to make a correct line * /
-    margin-bottom: calc(-1 * var(--subobject-card-padding-top-bottom));
-    margin-left: calc(-1 * var(--subobject-card-padding-left-right));
-    margin-right: calc(-1 * var(--subobject-card-padding-left-right));
-} */
-
+/* Full card placeholders (loader, error) */
 div.ui.container.subobject-error-container {
     width: 100%;
     height: var(--subobject-card-min-height);
@@ -62,6 +54,7 @@ div.ui.container.subobject-error-container {
 div.ui.message.subobject-error-message {
     height: 100%;
 }
+
 
 /* Card heading */
 div.composite-subobjct-card-heading-container {
@@ -112,6 +105,7 @@ div.composite-subobject-card-heading-text.unnamed {
     /* text-decoration: none; */
 }
 
+
 /* Card menu */
 div.menu.composite-subobject-card-menu {
     /* Allow multiline display of children */
@@ -128,6 +122,13 @@ div.menu.composite-subobject-card-menu {
     padding-left: 0;
     padding-right: 0;
 }
+
+
+/* Deleted subobject message */
+div.ui.message.deleted-subobject-message {
+    margin: 0;
+}
+
 
 /* Add menu */
 div.composite-subobject-card.add-menu {
