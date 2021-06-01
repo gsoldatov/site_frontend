@@ -203,14 +203,12 @@ export const loadCompositeSubobjectsFetch = objectID => {
             notFoundObjectIDs = notFoundObjectIDs.concat(subobjectIDsWithMissingData.filter(objectID => returndedObjectDataIDs.indexOf(objectID) === -1));
             if (notFoundObjectIDs.length > 0)
                 dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "Could not fetch object data.", subobjectIDs: notFoundObjectIDs }}, objectID));
-            
-            // Set which objects should be added to state.editedObjects (successfully fetched & not already present there)
-            // state = getState();
-            // subobjectIDsToAddToEditedObjects = [...nonCachedSubobjectIDs].filter(objectID => notFoundObjectIDs.indexOf(objectID) === -1 && !(objectID in state.editedObjects));
         }
 
+        // Set which objects should be added to state.editedObjects (successfully fetched & not already present there)
         state = getState();
-        let subobjectIDsToAddToEditedObjects = existingSubobjectIDs.filter(objID => objID in state.objects && objID in state.objectsTags && objectDataIsInState(state, objID));
+        let subobjectIDsToAddToEditedObjects = existingSubobjectIDs.filter(objID => objID in state.objects && objID in state.objectsTags && objectDataIsInState(state, objID)
+            && (!objID in state.editedObjects));
 
         // Add objects to state.editedObjects
         if (subobjectIDsToAddToEditedObjects.length > 0)
