@@ -20,11 +20,13 @@ import StyleObject from "../../styles/object.css";
 */
 // Object type selector
 const objectTypes = [
-    { key: 1, name: "link", title: "Link" },
-    { key: 2, name: "markdown", title: "Markdown" },
-    { key: 3, name: "to_do_list", title: "To-Do List" },
-    { key: 4, name: "composite", title: "Composite" }
+    { name: "link", title: "Link" },
+    { name: "markdown", title: "Markdown" },
+    { name: "to_do_list", title: "To-Do List" },
+    { name: "composite", title: "Composite" }
 ];
+const newSubobjectTypes = objectTypes.filter(t => t.name !== "composite");
+
 export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
     const dispatch = useDispatch();
 
@@ -39,13 +41,14 @@ export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
     const menuClassName = isFullscreenStyle ? "object-type-menu" : "object-type-menu small";
 
     // Items
-    const items = objectTypes.map(t => {
+    const displayedObjectTypes = isSubobject && !isDisabled ? newSubobjectTypes : objectTypes;   // disable adding new composite subobjects
+    const items = displayedObjectTypes.map((t, k) => {
         const isActive = t.name === objectType;
         let className = isActive ? "active object-type" : "object-type";
         if (!isFullscreenStyle) className += " small";
         
         return (
-            <Menu.Item as="div" key={t.key} name={t.name} className={className} disabled={isDisabled}
+            <Menu.Item as="div" key={k} name={t.name} className={className} disabled={isDisabled}
                 onClick={(e, props) => dispatch(setEditedObject({ object_type: props.name}, objectID))} >
                 {isActive ? <Icon name="check" /> : null}
                     {t.title}
@@ -57,7 +60,7 @@ export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
     return (
         <>
             <div className={headerClassName}>Object Type</div>
-            <OnResizeWrapper threshold={125 * objectTypes.length} callback={setIsFullscreenStyle}>
+            <OnResizeWrapper threshold={125 * displayedObjectTypes.length} callback={setIsFullscreenStyle}>
                 <Menu compact className={menuClassName}>
                     {items}
                 </Menu>
@@ -68,8 +71,8 @@ export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
 
 
 // Component for switching type-specific view/edit components.
-// If `disableComposite` is true, displays default component for composite objects.
-export const ObjectViewEditSwitch = ({ objectID, disableComposite = false }) => {
+// If `subobjectCard` is true, displays default component for composite objects and styles if accordingly.
+export const ObjectViewEditSwitch = ({ objectID, subobjectCard = false }) => {
     const objectType = useSelector(getEditedOrDefaultObjectSelector(objectID)).object_type;
 
     switch (objectType) {
@@ -80,11 +83,11 @@ export const ObjectViewEditSwitch = ({ objectID, disableComposite = false }) => 
         case "to_do_list":
             return <TDLContainer objectID={objectID} />;
         case "composite":
-            if (disableComposite)
-                return <DefaultObjectData objectID={objectID} />;
+            if (subobjectCard)
+                return <DefaultObjectData objectID={objectID} subobjectCard />;
             else
                 return <SubobjectsContainer objectID={objectID} />;
         default:
-            return <DefaultObjectData objectID={objectID} />;
+            return <DefaultObjectData objectID={objectID} subobjectCard={subobjectCard} />;
     }
 };

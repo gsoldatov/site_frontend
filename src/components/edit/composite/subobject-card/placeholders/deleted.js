@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Message } from "semantic-ui-react";
+import { Message } from "semantic-ui-react";
 
 
 /*

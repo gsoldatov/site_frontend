@@ -9,7 +9,7 @@ import { ObjectViewEditSwitch } from "../../object";
 export const CardDataTab = ({ subobjectID }) => {
     return (
         <div className="composite-subobject-card-tab">
-            <ObjectViewEditSwitch objectID={subobjectID} disableComposite />
+            <ObjectViewEditSwitch objectID={subobjectID} subobjectCard />
         </div>
     );
 }; 
