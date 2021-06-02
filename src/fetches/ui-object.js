@@ -208,7 +208,7 @@ export const loadCompositeSubobjectsFetch = objectID => {
         // Set which objects should be added to state.editedObjects (successfully fetched & not already present there)
         state = getState();
         let subobjectIDsToAddToEditedObjects = existingSubobjectIDs.filter(objID => objID in state.objects && objID in state.objectsTags && objectDataIsInState(state, objID)
-            && (!objID in state.editedObjects));
+            && !(objID in state.editedObjects));
 
         // Add objects to state.editedObjects
         if (subobjectIDsToAddToEditedObjects.length > 0)
