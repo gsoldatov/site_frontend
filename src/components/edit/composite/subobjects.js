@@ -37,7 +37,7 @@ export const SubobjectsContainer = ({ objectID }) => {
 
         for (let subobjectID of subobjectOrder[i]) {
             let fetchError = composite.subobjects[subobjectID].fetchError;
-            let selectedTab = composite.subobjects[subobjectID].selectedTab;
+            let selectedTab = composite.subobjects[subobjectID].selected_tab;
             let isSubbjectEdited = editedObjects[subobjectID] !== undefined;
             let isSubobjectDeleted = composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none;
 

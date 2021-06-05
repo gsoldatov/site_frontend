@@ -1,22 +1,23 @@
 import { SET_REDIRECT_ON_RENDER } from "../actions/common";
-import { currentObjectHasNoChanges } from "../util/equality-checks";
+import { objectHasNoChanges } from "../util/equality-checks";
+import { removeEditedObject } from "./helpers/object";
 
 
 function setRedirectOnRender(state, action) {
     // Remove currentlyEdited object from state.editedObjects if it was not changed;
     // delete new object from state.editedObjects if `deleteNewObject` prop was passed via action.
-    let newEditedObjects = state.editedObjects;
+    // In any of the above cases, if the object is composite, delete all its unchanged subobjects
+    let newState = state;
     const currentObjectID = state.objectUI.currentObjectID;
     if (currentObjectID != 0 || action.deleteNewObject) {
-        newEditedObjects = {...state.editedObjects};
-        if (currentObjectID != 0 && currentObjectHasNoChanges(state)) delete newEditedObjects[currentObjectID];
-        if (action.deleteNewObject) delete newEditedObjects[0];
+        if (currentObjectID != 0 && objectHasNoChanges(state, currentObjectID))
+            newState = removeEditedObject(newState, currentObjectID);
+        if (action.deleteNewObject) newState = removeEditedObject(newState, 0);
     }
 
-    const redirectOnRender = typeof(action.redirectOnRender) === "function"  ? action.redirectOnRender(state) : action.redirectOnRender;
+    const redirectOnRender = typeof(action.redirectOnRender) === "function" ? action.redirectOnRender(newState) : action.redirectOnRender;
     return {
-        ...state,
-        editedObjects: newEditedObjects,
+        ...newState,
         redirectOnRender
     };
 }

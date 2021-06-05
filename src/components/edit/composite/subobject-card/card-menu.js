@@ -15,9 +15,9 @@ const _tabIndexes = { "general": 0, "data": 1 };
 export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogDisplayed, setIsResetDialogDisplayed }) => {
     const dispatch = useDispatch();
 
-    const selectedTab = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].selectedTab);
+    const selectedTab = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].selected_tab);
     const isTabChangeDisabled = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none);
-    const onTabChange = (e, data) => { updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, selectedTab: _tabIndexes[data.name] }}); };
+    const onTabChange = (e, data) => { updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, selected_tab: _tabIndexes[data.name] }}); };
 
     // Menu button callbacks
     const editObjectPageCallback = useMemo(() => () => {

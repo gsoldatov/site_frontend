@@ -9,9 +9,8 @@ export const enumDeleteModes = {
 export const subobjectDefaults = {
     row: -1, 
     column: -1, 
-    isDeleted: false, 
     deleteMode: enumDeleteModes.none, 
     showResetDialog: false, 
-    selectedTab: 0, 
+    selected_tab: 0, 
     fetchError: ""
 };

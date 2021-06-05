@@ -55,6 +55,7 @@ const initialState = {
     links: {},
     markdown: {},
     toDoLists: {},
+    composite: {},
 
     // edited objects
     editedObjects: {},

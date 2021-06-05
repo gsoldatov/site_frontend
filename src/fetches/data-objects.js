@@ -5,10 +5,10 @@ import { getNonCachedTags } from "./data-tags";
 
 import { setObjectsTags } from "../actions/data-tags";
 import { addObjects, addObjectData, deleteObjects } from "../actions/data-objects";
-import { setObjectOnSaveFetchState } from "../actions/object";
+import { setEditedObject, setObjectOnSaveFetchState } from "../actions/object";
 import { deselectObjects } from "../actions/objects";
 
-import { validateObject, serializeObjectData } from "../store/state-util/objects";
+import { validateObject, serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
 
 
 const backendURL = config.backendURL;
@@ -30,8 +30,8 @@ export const addObjectFetch = obj => {
         }
 
         // Run fetch & handle response
-        let object_data = serializeObjectData(obj);
-        let payload = JSON.stringify({
+        let object_data = serializeObjectData(state, obj);
+        let payload = {
             object: {
                 object_type: obj.object_type,
                 object_name: obj.object_name,
@@ -39,19 +39,24 @@ export const addObjectFetch = obj => {
                 added_tags: obj.addedTags,
                 object_data
             }
-        });
-
+        };
         
         let response = await runFetch(`${backendURL}/objects/add`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: payload
+            body: JSON.stringify(payload)
         });
         if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
                 let object = (await response.json()).object;
+
+                // Composite object data updates
+                dispatch(setEditedObject({ compositeUpdate: { command: "updateSubobjectsOnSave", object, object_data }}, 0));     // object_data must contain non-mapped IDs of new subobjects
+                object_data = modifyObjectDataPostSave(payload, object);
+
+                // General updates
                 dispatch(setObjectsTags([object]));     // Set objects tags
                 dispatch(addObjects([object]));         // Add object
                 dispatch(addObjectData([{ object_id: object.object_id, object_type: object.object_type, object_data: object_data }]));
@@ -131,8 +136,8 @@ export const updateObjectFetch = obj => {
         }
 
         // Run fetch & handle response
-        let object_data = serializeObjectData(obj);
-        let payload = JSON.stringify({
+        let object_data = serializeObjectData(state, obj);
+        let payload = {
             object: {
                 object_id: obj.object_id,
                 object_name: obj.object_name,
@@ -141,12 +146,12 @@ export const updateObjectFetch = obj => {
                 added_tags: obj.addedTags,
                 removed_tag_ids: obj.removedTagIDs
             }
-        });
+        };
         
         let response = await runFetch(`${backendURL}/objects/update`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: payload
+            body: JSON.stringify(payload)
         });
         if (responseHasError(response)) return response;  // return error message in case of network error
 

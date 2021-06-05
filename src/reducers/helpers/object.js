@@ -1,6 +1,7 @@
 import { deepCopy } from "../../util/copy";
 import { defaultEditedObjectState } from "../../store/state-templates/edited-object";
 import { getObjectDataFromStore } from "../../store/state-util/objects";
+import { objectHasNoChanges } from "../../util/equality-checks";
 
 
 /*
@@ -60,4 +61,29 @@ export const resetEditedObjects = (state, objectIDs) => {
     });
 
     return { ...state, editedObjects: newEditedObjects };
+};
+
+
+// Deletes the specified `objectID` from the state.editedObjects.
+// If the object corresponding to the `objectID` is composite, also deletes all of its new & unmodified existing children.
+// Returns the state after delete(-s).
+export const removeEditedObject = (state, objectID) => {
+    if (!(objectID in state.editedObjects)) return state;
+
+    let newEditedObjects = { ...state.editedObjects };
+
+    if (newEditedObjects[objectID].object_type === "composite") {
+        Object.keys(newEditedObjects[objectID].composite.subobjects).forEach(subobjectID => {
+            const intSubobjectID = parseInt(subobjectID);
+            if (intSubobjectID < 0 || (intSubobjectID > 0 && objectHasNoChanges(state, intSubobjectID)))
+                delete newEditedObjects[subobjectID];
+        });
+    }
+
+    delete newEditedObjects[objectID];
+
+    return {
+        ...state,
+        editedObjects: newEditedObjects
+    };
 };

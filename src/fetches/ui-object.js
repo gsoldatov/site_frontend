@@ -5,7 +5,7 @@ import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch
 import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
 
 import { setRedirectOnRender } from "../actions/common";
-import { loadEditObjectPage, resetEditedObjects, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
+import { loadAddObjectPage, loadEditObjectPage, resetEditedObjects, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
         setShowDeleteDialogObject, setEditedObject, 
         setEditedObjectTags, setObjectTagsInput, setAddCompositeSubobjectMenu } from "../actions/object";
 
@@ -14,6 +14,15 @@ import { objectDataIsInState } from "../store/state-util/objects";
 
 
 const backendURL = config.backendURL;
+
+
+// Loads default state of /objects/add page & loads composite object's subobject data
+export const addObjectOnLoad = () => {
+    return (dispatch, getState) => {
+        dispatch(loadAddObjectPage());
+        dispatch(loadCompositeSubobjectsFetch(0));
+    };
+};
 
 
 // Handles "Save" button click on new object page
@@ -76,6 +85,9 @@ export const editObjectOnLoadFetch = object_id => {
 
         // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
         if (setEditedObjects) dispatch(resetEditedObjects());  // object_id is taken from state.objectUI.currentObjectID (which was set by loadEditObjectPage)
+
+        // Run composite object's subobject data load without awaiting it
+        dispatch(loadCompositeSubobjectsFetch(object_id));
 
         // End fetch
         dispatch(setObjectOnLoadFetchState(false, ""));

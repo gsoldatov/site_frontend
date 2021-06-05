@@ -13,9 +13,9 @@ import { InlineInput } from "./inline/inline-input";
 
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, addDefaultEditedObject, resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
+import { addDefaultEditedObject, resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
          setShowResetDialogObject, setShowDeleteDialogObject } from "../actions/object";
-import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch, loadCompositeSubobjectsFetch } from "../fetches/ui-object";
+import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
 
 
 /*
@@ -24,7 +24,7 @@ import { addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, edi
 // Exports
 export const AddObject = () => {
     const id = 0;
-    return <_Object sideMenuItems={addObjectSideMenuItems} objectID={id} onLoad={loadAddObjectPage()} header="Add a New Object" />;
+    return <_Object sideMenuItems={addObjectSideMenuItems} objectID={id} onLoad={addObjectOnLoad()} header="Add a New Object" />;
 };
 
 export const EditObject = () => {
@@ -154,7 +154,6 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     // On load action (also triggers when object ids change)
     useEffect(() => {
         dispatch(onLoad);
-        dispatch(loadCompositeSubobjectsFetch(objectID));   // load missing subobjects' data for composite objects
     }, [objectID]);
 
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
