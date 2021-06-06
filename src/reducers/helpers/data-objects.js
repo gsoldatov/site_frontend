@@ -5,7 +5,7 @@ const _objectAttributes = ["object_id", "object_type", "created_at", "modified_a
 
 
 // Returns state with provided list of object attributes `objects` inserted into state.objects storage.
-export const addObjectsToState = (state, objects) => {
+export const getStateWithAddedObjects = (state, objects) => {
     if (!(objects instanceof Array) || objects.length === 0) return state;
 
     let newObjects = {};
@@ -25,7 +25,7 @@ export const addObjectsToState = (state, objects) => {
 
 
 // Returns state with provided list object data `objectData` inserted into respective object data storages.
-export const addObjectDataToState = (state, objectData) => {
+export const getStateWithAddedObjectsData = (state, objectData) => {
     if (!(objectData instanceof Array) || objectData.length === 0) return state;
 
     let newLinks = {}, newMarkdown = {}, newTDL = {}, newComposite = {};

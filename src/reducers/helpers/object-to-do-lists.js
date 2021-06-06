@@ -11,7 +11,7 @@ import { itemDefaults } from "../../store/state-templates/to-do-list-item";
     Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
     `update` is an object with `command` prop with the type of update to perform, as well as additional props specifying the update.
 */
-export const updateToDoListItems = (toDoList, update) => {
+export const getUpdatedToDoList = (toDoList, update) => {
     const command = update.command;
     // Adds a new item after the item with provided `id`. 
     // Sets the properties of the new item with provided properties or uses values stored in `itemDefaults`.

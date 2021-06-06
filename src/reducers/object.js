@@ -9,8 +9,8 @@ import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tag
 import { getCurrentObject } from "../store/state-util/ui-object";
 
 import { getDefaultEditedObjectState, getStateWithResetEditedObjects, getStateWithResetEditedExistingSubobjects, getStateWithDeletedEditedNewSubobjects } from "./helpers/object";
-import { updateToDoListItems } from "./helpers/object-to-do-lists";
-import { updateComposite } from "./helpers/object-composite";
+import { getUpdatedToDoList } from "./helpers/object-to-do-lists";
+import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 
 
 function loadAddObjectPage(state, action) {
@@ -140,7 +140,8 @@ function resetEditedObjects(state, action) {
     
     If `action.objectID` is provided, updates the object with the provided ID, otherwise updates the object with ID == state.objectUI.currentObjectID.
 
-    To-do lists can be updated with commands specified in `updateToDoListItems` function by passing an `action.object.toDoListItemUpdate` prop.
+    To-do lists can be updated with commands specified in `getUpdatedToDoList` function by passing an `action.object.toDoListItemUpdate` prop.
+    Composite objects can be updated with commands specified in `action.object.compositeUpdate` prop.
 */
 function setEditedObject(state, action) {
     const objectID = action.objectID !== undefined ? action.objectID : state.objectUI.currentObjectID;
@@ -149,7 +150,7 @@ function setEditedObject(state, action) {
 
     // Composite
     const aCompositeUpdate = action.object.compositeUpdate;
-    if (aCompositeUpdate !== undefined) return updateComposite(state, objectID, aCompositeUpdate);
+    if (aCompositeUpdate !== undefined) return getStateWithCompositeUpdate(state, objectID, aCompositeUpdate);
 
     // Links
     const link = action.object.link !== undefined ? action.object.link : oldObject.link;
@@ -167,7 +168,7 @@ function setEditedObject(state, action) {
     const aTDLItemUpdate = action.object.toDoListItemUpdate;
 
     if (aTDLItemUpdate !== undefined) {
-        toDoList = updateToDoListItems(oldObject.toDoList, aTDLItemUpdate);
+        toDoList = getUpdatedToDoList(oldObject.toDoList, aTDLItemUpdate);
     } else if (aTDL !== undefined) {
         toDoList = {
             itemOrder: aTDL.itemOrder !== undefined ? aTDL.itemOrder : oldObject.toDoList.itemOrder,

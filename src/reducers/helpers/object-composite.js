@@ -1,4 +1,4 @@
-import { addObjectsToState, addObjectDataToState } from "./data-objects";
+import { getStateWithAddedObjects, getStateWithAddedObjectsData } from "./data-objects";
 import { getStateWithResetEditedObjects } from "./object";
 
 import { subobjectDefaults } from "../../store/state-templates/composite-subobjects";
@@ -10,7 +10,7 @@ import { deepCopy } from "../../util/copy";
     Object page functions for updating state of composite objects' and their subobjects.
     Return a fully modified instance of state.
 */
-export const updateComposite = (state, objectID, update) => {
+export const getStateWithCompositeUpdate = (state, objectID, update) => {
     const { command } = update;
 
     // Adds a new subobject with default state to state.editedObjects & composite object data.
@@ -171,8 +171,8 @@ export const updateComposite = (state, objectID, update) => {
         });
 
         // Add new & modified existing attributes & data to state
-        newState = addObjectsToState(newState, subobjectsToAddToState);
-        newState = addObjectDataToState(newState, subobjectsToAddToState);
+        newState = getStateWithAddedObjects(newState, subobjectsToAddToState);
+        newState = getStateWithAddedObjectsData(newState, subobjectsToAddToState);
         
         // Map subobjectIDs for the composite object in state.editedObjects[objectID]
         const newComposite = { ...newState.editedObjects[objectID].composite };

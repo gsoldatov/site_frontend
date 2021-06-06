@@ -1,15 +1,15 @@
 import { ADD_OBJECTS, ADD_OBJECT_DATA, DELETE_OBJECTS } from "../actions/data-objects";
 
-import { addObjectsToState, addObjectDataToState } from "./helpers/data-objects";
+import { getStateWithAddedObjects, getStateWithAddedObjectsData } from "./helpers/data-objects";
 import { subobjectDefaults } from "../store/state-templates/composite-subobjects";
 
 
 function addObjects(state, action) {
-    return addObjectsToState(state, action.objects);
+    return getStateWithAddedObjects(state, action.objects);
 };
 
 function addObjectData(state, action) {
-    return addObjectDataToState(state, action.objectData);
+    return getStateWithAddedObjectsData(state, action.objectData);
 }
 
 function deleteObjects(state, action) {
