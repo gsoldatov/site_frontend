@@ -1,5 +1,5 @@
 import { addObjectsToState, addObjectDataToState } from "./data-objects";
-import { addEditedObject, resetEditedObjects } from "./object";
+import { getStateWithResetEditedObjects } from "./object";
 
 import { subobjectDefaults } from "../../store/state-templates/composite-subobjects";
 import { getNewSubobjectID } from "../../store/state-util/composite";
@@ -17,7 +17,7 @@ export const updateComposite = (state, objectID, update) => {
     if (command === "addNew") {
         // Add a new edited object
         const newID = update.subobjectID !== undefined ? update.subobjectID : getNewSubobjectID(state);     // take existing subobjectID if it's passed
-        let newState = addEditedObject(state, newID);
+        let newState = getStateWithResetEditedObjects(state, [newID], true);
         
         // Add the new object to composite data
         let newCompositeData = {
@@ -42,7 +42,7 @@ export const updateComposite = (state, objectID, update) => {
         const { resetEditedObject, subobjectID, row, column } = update;
         let newState = state;
 
-        if (resetEditedObject) newState = resetEditedObjects(state, [subobjectID]);
+        if (resetEditedObject) newState = getStateWithResetEditedObjects(state, [subobjectID]);
         const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };
         newSubobjects[subobjectID] = { ...deepCopy(subobjectDefaults), row, column };
         

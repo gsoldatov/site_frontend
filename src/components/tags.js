@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "semantic-ui-react";
 
@@ -19,6 +19,44 @@ export default () => {
     const dispatch = useDispatch();
     const currentPage = useSelector(state => state.tagsUI.paginationInfo.currentPage);
     const fetch = useSelector(state => state.tagsUI.fetch);
+
+    // Side menu items
+    const sideMenuItems = useMemo(() => [
+        {
+            type: "item",
+            text: "Add Tag",
+            isActiveSelector: state => !isFetchinOrShowingDialogTags(state),
+            onClick: () => dispatch(setRedirectOnRender("/tags/add"))
+        },
+        {
+            type: "item",
+            text: "Edit Tag",
+            isActiveSelector: state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state),
+            onClick: () => dispatch(setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.tagsEdit))
+        },
+        {
+            type: "item",
+            text: "Delete",
+            isActiveSelector: state => !isFetchinOrShowingDialogTags(state) && state.tagsUI.selectedTagIDs.length > 0,
+            isVisibleSelector: state => !state.tagsUI.showDeleteDialog,
+            onClick: () => dispatch(setShowDeleteDialogTags(true))
+        },
+        {
+            type: "dialog",
+            text: "Delete Selected Tags?",
+            isVisibleSelector: state => state.tagsUI.showDeleteDialog && !isFetchingTags(state),
+            buttons: [
+                {
+                    text: "Yes",
+                    onClick: () => dispatch(onDeleteFetch())
+                },
+                {
+                    text: "No",
+                    onClick: () => dispatch(setShowDeleteDialogTags(false))
+                }
+            ]
+        }
+    ]);
 
     // On load action
     useEffect(() => {
@@ -43,45 +81,6 @@ export default () => {
 
     return <Layout sideMenuItems={sideMenuItems} body={pageBodyWithMenu} />;
 };
-
-
-// Side menu items
-const sideMenuItems = [
-    {
-        type: "item",
-        text: "Add Tag",
-        isActiveSelector: state => !isFetchinOrShowingDialogTags(state),
-        onClick: setRedirectOnRender("/tags/add")
-    },
-    {
-        type: "item",
-        text: "Edit Tag",
-        isActiveSelector: state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state),
-        onClick: setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.tagsEdit)
-    },
-    {
-        type: "item",
-        text: "Delete",
-        isActiveSelector: state => !isFetchinOrShowingDialogTags(state) && state.tagsUI.selectedTagIDs.length > 0,
-        isVisibleSelector: state => !state.tagsUI.showDeleteDialog,
-        onClick: setShowDeleteDialogTags(true)
-    },
-    {
-        type: "dialog",
-        text: "Delete Selected Tags?",
-        isVisibleSelector: state => state.tagsUI.showDeleteDialog && !isFetchingTags(state),
-        buttons: [
-            {
-                text: "Yes",
-                onClick: onDeleteFetch()
-            },
-            {
-                text: "No",
-                onClick: setShowDeleteDialogTags(false)
-            }
-        ]
-    }
-];
 
 
 // Field menu items

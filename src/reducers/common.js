@@ -1,6 +1,6 @@
 import { SET_REDIRECT_ON_RENDER } from "../actions/common";
 import { objectHasNoChanges } from "../util/equality-checks";
-import { removeEditedObject } from "./helpers/object";
+import { getStateWithRemovedEditedObjects } from "./helpers/object";
 
 
 function setRedirectOnRender(state, action) {
@@ -11,8 +11,8 @@ function setRedirectOnRender(state, action) {
     const currentObjectID = state.objectUI.currentObjectID;
     if (currentObjectID != 0 || action.deleteNewObject) {
         if (currentObjectID != 0 && objectHasNoChanges(state, currentObjectID))
-            newState = removeEditedObject(newState, currentObjectID);
-        if (action.deleteNewObject) newState = removeEditedObject(newState, 0);
+            newState = getStateWithRemovedEditedObjects(newState, [currentObjectID]);
+        if (action.deleteNewObject) newState = getStateWithRemovedEditedObjects(newState, [0]);
     }
 
     const redirectOnRender = typeof(action.redirectOnRender) === "function" ? action.redirectOnRender(newState) : action.redirectOnRender;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "semantic-ui-react";
 
@@ -26,6 +26,61 @@ export default () => {
     const dispatch = useDispatch();
     const fetch = useSelector(state => state.objectsUI.fetch);
 
+    // Side menu items
+    const sideMenuItems = useMemo(() => [
+        {
+            type: "item",
+            text: "Add Object",
+            isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state),
+            isVisibleSelector: state => !isObjectsTagsEditActive(state),
+            onClick: () => dispatch(setRedirectOnRender("/objects/add"))
+        },
+        {
+            type: "item",
+            text: "Edit Object",
+            isActiveSelector: state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchingOrShowingDeleteDialogObjects(state),
+            isVisibleSelector: state => !isObjectsTagsEditActive(state),
+            onClick: () => dispatch(setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.objectsEdit))
+        },
+        {
+            type: "item",
+            text: "Delete",
+            isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state) && state.objectsUI.selectedObjectIDs.length > 0,
+            isVisibleSelector: state => !state.objectsUI.showDeleteDialog && !isObjectsTagsEditActive(state),
+            onClick: () => dispatch(setShowDeleteDialogObjects(true))
+        },
+        {
+            type: "dialog",
+            text: "Delete Selected Objects?",
+            isVisibleSelector: state => state.objectsUI.showDeleteDialog && !isFetchingObjects(state),
+            buttons: [
+                {
+                    text: "Yes",
+                    onClick: () => dispatch(onDeleteFetch())
+                },
+                {
+                    text: "No",
+                    onClick: () => dispatch(setShowDeleteDialogObjects(false))
+                }
+            ]
+        },
+
+        {
+            type: "item",
+            text: "Update Tags",
+            isActiveSelector: state => !isFetchingObjects(state),
+            isVisibleSelector: state => isObjectsTagsEditActive(state),
+            onClick: () => dispatch(onObjectsTagsUpdateFetch())
+        },
+        {
+            type: "item",
+            text: "Cancel Tag Update",
+            isActiveSelector: state => !isFetchingObjects(state),
+            isVisibleSelector: state => isObjectsTagsEditActive(state),
+            onClick: () => dispatch(setCurrentObjectsTags({ added: [], removed: [] }))
+        }
+    ]);
+
     // On load action
     useEffect(() => {
         dispatch(objectsOnLoadFetch());
@@ -51,62 +106,6 @@ export default () => {
 
     return <Layout sideMenuItems={sideMenuItems} body={pageBodyWithMenu} />;
 };
-
-
-// Side menu items
-const sideMenuItems = [
-    {
-        type: "item",
-        text: "Add Object",
-        isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state),
-        isVisibleSelector: state => !isObjectsTagsEditActive(state),
-        onClick: setRedirectOnRender("/objects/add")
-    },
-    {
-        type: "item",
-        text: "Edit Object",
-        isActiveSelector: state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchingOrShowingDeleteDialogObjects(state),
-        isVisibleSelector: state => !isObjectsTagsEditActive(state),
-        onClick: setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.objectsEdit)
-    },
-    {
-        type: "item",
-        text: "Delete",
-        isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state) && state.objectsUI.selectedObjectIDs.length > 0,
-        isVisibleSelector: state => !state.objectsUI.showDeleteDialog && !isObjectsTagsEditActive(state),
-        onClick: setShowDeleteDialogObjects(true)
-    },
-    {
-        type: "dialog",
-        text: "Delete Selected Objects?",
-        isVisibleSelector: state => state.objectsUI.showDeleteDialog && !isFetchingObjects(state),
-        buttons: [
-            {
-                text: "Yes",
-                onClick: onDeleteFetch()
-            },
-            {
-                text: "No",
-                onClick: setShowDeleteDialogObjects(false)
-            }
-        ]
-    },
-
-    {
-        type: "item",
-        text: "Update Tags",
-        isActiveSelector: state => !isFetchingObjects(state),
-        isVisibleSelector: state => isObjectsTagsEditActive(state),
-        onClick: onObjectsTagsUpdateFetch()
-    },
-    {
-        type: "item",
-        text: "Cancel Tag Update",
-        isActiveSelector: state => !isFetchingObjects(state),
-        isVisibleSelector: state => isObjectsTagsEditActive(state),
-        onClick: setCurrentObjectsTags({ added: [], removed: [] })
-    }
-];
 
 
 // Field menu items

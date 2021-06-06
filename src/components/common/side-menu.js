@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, Container, Header, Menu } from "semantic-ui-react";
+import React, { useEffect, useState } from "react";
+import { Button, Checkbox, Container, Header, Menu } from "semantic-ui-react";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -39,24 +39,36 @@ const SideMenuElement = props => {
 
 // Basic side menu item
 const SideMenuItem = ({ text, isActiveSelector, onClick }) => {
-    const dispatch = useDispatch();
     const isActive = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : true;
-    const _onClick = isActive ? () => dispatch(onClick) : undefined;
+    const _onClick = isActive ? () => onClick() : undefined;
     
     return <Menu.Item as="div" className="side-menu-item" disabled={!isActive} onClick={_onClick}>{text}</Menu.Item>;
 };
 
 
 // Dialog (header + clickable buttons)
-const SideMenuDialog = ({ text, buttons }) => {
-    const dispatch = useDispatch();
+const SideMenuDialog = ({ text, buttons, isCheckboxDisplayedSelector, checkboxText }) => {
+    // Checkbox
+    const [isChecked, setIsChecked] = useState(false);
+    const isCheckboxDisplayed = useSelector(isCheckboxDisplayedSelector || (state => false));
+    const checkbox = isCheckboxDisplayed && (
+        <Checkbox className="side-menu-dialog-checkbox-container" label={checkboxText} checked={isChecked} onChange={() => setIsChecked(!isChecked)} />
+    );
+    
+    // Reset isChecked when isCheckboxDisplayed changes
+    useEffect(() => {
+        setIsChecked(false);
+    }, [isCheckboxDisplayed]);
+
+    // Buttons
     let k = 0;
-    const _buttons = buttons.map(btn => <Button key={k++} onClick={() => dispatch(btn.onClick)}>{btn.text}</Button>);
+    const _buttons = buttons.map(btn => <Button key={k++} onClick={() => btn.onClick(isChecked)}>{btn.text}</Button>);
     
     return (
         <Menu.Item className="side-menu-dialog">
-            <Header as="h5" textAlign="center">{text}</Header>
+            <Header className="side-menu-dialog-header" as="h5" textAlign="center">{text}</Header>
+            {checkbox}
             <Container className="side-menu-dialog-buttons">{_buttons}</Container>
         </Menu.Item>
     );
-}
+};

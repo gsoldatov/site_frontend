@@ -15,47 +15,44 @@ export const getDefaultEditedObjectState = object_id => {
 }
 
 
-// Inserts an object with default state into state.editedObjects
-export const addEditedObject = (state, objectID) => {
-    const defaultState = getDefaultEditedObjectState(objectID);
-
-    return {
-        ...state,
-        editedObjects: {
-            ...state.editedObjects,
-            [objectID]: defaultState
-        }
-    };
-};
-
-
 // Resets state of edited objects with provided `objectIDs` to their last saved states.
-// Does not reset new subobjects (with `objectID` < 0).
-export const resetEditedObjects = (state, objectIDs) => {
+// Sets default attribute/tag/data values if `objectID` is not found in respective storage and `allowResetToDefaults` is true.
+// Throws an Error if attribute/tag/data are not found and `allowResetToDefaults` is false.
+export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDefaults) => {
+    if (objectIDs.length === 0) return state;
+
+    const throwIfDataIsMissing = (data, msg) => {
+        if (data === undefined && !allowResetToDefaults)
+            throw Error(msg);
+    };
+
     const newEditedObjects = {...state.editedObjects};
     objectIDs.forEach(objectID => {
-        if (objectID < 0) return;
-
         let stateAfterReset = getDefaultEditedObjectState(objectID);
 
-        if (objectID in state.objects)  // set attributes
-            stateAfterReset = {
-                ...stateAfterReset, 
-                ...deepCopy(state.objects[objectID])
-            };
+        // Set object attributes
+        const attributes = state.objects[objectID];
+        throwIfDataIsMissing(attributes, `Failed to reset object ${objectID}: attributes are missing.`);
+        stateAfterReset = {
+            ...stateAfterReset, 
+            ...deepCopy(state.objects[objectID] || {})
+        };
         
-        if (objectID in state.objectsTags)  // set current object tags (added & removed tags are already reset)
-            stateAfterReset = {
-                ...stateAfterReset,
-                currentTagIDs: state.objectsTags[objectID].slice()
-            };
+        // Set object's current tags (added & removed tags are already reset)
+        const tags = state.objectsTags[objectID];
+        throwIfDataIsMissing(tags, `Failed to reset object ${objectID}: tags are missing.`);
+        stateAfterReset = {
+            ...stateAfterReset,
+            currentTagIDs: (tags || []).slice()
+        };
         
-        const objectData = getObjectDataFromStore(state, objectID);     // set object data
-        if (objectData !== undefined)
-            stateAfterReset = {
-                ...stateAfterReset,
-                ...objectData
-            };
+        // Set object data
+        const data = getObjectDataFromStore(state, objectID) || {}; 
+        throwIfDataIsMissing(data, `Failed to reset object ${objectID}: data is missing.`);
+        stateAfterReset = {
+            ...stateAfterReset,
+            ...(data || {})
+        };
         
         newEditedObjects[objectID] = stateAfterReset;
     });
@@ -64,26 +61,79 @@ export const resetEditedObjects = (state, objectIDs) => {
 };
 
 
-// Deletes the specified `objectID` from the state.editedObjects.
-// If the object corresponding to the `objectID` is composite, also deletes all of its new & unmodified existing children.
+// Deletes the specified `objectIDs` from the state.editedObjects.
+// Composite objects' subobjects from `objectIDs`, also have all of thier new & unmodified existing children deleted.
 // Returns the state after delete(-s).
-export const removeEditedObject = (state, objectID) => {
-    if (!(objectID in state.editedObjects)) return state;
+export const getStateWithRemovedEditedObjects = (state, objectIDs) => {
+    if (objectIDs.length === 0) return state;
 
     let newEditedObjects = { ...state.editedObjects };
 
-    if (newEditedObjects[objectID].object_type === "composite") {
+    objectIDs.forEach(objectID => {
+        if (!(objectID in newEditedObjects)) return;
+
+        if (newEditedObjects[objectID].object_type === "composite") {
+            Object.keys(newEditedObjects[objectID].composite.subobjects).forEach(subobjectID => {
+                const intSubobjectID = parseInt(subobjectID);
+                if (intSubobjectID < 0 || (intSubobjectID > 0 && objectHasNoChanges(state, intSubobjectID)))
+                    delete newEditedObjects[subobjectID];
+            });
+        }
+    
+        delete newEditedObjects[objectID];
+    });
+
+    return { ...state, editedObjects: newEditedObjects };
+};
+
+
+// Deletes all new subobjects of each composite object in `objectIDs` from state.editedObjects.
+// Returns the state after deletes.
+export const getStateWithDeletedEditedNewSubobjects = (state, objectIDs) => {
+    if (objectIDs.length === 0) return state;
+    let newEditedObjects = { ...state.editedObjects };
+
+    objectIDs.forEach(objectID => {
+        if (!(objectID in newEditedObjects) || newEditedObjects[objectID].object_type !== "composite") return;
+
         Object.keys(newEditedObjects[objectID].composite.subobjects).forEach(subobjectID => {
-            const intSubobjectID = parseInt(subobjectID);
-            if (intSubobjectID < 0 || (intSubobjectID > 0 && objectHasNoChanges(state, intSubobjectID)))
-                delete newEditedObjects[subobjectID];
+            if (parseInt(subobjectID) < 0) delete newEditedObjects[subobjectID];
         });
-    }
+    });
 
-    delete newEditedObjects[objectID];
+    return { ...state, editedObjects: newEditedObjects };
+};
 
-    return {
-        ...state,
-        editedObjects: newEditedObjects
-    };
+
+// Resets all edited existing non-composite subobjects of each composite object in `objectIDs` from state.editedObjects.
+// Removes edited existing non-composite subobjects, which were added since last save.
+// Returns the state after resets.
+export const getStateWithResetEditedExistingSubobjects = (state, objectIDs) => {
+    if (objectIDs.length === 0) return state;
+    let resetIDs = new Set(), deletedIDs = new Set();
+
+    objectIDs.forEach(objectID => {
+        if (!(objectID in state.editedObjects) || state.editedObjects[objectID].object_type !== "composite") return;
+        const editedSubobjectIDs = Object.keys(state.editedObjects[objectID].composite.subobjects);
+        // Get subobjects from last saved state; if objectID is not in composite for some reason, all subobjects are deleted
+        const savedSubobjectIDs = objectID in state.composite ? Object.keys(state.composite[objectID].subobjects) : [];
+
+        editedSubobjectIDs.forEach(subobjectID => {
+            const subobjectObjectType = subobjectID in state.editedObjects ? state.editedObjects[subobjectID].object_type: "composite";  // don't delete or reset subobjects which are not present in editedObjects
+
+            if (parseInt(subobjectID) > 0 && subobjectObjectType !== "composite") {
+                const idAddedAfterSave = savedSubobjectIDs.indexOf(subobjectID) === -1;
+                if (idAddedAfterSave) deletedIDs.add(subobjectID);
+                else resetIDs.add(subobjectID);
+            }
+        });
+    });
+
+    // Delete composite subobjects which will be deleted from their parent objects after reset
+    let newState = getStateWithRemovedEditedObjects(state, [...deletedIDs]);
+
+    // Reset composite subobjects which will remain after their parent objects are reset
+    newState = getStateWithResetEditedObjects(newState, [...resetIDs]);
+
+    return newState;
 };

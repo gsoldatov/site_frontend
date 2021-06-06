@@ -13,7 +13,7 @@ import { InlineInput } from "./inline/inline-input";
 
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
-import { addDefaultEditedObject, resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
+import { resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
          setShowResetDialogObject, setShowDeleteDialogObject } from "../actions/object";
 import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
 
@@ -23,128 +23,134 @@ import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjec
 */
 // Exports
 export const AddObject = () => {
+    const dispatch = useDispatch();
+
+    const addObjectSideMenuItems = useMemo(() => [
+        {
+            type: "item",
+            text: "Save",
+            isActiveSelector: state => !isFetchingObject(state) && 
+                                    getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255,
+            onClick: () => dispatch(addObjectOnSaveFetch())
+        },
+
+        {
+            type: "item",
+            text: "Reset",
+            isVisibleSelector: state => !state.objectUI.showResetDialog,
+            isActiveSelector: state => !isFetchingObject(state),
+            onClick: () => dispatch(setShowResetDialogObject(true))
+        },
+        {
+            type: "dialog",
+            text: "Reset This Object?",
+            isVisibleSelector: state => state.objectUI.showResetDialog,
+            isCheckboxDisplayedSelector: state => getCurrentObject(state).object_type === "composite", 
+            checkboxText: "Reset subobjects",
+            buttons: [
+                {
+                    text: "Yes",
+                    onClick: resetCompositeSubobjects => dispatch(resetEditedObjects({ hideObjectResetDialog: true, allowResetToDefaults: true, resetCompositeSubobjects }))
+                },
+                {
+                    text: "No",
+                    onClick: () => dispatch(setShowResetDialogObject(false))
+                }
+            ]
+        },
+
+        {
+            type: "item",
+            text: "Cancel",
+            isActiveSelector: state => !isFetchingObject(state),
+            onClick: () => dispatch(setRedirectOnRender("/objects"))
+        }
+    ]);
+
     const id = 0;
     return <_Object sideMenuItems={addObjectSideMenuItems} objectID={id} onLoad={addObjectOnLoad()} header="Add a New Object" />;
 };
 
+
 export const EditObject = () => {
+    const dispatch = useDispatch();
     let { id } = useParams();
     id = parseInt(id);
+
+    const editObjectSideMenuItems = useMemo(() => [
+        {
+            type: "item",
+            text: "Add Object",
+            isActiveSelector: state => !isFetchingObject(state),
+            onClick: () => dispatch(setRedirectOnRender("/objects/add"))
+        },
+
+        {
+            type: "item",
+            text: "Save",
+            isActiveSelector: state => !isFetchingObject(state) && 
+                                    getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255,
+            onClick: () => dispatch(editObjectOnSaveFetch())
+        },
+
+        {
+            type: "item",
+            text: "Reset",
+            isVisibleSelector: state => !state.objectUI.showResetDialog,
+            isActiveSelector: state => !isFetchingOrOnLoadFetchFailed(state),
+            onClick: () => dispatch(setShowResetDialogObject(true))
+        },
+        {
+            type: "dialog",
+            text: "Reset This Object?",
+            isVisibleSelector: state => state.objectUI.showResetDialog,
+            isCheckboxDisplayedSelector: state => getCurrentObject(state).object_type === "composite", 
+            checkboxText: "Reset subobjects",
+            buttons: [
+                {
+                    text: "Yes",
+                    onClick: resetCompositeSubobjects => dispatch(resetEditedObjects({ hideObjectResetDialog: true, resetCompositeSubobjects }))
+                },
+                {
+                    text: "No",
+                    onClick: () => dispatch(setShowResetDialogObject(false))
+                }
+            ]
+        },
+        
+        {
+            type: "item",
+            text: "Delete",
+            isVisibleSelector: state => !state.objectUI.showDeleteDialog,
+            isActiveSelector: state => !isFetchingOrOnLoadFetchFailed(state),
+            onClick: () => dispatch(setShowDeleteDialogObject(true))
+        },
+        {
+            type: "dialog",
+            text: "Delete This Object?",
+            isVisibleSelector: state => state.objectUI.showDeleteDialog,
+            buttons: [
+                {
+                    text: "Yes",
+                    onClick: () => dispatch(editObjectOnDeleteFetch())
+                },
+                {
+                    text: "No",
+                    onClick: () => dispatch(setShowDeleteDialogObject(false))
+                }
+            ]
+        },
+
+        {
+            type: "item",
+            text: "Cancel",
+            isActiveSelector: state => !isFetchingObject(state),
+            onClick: () => dispatch(setRedirectOnRender("/objects"))
+        }
+    ], [id]);
+
     return <_Object sideMenuItems={editObjectSideMenuItems} objectID={id} onLoad={editObjectOnLoadFetch(id)} header="Object Information" />;
 };
-
-// Add object page side menu items
-const addObjectSideMenuItems = [
-    {
-        type: "item",
-        text: "Save",
-        isActiveSelector: state => !isFetchingObject(state) && 
-                                getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255,
-        onClick: addObjectOnSaveFetch()
-    },
-
-    {
-        type: "item",
-        text: "Reset",
-        isVisibleSelector: state => !state.objectUI.showResetDialog,
-        isActiveSelector: state => !isFetchingObject(state),
-        onClick: setShowResetDialogObject(true)
-    },
-    {
-        type: "dialog",
-        text: "Reset This Object?",
-        isVisibleSelector: state => state.objectUI.showResetDialog,
-        buttons: [
-            {
-                text: "Yes",
-                onClick: addDefaultEditedObject(0)
-            },
-            {
-                text: "No",
-                onClick: setShowResetDialogObject(false)
-            }
-        ]
-    },
-
-    {
-        type: "item",
-        text: "Cancel",
-        isActiveSelector: state => !isFetchingObject(state),
-        onClick: setRedirectOnRender("/objects")
-    }
-];
-
-
-// Edit object page side menu items
-const editObjectSideMenuItems = [
-    {
-        type: "item",
-        text: "Add Object",
-        isActiveSelector: state => !isFetchingObject(state),
-        onClick: setRedirectOnRender("/objects/add")
-    },
-
-    {
-        type: "item",
-        text: "Save",
-        isActiveSelector: state => !isFetchingObject(state) && 
-                                getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255,
-        onClick: editObjectOnSaveFetch()
-    },
-
-    {
-        type: "item",
-        text: "Reset",
-        isVisibleSelector: state => !state.objectUI.showResetDialog,
-        isActiveSelector: state => !isFetchingOrOnLoadFetchFailed(state),
-        onClick: setShowResetDialogObject(true)
-    },
-    {
-        type: "dialog",
-        text: "Reset This Object?",
-        isVisibleSelector: state => state.objectUI.showResetDialog,
-        buttons: [
-            {
-                text: "Yes",
-                onClick: resetEditedObjects(undefined, true)
-            },
-            {
-                text: "No",
-                onClick: setShowResetDialogObject(false)
-            }
-        ]
-    },
-    
-    {
-        type: "item",
-        text: "Delete",
-        isVisibleSelector: state => !state.objectUI.showDeleteDialog,
-        isActiveSelector: state => !isFetchingOrOnLoadFetchFailed(state),
-        onClick: setShowDeleteDialogObject(true)
-    },
-    {
-        type: "dialog",
-        text: "Delete This Object?",
-        isVisibleSelector: state => state.objectUI.showDeleteDialog,
-        buttons: [
-            {
-                text: "Yes",
-                onClick: editObjectOnDeleteFetch()
-            },
-            {
-                text: "No",
-                onClick: setShowDeleteDialogObject(false)
-            }
-        ]
-    },
-
-    {
-        type: "item",
-        text: "Cancel",
-        isActiveSelector: state => !isFetchingObject(state),
-        onClick: setRedirectOnRender("/objects")
-    }
-];
 
 
 // Basic add/edit object page

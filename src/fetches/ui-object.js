@@ -84,7 +84,7 @@ export const editObjectOnLoadFetch = object_id => {
         // }
 
         // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
-        if (setEditedObjects) dispatch(resetEditedObjects());  // object_id is taken from state.objectUI.currentObjectID (which was set by loadEditObjectPage)
+        if (setEditedObjects) dispatch(resetEditedObjects({}));  // object_id is taken from state.objectUI.currentObjectID (which was set by loadEditObjectPage)
 
         // Run composite object's subobject data load without awaiting it
         dispatch(loadCompositeSubobjectsFetch(object_id));
@@ -224,6 +224,6 @@ export const loadCompositeSubobjectsFetch = objectID => {
 
         // Add objects to state.editedObjects
         if (subobjectIDsToAddToEditedObjects.length > 0)
-            dispatch(resetEditedObjects(subobjectIDsToAddToEditedObjects));
+            dispatch(resetEditedObjects({ objectIDs: subobjectIDsToAddToEditedObjects }));
     };
 };

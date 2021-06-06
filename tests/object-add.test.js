@@ -168,6 +168,7 @@ describe("Reset new object state", () => {
     
         // Reset attributes & link
         resetObject(container);
+        clickGeneralTabButton(container);
     
         objectNameInput = getByPlaceholderText(container, "Object name");
         expect(objectNameInput.value).toEqual("");

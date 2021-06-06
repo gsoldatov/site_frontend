@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Header } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -19,76 +19,80 @@ import StyleTag from "../styles/tag.css";
 */
 // Exports
 export const AddTag = () => {
+    const dispatch = useDispatch();
+
+    // Side menu items
+    const addTagSideMenuItems = useMemo(() => [
+        {
+            type: "item",
+            text: "Save",
+            isActiveSelector: state => !isFetchingTag(state) && 
+                                    state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255,
+            onClick: () => dispatch(addTagOnSaveFetch())
+        },
+        {
+            type: "item",
+            text: "Cancel",
+            isActiveSelector: state => !isFetchingTag(state),
+            onClick: () => dispatch(setRedirectOnRender("/tags"))
+        }
+    ]);
+
     return <Tag sideMenuItems={addTagSideMenuItems} onLoad={loadAddTagPage()} header="Add a New Tag" />;
 };
 
+
 export const EditTag = () => {
+    const dispatch = useDispatch();
     const { id } = useParams();
+
+    // Side menu items
+    const editTagSideMenuItems = useMemo(() => [
+        {
+            type: "item",
+            text: "Add Tag",
+            isActiveSelector: state => !isFetchingTag(state),
+            onClick: () => dispatch(setRedirectOnRender("/tags/add"))
+        },
+        {
+            type: "item",
+            text: "Save",
+            isActiveSelector: state => !isFetchingTag(state) && 
+                                    state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255,
+            onClick: () => dispatch(editTagOnSaveFetch())
+        },
+        {
+            type: "item",
+            text: "Delete",
+            isVisibleSelector: state => !state.tagUI.showDeleteDialog,
+            isActiveSelector: state => !isFetchinOrShowingDialogTag(state) && state.tagUI.currentTag.tag_id !== 0,
+            onClick: () => dispatch(setShowDeleteDialogTag(true))
+        },
+        {
+            type: "dialog",
+            text: "Delete This Tag?",
+            isVisibleSelector: state => state.tagUI.showDeleteDialog,
+            buttons: [
+                {
+                    text: "Yes",
+                    onClick: () => dispatch(editTagOnDeleteFetch())
+                },
+                {
+                    text: "No",
+                    onClick: () => dispatch(setShowDeleteDialogTag(false))
+                }
+            ]
+        },
+        {
+            type: "item",
+            text: "Cancel",
+            isActiveSelector: state => !isFetchingTag(state),
+            onClick: () => dispatch(setRedirectOnRender("/tags"))
+        }
+    ], [id]);
+
     return <Tag sideMenuItems={editTagSideMenuItems} onLoad={editTagOnLoadFetch(id)} header="Tag Information" />;
 };
-
-// Add tag page side menu items
-const addTagSideMenuItems = [
-    {
-        type: "item",
-        text: "Save",
-        isActiveSelector: state => !isFetchingTag(state) && 
-                                state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255,
-        onClick: addTagOnSaveFetch()
-    },
-    {
-        type: "item",
-        text: "Cancel",
-        isActiveSelector: state => !isFetchingTag(state),
-        onClick: setRedirectOnRender("/tags")
-    }
-];
-
-
-// Edit tag page side menu items
-const editTagSideMenuItems = [
-    {
-        type: "item",
-        text: "Add Tag",
-        isActiveSelector: state => !isFetchingTag(state),
-        onClick: setRedirectOnRender("/tags/add")
-    },
-    {
-        type: "item",
-        text: "Save",
-        isActiveSelector: state => !isFetchingTag(state) && 
-                                state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255,
-        onClick: editTagOnSaveFetch()
-    },
-    {
-        type: "item",
-        text: "Delete",
-        isVisibleSelector: state => !state.tagUI.showDeleteDialog,
-        isActiveSelector: state => !isFetchinOrShowingDialogTag(state) && state.tagUI.currentTag.tag_id !== 0,
-        onClick: setShowDeleteDialogTag(true)
-    },
-    {
-        type: "dialog",
-        text: "Delete This Tag?",
-        isVisibleSelector: state => state.tagUI.showDeleteDialog,
-        buttons: [
-            {
-                text: "Yes",
-                onClick: editTagOnDeleteFetch()
-            },
-            {
-                text: "No",
-                onClick: setShowDeleteDialogTag(false)
-            }
-        ]
-    },
-    {
-        type: "item",
-        text: "Cancel",
-        isActiveSelector: state => !isFetchingTag(state),
-        onClick: setRedirectOnRender("/tags")
-    }
-];
 
 
 // Basic add/edit tag page
