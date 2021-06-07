@@ -24,7 +24,7 @@ export const getStateWithAddedObjects = (state, objects) => {
 };
 
 
-// Returns state with provided list object data `objectData` inserted into respective object data storages.
+// Returns state with provided list of object data `objectData` inserted into respective object data storages.
 export const getStateWithAddedObjectsData = (state, objectData) => {
     if (!(objectData instanceof Array) || objectData.length === 0) return state;
 
@@ -90,4 +90,21 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
             ...newComposite
         }
     };
+};
+
+
+// Returns state with provided list of object data `objectIDs` removed from the storages.
+export const getStateWithDeletedObjects = (state, objectIDs) => {
+    if (objectIDs.length === 0) return state;
+    
+    const storageNames = ["objects", "links", "markdown", "toDoLists", "composite", "objectsTags", "editedObjects"];
+    const newStorages = {};
+    storageNames.forEach(storage => newStorages[storage] = { ...state[storage] });
+
+    for (let objectID of objectIDs)
+        storageNames.forEach(storage => {
+            delete newStorages[storage][objectID];
+        });
+    
+    return { ...state, ...newStorages };
 };

@@ -142,7 +142,7 @@ export const updateObjectFetch = obj => {
                 object_id: obj.object_id,
                 object_name: obj.object_name,
                 object_description: obj.object_description,
-                object_data: object_data,
+                object_data,
                 added_tags: obj.addedTags,
                 removed_tag_ids: obj.removedTagIDs
             }
@@ -158,6 +158,10 @@ export const updateObjectFetch = obj => {
         switch (response.status) {
             case 200:
                 let object = (await response.json()).object;
+
+                // Composite object data updates
+                dispatch(setEditedObject({ compositeUpdate: { command: "updateSubobjectsOnSave", object, object_data }}, object.object_id));     // object_data must contain non-mapped IDs of new subobjects
+                object_data = modifyObjectDataPostSave(payload, object);
 
                 // Set object attributes, tags and data
                 dispatch(addObjects([ object ]));

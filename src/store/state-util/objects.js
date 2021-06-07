@@ -87,7 +87,7 @@ export const serializeObjectData = (state, obj) => {
             }
             
             // Adjust non-deleted objects' positions
-            const nonDeletedSubobjectsOrder = getSubobjectDisplayOrder({ subobjects: nonDeletedSubobjects });
+            const nonDeletedSubobjectsOrder = getSubobjectDisplayOrder({ subobjects: nonDeletedSubobjects }, true);
             for (let column of nonDeletedSubobjectsOrder) {
                 for (let i = 0; i < column.length; i++) {
                     const subobjectID = column[i];
@@ -193,7 +193,7 @@ export const objectDataIsInState = (state, object_id) => {
 // `requestPayload` is the body of the request sent to backend.
 // `responseObject` is the `object` attribute of the JSON parsed from response body.
 export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
-    const { object_type } = requestPayload.object;
+    const { object_type } = responseObject;
     const request_object_data = requestPayload.object.object_data;
     
     switch (object_type) {
