@@ -5,4 +5,4 @@ export const DELETE_OBJECTS = "DELETE_OBJECTS";
 
 export const addObjects     = objects => ({ type: ADD_OBJECTS, objects });
 export const addObjectData  = objectData => ({ type: ADD_OBJECT_DATA, objectData });
-export const deleteObjects  = object_ids => ({ type: DELETE_OBJECTS, object_ids });
+export const deleteObjects  = ({ objectIDs, deleteSubobjects }) => ({ type: DELETE_OBJECTS, objectIDs, deleteSubobjects });

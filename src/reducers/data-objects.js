@@ -13,7 +13,7 @@ function addObjectData(state, action) {
 }
 
 function deleteObjects(state, action) {
-    return getStateWithDeletedObjects(state, action.object_ids);
+    return getStateWithDeletedObjects(state, action.objectIDs, action.deleteSubobjects);
 }
 
 

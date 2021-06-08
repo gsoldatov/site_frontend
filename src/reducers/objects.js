@@ -1,4 +1,4 @@
-import { SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, DESELECT_OBJECTS, CLEAR_SELECTED_OBJECTS, 
+import { SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
     SET_OBJECTS_PAGINATION_INFO, SET_TAGS_FILTER, SET_TAGS_FILTER_INPUT, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
 import { resetObjectCaches, objectsGetCommonTagIDs } from "../store/state-util/ui-objects";
@@ -109,19 +109,6 @@ function toggleObjectSelection(state, action) {
     };
 }
 
-function deselectObjects(state, action) {
-    const newSelectedObjectIDs = state.objectsUI.selectedObjectIDs.filter(object_id => !action.object_ids.includes(object_id));
-    const newShowDeleteDialog = newSelectedObjectIDs.length > 0 ? state.objectsUI.showDeleteDialog : false;     // Reset delete dialog if no objects are selected
-
-    return {
-        ...state,
-        objectsUI: {
-            ...state.objectsUI,
-            selectedObjectIDs: newSelectedObjectIDs
-        }
-    };
-}
-
 function clearSelectedObjects(state, action) {
     return {
         ...state,
@@ -226,7 +213,6 @@ const root = {
     SET_CURRENT_OBJECTS_TAGS: setCurrentObjectsTags,
     SELECT_OBJECTS: selectObjects,
     TOGGLE_OBJECT_SELECTION: toggleObjectSelection,
-    DESELECT_OBJECTS: deselectObjects,
     CLEAR_SELECTED_OBJECTS: clearSelectedObjects,
     SET_OBJECTS_PAGINATION_INFO: setObjectsPaginationInfo,
     SET_TAGS_FILTER: setTagsFilter,

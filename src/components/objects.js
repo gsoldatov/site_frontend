@@ -53,10 +53,16 @@ export default () => {
             type: "dialog",
             text: "Delete Selected Objects?",
             isVisibleSelector: state => state.objectsUI.showDeleteDialog && !isFetchingObjects(state),
+            isCheckboxDisplayedSelector: state => {
+                for (let objectID of state.objectsUI.selectedObjectIDs)
+                    if (state.objects[objectID].object_type === "composite") return true;
+                return false;
+            },
+            checkboxText: "Delete subobjects",
             buttons: [
                 {
                     text: "Yes",
-                    onClick: () => dispatch(onDeleteFetch())
+                    onClick: deleteSubobjects => dispatch(onDeleteFetch(deleteSubobjects))
                 },
                 {
                     text: "No",

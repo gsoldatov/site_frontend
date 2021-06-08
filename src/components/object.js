@@ -129,10 +129,12 @@ export const EditObject = () => {
             type: "dialog",
             text: "Delete This Object?",
             isVisibleSelector: state => state.objectUI.showDeleteDialog,
+            isCheckboxDisplayedSelector: state => getCurrentObject(state).object_type === "composite", 
+            checkboxText: "Delete subobjects",
             buttons: [
                 {
                     text: "Yes",
-                    onClick: () => dispatch(editObjectOnDeleteFetch())
+                    onClick: deleteSubobjects => dispatch(editObjectOnDeleteFetch(deleteSubobjects))
                 },
                 {
                     text: "No",

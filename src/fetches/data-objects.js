@@ -6,7 +6,6 @@ import { getNonCachedTags } from "./data-tags";
 import { setObjectsTags } from "../actions/data-tags";
 import { addObjects, addObjectData, deleteObjects } from "../actions/data-objects";
 import { setEditedObject, setObjectOnSaveFetchState } from "../actions/object";
-import { deselectObjects } from "../actions/objects";
 
 import { validateObject, serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
 
@@ -185,21 +184,22 @@ export const updateObjectFetch = obj => {
 
 // Fetches backend to delete objects with provided `objectIDs`.
 // Deletes the objects from the state in case of success.
+// If `deleteSubobjects` is true, deletes all subobjects of composite objects in `objectIDs` on backend and in local state.
 // Returns the array of deleted object IDs or an object with `error` attribute containing error message in case of failure.
-export const deleteObjectsFetch = objectIDs => {
+export const deleteObjectsFetch = (objectIDs, deleteSubobjects) => {
     return async (dispatch, getState) => {
+        deleteSubobjects = deleteSubobjects || false;
         let response = await runFetch(`${backendURL}/objects/delete`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ object_ids: objectIDs.map(id => parseInt(id)) })
+            body: JSON.stringify({ object_ids: objectIDs.map(id => parseInt(id)), delete_subobjects: deleteSubobjects })
         });
         if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
             case 404:   // Objects not present in the database should be deleted from state
-                dispatch(deselectObjects(objectIDs));
-                dispatch(deleteObjects(objectIDs));
+                dispatch(deleteObjects({ objectIDs, deleteSubobjects }));
                 return objectIDs;
             case 400:
             case 500:

@@ -93,10 +93,31 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
 };
 
 
-// Returns state with provided list of object data `objectIDs` removed from the storages.
-export const getStateWithDeletedObjects = (state, objectIDs) => {
+// Returns state with provided list of object data `objectIDs` removed from the storages and selections.
+// If `deleteSubobjects` is true, also deleted all subobjects of composite objects in `objectIDs`.
+export const getStateWithDeletedObjects = (state, objectIDs, deleteSubobjects) => {
     if (objectIDs.length === 0) return state;
+
+    // Add subobjects to delete list
+    if (deleteSubobjects) {
+        const subobjectIDs = new Set();
+        for (let objectID of objectIDs) {
+            // Look up state.composite
+            if (objectID in state.composite)
+                for (let subobjectID of Object.keys(state.composite[objectID].subobjects)) subobjectIDs.add(parseInt(subobjectID));
+
+            // Look up state.editedObjects
+            if (objectID in state.editedObjects)
+                for (let subobjectID of Object.keys(state.editedObjects[objectID].composite.subobjects)) subobjectIDs.add(parseInt(subobjectID));
+        }
+
+        objectIDs = objectIDs.concat(...subobjectIDs);
+    }
     
+    // Deselect objects
+    const newSelectedObjectIDs = state.objectsUI.selectedObjectIDs.filter(objectID => objectIDs.indexOf(objectID) === -1);
+    
+    // Remove from storage
     const storageNames = ["objects", "links", "markdown", "toDoLists", "composite", "objectsTags", "editedObjects"];
     const newStorages = {};
     storageNames.forEach(storage => newStorages[storage] = { ...state[storage] });
@@ -106,5 +127,12 @@ export const getStateWithDeletedObjects = (state, objectIDs) => {
             delete newStorages[storage][objectID];
         });
     
-    return { ...state, ...newStorages };
+    return { 
+        ...state, 
+        ...newStorages,
+        objectsUI: {
+            ...state.objectsUI,
+            selectedObjectIDs: newSelectedObjectIDs
+        }
+    };
 };

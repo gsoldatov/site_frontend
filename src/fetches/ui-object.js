@@ -119,7 +119,7 @@ export const editObjectOnSaveFetch = () => {
 
 
 // Handles delete confirmation button click on existing object page
-export const editObjectOnDeleteFetch = () => {
+export const editObjectOnDeleteFetch = deleteSubobjects => {
     return async (dispatch, getState) => {
         // Exit if already fetching
         let state = getState();
@@ -130,7 +130,7 @@ export const editObjectOnDeleteFetch = () => {
 
         // Run fetch & delete object data from state
         dispatch(setObjectOnSaveFetchState(true, ""));
-        const result = await dispatch(deleteObjectsFetch( [state.objectUI.currentObjectID] ));
+        const result = await dispatch(deleteObjectsFetch( [state.objectUI.currentObjectID], deleteSubobjects ));
 
         if (!responseHasError(result)) {
             dispatch(setRedirectOnRender("/objects"));

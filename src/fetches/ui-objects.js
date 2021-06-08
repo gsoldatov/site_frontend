@@ -101,7 +101,7 @@ const getPageObjectIDs = () => {
 
 
 // Delete selected objects from state and stop displaying them on the current page.
-export const onDeleteFetch = () => {
+export const onDeleteFetch = (deleteSubobjects) => {
     return async (dispatch, getState) => {
         // Exit if already fetching
         let state = getState();
@@ -112,7 +112,7 @@ export const onDeleteFetch = () => {
 
         // Run view fetch & delete objects data
         dispatch(setObjectsFetch(true, ""));
-        const result = await dispatch(deleteObjectsFetch(state.objectsUI.selectedObjectIDs));
+        const result = await dispatch(deleteObjectsFetch(state.objectsUI.selectedObjectIDs, deleteSubobjects));
         if (!responseHasError(result)) {
             dispatch(setObjectsPaginationInfo({ currentPageObjectIDs: state.objectsUI.paginationInfo.currentPageObjectIDs.filter(id => !result.includes(id)) }));  // delete from current page
             dispatch(setObjectsFetch(false, ""));

@@ -342,7 +342,8 @@ function setShowResetDialogObject(state, action) {
         ...state,
         objectUI: {
             ...state.objectUI,
-            showResetDialog: action.showResetDialog
+            showResetDialog: action.showResetDialog,
+            showDeleteDialog: false
         }
     };
 }
@@ -353,7 +354,8 @@ function setShowDeleteDialogObject(state, action) {
         ...state,
         objectUI: {
             ...state.objectUI,
-            showDeleteDialog: action.showDeleteDialog
+            showDeleteDialog: action.showDeleteDialog,
+            showResetDialog: false
         }
     };
 }
