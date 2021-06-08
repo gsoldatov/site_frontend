@@ -93,23 +93,31 @@ function selectObjects(state, action) {
 }
 
 function toggleObjectSelection(state, action) {
+    const newSelectedObjectIDs = state.objectsUI.selectedObjectIDs.includes(action.object_id) 
+                                ? state.objectsUI.selectedObjectIDs.filter(object_id => object_id !== action.object_id)
+                                : state.objectsUI.selectedObjectIDs.concat(action.object_id);
+    
+    const newShowDeleteDialog = newSelectedObjectIDs.length > 0 ? state.objectsUI.showDeleteDialog : false;     // Reset delete dialog if no objects are selected
+                                
     return {
         ...state,
         objectsUI: {
             ...state.objectsUI,
-            selectedObjectIDs: state.objectsUI.selectedObjectIDs.includes(action.object_id) 
-                            ? state.objectsUI.selectedObjectIDs.filter(object_id => object_id !== action.object_id)
-                            : state.objectsUI.selectedObjectIDs.concat(action.object_id)
+            selectedObjectIDs: newSelectedObjectIDs,
+            showDeleteDialog: newShowDeleteDialog
         }
     };
 }
 
 function deselectObjects(state, action) {
+    const newSelectedObjectIDs = state.objectsUI.selectedObjectIDs.filter(object_id => !action.object_ids.includes(object_id));
+    const newShowDeleteDialog = newSelectedObjectIDs.length > 0 ? state.objectsUI.showDeleteDialog : false;     // Reset delete dialog if no objects are selected
+
     return {
         ...state,
         objectsUI: {
             ...state.objectsUI,
-            selectedObjectIDs: state.objectsUI.selectedObjectIDs.filter(object_id => !action.object_ids.includes(object_id))
+            selectedObjectIDs: newSelectedObjectIDs
         }
     };
 }
@@ -119,7 +127,8 @@ function clearSelectedObjects(state, action) {
         ...state,
         objectsUI: {
             ...state.objectsUI,
-            selectedObjectIDs: []
+            selectedObjectIDs: [],
+            showDeleteDialog: false
         }
     };
 }
