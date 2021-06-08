@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Icon, Popup } from "semantic-ui-react";
 
 
-/*
-    To-do list item comment button & edit window.
-*/
+/**
+ * To-do list item comment button & edit window.
+ */
 export const Comment = ({ id, commentary, updateCallback, updateInnerHTMLRequired }) => {
     const [initialCommentary, setInitialCommentary] = useState(commentary);
 

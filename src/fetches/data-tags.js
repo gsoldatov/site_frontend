@@ -12,9 +12,13 @@ import { checkIfTagNameExists } from "../store/state-util/tags";
 const backendURL = config.backendURL;
 
 
-// Fetches backend to add provided `tag` as a new tag. 
-// Adds the tag to the state in case of success.
-// Returns the object with the tag attributes returned by backend or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to add provided `tag` as a new tag. 
+ * 
+ * Adds the tag to the state in case of success.
+ * 
+ * Returns the object with the tag attributes returned by backend or an object with `error` attribute containing error message in case of failure.
+ */
 export const addTagFetch = tag => {
     return async (dispatch, getState) => {        
         // Check if tag_name already exists in local storage
@@ -42,9 +46,13 @@ export const addTagFetch = tag => {
 };
 
 
-// Fetches backend to retrieve tags with provided `tagIDs`.
-// Adds the tags to the state in case of success.
-// Returns the array of tag data returned by backend or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to retrieve tags with provided `tagIDs`.
+ * 
+ * Adds the tags to the state in case of success.
+ * 
+ * Returns the array of tag data returned by backend or an object with `error` attribute containing error message in case of failure.
+ */
 export const viewTagsFetch = tagIDs => {
     return async (dispatch, getState) => {
         let response = await runFetch(`${backendURL}/tags/view`, {
@@ -70,7 +78,9 @@ export const viewTagsFetch = tagIDs => {
 };
 
 
-// Fetches missing data for a list of provided tag IDs
+/**
+ * Fetches missing data for a list of provided `tagIDs`.
+ */
 export const getNonCachedTags = tagIDs => {
     return async (dispatch, getState) => {
         let nonCachedTags = tagIDs.filter(id => !(id in getState().tags));
@@ -81,9 +91,13 @@ export const getNonCachedTags = tagIDs => {
 };
 
 
-// Fetches backend to update provided `tag` data.
-// Updates the tag in the state in case of success.
-// Returns the object with the tag attributes returned by backend or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to update provided `tag` data.
+ * 
+ * Updates the tag in the state in case of success.
+ * 
+ * Returns the object with the tag attributes returned by backend or an object with `error` attribute containing error message in case of failure.
+ */
 export const updateTagFetch = tag => {
     return async (dispatch, getState) => {        
         // Check if tag_name already exists in local storage
@@ -113,9 +127,13 @@ export const updateTagFetch = tag => {
 };
 
 
-// Fetches backend to delete tags with provided `tagIDs`.
-// Deletes the tags from the state in case of success.
-// Returns the array of deleted tag IDs or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to delete tags with provided `tagIDs`.
+ * 
+ * Deletes the tags from the state in case of success.
+ * 
+ * Returns the array of deleted tag IDs or an object with `error` attribute containing error message in case of failure.
+ */
 export const deleteTagsFetch = tagIDs => {
     return async (dispatch, getState) => {
         let response = await runFetch(`${backendURL}/tags/delete`, {
@@ -139,9 +157,13 @@ export const deleteTagsFetch = tagIDs => {
 };
 
 
-// Fetches backend to get tags which match provided `queryText` and are not present in `existingIDs`.
-// Fetches non-cached tags in case of success.
-// Returns the array of matching tag IDs or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to get tags which match provided `queryText` and are not present in `existingIDs`.
+ * 
+ * Fetches non-cached tags in case of success.
+ * 
+ * Returns the array of matching tag IDs or an object with `error` attribute containing error message in case of failure.
+ */
 export const tagsSearchFetch = ({queryText, existingIDs}) => {
     return async (dispatch, getState) => {
         // Check params
@@ -182,9 +204,13 @@ export const tagsSearchFetch = ({queryText, existingIDs}) => {
 };
 
 
-// Fetches backend update tags of objects with provided `object_ids` with `added_tags` and `removed_tag_ids`.
-// Fetches non-cached tags and updates objects' attributes and tags in case of success.
-// Returns the object IDs and tag updates from fetch response or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend update tags of objects with provided `object_ids` with `added_tags` and `removed_tag_ids`.
+ * 
+ * Fetches non-cached tags and updates objects' attributes and tags in case of success.
+ * 
+ * Returns the object IDs and tag updates from fetch response or an object with `error` attribute containing error message in case of failure.
+ */
 export const objectsTagsUpdateFetch = (object_ids, added_tags, removed_tag_ids) => {
     return async (dispatch, getState) => {
         // Run tags update fetch

@@ -7,11 +7,11 @@ import { setRedirectOnRender } from "../../../../actions/common";
 import { enumDeleteModes } from "../../../../store/state-templates/composite-subobjects";
 
 
-/*
-    Subobject card top menu.
-*/
 const _tabIndexes = { "general": 0, "data": 1 };
 
+/**
+ * Subobject card top menu.
+ */
 export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogDisplayed, setIsResetDialogDisplayed }) => {
     const dispatch = useDispatch();
 

@@ -1,11 +1,12 @@
 const LOGGING_ORDER = ["tagUI", "tagsUI", "objectUI", "objectsUI", "tags", "objects", "links", "markdown", "toDoLists"];
 
 
+/**
+ * Function for formatted logging of the state into the console.
+ * 
+ * Prints top-level parts of the state set in the LOGGING_ORDER list, then prints the rest of the state.
+ */
 export default (state, topLevelHeader) => {
-    /*
-         Function for formatted logging of the state into the console.
-         Prints top-level parts of the state set in the LOGGING_ORDER list, then prints the rest of the state.
-     */
      const log = (state, header, isTopLevel = false) => {
          let oneLine = true;
          if (typeof(state) === "object" && state !== null) {

@@ -6,7 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import StyleSideMenu from "../../styles/side-menu.css";
 
 
-/* Side menu component with customizable items. */
+/**
+ * Side menu component with customizable items. 
+ */
 export default ({ items }) => {
     let k = 0;
     const itemComponents = items.map(item => <SideMenuElement key={k++} {...item} />);
@@ -19,7 +21,9 @@ export default ({ items }) => {
 }
 
 
-// Component for switching between different types of side menu items
+/**
+ * Component for switching between different types of side menu items.
+ */
 const SideMenuElement = props => {
     const isVisible = typeof(props.isVisibleSelector) === "function" ? useSelector(props.isVisibleSelector) : true;    
     if (!isVisible) {
@@ -37,7 +41,9 @@ const SideMenuElement = props => {
 };
 
 
-// Basic side menu item
+/**
+ * Basic side menu item.
+ */
 const SideMenuItem = ({ text, isActiveSelector, onClick }) => {
     const isActive = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : true;
     const _onClick = isActive ? () => onClick() : undefined;
@@ -46,7 +52,9 @@ const SideMenuItem = ({ text, isActiveSelector, onClick }) => {
 };
 
 
-// Dialog (header + clickable buttons)
+/** 
+ * Side menu dialog (header, checkbox and clickable buttons).
+ */
 const SideMenuDialog = ({ text, buttons, isCheckboxDisplayedSelector, checkboxText }) => {
     // Checkbox
     const [isChecked, setIsChecked] = useState(false);

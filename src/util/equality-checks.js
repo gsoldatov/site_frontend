@@ -2,7 +2,9 @@ import { getObjectDataFromStore, objectDataIsInState } from "../store/state-util
 import { deepCopy } from "./copy";
 
 
-// Returns true if `a` is deeply equal to `b` (cyclic references are not checked).
+/**
+ * Returns true if `a` is deeply equal to `b` (cyclic references are not checked).
+ */
 export const deepEqual = (a, b) => {
     // Check if types are the same
     if (typeof(a) !== typeof(b)) return false;
@@ -43,6 +45,11 @@ export const deepEqual = (a, b) => {
 };
 
 
+/**
+ * Returns true if state of the object with provided `objectID` in state.editedObjects has no changes compared to its last saved state.
+ * 
+ * If object is not present in any of the storages (state.editedObjects, state.objects, state.objectsTags, data storages), also returns true.
+ */
 export const objectHasNoChanges = (state, objectID) => {
     // If objectID is not present in edited objects, return true to avoid copying edited objects
     if (!state.editedObjects.hasOwnProperty(objectID)) return true;

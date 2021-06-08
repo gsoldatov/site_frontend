@@ -9,7 +9,10 @@ import StyleEditInputs from "../../styles/edit-inputs.css";
 /*
     Reusable components for tag/object edit pages.
 */
-// On load fetch indication & error
+
+/**
+ * On load fetch indication & error.
+ */
 export const LoadIndicatorAndError = ({ fetchSelector, loadingMessage = "Loading..." }) => {
     const fetch = useSelector(fetchSelector);
     if (fetch.isFetching) return <Loader active inline="centered">{loadingMessage}</Loader>;
@@ -18,7 +21,9 @@ export const LoadIndicatorAndError = ({ fetchSelector, loadingMessage = "Loading
 }
 
 
-// Save fetch error message
+/**
+ * Save fetch error message.
+ */
 export const SaveError = ({ fetchSelector }) => {
     const fetch = useSelector(fetchSelector);
     if (fetch.isFetching || !fetch.fetchError) return null;
@@ -26,7 +31,9 @@ export const SaveError = ({ fetchSelector }) => {
 };
 
 
-// Created at & modified at timestamps
+/**
+ * Created at & modified at timestamps.
+ */
 export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedSelector }) => {
     const createdAt = new Date(useSelector(createdAtSelector)).toLocaleString();
     const modifiedAt = new Date(useSelector(modifiedAtSelector)).toLocaleString();
@@ -47,7 +54,9 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedS
 }
 
 
-// Name and description input form
+/**
+ * Name and description input form.
+ */
 export const NameDescriptionInput = ({ nameLabel, namePlaceholder, name, nameOnChange,
     descriptionLabel, descriptionPlaceholder, description, descriptionOnChange }) => {
 

@@ -6,9 +6,9 @@ import { TimeStamps, NameDescriptionInput } from "../../../edit/common";
 
 import { setEditedObject } from "../../../../actions/object";
 
-/*
-    Subobject card "General" tab content.
-*/
+/**
+ * Subobject card "General" tab content. 
+ */
 export const CardGeneralTab = ({ subobjectID }) => {
     const dispatch = useDispatch();
 

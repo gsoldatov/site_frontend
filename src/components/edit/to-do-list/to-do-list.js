@@ -13,9 +13,9 @@ import { getIsTDLDragAndDropEnabledSelector } from "../../../store/state-util/ui
 import StyleTDL from "../../../styles/to-do-lists.css";
 
 
-/*
-    Edit & view components for to-do lists.
-*/
+/**
+ * To-do list data container component.
+ */
 export const TDLContainer = ({ objectID }) => {
     const dispatch = useDispatch();
     const canDrag = useSelector(getIsTDLDragAndDropEnabledSelector(objectID));

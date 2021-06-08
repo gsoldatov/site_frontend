@@ -42,14 +42,17 @@ class IntervalRunner {
     }
 }
 
-/*
-    Wraps the function to limit the maximum frequency of its calls and, optionally, add a delay before its execution.
-    Parameters:
-    - func - function being wrapped;
-    - interval - minimal delay before func calls in ms;
-    - alwaysRunAfterInterval - if true, func will be executed after the interval time since its last call has passed (including the situations when the func is called once); 
-        otherwise it is run immediately on the first call and on the subsequnt calls which occured after the interval time since previous call has passed.
-*/
+/**
+ * Wraps the function to limit the maximum frequency of its calls and, optionally, add a delay before its execution.
+ * 
+ * `func` is a function being wrapped.
+ * 
+ * `interval` is a minimal allowed delay before `func` calls in ms.
+ * 
+ * `alwaysRunAfterInterval` is a flag; if set to `true`, `func` will be executed after the `interval` time since its last call has passed 
+ * (including the situations when the `func` is called once);
+ * otherwise it is run immediately on the first call and on the subsequnt calls which occured after the `interval` time since previous call has passed.
+ */
 export default function intervalWrapper(func, interval = 1000, alwaysRunAfterInterval = false) {
     if (typeof(func) !== "function") {
         throw TypeError("First argument must be a function.");

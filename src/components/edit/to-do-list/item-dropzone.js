@@ -1,9 +1,9 @@
 import React from "react";
 
 
-/*
-    A dropzone and additional space which is rendered in a to-do item when its is dragged over by another item.
-*/
+/**
+ * A dropzone and additional space which is rendered in a to-do item when its is dragged over by another item.
+ */
 export const ItemDropzone = ({ currentIndent, maxIndent, indentUpdateCallback }) => {
     // Dropzones which update the new indent of the dropped item
     const dropZones = [0, 1, 2, 3, 4, 5].map(indent => {

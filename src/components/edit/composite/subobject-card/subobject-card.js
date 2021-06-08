@@ -10,9 +10,9 @@ import { DeletedPlaceholder } from "./placeholders/deleted";
 import { ResetSubobjectDialog } from "./dialogs/reset-subobject-dialog";
 
 
-/*
-    Composite subobject card
-*/
+/**
+ * Composite subobject card component.
+ */
 export class SubobjectCard extends React.PureComponent {
     constructor(props) {
         super(props);

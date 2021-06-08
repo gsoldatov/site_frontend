@@ -7,7 +7,9 @@ import intervalWrapper from "../../util/interval-wrapper";
 import StlyeFieldMenu from "../../styles/field-menu.css";
 
 
-/* Field menu component with customizable items. */
+/**
+ * Field menu component with customizable items.
+ */
 export default ({ items, className = "field-menu", compact, size }) => {
     let k = 0;
     const menuItems = items.map(item => <FieldMenuElement key={k++} {...item} size={size} />);
@@ -18,7 +20,9 @@ export default ({ items, className = "field-menu", compact, size }) => {
 }
 
 
-// Component for switching between different types of field menu items
+/**
+ * Component for switching between different types of field menu items.
+ */
 const FieldMenuElement = props => {
     switch(props.type) {
         case "item":
@@ -39,7 +43,9 @@ const FieldMenuElement = props => {
 };
 
 
-// Field menu button
+/**
+ * Field menu button.
+ */
 const FieldMenuItem = ({ icon, title, size = "medium", isDisabledSelector, isActiveSelector, onClick, onClickParamsSelector, onClickParams }) => {
     const dispatch = useDispatch();
     const isDisabled = typeof(isDisabledSelector) === "function" ? useSelector(isDisabledSelector) : false;
@@ -55,7 +61,9 @@ const FieldMenuItem = ({ icon, title, size = "medium", isDisabledSelector, isAct
 };
 
 
-// Field menu filter
+/**
+ * Field menu filter.
+ */
 const FieldMenuFilter = ({ placeholder, isDisabledSelector, valueSelector, onChange, onChangeDelayed, getOnChangeParams }) => {
     const dispatch = useDispatch();
     const _placeholder = placeholder || "Filter";
@@ -73,7 +81,9 @@ const FieldMenuFilter = ({ placeholder, isDisabledSelector, valueSelector, onCha
 };
 
 
-// Field menu dropdown
+/**
+ * Field menu dropdown.
+ */
 const FieldMenuDropdown = ({ placeholder, isDisabledSelector, defaultValueSelector, options, getOnChangeAction }) => {
     const dispatch = useDispatch();
     const isDisabled = useSelector(isDisabledSelector);
@@ -89,7 +99,9 @@ const FieldMenuDropdown = ({ placeholder, isDisabledSelector, defaultValueSelect
 }
 
 
-// Field menu dropdown with updatable options
+/**
+ * Field menu dropdown with updatable options.
+ */
 const FieldMenuUpdatableDropdown = ({ placeholder, isDisabledSelector, inputStateSelector, existingIDsSelector, onSearchChange, onSearchChangeDelayed, onChange, getDropdownItemTextSelectors }) => {
     const dispatch = useDispatch();
     const isDisabled = useSelector(isDisabledSelector);
@@ -147,13 +159,17 @@ const FieldMenuUpdatableDropdown = ({ placeholder, isDisabledSelector, inputStat
 };
 
 
-// Field menu separator
+/**
+ * Field menu separator.
+ */
 const FieldMenuSeparator = () => {
     return <div className="field-menu-separator" />;
 };
 
 
-// Field menu group
+/**
+ * Field menu group.
+ */
 const FieldMenuItemGroup = ({ items, noBorder }) => {
     let k = 0;
     const _items = items.map(item => <FieldMenuElement key={k++} {...item} />);

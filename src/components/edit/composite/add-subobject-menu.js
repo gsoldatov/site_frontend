@@ -7,9 +7,9 @@ import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from ".
 import intervalWrapper from "../../../util/interval-wrapper";
 
 
-/*
-    Menu for adding new subobjects to a composite object.
-*/
+/**
+ * Menu for adding new subobjects to a composite object.
+ */
 export class AddSubobjectMenu extends React.PureComponent {
     constructor (props) {
         super(props);

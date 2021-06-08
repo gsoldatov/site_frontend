@@ -1,5 +1,8 @@
-// Returns the caret position in the contenteditable node.
-// Returns -1 if a range of text is selected.
+/**
+ * Returns the caret position in the contenteditable node `element`.
+ * 
+ * Returns -1 if a range of text is selected.
+ */
 export const getCaretPosition = element => {
     let position = -1;
     const isSupported = typeof window.getSelection !== "undefined";
@@ -20,7 +23,9 @@ export const getCaretPosition = element => {
 };
 
 
-// Returns text before and after caret position in the element
+/**
+ * Returns text before and after caret position in the `element`.
+ */
 export const getSplitText = element => {
     const position = getCaretPosition(element);
     if (position === -1) return null;

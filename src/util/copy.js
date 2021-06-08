@@ -1,4 +1,6 @@
-// Returns a deep copy of the provided `obj`
+/**
+ * Returns a deep copy of the provided object `obj`.
+ */
 export const deepCopy = obj => {
     if (obj === null || typeof (obj) !== "object" || "isActiveClone" in obj)
         return obj;

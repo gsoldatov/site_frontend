@@ -11,6 +11,9 @@ import { getNewItemState } from "../../../store/state-util/to-do-lists";
 import * as caret from "../../../util/caret";   // wrapped into an object to make functions mockable in tests
 
 
+/**
+ * To-do list item component.
+ */
 class TDLItem extends React.PureComponent {
     constructor(props){
         super(props);

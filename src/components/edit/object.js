@@ -18,7 +18,7 @@ import StyleObject from "../../styles/object.css";
 /*
     Add/edit object sub-components
 */
-// Object type selector
+
 const objectTypes = [
     { name: "link", title: "Link" },
     { name: "markdown", title: "Markdown" },
@@ -27,6 +27,9 @@ const objectTypes = [
 ];
 const newSubobjectTypes = objectTypes.filter(t => t.name !== "composite");
 
+/**
+ * Object type selector component.
+ */
 export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
     const dispatch = useDispatch();
 
@@ -70,8 +73,11 @@ export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
 };
 
 
-// Component for switching type-specific view/edit components.
-// If `subobjectCard` is true, displays default component for composite objects and styles if accordingly.
+/**
+ * Component for switching type-specific view/edit components.
+ * 
+ * If `subobjectCard` is true, displays default component for composite objects and styles if accordingly.
+ */
 export const ObjectViewEditSwitch = ({ objectID, subobjectCard = false }) => {
     const objectType = useSelector(getEditedOrDefaultObjectSelector(objectID)).object_type;
 

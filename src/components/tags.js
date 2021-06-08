@@ -14,7 +14,9 @@ import { setTagsPaginationInfoAndFetchPage, pageFetch, onDeleteFetch } from "../
 import { isFetchingTags, isFetchinOrShowingDialogTags } from "../store/state-util/ui-tags";
 
 
-/* /objects page component */
+/**
+ * /tags page component.
+ */
 export default () => {
     const dispatch = useDispatch();
     const currentPage = useSelector(state => state.tagsUI.paginationInfo.currentPage);

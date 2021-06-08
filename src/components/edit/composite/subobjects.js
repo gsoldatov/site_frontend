@@ -11,9 +11,9 @@ import { enumDeleteModes } from "../../../store/state-templates/composite-subobj
 import StyleSubobjects from "../../../styles/subobjects.css";
 
 
-/*
-    Composite object grid with subobjects' cards
-*/
+/**
+ * Composite object grid with subobjects' cards.
+ */
 export const SubobjectsContainer = ({ objectID }) => {
     const dispatch = useDispatch();
     const updateCallback = useMemo(

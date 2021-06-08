@@ -4,7 +4,9 @@ import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 
-/* Navigation bar */
+/**
+ * Navigation bar.
+ */
 export default () => {
     const location = useLocation();
     return (

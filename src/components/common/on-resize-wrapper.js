@@ -5,9 +5,9 @@ import { Ref } from "semantic-ui-react";
 import intervalWrapper from "../../util/interval-wrapper";
 
 
-/*
-    Wrapper component, which checks if width of its child is greater than `threshold` and runs `callback` function with `threshold` as an argument when
-*/
+/**
+ * Wrapper component, which checks if width of its child is greater than `threshold` and runs `callback` function with `threshold` as an argument when a resize occurs.
+ */
 export const OnResizeWrapper = ({ threshold, callback, children }) => {
     const innerRef = useRef();
     const resizeObserver = useRef();

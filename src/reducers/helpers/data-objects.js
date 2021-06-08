@@ -4,7 +4,9 @@ import { subobjectDefaults } from "../../store/state-templates/composite-subobje
 const _objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description"];
 
 
-// Returns state with provided list of object attributes `objects` inserted into state.objects storage.
+/**
+ *  Returns state with provided list of object attributes `objects` inserted into state.objects storage.
+ */
 export const getStateWithAddedObjects = (state, objects) => {
     if (!(objects instanceof Array) || objects.length === 0) return state;
 
@@ -24,7 +26,9 @@ export const getStateWithAddedObjects = (state, objects) => {
 };
 
 
-// Returns state with provided list of object data `objectData` inserted into respective object data storages.
+/**
+ * Returns state with provided list of object data `objectData` inserted into respective object data storages.
+ */
 export const getStateWithAddedObjectsData = (state, objectData) => {
     if (!(objectData instanceof Array) || objectData.length === 0) return state;
 
@@ -93,9 +97,13 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
 };
 
 
-// Returns state with provided list of object data `objectIDs` removed from the storages and selections.
-// If `deleteSubobjects` is true, also deleted all subobjects of composite objects in `objectIDs`.
+/**
+ *  Returns state with provided list of object data `objectIDs` removed from the storages and selections.
+ * 
+ *  If `deleteSubobjects` is true, also deleted all subobjects of composite objects in `objectIDs`.
+ */
 export const getStateWithDeletedObjects = (state, objectIDs, deleteSubobjects) => {
+    // asdasdasd
     if (objectIDs.length === 0) return state;
 
     // Add subobjects to delete list

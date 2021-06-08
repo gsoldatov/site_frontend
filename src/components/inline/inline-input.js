@@ -5,6 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import intervalWrapper from "../../util/interval-wrapper";
 
 
+/**
+ * Component with input for adding new items in inline item lists.
+ */
 export const InlineInput = ({ placeholder, inputStateSelector, setInputState, onSearchChangeDelayed, existingIDsSelector, setItem, getDropdownItemTextSelectors }) => {
     const dispatch = useDispatch();
     const is = useSelector(inputStateSelector);

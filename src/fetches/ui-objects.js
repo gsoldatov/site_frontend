@@ -13,7 +13,9 @@ import { isFetchingObjects } from "../store/state-util/ui-objects";
 const backendURL = config.backendURL;
 
 
-// On load UI reset & current page fetch
+/**
+ * On load UI reset & current page fetch.
+ */
 export const objectsOnLoadFetch = () => {
     return async (dispatch, getState) => {
         const currentPage = getState().objectsUI.paginationInfo.currentPage;
@@ -24,7 +26,9 @@ export const objectsOnLoadFetch = () => {
 };
 
 
-// Updates pagination info, resets current displayed page to 1 and fetches objects to display on it.
+/**
+ * Updates `state.objectsUI.paginationInfo`, resets current displayed page to 1 and fetches objects to display on it.
+ */
 export const setObjectsPaginationInfoAndFetchPage = paginationInfo => {
     return async (dispatch, getState) => {
         paginationInfo.currentPage = 1;
@@ -34,7 +38,9 @@ export const setObjectsPaginationInfoAndFetchPage = paginationInfo => {
 };
 
 
-// Updates tags filter for displayed objects, resets current displayed page to 1 and fetches objects to display on it.
+/**
+ * Updates tags filter for displayed objects, resets current displayed page to 1 and fetches objects to display on it.
+ */
 export const setTagsFilterAndFetchPage = tagID => {
     return async (dispatch, getState) => {
         dispatch(setObjectsPaginationInfo({ currentPage: 1 }));
@@ -44,7 +50,9 @@ export const setTagsFilterAndFetchPage = tagID => {
 };
 
 
-// Fetches objects to display on provided `currentPage`.
+/**
+ * Fetches objects to display on provided `currentPage`.
+ */
 export const pageFetch = currentPage => {
     return async (dispatch, getState) => {
         const state = getState();
@@ -66,7 +74,9 @@ export const pageFetch = currentPage => {
 };
 
 
-// Fetches backend and sets object IDs of the current page based on the current pagination info settings.
+/**
+ * Fetches backend and sets object IDs of the current page based on the current pagination info settings.
+ */
 const getPageObjectIDs = () => {
     return async (dispatch, getState) => {
         const pI = getState().objectsUI.paginationInfo;
@@ -100,8 +110,12 @@ const getPageObjectIDs = () => {
 }
 
 
-// Delete selected objects from state and stop displaying them on the current page.
-export const onDeleteFetch = (deleteSubobjects) => {
+/**
+ * Delete selected objects from state and stop displaying them on the current page.
+ * 
+ * If `deleteSubobjects` is true, deleted all subobjects of selected composite objects.
+ */
+export const onDeleteFetch = deleteSubobjects => {
     return async (dispatch, getState) => {
         // Exit if already fetching
         let state = getState();
@@ -123,7 +137,9 @@ export const onDeleteFetch = (deleteSubobjects) => {
 };
 
 
-// Thunk creator for fetching tags which match the value returned by `inputTextSelector` and updating the state with `actionCreator`.
+/**
+ * Thunk creator for fetching tags which match the value returned by `inputTextSelector` and updating the state with `actionCreator`.
+ */
 const dropdownFetchThunkCreatorCreator = (actionCreator, inputTextSelector) => {
     return ({queryText, existingIDs}) => {
         return async (dispatch, getState) => {
@@ -151,7 +167,9 @@ export const objectsTagsDropdownFetch = dropdownFetchThunkCreatorCreator(setObje
 export const tagsFilterDropdownFetch = dropdownFetchThunkCreatorCreator(setTagsFilterInput, state => state.objectsUI.tagsFilterInput.inputText);
 
 
-// Handles `Update Tags` button click
+/**
+ * Handles "Update Tags" button click.
+ */
 export function onObjectsTagsUpdateFetch() {
     return async (dispatch, getState) => {
         // Exit if already fetching data

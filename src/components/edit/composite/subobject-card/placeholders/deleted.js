@@ -2,9 +2,9 @@ import React from "react";
 import { Message } from "semantic-ui-react";
 
 
-/*
-    Subobject tab placeholder displayed when subobject is deleted.
-*/
+/**
+ * Subobject tab placeholder displayed when subobject is deleted.
+ */
 export const DeletedPlaceholder = () => {
     return (
         <Message warning className="deleted-subobject-message">

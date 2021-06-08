@@ -1,4 +1,6 @@
-// Default state of edited object
+/**
+ * Default state of an edited object.
+ */
 export const defaultEditedObjectState = {
     // attributes
     object_id: -1,

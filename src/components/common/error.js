@@ -4,7 +4,9 @@ import { Container, Message } from "semantic-ui-react";
 import StyleError from "../../styles/error.css";
 
 
-/* Error message component */
+/**
+ * Error message component.
+ */
 export default ({ header, text, containerClassName, messageClassName }) => {
     const _header = header === undefined ? "Error" : header;
     const _containerClassName = containerClassName !== undefined ? containerClassName : "error-container";

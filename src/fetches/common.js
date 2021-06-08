@@ -1,5 +1,8 @@
-// Runs a fetch to `url` with `params`. Returns response object.
-// Catches network (and CORS) errors and returns an object with `error` property in this case.
+/**
+ * Runs a fetch to `url` with `params`. Returns response object.
+ * 
+ * Catches network (and CORS) errors and returns an object with `error` property in this case.
+ */
 export const runFetch = async (url, params) => {
     try {
         return await fetch(url, params);
@@ -10,7 +13,9 @@ export const runFetch = async (url, params) => {
 };
 
 
-// Returns an error message from response or undefined if there is none.
+/**
+ * Returns an error message from `response` or undefined if there is none.
+ */
 export const getErrorFromResponse = async response => {
     switch (response.status) {
         case 400:
@@ -22,5 +27,7 @@ export const getErrorFromResponse = async response => {
 };
 
 
-// Returns true if provided `response` contains an error
+/**
+ * Returns true if provided `response` contains an error.
+ */
 export const responseHasError = response => (response || {}).error !== undefined ? true : false;

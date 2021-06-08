@@ -1,9 +1,9 @@
 import initialState from "./state-templates/initial-state";
 import intervalWrapper from "../util/interval-wrapper";
 
-/*
-    Manages state loads and saves to the browser's local storage.
-*/
+/**
+ * Manages state loads and saves to the browser's local storage.
+ */
 export class LocalStorageProxy {
     DATE_TIME_PROPERTY_NAMES = ["updatedAt"];
     
@@ -52,21 +52,28 @@ export class LocalStorageProxy {
         }
     }
 
+    /**
+     * Validates the integrity of the state parsed from localStorage.
+     * 
+     * Non-empty sub-objects of initialState are recursively checked over the same criteria, as the state object itself.
+     * 
+     * 1. Checks if the property keys of initialState and parsedState are the same;
+     * 
+     *      1.1. If not, returns false;
+     * 
+     * 2. For each property key:
+     * 
+     *      2.1. If respective property type don't match, return false;
+     * 
+     *      2.2. If a property type is object, check that its prototypes match;
+     * 
+     *      2.3. If the property in the initialState is a non-empty object (and not an Array), it's checked recursively;
+     * 
+     *          2.3.1. If the check from 2.2.1 isn't passed, return false;
+     * 
+     * 3. If all properties are checked, return true.
+     */
     validateStoreState(initialState, parsedState) {
-        /*
-            Validates the integrity of the state parsed from localStorage. 
-            Non-empty sub-objects of initialState are recursively checked over the same criteria, as the state object itself.
-            
-            1. Checks if the property keys of initialState and parsedState are the same;
-                1.1. If not, returns false;
-            2. For each property key:
-                2.1. If respective property type don't match, return false;
-                2.2. If a property type is object, check that its prototypes match;
-                2.3. If the property in the initialState is a non-empty object (and not an Array), it's checked recursively;
-                    2.3.1. If the check from 2.2.1 isn't passed, return false;
-            3. If all properties are checked, return true.
-        */
-
         let initialStateKeys = Object.keys(initialState).sort();
         let parsedStateKeys = Object.keys(parsedState).sort();
         if (JSON.stringify(initialStateKeys) !== JSON.stringify(parsedStateKeys)) {

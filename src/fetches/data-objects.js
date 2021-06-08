@@ -14,9 +14,13 @@ const backendURL = config.backendURL;
 
 
 
-// Fetches backend to add provided `obj` as a new object. 
-// Adds the object to the state in case of success.
-// Returns object attributes from backend response or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to add provided edited object `obj` as a new object.
+ * 
+ * Adds the object to the state in case of success.
+ * 
+ * Returns object attributes from backend response or an object with `error` attribute containing error message in case of failure.
+ */
 export const addObjectFetch = obj => {
     return async (dispatch, getState) => {
         // Validate current object
@@ -68,10 +72,15 @@ export const addObjectFetch = obj => {
 };
 
 
-// Fetches backend to retrieve objects attributes for provided `objectIDs` and object data for `objectDataIDs`.
-// Adds the objects and data to the state in case of success.
-// Fetches non-cached tags, if object attributes were fetched for at least one object.
-// Returns the arrays of object attributes and data returned by backend or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to retrieve objects attributes for provided `objectIDs` and object data for `objectDataIDs`.
+ * 
+ * Adds the objects and data to the state in case of success.
+ * 
+ * Fetches non-cached tags, if object attributes were fetched for at least one object.
+ * 
+ * Returns the arrays of object attributes and data returned by backend or an object with `error` attribute containing error message in case of failure.
+ */
 export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
     return async (dispatch, getState) => {
         const objectIDsLength = (objectIDs || []).length;
@@ -120,9 +129,13 @@ export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
 };
 
 
-// Fetches backend to update provided `obj` data.
-// Fetches non-cached tags and updates the object in the state in case of success.
-// Returns object attributes from backend response or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to update provided `obj` data.
+ * 
+ * Fetches non-cached tags and updates the object in the state in case of success.
+ * 
+ * Returns object attributes from backend response or an object with `error` attribute containing error message in case of failure.
+ */
 export const updateObjectFetch = obj => {
     return async (dispatch, getState) => {
         // Validate current object
@@ -182,10 +195,15 @@ export const updateObjectFetch = obj => {
 };
 
 
-// Fetches backend to delete objects with provided `objectIDs`.
-// Deletes the objects from the state in case of success.
-// If `deleteSubobjects` is true, deletes all subobjects of composite objects in `objectIDs` on backend and in local state.
-// Returns the array of deleted object IDs or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to delete objects with provided `objectIDs`.
+ * 
+ * Deletes the objects from the state in case of success.
+ * 
+ * If `deleteSubobjects` is true, deletes all subobjects of composite objects in `objectIDs` on backend and in local state.
+ * 
+ * Returns the array of deleted object IDs or an object with `error` attribute containing error message in case of failure.
+ */
 export const deleteObjectsFetch = (objectIDs, deleteSubobjects) => {
     return async (dispatch, getState) => {
         deleteSubobjects = deleteSubobjects || false;
@@ -209,9 +227,13 @@ export const deleteObjectsFetch = (objectIDs, deleteSubobjects) => {
 };
 
 
-// Fetches backend to get objects which match provided `queryText` and are not present in `existingIDs`.
-// Fetches non-cached objects' attributes & tags in case of success.
-// Returns the array of matching object IDs or an object with `error` attribute containing error message in case of failure.
+/**
+ * Fetches backend to get objects which match provided `queryText` and are not present in `existingIDs`.
+ * 
+ * Fetches non-cached objects' attributes & tags in case of success.
+ * 
+ * Returns the array of matching object IDs or an object with `error` attribute containing error message in case of failure.
+ */
 export const objectsSearchFetch = ({queryText, existingIDs}) => {
     return async (dispatch, getState) => {
         // Check params

@@ -15,9 +15,9 @@ import StyleMarkdown from "../../styles/markdown.css";
 import StyleHighlight from "highlight.js/styles/a11y-dark.css";
 
 
-/*
-    Markdown-specific edit & view components
-*/
+/**
+ * Markdown data edit & view component.
+ */
 export const MarkdownContainer = ({ objectID }) => {
     const displayMode = useSelector(getEditedOrDefaultObjectSelector(objectID)).markdownDisplayMode;
     const viewEditBlock = displayMode === "view" ? <MarkdownView objectID={objectID} /> :

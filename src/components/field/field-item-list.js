@@ -8,7 +8,9 @@ import intervalWrapper from "../../util/interval-wrapper";
 import StyleFieldItemList from "../../styles/field-item-list.css";
 
 
-/* Field item list component with customizable item IDs and item components. Optionally provides expand/collapse functionality. */
+/**
+ * Field item list component with customizable item IDs and item components. Optionally provides expand/collapse functionality.
+ */
 export const FieldItemList = ({ header, ItemComponent, itemIDsSelector, isExpandable }) => {
     const itemIDs = useSelector(itemIDsSelector);
     const items = itemIDs.map(id => <ItemComponent key={id} id={id} />);
@@ -61,7 +63,9 @@ export const FieldItemList = ({ header, ItemComponent, itemIDsSelector, isExpand
 };
 
 
-/* A single field item without specific selectors and parameters, which should be provided by a wrapper component. */
+/**
+ * A single field item without specific selectors and parameters, which should be provided by a wrapper component.
+ */
 export const FieldItem = ({id, textSelector, link, isCheckedSelector, onChange }) => {
     const dispatch = useDispatch();
     const isChecked = useSelector(isCheckedSelector);

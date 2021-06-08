@@ -4,20 +4,24 @@ import { getObjectDataFromStore } from "../../store/state-util/objects";
 import { objectHasNoChanges } from "../../util/equality-checks";
 
 
-/*
-    Returns a deep copy of default edited object state.
-    Sets `object_id` in the returned object if it's provided.
-*/
+/**
+ * Returns a deep copy of default edited object state.
+ * Sets `object_id` in the returned object if it's provided.
+ */
 export const getDefaultEditedObjectState = object_id => {
     const defaultState = deepCopy(defaultEditedObjectState);
     if (object_id !== undefined) defaultState.object_id = object_id;
     return defaultState;
-}
+};
 
 
-// Resets state of edited objects with provided `objectIDs` to their last saved states.
-// Sets default attribute/tag/data values if `objectID` is not found in respective storage and `allowResetToDefaults` is true.
-// Throws an Error if attribute/tag/data are not found and `allowResetToDefaults` is false.
+/** 
+ * Resets state of edited objects with provided `objectIDs` to their last saved states.
+ * 
+ * Sets default attribute/tag/data values if `objectID` is not found in respective storage and `allowResetToDefaults` is true.
+ * 
+ * Throws an Error if attribute/tag/data are not found and `allowResetToDefaults` is false.
+ */
 export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDefaults) => {
     if (objectIDs.length === 0) return state;
 
@@ -61,9 +65,13 @@ export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDef
 };
 
 
-// Deletes the specified `objectIDs` from the state.editedObjects.
-// Composite objects' subobjects from `objectIDs`, also have all of thier new & unmodified existing children deleted.
-// Returns the state after delete(-s).
+/** 
+ * Deletes the specified `objectIDs` from the state.editedObjects.
+ * 
+ * Composite objects' subobjects from `objectIDs`, also have all of thier new & unmodified existing children deleted.
+ * 
+ * Returns the state after delete(-s).
+ */
 export const getStateWithRemovedEditedObjects = (state, objectIDs) => {
     if (objectIDs.length === 0) return state;
 
@@ -87,8 +95,11 @@ export const getStateWithRemovedEditedObjects = (state, objectIDs) => {
 };
 
 
-// Deletes all new subobjects of each composite object in `objectIDs` from state.editedObjects.
-// Returns the state after deletes.
+/** 
+ * Deletes all new subobjects of each composite object in `objectIDs` from state.editedObjects.
+ * 
+ * Returns the state after deletes.
+ */
 export const getStateWithDeletedEditedNewSubobjects = (state, objectIDs) => {
     if (objectIDs.length === 0) return state;
     let newEditedObjects = { ...state.editedObjects };
@@ -105,9 +116,13 @@ export const getStateWithDeletedEditedNewSubobjects = (state, objectIDs) => {
 };
 
 
-// Resets all edited existing non-composite subobjects of each composite object in `objectIDs` from state.editedObjects.
-// Removes edited existing non-composite subobjects, which were added since last save.
-// Returns the state after resets.
+/**
+ * Resets all edited existing non-composite subobjects of each composite object in `objectIDs` from state.editedObjects.
+ * 
+ * Removes edited existing non-composite subobjects, which were added since last save.
+ * 
+ * Returns the state after resets.
+ */
 export const getStateWithResetEditedExistingSubobjects = (state, objectIDs) => {
     if (objectIDs.length === 0) return state;
     let resetIDs = new Set(), deletedIDs = new Set();

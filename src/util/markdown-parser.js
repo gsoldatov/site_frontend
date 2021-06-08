@@ -6,9 +6,9 @@ import katex from "katex";
 import rules from "./markdown-rules";
 
 
-/*
-    Markdown parser setup
-*/
+/**
+ * Markdown parser setup. 
+ */
 const tokenizer = {
     code(src) {
         // Tokenize block formulas ($$ ... $$) as code
@@ -165,8 +165,10 @@ const renderer = {
 };
 
 
-// Add a code highlighting with Highlight.js 
-// (an additional "hljs" classname must be added separately to <code> tags in order to apply styles them)
+/**
+ * Add a code highlighting with Highlight.js
+ * (an additional "hljs" classname must be added separately to \<code\> tags in order to apply styles them).
+ */
 // const highlight = (code) => hljs.highlightAuto(code).value;  // very slow
 const highlight = (code, language) => {
     const validLanguage = hljs.getLanguage(language) ? language : "plaintext";

@@ -4,7 +4,9 @@ import { useSelector } from "react-redux";
 import { SubobjectDialog } from "./subobject-dialog";
 
 
-/* Reset subobject dialog. */
+/**
+ * Reset subobject dialog displayed in a subobject card.
+ */
 export const ResetSubobjectDialog = ({ objectID, subobjectID, updateCallback, setIsResetDialogDisplayed }) => {
     const { row, column } = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID]);
 

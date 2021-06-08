@@ -7,10 +7,12 @@ import { itemDefaults } from "../../store/state-templates/to-do-list-item";
 /*
     Object page functions for manipulating to-do list's state.
 */
-/*
-    Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
-    `update` is an object with `command` prop with the type of update to perform, as well as additional props specifying the update.
-*/
+
+/**
+ * Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
+ * 
+ * `update` is an object with `command` prop with the type of update to perform, as well as additional props specifying the update.
+ */
 export const getUpdatedToDoList = (toDoList, update) => {
     const command = update.command;
     // Adds a new item after the item with provided `id`. 
@@ -390,10 +392,12 @@ export const getUpdatedToDoList = (toDoList, update) => {
 };
 
 
-// Updates the new item input's indent in the provided `toDoList`, based on the current indent of the last item in the list.
-// New item input's indent can't be > than last item's indent + 1.
-//
-// The update is performed in the original toDoList object.
+/**
+ * Updates the new item input's indent in the provided `toDoList`, based on the current indent of the last item in the list.
+ * New item input's indent can't be > than last item's indent + 1.
+ *
+ * The update is performed in the original toDoList object.
+ */
 const setNewItemInputIndent = toDoList => {
     const sortedItemIDs = getSortedItemIDs(toDoList);
     if (sortedItemIDs.length > 0) {
@@ -404,9 +408,11 @@ const setNewItemInputIndent = toDoList => {
 };
 
 
-// Expands all parent items of the parent with the provided `id`.
-//
-// The update is performed in the original toDoList object.
+/** 
+ * Expands all parent items of the parent with the provided `id`.
+ *
+ * The update is performed in the original toDoList object.
+ */
 const expandParents = (toDoList, id) => {
     const parentIDs = getParentIDs(toDoList, id);
     parentIDs.forEach(id => {

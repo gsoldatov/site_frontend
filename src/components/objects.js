@@ -21,7 +21,9 @@ import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTag
 import { objectsGetCommonTagIDs, objectsGetPartiallyAppliedTagIDs, objectsGetAddedTags } from "../store/state-util/ui-objects";
 
 
-/* /objects page component */
+/**
+ * /objects page component.
+ */
 export default () => {
     const dispatch = useDispatch();
     const fetch = useSelector(state => state.objectsUI.fetch);

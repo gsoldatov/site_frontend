@@ -1,3 +1,6 @@
+/**
+ * Initial app state.
+ */
 const initialState = {
     redirectOnRender: "",
 

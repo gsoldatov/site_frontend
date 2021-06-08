@@ -6,7 +6,9 @@ import { Pagination } from "semantic-ui-react";
 import StyleFieldPagination from "../../styles/field-pagination.css";
 
 
-/* Field pagination component. */
+/**
+ * Field pagination component.
+ */
 export default ({ paginationInfoSelector, setCurrentPage }) => {
     const dispatch = useDispatch();
     const paginationInfo = useSelector(paginationInfoSelector);

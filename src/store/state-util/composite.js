@@ -3,7 +3,9 @@
 */
 
 
-// Returns an available object_id value for a new subobject.
+/**
+ *  Returns an available object_id value for a new subobject.
+ */
 export const getNewSubobjectID = state => {
     let minObjectID = 0;
     for (let id of Object.keys(state.editedObjects)) {
@@ -15,8 +17,10 @@ export const getNewSubobjectID = state => {
 };
 
 
-// Returns the ordered by column/row subobject positions of `composite` object. Result is a list with each item being a list for a specific column.
-// If `collapseEmptyRows` is set to true, removes empty rows inside each column
+/**
+ *  Returns the ordered by column/row subobject positions of `composite` object. Result is a list with each item being a list for a specific column.
+ * If `collapseEmptyRows` is set to true, removes empty rows inside each column
+ */
 export const getSubobjectDisplayOrder = (composite, collapseEmptyRows) => {
     let displayOrder = [[]];    // always return at least one empty column
 

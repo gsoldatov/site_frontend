@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 
 
-// Basic inline item component. Should be wrapped in a component which passes list-specific props to it.
+/**
+ * Basic inline item component. Should be wrapped in a component which passes list-specific props to it.
+ */
 export const InlineItem = ({ text, itemClassName, onClick, itemLink }) => {
     const _itemClassName = itemClassName || "inline-item";
 

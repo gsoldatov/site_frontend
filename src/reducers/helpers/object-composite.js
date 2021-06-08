@@ -7,10 +7,10 @@ import { deepCopy } from "../../util/copy";
 import { objectHasNoChanges } from "../../util/equality-checks";
 
 
-/*
-    Object page functions for updating state of composite objects' and their subobjects.
-    Return a fully modified instance of state.
-*/
+
+/**
+ * Processes update commands for a composite object and its subobjects and returns the state after updates.
+ */
 export const getStateWithCompositeUpdate = (state, objectID, update) => {
     const { command } = update;
 
@@ -115,6 +115,8 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
     }
 
     // Updates state after add or update of a composite object:
+    // - removes any new subobjects from state.editedObjects if the main object is not composite (for when it was changed after subobject creation);
+    // 
     // - removes fully deleted and unchanged deleted existing subobjects from state;
     // - updates new & modified subobjects in state.editedObjects (maps subobject IDs & created_at & modified_at timestamps);
     // - adds new & modified subobject attributes & data to state storages;
@@ -124,10 +126,12 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
     if (command === "updateSubobjectsOnSave") {
         // `object` contains response object attributes & data, `object_data` contains object data as it was sent in request
         const { object, object_data } = update;
-
-        // Exit if object is not composite
-        if (object.object_type !== "composite") return state;
         let newState = state;
+
+        // If object is not composite, delete any new subobjects which were created before object type was changed
+        if (object.object_type !== "composite") {
+            return newState;
+        }
 
         // Remove unchanged (non-fully) deleted existing objects from state
         let subobjectIDs = Object.keys(newState.editedObjects[objectID].composite.subobjects);

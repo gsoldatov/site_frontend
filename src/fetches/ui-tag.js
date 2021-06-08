@@ -7,7 +7,9 @@ import { loadEditTagPage, setTagOnLoadFetchState, setTagOnSaveFetchState, setSho
 import { isFetchingTag } from "../store/state-util/ui-tag";
 
 
-// Handles "Save" button click on new tag page
+/**
+ * Handles "Save" button click on new tag page.
+ */
 export const addTagOnSaveFetch = () => {
     return async (dispatch, getState) => {
         // Exit if already fetching
@@ -29,7 +31,9 @@ export const addTagOnSaveFetch = () => {
 };
 
 
-// Loads tag data on existing tag page
+/**
+ * Loads tag data on existing tag page.
+ */
 export const editTagOnLoadFetch = tag_id => {
     return async (dispatch, getState) => {
         // Set initial page state
@@ -56,7 +60,9 @@ export const editTagOnLoadFetch = tag_id => {
 };
 
 
-// Handles "Save" button click on existing tag page
+/**
+ * Handles "Save" button click on existing tag page.
+ */
 export const editTagOnSaveFetch = () => {
     return async (dispatch, getState) => {
         // Exit if already fetching
@@ -80,7 +86,9 @@ export const editTagOnSaveFetch = () => {
 };
 
 
-// Handles delete confirmation button click on existing tag page
+/**
+ * Handles delete confirmation button click on existing tag page.
+ */
 export const editTagOnDeleteFetch = () => {
     return async (dispatch, getState) => {
         // Exit if already fetching

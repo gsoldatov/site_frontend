@@ -9,7 +9,9 @@ import SideMenu from "./side-menu";
 import { setRedirectOnRender } from "../../actions/common";
 
 
-/* Page layout with navigation, side menu and main content (body) */
+/**
+ * Page layout with navigation, side menu and main content (body).
+ */
 export default ({ sideMenuItems, body }) => {
     const dispatch = useDispatch();
     const redirectOnRender = useSelector(state => state.redirectOnRender);

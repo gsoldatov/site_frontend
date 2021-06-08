@@ -5,10 +5,9 @@ import { Form } from "semantic-ui-react";
 import { setEditedObject } from "../../actions/object";
 import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-object";
 
-/*
-    Link-specific edit & view components
-*/
-// Link input form
+/**
+ * Link input form.
+ */
 export const LinkInput = ({ objectID }) => {
     const dispatch = useDispatch();
     

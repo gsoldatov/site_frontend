@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import { Icon } from "semantic-ui-react";
 
 
-/*
-    To-do list item state control menu & buttons.
-*/
 export const stateControlParams = {
     completed: { icon: "check square outline", title: "Set item as completed", iconColor: "green", inputCSSClass: "to-do-list-item-input completed" },
     active: { icon: "square outline", title: "Set item as active", iconColor: "black", inputCSSClass: "to-do-list-item-input" },
@@ -13,6 +10,9 @@ export const stateControlParams = {
 };
 
 
+/**
+ * To-do list item state control menu.
+ */
 export const StateControl = ({ id, state, updateCallback }) => {
     const [isHovered, setIsHovered] = useState(false);
     const buttonOnClick = state => {
@@ -30,7 +30,7 @@ export const StateControl = ({ id, state, updateCallback }) => {
 };
 
 
-export const StateControlButton = ({ state, onClick }) => {
+const StateControlButton = ({ state, onClick }) => {
     const { icon, title, iconColor } = stateControlParams[state];
     return <Icon className="to-do-list-item-button" color={iconColor} name={icon} title={title} onClick={() => onClick(state)} />;
 };

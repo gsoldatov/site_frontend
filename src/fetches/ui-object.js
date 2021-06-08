@@ -16,7 +16,9 @@ import { objectDataIsInState } from "../store/state-util/objects";
 const backendURL = config.backendURL;
 
 
-// Loads default state of /objects/add page & loads composite object's subobject data
+/**
+ * Loads default state of /objects/add page & loads composite object's subobject data.
+ */
 export const addObjectOnLoad = () => {
     return (dispatch, getState) => {
         dispatch(loadAddObjectPage());
@@ -25,7 +27,9 @@ export const addObjectOnLoad = () => {
 };
 
 
-// Handles "Save" button click on new object page
+/**
+ * Handles "Save" button click on new object page.
+ */
 export const addObjectOnSaveFetch = () => {
     return async (dispatch, getState) => {
         let state = getState();
@@ -47,7 +51,9 @@ export const addObjectOnSaveFetch = () => {
 };
 
 
-// Fetches attributes, tags and data of an existing object and adds them to state.editedObjects, if the object was not already edited
+/**
+ * Fetches attributes, tags and data of an existing object with the provided `object_id` and adds them to state.editedObjects, if the object was not already edited.
+ */
 export const editObjectOnLoadFetch = object_id => {
     return async (dispatch, getState) => {
         // Set initial page state
@@ -95,7 +101,9 @@ export const editObjectOnLoadFetch = object_id => {
 };
 
 
-// Handles "Save" button click on existing object page
+/**
+ * Handles "Save" button click on existing object page.
+ */
 export const editObjectOnSaveFetch = () => {
     return async (dispatch, getState) => {
         let state = getState();
@@ -118,7 +126,11 @@ export const editObjectOnSaveFetch = () => {
 };
 
 
-// Handles delete confirmation button click on existing object page
+/**
+ * Handles delete confirmation button click on existing object page.
+ * 
+ * If `deleteSubobjects` is true, deletes all subobjects along with the composite object.
+ */
 export const editObjectOnDeleteFetch = deleteSubobjects => {
     return async (dispatch, getState) => {
         // Exit if already fetching
@@ -141,7 +153,9 @@ export const editObjectOnDeleteFetch = deleteSubobjects => {
 };
 
 
-// Handles objects tags dropdown with matching tags update
+/**
+ * Handles objects tags dropdown with matching tags update.
+ */
 export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
     return async (dispatch, getState) => {
         // Exit fetch if an item was added before the start of the fetch
@@ -162,7 +176,9 @@ export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
 }
 
 
-// Handles composite object add subobject dropdown values update
+/**
+ * Handles composite object add subobject dropdown values update.
+ */
 export const compositeSubobjectDropdownFetch = ({queryText, existingIDs}) => {
     return async (dispatch, getState) => {
         // Exit fetch if an item was added before the start of the fetch
@@ -180,7 +196,11 @@ export const compositeSubobjectDropdownFetch = ({queryText, existingIDs}) => {
 }
 
 
-// Fetches missing attributes/tags/data of composite object's subobjects
+/**
+ * Fetches missing subobject attributes/tags/data of composite object with provided `objectID`.
+ * 
+ * Does nothing if the object is not composite.
+ */
 export const loadCompositeSubobjectsFetch = objectID => {
     return async (dispatch, getState) => {
         let state = getState();

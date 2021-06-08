@@ -3,9 +3,13 @@
 */
 
 
-// Returns true if any of tag page fetches are being performed.
+/**
+ * Returns true if any of tag page fetches are being performed.
+ */
 export const isFetchingTag = state => state.tagUI.tagOnLoadFetch.isFetching || state.tagUI.tagOnSaveFetch.isFetching;
 
 
-// Returns true if any of tag page fetches are being performed or a confirmation dialog is being displayed.
+/**
+ * Returns true if any of tag page fetches are being performed or a confirmation dialog is being displayed.
+ */
 export const isFetchinOrShowingDialogTag = state => isFetchingTag(state) || state.tagUI.showDeleteDialog;

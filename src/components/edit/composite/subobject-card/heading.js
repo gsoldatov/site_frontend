@@ -3,6 +3,9 @@ import { Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 
 
+/**
+ * Subobject card heading line with object type and name, object name and indicators.
+ */
 export const Heading = ({ subobjectID }) => {
     return (
         <div className="composite-subobjct-card-heading-container">
@@ -22,7 +25,6 @@ export const Heading = ({ subobjectID }) => {
 const ObjectTypeAndName = ({ subobjectID }) => {
     const objectName = useSelector(state => state.editedObjects[subobjectID].object_name);
     const objectType = useSelector(state => state.editedObjects[subobjectID].object_type);
-    
 
     const headingTextClassName = objectName.length > 0 ? "composite-subobject-card-heading-text" : "composite-subobject-card-heading-text unnamed";
     const headingText = objectName.length > 0 ? objectName : "<Unnamed>";

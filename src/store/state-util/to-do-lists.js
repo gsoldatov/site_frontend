@@ -3,7 +3,9 @@
 */
 
 
-// Accepts a to-do list object and returns the IDs of its items sorted according to its current sort_type.
+/**
+ * Accepts a `toDoList` object representing to-do list data and returns the IDs of its items sorted according to its current `sort_type`.
+ */
 export const getSortedItemIDs = toDoList => {
     let sortedItems;
     if (toDoList.sort_type === "default") sortedItems = [...toDoList.itemOrder];
@@ -13,7 +15,9 @@ export const getSortedItemIDs = toDoList => {
 };
 
 
-// Returns a recursively sorted by state `items`. Child items are also sorted, but are kept after the same parent.
+/**
+ * Returns a recursively sorted by state `items` of the `toDoList`. Child items are also sorted, but are kept after the same parent.
+ */
 const sortByState = (toDoList, items) => {
     // Exit function if an empty item list is passed as an argument
     if (items.length === 0) return [];
@@ -56,14 +60,18 @@ const sortByState = (toDoList, items) => {
 }
 
 
-// Returns sorted item IDs of visible items (parents of which are not collapsed)
+/**
+ * Returns sorted item IDs of visible items (parents of which are not collapsed) of the `toDoList`.
+ */
 export const getVisibleSortedItemIDs = toDoList => {
     const sortedItemIDs = getSortedItemIDs(toDoList);
     return getVisibleItemIDs(toDoList, sortedItemIDs);
 };
 
 
-// Returns a list of visible item IDs, which are present in `itemIDs` list
+/**
+ * Returns a list of visible item IDs of the `toDoList`, which are present in `itemIDs` list.
+ */
 export const getVisibleItemIDs = (toDoList, itemIDs) => {
     let visibleItems = [];
     let collapsedParentIndent;
@@ -85,18 +93,26 @@ export const getVisibleItemIDs = (toDoList, itemIDs) => {
 }
 
 
-// Returns a new value to use as an item id
+/**
+ * Returns a new value to use as an item id for a new item in `toDoList`.
+ */
 export const getNewItemID = toDoList => toDoList.itemOrder.length > 0 ? Math.max(...toDoList.itemOrder) + 1 : 0;
 
 
-// Returns a new item state based on its current (for state toggling).
 const itemStates = ["active", "optional", "completed", "cancelled"];
+/**
+ * Returns a new item `state` based on its current (used for state toggling).
+ */
 export const getNewItemState = state => itemStates[(itemStates.indexOf(state) + 1) % 4];
 
 
-// Returns the indent of the item previous to the item with provided `id`.
-// If `id` = "newItem", returns the indent of the last item in the list.
-// If item is first in the list, returns -1.
+/**
+ * Returns the indent of the `toDoList` item, previous to the item with provided `id`.
+ * 
+ * If `id` = "newItem", returns the indent of the last item in the list.
+ * 
+ * If item is first in the list, returns -1.
+ */
 export const getPreviousItemIndent = (toDoList, id) => {
     const itemOrder = getSortedItemIDs(toDoList);
 
@@ -114,7 +130,9 @@ export const getPreviousItemIndent = (toDoList, id) => {
     }
 };
 
-// Returns an array of parent item IDs for a provided `id`.
+/**
+ * Returns an array of parent item IDs in the `toDoList` for a provided `id`.
+ */
 export const getParentIDs = (toDoList, id) => {
     let parentIDs = [];
     let currentIndent = toDoList.items[id].indent;
@@ -133,7 +151,9 @@ export const getParentIDs = (toDoList, id) => {
 };
 
 
-// Returns an array of children item IDs for a provided `id`.
+/**
+ * Returns an array of children item IDs in the `toDoList` for a provided `id`.
+ */
 export const getChildrenIDs = (toDoList, id) => {
     let childrenIDs = [];
     const index = toDoList.itemOrder.indexOf(id);
@@ -146,7 +166,9 @@ export const getChildrenIDs = (toDoList, id) => {
 };
 
 
-// Returns an insert position in itemOrder list for an item, resulting in merge of items with ids `first` and `second`
+/**
+ * Returns an insert position in `toDoList.itemOrder` list for an item, resulting in merge of items with ids `first` and `second`.
+ */
 export const getMergedItemInsertPosition = (toDoList, first, second) => {
     // For default sort always insert at the position of `first`
     if (toDoList.sort_type === "default") return toDoList.itemOrder.indexOf(first);

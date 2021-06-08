@@ -2,9 +2,9 @@ import React from "react";
 import { Button, Header } from "semantic-ui-react";
 
 
-/* 
-    Basic dialog component displayed instead of subobject card tabs.
-*/
+/**
+ * Basic dialog component displayed instead of subobject card tabs.
+ */
 export const SubobjectDialog = ({ header, yesCallback, noCallback }) => {
 
     return (

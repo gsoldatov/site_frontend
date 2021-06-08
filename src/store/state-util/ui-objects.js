@@ -3,19 +3,27 @@
 */
 
 
-// Returns true if object page fetch is being performed.
+/**
+ * Returns true if objects page fetch is being performed.
+ */
 export const isFetchingObjects = state => state.objectsUI.fetch.isFetching;
 
 
-// Returns true if object page fetch is being performed or a confirmation dialog is being displayed.
+/**
+ * Returns true if object page fetch is being performed or a confirmation dialog is being displayed.
+ */
 export const isFetchingOrShowingDeleteDialogObjects = state => isFetchingObjects(state) || state.objectsUI.showDeleteDialog;
 
 
-// Returns true if there are currently added or removed tags in objectsUI state
+/**
+ * Returns true if there are currently added or removed tags in objectsUI state.
+ */
 export const isObjectsTagsEditActive = state => state.objectsUI.addedTags.length > 0 || state.objectsUI.removedTagIDs.length > 0;
 
 
-/* Resets objects caches */
+/**
+ * Resets added and common & partially applied tag caches on the /objects page.
+ */
 export const resetObjectCaches = () => {
     commonAndPartiallyAppliedTagsCache = {};
     addedTagsCache = {};

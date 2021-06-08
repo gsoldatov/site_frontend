@@ -2,9 +2,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 
-/*
-    Inline item list component.
-*/
+/**
+ * Inline item list component.
+ */
 export const InlineItemList = ({ itemIDSelector, ItemComponent }) => {
     // const stringItemKeyValue = useRef(-1);  // items with string ids use this key generator when generating a list on inline item components
     const itemIDs = useSelector(itemIDSelector);

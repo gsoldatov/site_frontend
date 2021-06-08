@@ -11,7 +11,9 @@ import { isFetchingTags } from "../store/state-util/ui-tags";
 const backendURL = config.backendURL;
 
 
-// Updates pagination info, resets current displayed page to 1 and fetches tags to display on it.
+/**
+ * Updates pagination info, resets current displayed page to 1 and fetches tags to display on it.
+ */
 export const setTagsPaginationInfoAndFetchPage = paginationInfo => {
     return async (dispatch, getState) => {
         paginationInfo.currentPage = 1;
@@ -21,7 +23,9 @@ export const setTagsPaginationInfoAndFetchPage = paginationInfo => {
 };
 
 
-// Fetches tags to display on provided `currentPage`.
+/**
+ * Fetches tags to display on provided `currentPage`.
+ */
 export const pageFetch = currentPage => {
     return async (dispatch, getState) => {
         const state = getState();
@@ -40,7 +44,9 @@ export const pageFetch = currentPage => {
 };
 
 
-// Fetches backend and sets tag IDs of the current page based on the current pagination info settings.
+/**
+ * Fetches backend and sets tag IDs of the current page based on the current pagination info settings.
+ */
 const getPageTagIDs = () => {
     return async (dispatch, getState) => {
         const pI = getState().tagsUI.paginationInfo;
@@ -72,7 +78,9 @@ const getPageTagIDs = () => {
 }
 
 
-// Delete selected tags from state and stop displaying them on the current page.
+/**
+ * Delete selected tags from state and stop displaying them on the current page.
+ */
 export const onDeleteFetch = () => {
     return async (dispatch, getState) => {
         // Exit if already fetching

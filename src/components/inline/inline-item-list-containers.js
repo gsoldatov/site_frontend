@@ -3,10 +3,11 @@ import { useSelector } from "react-redux";
 import StyleInline from "../../styles/inline.css";
 
 
-/*
-    Container components for inline item lists.
-*/
-//  Highest level component for inline itemlists. Contains one or more <InlineItemListWrapper> components.
+/**
+ * Container components for inline item lists.
+ * 
+ * Highest level component for inline itemlists. Contains one or more <InlineItemListWrapper> components.
+ */
 export const InlineItemListBlock = ({header, children}) => {
     const _header = header && <div className="inline-item-list-block-header">{header}</div>;
 
@@ -20,7 +21,9 @@ export const InlineItemListBlock = ({header, children}) => {
     );
 };
 
-// Component for groupping inline item lists and input controls.
+/**
+ * Component for groupping inline item lists and input controls.
+ */
 export const InlineItemListWrapper = ({header, children, isDisplayedSelector}) => {
     const isDisplayed = isDisplayedSelector ? useSelector(isDisplayedSelector) : true;
     if (!isDisplayed) return null;

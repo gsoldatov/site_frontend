@@ -6,6 +6,9 @@ import { ItemDropzone } from "./item-dropzone";
 import { indentClassNames } from "./item";
 
 
+/**
+ * To-do list new item input component.
+ */
 class NewTDLItem extends React.PureComponent {
     constructor(props) {
         super(props);

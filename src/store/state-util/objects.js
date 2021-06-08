@@ -7,7 +7,9 @@ import { getSubobjectDisplayOrder } from "./composite";
 */
 
 
-// Returns true if object_name of `obj` is already taken by another object, which is present in the local storage, or false otherwise.
+/**
+ *  Returns true if object_name of `obj` is already taken by another object, which is present in the local storage, or false otherwise.
+ */
 export const checkIfObjectNameExists = (state, obj) => {
     const objects = state.objects;
     const loweredName = obj.object_name.toLowerCase();
@@ -22,7 +24,9 @@ export const checkIfObjectNameExists = (state, obj) => {
 };
 
 
-// Returns true is `obj` data is valid or throws an error if not.
+/**
+ * Returns true is `obj` data is valid or throws an error if not.
+ */
 export const validateObject = (state, obj) => {
     if (obj.object_name.length === 0) throw Error("Object name is required.");
     // if (checkIfObjectNameExists(state, obj)) throw Error("Object name already exists.");
@@ -63,7 +67,9 @@ export const validateObject = (state, obj) => {
 };
 
 
-// Returns `obj` object data serialized into a format required by backed API.
+/**
+ * Returns `obj` object data serialized into a format required by backed API.
+ */
 export const serializeObjectData = (state, obj) => {
     // Function must return a copy of the object if its data is mutable;
     // This will prevent potential inconsistency in local storage due to user inputs during the add fetch.
@@ -146,7 +152,9 @@ export const serializeObjectData = (state, obj) => {
 };
 
 
-// Returns a new object with object data for the provided object_id or undefined.
+/**
+ * Returns a new object with object data for the provided object_id or undefined.
+ */
 export const getObjectDataFromStore = (state, object_id) => {
     if (!objectDataIsInState(state, object_id)) return undefined;
 
@@ -169,7 +177,9 @@ export const getObjectDataFromStore = (state, object_id) => {
 };
 
 
-// Returns true if object data for the provided `object_id` exists in state or false otherwise.
+/**
+ * Returns true if object data for the provided `object_id` exists in state or false otherwise.
+ */
 export const objectDataIsInState = (state, object_id) => {
     if (!state.objects[object_id]) return false;
     const objectType = state.objects[object_id].object_type;
@@ -189,9 +199,11 @@ export const objectDataIsInState = (state, object_id) => {
 };
 
 
-// Modifies object_data in add/update object fetches to prepare it for adding to the respective storage with addObjectData action.
-// `requestPayload` is the body of the request sent to backend.
-// `responseObject` is the `object` attribute of the JSON parsed from response body.
+/**
+ * Modifies object_data in add/update object fetches to prepare it for adding to the respective storage with addObjectData action.
+ * `requestPayload` is the body of the request sent to backend.
+ * `responseObject` is the `object` attribute of the JSON parsed from response body.
+ */
 export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
     const { object_type } = responseObject;
     const request_object_data = requestPayload.object.object_data;
