@@ -1,5 +1,5 @@
 import { getStateWithAddedObjects, getStateWithAddedObjectsData, getStateWithDeletedObjects } from "./data-objects";
-import { getStateWithResetEditedObjects } from "./object";
+import { getStateWithDeletedEditedNewSubobjects, getStateWithResetEditedObjects } from "./object";
 
 import { enumDeleteModes, subobjectDefaults } from "../../store/state-templates/composite-subobjects";
 import { getNewSubobjectID } from "../../store/state-util/composite";
@@ -126,12 +126,10 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
     if (command === "updateSubobjectsOnSave") {
         // `object` contains response object attributes & data, `object_data` contains object data as it was sent in request
         const { object, object_data } = update;
-        let newState = state;
 
         // If object is not composite, delete any new subobjects which were created before object type was changed
-        if (object.object_type !== "composite") {
-            return newState;
-        }
+        if (object.object_type !== "composite") return getStateWithDeletedEditedNewSubobjects(state, [objectID]);
+        let newState = state;
 
         // Remove unchanged (non-fully) deleted existing objects from state
         let subobjectIDs = Object.keys(newState.editedObjects[objectID].composite.subobjects);

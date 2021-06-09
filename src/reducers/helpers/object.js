@@ -105,7 +105,10 @@ export const getStateWithDeletedEditedNewSubobjects = (state, objectIDs) => {
     let newEditedObjects = { ...state.editedObjects };
 
     objectIDs.forEach(objectID => {
-        if (!(objectID in newEditedObjects) || newEditedObjects[objectID].object_type !== "composite") return;
+        if (!(objectID in newEditedObjects)) return;
+        
+        // Non-composite objects' check is required for deleting new subobjects of a new object, if its type was switched from composite before save.
+        // if (!(objectID in newEditedObjects) || newEditedObjects[objectID].object_type !== "composite") return;
 
         Object.keys(newEditedObjects[objectID].composite.subobjects).forEach(subobjectID => {
             if (parseInt(subobjectID) < 0) delete newEditedObjects[subobjectID];
