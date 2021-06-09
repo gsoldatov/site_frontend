@@ -52,10 +52,11 @@ export const validateObject = (state, obj) => {
             
             if (!hasNonDeletedSubobjects) throw Error("Composite object must have at least one non-deleted subobject.");
             
-            // Recursively check non-composite subobjects
+            // Recursively check non-composite non-deleted subobjects
             for (let subobjectID of Object.keys(obj.composite.subobjects)) {
                 const subobject = state.editedObjects[subobjectID];
-                if (subobject.object_type !== "composite") validateObject(state, subobject);
+                if (subobject !== undefined && subobject.object_type !== "composite" && obj.composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none) 
+                    validateObject(state, subobject);
             }
 
             if (Object.keys(obj.composite.subobjects).length === 0) throw Error("At least one item is required in the to-do list.");

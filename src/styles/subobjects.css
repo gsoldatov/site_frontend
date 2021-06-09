@@ -33,6 +33,7 @@ div.composite-subobject-card:last-child {
     margin: 0.5em;  /* Override bottom margin */
 }
 
+/* Full card placeholders (loader, error) */
 div.composite-subobject-card.no-padding {
     padding: 0;
 
@@ -42,19 +43,19 @@ div.composite-subobject-card.no-padding {
     justify-content: center;
 }
 
-
-/* Full card placeholders (loader, error) */
-div.ui.container.subobject-error-container {
-    width: 100%;
+div.ui.message.subobject-error-message {
     height: var(--subobject-card-min-height);
 
-    margin: 0 !important;   /* override SUIR margin left & right which appear at small widths (<500px) */
+    display: flex;
+    flex-direction: column;
 }
 
-div.ui.message.subobject-error-message {
-    height: 100%;
-}
+div.subobject-error-button-container {
+    padding: 0.5rem;
 
+    display: flex;
+    justify-content: center;
+}
 
 /* Card heading */
 div.composite-subobjct-card-heading-container {

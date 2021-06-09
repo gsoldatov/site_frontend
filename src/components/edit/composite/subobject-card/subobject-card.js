@@ -4,7 +4,7 @@ import { Heading } from "./heading";
 import { CardMenu } from "./card-menu";
 import { CardGeneralTab } from "./general-tab";
 import { CardDataTab } from "./data-tab";
-import { ErrorPlaceholder } from "./placeholders/error";
+import { CardPlaceholder } from "./placeholders/error";
 import { LoadingPlaceholder } from "./placeholders/loading";
 import { DeletedPlaceholder } from "./placeholders/deleted";
 import { ResetSubobjectDialog } from "./dialogs/reset-subobject-dialog";
@@ -31,7 +31,8 @@ export class SubobjectCard extends React.PureComponent {
         const { isResetDialogDisplayed } = this.state;
         
         // Render fetch error message, when object could not 
-        if (!isSubbjectEdited && fetchError.length > 0) return <ErrorPlaceholder fetchError={fetchError} />;
+        if (!isSubbjectEdited && fetchError.length > 0) return <CardPlaceholder fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted}
+            subobjectID={subobjectID} updateCallback={updateCallback} />;
 
         // Render placeholder if object is not added into state.editedObjects
         if (!isSubbjectEdited) return <LoadingPlaceholder />;
