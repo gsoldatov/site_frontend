@@ -1,5 +1,5 @@
 import { deepCopy } from "../../util/copy";
-import { objectHasNoChanges } from "../../util/equality-checks";
+import { deepEqual } from "../../util/equality-checks";
 import { enumDeleteModes } from "../state-templates/composite-subobjects";
 import { getSubobjectDisplayOrder } from "./composite";
 /*
@@ -223,4 +223,37 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
         default:
             return request_object_data;
     }
+};
+
+
+/**
+ * Returns true if state of the object with provided `objectID` in state.editedObjects has no changes compared to its last saved state.
+ * 
+ * If object is not present in any of the storages (state.editedObjects, state.objects, state.objectsTags, data storages), also returns true.
+ */
+ export const objectHasNoChanges = (state, objectID) => {
+    // If objectID is not present in edited objects, return true to avoid copying edited objects
+    if (!state.editedObjects.hasOwnProperty(objectID)) return true;
+
+    // If saved object attributes, tags or data are missing, return true to avoid deleting existing changes of a non-cached object
+    if (!state.objects.hasOwnProperty(objectID) || !state.objectsTags.hasOwnProperty(objectID) || !objectDataIsInState(state, objectID)) 
+        return true;
+    
+    const editedObject = state.editedObjects[objectID];
+    
+    // Check object attributes
+    let savedAttributes = state.objects[objectID];
+    for (let key of Object.keys(savedAttributes))
+        if (!deepEqual(editedObject[key], savedAttributes[key])) return false;
+
+    // Check object tags
+    if (editedObject.addedTags.length > 0 || editedObject.removedTagIDs.length > 0 || !deepEqual(editedObject.currentTagIDs, state.objectsTags[objectID])) return false;
+
+    // Check object data
+    let savedObjectData = getObjectDataFromStore(state, objectID);
+    for (let key of Object.keys(savedObjectData))
+        if (!deepEqual(editedObject[key], savedObjectData[key])) return false;
+
+    // No changes were made
+    return true;
 };

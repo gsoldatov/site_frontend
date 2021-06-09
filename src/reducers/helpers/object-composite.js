@@ -3,9 +3,8 @@ import { getStateWithDeletedEditedNewSubobjects, getStateWithResetEditedObjects 
 
 import { enumDeleteModes, subobjectDefaults } from "../../store/state-templates/composite-subobjects";
 import { getNewSubobjectID } from "../../store/state-util/composite";
+import { objectHasNoChanges } from "../../store/state-util/objects";
 import { deepCopy } from "../../util/copy";
-import { objectHasNoChanges } from "../../util/equality-checks";
-
 
 
 /**

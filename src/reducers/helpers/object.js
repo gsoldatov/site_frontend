@@ -1,7 +1,6 @@
 import { deepCopy } from "../../util/copy";
 import { defaultEditedObjectState } from "../../store/state-templates/edited-object";
-import { getObjectDataFromStore } from "../../store/state-util/objects";
-import { objectHasNoChanges } from "../../util/equality-checks";
+import { getObjectDataFromStore, objectHasNoChanges } from "../../store/state-util/objects";
 
 
 /**
@@ -106,7 +105,7 @@ export const getStateWithDeletedEditedNewSubobjects = (state, objectIDs) => {
 
     objectIDs.forEach(objectID => {
         if (!(objectID in newEditedObjects)) return;
-        
+
         // Non-composite objects' check is required for deleting new subobjects of a new object, if its type was switched from composite before save.
         // if (!(objectID in newEditedObjects) || newEditedObjects[objectID].object_type !== "composite") return;
 

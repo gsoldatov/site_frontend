@@ -1,5 +1,5 @@
 import { SET_REDIRECT_ON_RENDER } from "../actions/common";
-import { objectHasNoChanges } from "../util/equality-checks";
+import { objectHasNoChanges } from "../store/state-util/objects";
 import { getStateWithRemovedEditedObjects } from "./helpers/object";
 
 
