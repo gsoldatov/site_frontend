@@ -36,15 +36,16 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         return newState;
     }
 
-    // Adds an existing subobject to the composite object
-    // If `resetEditedObject` is set to true, resets the object in state.editedObjects
+    // Adds an existing subobject to the composite object.
+    // If `resetEditedObject` is set to true, resets the object in state.editedObjects (for composite objects also deletes all of their new subobjects).
     if (command === "addExisting") {
         const { resetEditedObject, subobjectID, row, column } = update;
         let newState = state;
-        console.log(`IN addExisting command for object ${objectID}`)
-        console.log(`resetEditedObject = ${resetEditedObject}, subobjectID = ${subobjectID}, row = ${row}, column = ${column}`)
 
-        if (resetEditedObject) newState = getStateWithResetEditedObjects(state, [subobjectID]);
+        if (resetEditedObject) {
+            newState = getStateWithDeletedEditedNewSubobjects(newState, [subobjectID]);
+            newState = getStateWithResetEditedObjects(newState, [subobjectID]);
+        }
         const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };
         newSubobjects[subobjectID] = { ...deepCopy(subobjectDefaults), row, column };
         
