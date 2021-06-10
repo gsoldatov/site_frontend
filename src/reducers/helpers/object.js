@@ -50,7 +50,7 @@ export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDef
         };
         
         // Set object data
-        const data = getObjectDataFromStore(state, objectID) || {}; 
+        const data = getObjectDataFromStore(state, objectID); 
         throwIfDataIsMissing(data, `Failed to reset object ${objectID}: data is missing.`);
         stateAfterReset = {
             ...stateAfterReset,
