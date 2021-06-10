@@ -39,7 +39,7 @@ export class SubobjectCard extends React.PureComponent {
 
         // Render object card
         // Heading & menu
-        const heading = <Heading subobjectID={subobjectID} />;
+        const heading = <Heading objectID={objectID} subobjectID={subobjectID} />;
         const menu = <CardMenu objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} isResetDialogDisplayed={isResetDialogDisplayed} setIsResetDialogDisplayed={this.setIsResetDialogDisplayed} />;
 
         // Card body

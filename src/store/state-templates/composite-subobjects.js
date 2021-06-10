@@ -13,8 +13,7 @@ export const enumDeleteModes = {
 export const subobjectDefaults = {
     row: -1, 
     column: -1, 
-    deleteMode: enumDeleteModes.none, 
-    showResetDialog: false, 
     selected_tab: 0, 
+    deleteMode: enumDeleteModes.none, 
     fetchError: ""
 };

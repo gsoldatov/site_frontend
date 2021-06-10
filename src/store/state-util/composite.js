@@ -2,6 +2,9 @@
     Functions for checking/getting data from the state of a composite objects and subobjects.
 */
 
+import { deepEqual } from "../../util/equality-checks";
+import { validateObject } from "./objects";
+
 
 /**
  *  Returns an available object_id value for a new subobject.
@@ -42,4 +45,54 @@ export const getSubobjectDisplayOrder = (composite, collapseEmptyRows) => {
     }
 
     return displayOrder;
+};
+
+
+/**
+ * Returns true if subobject with `subobjectID` parameters in parent composite object with `objectID` were modified.
+ * 
+ * If object is not present in state.editedObjects or state.composite, returns false.
+ * 
+ * If subobject is not present in edited or saved state, returns false.
+ */
+ export const subobjectStateIsModified = (state, objectID, subobjectID) => {
+    const objectData = state.composite[objectID], editedObject = state.editedObjects[objectID];
+    if (objectData === undefined || editedObject === undefined) return false;
+
+    const savedSubobjectState = objectData.subobjects[subobjectID], editedSubobjectState = editedObject.composite.subobjects[subobjectID];
+    if (savedSubobjectState === undefined || editedSubobjectState === undefined) return false;
+
+    for (let attr of ["row", "column", "selected_tab"]) {
+        if (!deepEqual(savedSubobjectState[attr], editedSubobjectState[attr])) return true;
+    }
+
+    return false;
+};
+
+
+/**
+ * Returns true if non-composite subobject attributes/data are valid.
+ * 
+ * Always returns true for subobjects with composite object type or not present in the state.
+ */
+export const nonCompositeSubobjectIsValid = (state, subobjectID) => {
+    return getNonCompositeSubobjectValidationError(state, subobjectID) === undefined;
+};
+
+
+/**
+ * Returns validation error text for a non-composite edited object, if it's not valid.
+ * 
+ * If object is valid, has "composite" object type or not being edited, returns undefined.
+ */
+export const getNonCompositeSubobjectValidationError = (state, subobjectID) => {
+    const editedObject = state.editedObjects[subobjectID];
+    if (editedObject === undefined || editedObject.object_type === "composite") return undefined;
+
+    try {
+        validateObject(state, editedObject);
+        return undefined;
+    } catch (e) {
+        return e.message;
+    }
 };

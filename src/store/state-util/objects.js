@@ -242,18 +242,63 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
     const editedObject = state.editedObjects[objectID];
     
     // Check object attributes
-    let savedAttributes = state.objects[objectID];
-    for (let key of Object.keys(savedAttributes))
-        if (!deepEqual(editedObject[key], savedAttributes[key])) return false;
+    if (objectAttributesAreModified(state, objectID)) return false;
 
     // Check object tags
-    if (editedObject.addedTags.length > 0 || editedObject.removedTagIDs.length > 0 || !deepEqual(editedObject.currentTagIDs, state.objectsTags[objectID])) return false;
+    if (objectTagsAreModified(state, objectID)) return false;
 
     // Check object data
-    let savedObjectData = getObjectDataFromStore(state, objectID);
-    for (let key of Object.keys(savedObjectData))
-        if (!deepEqual(editedObject[key], savedObjectData[key])) return false;
+    if (objectDataIsModified(state, objectID)) return false;
 
     // No changes were made
     return true;
+};
+
+
+/**
+ * Returns true if object attributes in state.editedObjects are different than in state.objects.
+ * 
+ * If object is not present in state.objects or state.editedObjects, returns false.
+ */
+export const objectAttributesAreModified = (state, objectID) => {
+    console.log(`IN objectAttributesAreModified FOR objectID ${objectID}`)
+    const object = state.objects[objectID], editedObject = state.editedObjects[objectID];
+    if (object === undefined || editedObject === undefined) return false;
+
+    for (let key of Object.keys(object))
+        if (!deepEqual(object[key], editedObject[key])) return true;
+    
+    return false;
+};
+
+
+/**
+ * Returns true if object tags in state.editedObjects are modified.
+ * 
+ * If object is not present in state.editedObjects, returns false.
+ */
+export const objectTagsAreModified = (state, objectID) => {
+    const editedObject = state.editedObjects[objectID];
+    if (editedObject === undefined) return false;
+
+    return editedObject.addedTags.length > 0 || editedObject.removedTagIDs.length > 0 || !deepEqual(editedObject.currentTagIDs, state.objectsTags[objectID]);
+};
+
+
+/**
+ * Returns true if object data in state.editedObjects is modified.
+ * 
+ * If object is not present in state.editedObjects or corresponding data storage, returns false.
+ */
+export const objectDataIsModified = (state, objectID) => {
+    const editedObject = state.editedObjects[objectID];
+    if (editedObject === undefined) return false;
+
+    const savedObjectData = getObjectDataFromStore(state, objectID);
+    if (savedObjectData === undefined) return false;
+
+    for (let key of Object.keys(savedObjectData))
+        if (!deepEqual(editedObject[key], savedObjectData[key])) return true;
+    
+    return false;
 };
