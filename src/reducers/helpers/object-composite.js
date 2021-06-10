@@ -41,6 +41,8 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
     if (command === "addExisting") {
         const { resetEditedObject, subobjectID, row, column } = update;
         let newState = state;
+        console.log(`IN addExisting command for object ${objectID}`)
+        console.log(`resetEditedObject = ${resetEditedObject}, subobjectID = ${subobjectID}, row = ${row}, column = ${column}`)
 
         if (resetEditedObject) newState = getStateWithResetEditedObjects(state, [subobjectID]);
         const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };

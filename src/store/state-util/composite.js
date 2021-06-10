@@ -3,7 +3,7 @@
 */
 
 import { deepEqual } from "../../util/equality-checks";
-import { validateObject } from "./objects";
+import { validateNonCompositeObject } from "./objects";
 
 
 /**
@@ -47,23 +47,18 @@ export const getSubobjectDisplayOrder = (composite, collapseEmptyRows) => {
     return displayOrder;
 };
 
-
 /**
- * Returns true if subobject with `subobjectID` parameters in parent composite object with `objectID` were modified.
+ * Accepts subobject state from object data (`stateInObjectData`) and editedObject (`stateInEditedObject`).
  * 
- * If object is not present in state.editedObjects or state.composite, returns false.
+ * Returns true if the two state have different user-editable attributes.
  * 
- * If subobject is not present in edited or saved state, returns false.
+ * Returns false if any of the two states are not found.
  */
- export const subobjectStateIsModified = (state, objectID, subobjectID) => {
-    const objectData = state.composite[objectID], editedObject = state.editedObjects[objectID];
-    if (objectData === undefined || editedObject === undefined) return false;
-
-    const savedSubobjectState = objectData.subobjects[subobjectID], editedSubobjectState = editedObject.composite.subobjects[subobjectID];
-    if (savedSubobjectState === undefined || editedSubobjectState === undefined) return false;
+export const subobjectStateIsModified = (stateInObjectData, stateInEditedObject) => {
+    if (stateInObjectData === undefined || stateInEditedObject === undefined) return false;
 
     for (let attr of ["row", "column", "selected_tab"]) {
-        if (!deepEqual(savedSubobjectState[attr], editedSubobjectState[attr])) return true;
+        if (!deepEqual(stateInObjectData[attr], stateInEditedObject[attr])) return true;
     }
 
     return false;
@@ -71,26 +66,25 @@ export const getSubobjectDisplayOrder = (composite, collapseEmptyRows) => {
 
 
 /**
- * Returns true if non-composite subobject attributes/data are valid.
+ * Returns true if non-composite subobject attributes/data of `editedObject` are valid.
  * 
  * Always returns true for subobjects with composite object type or not present in the state.
  */
-export const nonCompositeSubobjectIsValid = (state, subobjectID) => {
-    return getNonCompositeSubobjectValidationError(state, subobjectID) === undefined;
+export const nonCompositeSubobjectIsValid = editedObject => {
+    return getNonCompositeSubobjectValidationError(editedObject) === undefined;
 };
 
 
 /**
- * Returns validation error text for a non-composite edited object, if it's not valid.
+ * Returns validation error text for a non-composite edited object `editedObject`, if it's not valid.
  * 
  * If object is valid, has "composite" object type or not being edited, returns undefined.
  */
-export const getNonCompositeSubobjectValidationError = (state, subobjectID) => {
-    const editedObject = state.editedObjects[subobjectID];
+export const getNonCompositeSubobjectValidationError = editedObject => {
     if (editedObject === undefined || editedObject.object_type === "composite") return undefined;
 
     try {
-        validateObject(state, editedObject);
+        validateNonCompositeObject(editedObject);
         return undefined;
     } catch (e) {
         return e.message;

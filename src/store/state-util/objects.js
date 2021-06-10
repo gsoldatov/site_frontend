@@ -25,23 +25,13 @@ export const checkIfObjectNameExists = (state, obj) => {
 
 
 /**
- * Returns true is `obj` data is valid or throws an error if not.
+ * Returns true is state of an edited object `obj` is valid or throws an error if not.
  */
 export const validateObject = (state, obj) => {
-    if (obj.object_name.length === 0) throw Error("Object name is required.");
-    // if (checkIfObjectNameExists(state, obj)) throw Error("Object name already exists.");
-
     switch (obj.object_type) {
-        case "link":
-            if (obj.link.length === 0) throw Error("Link value is required.");
-            break;
-        case "markdown":
-            if (obj.markdown.raw_text.length === 0) throw Error("Markdown text is required.");
-            break;
-        case "to_do_list":
-            if (Object.keys(obj.toDoList.items).length === 0) throw Error("At least one item is required in the to-do list.");
-            break;
         case "composite":
+            if (obj.object_name.length === 0) throw Error("Object name is required.");
+
             // Check if at least one non-deleted subobject exists
             let hasNonDeletedSubobjects = false;
             for (let subobjectID of Object.keys(obj.composite.subobjects))
@@ -56,12 +46,33 @@ export const validateObject = (state, obj) => {
             for (let subobjectID of Object.keys(obj.composite.subobjects)) {
                 const subobject = state.editedObjects[subobjectID];
                 if (subobject !== undefined && subobject.object_type !== "composite" && obj.composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none) 
-                    validateObject(state, subobject);
+                    validateNonCompositeObject(subobject);
             }
-
-            if (Object.keys(obj.composite.subobjects).length === 0) throw Error("At least one item is required in the to-do list.");
         default:
+            validateNonCompositeObject(obj);
+    }
+
+    return true;
+};
+
+/**
+ * Validates a single non-composite edited object `obj` and returns true if its valid.
+ */
+export const validateNonCompositeObject = obj => {
+    if (obj.object_name.length === 0) throw Error("Object name is required.");
+
+    switch (obj.object_type) {
+        case "link":
+            if (obj.link.length === 0) throw Error("Link value is required.");
             break;
+        case "markdown":
+            if (obj.markdown.raw_text.length === 0) throw Error("Markdown text is required.");
+            break;
+        case "to_do_list":
+            if (Object.keys(obj.toDoList.items).length === 0) throw Error("At least one item is required in the to-do list.");
+            break;
+        default:
+            throw Error(`validateNonCompositeObject received an unexpected object type "${obj.object_type} when validating object ${obj.object_id}`);
     }
 
     return true;
@@ -154,24 +165,34 @@ export const serializeObjectData = (state, obj) => {
 
 
 /**
- * Returns a new object with object data for the provided object_id or undefined.
+ * Returns object data from `state` storage for the provided `objectID`.
+ * 
+ * If `formatAsEditedObjectProps` is true, returns a deep copy of data formatted to be inserted into an edited object,
+ * otherwise returns the reference to the original object in the storage.
+ * 
+ * If object data or attributes (object type is required) are not present, returns `undefined`.
  */
-export const getObjectDataFromStore = (state, object_id) => {
-    if (!objectDataIsInState(state, object_id)) return undefined;
+export const getObjectDataFromStore = (state, objectID, formatAsEditedObjectProps) => {
+    if (!objectDataIsInState(state, objectID)) return undefined;
 
-    const objectType = state.objects[object_id].object_type;
+    const objectType = state.objects[objectID].object_type;
     switch (objectType) {
         case "link":
-            return { ...state.links[object_id] };
+            return formatAsEditedObjectProps
+                ? { ...state.links[objectID] }
+                : state.links[objectID];
         case "markdown":
-            return state.markdown[object_id] ? { markdown: { raw_text: state.markdown[object_id].raw_text, parsed: "" }} : undefined;
+            return formatAsEditedObjectProps
+                ? (state.markdown[objectID] ? { markdown: { raw_text: state.markdown[objectID].raw_text, parsed: "" }} : undefined)
+                : state.markdown[objectID];
         case "to_do_list":
-            return { toDoList: {
-                ...state.toDoLists[object_id],
-                items: deepCopy(state.toDoLists[object_id].items)
-            }};
+            return formatAsEditedObjectProps
+                ? { toDoList: deepCopy(state.toDoLists[objectID]) }
+                : state.toDoLists[objectID];
         case "composite":
-            return { composite: deepCopy(state.composite[object_id]) };
+            return formatAsEditedObjectProps
+                ? { composite: deepCopy(state.composite[objectID]) }
+                : state.composite[objectID];
         default:
             return undefined;
     }
@@ -179,21 +200,21 @@ export const getObjectDataFromStore = (state, object_id) => {
 
 
 /**
- * Returns true if object data for the provided `object_id` exists in state or false otherwise.
+ * Returns true if object data for the provided `objectID` exists in `state` or false otherwise.
  */
-export const objectDataIsInState = (state, object_id) => {
-    if (!state.objects[object_id]) return false;
-    const objectType = state.objects[object_id].object_type;
+export const objectDataIsInState = (state, objectID) => {
+    if (!state.objects[objectID]) return false;
+    const objectType = state.objects[objectID].object_type;
 
     switch (objectType) {
         case "link":
-            return object_id in state.links;
+            return objectID in state.links;
         case "markdown":
-            return object_id in state.markdown;
+            return objectID in state.markdown;
         case "to_do_list":
-            return object_id in state.toDoLists;
+            return objectID in state.toDoLists;
         case "composite":
-            return object_id in state.composite;
+            return objectID in state.composite;
         default:
             return false;
     }
@@ -239,16 +260,17 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
     if (!state.objects.hasOwnProperty(objectID) || !state.objectsTags.hasOwnProperty(objectID) || !objectDataIsInState(state, objectID)) 
         return true;
     
-    const editedObject = state.editedObjects[objectID];
+    const object = state.objects[objectID], objectTags = state.objectsTags[objectID], objectData = getObjectDataFromStore(state, objectID),
+        editedObject = state.editedObjects[objectID];
     
     // Check object attributes
-    if (objectAttributesAreModified(state, objectID)) return false;
+    if (objectAttributesAreModified(object, editedObject)) return false;
 
     // Check object tags
-    if (objectTagsAreModified(state, objectID)) return false;
+    if (objectTagsAreModified(objectTags, editedObject)) return false;
 
     // Check object data
-    if (objectDataIsModified(state, objectID)) return false;
+    if (objectDataIsModified(objectData, editedObject)) return false;
 
     // No changes were made
     return true;
@@ -256,13 +278,13 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
 
 
 /**
- * Returns true if object attributes in state.editedObjects are different than in state.objects.
+ * Accepts saved object attributes `object` and edited object state `editedObject`.
  * 
- * If object is not present in state.objects or state.editedObjects, returns false.
+ * Returns true if object attributes in `editedObjects` are different than in `object`.
+ * 
+ * If `object` or `editedObject` are undefined, returns false.
  */
-export const objectAttributesAreModified = (state, objectID) => {
-    console.log(`IN objectAttributesAreModified FOR objectID ${objectID}`)
-    const object = state.objects[objectID], editedObject = state.editedObjects[objectID];
+export const objectAttributesAreModified = (object, editedObject) => {
     if (object === undefined || editedObject === undefined) return false;
 
     for (let key of Object.keys(object))
@@ -273,32 +295,42 @@ export const objectAttributesAreModified = (state, objectID) => {
 
 
 /**
- * Returns true if object tags in state.editedObjects are modified.
+ * Accepts saved object tags `objectTags` and an edited object state `editedObject`.
+ * 
+ * Returns true if object tags in `editedObject` are modified.
  * 
  * If object is not present in state.editedObjects, returns false.
  */
-export const objectTagsAreModified = (state, objectID) => {
-    const editedObject = state.editedObjects[objectID];
+export const objectTagsAreModified = (objectTags, editedObject) => {
     if (editedObject === undefined) return false;
 
-    return editedObject.addedTags.length > 0 || editedObject.removedTagIDs.length > 0 || !deepEqual(editedObject.currentTagIDs, state.objectsTags[objectID]);
+    return editedObject.addedTags.length > 0 || editedObject.removedTagIDs.length > 0 || 
+        (editedObject.object_id > 0 && !deepEqual(editedObject.currentTagIDs, objectTags));  // don't compare currentTagIDs for new objects
 };
 
 
 /**
- * Returns true if object data in state.editedObjects is modified.
+ * Accepts saved in a storage object data `objectData` and an edited object state `editedObject`.
+ * 
+ * Returns true if object data `editedObject` is modified.
+ * 
+ * If `objectData` or `editedObject` are undefined, returns false.
  * 
  * If object is not present in state.editedObjects or corresponding data storage, returns false.
  */
-export const objectDataIsModified = (state, objectID) => {
-    const editedObject = state.editedObjects[objectID];
-    if (editedObject === undefined) return false;
+export const objectDataIsModified = (objectData, editedObject) => {
+    if (objectData === undefined || editedObject === undefined) return false;
 
-    const savedObjectData = getObjectDataFromStore(state, objectID);
-    if (savedObjectData === undefined) return false;
-
-    for (let key of Object.keys(savedObjectData))
-        if (!deepEqual(editedObject[key], savedObjectData[key])) return true;
-    
-    return false;
+    switch(editedObject.object_type) {
+        case "link":
+            return objectData.link !== editedObject.link;
+        case "markdown":
+            return objectData.raw_text !== editedObject.markdown.raw_text;
+        case "to_do_list":
+            return !deepEqual(objectData, editedObject.toDoList);
+        case "composite":
+            return !deepEqual(objectData, editedObject.composite);
+        default:
+            throw Error(`objectDataIsModified received an unexpected object type ${editedObject.object_type} when checking object ${editedObject.objectID}`);
+    }
 };
