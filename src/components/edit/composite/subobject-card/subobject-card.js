@@ -30,7 +30,7 @@ export class SubobjectCard extends React.PureComponent {
         const { objectID, subobjectID, updateCallback, selectedTab, isSubbjectEdited, fetchError, isSubobjectDeleted } = this.props;
         const { isResetDialogDisplayed } = this.state;
         
-        // Render fetch error message, when object could not 
+        // Render fetch error message, when object could not be fetched
         if (!isSubbjectEdited && fetchError.length > 0) return <CardPlaceholder fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted}
             subobjectID={subobjectID} updateCallback={updateCallback} />;
 
