@@ -18,7 +18,7 @@ export const SubobjectsContainer = ({ objectID }) => {
     const dispatch = useDispatch();
     const updateCallback = useMemo(
         () => params => dispatch(setEditedObject(params, objectID))
-    , []);
+    , [objectID]);
     const setAddMenuCallback = useMemo(
         () => addCompositeSubobjectMenu => dispatch(setAddCompositeSubobjectMenu(addCompositeSubobjectMenu))
     , []);
