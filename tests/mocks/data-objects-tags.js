@@ -5,7 +5,9 @@ import { addObjects } from "../../src/actions/data-objects";
 import { selectObjects } from "../../src/actions/objects";
 
 
-// Creats a store with 2 selected objects in the state (for /objects page)
+/**
+ * Creats a store with 2 selected objects in the state (for /objects page)
+ */
 export async function getStoreWithTwoSelectedObjects() {
     
     let store = createStore({ useLocalStorage: false, enableDebugLogging: false });

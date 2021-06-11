@@ -1,4 +1,6 @@
-// Return mocked object type base on its ID
+/**
+ * Return mocked object type base on its `objectID`.
+ */
 export function getObjectTypeFromID(objectID) {
     if (objectID >= 1 && objectID <= 1000) {
         return "link";
