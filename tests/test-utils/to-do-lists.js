@@ -1,7 +1,9 @@
 import { queryByPlaceholderText } from "@testing-library/dom";
 
 
-// Returns true if data in provided items is equal.
+/**
+ * Returns true if data in provided items is equal.
+ */
 export const compareItemData = (firstItemData, secondItemData) => {
     const attrs = ["item_data", "item_state", "commentary", "indent", "is_expanded"];
     for (let attr of attrs)
@@ -10,11 +12,15 @@ export const compareItemData = (firstItemData, secondItemData) => {
 };
 
 
-// Returns the to-do list default item order.
+/**
+ * Returns the to-do list default item order.
+ */
 export const getDefaultSortOrder = toDoList => Object.keys(toDoList.items).map(id => parseInt(id)).sort((a, b) => a - b);
 
 
-// Returns the numeric indent based on the CSS class of the indent <div> in the `item`.
+/**
+ * Returns the numeric indent based on the CSS class of the indent <div> in the `item`.
+ */
 const indentClassNames = ["", "one", "two", "three", "four", "five"];
 export const getRenderedItemIndent = item => {
     const indentDiv = item.querySelector(".to-do-list-item-indent");
@@ -27,7 +33,9 @@ export const getRenderedItemIndent = item => {
 };
 
 
-// Check if items in `TDLContainer` have the IDs corresponding to `itemOrder`
+/**
+ * Check if items in `TDLContainer` have the IDs corresponding to `itemOrder`
+ */
 export const checkRenderedItemsOrder = (TDLContainer, itemOrder) => {
     const items = TDLContainer.querySelectorAll(".to-do-list-item-container");
     items.forEach((item, index) => {

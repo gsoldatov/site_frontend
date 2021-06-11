@@ -1,4 +1,6 @@
-// Returns true if data in provided items is equal
+/**
+ * Returns true if data in provided items is equal
+ */
 export const compareItemData = (firstItemData, secondItemData) => {
     const attrs = ["item_data", "item_state", "commentary"];
     for (let attr of attrs)

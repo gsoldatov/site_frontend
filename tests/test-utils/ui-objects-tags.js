@@ -1,7 +1,9 @@
 import { queryByText, queryAllByText } from "@testing-library/dom";
 
 
-// Returns the input node of the InlineInput component inside the container
+/**
+ * Returns the input node of the InlineInput component inside the container
+ */
 export const getInlineInputField = ({ container, currentQueryText }) => {
     let placeholder = queryByText(container, "Enter tag name...");
     if (!placeholder && currentQueryText) queryAllByText(container, currentQueryText).forEach(node => {
@@ -12,7 +14,9 @@ export const getInlineInputField = ({ container, currentQueryText }) => {
 };
 
 
-// Returns the dropdown list node of the InlineInput component inside the container
+/**
+ * Returns the dropdown list node of the InlineInput component inside the container
+ */
 export const getDropdownOptionsContainer = ({ container, currentQueryText }) => {
     const input = getInlineInputField({ container, currentQueryText });
     if (!input) return null;
@@ -20,7 +24,9 @@ export const getDropdownOptionsContainer = ({ container, currentQueryText }) => 
 };
 
 
-// Returns the node of the dropdown list with the matching text
+/**
+ * Returns the node of the dropdown list with the matching text
+ */
 export const getTagInlineItem = ({ container, text }) => {
     let tag;
     queryAllByText(container, text).forEach(node => {
