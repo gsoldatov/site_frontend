@@ -51,7 +51,7 @@ export class SubobjectCard extends React.PureComponent {
             : null;
 
         return (
-            <div className="composite-subobject-card">
+            <div className="composite-subobject-card" id={subobjectID}>
                 {heading}
                 {menu}
                 {body}
