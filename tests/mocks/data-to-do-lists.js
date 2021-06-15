@@ -1,5 +1,5 @@
 /**
- * Mock to-do lists.
+ * Returns a mock to-do list object data based on the provided `objectID`.
 */
 export const getTDLByObjectID = objectID => {
     const strID = objectID.toString();

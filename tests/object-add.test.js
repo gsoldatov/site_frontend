@@ -6,9 +6,10 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-l
 
 import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSelectingElements, clickGeneralTabButton, clickDataTabButton, resetObject } from "./test-utils/ui-object";
+import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards } from "./test-utils/ui-composite";
 
 import { AddObject, EditObject } from "../src/components/object";
-
+import { getMappedSubobjectID } from "./mocks/data-composite";
 
 
 /*
@@ -24,7 +25,6 @@ beforeEach(() => {
         global.setFetchFail = jest.fn(setFetchFail);
     });
 });
-
 
 
 describe("UI checks", () => {
@@ -217,6 +217,71 @@ describe("Reset new object state", () => {
         expect(getCurrentObject(store.getState()).object_type).toEqual("link");
         expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(0);
     });
+
+
+    test("Reset composite (without subobjects)", async () => {
+        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+
+        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        clickDataTabButton(container);
+
+        // Add 2 new and one existing subobjects
+        addANewSubobject(container);
+        addANewSubobject(container);
+        await addAnExistingSubobject(container, "some name", store, { waitForObjectLoad: true });
+        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [3] });
+        const [firstSubobjectID, secondSubobjectID, thirdSubobjectID] = cards[0].map(card => card.id);
+
+        // Update existing subobject
+        const updatedSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][2]).subobjectNameInput, { target: { value: updatedSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[thirdSubobjectID].object_name).toEqual(updatedSubobjectName));
+
+        // Reset without resetting subobjects
+        resetObject(container);
+
+        // Check if new subobjects are removed, but existing subobject is not reset/deleted
+        expect(Object.keys(store.getState().editedObjects[0].composite.subobjects).length).toEqual(0);
+        expect(store.getState().editedObjects).not.toHaveProperty(firstSubobjectID);
+        expect(store.getState().editedObjects).not.toHaveProperty(secondSubobjectID);
+        
+        expect(store.getState().editedObjects).toHaveProperty(thirdSubobjectID);
+        expect(store.getState().editedObjects[thirdSubobjectID].object_name).toEqual(updatedSubobjectName);
+    });
+
+
+    test("Reset composite (with subobjects)", async () => {
+        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+
+        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        clickDataTabButton(container);
+
+        // Add 2 new and one existing subobjects
+        addANewSubobject(container);
+        addANewSubobject(container);
+        const existingSubobjectName = "some name";
+        await addAnExistingSubobject(container, existingSubobjectName, store, { waitForObjectLoad: true });
+        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [3] });
+        const [firstSubobjectID, secondSubobjectID, thirdSubobjectID] = cards[0].map(card => card.id);
+
+        // Update existing subobject
+        const updatedSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][2]).subobjectNameInput, { target: { value: updatedSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[thirdSubobjectID].object_name).toEqual(updatedSubobjectName));
+
+        // Reset without resetting subobjects
+        resetObject(container, true);
+
+        // Check if all added subobjects are removed from editedObjects
+        expect(Object.keys(store.getState().editedObjects[0].composite.subobjects).length).toEqual(0);
+        expect(store.getState().editedObjects).not.toHaveProperty(firstSubobjectID);
+        expect(store.getState().editedObjects).not.toHaveProperty(secondSubobjectID);
+        expect(store.getState().editedObjects).not.toHaveProperty(thirdSubobjectID);
+    });
 });
 
 
@@ -304,6 +369,41 @@ describe("Persist new object state", () => {
 
         clickDataTabButton(container);
         getByText(container.querySelector(".to-do-list-container"), newItemText);
+    });
+
+
+    test("Composite data and subobjects", async () => {
+        // Render /objects/add and add a new & an existing subobject
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/add", store
+        });
+
+        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        clickDataTabButton(container);
+
+        addANewSubobject(container);
+        await addAnExistingSubobject(container, "some name", store, { waitForObjectLoad: true });
+        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        const firstSubobjectID = cards[0][0].id, secondSubobjectID = cards[0][1].id;
+
+        // Modify new subobject name
+        const newSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput, { target: { value: newSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[firstSubobjectID].object_name).toEqual(newSubobjectName));
+
+        // Render /objects/1, then render /objects/add and check if the state was saved
+        history.push("/objects/1");
+        await waitForEditObjectPageLoad(container, store);
+
+        history.push("/objects/add");
+        await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
+        clickDataTabButton(container);
+
+        expect(store.getState().editedObjects).toHaveProperty(firstSubobjectID);
+        expect(store.getState().editedObjects).toHaveProperty(secondSubobjectID);
+        cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput.value).toEqual(newSubobjectName);
+        expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectNameInput.value).toEqual(store.getState().editedObjects[secondSubobjectID].object_name);
     });
 });
 
@@ -398,6 +498,108 @@ describe("Save new object errors", () => {
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().toDoLists[1]).toBeUndefined();
     });
+
+
+    test("Composite object without subobjects", async () => {
+        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+
+        // Modify object name and type, then click save button
+        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
+        fireEvent.click(getByText(container, "Save"));
+
+        // Check if error message is displayed and save did not occur
+        await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
+        expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
+        expect(store.getState().objects[1]).toBeUndefined();
+        expect(store.getState().composite[1]).toBeUndefined();
+    });
+
+
+    test("Composite object without non-deleted subobjects", async () => {
+        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+
+        // Modify object type and name
+        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
+
+        // Add 2 subobjects, then delete them
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        await addAnExistingSubobject(container, "some name", store, { waitForObjectLoad: true });
+        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][0]).deleteButton);
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][1]).fullDeleteButton);
+
+        // Click save button and check if error message is displayed and save did not occur
+        fireEvent.click(getByText(container, "Save"));
+        await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
+        expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
+        expect(store.getState().objects[1]).toBeUndefined();
+        expect(store.getState().composite[1]).toBeUndefined();
+    });
+
+
+    test("Composite object a with a new subobject with incorrect attributes", async () => {
+        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+
+        // Modify object type and name
+        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
+
+        // Add a new subobject and edit its data
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        const card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
+        clickSubobjectCardDataTabButton(card);
+        fireEvent.change(getByPlaceholderText(card, "Link"), { target: { value: "new link value" }});
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe("new link value"));
+
+        // Click save button and check if error message is displayed and save did not occur
+        fireEvent.click(getByText(container, "Save"));
+        await waitFor(() => getByText(container, "Object name is required.", { exact: false }));
+        expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
+        expect(store.getState().objects[1]).toBeUndefined();
+        expect(store.getState().composite[1]).toBeUndefined();
+        expect(store.getState().editedObjects).toHaveProperty(card.id);
+    });
+
+
+    test("Composite object a with an existing subobject with incorrect data", async () => {
+        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+
+        // Modify object type and name
+        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
+
+        // Add an existing subobject and modify its data to be invalid
+        clickDataTabButton(container);
+        await addAnExistingSubobject(container, "some name", store, { waitForObjectLoad: true });
+        const card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
+        clickSubobjectCardDataTabButton(card);
+        fireEvent.change(getByPlaceholderText(card, "Link"), { target: { value: "" }});
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe(""));
+
+        // Click save button and check if error message is displayed and save did not occur
+        fireEvent.click(getByText(container, "Save"));
+        await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
+        expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
+        expect(store.getState().objects[1]).toBeUndefined();
+        expect(store.getState().composite[1]).toBeUndefined();
+        expect(store.getState().editedObjects).toHaveProperty(card.id);
+    });
 });
 
 
@@ -486,7 +688,7 @@ describe("Save new object", () => {
     });
 
 
-    test("Save To-do list", async () => {
+    test("Save to-do list", async () => {
         let { container, history, store } = renderWithWrappersAndDnDProvider(
             <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
             { route: "/objects/add" }
@@ -527,22 +729,124 @@ describe("Save new object", () => {
         getByText(container, "Modified at:");
         expect(store.getState().toDoLists[object_id].items[0].item_text).toEqual("new value");
     });
+
+    
+    test("Save composite", async () => {
+        let { container, history, store } = renderWithWrappers(
+            <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
+            { route: "/objects/add" }
+        );
+
+        // Modify object type and name
+        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
+
+        // Add 3 new & 4 existing subobjects
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        addANewSubobject(container);
+        addANewSubobject(container);
+        await addAnExistingSubobject(container, "deleted existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, "fully deleted existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, "unmodified existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, "existing to be modified", store, { waitForObjectLoad: true });
+        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [7] });
+        const [deletedNewID, firstNewID, secondNewID, deletedExistingID, fullyDeletedExistingID, unmodifiedExistingID, modifiedExistingID] = cards[0].map(card => card.id);
+
+        // Delete 2 subobjects (new + existing), fully delete 1 existing subobject
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][0]).deleteButton);
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][3]).deleteButton);
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][4]).fullDeleteButton);
+
+        // Modify new subobjects
+        const firstNewName = "first new subobject", firstLink = "http://first.link";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][1]).subobjectNameInput, { target: { value: firstNewName } });
+        await waitFor(() => expect(store.getState().editedObjects[firstNewID].object_name).toEqual(firstNewName));
+        clickSubobjectCardDataTabButton(cards[0][1]);
+        fireEvent.change(getByPlaceholderText(cards[0][1], "Link"), { target: { value: firstLink }});
+        await waitFor(() => expect(store.getState().editedObjects[firstNewID].link).toEqual(firstLink));
+
+        const secondNewName = "second new subobject", secondLink = "http://second.link";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][2]).subobjectNameInput, { target: { value: secondNewName } });
+        await waitFor(() => expect(store.getState().editedObjects[secondNewID].object_name).toEqual(secondNewName));
+        clickSubobjectCardDataTabButton(cards[0][2]);
+        fireEvent.change(getByPlaceholderText(cards[0][2], "Link"), { target: { value: secondLink }});
+        await waitFor(() => expect(store.getState().editedObjects[secondNewID].link).toEqual(secondLink));
+
+        // Modify existing subobject
+        const unModifiedExistingTimestamp = store.getState().objects[unmodifiedExistingID].modified_at;
+        const modifiedExistingName = "modified existing", modifiedExistingLink = "http://modifed.link";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][6]).subobjectNameInput, { target: { value: modifiedExistingName } });
+        await waitFor(() => expect(store.getState().editedObjects[modifiedExistingID].object_name).toEqual(modifiedExistingName));
+        clickSubobjectCardDataTabButton(cards[0][6]);
+        fireEvent.change(getByPlaceholderText(cards[0][6], "Link"), { target: { value: modifiedExistingLink }});
+        await waitFor(() => expect(store.getState().editedObjects[modifiedExistingID].link).toEqual(modifiedExistingLink));
+
+        // Check if object is redirected after adding a correct object
+        fireEvent.click(getByText(container, "Save"));
+        const object_id = 1000; // mock object returned has this id
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+        
+        // Check added object (is added to state.editedObjects & state.composite and has 4 subobjects in both states)
+        const strObjectID = object_id.toString();
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(strObjectID));
+        const state = store.getState();
+        expect(state.composite).toHaveProperty(strObjectID);
+        expect(Object.keys(state.composite[object_id].subobjects).length).toEqual(4);
+        expect(Object.keys(state.editedObjects[object_id].composite.subobjects).length).toEqual(4);
+
+        // Deleted new subobject, deleted and fully deleted existing subobjects
+        for (let subobjectID of [deletedNewID, deletedExistingID, fullyDeletedExistingID]) {
+            const strSubobjectID = subobjectID.toString();
+            expect(state.editedObjects).not.toHaveProperty(strSubobjectID);
+            expect(state.editedObjects[object_id].composite.subobjects).not.toHaveProperty(strSubobjectID);
+            expect(state.composite[object_id].subobjects).not.toHaveProperty(strSubobjectID);
+        }
+
+        // First and second new subobjects (are present in editedObjects under mapped ids)
+        for (let [subobjectID, subobjectName] of [[firstNewID, firstNewName], [secondNewID, secondNewName]]) {
+            const strSubobjectID = subobjectID.toString();
+            expect(state.editedObjects).not.toHaveProperty(strSubobjectID);
+            
+            const mappedID = getMappedSubobjectID(subobjectID, "link").toString();
+            expect(state.editedObjects).toHaveProperty(mappedID);
+            expect(state.editedObjects[mappedID].object_name).toEqual(subobjectName);
+
+            expect(state.composite[object_id].subobjects).toHaveProperty(mappedID);
+            expect(state.editedObjects[object_id].composite.subobjects).toHaveProperty(mappedID);
+        }
+
+        // Unmodified and modified existing subobjects (are present in state.editedObjects and in subobjects of saved object)
+        for (let subobjectID of [unmodifiedExistingID, modifiedExistingID]) {
+            const strSubobjectID = subobjectID.toString();
+            expect(state.editedObjects).toHaveProperty(strSubobjectID);
+            expect(state.composite[object_id].subobjects).toHaveProperty(strSubobjectID);
+            expect(state.editedObjects[object_id].composite.subobjects).toHaveProperty(strSubobjectID);
+        }
+
+        // Unmodified existing subobject (modified_at timestamp is not changed)
+        expect(state.editedObjects[unmodifiedExistingID].modified_at).toEqual(unModifiedExistingTimestamp);
+        expect(state.objects[unmodifiedExistingID].modified_at).toEqual(unModifiedExistingTimestamp);
+
+        // Modified existing subobject (has updated modified_at & object_name)
+        expect(state.objects[modifiedExistingID].object_name).toEqual(modifiedExistingName);
+        expect(state.links[modifiedExistingID].link).toEqual(modifiedExistingLink);
+        expect(state.editedObjects[modifiedExistingID].modified_at).toEqual(state.objects[object_id].modified_at);
+        expect(state.objects[modifiedExistingID].modified_at).toEqual(state.objects[object_id].modified_at);
+
+        // Rows of non-deleted subobjects are updated
+        for (let subobjectsStorage of [state.composite[object_id].subobjects, state.editedObjects[object_id].composite.subobjects]) {
+            expect(subobjectsStorage[getMappedSubobjectID(firstNewID, "link")].row).toEqual(0);
+            expect(subobjectsStorage[getMappedSubobjectID(secondNewID, "link")].row).toEqual(1);
+            expect(subobjectsStorage[unmodifiedExistingID].row).toEqual(2);
+            expect(subobjectsStorage[modifiedExistingID].row).toEqual(3);
+        }
+
+        // Subobject cards are rendered
+        clickDataTabButton(container);
+        cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+        const expectedCardIDs = [getMappedSubobjectID(firstNewID, "link"), getMappedSubobjectID(secondNewID, "link"), unmodifiedExistingID, modifiedExistingID];
+        for (let i = 0; i < 4; i++) expect(cards[0][i].id).toEqual(expectedCardIDs[i].toString());
+    });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

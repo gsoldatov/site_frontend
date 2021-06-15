@@ -1,9 +1,9 @@
 import { autoGenerateTag } from "./mock-fetch-handlers-tags";
-import { getObjectTypeFromID } from "./data-objects";
-import { getTDLByObjectID } from "./data-to-do-lists";
+import { getObjectTypeFromID, generateObjectData, generateObjectAttributes } from "./data-objects";
+import { mapAndCacheNewSubobjects } from "./data-composite";
 
-let _cachedObjects = {};      // object & object data caches, which are used to pass object data from add/update to view handler
-let _cachedObjectData = {};
+export let _cachedObjects = {};      // object & object data caches, which are used to pass object data from add/update to view handler
+export let _cachedObjectData = {};
 export const resetObjectsCaches = () => { _cachedObjects = {}; _cachedObjectData = {} };
 
 
@@ -11,7 +11,7 @@ function handleAdd(body) {
     const object = JSON.parse(body).object;
 
     // Check object type
-    if (!["link", "markdown", "to_do_list"].includes(object["object_type"]))
+    if (!["link", "markdown", "to_do_list", "composite"].includes(object["object_type"]))
         throw new Exception("Received unexpected object_type in handleAdd");
 
     // // Handle existing object_name case  // unique constraint on lowered object_name is removed
@@ -20,7 +20,7 @@ function handleAdd(body) {
 
     // Set attributes of the new object
     const objectID = 1000;
-    const createdAt = new Date();
+    const createdAt =  new Date();
     const modifiedAt = new Date((new Date(createdAt)).setDate(createdAt.getDate() + 1));
     const response = { object_id: objectID, object_type: object["object_type"], object_name: object["object_name"], object_description: object["object_description"], 
                         created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString() };
@@ -33,9 +33,12 @@ function handleAdd(body) {
     });
     response.tag_updates = tagUpdates;
 
+    // Map composite object's new subobjects
+    if (object["object_type"] === "composite") response["object_data"] = mapAndCacheNewSubobjects(object["object_data"], createdAt, modifiedAt);
+
     // Cache object attributes & data
     _cachedObjects[objectID] = response;
-    _cachedObjectData[objectID] = object["object_data"];    
+    _cachedObjectData[objectID] = object["object_data"];
 
     // Send response
     return { status: 200, json: () => Promise.resolve({ object: response })};
@@ -62,21 +65,15 @@ function handleView(body) {
     let objects = object_ids.map(id => {
         if (_cachedObjects.hasOwnProperty(id)) {
             let object = _cachedObjects[id];
-            object.current_tag_ids = object.tag_updates.added_tag_ids;      // fetching the object after it is updated requires a different logic for getting current_tag_ids
-            delete object.tag_updates;                                      // (pre_tag_ids + added_tag_ids - removed_tag_ids)
+            if (object.hasOwnProperty("tag_updates")) {
+                object.current_tag_ids = object.tag_updates.added_tag_ids;      // fetching the object after it is updated requires a different logic for getting current_tag_ids
+                delete object.tag_updates;                                      // (pre_tag_ids + added_tag_ids - removed_tag_ids)
+            }
             delete _cachedObjects[id];
             return object;
         }
 
-        return {
-            object_id: id,
-            object_type: getObjectTypeFromID(id),
-            object_name: `object #${id}`,
-            object_description: `object #${id} description`,
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(),
-            modified_at: (new Date()).toUTCString(),
-            current_tag_ids: [1, 2, 3, 4, 5]
-        };
+        return generateObjectAttributes({ object_id: id });
     });
 
     // Set object_data list
@@ -86,15 +83,8 @@ function handleView(body) {
             delete _cachedObjectData[id];
             return data;
         }
-
-        // links
-        if (id >= 0 && id <= 1000) return {object_id: id, object_type: "link", object_data: {link: `https://website${id}.com`}};
-        // markdown
-        else if (id >= 1001 && id <= 2000) return {object_id: id, object_type: "markdown", object_data: {raw_text: `# Markdown Object \\#${id}\n1. item 1;\n2. item 2;`}};
-        // to-do lists
-        else if (id >= 2001 && id <= 3000) return {object_id: id, object_type: "to_do_list", object_data: getTDLByObjectID(id) };
-        // default
-        else return {object_id: id, object_type: "unknown", object_data: {}};
+        
+        return generateObjectData(id);
     });
 
     // Send response
@@ -131,8 +121,8 @@ function handleUpdate(body) {
     const responseObj = { object: {
         ...object,
         object_type: getObjectTypeFromID(object.object_id),
-        created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(),
-        modified_at: (new Date()).toUTCString(),
+        created_at: (new Date(Date.now() + 24*60*60*1000 + object.object_id)).toUTCString(),
+        modified_at: (new Date(Date.now() + 2*24*60*60*1000 + object.object_id)).toUTCString(),
         tag_updates: tagUpdates
     }};
     return { status: 200, json: () => Promise.resolve(responseObj) };
@@ -238,7 +228,6 @@ export function getMockedPageObjectIDs(pI) {
 
 function handleUpdateTags(body) {
     const parsedBody = JSON.parse(body);
-    const objectIDs = parsedBody.object_ids;
     const addedTagIDs = (parsedBody.added_tags || []).map(tagID => typeof(tagID) === "number" ? tagID : autoGenerateTag({ tag_name: tagID }));  // autogenerate new tags for strings
 
     let responseObj = {
@@ -252,11 +241,42 @@ function handleUpdateTags(body) {
 }
 
 
+function handleObjectsSearch(body) {
+    const { query_text, maximum_values, existing_ids } = JSON.parse(body).query;
+
+    // Get id of the found object
+    let objectID = 10000;
+    while (existing_ids.indexOf(objectID) !== -1) objectID++;
+
+    // Get object_type from object name
+    let object_type = "link";
+    for (let ot of ["markdown", "to_do_list", "composite"]) 
+        if (query_text.toLowerCase().indexOf(ot) > -1) {
+            object_type = ot;
+            break;
+        }
+
+    // Generate object attributes & data and cache them
+    const object = generateObjectAttributes({ object_id: objectID, object_name: query_text, object_type });
+    const objectData = generateObjectData(objectID, object_type);
+
+    // Cache object attributes & data
+    _cachedObjects[objectID] = object;
+    _cachedObjectData[objectID] = objectData;
+
+
+    // Return object_id of the generated object
+    const responseObj = { object_ids: [objectID] };
+    return { status: 200, json: () => Promise.resolve(responseObj) };
+}
+
+
 export const objectsHandlersList = new Map([
     ["/objects/add", {"POST": handleAdd}],
     ["/objects/view", {"POST": handleView}],
     ["/objects/delete", {"DELETE": handleDelete}],
     ["/objects/update", {"PUT": handleUpdate}],
     ["/objects/get_page_object_ids", {"POST": handleGetPageObjectIDs}],
-    ["/objects/update_tags", {"PUT": handleUpdateTags}]
+    ["/objects/update_tags", {"PUT": handleUpdateTags}],
+    ["/objects/search", {"POST": handleObjectsSearch}]
 ]);

@@ -48,12 +48,16 @@ export const validateObject = (state, obj) => {
                 if (subobject !== undefined && subobject.object_type !== "composite" && obj.composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none) 
                     validateNonCompositeObject(subobject);
             }
+
+            break;
         default:
             validateNonCompositeObject(obj);
+            break;
     }
 
     return true;
 };
+
 
 /**
  * Validates a single non-composite edited object `obj` and returns true if its valid.
@@ -72,7 +76,7 @@ export const validateNonCompositeObject = obj => {
             if (Object.keys(obj.toDoList.items).length === 0) throw Error("At least one item is required in the to-do list.");
             break;
         default:
-            throw Error(`validateNonCompositeObject received an unexpected object type "${obj.object_type} when validating object ${obj.object_id}`);
+            throw Error(`validateNonCompositeObject received an unexpected object type "${obj.object_type}" when validating object ${obj.object_id}`);
     }
 
     return true;
