@@ -79,6 +79,7 @@ div.composite-subobjct-card-heading {
     width: 100%;
     height: 32px;   /* set fixed height close no actual height it takes; also equals to SUIR <Loader> component with default size prop height (which is not rendered anymore) */
     display: inline-flex;
+    min-width: 0;   /* shrink flex container when `composite-subobject-card-heading-text` content overflows available space */
 }
 
 div.composite-subobject-card-heading-left, div.composite-subobject-card-heading-right {
@@ -86,15 +87,18 @@ div.composite-subobject-card-heading-left, div.composite-subobject-card-heading-
     align-items: center;
     padding-top: 0.25em;
     padding-bottom: 0.25em;
+    min-width: 0;   /* shrink flex container when `composite-subobject-card-heading-text` content overflows available space */
 }
 
 div.composite-subobject-card-heading-right {
     margin-left: auto;  /* align div to the right side of its parent */
     margin-right: 0.5rem;
+    flex-shrink: 0;
 }
 
 div.composite-subobject-card-heading-object-type-icon {
     margin-left: 0.5em;
+    flex-shrink: 0;
 }
 
 div.composite-subobject-card-heading-text {
@@ -105,6 +109,7 @@ div.composite-subobject-card-heading-text {
 
     /* Disable displaying object name on multiple lines */
     height: 1.2em;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -117,6 +122,7 @@ div.composite-subobject-card-heading-text.unnamed {
 
 /* Expand/collapse button */
 button.ui.button.subobject-card-expand-toggle {
+    flex-shrink: 0;
     margin-left: 0.25rem;
     transition: var(--subobject-card-expand-collapse-time);
     /*-webkit-transition: var(--subobject-card-expand-collapse-time);   /* properties for better browser support * / 
