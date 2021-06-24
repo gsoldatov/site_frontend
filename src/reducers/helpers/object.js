@@ -154,3 +154,51 @@ export const getStateWithResetEditedExistingSubobjects = (state, objectIDs) => {
 
     return newState;
 };
+
+
+/**
+ * Returns state after all unchanged existing subobjects of an object `objectID` were removed.
+ * 
+ * Does nothing if object is not present in state.editedObjects or is not composite.
+ */
+const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID) => {
+    if (state.editedObjects[objectID] === undefined || state.editedObjects[objectID].object_type !== "composite") return state;
+    let newEditedObjects = { ...state.editedObjects };
+
+    for (let subobjectID of Object.keys(state.editedObjects[objectID].composite.subobjects)) {
+        if (parseInt(subobjectID) > 0 && objectHasNoChanges(state, subobjectID, false)) delete newEditedObjects[subobjectID];
+    }
+    
+    return { ...state, editedObjects: newEditedObjects }; 
+};
+
+
+/**
+ * Returns the state with unchanged editedObjects being removed from it.
+ * 
+ *  - If current edited object is new:
+ *      - if `deleteNewObject` is true, removes new object and, its new and unchanged existing subobjects, if it's composite;
+ *      - if `deleteNewObject` is false and the object is composite, remove unchanged existing subobjects;
+ *  - if current edited object is existing:
+ *      - if current edited object is unchanged:
+ *          - removes it;
+ *          - removes all subobjects for composite objects;
+ *      - if current edited object is changed:
+ *          - removes all unchanged subobjects for composite objects.
+ */
+export const getStateAfterObjectPageLeave = (state, deleteNewObject) => {
+    const currentObjectID = state.objectUI.currentObjectID;
+    let newState = state;
+    // New object
+    if (currentObjectID === 0) {
+        if (deleteNewObject) newState = getStateWithRemovedEditedObjects(newState, [0]);
+        else newState = getStateWithRemovedUnchangedEditedSubobjects(newState, currentObjectID);
+    }
+    // Existing object
+    else {
+        if (objectHasNoChanges(state, currentObjectID, false)) newState = getStateWithRemovedEditedObjects(newState, [currentObjectID]);
+        else newState = getStateWithRemovedUnchangedEditedSubobjects(newState, currentObjectID);
+    }
+
+    return newState;
+}

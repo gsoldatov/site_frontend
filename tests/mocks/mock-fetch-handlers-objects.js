@@ -52,10 +52,10 @@ function handleView(body) {
     const bodyJSON = JSON.parse(body);
 
     if ("object_ids" in bodyJSON)
-        object_ids = bodyJSON["object_ids"].filter(id => (id >= 0 && id <= 3000) || _cachedObjects.hasOwnProperty(id));
+        object_ids = bodyJSON["object_ids"].filter(id => (id >= 0 && id <= 4000) || _cachedObjects.hasOwnProperty(id));
     
     if ("object_data_ids" in bodyJSON)
-        object_data_ids = bodyJSON["object_data_ids"].filter(id => (id >= 0 && id <= 3000) || _cachedObjectData.hasOwnProperty(id));
+        object_data_ids = bodyJSON["object_data_ids"].filter(id => (id >= 0 && id <= 4000) || _cachedObjectData.hasOwnProperty(id));
     
     // Return 404 response if both object_ids and object_data_ids do not "exist"
     if (object_ids.length === 0 && object_data_ids.length === 0)
@@ -118,14 +118,21 @@ function handleUpdate(body) {
     });
     
     // Set and send response
-    const responseObj = { object: {
+    const createdAt = new Date(Date.now() + 24*60*60*1000 + object.object_id);
+    const modifiedAt = new Date(Date.now() + 2*24*60*60*1000 + object.object_id);
+    const objectType = getObjectTypeFromID(object.object_id);
+
+    const response = { object: {
         ...object,
-        object_type: getObjectTypeFromID(object.object_id),
-        created_at: (new Date(Date.now() + 24*60*60*1000 + object.object_id)).toUTCString(),
-        modified_at: (new Date(Date.now() + 2*24*60*60*1000 + object.object_id)).toUTCString(),
+        object_type: objectType,
+        created_at: createdAt.toDateString(),
+        modified_at: modifiedAt.toDateString(),
         tag_updates: tagUpdates
     }};
-    return { status: 200, json: () => Promise.resolve(responseObj) };
+
+    if (objectType === "composite") response.object["object_data"] = mapAndCacheNewSubobjects(object["object_data"], createdAt, modifiedAt);
+
+    return { status: 200, json: () => Promise.resolve(response) };
 }
 
 

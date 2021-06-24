@@ -2,18 +2,22 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle, queryByPlaceholderText } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle, queryByPlaceholderText, screen } from "@testing-library/dom";
 
 import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
 import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, resetObject } from "./test-utils/ui-object";
+import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards } from "./test-utils/ui-composite";
 import { getTDLByObjectID } from "./mocks/data-to-do-lists";
+import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject, getMappedSubobjectID } from "./mocks/data-composite";
 
 import createStore from "../src/store/create-store";
 
 import { AddObject, EditObject } from "../src/components/object";
 import { setObjectsTags } from "../src/actions/data-tags";
 import { addObjects, addObjectData } from "../src/actions/data-objects";
+import { enumDeleteModes } from "../src/store/state-templates/composite-subobjects";
+
 
 
 /*
@@ -80,6 +84,36 @@ describe("Load object errors & UI checks", () => {
         let addObjectButton = getByText(container, "Add Object");
         fireEvent.click(addObjectButton);
         expect(history.entries[history.length - 1].pathname).toBe("/objects/add");
+    });
+
+
+    test("Load composite object's subobjects with fetch error", async () => {
+        let store = getStoreWithCompositeObject();
+        setFetchFail(true);
+        
+        let { container, history } = renderWithWrappers(
+            <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
+            { 
+                store,
+                route: "/objects/1" 
+            }
+        );
+        
+        // Load page
+        await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
+
+        // Wait for subobject fetchs to end
+        await waitFor(() => expect(store.getState().editedObjects[1].composite.subobjects[2].fetchError).not.toEqual(""));
+        const cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        getByText(cards[0][0], "Object is unavailable.");
+
+        // Delete and restore unaviable subobject
+        fireEvent.click(getByText(cards[0][0], "Delete"));
+        expect(store.getState().editedObjects[1].composite.subobjects[2].deleteMode).toEqual(enumDeleteModes.subobjectOnly);
+
+        fireEvent.click(getByText(cards[0][0], "Restore"));
+        expect(store.getState().editedObjects[1].composite.subobjects[2].deleteMode).toEqual(enumDeleteModes.none);
     });
 });
 
@@ -211,6 +245,53 @@ describe("Load object from state", () => {
         expect(TDLContainer).toBeTruthy();
         for (let item of objectData.object_data.items) getByText(TDLContainer, item.item_text);
         getByPlaceholderText(TDLContainer, "New item");
+    });
+
+
+    test("Load a composite object and subobjects from state", async () => {
+        let store = getStoreWithCompositeObjectAndSubobjects();
+
+        let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/1",
+            store: store
+        });
+        
+        // Load page
+        await waitFor(() => getByText(container, "Object Information"));
+
+        // Check if object type is displayed, but can't be changed
+        const objectTypeSelector = container.querySelector(".object-type-menu");
+        const compositeButton = getByText(objectTypeSelector, "Composite");
+        expect(compositeButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // markdown button includes a check icon
+        const linkButton = getByText(objectTypeSelector, "Link");
+        fireEvent.click(linkButton);
+        expect(getCurrentObject(store.getState()).object_type).toEqual("composite");
+
+
+        // Wait for subobjects to be loaded into state.editedObjects
+        clickDataTabButton(container);
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty("2"));
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty("3"));
+        const cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        const state = store.getState();
+
+        // Check first subobject
+        expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput.value).toEqual(state.editedObjects[2].object_name);
+        expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectDescriptionInput.value).toEqual(state.editedObjects[2].object_description);
+        clickSubobjectCardDataTabButton(cards[0][0]);
+        const linkInput = getByPlaceholderText(cards[0][0], "Link");
+        expect(linkInput.value).toEqual(state.editedObjects[2].link);
+
+        // Check second subobject
+        expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectNameInput.value).toEqual(state.editedObjects[3].object_name);
+        expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectDescriptionInput.value).toEqual(state.editedObjects[3].object_description);
+        clickSubobjectCardDataTabButton(cards[0][1]);
+
+        const markdownContainer = cards[0][1].querySelector(".markdown-container");
+        expect(markdownContainer).toBeTruthy();
+        const markdownInput = markdownContainer.querySelector(".edit-page-textarea");
+        expect(markdownInput).toBeTruthy();
+        expect(markdownInput.value).toEqual(state.editedObjects[3].markdown.raw_text);
     });
 });
 
@@ -353,6 +434,108 @@ describe("Load object from backend", () => {
         for (let key of getCurrentObject(store.getState()).toDoList.itemOrder) getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[key].item_text);
         getByPlaceholderText(TDLContainer, "New item");
     });
+
+
+    test("Load a composite object from state and subobjects from backend", async () => {
+        let store = getStoreWithCompositeObject();
+
+        let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/1",
+            store: store
+        });
+        
+        // Load page
+        await waitFor(() => getByText(container, "Object Information"));
+
+        // Wait for subobjects to be loaded into state.editedObjects
+        clickDataTabButton(container);
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty("2"));
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty("3"));
+        const cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        const state = store.getState();
+
+        // Check first subobject
+        expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput.value).toEqual(state.editedObjects[2].object_name);
+        expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectDescriptionInput.value).toEqual(state.editedObjects[2].object_description);
+        clickSubobjectCardDataTabButton(cards[0][0]);
+        let linkInput = getByPlaceholderText(cards[0][0], "Link");
+        expect(linkInput.value).toEqual(state.editedObjects[2].link);
+
+        // Check second subobject
+        expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectNameInput.value).toEqual(state.editedObjects[3].object_name);
+        expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectDescriptionInput.value).toEqual(state.editedObjects[3].object_description);
+        clickSubobjectCardDataTabButton(cards[0][1]);
+        linkInput = getByPlaceholderText(cards[0][1], "Link");
+        expect(linkInput.value).toEqual(state.editedObjects[3].link);
+    });
+
+
+    test("Load a composite object and subobjects from backend", async () => {
+        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3901"
+        });
+
+        // Load page and wait for subobjects to load
+        await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
+        for (let subobjectID of Object.keys(store.getState().editedObjects[3901].composite.subobjects))
+            await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(subobjectID));
+        
+        // Check if subobjects are properly displayed
+        const state = store.getState();
+        const cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+
+        // Check first subobject
+        const firstID = cards[0][0].id;
+        expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput.value).toEqual(state.editedObjects[firstID].object_name);
+        expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectDescriptionInput.value).toEqual(state.editedObjects[firstID].object_description);
+        clickSubobjectCardDataTabButton(cards[0][0]);
+        let linkInput = getByPlaceholderText(cards[0][0], "Link");
+        expect(linkInput.value).toEqual(state.editedObjects[firstID].link);
+
+        // Check second subobject
+        const secondID = cards[0][1].id;
+        expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectNameInput.value).toEqual(state.editedObjects[secondID].object_name);
+        expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectDescriptionInput.value).toEqual(state.editedObjects[secondID].object_description);
+        clickSubobjectCardDataTabButton(cards[0][1]);
+
+        const markdownContainer = cards[0][1].querySelector(".markdown-container");
+        expect(markdownContainer).toBeTruthy();
+        const markdownInput = markdownContainer.querySelector(".edit-page-textarea");
+        expect(markdownInput).toBeTruthy();
+        expect(markdownInput.value).toEqual(state.editedObjects[secondID].markdown.raw_text);
+
+        // Check third subobject
+        const thirdID = cards[0][2].id;
+        expect(getSubobjectCardAttributeElements(cards[0][2]).subobjectNameInput.value).toEqual(state.editedObjects[thirdID].object_name);
+        expect(getSubobjectCardAttributeElements(cards[0][2]).subobjectDescriptionInput.value).toEqual(state.editedObjects[thirdID].object_description);
+        clickSubobjectCardDataTabButton(cards[0][2]);
+        
+        const TDLContainer = cards[0][2].querySelector(".to-do-list-container");
+        expect(TDLContainer).toBeTruthy();
+        for (let key of state.editedObjects[thirdID].toDoList.itemOrder) getByText(TDLContainer, state.editedObjects[thirdID].toDoList.items[key].item_text);
+        getByPlaceholderText(TDLContainer, "New item");
+
+        // Check fourth subobject
+        const fourthID = cards[0][3].id;
+        expect(getSubobjectCardAttributeElements(cards[0][3]).subobjectNameInput.value).toEqual(state.editedObjects[fourthID].object_name);
+        expect(getSubobjectCardAttributeElements(cards[0][3]).subobjectDescriptionInput.value).toEqual(state.editedObjects[fourthID].object_description);
+        clickSubobjectCardDataTabButton(cards[0][3]);
+
+        getByText(cards[0][3], "Object preview unavailable.");
+    });
+
+
+    test("Load a composite object without subobjects from backend", async () => {
+        let { container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3902"
+        });
+
+        // Check if data tab is correctly displayed after page load
+        await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
+        getSubobjectCards(container, { expectedNumbersOfCards: [1], countAddMenusAsCards: true }); 
+    });
 });
 
 
@@ -446,6 +629,87 @@ describe("Reset object", () => {
 
         resetObject(container);
         await waitFor(() => getByText(container.querySelector(".to-do-list-container"), firstItemText));
+    });
+
+
+    test("Reset composite without subobjects", async () => {
+        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3001"
+        });
+    
+        // Load page and existing subobject
+        await waitFor(() => getByText(container, "Object Information"));
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+
+        // Add 2 new subobjects
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        addANewSubobject(container);
+        const cards = getSubobjectCards(container, { expectedNumbersOfCards: [3] });
+        const [existingSubobjectID, firstNewSubobjectID, secondNewSubobjectID] = cards[0].map(card => card.id.toString());
+
+        // Update existing subobject
+        const existingSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput, { target: { value: existingSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[cards[0][0].id].object_name).toEqual(existingSubobjectName));
+
+        // Reset without subobjects
+        resetObject(container);
+        const state = store.getState();
+
+        // Check if existing subobject is not reset and is present in composite object's subobjects
+        expect(state.editedObjects[existingSubobjectID].object_name).toEqual(existingSubobjectName);
+        expect(state.editedObjects[3001].composite.subobjects).toHaveProperty(existingSubobjectID);
+
+        // Check if new subobjects are removed from editedObjects and composite object's subobjects
+        expect(Object.keys(state.editedObjects[3001].composite.subobjects).length).toEqual(1);      // existing object is checked above
+        expect(state.editedObjects).not.toHaveProperty(firstNewSubobjectID);
+        expect(state.editedObjects).not.toHaveProperty(secondNewSubobjectID);
+    });
+
+
+    test("Reset composite with subobjects", async () => {
+        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3001"
+        });
+    
+        // Load page and existing subobject
+        await waitFor(() => getByText(container, "Object Information"));
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+
+
+        // Add 2 new subobjects and 1 existing subobject
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        addANewSubobject(container);
+        await addAnExistingSubobject(container, "Some existing subobject", store, { waitForObjectLoad: true });
+        const cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+        const [existingSubobjectID, firstNewSubobjectID, secondNewSubobjectID, addedExistingSubobjectID] = cards[0].map(card => card.id.toString());
+
+        // Update both existing subobjects
+        const oldExistingSubobjectName = store.getState().objects[existingSubobjectID].object_name, updatedExistingSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput, { target: { value: updatedExistingSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[existingSubobjectID].object_name).toEqual(updatedExistingSubobjectName));
+
+        const updatedSecondExistingSubobjectName = "updated second name";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][3]).subobjectNameInput, { target: { value: updatedSecondExistingSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[addedExistingSubobjectID].object_name).toEqual(updatedSecondExistingSubobjectName));
+
+        // Reset object with subobjects
+        resetObject(container, true);
+        const state = store.getState();
+
+        // Check if all added subobjects removed from composite object's data
+        expect(Object.keys(state.editedObjects[3001].composite.subobjects).length).toEqual(1);
+        expect(state.editedObjects[3001].composite.subobjects).toHaveProperty(existingSubobjectID);
+
+        // Check if existing subobject is reset
+        expect(state.editedObjects[existingSubobjectID].object_name).toEqual(oldExistingSubobjectName);
+
+        // Check if new subobjects and added existing subobject are removed from state.editedObjects
+        expect(state.editedObjects).not.toHaveProperty(firstNewSubobjectID);
+        expect(state.editedObjects).not.toHaveProperty(secondNewSubobjectID);
+        expect(state.editedObjects).not.toHaveProperty(addedExistingSubobjectID);
     });
 });
 
@@ -562,6 +826,138 @@ describe("Persist edited object state", () => {
         // Check if modified Markdown is displayed
         await waitFor(() => getByText(container.querySelector(".to-do-list-container"), newItemText));
     });
+
+
+    test("Composite data and subobjects", async () => {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/3001", store
+        });
+
+        // Wait for the page to load
+        await waitForEditObjectPageLoad(container, store);
+        clickDataTabButton(container);
+
+        // Wait for an existing subobject to load
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+        let card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
+
+        // Modify subobject name
+        let newSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(card).subobjectNameInput, { target: { value: newSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[card.id].object_name).toEqual(newSubobjectName));
+
+        // Render subobject page and check if updated name is displayed
+        history.push(`/objects/${card.id}`);
+        clickGeneralTabButton(container);
+        await waitFor(() => expect(getByPlaceholderText(container, "Object name").value).toEqual(newSubobjectName));
+        
+        // Modify subobject name again
+        newSubobjectName = "updated twice name";
+        fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: newSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[card.id].object_name).toEqual(newSubobjectName));
+
+        // Return to main object page
+        history.push(`/objects/3001`);
+        clickDataTabButton(container);
+        card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
+        expect(getSubobjectCardAttributeElements(card).subobjectNameInput.value).toEqual(newSubobjectName);
+    });
+
+
+    test("Unchanged composite object's and subobject removal", async () => {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/3001", store
+        });
+
+        // Wait for the page to load and subobject to load
+        await waitForEditObjectPageLoad(container, store);
+        const subobjectID = Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0];
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(subobjectID));
+
+        // Click cancel button
+        fireEvent.click(getByText(container, "Cancel"));
+
+        // Check if object and subobject are removed from state.editedObjects
+        await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty(subobjectID));
+        expect(store.getState().editedObjects).not.toHaveProperty("3001");
+    });
+
+
+    test("Unchanged composite object and subobject removal", async () => {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/3001", store
+        });
+
+        // Wait for the page to load and subobject to load
+        await waitForEditObjectPageLoad(container, store);
+        const subobjectID = Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0];
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(subobjectID));
+
+        // Click cancel button
+        fireEvent.click(getByText(container, "Cancel"));
+
+        // Check if object and subobject are removed from state.editedObjects
+        await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty(subobjectID));
+        expect(store.getState().editedObjects).not.toHaveProperty("3001");
+    });
+
+
+    test("Unchanged composite object's with changed subobject removal", async () => {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/3001", store
+        });
+
+        // Wait for the page to load and subobject to load
+        await waitForEditObjectPageLoad(container, store);
+        const subobjectID = Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0];
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(subobjectID));
+        clickDataTabButton(container);
+        let card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
+
+        // Modify existing subobject's name
+        let newSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(card).subobjectNameInput, { target: { value: newSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[card.id].object_name).toEqual(newSubobjectName));
+
+        // Click cancel button
+        fireEvent.click(getByText(container, "Cancel"));
+
+        // Check if object is removed from state.editedObjects and subobject is not
+        await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty("3001"));
+        expect(store.getState().editedObjects).toHaveProperty(subobjectID);
+    });
+
+
+    test("Changed composite object's subobjects removal", async () => {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/3001", store
+        });
+
+        // Wait for the page to load
+        await waitForEditObjectPageLoad(container, store);
+        clickDataTabButton(container);
+
+        // Wait for an existing subobject to load
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+        let card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
+
+        // Modify existing subobject's name
+        let newSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(card).subobjectNameInput, { target: { value: newSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[card.id].object_name).toEqual(newSubobjectName));
+
+        // Add an existing subobject
+        await addAnExistingSubobject(container, "Some existing subobject", store, { waitForObjectLoad: true });
+        const [firstSubobjectID, secondSubobjectID] = getSubobjectCards(container, { expectedNumbersOfCards: [2] })[0].map(card => card.id.toString());
+
+        // Click cancel button
+        fireEvent.click(getByText(container, "Cancel"));
+
+        // Check if unmodified subobject is removed from state.editedObjects, modified is not and object itself is not
+        await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty(secondSubobjectID));
+        expect(store.getState().editedObjects).toHaveProperty(firstSubobjectID);
+        expect(store.getState().editedObjects).toHaveProperty("3001");
+    });
 });
 
 
@@ -660,6 +1056,106 @@ describe("Delete object", () => {
         expect(store.getState().objects[2001]).toBeUndefined();
         expect(store.getState().toDoLists[2001]).toBeUndefined();
         expect(store.getState().editedObjects[2001]).toBeUndefined();
+    });
+
+
+    test("Delete a composite object without deleting subobjects", async () => {
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3001"
+        });
+
+        // Wait for object information to be displayed on the page
+        await waitFor(() => getByText(container, "Object Information"));
+
+        // Wait for an existing subobject to load
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+        clickDataTabButton(container);
+
+        // Add a new subobject
+        addANewSubobject(container);
+        const cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        const [existingSubobjectID, newSubobjectID] = cards[0].map(card => card.id.toString());
+
+        // Modify existing subobject
+        let newSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput, { target: { value: newSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[existingSubobjectID].object_name).toEqual(newSubobjectName));
+
+        // Delete composite object without deleting subobjects
+        let deleteButton = getByText(container, "Delete");
+        fireEvent.click(deleteButton);
+        let confimationDialogButtonYes = getByText(container, "Yes");
+        fireEvent.click(confimationDialogButtonYes);
+    
+        // Check if redirect occured
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+        const state = store.getState();
+
+        // Check if composite object is removed from state
+        expect(state.objects).not.toHaveProperty("3001");
+        expect(state.composite).not.toHaveProperty("3001");
+        expect(state.editedObjects).not.toHaveProperty("3001");
+        
+        // Check if new subobject is deleted
+        expect(state.editedObjects).not.toHaveProperty(newSubobjectID);
+
+        // Check if existing subobject is not deleted or reset
+        expect(state.objects).toHaveProperty(existingSubobjectID);
+        expect(state.links).toHaveProperty(existingSubobjectID);
+        expect(state.objectsTags).toHaveProperty(existingSubobjectID);
+        expect(state.editedObjects).toHaveProperty(existingSubobjectID);
+        expect(state.editedObjects[existingSubobjectID].object_name).toEqual(newSubobjectName);
+    });
+
+
+    test("Delete a composite object and subobjects", async () => {
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3001"
+        });
+
+        // Wait for object information to be displayed on the page
+        await waitFor(() => getByText(container, "Object Information"));
+
+        // Wait for an existing subobject to load
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+        clickDataTabButton(container);
+
+        // Add a new subobject
+        addANewSubobject(container);
+        const cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        const [existingSubobjectID, newSubobjectID] = cards[0].map(card => card.id.toString());
+
+        // Modify existing subobject
+        let newSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput, { target: { value: newSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[existingSubobjectID].object_name).toEqual(newSubobjectName));
+
+        // Delete composite object and subobjects
+        let deleteButton = getByText(container, "Delete");
+        fireEvent.click(deleteButton);
+        fireEvent.click(container.querySelector(".side-menu-dialog-checkbox-container").querySelector("input"));
+        let confimationDialogButtonYes = getByText(container, "Yes");
+        fireEvent.click(confimationDialogButtonYes);
+    
+        // Check if redirect occured
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+        const state = store.getState();
+
+        // Check if composite object is removed from state
+        expect(state.objects).not.toHaveProperty("3001");
+        expect(state.composite).not.toHaveProperty("3001");
+        expect(state.editedObjects).not.toHaveProperty("3001");
+        
+        // Check if new subobject is deleted
+        expect(state.editedObjects).not.toHaveProperty(newSubobjectID);
+
+        // Check if existing subobject is deleted
+        expect(state.objects).not.toHaveProperty(existingSubobjectID);
+        expect(state.links).not.toHaveProperty(existingSubobjectID);
+        expect(state.objectsTags).not.toHaveProperty(existingSubobjectID);
+        expect(state.editedObjects).not.toHaveProperty(existingSubobjectID);
     });
 });
 
@@ -781,6 +1277,75 @@ describe("Update object errors", () => {
         await waitFor(() => getByText(container, "At least one item is required in the to-do list.", { exact: false }));
         expect(compareArrays(Object.keys(store.getState().toDoLists[2001].items).sort(), Object.keys(oldObjectData.items).sort())).toBeTruthy();
     });
+
+
+    test("Composite object without non-deleted subobjects", async () => {
+        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3001"
+        });
+
+        // Wait for object and its subobject to load
+        await waitFor(() => getByText(container, "Object Information"));
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+
+        // Add a new subobject, then delete both subobjects
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][0]).fullDeleteButton);
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][1]).deleteButton);
+
+        // Click save button and check if error message is displayed and save did not occur
+        fireEvent.click(getByText(container, "Save"));
+        await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
+        expect(Object.keys(store.getState().composite[3001].subobjects).length).toEqual(1);
+    });
+
+
+    test("Composite object a with a new subobject with incorrect attributes", async () => {
+        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3001"
+        });
+
+        // Wait for object and its subobject to load
+        await waitFor(() => getByText(container, "Object Information"));
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+
+        // Add a new subobject and edit its data
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        const card = getSubobjectCards(container, { expectedNumbersOfCards: [2] })[0][1];
+        clickSubobjectCardDataTabButton(card);
+        fireEvent.change(getByPlaceholderText(card, "Link"), { target: { value: "new link value" }});
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe("new link value"));
+
+        // Click save button and check if error message is displayed and save did not occur
+        fireEvent.click(getByText(container, "Save"));
+        await waitFor(() => getByText(container, "Object name is required.", { exact: false }));
+    });
+
+
+    test("Composite object a with an existing subobject with incorrect data", async () => {
+        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3001"
+        });
+
+        // Wait for object and its subobject to load
+        await waitFor(() => getByText(container, "Object Information"));
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+
+        // Modify existing subobject's data to become invalid
+        clickDataTabButton(container);
+        const card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
+        clickSubobjectCardDataTabButton(card);
+        fireEvent.change(getByPlaceholderText(card, "Link"), { target: { value: "" }});
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe(""));
+
+        // Click save button and check if error message is displayed and save did not occur
+        fireEvent.click(getByText(container, "Save"));
+        await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
+        expect(store.getState().links[card.id].link).not.toEqual("");
+    });
 });
 
 
@@ -885,5 +1450,126 @@ describe("Update object", () => {
         await waitFor(() => expect(store.getState().objects[2001].object_name).toEqual("modified object name"));
         expect(store.getState().objects[2001].object_description).toEqual("modified object description");
         expect(store.getState().toDoLists[2001].items[newItemIndex].item_text).toEqual("new to-do list item");
+    });
+
+
+    test("Update a composite object", async () => {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+            route: "/objects/3001"
+        });
+
+        // Wait for object and its subobject to load
+        await waitFor(() => getByText(container, "Object Information"));
+        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+
+        // Modify object name
+        const updatedObjectName = "Updated object name";
+        fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: updatedObjectName } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe(updatedObjectName));
+
+        // Add 3 new & 3 existing subobjects
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        addANewSubobject(container);
+        addANewSubobject(container);
+        await addAnExistingSubobject(container, "fully deleted existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, "unmodified existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, "existing to be modified", store, { waitForObjectLoad: true });
+        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [7] });
+        const [deletedExistingID, deletedNewID, firstNewID, secondNewID, fullyDeletedExistingID, unmodifiedExistingID, modifiedExistingID] = cards[0].map(card => card.id);
+
+        // Delete 2 subobjects (existing + new), fully delete 1 existing subobject
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][0]).deleteButton);
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][1]).deleteButton);
+        fireEvent.click(getSubobjectCardMenuButtons(cards[0][4]).fullDeleteButton);
+
+        // Modify new subobjects
+        const firstNewName = "first new subobject", firstLink = "http://first.link";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][2]).subobjectNameInput, { target: { value: firstNewName } });
+        await waitFor(() => expect(store.getState().editedObjects[firstNewID].object_name).toEqual(firstNewName));
+        clickSubobjectCardDataTabButton(cards[0][2]);
+        fireEvent.change(getByPlaceholderText(cards[0][2], "Link"), { target: { value: firstLink }});
+        await waitFor(() => expect(store.getState().editedObjects[firstNewID].link).toEqual(firstLink));
+
+        const secondNewName = "second new subobject", secondLink = "http://second.link";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][3]).subobjectNameInput, { target: { value: secondNewName } });
+        await waitFor(() => expect(store.getState().editedObjects[secondNewID].object_name).toEqual(secondNewName));
+        clickSubobjectCardDataTabButton(cards[0][3]);
+        fireEvent.change(getByPlaceholderText(cards[0][3], "Link"), { target: { value: secondLink }});
+        await waitFor(() => expect(store.getState().editedObjects[secondNewID].link).toEqual(secondLink));
+
+        // Modify existing subobject
+        const unModifiedExistingTimestamp = store.getState().objects[unmodifiedExistingID].modified_at;
+        const modifiedExistingName = "modified existing", modifiedExistingLink = "http://modifed.link";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][6]).subobjectNameInput, { target: { value: modifiedExistingName } });
+        await waitFor(() => expect(store.getState().editedObjects[modifiedExistingID].object_name).toEqual(modifiedExistingName));
+        clickSubobjectCardDataTabButton(cards[0][6]);
+        fireEvent.change(getByPlaceholderText(cards[0][6], "Link"), { target: { value: modifiedExistingLink }});
+        await waitFor(() => expect(store.getState().editedObjects[modifiedExistingID].link).toEqual(modifiedExistingLink));
+
+        // Click save button and wait for the object to be updated
+        fireEvent.click(getByText(container, "Save"));
+        await waitFor(() => expect(store.getState().objects[3001].object_name).toEqual(updatedObjectName));
+        const object_id = 3001;
+        const state = store.getState();
+        
+        // Check updated composite object (has 4 subobjects in both editedObjects & composite storages)
+        const strObjectID = object_id.toString();
+        expect(state.composite).toHaveProperty(strObjectID);
+        expect(Object.keys(state.composite[object_id].subobjects).length).toEqual(4);
+        expect(Object.keys(state.editedObjects[object_id].composite.subobjects).length).toEqual(4);
+
+        // Deleted new subobject, deleted and fully deleted existing subobjects
+        for (let subobjectID of [deletedNewID, deletedExistingID, fullyDeletedExistingID]) {
+            const strSubobjectID = subobjectID.toString();
+            expect(state.editedObjects).not.toHaveProperty(strSubobjectID);
+            expect(state.editedObjects[object_id].composite.subobjects).not.toHaveProperty(strSubobjectID);
+            expect(state.composite[object_id].subobjects).not.toHaveProperty(strSubobjectID);
+        }
+
+        // First and second new subobjects (are present in editedObjects under mapped ids)
+        for (let [subobjectID, subobjectName] of [[firstNewID, firstNewName], [secondNewID, secondNewName]]) {
+            const strSubobjectID = subobjectID.toString();
+            expect(state.editedObjects).not.toHaveProperty(strSubobjectID);
+            
+            const mappedID = getMappedSubobjectID(subobjectID, "link").toString();
+            expect(state.editedObjects).toHaveProperty(mappedID);
+            expect(state.editedObjects[mappedID].object_name).toEqual(subobjectName);
+
+            expect(state.composite[object_id].subobjects).toHaveProperty(mappedID);
+            expect(state.editedObjects[object_id].composite.subobjects).toHaveProperty(mappedID);
+        }
+
+        // Unmodified and modified existing subobjects (are present in state.editedObjects and in subobjects of saved object)
+        for (let subobjectID of [unmodifiedExistingID, modifiedExistingID]) {
+            const strSubobjectID = subobjectID.toString();
+            expect(state.editedObjects).toHaveProperty(strSubobjectID);
+            expect(state.composite[object_id].subobjects).toHaveProperty(strSubobjectID);
+            expect(state.editedObjects[object_id].composite.subobjects).toHaveProperty(strSubobjectID);
+        }
+
+        // Unmodified existing subobject (modified_at timestamp is not changed)
+        expect(state.editedObjects[unmodifiedExistingID].modified_at).toEqual(unModifiedExistingTimestamp);
+        expect(state.objects[unmodifiedExistingID].modified_at).toEqual(unModifiedExistingTimestamp);
+
+        // Modified existing subobject (has updated modified_at & object_name)
+        expect(state.objects[modifiedExistingID].object_name).toEqual(modifiedExistingName);
+        expect(state.links[modifiedExistingID].link).toEqual(modifiedExistingLink);
+        expect(state.editedObjects[modifiedExistingID].modified_at).toEqual(state.objects[object_id].modified_at);
+        expect(state.objects[modifiedExistingID].modified_at).toEqual(state.objects[object_id].modified_at);
+
+        // Rows of non-deleted subobjects are updated
+        for (let subobjectsStorage of [state.composite[object_id].subobjects, state.editedObjects[object_id].composite.subobjects]) {
+            expect(subobjectsStorage[getMappedSubobjectID(firstNewID, "link")].row).toEqual(0);
+            expect(subobjectsStorage[getMappedSubobjectID(secondNewID, "link")].row).toEqual(1);
+            expect(subobjectsStorage[unmodifiedExistingID].row).toEqual(2);
+            expect(subobjectsStorage[modifiedExistingID].row).toEqual(3);
+        }
+
+        // Subobject cards are rendered
+        clickDataTabButton(container);
+        cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+        const expectedCardIDs = [getMappedSubobjectID(firstNewID, "link"), getMappedSubobjectID(secondNewID, "link"), unmodifiedExistingID, modifiedExistingID];
+        for (let i = 0; i < 4; i++) expect(cards[0][i].id).toEqual(expectedCardIDs[i].toString());
     });
 });

@@ -185,3 +185,27 @@ export const getSubobjectCardMenuButtons = card => {
         restoreButton: queryByTitle(cardMenu, "Restore deleted subobject")
     };
 };
+
+
+/**
+ * Returns all indicators displayed in the subobject `card` heading.
+ */
+export const getSubobjectCardIndicators = card => {
+    const heading = card.querySelector(".composite-subobjct-card-heading");
+    if (!heading) return {};
+    const headingRight = heading.querySelector(".composite-subobject-card-heading-right");
+    return {
+        isNewSubobject: queryByTitle(headingRight, "Subobject is new and will be created when main object is saved"),
+        
+        validationError: queryByTitle(headingRight, "Subobject is not valid:", { exact: false }),
+        isComposite: queryByTitle(headingRight, "Subobject is composite. All changes made to it must be saved from its page."),
+        
+        isExistingSubobjectWithModifiedAttributes: queryByTitle(headingRight, "Subobject attributes were modified"),
+        isExistingSubobjectWithModifiedTags: queryByTitle(headingRight, "Subobject tags were modified"),
+        isExistingSubobjectWithModifiedData: queryByTitle(headingRight, "Subobject data was modified"),
+        isExistingSubobjectWithModifiedParameters: queryByTitle(headingRight, "Subobject parameters were modified"),
+
+        isDeleted: queryByTitle(headingRight, "Subobject is marked for deletion"),
+        isFullyDeleted: queryByTitle(headingRight, "Subobject is marked for full deletion"),
+    };
+};

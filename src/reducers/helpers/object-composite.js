@@ -119,7 +119,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
     // Updates state after add or update of a composite object:
     // - removes any new subobjects from state.editedObjects if the main object is not composite (for when it was changed after subobject creation);
     // 
-    // - removes fully deleted and unchanged deleted existing subobjects from state;
+    // - removes deleted and fully deleted existing subobjects from state;
     // - updates new & modified subobjects in state.editedObjects (maps subobject IDs & created_at & modified_at timestamps);
     // - adds new & modified subobject attributes & data to state storages;
     // - maps subobject IDs of the saved composite object and removes deleted subobjects in state.editedObjects[objectID];
@@ -133,13 +133,12 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         if (object.object_type !== "composite") return getStateWithDeletedEditedNewSubobjects(state, [objectID]);
         let newState = state;
 
-        // Remove unchanged (non-fully) deleted existing objects from state
+        // Remove new and unchanged (non-fully) deleted existing objects from state
         let subobjectIDs = Object.keys(newState.editedObjects[objectID].composite.subobjects);
-        let deletedExistingSubobjectIDsWithoutChanges = subobjectIDs.filter(subobjectID => parseInt(subobjectID) > 0 
-                                                        && newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.subobjectOnly
-                                                        && objectHasNoChanges(newState, subobjectID));
-
-        newState = getStateWithDeletedObjects(newState, deletedExistingSubobjectIDsWithoutChanges);
+        let deletedSubobjectIDs = subobjectIDs.filter(subobjectID => 
+                                                    newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.subobjectOnly
+                                                    && objectHasNoChanges(newState, subobjectID));
+        newState = getStateWithDeletedObjects(newState, deletedSubobjectIDs);
         
         // Remove fully deleted existing objectsfrom state
         let fullyDeletedExistingSubobjectIDs = subobjectIDs.filter(subobjectID => {
@@ -153,7 +152,6 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         const modifiedExistingSubobjectIDs = object_data.subobjects.filter(so => so.object_id > 0 && so.object_name !== undefined).map(so => so.object_id);
         let newEditedObjects = {};
         for (let oldObjectID of Object.keys(newState.editedObjects)) {
-            const intOldObjectID = parseInt(oldObjectID);
             const isNewSubobject = IDMapping[oldObjectID] !== undefined;
             const isModifiedExistingSubobject = modifiedExistingSubobjectIDs.indexOf(parseInt(oldObjectID)) > -1;
 
@@ -206,7 +204,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         const newSubobjects = {};
         Object.keys(newComposite.subobjects).forEach(subobjectID => {
             // Filter out deleted subobjects
-            if (deletedExistingSubobjectIDsWithoutChanges.indexOf(subobjectID) > -1 || fullyDeletedExistingSubobjectIDs.indexOf(subobjectID) > -1) return;
+            if (deletedSubobjectIDs.indexOf(subobjectID) > -1 || fullyDeletedExistingSubobjectIDs.indexOf(subobjectID) > -1) return;
 
             const mappedSubobjectID = subobjectID in IDMapping ? IDMapping[subobjectID] : subobjectID;
             newSubobjects[mappedSubobjectID] = { ...newComposite.subobjects[subobjectID], row: newRowPositions[subobjectID] };

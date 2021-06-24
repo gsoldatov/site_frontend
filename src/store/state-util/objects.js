@@ -254,15 +254,14 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
 /**
  * Returns true if state of the object with provided `objectID` in state.editedObjects has no changes compared to its last saved state.
  * 
- * If object is not present in any of the storages (state.editedObjects, state.objects, state.objectsTags, data storages), also returns true.
+ * If object is not present in any of the storages (state.editedObjects, state.objects, state.objectsTags, data storages), returns `defaultReturnValue` (defaults to true).
  */
- export const objectHasNoChanges = (state, objectID) => {
-    // If objectID is not present in edited objects, return true to avoid copying edited objects
-    if (!state.editedObjects.hasOwnProperty(objectID)) return true;
+ export const objectHasNoChanges = (state, objectID, defaultReturnValue) => {
+    defaultReturnValue = defaultReturnValue !== undefined ? defaultReturnValue : true;
 
-    // If saved object attributes, tags or data are missing, return true to avoid deleting existing changes of a non-cached object
-    if (!state.objects.hasOwnProperty(objectID) || !state.objectsTags.hasOwnProperty(objectID) || !objectDataIsInState(state, objectID)) 
-        return true;
+    // Return default value if objectID is missing is editedObjects or attribute / tag / data storages
+    if (!state.editedObjects.hasOwnProperty(objectID) || !state.objects.hasOwnProperty(objectID) || !state.objectsTags.hasOwnProperty(objectID) || !objectDataIsInState(state, objectID)) 
+        return defaultReturnValue;
     
     const object = state.objects[objectID], objectTags = state.objectsTags[objectID], objectData = getObjectDataFromStore(state, objectID),
         editedObject = state.editedObjects[objectID];

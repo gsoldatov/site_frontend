@@ -405,6 +405,35 @@ describe("Persist new object state", () => {
         expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput.value).toEqual(newSubobjectName);
         expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectNameInput.value).toEqual(store.getState().editedObjects[secondSubobjectID].object_name);
     });
+
+
+    test("Composite unchanged existing subobject removal", async () => {
+        // Render /objects/add and add a new & an existing subobject
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/add", store
+        });
+
+        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        clickDataTabButton(container);
+
+        // Add 2 existing subobjects
+        await addAnExistingSubobject(container, "first name", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, "second name", store, { waitForObjectLoad: true });
+        const cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
+        const [firstSubobjectID, secondSubobjectID] = cards[0].map(card => card.id.toString());
+
+        // Modify first subobject
+        const newSubobjectName = "updated name";
+        fireEvent.change(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput, { target: { value: newSubobjectName } });
+        await waitFor(() => expect(store.getState().editedObjects[firstSubobjectID].object_name).toEqual(newSubobjectName));
+
+        // Click cancel button
+        fireEvent.click(getByText(container, "Cancel"));
+
+        // Check if second subobject is removed from state.editedObjects and first isn't
+        await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty(secondSubobjectID));
+        expect(store.getState().editedObjects).toHaveProperty(firstSubobjectID); 
+    });
 });
 
 

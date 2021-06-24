@@ -8,7 +8,7 @@ export const runFetch = async (url, params) => {
         return await fetch(url, params);
     } catch (e) {
         if (e instanceof TypeError && e.message.indexOf("NetworkError") > -1) return { error: "Failed to fetch data." };
-        throw e;    // TODO delete
+        // throw e;
     }
 };
 

@@ -12,6 +12,7 @@ import createStore from "../src/store/create-store";
 import Objects from "../src/components/objects";
 import { EditObject } from "../src/components/object";
 import { setObjectsPaginationInfo } from "../src/actions/objects";
+import { getStoreWithModifiedCompositeObject } from "./mocks/data-composite";
 
 
 /*
@@ -364,6 +365,101 @@ describe("Side menu", () => {
         // Check if edited object was not removed
         expect(Object.keys(store.getState().editedObjects).includes("1")).toBeFalsy();
     });
+
+
+    test("Delete button (delete composite without subobjects)", async () => {
+        let store = getStoreWithModifiedCompositeObject();
+
+        // Route component is required for matching (getting :id part of the URL in the Object component)
+        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
+            route: "/objects",
+            store
+        });
+
+        // Wait for the objects to be loaded
+        await waitForFetch(store);
+        for (let objectID of ["1", "2", "-1"])  // check if object IDs are correctly added to editedObjects
+            expect(store.getState().editedObjects).toHaveProperty(objectID);
+
+        // Select composite object
+        const compositeObjectName = store.getState().editedObjects[1].object_name;
+        fireEvent.click(getByText(container, compositeObjectName).parentNode.querySelector(".field-item-checkbox"));
+        await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
+
+        // Delete composite object with subobjects
+        const deleteButton = getByText(container, "Delete");
+        fireEvent.click(deleteButton);
+        const dialog = container.querySelector(".vertical.menu").querySelector(".side-menu-dialog");
+        let dialogYesButton = getByText(dialog, "Yes");
+        fireEvent.click(dialogYesButton);
+
+        // Check if composite object is deleted and deselected
+        await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty("1"));
+        const state = store.getState();
+        expect(state.objects).not.toHaveProperty("1");
+        expect(state.objectsTags).not.toHaveProperty("1");
+        expect(state.composite).not.toHaveProperty("1");
+        expect(state.editedObjects).not.toHaveProperty("1");
+        expect(state.objectsUI.selectedObjectIDs.indexOf(1)).toEqual(-1);
+
+        // Check if new subobject is deleted from editedObjects
+        expect(state.editedObjects).not.toHaveProperty("-1");
+
+        // Check if existing subobject is not removed from state
+        expect(state.objects).toHaveProperty("2");
+        expect(state.objectsTags).toHaveProperty("2");
+        expect(state.links).toHaveProperty("2");
+        expect(state.editedObjects).toHaveProperty("2");
+    });
+
+
+    test("Delete button (delete composite with subobjects)", async () => {
+        let store = getStoreWithModifiedCompositeObject();
+
+        // Route component is required for matching (getting :id part of the URL in the Object component)
+        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
+            route: "/objects",
+            store
+        });
+
+        // Wait for the objects to be loaded
+        await waitForFetch(store);
+        for (let objectID of ["1", "2", "-1"])  // check if object IDs are correctly added to editedObjects
+            expect(store.getState().editedObjects).toHaveProperty(objectID);
+
+        // Select composite object
+        const compositeObjectName = store.getState().editedObjects[1].object_name;
+        fireEvent.click(getByText(container, compositeObjectName).parentNode.querySelector(".field-item-checkbox"));
+        await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
+
+        // Delete composite object with subobjects
+        const deleteButton = getByText(container, "Delete");
+        fireEvent.click(deleteButton);
+        const dialog = container.querySelector(".vertical.menu").querySelector(".side-menu-dialog");
+        fireEvent.click(dialog.querySelector(".side-menu-dialog-checkbox-container").querySelector("input"));
+        let dialogYesButton = getByText(dialog, "Yes");
+        fireEvent.click(dialogYesButton);
+
+        // Check if composite object is deleted and deselected
+        await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty("1"));
+        const state = store.getState();
+        expect(state.objects).not.toHaveProperty("1");
+        expect(state.objectsTags).not.toHaveProperty("1");
+        expect(state.composite).not.toHaveProperty("1");
+        expect(state.editedObjects).not.toHaveProperty("1");
+        expect(state.objectsUI.selectedObjectIDs.indexOf(1)).toEqual(-1);
+
+        // Check if new subobject is deleted from editedObjects
+        expect(state.editedObjects).not.toHaveProperty("-1");
+
+        // Check if existing subobject is removed from state
+        expect(state.objects).not.toHaveProperty("2");
+        expect(state.objectsTags).not.toHaveProperty("2");
+        expect(state.links).not.toHaveProperty("2");
+        expect(state.editedObjects).not.toHaveProperty("2");
+    });
+    
+    
 });
 
 

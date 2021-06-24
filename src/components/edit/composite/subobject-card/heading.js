@@ -107,7 +107,7 @@ const Indicators = ({ objectID, subobjectID }) => {
                 isDisplayedSelector: state => state.editedObjects[subobjectID].object_type === "composite"},
 
             // New
-            { name: "plus", color: "green", title: "Subobject is new and will be created when main object is saved", isDisplayed: subobjectID < 0 },
+            { name: "plus", color: "green", title: "Subobject is new and will be created when main object is saved", isDisplayed: parseInt(subobjectID) < 0 },
 
             // Existing modified
             { name: "font", color: "yellow", title: "Subobject attributes were modified", isDisplayedSelector: state => attributesModifiedIsDisplayedSelector(state) },
@@ -125,7 +125,7 @@ const Indicators = ({ objectID, subobjectID }) => {
     }, [objectID, subobjectID]);
 
     const indicators = indicatorList.map((i, k) => 
-        <Indicator key={k} name={i.name} color={i.color} title={i.title} titleTextSelector={i.titleTextSelector} isDisplayedSelector={i.isDisplayedSelector} />
+        <Indicator key={k} name={i.name} color={i.color} title={i.title} titleTextSelector={i.titleTextSelector} isDisplayed={i.isDisplayed} isDisplayedSelector={i.isDisplayedSelector} />
     );
 
     return (
