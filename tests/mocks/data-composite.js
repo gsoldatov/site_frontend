@@ -48,8 +48,8 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
     ];
     let objectData = [
         { object_id: 1, object_type: "composite", object_data: { subobjects: [
-            { object_id: 2, row: 0, column: 0, selected_tab: 0 },
-            { object_id: 3, row: 1, column: 0, selected_tab: 0 }
+            { object_id: 2, row: 0, column: 0, selected_tab: 0, is_expanded: true },
+            { object_id: 3, row: 1, column: 0, selected_tab: 0, is_expanded: true }
         ]}},
         { object_id: 2, object_type: "link", object_data: {"link": "https://test.link"} },
         { object_id: 3, object_type: "markdown", object_data: {"raw_text": "**Test text**"} }
@@ -76,8 +76,8 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
     ];
     let objectData = [
         { object_id: 1, object_type: "composite", object_data: { subobjects: [
-            { object_id: 2, row: 0, column: 0, selected_tab: 0 },
-            { object_id: 3, row: 1, column: 0, selected_tab: 0 }
+            { object_id: 2, row: 0, column: 0, selected_tab: 0, is_expanded: true },
+            { object_id: 3, row: 1, column: 0, selected_tab: 0, is_expanded: true }
         ]}}
     ];
 
@@ -107,8 +107,8 @@ export const getStoreWithModifiedCompositeObject = () => {
     ];
     let objectData = [
         { object_id: 1, object_type: "composite", object_data: { subobjects: [
-            { object_id: 2, row: 0, column: 0, selected_tab: 0 },
-            { object_id: -1, row: 1, column: 0, selected_tab: 0 }
+            { object_id: 2, row: 0, column: 0, selected_tab: 0, is_expanded: true },
+            { object_id: -1, row: 1, column: 0, selected_tab: 0, is_expanded: true }
         ]}},
         { object_id: 2, object_type: "link", object_data: {"link": "https://test.link"} }
     ];
@@ -151,7 +151,7 @@ export const getCompositeByObjectID = objectID => {
 */
 const defaultComposite = {
     subobjects: [
-        { object_id: 101, row: 0, column: 0, selected_tab: 0 }
+        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: true }
     ]
 };
 
@@ -163,10 +163,10 @@ const defaultComposite = {
 */
 const compositeWithAllSubobjectTypes = {
     subobjects: [
-        { object_id: 101, row: 0, column: 0, selected_tab: 0 },
-        { object_id: 1101, row: 1, column: 0, selected_tab: 0 },
-        { object_id: 2101, row: 2, column: 0, selected_tab: 0 },
-        { object_id: 3101, row: 3, column: 0, selected_tab: 0 }
+        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: true },
+        { object_id: 1101, row: 1, column: 0, selected_tab: 0, is_expanded: true },
+        { object_id: 2101, row: 2, column: 0, selected_tab: 0, is_expanded: true },
+        { object_id: 3101, row: 3, column: 0, selected_tab: 0, is_expanded: true }
     ]
 };
 

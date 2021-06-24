@@ -209,3 +209,13 @@ export const getSubobjectCardIndicators = card => {
         isFullyDeleted: queryByTitle(headingRight, "Subobject is marked for full deletion"),
     };
 };
+
+
+/**
+ * Returns expand/collapse button of a `card`.
+ */
+export const getSubobjectExpandToggleButton = card => {
+    const heading = card.querySelector(".composite-subobjct-card-heading");
+    if (!heading) return null;
+    return heading.querySelector("button.subobject-card-expand-toggle");
+};

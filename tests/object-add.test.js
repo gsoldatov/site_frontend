@@ -6,7 +6,7 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-l
 
 import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSelectingElements, clickGeneralTabButton, clickDataTabButton, resetObject } from "./test-utils/ui-object";
-import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards } from "./test-utils/ui-composite";
+import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 
 import { AddObject, EditObject } from "../src/components/object";
 import { getMappedSubobjectID } from "./mocks/data-composite";
@@ -803,7 +803,7 @@ describe("Save new object", () => {
         fireEvent.change(getByPlaceholderText(cards[0][2], "Link"), { target: { value: secondLink }});
         await waitFor(() => expect(store.getState().editedObjects[secondNewID].link).toEqual(secondLink));
 
-        // Modify existing subobject
+        // Modify existing subobject and collapse its card
         const unModifiedExistingTimestamp = store.getState().objects[unmodifiedExistingID].modified_at;
         const modifiedExistingName = "modified existing", modifiedExistingLink = "http://modifed.link";
         fireEvent.change(getSubobjectCardAttributeElements(cards[0][6]).subobjectNameInput, { target: { value: modifiedExistingName } });
@@ -811,6 +811,8 @@ describe("Save new object", () => {
         clickSubobjectCardDataTabButton(cards[0][6]);
         fireEvent.change(getByPlaceholderText(cards[0][6], "Link"), { target: { value: modifiedExistingLink }});
         await waitFor(() => expect(store.getState().editedObjects[modifiedExistingID].link).toEqual(modifiedExistingLink));
+        fireEvent.click(getSubobjectExpandToggleButton(cards[0][6]));
+        await waitFor(() => expect(store.getState().editedObjects[0].composite.subobjects[modifiedExistingID].is_expanded).toBeFalsy());
 
         // Check if object is redirected after adding a correct object
         fireEvent.click(getByText(container, "Save"));
@@ -858,11 +860,12 @@ describe("Save new object", () => {
         expect(state.editedObjects[unmodifiedExistingID].modified_at).toEqual(unModifiedExistingTimestamp);
         expect(state.objects[unmodifiedExistingID].modified_at).toEqual(unModifiedExistingTimestamp);
 
-        // Modified existing subobject (has updated modified_at & object_name)
+        // Modified existing subobject (has updated modified_at & object_name, as well as is_expanded value)
         expect(state.objects[modifiedExistingID].object_name).toEqual(modifiedExistingName);
         expect(state.links[modifiedExistingID].link).toEqual(modifiedExistingLink);
         expect(state.editedObjects[modifiedExistingID].modified_at).toEqual(state.objects[object_id].modified_at);
         expect(state.objects[modifiedExistingID].modified_at).toEqual(state.objects[object_id].modified_at);
+        expect(state.composite[object_id].subobjects[modifiedExistingID].is_expanded).toBeFalsy();
 
         // Rows of non-deleted subobjects are updated
         for (let subobjectsStorage of [state.composite[object_id].subobjects, state.editedObjects[object_id].composite.subobjects]) {

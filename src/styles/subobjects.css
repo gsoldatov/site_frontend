@@ -5,6 +5,8 @@
     --subobject-card-min-height: 100px;
     --subobject-card-padding-top-bottom: 0.5em;
     --subobject-card-padding-left-right: 0.75em;
+    --subobject-card-expand-collapse-time: 0.20s;
+    --subobject-card-expand-toggle-rotation: 90deg;
 }
 
 
@@ -16,17 +18,24 @@ div.composite-subobject-grid {
 
 /* Card */
 div.composite-subobject-card {
-    /* min-height: 391.233px; / * minumum card height required to display general tab (without tags) */
-    min-height: var(--subobject-card-min-height);
     box-shadow: 0 0 4px rgba(0,0,0,0.5);
-
     margin: 0.5em;
     margin-bottom: 2em;
-
-    padding-top: var(--subobject-card-padding-top-bottom);
-    padding-bottom: var(--subobject-card-padding-top-bottom);
     padding-left: var(--subobject-card-padding-left-right);
     padding-right: var(--subobject-card-padding-left-right);
+    padding-top: var(--subobject-card-padding-top-bottom);
+
+    /* Expand => collapse animation */
+    transition: min-height var(--subobject-card-expand-collapse-time) ease-out;
+    min-height: 0;
+    padding-bottom: 0;      /* Only padding-bottom is removed, because `heading-container` always compensates for left, right and top paddings of `composite-subobject-card` */
+}
+
+div.composite-subobject-card.expanded {
+    /* Collapse => expand animation */
+    transition: min-height var(--subobject-card-expand-collapse-time) ease-in;
+    min-height: var(--subobject-card-min-height);
+    padding-bottom: var(--subobject-card-padding-top-bottom);
 }
 
 div.composite-subobject-card:last-child {
@@ -60,7 +69,7 @@ div.subobject-error-button-container {
 /* Card heading */
 div.composite-subobjct-card-heading-container {
     background-color: rgba(0, 0, 0, 0.04);
-    /* Remove the padding of div.composite-subobject-card to make a correct line */
+    /* Remove the padding of `div.composite-subobject-card` to make a correct line */
     margin-top: calc(-1 * var(--subobject-card-padding-top-bottom));
     margin-left: calc(-1 * var(--subobject-card-padding-left-right));
     margin-right: calc(-1 * var(--subobject-card-padding-left-right));
@@ -105,6 +114,29 @@ div.composite-subobject-card-heading-text.unnamed {
     color: gray;
     /* text-decoration: none; */
 }
+
+/* Expand/collapse button */
+button.ui.button.subobject-card-expand-toggle {
+    margin-left: 0.25rem;
+    transition: var(--subobject-card-expand-collapse-time);
+    /*-webkit-transition: var(--subobject-card-expand-collapse-time);   /* properties for better browser support * / 
+    -moz-transition: var(--subobject-card-expand-collapse-time);
+    -ms-transition: var(--subobject-card-expand-collapse-time);
+    -o-transition: var(--subobject-card-expand-collapse-time);*/
+}
+  
+button.ui.button.subobject-card-expand-toggle.expanded {
+    transition: var(--subobject-card-expand-collapse-time);
+    /*-webkit-transition: var(--subobject-card-expand-collapse-time);   /* properties for better browser support * / 
+    -moz-transition: var(--subobject-card-expand-collapse-time);
+    -ms-transition: var(--subobject-card-expand-collapse-time);
+    -o-transition: var(--subobject-card-expand-collapse-time);
+    -webkit-transform: rotate(var(--subobject-card-expand-toggle-rotation));
+    -moz-transform: rotate(var(--subobject-card-expand-toggle-rotation));
+    -o-transform: rotate(var(--subobject-card-expand-toggle-rotation));
+    -ms-transform: rotate(var(--subobject-card-expand-toggle-rotation)); */
+    transform: rotate(var(--subobject-card-expand-toggle-rotation));
+} 
 
 
 /* Card menu */

@@ -124,7 +124,7 @@ export const serializeObjectData = (state, obj) => {
                 const so = nonDeletedSubobjects[subobjectID];
                 const object_id = parseInt(subobjectID);
                 const subobject = { object_id };
-                for (let attr of ["row", "column", "selected_tab"])
+                for (let attr of ["row", "column", "selected_tab", "is_expanded"])
                     subobject[attr] = so[attr];
 
                 // Add subobjects' attributes & data changes

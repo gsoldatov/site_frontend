@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Icon } from "semantic-ui-react";
+import { Button, Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
@@ -11,12 +11,12 @@ import { enumDeleteModes } from "../../../../store/state-templates/composite-sub
 /**
  * Subobject card heading line with object type and name, object name and indicators.
  */
-export const Heading = ({ objectID, subobjectID }) => {
+export const Heading = ({ objectID, subobjectID, updateCallback }) => {
     return (
         <div className="composite-subobjct-card-heading-container">
             <div className="composite-subobjct-card-heading">
                 <div className="composite-subobject-card-heading-left">
-                    <ObjectTypeAndName subobjectID={subobjectID} />
+                    <HeadingLeft objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} />
                 </div>
                 <div className="composite-subobject-card-heading-right">
                     <Indicators objectID={objectID} subobjectID={subobjectID} />
@@ -27,15 +27,27 @@ export const Heading = ({ objectID, subobjectID }) => {
 };
 
 
-const ObjectTypeAndName = ({ subobjectID }) => {
+const HeadingLeft = ({ objectID, subobjectID, updateCallback }) => {
+    // Expand/collapse toggle
+    const isExpanded = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].is_expanded);
+    const expandToggleOnClick = useMemo(() => () => { 
+        updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, is_expanded: !isExpanded }}); 
+    }, [objectID, subobjectID, isExpanded]);
+
+    const expandToggleTitle = isExpanded ? "Collapse subobject card" : "Expand subobject card";
+    const expandToggleClassName = isExpanded ? "subobject-card-expand-toggle expanded" : "subobject-card-expand-toggle";
+    
+    const expandButton = <Button basic circular size="mini" className={expandToggleClassName} icon="angle right" onClick={expandToggleOnClick} title={expandToggleTitle} />;
+
+    // Type and name
     const objectName = useSelector(state => state.editedObjects[subobjectID].object_name);
     const objectType = useSelector(state => state.editedObjects[subobjectID].object_type);
 
     const headingTextClassName = objectName.length > 0 ? "composite-subobject-card-heading-text" : "composite-subobject-card-heading-text unnamed";
     const headingText = objectName.length > 0 ? objectName : "<Unnamed>";
-
     return (
         <>
+            {expandButton}
             <div className="composite-subobject-card-heading-object-type-icon" title={objectTypeIconTitleMapping[objectType]}>
                 <Icon name={objectTypeIconMapping[objectType]} />
             </div>

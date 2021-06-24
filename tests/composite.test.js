@@ -8,7 +8,8 @@ import { checkRenderedItemsOrder } from "./test-utils/to-do-lists";
 import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
 import { getCurrentObject, clickDataTabButton, getObjectTypeSelectingElements, clickGeneralTabButton } from "./test-utils/ui-object";
 import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElements, getSubobjectCards, getAddSubobjectMenu, getAddSubobjectMenuDropdown,
-    clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons, getSubobjectCardIndicators } from "./test-utils/ui-composite";
+    clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons, 
+    getSubobjectCardIndicators, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 import { getDropdownOptionsContainer, getInlineInputField } from "./test-utils/ui-objects-tags";
 
 import { AddObject, EditObject } from "../src/components/object";
@@ -219,7 +220,59 @@ describe("Heading (without indicators)", () => {
         card = getSubobjectCards(container, { expectedNumbersOfCards: [2] })[0][1];
         heading = card.querySelector(".composite-subobjct-card-heading");
         getByTitle(heading, "Composite object");
-    });    
+    });
+
+
+    test("Expand/collapse toggle", async () => {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+
+        // Select composite object type and go to data tab
+        const { compositeButton } = getObjectTypeSelectingElements(container);
+        fireEvent.click(compositeButton);
+        clickDataTabButton(container);
+
+        // Add a new subobject
+        addANewSubobject(container);
+        let card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
+
+        // Check if expand button is rendered and has a correct CSS classname
+        let expandToggle = getSubobjectExpandToggleButton(card);
+        expect(expandToggle).toBeTruthy();
+        expect(expandToggle.classList.contains("expanded")).toBeTruthy();
+
+        // Check if heading, menu and attribute tag are rendered
+        expect(card.querySelector(".composite-subobjct-card-heading")).toBeTruthy();
+        expect(card.querySelector(".composite-subobject-card-menu")).toBeTruthy();
+        expect(card.querySelector(".composite-subobject-card-tab")).toBeTruthy();
+
+        // Collapse card
+        fireEvent.click(expandToggle);
+
+        // Check if expand button is rendered and has a correct CSS classname
+        expandToggle = getSubobjectExpandToggleButton(card);
+        expect(expandToggle).toBeTruthy();
+        expect(expandToggle.classList.contains("expanded")).toBeFalsy();
+
+        // Check if only heading is rendered
+        expect(card.querySelector(".composite-subobjct-card-heading")).toBeTruthy();
+        expect(card.querySelector(".composite-subobject-card-menu")).toBeFalsy();
+        expect(card.querySelector(".composite-subobject-card-tab")).toBeFalsy();
+
+        // Expand card
+        fireEvent.click(expandToggle);
+
+        // Check if expand button is rendered and has a correct CSS classname
+        expandToggle = getSubobjectExpandToggleButton(card);
+        expect(expandToggle).toBeTruthy();
+        expect(expandToggle.classList.contains("expanded")).toBeTruthy();
+
+        // Check if heading, menu and attribute tag are rendered
+        expect(card.querySelector(".composite-subobjct-card-heading")).toBeTruthy();
+        expect(card.querySelector(".composite-subobject-card-menu")).toBeTruthy();
+        expect(card.querySelector(".composite-subobject-card-tab")).toBeTruthy();
+    });
 });
 
 
@@ -866,7 +919,7 @@ describe("Indicators", () => {
 
    
     test("Is existing subobject with modified parameters", async () => {
-        let { container, store, } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3001"
         });
 
@@ -875,11 +928,25 @@ describe("Indicators", () => {
         await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
         clickDataTabButton(container);
 
-        // Check if indicator appears after subobject parameters are changed
+        // Check if indicator is not displayed by default
         const card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
         expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeFalsy();
+
+        // Check if indicator is displayed after card tab is changed
         clickSubobjectCardDataTabButton(card);
         expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeTruthy();
+
+        // Check if indicator is not displayed after card tab is changed back
+        clickSubobjectCardAttributeTabButton(card);
+        expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeFalsy();
+
+        // Check if indicator is displayed after card expand is toggled
+        fireEvent.click(getSubobjectExpandToggleButton(card));
+        expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeTruthy();
+
+        // Check if indicator is not displayed after card expand is toggled twice
+        fireEvent.click(getSubobjectExpandToggleButton(card));
+        expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeFalsy();
     });
 
 

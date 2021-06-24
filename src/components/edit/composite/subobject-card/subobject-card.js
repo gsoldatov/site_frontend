@@ -27,7 +27,7 @@ export class SubobjectCard extends React.PureComponent {
     setIsResetDialogDisplayed (isResetDialogDisplayed) { this.setState({ isResetDialogDisplayed }); }
 
     render() {
-        const { objectID, subobjectID, updateCallback, selectedTab, isSubbjectEdited, fetchError, isSubobjectDeleted } = this.props;
+        const { objectID, subobjectID, updateCallback, selectedTab, isExpanded, isSubbjectEdited, fetchError, isSubobjectDeleted } = this.props;
         const { isResetDialogDisplayed } = this.state;
         
         // Render fetch error message, when object could not be fetched
@@ -39,19 +39,26 @@ export class SubobjectCard extends React.PureComponent {
 
         // Render object card
         // Heading & menu
-        const heading = <Heading objectID={objectID} subobjectID={subobjectID} />;
-        const menu = <CardMenu objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} isResetDialogDisplayed={isResetDialogDisplayed} setIsResetDialogDisplayed={this.setIsResetDialogDisplayed} />;
+        const heading = <Heading objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} />;
+        const menu = isExpanded && <CardMenu objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} isResetDialogDisplayed={isResetDialogDisplayed} setIsResetDialogDisplayed={this.setIsResetDialogDisplayed} />;
 
         // Card body
         const body = 
             isResetDialogDisplayed ? <ResetSubobjectDialog objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} setIsResetDialogDisplayed={this.setIsResetDialogDisplayed} />
-            : isSubobjectDeleted ? <DeletedPlaceholder />
-            : selectedTab === 0 ? <CardGeneralTab subobjectID={subobjectID} />
-            : selectedTab === 1 ? <CardDataTab subobjectID={subobjectID} />
+            : isExpanded ? 
+            (
+                isSubobjectDeleted ? <DeletedPlaceholder />
+                : selectedTab === 0 ? <CardGeneralTab subobjectID={subobjectID} />
+                : selectedTab === 1 ? <CardDataTab subobjectID={subobjectID} />
+                : null
+            )
             : null;
+        
+        // Card CSS class
+        const cardClassName = isExpanded ? "composite-subobject-card expanded" : "composite-subobject-card";
 
         return (
-            <div className="composite-subobject-card" id={subobjectID}>
+            <div className={cardClassName} id={subobjectID}>
                 {heading}
                 {menu}
                 {body}

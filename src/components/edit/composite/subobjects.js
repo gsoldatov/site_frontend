@@ -38,11 +38,12 @@ export const SubobjectsContainer = ({ objectID }) => {
         for (let subobjectID of subobjectOrder[i]) {
             let fetchError = composite.subobjects[subobjectID].fetchError;
             let selectedTab = composite.subobjects[subobjectID].selected_tab;
+            let isExpanded = composite.subobjects[subobjectID].is_expanded;
             let isSubbjectEdited = editedObjects[subobjectID] !== undefined;
             let isSubobjectDeleted = composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none;
 
             columnItems.push(<SubobjectCard key={subobjectID} objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback}
-                selectedTab={selectedTab} isSubbjectEdited={isSubbjectEdited} fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} />);
+                selectedTab={selectedTab} isExpanded={isExpanded} isSubbjectEdited={isSubbjectEdited} fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} />);
         }
         
         // <AddSubobjectMenu> at the bottom of the column

@@ -57,7 +57,7 @@ export const getSubobjectDisplayOrder = (composite, collapseEmptyRows) => {
 export const subobjectStateIsModified = (stateInObjectData, stateInEditedObject) => {
     if (stateInObjectData === undefined || stateInEditedObject === undefined) return false;
 
-    for (let attr of ["row", "column", "selected_tab"]) {
+    for (let attr of ["row", "column", "selected_tab", "is_expanded"]) {
         if (!deepEqual(stateInObjectData[attr], stateInEditedObject[attr])) return true;
     }
 
