@@ -7,8 +7,7 @@ import { DroppableNewTDLItem } from "./new-item";
 
 import { setEditedObject } from "../../../actions/object";
 import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-object";
-import { getSortedItemIDs, getVisibleItemIDs } from "../../../store/state-util/to-do-lists";
-import { getIsTDLDragAndDropEnabledSelector } from "../../../store/state-util/ui-object";
+import { getSortedItemIDs, getVisibleItemIDs, getIsTDLDragAndDropEnabledSelector } from "../../../store/state-util/to-do-lists";
 
 import StyleTDL from "../../../styles/to-do-lists.css";
 

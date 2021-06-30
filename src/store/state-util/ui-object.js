@@ -35,9 +35,3 @@ export const isFetchingObject = state => state.objectUI.objectOnLoadFetch.isFetc
  * Returns true if any of object page fetches are being performed or on load fetch failed.
  */
 export const isFetchingOrOnLoadFetchFailed = state => isFetchingObject(state) || state.objectUI.objectOnLoadFetch.fetchError;
-
-
-/**
- * Returns a selector for checking if to-do list drag and drop functionality is enabled.
- */
-export const getIsTDLDragAndDropEnabledSelector = objectID => state => !isFetchingObject(state) && state.editedObjects[objectID].toDoList.sort_type === "default";
