@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Button, Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
@@ -11,12 +11,38 @@ import { enumDeleteModes } from "../../../../store/state-templates/composite-sub
 /**
  * Subobject card heading line with object type and name, object name and indicators.
  */
-export const Heading = ({ objectID, subobjectID, updateCallback }) => {
+export const Heading = ({ objectID, subobjectID, updateCallback, setIsMouseOverDraggable }) => {
+    // Mouse enter and leave event handlers which toggles drag and drop functionality of the card
+    // DND is enabled is cursor is hovered over heading, but not over expand/collapse toggle
+    const [isOverHeading, setIsOverHeading] = useState(false);
+    const [isOverExpandCollapse, setIsOverExpandCollapse] = useState(false);
+
+    const onHeadingMouseEnter = useMemo(() => () => {
+        setIsOverHeading(true);
+        setIsMouseOverDraggable(!isOverExpandCollapse);
+    }, [objectID, subobjectID]);
+
+    const onHeadingMouseLeave = useMemo(() => () => {
+        setIsOverHeading(false);
+        setIsMouseOverDraggable(false);
+    }, [objectID, subobjectID]);
+
+    const onExpandCollapseMouseEnter = useMemo(() => () => {
+        setIsOverExpandCollapse(true);
+        setIsMouseOverDraggable(false);
+    }, [objectID, subobjectID]);
+
+    const onExpandCollapseMouseLeave = useMemo(() => () => {
+        setIsOverExpandCollapse(false);
+        setIsMouseOverDraggable(isOverHeading);
+    }, [objectID, subobjectID]);    
+
     return (
-        <div className="composite-subobjct-card-heading-container">
+        <div className="composite-subobjct-card-heading-container" onMouseEnter={onHeadingMouseEnter} onMouseLeave={onHeadingMouseLeave} >
             <div className="composite-subobjct-card-heading">
                 <div className="composite-subobject-card-heading-left">
-                    <HeadingLeft objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} />
+                    <HeadingLeft objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} 
+                        onExpandCollapseMouseEnter={onExpandCollapseMouseEnter} onExpandCollapseMouseLeave={onExpandCollapseMouseLeave} />
                 </div>
                 <div className="composite-subobject-card-heading-right">
                     <Indicators objectID={objectID} subobjectID={subobjectID} />
@@ -27,7 +53,7 @@ export const Heading = ({ objectID, subobjectID, updateCallback }) => {
 };
 
 
-const HeadingLeft = ({ objectID, subobjectID, updateCallback }) => {
+const HeadingLeft = ({ objectID, subobjectID, updateCallback, onExpandCollapseMouseEnter, onExpandCollapseMouseLeave }) => {
     // Expand/collapse toggle
     const isExpanded = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].is_expanded);
     const expandToggleOnClick = useMemo(() => () => { 
@@ -37,7 +63,8 @@ const HeadingLeft = ({ objectID, subobjectID, updateCallback }) => {
     const expandToggleTitle = isExpanded ? "Collapse subobject card" : "Expand subobject card";
     const expandToggleClassName = isExpanded ? "subobject-card-expand-toggle expanded" : "subobject-card-expand-toggle";
     
-    const expandButton = <Button basic circular size="mini" className={expandToggleClassName} icon="angle right" onClick={expandToggleOnClick} title={expandToggleTitle} />;
+    const expandButton = <Button basic circular size="mini" className={expandToggleClassName} icon="angle right" onClick={expandToggleOnClick} title={expandToggleTitle}
+        onMouseEnter={onExpandCollapseMouseEnter} onMouseLeave={onExpandCollapseMouseLeave} />;
 
     // Type and name
     const objectName = useSelector(state => state.editedObjects[subobjectID].object_name);

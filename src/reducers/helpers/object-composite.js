@@ -224,4 +224,86 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
 
         return newState;
     }
+
+    // Updates state when a subobject card is successfully dropped on another position.
+    //
+    // Accepts `subobjectID` of the dragged subobject and `dropTargetSubobjectID` of the drop target subobject or `newColumn` + `newRow` if drop target is add menu.
+    //
+    // Updates column row and values of dropped subobject card and other subobjects, which should be affected by position change.
+    if (command === "updatePositionsOnDrop") {
+        let { subobjectID, dropTargetSubobjectID, newColumn, newRow } = update;
+        if (dropTargetSubobjectID !== undefined) {
+            newColumn = state.editedObjects[objectID].composite.subobjects[dropTargetSubobjectID].column;
+            newRow = state.editedObjects[objectID].composite.subobjects[dropTargetSubobjectID].row;
+        }
+
+        // Exit if position was not changed (dropped on the row after its starting position)
+        const { column, row } = state.editedObjects[objectID].composite.subobjects[subobjectID];
+        if (newColumn === column && newRow === row + 1) return state;
+        
+        subobjectID = subobjectID.toString();
+        let newSubobjects = deepCopy(state.editedObjects[objectID].composite.subobjects);
+
+        // Handle drop in the same column
+        if (column === newColumn) {
+            // Dropped lower
+            if (newRow > row + 1) {
+                for (let soID of Object.keys(newSubobjects))
+                    if (soID !== subobjectID) {     // reduce rows of cards between start and end positions by 1
+                        const so = newSubobjects[soID];
+                        if (so.column === column && so.row > row && so.row < newRow) so.row -= 1;
+                    }
+                newSubobjects[subobjectID].row = newRow - 1;    // set new row of dragged subobject
+            // Dropped higher
+            } else {
+                for (let soID of Object.keys(newSubobjects))
+                    if (soID !== subobjectID) {     // increase rows of cards between end and start positions by 1
+                        const so = newSubobjects[soID];
+                        if (so.column === column && so.row >= newRow && so.row < row) so.row += 1;
+                    }
+                newSubobjects[subobjectID].row = newRow;    // set new row of dragged subobject
+            }
+        // Handle drop in another column
+        } else {
+            let remaininngItemsInStartColumn = 0;
+            for (let soID of Object.keys(newSubobjects))
+                if (soID !== subobjectID) {
+                    const so = newSubobjects[soID];
+                    // Reduce rows of subobjects in the start column after the start row
+                    if (so.column === column && so.row > row) {
+                        so.row--;
+                        remaininngItemsInStartColumn++;
+                    }
+
+                    // Increase rows of subobjects in the new column after the new row
+                    if (so.column === newColumn && so.row >= newRow) so.row++;
+                }
+            
+            // Set new column & row of the dragged card
+            newSubobjects[subobjectID].column = newColumn;
+            newSubobjects[subobjectID].row = newRow;
+
+            // Reduce column numbers if start column has no remaining subobjects
+            if (remaininngItemsInStartColumn === 0) {
+                for (let soID of Object.keys(newSubobjects)) {
+                    const so = newSubobjects[soID];
+                    if (so.column > column) so.column--;
+                }
+            }
+        }
+
+        return {
+            ...state,
+            editedObjects: {
+                ...state.editedObjects,
+                [objectID]: {
+                    ...state.editedObjects[objectID],
+                    composite: {
+                        ...state.editedObjects[objectID].composite,
+                        subobjects: newSubobjects
+                    }
+                }
+            }
+        };
+    }
 }

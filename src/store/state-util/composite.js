@@ -4,6 +4,7 @@
 
 import { deepEqual } from "../../util/equality-checks";
 import { validateNonCompositeObject } from "./objects";
+import { isFetchingObject } from "./ui-object";
 
 
 /**
@@ -90,3 +91,9 @@ export const getNonCompositeSubobjectValidationError = editedObject => {
         return e.message;
     }
 };
+
+
+/**
+ * Returns a boolean indicating if composite object's drag and drop functionality is enabled.
+ */
+ export const isCompositeDragAndDropEnabledSelector = state => !isFetchingObject(state);

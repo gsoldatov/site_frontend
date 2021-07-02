@@ -3,8 +3,12 @@
 *******************************************************/
 :root {
     --subobject-card-min-height: 100px;
+    --subobject-card-collapsed-height: 32px;    /* set fixed height close to actual height it takes; also equals to SUIR <Loader> component with default size prop height (which is not rendered anymore) */
     --subobject-card-padding-top-bottom: 0.5em;
     --subobject-card-padding-left-right: 0.75em;
+
+    --subobject-card-default-margin-bottom: 2em;
+
     --subobject-card-expand-collapse-time: 0.20s;
     --subobject-card-expand-toggle-rotation: 90deg;
 }
@@ -16,11 +20,21 @@ div.composite-subobject-grid {
 }
 
 
-/* Card */
-div.composite-subobject-card {
+/* Card and card dropzone */
+div.composite-subobject-card, div.composite-subobject-card-dropzone {
+    /* Borders and margin */
     box-shadow: 0 0 4px rgba(0,0,0,0.5);
     margin: 0.5em;
-    margin-bottom: 2em;
+}
+
+div.composite-subobject-card-dropzone {
+    height: var(--subobject-card-collapsed-height);
+    background-color: rgba(100, 200, 100, 0.25);
+}
+
+div.composite-subobject-card {    
+    margin-bottom: var(--subobject-card-default-margin-bottom);
+    /* Padding */
     padding-left: var(--subobject-card-padding-left-right);
     padding-right: var(--subobject-card-padding-left-right);
     padding-top: var(--subobject-card-padding-top-bottom);
@@ -38,13 +52,29 @@ div.composite-subobject-card.expanded {
     padding-bottom: var(--subobject-card-padding-top-bottom);
 }
 
-div.composite-subobject-card:last-child {
-    margin: 0.5em;  /* Override bottom margin */
+
+/* Smooth dragged card change */
+div.composite-subobject-card-container:not(:first-child) div.composite-subobject-card-dropzone {
+    /* Reduce space between dropzone and previous subobject card to enable smooth dragging over next card in the same column
+       (if additional space taken by dropzone if too large, next collapsed card will be missed when moving down the column,
+       because previous card stops being dragged over earlier than the next one begins to;
+       a potential way to fix this is add padding-top to the next container instead of padding-bottom to the current one)  */
+    margin-top: calc(-1 * var(--subobject-card-default-margin-bottom) + 0.5em);
 }
+
+div.composite-subobject-card-container.is-dragged-over {    /* replace margin-bottom of the `composite-subobject-card` with padding-bottom of its container */
+    padding-bottom: var(--subobject-card-default-margin-bottom);
+}
+
+div.composite-subobject-card.is-dragged-over {
+    margin-bottom: 0;
+}
+
 
 /* Full card placeholders (loader, error) */
 div.composite-subobject-card.no-padding {
     padding: 0;
+    min-height: var(--subobject-card-min-height);
 
     /* Center content vertically */
     display: flex;
@@ -66,10 +96,11 @@ div.subobject-error-button-container {
     justify-content: center;
 }
 
+
 /* Card heading */
 div.composite-subobjct-card-heading-container {
     background-color: rgba(0, 0, 0, 0.04);
-    /* Remove the padding of `div.composite-subobject-card` to make a correct line */
+    /* Remove the padding of `div.composite-subobject-card-container` to make a correct line */
     margin-top: calc(-1 * var(--subobject-card-padding-top-bottom));
     margin-left: calc(-1 * var(--subobject-card-padding-left-right));
     margin-right: calc(-1 * var(--subobject-card-padding-left-right));
@@ -77,7 +108,7 @@ div.composite-subobjct-card-heading-container {
 
 div.composite-subobjct-card-heading {
     width: 100%;
-    height: 32px;   /* set fixed height close no actual height it takes; also equals to SUIR <Loader> component with default size prop height (which is not rendered anymore) */
+    height: var(--subobject-card-collapsed-height);
     display: inline-flex;
     min-width: 0;   /* shrink flex container when `composite-subobject-card-heading-text` content overflows available space */
 }
@@ -105,7 +136,10 @@ div.composite-subobject-card-heading-text {
     margin-left: 0.5em;
     font-size: 1.2em;
     font-weight: bold;
-    /* text-decoration: underline; */
+
+    /* Disable text selection */
+    cursor: default;
+    user-select: none;
 
     /* Disable displaying object name on multiple lines */
     height: 1.2em;
@@ -119,6 +153,7 @@ div.composite-subobject-card-heading-text.unnamed {
     color: gray;
     /* text-decoration: none; */
 }
+
 
 /* Expand/collapse button */
 button.ui.button.subobject-card-expand-toggle {
@@ -193,8 +228,12 @@ button.ui.button.subobject-card-dialog-button {
 
 /* Add menu */
 div.composite-subobject-card.add-menu {
-    min-height: min-content;    /* Override fixed min-height */
+    /* Override default `composite-subobject-card` params */
+    min-height: min-content;
+    margin: 0.5em;
+    padding: 0.25em;
 
+    /* Center content horizontally */
     text-align: center;
 
     /* Center content vertically */
