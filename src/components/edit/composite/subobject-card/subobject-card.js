@@ -73,8 +73,7 @@ class SubobjectCard extends React.PureComponent {
                 : null;
             
             // CSS card classname
-            let cardClassName = isExpanded ? "composite-subobject-card expanded" : "composite-subobject-card";
-            cardClassName += isDraggedOver ? " is-dragged-over": "";
+            const cardClassName = isExpanded ? "composite-subobject-card expanded" : "composite-subobject-card";
             
             result = (
                 <div className={cardClassName} id={subobjectID}>
@@ -88,10 +87,8 @@ class SubobjectCard extends React.PureComponent {
         // Dropzone & container <div>
         const dropzone = isDraggedOver && <SubobjectCardDropZone />;
 
-        const cardContainerClassName = "composite-subobject-card-container" + (isDraggedOver && !isPlaceholder ? " is-dragged-over": "");
-
         result = (
-            <div className={cardContainerClassName}>
+            <div className="composite-subobject-card-container">
                 {dropzone}
                 {result}
             </div>

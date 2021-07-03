@@ -49,13 +49,10 @@ class AddSubobjectMenu extends React.PureComponent {
         // Dropzone & container <div>
         const dropzone = isDraggedOver && <SubobjectCardDropZone />;
 
-        const cardContainerClassName = "composite-subobject-card-container" + (isDraggedOver ? " is-dragged-over": "");
-        const cardClassName = "composite-subobject-card add-menu" + (isDraggedOver ? " is-dragged-over": "");
-
         return connectDropTarget(
-            <div className={cardContainerClassName}>
+            <div className="composite-subobject-card-container">
                 {dropzone}
-                <div className={cardClassName}>
+                <div className="composite-subobject-card add-menu">
                     {result}
                 </div>
             </div>
