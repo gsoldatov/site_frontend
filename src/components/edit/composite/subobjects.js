@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DraggableSubobjectCard } from "./subobject-card/subobject-card";
-import { AddSubobjectMenu } from "./add-subobject-menu";
+import { DroppableAddSubobjectMenu } from "./add-subobject-menu";
 
 import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../actions/object";
 import { getSubobjectDisplayOrder, isCompositeDragAndDropEnabledSelector } from "../../../store/state-util/composite";
@@ -50,10 +50,10 @@ export const SubobjectsContainer = ({ objectID }) => {
                 canDrag={canDrag} />);
         }
         
-        // <AddSubobjectMenu> at the bottom of the column
+        // <DroppableAddSubobjectMenu> at the bottom of the column
         const isObjectInputDisplayed = existingObjectInputRow === subobjectOrder[i].length && existingObjectInputColumn === i;
         
-        columnItems.push(<AddSubobjectMenu key="addMenu" row={subobjectOrder[i].length} column={i} objectID={objectID} updateCallback={updateCallback} setAddMenuCallback={setAddMenuCallback}
+        columnItems.push(<DroppableAddSubobjectMenu key="addMenu" row={subobjectOrder[i].length} column={i} objectID={objectID} updateCallback={updateCallback} setAddMenuCallback={setAddMenuCallback}
             isObjectInputDisplayed={isObjectInputDisplayed} />);
 
         subobjectGrid.push(

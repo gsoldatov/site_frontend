@@ -76,7 +76,6 @@ class SubobjectCard extends React.PureComponent {
             let cardClassName = isExpanded ? "composite-subobject-card expanded" : "composite-subobject-card";
             cardClassName += isDraggedOver ? " is-dragged-over": "";
             
-
             result = (
                 <div className={cardClassName} id={subobjectID}>
                     {heading}
@@ -113,8 +112,9 @@ const dragSourceSpec = {
     endDrag: (props, monitor, component) => {
         if (!monitor.didDrop()) return;
         
-        const dropResult = monitor.getDropResult();
-        props.updateCallback({ compositeUpdate: { command: "updatePositionsOnDrop", subobjectID: props.subobjectID, dropTargetSubobjectID: dropResult.subobjectID }});
+        const { subobjectID, newColumn, newRow } = monitor.getDropResult();
+        props.updateCallback({ compositeUpdate: { command: "updatePositionsOnDrop", subobjectID: props.subobjectID, dropTargetSubobjectID: subobjectID,
+            newColumn, newRow }});
     },
     canDrag: props => props.canDrag
 };

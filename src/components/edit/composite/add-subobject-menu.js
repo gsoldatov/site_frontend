@@ -1,6 +1,9 @@
 import React, { useRef, useEffect } from "react";
+import { DropTarget } from "react-dnd";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Dropdown, Icon } from "semantic-ui-react";
+import { Button, Dropdown } from "semantic-ui-react";
+
+import { SubobjectCardDropZone } from "./subobject-card/card-dropzone";
 
 import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../fetches/ui-object";
 
@@ -10,7 +13,7 @@ import intervalWrapper from "../../../util/interval-wrapper";
 /**
  * Menu for adding new subobjects to a composite object.
  */
-export class AddSubobjectMenu extends React.PureComponent {
+class AddSubobjectMenu extends React.PureComponent {
     constructor (props) {
         super(props);
 
@@ -24,19 +27,15 @@ export class AddSubobjectMenu extends React.PureComponent {
 
     render() {
         const { isObjectInputDisplayed, objectID, setAddMenuCallback, updateCallback, row, column } = this.props;
+        const { connectDropTarget, isDraggedOver } = this.props;
+        let result;
 
         // Object search dropdown
-        if (isObjectInputDisplayed) {
-            return (
-                <div className="composite-subobject-card add-menu">
-                    <NewObjectDropdown objectID={objectID} setAddMenuCallback={setAddMenuCallback} updateCallback={updateCallback} row={row} column={column} />
-                </div>
-            );
-        }
+        if (isObjectInputDisplayed)
+            result = <NewObjectDropdown objectID={objectID} setAddMenuCallback={setAddMenuCallback} updateCallback={updateCallback} row={row} column={column} />
 
         // "Add New" + "Add Existing" buttons
-        return (
-            <div className="composite-subobject-card add-menu">
+        result = (
                 <div className="composite-subobject-add-menu-button-container">
                     <Button color="blue" onClick={this.addNewOnClick} className="composite-subobject-add-menu-button">
                         Add New
@@ -45,12 +44,42 @@ export class AddSubobjectMenu extends React.PureComponent {
                         Add Existing
                     </Button>
                 </div>
+        );
+
+        // Dropzone & container <div>
+        const dropzone = isDraggedOver && <SubobjectCardDropZone />;
+
+        const cardContainerClassName = "composite-subobject-card-container" + (isDraggedOver ? " is-dragged-over": "");
+        const cardClassName = "composite-subobject-card add-menu" + (isDraggedOver ? " is-dragged-over": "");
+
+        return connectDropTarget(
+            <div className={cardContainerClassName}>
+                {dropzone}
+                <div className={cardClassName}>
+                    {result}
+                </div>
             </div>
         );
     }
 }
 
+// Drop specification, collecting functions and wrapping
+const dropTargetSpec = {
+    drop: props => ({ objectID: props.objectID, newColumn: props.column, newRow: props.row }),
+    canDrop: (props, monitor) => props.objectID === monitor.getItem().objectID
+};
 
+const dropTargetCollect = (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    isDraggedOver: monitor.canDrop() && monitor.isOver()
+});
+
+export const DroppableAddSubobjectMenu = DropTarget("composite subobject", dropTargetSpec, dropTargetCollect)(AddSubobjectMenu);
+
+
+/**
+ * Existing subobjects search dropdown.
+ */
 const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, column }) => {
     const dispatch = useDispatch();
 

@@ -66,7 +66,7 @@ div.composite-subobject-card-container.is-dragged-over {    /* replace margin-bo
     padding-bottom: var(--subobject-card-default-margin-bottom);
 }
 
-div.composite-subobject-card.is-dragged-over {
+div.composite-subobject-card.is-dragged-over, div.composite-subobject-card.add-menu.is-dragged-over {
     margin-bottom: 0;
 }
 
