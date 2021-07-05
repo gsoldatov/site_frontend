@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { DraggableSubobjectCard } from "./subobject-card/subobject-card";
 import { DroppableAddSubobjectMenu } from "./add-subobject-menu";
+import { NewSubobjectGridColumn } from "./new-subobject-grid-column";
 
 import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../actions/object";
 import { getSubobjectDisplayOrder, isCompositeDragAndDropEnabledSelector } from "../../../store/state-util/composite";
@@ -23,11 +24,13 @@ export const SubobjectsContainer = ({ objectID }) => {
         () => addCompositeSubobjectMenu => dispatch(setAddCompositeSubobjectMenu(addCompositeSubobjectMenu))
     , []);
 
-    const canDrag = useSelector(isCompositeDragAndDropEnabledSelector);
 
     const editedObjects = useSelector(state => state.editedObjects);
     const composite = useSelector(state => state.editedObjects[objectID].composite);
     const subobjectOrder = getSubobjectDisplayOrder(composite);
+
+    const canDrag = useSelector(isCompositeDragAndDropEnabledSelector);
+    const isDragging = useSelector(state => state.objectUI.isDraggingCompositeSubobject);
     const existingObjectInputRow = useSelector(state => state.objectUI.addCompositeSubobjectMenu.row);
     const existingObjectInputColumn = useSelector(state => state.objectUI.addCompositeSubobjectMenu.column);
     
@@ -57,11 +60,15 @@ export const SubobjectsContainer = ({ objectID }) => {
             isObjectInputDisplayed={isObjectInputDisplayed} />);
 
         subobjectGrid.push(
-            <div className="composite-subobject-grid-column" key={i}>
+            <div key={i} className="composite-subobject-grid-column" /*style={{width: `calc(100% / ${subobjectOrder.length})`}}*/>
                 {columnItems}
             </div>
         );
     }
+
+    // New column placeholder
+    if (isDragging && subobjectGrid.length < 4)
+        subobjectGrid.push(<NewSubobjectGridColumn key={subobjectGrid.length} column={subobjectGrid.length} />);
     
     return (
         <div className="composite-subobject-grid">

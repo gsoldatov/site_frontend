@@ -2,7 +2,9 @@
         Subobjects grid, card & menu styling.  
 *******************************************************/
 :root {
-    --subobject-card-min-height: 100px;
+    --subobject-grid-column-min-width: 250px;
+
+    --subobject-card-min-height: 100px;    
     --subobject-card-collapsed-height: 32px;    /* set fixed height close to actual height it takes; also equals to SUIR <Loader> component with default size prop height (which is not rendered anymore) */
     --subobject-card-padding-top-bottom: 0.5em;
     --subobject-card-padding-left-right: 0.75em;
@@ -16,7 +18,27 @@
 
 /* Grid */
 div.composite-subobject-grid {
+    display: flex;
     margin: -0.5em; /* reduce padding of SUIR div.tab (1em) by half */
+}
+
+/* Column */
+div.composite-subobject-grid-column {
+    /* Set columns with equal width and a min width */
+    flex: 1 0 var(--subobject-grid-column-min-width);
+}
+
+/* New column */
+div.composite-subobject-grid-column.new {
+    /* Display a narrow column when not dragged over */
+    background-color: rgba(75, 75, 75, 0.25);
+    flex: 0 0 100px;
+}
+
+div.composite-subobject-grid-column.new.is-dragged-over {
+    /* Display a column of same width as existing columns if dragged over */
+    background-color: unset;
+    flex: 1 0 var(--subobject-grid-column-min-width);
 }
 
 

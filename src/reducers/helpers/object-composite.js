@@ -225,6 +225,17 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         return newState;
     }
 
+    // Sets state.objectUI.isDraggingCompositeSubobject with the provided value.
+    if (command === "setIsDraggingCompositeSubobject") {
+        return {
+            ...state,
+            objectUI: {
+                ...state.objectUI,
+                isDraggingCompositeSubobject: update.isDraggingCompositeSubobject
+            }
+        };
+    }
+
     // Updates state when a subobject card is successfully dropped on another position.
     //
     // Accepts `subobjectID` of the dragged subobject and `dropTargetSubobjectID` of the drop target subobject or `newColumn` + `newRow` if drop target is add menu.
@@ -270,10 +281,8 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
                 if (soID !== subobjectID) {
                     const so = newSubobjects[soID];
                     // Reduce rows of subobjects in the start column after the start row
-                    if (so.column === column && so.row > row) {
-                        so.row--;
-                        remaininngItemsInStartColumn++;
-                    }
+                    if (so.column === column && so.row > row) so.row--;
+                    if (so.column === column) remaininngItemsInStartColumn++;
 
                     // Increase rows of subobjects in the new column after the new row
                     if (so.column === newColumn && so.row >= newRow) so.row++;
