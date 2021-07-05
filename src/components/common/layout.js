@@ -12,7 +12,7 @@ import { setRedirectOnRender } from "../../actions/common";
 /**
  * Page layout with navigation, side menu and main content (body).
  */
-export default ({ sideMenuItems, body }) => {
+export default ({ sideMenuItems, body, className }) => {
     const dispatch = useDispatch();
     const redirectOnRender = useSelector(state => state.redirectOnRender);
     const history = useHistory();
@@ -26,15 +26,15 @@ export default ({ sideMenuItems, body }) => {
     }, [redirectOnRender]);
 
     return (
-        <Grid celled>
-            <Grid.Row>
+        <Grid celled className={className}>
+            <Grid.Row className={className}>
                 <Navigation />
             </Grid.Row>
-            <Grid.Row columns={2}>
-                <Grid.Column width={2} >
+            <Grid.Row columns={2} className={className}>
+                <Grid.Column width={2} className={className}>
                     <SideMenu items={sideMenuItems} />
                 </Grid.Column>
-                <GridColumn width={12}>
+                <GridColumn width={12} className={className}>
                     {body}
                 </GridColumn>
             </Grid.Row>

@@ -19,6 +19,10 @@
     border: 0;
 } */
 
+body {
+    overflow-x: auto;   /* enable horizontal scrollbar when required */
+}
+
 div.ui.celled.grid {
     margin: 0;  /* fix height to remove browser scrollbar */
 }

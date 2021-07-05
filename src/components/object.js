@@ -159,6 +159,8 @@ export const EditObject = () => {
 const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     const dispatch = useDispatch();
 
+    const objectType = useSelector(state => getCurrentObject(state).object_type);
+
     // On load action (also triggers when object ids change)
     useEffect(() => {
         dispatch(onLoad);
@@ -173,7 +175,10 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
         </>
     );
 
-    return <Layout sideMenuItems={sideMenuItems} body={pageBody} />;
+    // Custom layout classname for composite objects (to allow multicolumn subobjects)
+    const className = objectType === "composite" ? "composite-object-page" : undefined;
+
+    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} />;
 };
 
 

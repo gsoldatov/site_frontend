@@ -2,7 +2,7 @@
         Subobjects grid, card & menu styling.  
 *******************************************************/
 :root {
-    --subobject-grid-column-min-width: 250px;
+    --subobject-grid-column-min-width: 300px;
 
     --subobject-card-min-height: 100px;    
     --subobject-card-collapsed-height: 32px;    /* set fixed height close to actual height it takes; also equals to SUIR <Loader> component with default size prop height (which is not rendered anymore) */
@@ -16,9 +16,30 @@
 }
 
 
-/* Grid */
+/* Layout grid & main content column */
+div.ui.celled.grid.composite-object-page, div.twelve.wide.column.composite-object-page {
+    /* Override min-width to fit multicolumn composite subobject grids */
+    min-width: max-content;
+}
+
+div.two.wide.column.composite-object-page {
+    /* Limit max width of side menu to default value for 1920x1080 screen (when multicolumn subobjects overflow main column) */
+    max-width: 240px;
+}
+
+div.two.column.row.composite-object-page {
+    /* Force placing both columns in main row on a single line */
+    flex-wrap: nowrap;
+}
+
+
+/* Subobjects grid */
 div.composite-subobject-grid {
     display: flex;
+    /* flex-wrap: nowrap; */
+    /* min-width: max-content; */
+    /* width: 2500px; */
+    /* width: min-content; */
     margin: -0.5em; /* reduce padding of SUIR div.tab (1em) by half */
 }
 
@@ -26,6 +47,7 @@ div.composite-subobject-grid {
 div.composite-subobject-grid-column {
     /* Set columns with equal width and a min width */
     flex: 1 0 var(--subobject-grid-column-min-width);
+    min-width: var(--subobject-grid-column-min-width);  /* min-width is required to correctly calculate max-content of parent containers */
 }
 
 /* New column */
@@ -33,12 +55,14 @@ div.composite-subobject-grid-column.new {
     /* Display a narrow column when not dragged over */
     background-color: rgba(75, 75, 75, 0.25);
     flex: 0 0 100px;
+    min-width: 100px;   /* min-width is required to correctly calculate max-content of parent containers */
 }
 
 div.composite-subobject-grid-column.new.is-dragged-over {
     /* Display a column of same width as existing columns if dragged over */
     background-color: unset;
     flex: 1 0 var(--subobject-grid-column-min-width);
+    min-width: var(--subobject-grid-column-min-width);  /* min-width is required to correctly calculate max-content of parent containers */
 }
 
 

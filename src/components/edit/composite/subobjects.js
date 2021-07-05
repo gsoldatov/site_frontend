@@ -60,14 +60,14 @@ export const SubobjectsContainer = ({ objectID }) => {
             isObjectInputDisplayed={isObjectInputDisplayed} />);
 
         subobjectGrid.push(
-            <div key={i} className="composite-subobject-grid-column" /*style={{width: `calc(100% / ${subobjectOrder.length})`}}*/>
+            <div key={i} className="composite-subobject-grid-column">
                 {columnItems}
             </div>
         );
     }
 
     // New column placeholder
-    if (isDragging && subobjectGrid.length < 4)
+    if (isDragging /*&& subobjectGrid.length < 4*/)
         subobjectGrid.push(<NewSubobjectGridColumn key={subobjectGrid.length} column={subobjectGrid.length} />);
     
     return (
