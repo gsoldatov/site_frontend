@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Form, Loader } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 
@@ -59,6 +59,14 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedS
  */
 export const NameDescriptionInput = ({ nameLabel, namePlaceholder, name, nameOnChange,
     descriptionLabel, descriptionPlaceholder, description, descriptionOnChange }) => {
+    
+    const descriptionRef = useRef(null);
+    const resizeDescriptionInput = useRef(() => {
+        if (descriptionRef.current) {
+            descriptionRef.current.style.height = "inherit";  // reset
+            descriptionRef.current.style.height = descriptionRef.current.scrollHeight + "px";   // set to text height
+        }
+    }).current;
 
     const handleNameChange = useRef(e => {
         nameOnChange(e.target.value);
@@ -66,14 +74,13 @@ export const NameDescriptionInput = ({ nameLabel, namePlaceholder, name, nameOnC
 
     const handleDescriptionChange = useRef(e => {
         descriptionOnChange(e.target.value);
-
-        if (descriptionRef.current) {
-            descriptionRef.current.style.height = "inherit";  // reset
-            descriptionRef.current.style.height = descriptionRef.current.scrollHeight + "px";   // set to text height
-        }
+        resizeDescriptionInput();
     }).current;
 
-    const descriptionRef = useRef(null);
+    // Resize description input on start
+    useEffect(() => {
+        resizeDescriptionInput();
+    }, []);
 
     return (
         <Form className="name-description-form">
