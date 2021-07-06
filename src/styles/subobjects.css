@@ -133,6 +133,11 @@ div.composite-subobjct-card-heading-container {
     margin-right: calc(-1 * var(--subobject-card-padding-left-right));
 }
 
+div.composite-subobjct-card-heading-container.is-hovered-over {
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    cursor: grab;
+}
+
 div.composite-subobjct-card-heading {
     width: 100%;
     height: var(--subobject-card-collapsed-height);
@@ -178,7 +183,10 @@ div.composite-subobject-card-heading-text {
 div.composite-subobject-card-heading-text.unnamed {
     font-weight: normal;
     color: gray;
-    /* text-decoration: none; */
+}
+
+div.composite-subobject-card-heading-text.is-hovered-over {
+    cursor: grab;
 }
 
 

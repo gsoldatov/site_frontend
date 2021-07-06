@@ -20,7 +20,7 @@ export const Heading = ({ objectID, subobjectID, updateCallback, setIsMouseOverD
     const onHeadingMouseEnter = useMemo(() => () => {
         setIsOverHeading(true);
         setIsMouseOverDraggable(!isOverExpandCollapse);
-    }, [objectID, subobjectID]);
+    }, [objectID, subobjectID, isOverExpandCollapse]);
 
     const onHeadingMouseLeave = useMemo(() => () => {
         setIsOverHeading(false);
@@ -35,13 +35,17 @@ export const Heading = ({ objectID, subobjectID, updateCallback, setIsMouseOverD
     const onExpandCollapseMouseLeave = useMemo(() => () => {
         setIsOverExpandCollapse(false);
         setIsMouseOverDraggable(isOverHeading);
-    }, [objectID, subobjectID]);    
+    }, [objectID, subobjectID, isOverHeading]);
+    
+    // Heading container classname
+    let containerHeadingClassName = "composite-subobjct-card-heading-container";
+    if (isOverHeading) containerHeadingClassName += " is-hovered-over";
 
     return (
-        <div className="composite-subobjct-card-heading-container" onMouseEnter={onHeadingMouseEnter} onMouseLeave={onHeadingMouseLeave} >
+        <div className={containerHeadingClassName} onMouseEnter={onHeadingMouseEnter} onMouseLeave={onHeadingMouseLeave} >
             <div className="composite-subobjct-card-heading">
                 <div className="composite-subobject-card-heading-left">
-                    <HeadingLeft objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} 
+                    <HeadingLeft objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} isHoveredOver={isOverHeading}
                         onExpandCollapseMouseEnter={onExpandCollapseMouseEnter} onExpandCollapseMouseLeave={onExpandCollapseMouseLeave} />
                 </div>
                 <div className="composite-subobject-card-heading-right">
@@ -53,7 +57,7 @@ export const Heading = ({ objectID, subobjectID, updateCallback, setIsMouseOverD
 };
 
 
-const HeadingLeft = ({ objectID, subobjectID, updateCallback, onExpandCollapseMouseEnter, onExpandCollapseMouseLeave }) => {
+const HeadingLeft = ({ objectID, subobjectID, updateCallback, isHoveredOver, onExpandCollapseMouseEnter, onExpandCollapseMouseLeave }) => {
     // Expand/collapse toggle
     const isExpanded = useSelector(state => state.editedObjects[objectID].composite.subobjects[subobjectID].is_expanded);
     const expandToggleOnClick = useMemo(() => () => { 
@@ -70,7 +74,8 @@ const HeadingLeft = ({ objectID, subobjectID, updateCallback, onExpandCollapseMo
     const objectName = useSelector(state => state.editedObjects[subobjectID].object_name);
     const objectType = useSelector(state => state.editedObjects[subobjectID].object_type);
 
-    const headingTextClassName = objectName.length > 0 ? "composite-subobject-card-heading-text" : "composite-subobject-card-heading-text unnamed";
+    let headingTextClassName = objectName.length > 0 ? "composite-subobject-card-heading-text" : "composite-subobject-card-heading-text unnamed";
+    if (isHoveredOver) headingTextClassName += " is-hovered-over";
     const headingText = objectName.length > 0 ? objectName : "<Unnamed>";
     return (
         <>
