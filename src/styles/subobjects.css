@@ -74,8 +74,14 @@ div.composite-subobject-grid-column {
 
 /* New column dropzone */
 div.composite-subobject-grid-new-column-dropzone {
-    /* background-color: rgba(75, 75, 75, 0.25); */
     flex: 0 0 var(--subobject-new-column-dropzone-width);
+
+    align-self: center;
+    /* height: 100%; */
+    height: calc(100% - 2 * calc(var(--subobject-card-padding-top-bottom)));
+    margin-top: calc(var(--subobject-card-padding-top-bottom));
+    /* padding-top: 2.5em; */
+    margin-bottom: calc(var(--subobject-card-padding-top-bottom));
 }
 
 div.composite-subobject-grid-new-column-dropzone.is-dragged-over {
