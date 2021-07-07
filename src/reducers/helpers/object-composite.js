@@ -225,24 +225,17 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         return newState;
     }
 
-    // Sets state.objectUI.isDraggingCompositeSubobject with the provided value.
-    if (command === "setIsDraggingCompositeSubobject") {
-        return {
-            ...state,
-            objectUI: {
-                ...state.objectUI,
-                isDraggingCompositeSubobject: update.isDraggingCompositeSubobject
-            }
-        };
-    }
-
     // Updates state when a subobject card is successfully dropped on another position.
     //
-    // Accepts `subobjectID` of the dragged subobject and `dropTargetSubobjectID` of the drop target subobject or `newColumn` + `newRow` if drop target is add menu.
+    // Accepts one of four sets of arguments:
+    // 1) `subobjectID` of the dragged subobject and `dropTargetSubobjectID` if dropped on another subobject card;
+    // 2) `subobjectID`, `newColumn` & `newRow` if dropped on an add menu;
+    // 3) `subobjectID`, `newColumn`, `newRow` & `isDroppedToTheLeft` if dropped on a new column dropzone to the left of an existing column;
+    // 4) `subobjectID`, `newColumn`, `newRow` & `isDroppedToTheRight` if dropped on a new column dropzone to the right an existing column.
     //
     // Updates column row and values of dropped subobject card and other subobjects, which should be affected by position change.
     if (command === "updatePositionsOnDrop") {
-        let { subobjectID, dropTargetSubobjectID, newColumn, newRow } = update;
+        let { subobjectID, dropTargetSubobjectID, newColumn, newRow, isDroppedToTheLeft, isDroppedToTheRight } = update;
         if (dropTargetSubobjectID !== undefined) {
             newColumn = state.editedObjects[objectID].composite.subobjects[dropTargetSubobjectID].column;
             newRow = state.editedObjects[objectID].composite.subobjects[dropTargetSubobjectID].row;
@@ -255,8 +248,35 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         subobjectID = subobjectID.toString();
         let newSubobjects = deepCopy(state.editedObjects[objectID].composite.subobjects);
 
+        // Handle drop on a new column dropzone
+        if (isDroppedToTheLeft || isDroppedToTheRight) {
+            const minColumnToIncrease = isDroppedToTheLeft ? newColumn : newColumn + 1;
+            let remaininngItemsInStartColumn = 0;
+            for (let soID of Object.keys(newSubobjects))
+                if (soID !== subobjectID) {
+                    const so = newSubobjects[soID];
+                    // Reduce rows of subobjects in the start column after the start row
+                    if (so.column === column && so.row > row) so.row--;
+                    if (so.column === column) remaininngItemsInStartColumn++;
+                    
+                    // Increase column number to the right of the dropped column
+                    if (so.column >= minColumnToIncrease) so.column += 1;
+                }
+            
+            // Set new column & row of the dragged card
+            newSubobjects[subobjectID].column = isDroppedToTheLeft ? newColumn : newColumn + 1;
+            newSubobjects[subobjectID].row = 0;
+
+            // Reduce column numbers if start column has no remaining subobjects
+            if (remaininngItemsInStartColumn === 0) {
+                for (let soID of Object.keys(newSubobjects)) {
+                    const so = newSubobjects[soID];
+                    if (so.column > column) so.column--;
+                }
+            }
+        }
         // Handle drop in the same column
-        if (column === newColumn) {
+        else if (column === newColumn) {
             // Dropped lower
             if (newRow > row + 1) {
                 for (let soID of Object.keys(newSubobjects))

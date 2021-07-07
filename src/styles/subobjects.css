@@ -2,7 +2,8 @@
         Subobjects grid, card & menu styling.  
 *******************************************************/
 :root {
-    --subobject-grid-column-min-width: 300px;
+    --subobject-grid-column-container-min-width: 300px;
+    --subobject-new-column-dropzone-width: 150px;
 
     --subobject-card-min-height: 100px;    
     --subobject-card-collapsed-height: 32px;    /* set fixed height close to actual height it takes; also equals to SUIR <Loader> component with default size prop height (which is not rendered anymore) */
@@ -13,6 +14,8 @@
 
     --subobject-card-expand-collapse-time: 0.20s;
     --subobject-card-expand-toggle-rotation: 90deg;
+
+    --subobject-dropzone-background-color: rgba(100, 200, 100, 0.25);
 }
 
 
@@ -43,26 +46,40 @@ div.composite-subobject-grid {
     margin: -0.5em; /* reduce padding of SUIR div.tab (1em) by half */
 }
 
-/* Column */
-div.composite-subobject-grid-column {
+/* Column container & column */
+div.composite-subobject-grid-column-container {
+    display: flex;
+    flex-direction: row;
     /* Set columns with equal width and a min width */
-    flex: 1 0 var(--subobject-grid-column-min-width);
-    min-width: var(--subobject-grid-column-min-width);  /* min-width is required to correctly calculate max-content of parent containers */
+    flex: 1 0 var(--subobject-grid-column-container-min-width);
+    min-width: var(--subobject-grid-column-container-min-width);  /* min-width is required to correctly calculate max-content of parent containers */
 }
 
-/* New column */
-div.composite-subobject-grid-column.new {
-    /* Display a narrow column when not dragged over */
+div.composite-subobject-grid-column-container.is-dragged-over {
+    /* Increase min width to include 1 new column dropzone */
+    flex: 1 0 calc(var(--subobject-grid-column-container-min-width) + var(--subobject-new-column-dropzone-width));
+    min-width: calc(var(--subobject-grid-column-container-min-width) + var(--subobject-new-column-dropzone-width));  /* min-width is required to correctly calculate max-content of parent containers */
+}
+
+div.composite-subobject-grid-column-container.is-dragged-over.two-dropzones {
+    /* Increase min width to include 2 new column dropzones */
+    flex: 1 0 calc(var(--subobject-grid-column-container-min-width) + 2 * var(--subobject-new-column-dropzone-width));
+    min-width: calc(var(--subobject-grid-column-container-min-width) + 2 * var(--subobject-new-column-dropzone-width));  /* min-width is required to correctly calculate max-content of parent containers */
+}
+
+div.composite-subobject-grid-column {
+    /* Always fully fill subobject-grid-column-container */
+    flex-grow: 1;
+}
+
+/* New column dropzone */
+div.composite-subobject-grid-new-column-dropzone {
     background-color: rgba(75, 75, 75, 0.25);
-    flex: 0 0 100px;
-    min-width: 100px;   /* min-width is required to correctly calculate max-content of parent containers */
+    flex: 0 0 var(--subobject-new-column-dropzone-width);
 }
 
-div.composite-subobject-grid-column.new.is-dragged-over {
-    /* Display a column of same width as existing columns if dragged over */
-    background-color: unset;
-    flex: 1 0 var(--subobject-grid-column-min-width);
-    min-width: var(--subobject-grid-column-min-width);  /* min-width is required to correctly calculate max-content of parent containers */
+div.composite-subobject-grid-new-column-dropzone.is-dragged-over {
+    background-color: var(--subobject-dropzone-background-color);
 }
 
 
@@ -75,7 +92,7 @@ div.composite-subobject-card, div.composite-subobject-card-dropzone {
 
 div.composite-subobject-card-dropzone {
     height: var(--subobject-card-collapsed-height);
-    background-color: rgba(100, 200, 100, 0.25);
+    background-color: var(--subobject-dropzone-background-color);
 }
 
 div.composite-subobject-card {    
@@ -84,6 +101,9 @@ div.composite-subobject-card {
     padding-left: var(--subobject-card-padding-left-right);
     padding-right: var(--subobject-card-padding-left-right);
     padding-top: var(--subobject-card-padding-top-bottom);
+
+    /* max-width: calc(100% - 2 * var(--subobject-card-padding-left-right)); */
+    /* max-width: */
 
     /* Expand => collapse animation */
     transition: min-height var(--subobject-card-expand-collapse-time) ease-out;

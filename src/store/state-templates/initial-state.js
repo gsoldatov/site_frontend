@@ -93,9 +93,7 @@ const initialState = {
             column: -1,
             inputText: "",
             matchingIDs: []
-        },
-
-        isDraggingCompositeSubobject: false
+        }
     },
 
     // /objects page UI controllers

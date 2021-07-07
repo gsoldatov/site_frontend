@@ -1,16 +1,15 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useDrop } from "react-dnd";
 
-import { SubobjectCardDropZone } from "./subobject-card/card-dropzone";
 
 
 /**
  * New composite subobject grid column placeholder displayed during drag and drop of subobjects.
  */
-export const NewSubobjectGridColumn = ({ column }) => {
+export const NewSubobjectGridColumn = ({ column, isDroppedToTheLeft, isDroppedToTheRight }) => {
     const [collectedProps, dropRef] = useDrop({
         accept: ["composite subobject"],
-        drop: item => ({ objectID: item.objectID, newColumn: column, newRow: 0 }),
+        drop: item => ({ objectID: item.objectID, newColumn: column, newRow: 0, isDroppedToTheLeft, isDroppedToTheRight }),
         canDrop: (item, monitor) => item.objectID === monitor.getItem().objectID,
         collect: (monitor) => ({
             isDraggedOver: monitor.canDrop() && monitor.isOver()
@@ -18,16 +17,10 @@ export const NewSubobjectGridColumn = ({ column }) => {
     });
     const { isDraggedOver } = collectedProps;
 
-    // Dropzone
-    const dropzone = isDraggedOver && <SubobjectCardDropZone />;
-
-
-    let cssClassName = "composite-subobject-grid-column new";
+    let cssClassName = "composite-subobject-grid-new-column-dropzone";
     if (isDraggedOver) cssClassName += " is-dragged-over";
 
     return (
-        <div ref={dropRef} className={cssClassName}>
-            {dropzone}
-        </div>
+        <div ref={dropRef} className={cssClassName} />
     );
 };

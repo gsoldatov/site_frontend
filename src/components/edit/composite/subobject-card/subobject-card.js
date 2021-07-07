@@ -104,16 +104,14 @@ class SubobjectCard extends React.PureComponent {
 // Drag & drop specifications, collecting functions and wrapping
 const dragSourceSpec = {
     beginDrag: props => {
-        props.updateCallback({ compositeUpdate: { command: "setIsDraggingCompositeSubobject", isDraggingCompositeSubobject: true }});
         return { objectID: props.objectID, subobjectID: props.subobjectID };
     },
     endDrag: (props, monitor, component) => {
-        props.updateCallback({ compositeUpdate: { command: "setIsDraggingCompositeSubobject", isDraggingCompositeSubobject: false }});
         if (!monitor.didDrop()) return;
         
-        const { subobjectID, newColumn, newRow } = monitor.getDropResult();
+        const { subobjectID, newColumn, newRow, isDroppedToTheLeft, isDroppedToTheRight } = monitor.getDropResult();
         props.updateCallback({ compositeUpdate: { command: "updatePositionsOnDrop", subobjectID: props.subobjectID, dropTargetSubobjectID: subobjectID,
-            newColumn, newRow }});
+            newColumn, newRow, isDroppedToTheLeft, isDroppedToTheRight }});
     },
     canDrag: props => props.canDrag
 };

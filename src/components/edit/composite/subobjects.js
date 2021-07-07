@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DraggableSubobjectCard } from "./subobject-card/subobject-card";
@@ -10,6 +10,8 @@ import { getSubobjectDisplayOrder, isCompositeDragAndDropEnabledSelector } from 
 import { enumDeleteModes } from "../../../store/state-templates/composite-subobjects";
 
 import StyleSubobjects from "../../../styles/subobjects.css";
+import { useDrop } from "react-dnd";
+import { useEffect } from "react";
 
 
 /**
@@ -28,13 +30,15 @@ export const SubobjectsContainer = ({ objectID }) => {
     const editedObjects = useSelector(state => state.editedObjects);
     const composite = useSelector(state => state.editedObjects[objectID].composite);
     const subobjectOrder = getSubobjectDisplayOrder(composite);
-
+    
     const canDrag = useSelector(isCompositeDragAndDropEnabledSelector);
-    const isDragging = useSelector(state => state.objectUI.isDraggingCompositeSubobject);
     const existingObjectInputRow = useSelector(state => state.objectUI.addCompositeSubobjectMenu.row);
     const existingObjectInputColumn = useSelector(state => state.objectUI.addCompositeSubobjectMenu.column);
     
     let subobjectGrid = [];
+    
+    // Set max width of the column without dropzones (75% screen / numOfColumns, but >= 300px); 300px = card min width, 75% screen = default main area width
+    const columnStyle = { maxWidth: `max(300px, calc(75vw / ${subobjectOrder.length}))`};
 
     // Subobject grid
     for (let i = 0; i < subobjectOrder.length; i++) {
@@ -58,17 +62,13 @@ export const SubobjectsContainer = ({ objectID }) => {
         
         columnItems.push(<DroppableAddSubobjectMenu key="addMenu" row={subobjectOrder[i].length} column={i} objectID={objectID} updateCallback={updateCallback} setAddMenuCallback={setAddMenuCallback}
             isObjectInputDisplayed={isObjectInputDisplayed} />);
-
+        
+        // Add column
+        const displayRightNewColumn = i === subobjectOrder.length - 1;
         subobjectGrid.push(
-            <div key={i} className="composite-subobject-grid-column">
-                {columnItems}
-            </div>
+            <SubobjectGridColumn key={i} column={i} items={columnItems} displayRightNewColumn={displayRightNewColumn} columnStyle={columnStyle} />
         );
     }
-
-    // New column placeholder
-    if (isDragging /*&& subobjectGrid.length < 4*/)
-        subobjectGrid.push(<NewSubobjectGridColumn key={subobjectGrid.length} column={subobjectGrid.length} />);
     
     return (
         <div className="composite-subobject-grid">
@@ -76,3 +76,42 @@ export const SubobjectsContainer = ({ objectID }) => {
         </div>
     );
 };
+
+
+/**
+ * Subobject grid column component ReactDND wrapper for firing state updates when dragged over column changes.
+ */
+const SubobjectGridColumn = ({ column, items, displayRightNewColumn, columnStyle }) => {
+    const [collectedProps, dropRef] = useDrop({
+        accept: ["composite subobject"],    // type used in subobject cards DND is required for monitor.isOver() to return correct values
+        canDrop: () => false,
+        collect: (monitor) => ({
+            isOver: monitor.isOver()
+        })
+    });
+    const { isOver } = collectedProps;
+    
+    // Column container classname
+    let columnContainerClassName = "composite-subobject-grid-column-container";
+    if (isOver) columnContainerClassName += " is-dragged-over";
+    if (displayRightNewColumn) columnContainerClassName += " two-dropzones";
+
+    // New column dropzones to the left & right
+    const newColumnDropzoneLeft = isOver && (
+        <NewSubobjectGridColumn column={column} isDroppedToTheLeft />
+    );
+
+    const newColumnDropzoneRight = isOver && displayRightNewColumn && (
+        <NewSubobjectGridColumn column={column} isDroppedToTheRight />
+    );
+
+    return (
+        <div className={columnContainerClassName} ref={dropRef}>
+            {newColumnDropzoneLeft}
+            <div className="composite-subobject-grid-column" style={columnStyle}>
+                {items}
+            </div>
+            {newColumnDropzoneRight}
+        </div>
+    );
+}
