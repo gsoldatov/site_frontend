@@ -3,7 +3,7 @@
 *******************************************************/
 :root {
     --subobject-grid-column-container-min-width: 300px;
-    --subobject-new-column-dropzone-width: 150px;
+    --subobject-new-column-dropzone-width: 50px;
 
     --subobject-card-min-height: 100px;    
     --subobject-card-collapsed-height: 32px;    /* set fixed height close to actual height it takes; also equals to SUIR <Loader> component with default size prop height (which is not rendered anymore) */
@@ -74,7 +74,7 @@ div.composite-subobject-grid-column {
 
 /* New column dropzone */
 div.composite-subobject-grid-new-column-dropzone {
-    background-color: rgba(75, 75, 75, 0.25);
+    /* background-color: rgba(75, 75, 75, 0.25); */
     flex: 0 0 var(--subobject-new-column-dropzone-width);
 }
 
@@ -83,27 +83,19 @@ div.composite-subobject-grid-new-column-dropzone.is-dragged-over {
 }
 
 
-/* Card and card dropzone */
-div.composite-subobject-card, div.composite-subobject-card-dropzone {
+/* Card */
+div.composite-subobject-card {
     /* Borders and margin */
     box-shadow: 0 0 4px rgba(0,0,0,0.5);
     margin: 0.5em;
 }
 
-div.composite-subobject-card-dropzone {
-    height: var(--subobject-card-collapsed-height);
-    background-color: var(--subobject-dropzone-background-color);
-}
-
 div.composite-subobject-card {    
     margin-bottom: var(--subobject-card-default-margin-bottom);
     /* Padding */
+    padding-top: var(--subobject-card-padding-top-bottom);
     padding-left: var(--subobject-card-padding-left-right);
     padding-right: var(--subobject-card-padding-left-right);
-    padding-top: var(--subobject-card-padding-top-bottom);
-
-    /* max-width: calc(100% - 2 * var(--subobject-card-padding-left-right)); */
-    /* max-width: */
 
     /* Expand => collapse animation */
     transition: min-height var(--subobject-card-expand-collapse-time) ease-out;
@@ -116,6 +108,10 @@ div.composite-subobject-card.expanded {
     transition: min-height var(--subobject-card-expand-collapse-time) ease-in;
     min-height: var(--subobject-card-min-height);
     padding-bottom: var(--subobject-card-padding-top-bottom);
+}
+
+div.composite-subobject-card.is-dragged-over {
+    box-shadow: 0 0 0 6px var(--subobject-dropzone-background-color);
 }
 
 /* Full card placeholders (loader, error) */
@@ -147,7 +143,7 @@ div.subobject-error-button-container {
 /* Card heading */
 div.composite-subobjct-card-heading-container {
     background-color: rgba(0, 0, 0, 0.04);
-    /* Remove the padding of `div.composite-subobject-card-container` to make a correct line */
+    /* Remove the padding of `div.composite-subobject-card` to make a correct line */
     margin-top: calc(-1 * var(--subobject-card-padding-top-bottom));
     margin-left: calc(-1 * var(--subobject-card-padding-left-right));
     margin-right: calc(-1 * var(--subobject-card-padding-left-right));

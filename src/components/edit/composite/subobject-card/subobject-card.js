@@ -9,7 +9,6 @@ import { CardPlaceholder } from "./placeholders/error";
 import { LoadingPlaceholder } from "./placeholders/loading";
 import { DeletedPlaceholder } from "./placeholders/deleted";
 import { ResetSubobjectDialog } from "./dialogs/reset-subobject-dialog";
-import { SubobjectCardDropZone } from "./card-dropzone";
 
 
 /**
@@ -73,7 +72,8 @@ class SubobjectCard extends React.PureComponent {
                 : null;
             
             // CSS card classname
-            const cardClassName = isExpanded ? "composite-subobject-card expanded" : "composite-subobject-card";
+            let cardClassName = isExpanded ? "composite-subobject-card expanded" : "composite-subobject-card";
+            if (isDraggedOver) cardClassName += " is-dragged-over";
             
             result = (
                 <div className={cardClassName} id={subobjectID}>
@@ -83,16 +83,6 @@ class SubobjectCard extends React.PureComponent {
                 </div>
             );
         }
-
-        // Dropzone & container <div>
-        const dropzone = isDraggedOver && <SubobjectCardDropZone />;
-
-        result = (
-            <div className="composite-subobject-card-container">
-                {dropzone}
-                {result}
-            </div>
-        );
 
         // Disable dragging if not hovering over component's heading (except for expand/collapse toggle)
         if (!this.state.isMouseOverDraggable) return connectDropTarget(result);

@@ -3,8 +3,6 @@ import { DropTarget } from "react-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown } from "semantic-ui-react";
 
-import { SubobjectCardDropZone } from "./subobject-card/card-dropzone";
-
 import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../fetches/ui-object";
 
 import intervalWrapper from "../../../util/interval-wrapper";
@@ -46,15 +44,13 @@ class AddSubobjectMenu extends React.PureComponent {
                 </div>
         );
 
-        // Dropzone & container <div>
-        const dropzone = isDraggedOver && <SubobjectCardDropZone />;
+        // Menu classname
+        let menuClassName = "composite-subobject-card add-menu";
+        if (isDraggedOver) menuClassName += " is-dragged-over";
 
         return connectDropTarget(
-            <div className="composite-subobject-card-container">
-                {dropzone}
-                <div className="composite-subobject-card add-menu">
-                    {result}
-                </div>
+            <div className={menuClassName}>
+                {result}
             </div>
         );
     }
