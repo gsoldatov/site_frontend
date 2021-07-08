@@ -24,23 +24,23 @@ expect.extend({
 
 
 /**
- * Adds a new subobject via add subobject menu.
+ * Adds a new subobject via add subobject menu in the specified `column` (default is 0).
  */
-export const addANewSubobject = container => {
-    const { addNewButton } = getAddSubobjectMenu(container);
+export const addANewSubobject = (container, column = 0) => {
+    const { addNewButton } = getAddSubobjectMenu(container, column);
     fireEvent.click(addNewButton);
 };
 
 
 /**
- * Adds an existing subobject with provided `objectName`. `store` is required to monitor state updates.
+ * Adds an existing subobject in the provided `column` with provided `objectName`. `store` is required to monitor state updates.
  * 
  * If `waitForObjectLoad` is true, waits for the data of the new subobject to appear in state.editedObjects.
  */
-export const addAnExistingSubobject = async (container, objectName, store, { waitForObjectLoad } = {}) => {
+export const addAnExistingSubobject = async (container, column = 0, objectName, store, { waitForObjectLoad } = {}) => {
     const currentObjectID = store.getState().objectUI.currentObjectID;
     const existingSubobjectIDs = Object.keys(store.getState().editedObjects[currentObjectID].composite.subobjects);
-    const { addSubobjectMenuContainer, addExistingButton } = getAddSubobjectMenu(container);
+    const { addSubobjectMenuContainer, addExistingButton } = getAddSubobjectMenu(container, column);
     fireEvent.click(addExistingButton);
     
     // Enter object name and await seach results
@@ -69,11 +69,15 @@ export const addAnExistingSubobject = async (container, objectName, store, { wai
 
 
 /**
- * Returns composite object's add subobjects menu and buttons.
+ * Returns composite object's add subobjects menu and buttons from the specified `container` and in the specified `column`.
  */
- export const getAddSubobjectMenu = container => {
-    const addSubobjectMenuContainer = container.querySelector(".composite-subobject-card.add-menu");
-    expect(addSubobjectMenuContainer).toBeTruthy();
+ export const getAddSubobjectMenu = (container, column = 0) => {
+    const girdColumns = container.querySelectorAll(".composite-subobject-grid-column");
+    if (!girdColumns && !girdColumns[column]) return {};
+
+    const addSubobjectMenuContainer = girdColumns[column].querySelector(".composite-subobject-card.add-menu");
+    if (!addSubobjectMenuContainer) return {};
+
     const addNewButton = getByText(addSubobjectMenuContainer, "Add New");
     const addExistingButton = getByText(addSubobjectMenuContainer, "Add Existing");
     return { addSubobjectMenuContainer, addNewButton, addExistingButton };

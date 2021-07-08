@@ -10,7 +10,7 @@ import { DndProvider } from "react-dnd";
 import createStore from "../../src/store/create-store";
 
 
-export function renderWithWrappersAndDnDProvider(ui, params) {
+export function renderWithWrappers(ui, params) {
     const { store, history } = getRenderParams(params);
     function wrapper({ children }) {
         return (
@@ -30,27 +30,6 @@ export function renderWithWrappersAndDnDProvider(ui, params) {
         store
     };
 }
-
-
-export function renderWithWrappers(ui, params) {
-    const { store, history } = getRenderParams(params);
-    function wrapper({ children }) {
-        return (
-            <Provider store={store}>
-                <Router history={history}>
-                    {children}
-                </Router>
-            </Provider>
-        );
-    }
-
-    return { 
-        ...render(ui, { wrapper }),
-        history,
-        store
-    };
-}
-
 
 const getRenderParams = (params = {}) => {
     const store = params.store || createStore({ useLocalStorage: false, enableDebugLogging: false }),

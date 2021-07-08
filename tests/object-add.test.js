@@ -4,7 +4,7 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
-import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
+import { renderWithWrappers } from "./test-utils/render";
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSelectingElements, clickGeneralTabButton, clickDataTabButton, resetObject } from "./test-utils/ui-object";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 
@@ -53,7 +53,7 @@ describe("UI checks", () => {
 
 
     test("Select different object types", async () => {
-        let { store, container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        let { store, container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
     
@@ -201,7 +201,7 @@ describe("Reset new object state", () => {
 
 
     test("Reset to-do list", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
 
@@ -220,7 +220,7 @@ describe("Reset new object state", () => {
 
 
     test("Reset composite (without subobjects)", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
 
@@ -230,7 +230,7 @@ describe("Reset new object state", () => {
         // Add 2 new and one existing subobjects
         addANewSubobject(container);
         addANewSubobject(container);
-        await addAnExistingSubobject(container, "some name", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "some name", store, { waitForObjectLoad: true });
         let cards = getSubobjectCards(container, { expectedNumbersOfCards: [3] });
         const [firstSubobjectID, secondSubobjectID, thirdSubobjectID] = cards[0].map(card => card.id);
 
@@ -253,7 +253,7 @@ describe("Reset new object state", () => {
 
 
     test("Reset composite (with subobjects)", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
 
@@ -264,7 +264,7 @@ describe("Reset new object state", () => {
         addANewSubobject(container);
         addANewSubobject(container);
         const existingSubobjectName = "some name";
-        await addAnExistingSubobject(container, existingSubobjectName, store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, existingSubobjectName, store, { waitForObjectLoad: true });
         let cards = getSubobjectCards(container, { expectedNumbersOfCards: [3] });
         const [firstSubobjectID, secondSubobjectID, thirdSubobjectID] = cards[0].map(card => card.id);
 
@@ -348,7 +348,7 @@ describe("Persist new object state", () => {
 
     test("To-do list data", async () => {
         // Render /objects/add and update to-do list items
-        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
             route: "/objects/add", store
         });
 
@@ -382,7 +382,7 @@ describe("Persist new object state", () => {
         clickDataTabButton(container);
 
         addANewSubobject(container);
-        await addAnExistingSubobject(container, "some name", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "some name", store, { waitForObjectLoad: true });
         let cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
         const firstSubobjectID = cards[0][0].id, secondSubobjectID = cards[0][1].id;
 
@@ -417,8 +417,8 @@ describe("Persist new object state", () => {
         clickDataTabButton(container);
 
         // Add 2 existing subobjects
-        await addAnExistingSubobject(container, "first name", store, { waitForObjectLoad: true });
-        await addAnExistingSubobject(container, "second name", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "first name", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "second name", store, { waitForObjectLoad: true });
         const cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
         const [firstSubobjectID, secondSubobjectID] = cards[0].map(card => card.id.toString());
 
@@ -508,7 +508,7 @@ describe("Save new object errors", () => {
 
 
     test("To-do list with incorrect data", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
     
@@ -530,7 +530,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object without subobjects", async () => {
-        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
 
@@ -549,7 +549,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object without non-deleted subobjects", async () => {
-        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
 
@@ -561,7 +561,7 @@ describe("Save new object errors", () => {
         // Add 2 subobjects, then delete them
         clickDataTabButton(container);
         addANewSubobject(container);
-        await addAnExistingSubobject(container, "some name", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "some name", store, { waitForObjectLoad: true });
         let cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
         fireEvent.click(getSubobjectCardMenuButtons(cards[0][0]).deleteButton);
         fireEvent.click(getSubobjectCardMenuButtons(cards[0][1]).fullDeleteButton);
@@ -576,7 +576,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object a with a new subobject with incorrect attributes", async () => {
-        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
 
@@ -604,7 +604,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object a with an existing subobject with incorrect data", async () => {
-        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><AddObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
 
@@ -615,7 +615,7 @@ describe("Save new object errors", () => {
 
         // Add an existing subobject and modify its data to be invalid
         clickDataTabButton(container);
-        await addAnExistingSubobject(container, "some name", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "some name", store, { waitForObjectLoad: true });
         const card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
         clickSubobjectCardDataTabButton(card);
         fireEvent.change(getByPlaceholderText(card, "Link"), { target: { value: "" }});
@@ -718,7 +718,7 @@ describe("Save new object", () => {
 
 
     test("Save to-do list", async () => {
-        let { container, history, store } = renderWithWrappersAndDnDProvider(
+        let { container, history, store } = renderWithWrappers(
             <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
             { route: "/objects/add" }
         );
@@ -776,10 +776,10 @@ describe("Save new object", () => {
         addANewSubobject(container);
         addANewSubobject(container);
         addANewSubobject(container);
-        await addAnExistingSubobject(container, "deleted existing", store, { waitForObjectLoad: true });
-        await addAnExistingSubobject(container, "fully deleted existing", store, { waitForObjectLoad: true });
-        await addAnExistingSubobject(container, "unmodified existing", store, { waitForObjectLoad: true });
-        await addAnExistingSubobject(container, "existing to be modified", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "deleted existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "fully deleted existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "unmodified existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "existing to be modified", store, { waitForObjectLoad: true });
         let cards = getSubobjectCards(container, { expectedNumbersOfCards: [7] });
         const [deletedNewID, firstNewID, secondNewID, deletedExistingID, fullyDeletedExistingID, unmodifiedExistingID, modifiedExistingID] = cards[0].map(card => card.id);
 

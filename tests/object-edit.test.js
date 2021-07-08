@@ -5,7 +5,7 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle, queryByPlaceholderText, screen } from "@testing-library/dom";
 
 import { compareArrays } from "./test-utils/data-checks";
-import { renderWithWrappers, renderWithWrappersAndDnDProvider } from "./test-utils/render";
+import { renderWithWrappers } from "./test-utils/render";
 import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, resetObject } from "./test-utils/ui-object";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 import { getTDLByObjectID } from "./mocks/data-to-do-lists";
@@ -217,7 +217,7 @@ describe("Load object from state", () => {
         store.dispatch(setObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/1",
             store: store
         });
@@ -405,7 +405,7 @@ describe("Load object from backend", () => {
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/2001",
             store: store
         });
@@ -471,7 +471,7 @@ describe("Load object from backend", () => {
 
 
     test("Load a composite object and subobjects from backend", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3901"
         });
 
@@ -527,7 +527,7 @@ describe("Load object from backend", () => {
 
 
     test("Load a composite object without subobjects from backend", async () => {
-        let { container } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3902"
         });
 
@@ -613,7 +613,7 @@ describe("Reset object", () => {
 
     test("Reset to-do list", async () => {
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/2001"
         });
     
@@ -633,7 +633,7 @@ describe("Reset object", () => {
 
 
     test("Reset composite without subobjects", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3001"
         });
     
@@ -669,7 +669,7 @@ describe("Reset object", () => {
 
 
     test("Reset composite with subobjects", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3001"
         });
     
@@ -682,7 +682,7 @@ describe("Reset object", () => {
         clickDataTabButton(container);
         addANewSubobject(container);
         addANewSubobject(container);
-        await addAnExistingSubobject(container, "Some existing subobject", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "Some existing subobject", store, { waitForObjectLoad: true });
         const cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
         const [existingSubobjectID, firstNewSubobjectID, secondNewSubobjectID, addedExistingSubobjectID] = cards[0].map(card => card.id.toString());
 
@@ -803,7 +803,7 @@ describe("Persist edited object state", () => {
 
     test("To-do list", async () => {
         // Render page of the first object
-        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
             route: "/objects/2001", store
         });
         // await waitFor(() => getByText(container, "Object Information"));
@@ -947,7 +947,7 @@ describe("Persist edited object state", () => {
         await waitFor(() => expect(store.getState().editedObjects[card.id].object_name).toEqual(newSubobjectName));
 
         // Add an existing subobject
-        await addAnExistingSubobject(container, "Some existing subobject", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "Some existing subobject", store, { waitForObjectLoad: true });
         const [firstSubobjectID, secondSubobjectID] = getSubobjectCards(container, { expectedNumbersOfCards: [2] })[0].map(card => card.id.toString());
 
         // Click cancel button
@@ -1039,7 +1039,7 @@ describe("Delete object", () => {
 
     test("Delete a to-do list object", async () => {
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/2001"
         });
     
@@ -1061,7 +1061,7 @@ describe("Delete object", () => {
 
     test("Delete a composite object without deleting subobjects", async () => {
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3001"
         });
 
@@ -1111,7 +1111,7 @@ describe("Delete object", () => {
 
     test("Delete a composite object and subobjects", async () => {
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store, history } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3001"
         });
 
@@ -1250,7 +1250,7 @@ describe("Update object errors", () => {
 
     test("Save an empty to-do list object", async () => {
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/2001"
         });
     
@@ -1280,7 +1280,7 @@ describe("Update object errors", () => {
 
 
     test("Composite object without non-deleted subobjects", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3001"
         });
 
@@ -1303,7 +1303,7 @@ describe("Update object errors", () => {
 
 
     test("Composite object a with a new subobject with incorrect attributes", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3001"
         });
 
@@ -1326,7 +1326,7 @@ describe("Update object errors", () => {
 
 
     test("Composite object a with an existing subobject with incorrect data", async () => {
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/3001"
         });
 
@@ -1420,7 +1420,7 @@ describe("Update object", () => {
 
     test("Update a to-do list object", async () => {
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappersAndDnDProvider(<Route exact path="/objects/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/2001"
         });
     
@@ -1472,9 +1472,9 @@ describe("Update object", () => {
         addANewSubobject(container);
         addANewSubobject(container);
         addANewSubobject(container);
-        await addAnExistingSubobject(container, "fully deleted existing", store, { waitForObjectLoad: true });
-        await addAnExistingSubobject(container, "unmodified existing", store, { waitForObjectLoad: true });
-        await addAnExistingSubobject(container, "existing to be modified", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "fully deleted existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "unmodified existing", store, { waitForObjectLoad: true });
+        await addAnExistingSubobject(container, 0, "existing to be modified", store, { waitForObjectLoad: true });
         let cards = getSubobjectCards(container, { expectedNumbersOfCards: [7] });
         const [deletedExistingID, deletedNewID, firstNewID, secondNewID, fullyDeletedExistingID, unmodifiedExistingID, modifiedExistingID] = cards[0].map(card => card.id);
 

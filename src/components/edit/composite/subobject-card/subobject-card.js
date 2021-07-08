@@ -34,21 +34,27 @@ class SubobjectCard extends React.PureComponent {
         const { objectID, subobjectID, updateCallback, selectedTab, isExpanded, isSubbjectEdited, fetchError, isSubobjectDeleted } = this.props;
         const { isResetDialogDisplayed } = this.state;
         const { connectDragSource, connectDropTarget, isDragging, isDraggedOver } = this.props;
-        let result, isPlaceholder = false;
+        let result;
 
         // Don't render the element which is being dragged
         if (isDragging) return null;
         
         // Render fetch error message, when object could not be fetched
         if (!isSubbjectEdited && fetchError.length > 0) {
-            result = <CardPlaceholder fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} subobjectID={subobjectID} updateCallback={updateCallback} />;
-            isPlaceholder = true;
+            result = (  // wrapper is required to avoid error when passing a component to React DND connector
+                <div className="composite-subobject-card no-padding">
+                    <CardPlaceholder fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} subobjectID={subobjectID} updateCallback={updateCallback} />;
+                </div>
+            );
         }
 
         // Render placeholder if object is not added into state.editedObjects
         else if (!isSubbjectEdited) {
-            result = <LoadingPlaceholder />;
-            isPlaceholder = true;
+            result = (  // wrapper is required to avoid error when passing a component to React DND connector
+                <div className="composite-subobject-card no-padding">
+                    <LoadingPlaceholder />;
+                </div>
+            );
         }
 
         // Render object card

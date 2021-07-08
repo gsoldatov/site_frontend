@@ -28,12 +28,17 @@ class AddSubobjectMenu extends React.PureComponent {
         const { connectDropTarget, isDraggedOver } = this.props;
         let result;
 
-        // Object search dropdown
+        // Object search dropdown (additional <div> is required for wrapping component with React DND)
         if (isObjectInputDisplayed)
-            result = <NewObjectDropdown objectID={objectID} setAddMenuCallback={setAddMenuCallback} updateCallback={updateCallback} row={row} column={column} />
+            result = (
+                <div className="composite-object-add-menu-dropdown-container">
+                    <NewObjectDropdown objectID={objectID} setAddMenuCallback={setAddMenuCallback} updateCallback={updateCallback} row={row} column={column} />
+                </div>
+            );
 
         // "Add New" + "Add Existing" buttons
-        result = (
+        else 
+            result = (
                 <div className="composite-subobject-add-menu-button-container">
                     <Button color="blue" onClick={this.addNewOnClick} className="composite-subobject-add-menu-button">
                         Add New
@@ -42,7 +47,7 @@ class AddSubobjectMenu extends React.PureComponent {
                         Add Existing
                     </Button>
                 </div>
-        );
+            );
 
         // Menu classname
         let menuClassName = "composite-subobject-card add-menu";
