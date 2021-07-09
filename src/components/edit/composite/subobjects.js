@@ -85,14 +85,9 @@ export const SubobjectsContainer = ({ objectID }) => {
 
 
 /**
- * Subobject grid column component ReactDND wrapper for firing state updates when dragged over column changes.
+ * Subobject grid column component with new column dropzones to the left and right.
  */
 const SubobjectGridColumn = ({ column, items, displayRightNewColumn, columnStyle }) => {
-    const [, dropRef] = useDrop({
-        accept: ["composite subobject"],    // type used in subobject cards DND is required for monitor.isOver() to return correct values
-        canDrop: () => false
-    });
-    
     // Column container classname
     let columnContainerClassName = "composite-subobject-grid-column-container";
     if (displayRightNewColumn) columnContainerClassName += " two-dropzones";
@@ -107,7 +102,7 @@ const SubobjectGridColumn = ({ column, items, displayRightNewColumn, columnStyle
     );
 
     return (
-        <div className={columnContainerClassName} ref={dropRef}>
+        <div className={columnContainerClassName}>
             {newColumnDropzoneLeft}
             <div className="composite-subobject-grid-column" style={columnStyle}>
                 {items}
