@@ -91,6 +91,11 @@ div.composite-subobject-card {
     margin: 0.5em;
 }
 
+div.composite-subobject-card.is-dragged {
+    /* Hide dragged cards */
+    display: none;
+}
+
 div.composite-subobject-card {    
     margin-bottom: var(--subobject-card-default-margin-bottom);
     /* Padding */

@@ -35,14 +35,12 @@ class SubobjectCard extends React.PureComponent {
         const { isResetDialogDisplayed } = this.state;
         const { connectDragSource, connectDropTarget, isDragging, isDraggedOver } = this.props;
         let result, isDraggable = false;
-
-        // Don't render the element which is being dragged
-        if (isDragging) return null;
         
         // Render fetch error message, when object could not be fetched
         if (!isSubbjectEdited && fetchError.length > 0) {
             let cardClassName = "composite-subobject-card no-padding is-draggable";
             if (isDraggedOver) cardClassName += " is-dragged-over";
+            if (isDragging) cardClassName += " is-dragged";
             
             result = (  // wrapper is required to avoid error when passing a component to React DND connector
                 <div className={cardClassName}>
@@ -56,6 +54,7 @@ class SubobjectCard extends React.PureComponent {
         else if (!isSubbjectEdited) {
             let cardClassName = "composite-subobject-card no-padding";
             if (isDraggedOver) cardClassName += " is-dragged-over";
+            // if (isDragging) cardClassName += " is-dragged";  // loading card is not draggable
 
             result = (  // wrapper is required to avoid error when passing a component to React DND connector
                 <div className={cardClassName}>
@@ -87,6 +86,7 @@ class SubobjectCard extends React.PureComponent {
             // CSS card classname
             let cardClassName = isExpanded ? "composite-subobject-card expanded" : "composite-subobject-card";
             if (isDraggedOver) cardClassName += " is-dragged-over";
+            if (isDragging) cardClassName += " is-dragged";
             
             result = (
                 <div className={cardClassName} id={subobjectID}>
