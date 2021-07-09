@@ -131,6 +131,10 @@ div.composite-subobject-card.no-padding {
     justify-content: center;
 }
 
+div.composite-subobject-card.no-padding.is-draggable {
+    cursor: grab;
+}
+
 div.ui.message.subobject-error-message {
     height: var(--subobject-card-min-height);
 

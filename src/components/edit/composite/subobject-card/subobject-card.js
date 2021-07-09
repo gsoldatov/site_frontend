@@ -34,25 +34,32 @@ class SubobjectCard extends React.PureComponent {
         const { objectID, subobjectID, updateCallback, selectedTab, isExpanded, isSubbjectEdited, fetchError, isSubobjectDeleted } = this.props;
         const { isResetDialogDisplayed } = this.state;
         const { connectDragSource, connectDropTarget, isDragging, isDraggedOver } = this.props;
-        let result;
+        let result, isDraggable = false;
 
         // Don't render the element which is being dragged
         if (isDragging) return null;
         
         // Render fetch error message, when object could not be fetched
         if (!isSubbjectEdited && fetchError.length > 0) {
+            let cardClassName = "composite-subobject-card no-padding is-draggable";
+            if (isDraggedOver) cardClassName += " is-dragged-over";
+            
             result = (  // wrapper is required to avoid error when passing a component to React DND connector
-                <div className="composite-subobject-card no-padding">
-                    <CardPlaceholder fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} subobjectID={subobjectID} updateCallback={updateCallback} />;
+                <div className={cardClassName}>
+                    <CardPlaceholder fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} subobjectID={subobjectID} updateCallback={updateCallback} />
                 </div>
             );
+            isDraggable = true;
         }
 
         // Render placeholder if object is not added into state.editedObjects
         else if (!isSubbjectEdited) {
+            let cardClassName = "composite-subobject-card no-padding";
+            if (isDraggedOver) cardClassName += " is-dragged-over";
+
             result = (  // wrapper is required to avoid error when passing a component to React DND connector
-                <div className="composite-subobject-card no-padding">
-                    <LoadingPlaceholder />;
+                <div className={cardClassName}>
+                    <LoadingPlaceholder />
                 </div>
             );
         }
@@ -91,7 +98,7 @@ class SubobjectCard extends React.PureComponent {
         }
 
         // Disable dragging if not hovering over component's heading (except for expand/collapse toggle)
-        if (!this.state.isMouseOverDraggable) return connectDropTarget(result);
+        if (!this.state.isMouseOverDraggable && !isDraggable) return connectDropTarget(result);
         return connectDropTarget(connectDragSource(result));
     }
 }
