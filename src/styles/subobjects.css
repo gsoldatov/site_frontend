@@ -50,18 +50,13 @@ div.composite-subobject-grid {
 div.composite-subobject-grid-column-container {
     display: flex;
     flex-direction: row;
-    /* Set columns with equal width and a min width */
-    flex: 1 0 var(--subobject-grid-column-container-min-width);
-    min-width: var(--subobject-grid-column-container-min-width);  /* min-width is required to correctly calculate max-content of parent containers */
-}
-
-div.composite-subobject-grid-column-container.is-dragged-over {
-    /* Increase min width to include 1 new column dropzone */
+    /* Set columns with equal width and a min width (min card width + 1 new column dropzone) */
     flex: 1 0 calc(var(--subobject-grid-column-container-min-width) + var(--subobject-new-column-dropzone-width));
     min-width: calc(var(--subobject-grid-column-container-min-width) + var(--subobject-new-column-dropzone-width));  /* min-width is required to correctly calculate max-content of parent containers */
 }
 
-div.composite-subobject-grid-column-container.is-dragged-over.two-dropzones {
+
+div.composite-subobject-grid-column-container.two-dropzones {
     /* Increase min width to include 2 new column dropzones */
     flex: 1 0 calc(var(--subobject-grid-column-container-min-width) + 2 * var(--subobject-new-column-dropzone-width));
     min-width: calc(var(--subobject-grid-column-container-min-width) + 2 * var(--subobject-new-column-dropzone-width));  /* min-width is required to correctly calculate max-content of parent containers */
