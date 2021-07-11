@@ -223,3 +223,35 @@ export const getSubobjectExpandToggleButton = card => {
     if (!heading) return null;
     return heading.querySelector("button.subobject-card-expand-toggle");
 };
+
+
+/**
+ * Starts drag of the provided `card` of a successfully loaded into state subobject and waits for the card to become dragged (`is-dragged` CSS class is added to it).
+ */
+export const startSubobjectCardDrag = async card => {
+    const heading = card.querySelector(".composite-subobjct-card-heading");
+    if (!heading) return;
+    fireEvent.mouseEnter(heading);
+    fireEvent.dragStart(card);
+    await waitFor(() => expect(card.classList.contains("is-dragged")).toBeTruthy());
+};
+
+
+/**
+ * Returns an array of subobject grid column containers found in the provided `container`.
+ */
+export const getSubobjectGridColumnContainers = container => {
+    return new Array(...container.querySelectorAll(".composite-subobject-grid-column-container"));
+};
+
+
+/**
+ * Returns new column dropzones from the provided `columnContainer`
+ */
+export const getNewColumnDropzones = columnContainer => {
+    const dropzones = columnContainer.querySelectorAll(".composite-subobject-grid-new-column-dropzone");
+    return {
+        leftDropzone: dropzones[0],
+        rightDropzone: dropzones[1]
+    };
+};

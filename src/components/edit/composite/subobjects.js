@@ -52,12 +52,6 @@ export const SubobjectsContainer = ({ objectID }) => {
             let isSubbjectEdited = editedObjects[subobjectID] !== undefined;
             let isSubobjectDeleted = composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none;
 
-            if (j === 2) {  // TODO delete
-                isSubbjectEdited = false;
-                fetchError = "test error"
-            }
-            if (j === 3) isSubbjectEdited = false;
-
             columnItems.push(<DraggableSubobjectCard key={subobjectID} objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback}
                 selectedTab={selectedTab} isExpanded={isExpanded} isSubbjectEdited={isSubbjectEdited} fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} 
                 canDrag={canDrag} />);

@@ -141,6 +141,10 @@ export const getCompositeByObjectID = objectID => {
     switch (strID) {
         case "3901": return compositeWithAllSubobjectTypes;
         case "3902": return compositeWithoutSubobjects;
+        case "3903": return compositeWithCollapsedAndExpandedCards;
+        case "3904": return compositeWithAnUnavailableSubobject;
+        case "3905": return compositeWithTwoColumns;
+        case "3906": return compositeWithFourColumns;
         default: return defaultComposite;
     }
 };
@@ -175,4 +179,74 @@ const compositeWithAllSubobjectTypes = {
 */
 const compositeWithoutSubobjects = {
     subobjects: []
+};
+
+
+/*
+    <collapsed>
+    <collapsed>
+    <expanded>
+    <expanded>
+*/
+const compositeWithCollapsedAndExpandedCards = {
+    subobjects: [
+        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: false },
+        { object_id: 1101, row: 1, column: 0, selected_tab: 0, is_expanded: false },
+        { object_id: 2101, row: 2, column: 0, selected_tab: 0, is_expanded: true },
+        { object_id: 3101, row: 3, column: 0, selected_tab: 0, is_expanded: true }
+    ]    
+};
+
+
+/*
+    <unavailable>
+    <available>
+    <available>
+*/
+const compositeWithAnUnavailableSubobject = {
+    subobjects: [
+        { object_id: 9999, row: 0, column: 0, selected_tab: 0, is_expanded: false },
+        { object_id: 1101, row: 1, column: 0, selected_tab: 0, is_expanded: true },
+        { object_id: 2101, row: 2, column: 0, selected_tab: 0, is_expanded: true }
+    ]    
+};
+
+
+/*
+    link    link
+    link    link
+    link    link
+    link    link
+*/
+const compositeWithTwoColumns = {
+    subobjects: [
+        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: true },
+        { object_id: 102, row: 1, column: 0, selected_tab: 0, is_expanded: true },
+        { object_id: 103, row: 2, column: 0, selected_tab: 0, is_expanded: true },
+        { object_id: 104, row: 3, column: 0, selected_tab: 0, is_expanded: true },
+
+        { object_id: 105, row: 0, column: 1, selected_tab: 0, is_expanded: true },
+        { object_id: 106, row: 1, column: 1, selected_tab: 0, is_expanded: true },
+        { object_id: 107, row: 2, column: 1, selected_tab: 0, is_expanded: true },
+        { object_id: 108, row: 3, column: 1, selected_tab: 0, is_expanded: true }
+    ]
+};
+
+
+/*
+    link    link    link    link
+    link            link
+*/
+const compositeWithFourColumns = {
+    subobjects: [
+        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: true },
+        { object_id: 102, row: 1, column: 0, selected_tab: 0, is_expanded: true },
+        
+        { object_id: 103, row: 0, column: 1, selected_tab: 0, is_expanded: true },
+        
+        { object_id: 104, row: 0, column: 2, selected_tab: 0, is_expanded: true },
+        { object_id: 105, row: 1, column: 2, selected_tab: 0, is_expanded: true },
+        
+        { object_id: 106, row: 0, column: 3, selected_tab: 0, is_expanded: true }
+    ]
 };
