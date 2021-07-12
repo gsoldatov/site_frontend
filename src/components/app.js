@@ -12,6 +12,7 @@ import { AddTag, EditTag } from "./tag";
 import Tags from "./tags";
 import { AddObject, EditObject } from "./object";
 import Objects from "./objects";
+import { NotFound } from "./not-found";
 
 
 export const App = () => {
@@ -25,6 +26,9 @@ export const App = () => {
                 <Objects />
             </Route>
             <Route exact path="/objects/:id" render={props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> }/>
+            <Route>
+                <NotFound />
+            </Route>
         </Switch>
     )
 };

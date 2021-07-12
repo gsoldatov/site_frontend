@@ -10,6 +10,8 @@ import StyleSideMenu from "../../styles/side-menu.css";
  * Side menu component with customizable items. 
  */
 export default ({ items }) => {
+    if (!items) return null;
+    
     let k = 0;
     const itemComponents = items.map(item => <SideMenuElement key={k++} {...item} />);
 
