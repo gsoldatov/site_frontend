@@ -1,12 +1,11 @@
-import React from "react";
+import React, { memo } from "react";
 import { useDrop } from "react-dnd";
-
 
 
 /**
  * New composite subobject grid column placeholder displayed during drag and drop of subobjects.
  */
-export const NewSubobjectGridColumn = ({ column, isDroppedToTheLeft, isDroppedToTheRight }) => {
+export const NewSubobjectGridColumn = memo(({ column, isDroppedToTheLeft, isDroppedToTheRight }) => {
     const [collectedProps, dropRef] = useDrop({
         accept: ["composite subobject"],
         drop: item => ({ objectID: item.objectID, newColumn: column, newRow: 0, isDroppedToTheLeft, isDroppedToTheRight }),
@@ -23,4 +22,4 @@ export const NewSubobjectGridColumn = ({ column, isDroppedToTheLeft, isDroppedTo
     return (
         <div ref={dropRef} className={cssClassName} />
     );
-};
+});

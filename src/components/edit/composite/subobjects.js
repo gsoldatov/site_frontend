@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DraggableSubobjectCard } from "./subobject-card/subobject-card";
@@ -10,8 +10,6 @@ import { getSubobjectDisplayOrder, isCompositeDragAndDropEnabledSelector } from 
 import { enumDeleteModes } from "../../../store/state-templates/composite-subobjects";
 
 import StyleSubobjects from "../../../styles/subobjects.css";
-import { useDrop } from "react-dnd";
-import { useEffect } from "react";
 
 
 /**
@@ -38,7 +36,9 @@ export const SubobjectsContainer = ({ objectID }) => {
     let subobjectGrid = [];
     
     // Set max width of the column without dropzones (75% screen / numOfColumns, but >= 300px); 300px = card min width, 75% screen = default main area width
-    const columnStyle = { maxWidth: `max(300px, calc(75vw / ${subobjectOrder.length}))`};
+    const columnStyle = useMemo(() =>
+        ({ maxWidth: `max(300px, calc(75vw / ${subobjectOrder.length}))`})
+    , [subobjectOrder.length]);
 
     // Subobject grid
     for (let i = 0; i < subobjectOrder.length; i++) {
@@ -104,4 +104,4 @@ const SubobjectGridColumn = ({ column, items, displayRightNewColumn, columnStyle
             {newColumnDropzoneRight}
         </div>
     );
-}
+};

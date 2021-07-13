@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, memo } from "react";
 import { Dropdown, Icon } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -29,7 +29,7 @@ const newSubobjectDropdownOptions = objectTypeDropdownOptions.filter(option => o
 /**
  * Object type selector component.
  */
-export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
+export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
     const dispatch = useDispatch();
 
     const isDisabled = objectID > 0;
@@ -48,11 +48,11 @@ export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
 
     // Add icon to the left of selected option text (by replacing standart text with a custom element)
     const selectedOption = objectTypeDropdownOptions.filter(option => option.value === objectType)[0];
-    const trigger = (
+    const trigger = useMemo(() => (
         <span className="selected-object-type">
             <Icon name={selectedOption.icon} /> {selectedOption.text}
         </span>
-    );
+    ), [objectType]);
 
     return (
         <>
@@ -67,7 +67,7 @@ export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
             />
         </>
     );
-};
+});
 
 
 /**
