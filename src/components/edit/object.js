@@ -76,7 +76,9 @@ export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
  * If `subobjectCard` is true, displays default component for composite objects and styles if accordingly.
  */
 export const ObjectViewEditSwitch = ({ objectID, subobjectCard = false }) => {
-    const objectType = useSelector(getEditedOrDefaultObjectSelector(objectID)).object_type;
+    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
+    const objectTypeSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).object_type, [objectID]);
+    const objectType = useSelector(objectTypeSelector);
 
     switch (objectType) {
         case "link":

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Grid } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 
 import FieldMenu from "../field/field-menu";
 import { OnResizeWrapper } from "../common/on-resize-wrapper";
@@ -18,8 +18,10 @@ import StyleHighlight from "highlight.js/styles/a11y-dark.css";
 /**
  * Markdown data edit & view component.
  */
-export const MarkdownContainer = ({ objectID }) => {
-    const displayMode = useSelector(getEditedOrDefaultObjectSelector(objectID)).markdownDisplayMode;
+export const MarkdownContainer = memo(({ objectID }) => {
+    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
+    const displayModeSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).markdownDisplayMode, [objectID]);
+    const displayMode = useSelector(displayModeSelector);
     const viewEditBlock = displayMode === "view" ? <MarkdownView objectID={objectID} /> :
         displayMode === "edit" ? <MarkdownEdit objectID={objectID} /> : <MarkdownViewEdit objectID={objectID} />;
     const headerText = "Markdown " + (displayMode === "view" ? "(View)" :
@@ -34,11 +36,11 @@ export const MarkdownContainer = ({ objectID }) => {
             </div>
         </div>
     )
-};
+});
 
 
-const MarkdownDisplaySwitch = ({ objectID }) => {
-    const fieldMenuItems = [
+const MarkdownDisplaySwitch = memo(({ objectID }) => {
+    const fieldMenuItems = useMemo(() => [
         {
             type: "item",
             icon: "square outline",
@@ -63,10 +65,10 @@ const MarkdownDisplaySwitch = ({ objectID }) => {
             onClickParams: { objectID, markdownDisplayMode: "both" },
             isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "both"
         }
-    ];
+    ], [objectID]);
 
     return <FieldMenu size="mini" compact className="markdown-display-switch-menu" items={fieldMenuItems} />;
-};
+});
 
 
 const useMarkdownParseWorker = (objectID) => {
@@ -87,8 +89,13 @@ const useMarkdownParseWorker = (objectID) => {
 
 const MarkdownView = ({ objectID }) => {
     const parseMarkdown = useMarkdownParseWorker(objectID);
-    const text = useSelector(getEditedOrDefaultObjectSelector(objectID)).markdown.parsed;
-    const rawText = useSelector(getEditedOrDefaultObjectSelector(objectID)).markdown.raw_text;
+
+    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
+    const rawTextSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).markdown.raw_text, [objectID]);
+    const textSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).markdown.parsed, [objectID]);
+
+    const rawText = useSelector(rawTextSelector);
+    const text = useSelector(textSelector);
 
     useEffect(() => {   // Parse after first render
         if (text === undefined || text === "")
@@ -101,7 +108,10 @@ const MarkdownView = ({ objectID }) => {
 
 const MarkdownEdit = ({ objectID }) => {
     const dispatch = useDispatch();
-    const rawText = useSelector(getEditedOrDefaultObjectSelector(objectID)).markdown.raw_text;
+
+    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
+    const rawTextSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).markdown.raw_text, [objectID]);
+    const rawText = useSelector(rawTextSelector);
 
     const parseMarkdown = useMarkdownParseWorker(objectID);
 

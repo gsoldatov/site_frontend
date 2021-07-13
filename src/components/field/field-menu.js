@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
@@ -10,14 +10,14 @@ import StlyeFieldMenu from "../../styles/field-menu.css";
 /**
  * Field menu component with customizable items.
  */
-export default ({ items, className = "field-menu", compact, size }) => {
+export default memo(({ items, className = "field-menu", compact, size }) => {
     let k = 0;
     const menuItems = items.map(item => <FieldMenuElement key={k++} {...item} size={size} />);
 
     return (
         <Menu className={className} compact={compact} size={size}>{menuItems}</Menu>
     );
-}
+});
 
 
 /**
