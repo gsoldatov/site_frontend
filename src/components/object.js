@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { memo, useEffect, useMemo, useRef } from "react";
 import { Header, Tab } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -269,25 +269,25 @@ const ObjectInput = () => {
 
 // Object's tags
 const addedTagsSelector = state => getCurrentObject(state).addedTags;
-const AddedTagItem = ({ id }) => {
+const AddedTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
     const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
     const itemClassName = typeof(id) === "number" ? "inline-item-green" : "inline-item-blue";
-    const onClick = () => dispatch(setEditedObjectTags({ added: [id] }));
+    const onClick = useMemo(() => () => dispatch(setEditedObjectTags({ added: [id] })));
     const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
-};
+});
 const currentTagsSelector = state => getCurrentObject(state).currentTagIDs;
-const CurrentTagItem = ({ id }) => {
+const CurrentTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
     // const text = useSelector(state => state.tags[id].tag_name);
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     const isRemoved = useSelector(state => getCurrentObject(state).removedTagIDs.includes(id));
     const itemClassName = isRemoved ? "inline-item-red" : "inline-item";
-    const onClick = () => dispatch(setEditedObjectTags({ removed: [id] }));
+    const onClick = useMemo(() => () => dispatch(setEditedObjectTags({ removed: [id] })));
     const itemLink = `/tags/${id}`;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
-};
+});
 
 const inputStateSelector = state => state.objectUI.tagsInput;
 const existingIDsSelector = createSelector(

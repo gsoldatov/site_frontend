@@ -1,7 +1,7 @@
 import { SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
     SET_OBJECTS_PAGINATION_INFO, SET_TAGS_FILTER, SET_TAGS_FILTER_INPUT, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
-import { resetObjectCaches, objectsGetCommonTagIDs } from "../store/state-util/ui-objects";
+import { commonTagIDsSelector } from "../store/state-util/ui-objects";
 
 
 function setObjectsTagsInput(state, action) {
@@ -48,7 +48,7 @@ function setCurrentObjectsTags(state, action) {
             newAddedTags = newAddedTags.filter(t => !lowerCaseAT.includes(getLowerCaseTagNameOrID(t)));
             newAddedTags = newAddedTags.concat(at.filter(t => !lowerCaseOldAddedTags.includes(getLowerCaseTagNameOrID(t))));
 
-            addedExistingTagIDs = newAddedTags.filter(t => objectsGetCommonTagIDs(state).includes(t));  // move added tag IDs which are already present in the common tags into removed
+            addedExistingTagIDs = newAddedTags.filter(t => commonTagIDsSelector(state).includes(t));  // move added tag IDs which are already present in the common tags into removed
             newAddedTags = newAddedTags.filter(t => !addedExistingTagIDs.includes(t));
         }
     }
@@ -194,7 +194,6 @@ function setShowDeleteDialogObjects(state, action) {
 }
 
 function setObjectsFetch(state, action) {
-    if (!action.isFetching) resetObjectCaches();
     return {
         ...state,
         objectsUI: {
