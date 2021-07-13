@@ -239,13 +239,13 @@ const paginationInfoSelector = state => state.objectsUI.paginationInfo;
 
 
 // FieldItem creating component for /objects page
-const ObjectsFieldItem = ({ id }) => {
-    const textSelector = useRef(state => state.objects[id] ? state.objects[id].object_name : "?").current;
-    const isCheckedSelector = useRef(state => state.objectsUI.selectedObjectIDs.includes(id)).current;
-    const link = useRef(`/objects/${id}`).current;
+const ObjectsFieldItem = memo(({ id }) => {
+    const textSelector = useMemo(() => state => state.objects[id] ? state.objects[id].object_name : "?", [id]);
+    const isCheckedSelector = useMemo(() => state => state.objectsUI.selectedObjectIDs.includes(id), [id]);
+    const link = useMemo(() => `/objects/${id}`, [id]);
     return <FieldItem id={id} textSelector={textSelector} link={link} 
     isCheckedSelector={isCheckedSelector} onChange={toggleObjectSelection} />;
-};
+});
 
 
 // Tags filter

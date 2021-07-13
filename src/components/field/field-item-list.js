@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Header, Icon } from "semantic-ui-react";
@@ -19,16 +19,19 @@ export const FieldItemList = ({ header, ItemComponent, itemIDsSelector, isExpand
     const [isExpandRequired, setIsExpandRequired] = useState(false);
 
     // Header
-    const _header = header && <Header as="h5" className="field-item-list-header">{header}</Header>;
+    const _header = useMemo(() => 
+        header && <Header as="h5" className="field-item-list-header">{header}</Header>
+    , [header]);
 
     // Expand/collapse block
     const itemListClassName = !isExpandable || isExpanded ? "field-item-list" : "field-item-list-collapsed";
-    const expandDiv = isExpandable && isExpandRequired && items.length > 0 && (
+    const expandDiv = useMemo(() => 
+        isExpandable && isExpandRequired && items.length > 0 && (
         <div className="field-item-list-expand-div" onClick={() => setIsExpanded(!isExpanded)}>
             <Icon name={isExpanded ? "angle up" : "angle down"} />
             {isExpanded ? "Collapse" : "Expand"}
         </div>
-    );
+    ), [isExpandable, isExpandRequired, items.length > 0, isExpanded]);
 
     // isExpandRequired updates
     const itemListRef = useRef();
@@ -64,7 +67,7 @@ export const FieldItemList = ({ header, ItemComponent, itemIDsSelector, isExpand
 
 
 /**
- * A single field item without specific selectors and parameters, which should be provided by a wrapper component.
+ * A single field item without specific selectors and parameters, which should be provided by a (if possible, memoized) wrapper component.
  */
 export const FieldItem = ({id, textSelector, link, isCheckedSelector, onChange }) => {
     const dispatch = useDispatch();

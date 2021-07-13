@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "semantic-ui-react";
 
@@ -169,10 +169,10 @@ const paginationInfoSelector = state => state.tagsUI.paginationInfo;
 
 
 // FieldItem creating component for /tags page
-const TagsFieldItem = ({ id }) => {
-    const textSelector = useRef(state => state.tags[id] ? state.tags[id].tag_name : "?").current;
-    const isCheckedSelector = useRef(state => state.tagsUI.selectedTagIDs.includes(id)).current;
-    const link = useRef(`/tags/${id}`).current;
+const TagsFieldItem = memo(({ id }) => {
+    const textSelector = useMemo(() => state => state.tags[id] ? state.tags[id].tag_name : "?", [id]);
+    const isCheckedSelector = useMemo(() => state => state.tagsUI.selectedTagIDs.includes(id), [id]);
+    const link = useMemo(() => `/tags/${id}`, [id]);
     return <FieldItem id={id} textSelector={textSelector} link={link} 
     isCheckedSelector={isCheckedSelector} onChange={toggleTagSelection} />;
-};
+});
