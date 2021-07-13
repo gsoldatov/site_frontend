@@ -5,7 +5,7 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
 import { renderWithWrappers } from "./test-utils/render";
-import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSelectingElements, clickGeneralTabButton, clickDataTabButton, resetObject } from "./test-utils/ui-object";
+import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickGeneralTabButton, clickDataTabButton, resetObject } from "./test-utils/ui-object";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 
 import { AddObject, EditObject } from "../src/components/object";
@@ -56,38 +56,36 @@ describe("UI checks", () => {
         let { store, container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
-    
+
         // Select markdown object type and check if markdown inputs are rendered
-        let { markdownButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(markdownButton);
+        let { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(markdownOption);
         clickDataTabButton(container);
         const markdownContainer = document.querySelector(".markdown-container");
         expect(markdownContainer).toBeTruthy();
-        // expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input (before object data div, tag block, tag block header)
-        // expect(mainContentContainer.lastChild).toEqual(markdownContainer);  // last node is Markdown input mock
         expect(getCurrentObject(store.getState()).object_type).toEqual("markdown");
         getByText(container, "Markdown", { exact: false });
-    
+
         // Select to-do object type and check if to-do inputs are rendered
         clickGeneralTabButton(container);
-        let { TDLButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(TDLButton);
+        let { toDoListOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(toDoListOption);
         clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
-        // expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
-        // expect(mainContentContainer.lastChild).toEqual(TDLContainer);  // last node is To-Do list input mock
         expect(getCurrentObject(store.getState()).object_type).toEqual("to_do_list");
         getByText(container, "To-Do List", { exact: false });
-        
+
+        // Composite subobject selection is tested in composite.test.js
+
         // Select link object type and check if link inputs are rendered    
         clickGeneralTabButton(container);
-        let { linkButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(linkButton);
+        let { linkOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(linkOption);
         clickDataTabButton(container);
-        // expect(mainContentContainer.childNodes[mainContentContainer.childNodes.length - 4]).toEqual(objectNameDescriptionInput);    // fourth to last node is NameDescr input
-        // const linkInput = getByPlaceholderText(mainContentContainer, "Link");
-        // expect(mainContentContainer.lastChild).toEqual(linkInput.parentNode.parentNode.parentNode);   // last node is link input form
         expect(getCurrentObject(store.getState()).object_type).toEqual("link");
         getByPlaceholderText(container, "Link", { exact: false });
     });
@@ -98,8 +96,9 @@ describe("UI checks", () => {
             route: "/objects/add"
         });
         // Change object type
-        let { markdownButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(markdownButton);
+        let { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(markdownOption);
     
         // Select data tab
         clickDataTabButton(container);
@@ -183,8 +182,9 @@ describe("Reset new object state", () => {
             route: "/objects/add"
         });
 
-        const { markdownButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(markdownButton);
+        const { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(markdownOption);
         clickDataTabButton(container);
         const editModeButton = getByTitle(container, "Display edit window")
         fireEvent.click(editModeButton);
@@ -205,8 +205,9 @@ describe("Reset new object state", () => {
             route: "/objects/add"
         });
 
-        const { TDLButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(TDLButton);
+        const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(toDoListOption);
         clickDataTabButton(container);
         let newItemInput = getByPlaceholderText(container.querySelector(".to-do-list-item-container"), "New item");
         fireEvent.input(newItemInput, { target: { innerHTML: "new value" } });
@@ -224,7 +225,9 @@ describe("Reset new object state", () => {
             route: "/objects/add"
         });
 
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add 2 new and one existing subobjects
@@ -257,7 +260,9 @@ describe("Reset new object state", () => {
             route: "/objects/add"
         });
 
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add 2 new and one existing subobjects
@@ -325,8 +330,9 @@ describe("Persist new object state", () => {
             route: "/objects/add", store
         });
 
-        const { markdownButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(markdownButton);
+        const { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(markdownOption);
         clickDataTabButton(container);
         const editModeButton = getByTitle(container, "Display edit window")
         fireEvent.click(editModeButton);
@@ -352,8 +358,9 @@ describe("Persist new object state", () => {
             route: "/objects/add", store
         });
 
-        const { TDLButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(TDLButton);
+        const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(toDoListOption);
         clickDataTabButton(container);
         const newItemText = "new value";
         let newItemInput = getByPlaceholderText(container.querySelector(".to-do-list-item-container"), "New item");
@@ -378,7 +385,9 @@ describe("Persist new object state", () => {
             route: "/objects/add", store
         });
 
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         addANewSubobject(container);
@@ -413,7 +422,9 @@ describe("Persist new object state", () => {
             route: "/objects/add", store
         });
 
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add 2 existing subobjects
@@ -467,17 +478,17 @@ describe("Save new object errors", () => {
         let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
-    
-        // Get object name input, link object type button & save button
+
         const objectNameInput = getByPlaceholderText(container, "Object name");
-        const linkButton = getByText(container.querySelector(".object-type-menu"), "Link");
         const saveButton = getByText(container, "Save");
     
         // Set a valid object name
         fireEvent.change(objectNameInput, { target: { value: "New object" } });
     
         // Save an empty link
-        fireEvent.click(linkButton);
+        const { switchContainer, linkOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(linkOption);
         fireEvent.click(saveButton);
         await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
         expect(store.getState().objects[1]).toBeUndefined();
@@ -490,16 +501,16 @@ describe("Save new object errors", () => {
             route: "/objects/add"
         });
     
-        // Get object name input, link object type button & save button
         const objectNameInput = getByPlaceholderText(container, "Object name");
-        const { markdownButton } = getObjectTypeSelectingElements(container);
         const saveButton = getByText(container, "Save");
     
         // Set a valid object name
         fireEvent.change(objectNameInput, { target: { value: "New object" } });
     
         // Save an empty markdown object
-        fireEvent.click(markdownButton);
+        const { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(markdownOption);
         fireEvent.click(saveButton);
         await waitFor(() => getByText(container, "Markdown text is required.", { exact: false }));
         expect(store.getState().objects[1]).toBeUndefined();
@@ -511,17 +522,17 @@ describe("Save new object errors", () => {
         let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add"
         });
-    
-        // Get object name input, link object type button & save button
+
         const objectNameInput = getByPlaceholderText(container, "Object name");
-        const TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
         const saveButton = getByText(container, "Save");
     
         // Set a valid object name
         fireEvent.change(objectNameInput, { target: { value: "New object" } });
     
         // Save an empty to-do list object
-        fireEvent.click(TDLButton);
+        const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(toDoListOption);
         fireEvent.click(saveButton);
         await waitFor(() => getByText(container, "At least one item is required in the to-do list.", { exact: false }));
         expect(store.getState().objects[1]).toBeUndefined();
@@ -535,7 +546,9 @@ describe("Save new object errors", () => {
         });
 
         // Modify object name and type, then click save button
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
         fireEvent.click(getByText(container, "Save"));
@@ -554,7 +567,9 @@ describe("Save new object errors", () => {
         });
 
         // Modify object type and name
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
 
@@ -581,7 +596,9 @@ describe("Save new object errors", () => {
         });
 
         // Modify object type and name
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
 
@@ -609,7 +626,9 @@ describe("Save new object errors", () => {
         });
 
         // Modify object type and name
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
 
@@ -679,8 +698,9 @@ describe("Save new object", () => {
         );
     
         // Change object type
-        const { markdownButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(markdownButton);
+        const { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(markdownOption);
     
         let objectNameInput = getByPlaceholderText(container, "Object name");
         let objectDescriptionInput = getByPlaceholderText(container, "Object description");
@@ -724,8 +744,9 @@ describe("Save new object", () => {
         );
     
         // Change object type
-        const { TDLButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(TDLButton);
+        const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(toDoListOption);
     
         let objectNameInput = getByPlaceholderText(container, "Object name");
         let objectDescriptionInput = getByPlaceholderText(container, "Object description");
@@ -767,7 +788,9 @@ describe("Save new object", () => {
         );
 
         // Modify object type and name
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
 

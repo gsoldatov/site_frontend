@@ -1,5 +1,5 @@
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor } from "@testing-library/dom";
+import { getByText, getByTitle, queryByText, waitFor } from "@testing-library/dom";
 
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../test-utils/ui-objects-tags";
 
@@ -18,27 +18,20 @@ export const waitForEditObjectPageLoad = async (container, store) => {
 
 
 /**
- * Return object type switching elements
+ * Returns object type switch container and selecting elements
  */
-export const getObjectTypeSelectingElements = container => {
-    // Check if object types selector is rendered and enabled
-    const objectTypeSelector = container.querySelector(".object-type-menu");
-    expect(objectTypeSelector).toBeTruthy();
+export const getObjectTypeSwitchElements = container => {
+    const switchContainer = container.querySelector("div.ui.dropdown.object-type-dropdown-switch");
+    if (!switchContainer) return {};
 
-    // Get link, markdown and to-do selecting elements
-    let linkButton, markdownButton, TDLButton, compositeButton;
-    objectTypeSelector.querySelectorAll(".object-type").forEach(node => {
-        const innerHTML = node.innerHTML;
-        if (innerHTML.includes("Link")) linkButton = node;
-        else if (innerHTML.includes("Markdown")) markdownButton = node;
-        else if (innerHTML.includes("To-Do List")) TDLButton = node;
-        else if (innerHTML.includes("Composite")) compositeButton = node;
-    });
-    // expect(linkButton).toBeTruthy();
-    // expect(markdownButton).toBeTruthy();
-    // expect(TDLButton).toBeTruthy();
-    // expect(compositeButton).toBeTruthy();
-    return { linkButton, markdownButton, TDLButton, compositeButton };
+    const selectedObjectType = switchContainer.querySelector("span.selected-object-type");
+    
+    const dropdownOptionsContainer = switchContainer.querySelector("div.menu.transition");
+    const linkOption = getByText(dropdownOptionsContainer, "Link").parentNode;
+    const markdownOption = getByText(dropdownOptionsContainer, "Markdown").parentNode;
+    const toDoListOption = getByText(dropdownOptionsContainer, "To-Do List").parentNode;
+    const compositeOption = (queryByText(dropdownOptionsContainer, "Composite") || {}).parentNode;
+    return { switchContainer, selectedObjectType, dropdownOptionsContainer, linkOption, markdownOption, toDoListOption, compositeOption };
 };
 
 

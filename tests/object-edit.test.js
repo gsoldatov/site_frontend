@@ -6,7 +6,7 @@ import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle, quer
 
 import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers } from "./test-utils/render";
-import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, resetObject } from "./test-utils/ui-object";
+import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, resetObject, getObjectTypeSwitchElements } from "./test-utils/ui-object";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 import { getTDLByObjectID } from "./mocks/data-to-do-lists";
 import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject, getMappedSubobjectID } from "./mocks/data-composite";
@@ -143,12 +143,10 @@ describe("Load object from state", () => {
         getByText(container, "Modified at:");
     
         // Check if object type is displayed, but can't be changed
-        const objectTypeSelector = container.querySelector(".object-type-menu");
-        const linkButton = getByText(objectTypeSelector, "Link");
-        expect(linkButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // link button includes a check icon
-        const markdownButton = getByText(objectTypeSelector, "Markdown");
-        fireEvent.click(markdownButton);
-        expect(getCurrentObject(store.getState()).object_type).toEqual("link");
+        const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
+        getByText(selectedObjectType, "Link");
+        fireEvent.click(switchContainer);
+        expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
     
         // Check if link data is displayed
         clickDataTabButton(container);
@@ -180,12 +178,10 @@ describe("Load object from state", () => {
         // getByText(container, object.modified_at);
     
         // Check if object type is displayed, but can't be changed
-        const objectTypeSelector = container.querySelector(".object-type-menu");
-        const markdownButton = getByText(objectTypeSelector, "Markdown");
-        expect(markdownButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // markdown button includes a check icon
-        const linkButton = getByText(objectTypeSelector, "Link");
-        fireEvent.click(linkButton);
-        expect(getCurrentObject(store.getState()).object_type).toEqual("markdown");
+        const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
+        getByText(selectedObjectType, "Markdown");
+        fireEvent.click(switchContainer);
+        expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
     
         // Check if markdown data is displayed in "both" mode
         clickDataTabButton(container);
@@ -232,12 +228,10 @@ describe("Load object from state", () => {
         // getByText(container, object.modified_at);
     
         // Check if object type is displayed, but can't be changed
-        const objectTypeSelector = container.querySelector(".object-type-menu");
-        const TDLButton = getByText(objectTypeSelector, "To-Do List");
-        expect(TDLButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // markdown button includes a check icon
-        const linkButton = getByText(objectTypeSelector, "Link");
-        fireEvent.click(linkButton);
-        expect(getCurrentObject(store.getState()).object_type).toEqual("to_do_list");
+        const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
+        getByText(selectedObjectType, "To-Do List");
+        fireEvent.click(switchContainer);
+        expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
     
         // Check if all items are displayed (detailed interface checks are performed in to-do-lists.test.js)
         clickDataTabButton(container);
@@ -260,12 +254,10 @@ describe("Load object from state", () => {
         await waitFor(() => getByText(container, "Object Information"));
 
         // Check if object type is displayed, but can't be changed
-        const objectTypeSelector = container.querySelector(".object-type-menu");
-        const compositeButton = getByText(objectTypeSelector, "Composite");
-        expect(compositeButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // markdown button includes a check icon
-        const linkButton = getByText(objectTypeSelector, "Link");
-        fireEvent.click(linkButton);
-        expect(getCurrentObject(store.getState()).object_type).toEqual("composite");
+        const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
+        getByText(selectedObjectType, "Composite");
+        fireEvent.click(switchContainer);
+        expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
 
 
         // Wait for subobjects to be loaded into state.editedObjects
@@ -319,12 +311,10 @@ describe("Load object from backend", () => {
         getByText(container, "Modified at:");
     
         // Check if object type is displayed, but can't be changed
-        const objectTypeSelector = container.querySelector(".object-type-menu");
-        const linkButton = getByText(objectTypeSelector, "Link");
-        expect(linkButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // link button includes a check icon
-        const markdownButton = getByText(objectTypeSelector, "Markdown");
-        fireEvent.click(markdownButton);
-        expect(getCurrentObject(store.getState()).object_type).toEqual("link");
+        const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
+        getByText(selectedObjectType, "Link");
+        fireEvent.click(switchContainer);
+        expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
     
         // Check if link data is displayed
         let objectData = store.getState().links[1];
@@ -378,12 +368,10 @@ describe("Load object from backend", () => {
         // getByText(container, object.modified_at);
     
         // Check if object type is displayed, but can't be changed
-        const objectTypeSelector = container.querySelector(".object-type-menu");
-        const markdownButton = getByText(objectTypeSelector, "Markdown");
-        expect(markdownButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // markdown button includes a check icon
-        const linkButton = getByText(objectTypeSelector, "Link");
-        fireEvent.click(linkButton);
-        expect(getCurrentObject(store.getState()).object_type).toEqual("markdown");
+        const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
+        getByText(selectedObjectType, "Markdown");
+        fireEvent.click(switchContainer);
+        expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
     
         // Check if markdown data is displayed
         clickDataTabButton(container);
@@ -420,12 +408,10 @@ describe("Load object from backend", () => {
         // getByText(container, object.modified_at);
     
         // Check if object type is displayed, but can't be changed
-        const objectTypeSelector = container.querySelector(".object-type-menu");
-        const TDLButton = getByText(objectTypeSelector, "To-Do List");
-        expect(TDLButton.parentNode.innerHTML.includes("check")).toBeTruthy();  // to-do list button includes a check icon
-        const linkButton = getByText(objectTypeSelector, "Link");
-        fireEvent.click(linkButton);
-        expect(getCurrentObject(store.getState()).object_type).toEqual("to_do_list");
+        const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
+        getByText(selectedObjectType, "To-Do List");
+        fireEvent.click(switchContainer);
+        expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
     
         // Check if all items are displayed (detailed interface checks are performed in to-do-lists.test.js)
         clickDataTabButton(container);

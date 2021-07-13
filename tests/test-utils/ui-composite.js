@@ -1,6 +1,6 @@
 import { fireEvent } from "@testing-library/react";
 import { getByText, queryByPlaceholderText, queryByRole, queryByText, queryByTitle, waitFor } from "@testing-library/dom";
-import { getObjectTypeSelectingElements } from "./ui-object";
+import { getObjectTypeSwitchElements } from "./ui-object";
 
 
 expect.extend({
@@ -131,14 +131,15 @@ export const getSubobjectCards = (container, { expectedNumbersOfCards, countAddM
  * Returns subobject attribute elements and controls from subobject card `card`.
  */
 export const getSubobjectCardAttributeElements = card => {
-    const { linkButton, markdownButton, TDLButton, compositeButton } = getObjectTypeSelectingElements(card);
+    const { switchContainer, selectedObjectType, dropdownOptionsContainer, linkOption, markdownOption, toDoListOption, compositeOption } = getObjectTypeSwitchElements(card);
 
     const timeStampsContainer = card.querySelector(".created-modified-timestamps-container");
 
     const subobjectNameInput = queryByPlaceholderText(card, "Object name");
     const subobjectDescriptionInput = queryByPlaceholderText(card, "Object description");
     
-    return { linkButton, markdownButton, TDLButton, compositeButton, timeStampsContainer, subobjectNameInput, subobjectDescriptionInput };
+    return { switchContainer, selectedObjectType, dropdownOptionsContainer, linkOption, markdownOption, toDoListOption, compositeOption, 
+        timeStampsContainer, subobjectNameInput, subobjectDescriptionInput };
 };
 
 

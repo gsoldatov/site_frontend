@@ -1,8 +1,7 @@
-import React, { useRef, useState } from "react";
-import { Icon, Menu } from "semantic-ui-react";
+import React, { useMemo } from "react";
+import { Dropdown, Icon } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { OnResizeWrapper } from "../common/on-resize-wrapper";
 import { DefaultObjectData } from "./default-object-data";
 import { LinkInput } from "./link";
 import { MarkdownContainer } from "./markdown";
@@ -18,14 +17,14 @@ import StyleObject from "../../styles/object.css";
 /*
     Add/edit object sub-components
 */
-
-const objectTypes = [
-    { name: "link", title: "Link" },
-    { name: "markdown", title: "Markdown" },
-    { name: "to_do_list", title: "To-Do List" },
-    { name: "composite", title: "Composite" }
+const objectTypeDropdownOptions = [
+    { key: 1, text: "Link", value: "link", icon: "linkify" },
+    { key: 2, text: "Markdown", value: "markdown", icon: "arrow down" },
+    { key: 3, text: "To-Do List", value: "to_do_list", icon: "check square outline" },
+    { key: 4, text: "Composite", value: "composite", icon: "copy outline" }
 ];
-const newSubobjectTypes = objectTypes.filter(t => t.name !== "composite");
+const newSubobjectDropdownOptions = objectTypeDropdownOptions.filter(option => option.value !== "composite");
+
 
 /**
  * Object type selector component.
@@ -39,35 +38,33 @@ export const ObjectTypeSelector = ({ objectID, isSubobject = false }) => {
     // Header style
     const headerClassName = "object-type-menu-header" + (isSubobject ? " subobject": "");
 
-    // Fullscreen style state
-    const [isFullscreenStyle, setIsFullscreenStyle] = useState(true);
-    const menuClassName = isFullscreenStyle ? "object-type-menu" : "object-type-menu small";
+    // On change callback
+    const onChange = useMemo(() => (e, data) => {
+        dispatch(setEditedObject({ object_type: data.value }, objectID));
+    }, [objectID]);
 
-    // Items
-    const displayedObjectTypes = isSubobject && !isDisabled ? newSubobjectTypes : objectTypes;   // disable adding new composite subobjects
-    const items = displayedObjectTypes.map((t, k) => {
-        const isActive = t.name === objectType;
-        let className = isActive ? "active object-type" : "object-type";
-        if (!isFullscreenStyle) className += " small";
-        
-        return (
-            <Menu.Item as="div" key={k} name={t.name} className={className} disabled={isDisabled}
-                onClick={(e, props) => dispatch(setEditedObject({ object_type: props.name}, objectID))} >
-                {isActive ? <Icon name="check" /> : null}
-                    {t.title}
-            </Menu.Item>
-        );
-    });
+    // Dropdown options
+    const options = isSubobject && !isDisabled ? newSubobjectDropdownOptions : objectTypeDropdownOptions;   // disable adding new composite subobjects
 
-    // each item has a fixed width of 125px in fullscreen mode; update CSS if this is updated
+    // Add icon to the left of selected option text (by replacing standart text with a custom element)
+    const selectedOption = objectTypeDropdownOptions.filter(option => option.value === objectType)[0];
+    const trigger = (
+        <span className="selected-object-type">
+            <Icon name={selectedOption.icon} /> {selectedOption.text}
+        </span>
+    );
+
     return (
         <>
             <div className={headerClassName}>Object Type</div>
-            <OnResizeWrapper threshold={125 * displayedObjectTypes.length} callback={setIsFullscreenStyle}>
-                <Menu compact className={menuClassName}>
-                    {items}
-                </Menu>
-            </OnResizeWrapper>
+            {/* <Dropdown selection className="object-type-dropdown-switch" */}
+            <Dropdown className="selection object-type-dropdown-switch"     // Add SUIR classname for styling (`selection` prop is not compatible with `trigger`)
+                disabled={isDisabled}
+                defaultValue={objectType}
+                trigger={trigger}
+                options={options}
+                onChange={onChange}
+            />
         </>
     );
 };

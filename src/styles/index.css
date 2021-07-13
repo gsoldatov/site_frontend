@@ -5,7 +5,7 @@
 /* :root {
     --selected-color: rgba(160, 160, 160, 0.5);
     --hover-color: rgba(30, 105, 55, 0.7);
-    --border-color: var(--hover-color);     /* TODO rename * /
+    --border-color: var(--hover-color);
     
     --pressed-button-color: rgba(80, 80, 80);
     --field-menu-button-overlay-color: rgba(0, 0, 0, 0.3);

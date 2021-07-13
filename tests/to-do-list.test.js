@@ -7,7 +7,7 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholde
 import { compareItemData, getDefaultSortOrder, getRenderedItemIndent, checkRenderedItemsOrder } from "./test-utils/to-do-lists";
 import { defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "./mocks/data-to-do-lists";
 import { renderWithWrappers } from "./test-utils/render";
-import { getCurrentObject, clickDataTabButton } from "./test-utils/ui-object";
+import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "./test-utils/ui-object";
 
 import { AddObject, EditObject } from "../src/components/object";
 import * as caret from "../src/util/caret";
@@ -34,8 +34,9 @@ test("Load a new to-do list", async () => {
     });
 
     // Select to-do list object type
-    const TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
-    fireEvent.click(TDLButton);
+    const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
+    fireEvent.click(switchContainer);
+    fireEvent.click(toDoListOption);
     clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
@@ -121,8 +122,9 @@ test("Add, edit & delete items", async () => {
     });
 
     // Select to-do list object type
-    const TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
-    fireEvent.click(TDLButton);
+    const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
+    fireEvent.click(switchContainer);
+    fireEvent.click(toDoListOption);
     clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
@@ -301,8 +303,9 @@ test("New item input indenation", async () => {
     });
 
     // Select to-do list object type
-    const TDLButton = getByText(container.querySelector(".object-type-menu"), "To-Do List");
-    fireEvent.click(TDLButton);
+    const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
+    fireEvent.click(switchContainer);
+    fireEvent.click(toDoListOption);
     clickDataTabButton(container);
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();

@@ -6,7 +6,7 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle, screen } from "@t
 
 import { checkRenderedItemsOrder } from "./test-utils/to-do-lists";
 import { renderWithWrappers } from "./test-utils/render";
-import { getCurrentObject, clickDataTabButton, getObjectTypeSelectingElements, clickGeneralTabButton } from "./test-utils/ui-object";
+import { getCurrentObject, clickDataTabButton, getObjectTypeSelectingElements, clickGeneralTabButton, getObjectTypeSwitchElements } from "./test-utils/ui-object";
 import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElements, getSubobjectCards, getAddSubobjectMenu, getAddSubobjectMenuDropdown,
     clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons, 
     getSubobjectCardIndicators, getSubobjectExpandToggleButton, startSubobjectCardDrag, getSubobjectGridColumnContainers, getNewColumnDropzones } from "./test-utils/ui-composite";
@@ -40,8 +40,9 @@ describe("Basic load and UI checks", () => {
         });
 
         // Select composite object type and go to data tab
-        const { compositeButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add two new subobjects and check if subobject cards are rendered
@@ -74,8 +75,9 @@ describe("Basic load and UI checks", () => {
         });
 
         // Select composite object type and go to data tab
-        const { compositeButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add two existing subobjects and check if subobject cards are rendered
@@ -126,8 +128,9 @@ describe("Basic load and UI checks", () => {
         });
 
         // Select composite object type and go to data tab
-        const { compositeButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Click "Add Existing" button
@@ -166,8 +169,9 @@ describe("Heading (without indicators)", () => {
         });
 
         // Select composite object type and go to data tab
-        const { compositeButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add a new subobject
@@ -192,8 +196,9 @@ describe("Heading (without indicators)", () => {
         });
 
         // Select composite object type and go to data tab
-        const { compositeButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(compositeButton);
+        const switchElements = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchElements.switchContainer);
+        fireEvent.click(switchElements.compositeOption);
         clickDataTabButton(container);
 
         // Add a new subobject
@@ -203,16 +208,21 @@ describe("Heading (without indicators)", () => {
         expect(heading).toBeTruthy();
 
         // Select each object type and check object type icon's title text
-        const { linkButton, markdownButton, TDLButton } = getSubobjectCardAttributeElements(card);
+        const { switchContainer, linkOption, markdownOption, toDoListOption, compositeOption } = getSubobjectCardAttributeElements(card);
         
-        fireEvent.click(markdownButton);
+        fireEvent.click(switchContainer);
+        fireEvent.click(markdownOption);
         getByTitle(heading, "Markdown");
 
-        fireEvent.click(TDLButton);
+        fireEvent.click(switchContainer);
+        fireEvent.click(toDoListOption);
         getByTitle(heading, "To-do list");
 
-        fireEvent.click(linkButton);
+        fireEvent.click(switchContainer);
+        fireEvent.click(linkOption);
         getByTitle(heading, "Link");
+
+        expect(compositeOption).toBeUndefined();
 
         // Add an existing composite subobject
         const objectName = "Test composite";
@@ -231,8 +241,9 @@ describe("Heading (without indicators)", () => {
         });
 
         // Select composite object type and go to data tab
-        const { compositeButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add a new subobject
@@ -285,7 +296,9 @@ describe("Subobject card tabs", () => {
         });
 
         // Select composite object type and go to data tab
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add two new subobjects
@@ -320,8 +333,9 @@ describe("Subobject card tabs", () => {
         });
 
         // Select composite object type and go to data tab
-        const { compositeButton } = getObjectTypeSelectingElements(container);
-        fireEvent.click(compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add two existing subobjects and check if subobject cards are rendered
@@ -340,14 +354,14 @@ describe("Subobject card tabs", () => {
         const subobjectID = cards[0][0].id;
         const firstCardAttributeElements = getSubobjectCardAttributeElements(cards[0][0]);
         expect(firstCardAttributeElements.timeStampsContainer).toBeTruthy();
-        expect(firstCardAttributeElements.linkButton.classList.contains("active")).toBeTruthy();
+        getByText(firstCardAttributeElements.selectedObjectType, "Link");
         expect(firstCardAttributeElements.subobjectNameInput.value).toEqual(firstName);
         expect(firstCardAttributeElements.subobjectNameInput.value).toEqual(store.getState().editedObjects[subobjectID].object_name);
         expect(firstCardAttributeElements.subobjectDescriptionInput.value).toEqual(store.getState().editedObjects[subobjectID].object_description);
 
         // Check if object type can't be changed
-        fireEvent.click(firstCardAttributeElements.TDLButton);
-        expect(store.getState().editedObjects[cards[0][0].id].object_type).toEqual("link");
+        fireEvent.click(firstCardAttributeElements.switchContainer);
+        expect(firstCardAttributeElements.dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
 
         // Edit name & description and check if they're changed
         const objectName = "some name", objectDescription = "some description";
@@ -364,7 +378,9 @@ describe("Subobject card tabs", () => {
         });
 
         // Select composite object type and go to data tab
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add two new subobjects
@@ -374,7 +390,9 @@ describe("Subobject card tabs", () => {
         const card = cards[0][0];
         
         // Select markdown object type, check if data is correctly updated and markdown container is rendered on the data tab
-        fireEvent.click(getSubobjectCardAttributeElements(card).markdownButton);
+        let switchElements = getSubobjectCardAttributeElements(card);
+        fireEvent.click(switchElements.switchContainer);
+        fireEvent.click(switchElements.markdownOption);
         expect(store.getState().editedObjects[cards[0][0].id].object_type).toEqual("markdown");
         expect(store.getState().editedObjects[cards[0][1].id].object_type).toEqual("link");
         clickSubobjectCardDataTabButton(card);
@@ -382,13 +400,17 @@ describe("Subobject card tabs", () => {
 
         // Select to-do object type and check if to-do list container is rendered on the data tab
         clickSubobjectCardAttributeTabButton(card);
-        fireEvent.click(getSubobjectCardAttributeElements(card).TDLButton);
+        switchElements = getSubobjectCardAttributeElements(card);
+        fireEvent.click(switchElements.switchContainer);
+        fireEvent.click(switchElements.toDoListOption);
         clickSubobjectCardDataTabButton(card);
         expect(card.querySelector(".to-do-list-container")).toBeTruthy();
 
         // Select link object type and check if link input is rendered on the data tab
         clickSubobjectCardAttributeTabButton(card);
-        fireEvent.click(getSubobjectCardAttributeElements(card).linkButton);
+        switchElements = getSubobjectCardAttributeElements(card);
+        fireEvent.click(switchElements.switchContainer);
+        fireEvent.click(switchElements.linkOption);
         clickSubobjectCardDataTabButton(card);
         const linkInput = getByPlaceholderText(card, "Link");
 
@@ -405,13 +427,15 @@ describe("Subobject card tabs", () => {
         });
 
         // Select composite object type and go to data tab
-        fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
         clickDataTabButton(container);
 
         // Add an existing link object
         await addAnExistingSubobject(container, 0, "link subobject", store, { waitForObjectLoad: true });
         let card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
-        expect(getSubobjectCardAttributeElements(card).linkButton.classList.contains("active")).toBeTruthy();
+        getByText(getSubobjectCardAttributeElements(card).selectedObjectType, "Link");
 
         // Check if link data is displayed
         clickSubobjectCardDataTabButton(card);
@@ -426,7 +450,7 @@ describe("Subobject card tabs", () => {
         // Add an existing markdown object
         await addAnExistingSubobject(container, 0, "markdown subobject", store, { waitForObjectLoad: true });
         card = getSubobjectCards(container, { expectedNumbersOfCards: [2] })[0][1];
-        expect(getSubobjectCardAttributeElements(card).markdownButton.classList.contains("active")).toBeTruthy();
+        getByText(getSubobjectCardAttributeElements(card).selectedObjectType, "Markdown");
 
         // Check if markdown data is displayed
         clickSubobjectCardDataTabButton(card);
@@ -439,7 +463,7 @@ describe("Subobject card tabs", () => {
         // Add an existing to-do list object
         await addAnExistingSubobject(container, 0, "to_do_list subobject", store, { waitForObjectLoad: true });
         card = getSubobjectCards(container, { expectedNumbersOfCards: [3] })[0][2];
-        expect(getSubobjectCardAttributeElements(card).TDLButton.classList.contains("active")).toBeTruthy();
+        getByText(getSubobjectCardAttributeElements(card).selectedObjectType, "To-Do List");
 
         // Check if to-do list data is displayed
         clickSubobjectCardDataTabButton(card);
@@ -450,7 +474,7 @@ describe("Subobject card tabs", () => {
         // Add an existing composite object
         await addAnExistingSubobject(container, 0, "composite subobject", store, { waitForObjectLoad: true });
         card = getSubobjectCards(container, { expectedNumbersOfCards: [4] })[0][3];
-        expect(getSubobjectCardAttributeElements(card).compositeButton.classList.contains("active")).toBeTruthy();
+        getByText(getSubobjectCardAttributeElements(card).selectedObjectType, "Composite");
 
         // Check if data tab placeholder is displayed
         clickSubobjectCardDataTabButton(card);
@@ -475,7 +499,9 @@ describe("Subobject card menu buttons", () => {
             });
     
             // Select composite object type and go to data tab
-            fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add two new subobjects
@@ -497,7 +523,8 @@ describe("Subobject card menu buttons", () => {
             fireEvent.change(getSubobjectCardAttributeElements(secondCard).subobjectDescriptionInput, { target: { value: secondDescription } });
             await waitFor(() => expect(store.getState().editedObjects[secondCard.id].object_description).toEqual(secondDescription));
 
-            fireEvent.click(getSubobjectCardAttributeElements(secondCard).markdownButton);
+            fireEvent.click(getSubobjectCardAttributeElements(secondCard).switchContainer);
+            fireEvent.click(getSubobjectCardAttributeElements(secondCard).markdownOption);
             clickSubobjectCardDataTabButton(secondCard);
 
             const secondMarkdown = "some markdown text";
@@ -539,7 +566,9 @@ describe("Subobject card menu buttons", () => {
             });
     
             // Select composite object type and go to data tab
-            fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add two new subobjects
@@ -587,7 +616,9 @@ describe("Subobject card menu buttons", () => {
             });
     
             // Select composite object type and go to data tab
-            fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject
@@ -615,7 +646,9 @@ describe("Subobject card menu buttons", () => {
             });
     
             // Select composite object type and go to data tab
-            fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject
@@ -664,7 +697,9 @@ describe("Subobject card menu buttons", () => {
             });
 
             // Select composite object type and go to data tab
-            fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject
@@ -700,7 +735,9 @@ describe("Subobject card menu buttons", () => {
             });
     
             // Select composite object type and go to data tab
-            fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject
@@ -723,7 +760,9 @@ describe("Subobject card menu buttons", () => {
             });
     
             // Select composite object type and go to data tab
-            fireEvent.click(getObjectTypeSelectingElements(container).compositeButton);
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject
