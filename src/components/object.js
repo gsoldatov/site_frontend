@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { Header, Tab } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { createSelector } from "reselect";
 
 import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "./edit/common";
 import { ObjectTypeSelector, ObjectViewEditSwitch } from "./edit/object";
@@ -289,8 +290,13 @@ const CurrentTagItem = ({ id }) => {
 };
 
 const inputStateSelector = state => state.objectUI.tagsInput;
-const existingIDsSelector = state => getCurrentObject(state).currentTagIDs.concat(
-    getCurrentObject(state).addedTags.filter(tag => typeof(tag) === "number"));
+const existingIDsSelector = createSelector(
+    state => getCurrentObject(state).currentTagIDs,
+    state => getCurrentObject(state).addedTags,
+    (currentTagIDs, addedTags) => currentTagIDs.concat(
+        addedTags.filter(tag => typeof(tag) === "number")
+    )
+);
 // const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
 const inlineInputDropdownItemTextSelectors = { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name };
 const ObjectTags = () => {

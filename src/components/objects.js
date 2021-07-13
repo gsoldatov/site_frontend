@@ -307,6 +307,13 @@ const PartiallyAppliedTagItem = ({ id }) => {
 const inputStateSelector = state => state.objectsUI.tagsInput;
 const existingIDsSelector = state => objectsGetCommonTagIDs(state).concat(objectsGetPartiallyAppliedTagIDs(state)).concat(
     state.objectsUI.addedTags.filter(tag => typeof(tag) === "number")); // common + partially applied + added existing tags
+// const existingIDsSelector = createSelector(      // TODO delete
+//     state => getCurrentObject(state).currentTagIDs,
+//     state => getCurrentObject(state).addedTags,
+//     (currentTagIDs, addedTags) => currentTagIDs.concat(
+//         addedTags.filter(tag => typeof(tag) === "number")
+//     )
+// );
 // const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
 const inlineInputDropdownItemTextSelectors = { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name };
 

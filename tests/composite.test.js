@@ -116,6 +116,7 @@ describe("Basic load and UI checks", () => {
 
         // Return to composite object page and check if subobject name is displayed correctly;
         history.push(`/objects/add`);
+        await waitFor(() => getByText(container, "Add a New Object"));
         clickDataTabButton(container);
         cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
         expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput.value).toEqual(firstName);

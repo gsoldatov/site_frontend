@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo, memo } from "react";
 import { Dropdown, Icon } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -8,14 +8,14 @@ import intervalWrapper from "../../util/interval-wrapper";
 /**
  * Component with input for adding new items in inline item lists.
  */
-export const InlineInput = ({ placeholder, inputStateSelector, setInputState, onSearchChangeDelayed, existingIDsSelector, setItem, getDropdownItemTextSelectors }) => {
+export const InlineInput = memo(({ placeholder, inputStateSelector, setInputState, onSearchChangeDelayed, existingIDsSelector, setItem, getDropdownItemTextSelectors }) => {
     const dispatch = useDispatch();
     const is = useSelector(inputStateSelector);
     const existingIDs = useSelector(existingIDsSelector);
 
     const abortFetch = useRef();    // ref for storing abort fetch function
     const inputRef = useRef();
-    const setIsDisplayed = isDisplayed => dispatch(setInputState({ isDisplayed: isDisplayed }));
+    const setIsDisplayed = useMemo(() => isDisplayed => dispatch(setInputState({ isDisplayed })));
     let itemAdded = false;
 
     // Focus the input after it's rendered
@@ -98,7 +98,7 @@ export const InlineInput = ({ placeholder, inputStateSelector, setInputState, on
             {/* {addButton} */}
         </span>
     );
-};
+});
 
 
 /* InlineInput implemented with input + datalist tags (has add button, doesn't always update dropdown values) */
