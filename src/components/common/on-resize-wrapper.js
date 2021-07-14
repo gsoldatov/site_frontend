@@ -6,16 +6,15 @@ import intervalWrapper from "../../util/interval-wrapper";
 
 
 /**
- * Wrapper component, which checks if width of its child is greater than `threshold` and runs `callback` function with `threshold` as an argument when a resize occurs.
+ * Wrapper component, which fires (with debouncing) provided `callback` when resize of its child occures and passes computed style into it.
  */
-export const OnResizeWrapper = ({ threshold, callback, children }) => {
+export const OnResizeWrapper = ({ callback, children }) => {
     const innerRef = useRef();
     const resizeObserver = useRef();
-
+    
     const onResize = useRef(intervalWrapper(() => {
         if (innerRef.current) {
-            const childWidth = parseInt(getComputedStyle(innerRef.current).width.replace("px", ""));
-            callback(childWidth > threshold);
+            callback(getComputedStyle(innerRef.current));
         }
     }, 200, false)).current;
 

@@ -2,10 +2,39 @@
     Field pagination styles. 
 *******************************/
 
+/* Navigation bar */
 div.ui.menu.navigation-bar {
     border-radius: 0;
 }
 
+
+/* Menu items */
 div.ui.menu.navigation-bar > .item {
+    display: flex;
+    justify-content: center;
     border-radius: 0;
+}
+
+
+/* Menu expand toggle */
+div.ui.menu.navigation-bar > div.item.navigation-bar-expand-container {
+    justify-content: end;
+}
+
+i.navigation-bar-expand-toggle:hover {
+    cursor: pointer;
+}
+
+
+/* Right menu buttons */
+div.ui.menu.navigation-bar div.nagivation-bar-button-container {
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+div.ui.menu.navigation-bar:not(.vertical) .item > button.navigation-bar-button {    /* override SUIR styling */
+    margin-left: 0.5em;
+    margin-right: 0.5em;
 }
