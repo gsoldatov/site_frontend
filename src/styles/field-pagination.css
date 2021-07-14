@@ -2,9 +2,13 @@
     Field pagination styles. 
 *******************************/
 
-.field-pagination {
+.field-pagination-container {
     display: flex;
     flex-flow: row wrap; 
     justify-content: center;
     align-items: center;
+}
+
+.field-pagination-container > .field-pagination {
+    flex-wrap: wrap;
 }
