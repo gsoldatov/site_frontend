@@ -161,6 +161,7 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     const dispatch = useDispatch();
 
     const objectType = useSelector(state => getCurrentObject(state).object_type);
+    const selectedTab = useSelector(state => state.objectUI.selectedTab);
 
     // On load action (also triggers when object ids change)
     useEffect(() => {
@@ -177,7 +178,7 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     );
 
     // Custom layout classname for composite objects (to allow multicolumn subobjects)
-    const className = objectType === "composite" ? "composite-object-page" : undefined;
+    const className = objectType === "composite" && selectedTab === 1 ? "composite-object-page" : undefined;
 
     return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} />;
 };
