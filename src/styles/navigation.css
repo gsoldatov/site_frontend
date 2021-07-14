@@ -34,7 +34,22 @@ div.ui.menu.navigation-bar div.nagivation-bar-button-container {
     padding-right: 0;
 }
 
-div.ui.menu.navigation-bar:not(.vertical) .item > button.navigation-bar-button {    /* override SUIR styling */
+div.navigation-right-menu.is-stacked {
+    border-top: solid 1px rgba(255, 255, 255, 0.08);
+    /* rgba(255,255,255,.08); */
+    /* background-color: rgba(255, 255, 255, 0.08); */
+    /* background-position-x: 0%;
+    background-position-y: 0%;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-image: none;
+    background-size: auto;
+    background-origin: padding-box;
+    background-clip: border-box; */
+}
+
+div.ui.menu.navigation-bar .item > button.navigation-bar-button {    /* override SUIR styling */
     margin-left: 0.5em;
     margin-right: 0.5em;
+    width: 100px;
 }

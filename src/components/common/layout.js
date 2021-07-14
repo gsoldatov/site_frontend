@@ -28,7 +28,7 @@ export default ({ sideMenuItems, body, className }) => {
     return (
         <Grid celled className={className}>
             <Grid.Row className={className}>
-                <Navigation />
+                <Navigation layoutClassName={className} />
             </Grid.Row>
             <Grid.Row columns={2} className={className}>
                 <Grid.Column width={2} className={className}>
