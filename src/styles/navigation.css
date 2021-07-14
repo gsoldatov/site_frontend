@@ -1,0 +1,11 @@
+/*******************************
+    Field pagination styles. 
+*******************************/
+
+div.ui.menu.navigation-bar {
+    border-radius: 0;
+}
+
+div.ui.menu.navigation-bar > .item {
+    border-radius: 0;
+}
