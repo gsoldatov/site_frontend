@@ -1,21 +1,33 @@
-import React, { useState, useRef, memo } from "react";
+import React, { useState, useRef, memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
 import intervalWrapper from "../../util/interval-wrapper";
 
+import { OnResizeWrapper } from "../common/on-resize-wrapper";
+
 import StlyeFieldMenu from "../../styles/field-menu.css";
 
 
+const menuIsFullscreenThreshold = 768;
 /**
  * Field menu component with customizable items.
  */
 export default memo(({ items, className = "field-menu", compact, size }) => {
-    let k = 0;
-    const menuItems = items.map(item => <FieldMenuElement key={k++} {...item} size={size} />);
+    const [isFullscreenStyle, setIsFullscreenStyle] = useState(window.innerWidth >= menuIsFullscreenThreshold);
+
+    const onResizeCallback = useMemo(() => computedStyle => {
+        setIsFullscreenStyle(window.innerWidth >= menuIsFullscreenThreshold);
+    });
+
+    const menuItems = items.map((item, k) => <FieldMenuElement key={k} {...item} size={size} isFullscreenStyle={isFullscreenStyle} />);
 
     return (
-        <Menu className={className} compact={compact} size={size}>{menuItems}</Menu>
+        <OnResizeWrapper callback={onResizeCallback}>
+            <Menu className={className} compact={compact} size={size}>
+                {menuItems}
+            </Menu>
+        </OnResizeWrapper>
     );
 });
 
@@ -25,14 +37,14 @@ export default memo(({ items, className = "field-menu", compact, size }) => {
  */
 const FieldMenuElement = props => {
     switch(props.type) {
+        case "group":
+            return <FieldMenuGroup {...props} />;
         case "item":
             return <FieldMenuItem {...props} />;
         case "filter":
             return <FieldMenuFilter {...props} />;
         case "separator":
             return <FieldMenuSeparator {...props} />;
-        case "itemGroup":
-            return <FieldMenuItemGroup {...props} />;
         case "dropdown":
             return <FieldMenuDropdown {...props} />;
         case "updatableDropdown":
@@ -40,6 +52,20 @@ const FieldMenuElement = props => {
         default:
             throw Error(`Received incorrect 'type' property for <FieldMenuElement> component: ${props.type}`);
     }
+};
+
+
+/**
+ * Groupping container for holding other elements.
+ */
+const FieldMenuGroup = ({ items, size, isFullscreenStyle }) => {
+    const groupClassName = "field-menu-group" + (isFullscreenStyle ? "" : " small");
+    const groupItems = items.map((item, k) => <FieldMenuElement key={k} {...item} size={size} isFullscreenStyle={isFullscreenStyle} />);
+    return (
+        <div className={groupClassName}>
+            {groupItems}
+        </div>
+    );
 };
 
 
@@ -64,7 +90,7 @@ const FieldMenuItem = ({ icon, title, size = "medium", isDisabledSelector, isAct
 /**
  * Field menu filter.
  */
-const FieldMenuFilter = ({ placeholder, isDisabledSelector, valueSelector, onChange, onChangeDelayed, getOnChangeParams }) => {
+const FieldMenuFilter = ({ placeholder, isDisabledSelector, valueSelector, onChange, onChangeDelayed, getOnChangeParams, isFullscreenStyle }) => {
     const dispatch = useDispatch();
     const _placeholder = placeholder || "Filter";
     const isDisabled = useSelector(isDisabledSelector);
@@ -77,21 +103,26 @@ const FieldMenuFilter = ({ placeholder, isDisabledSelector, valueSelector, onCha
         _onChangeDelayed(onChangeParams);                           // onChangeDelayed is called after a delay since last input value change (and dispatches a fetch)
     };
 
-    return <Input icon="search" disabled={isDisabled} className="field-menu-filter" placeholder={_placeholder} value={value} onChange={handleChange} />;
+    const inputClassName = "field-menu-filter" + isFullscreenStyle ? "" : " small";
+
+    return <Input icon="search" disabled={isDisabled} className={inputClassName}  fluid={!isFullscreenStyle} placeholder={_placeholder} value={value} onChange={handleChange} />;
 };
 
 
 /**
  * Field menu dropdown.
  */
-const FieldMenuDropdown = ({ placeholder, isDisabledSelector, defaultValueSelector, options, getOnChangeAction }) => {
+const FieldMenuDropdown = ({ placeholder, isDisabledSelector, defaultValueSelector, options, getOnChangeAction, isFullscreenStyle }) => {
     const dispatch = useDispatch();
     const isDisabled = useSelector(isDisabledSelector);
     const defaultValue = useSelector(defaultValueSelector);
+
+    const dropdownClassName = "field-menu-dropdown" + isFullscreenStyle ? "" : " small";
     
-    return <Dropdown multiple selection className="field-menu-dropdown"
+    return <Dropdown multiple selection className={dropdownClassName}
         placeholder={placeholder}
         disabled={isDisabled}
+        fluid={!isFullscreenStyle}
         defaultValue={defaultValue}
         options={options}
         onChange={(e, data) => dispatch(getOnChangeAction(e, data))}
@@ -102,7 +133,8 @@ const FieldMenuDropdown = ({ placeholder, isDisabledSelector, defaultValueSelect
 /**
  * Field menu dropdown with updatable options.
  */
-const FieldMenuUpdatableDropdown = ({ placeholder, isDisabledSelector, inputStateSelector, existingIDsSelector, onSearchChange, onSearchChangeDelayed, onChange, getDropdownItemTextSelectors }) => {
+const FieldMenuUpdatableDropdown = ({ placeholder, isDisabledSelector, inputStateSelector, existingIDsSelector, onSearchChange, onSearchChangeDelayed, 
+        onChange, getDropdownItemTextSelectors, isFullscreenStyle }) => {
     const dispatch = useDispatch();
     const isDisabled = useSelector(isDisabledSelector);
     const inputState = useSelector(inputStateSelector);
@@ -141,9 +173,13 @@ const FieldMenuUpdatableDropdown = ({ placeholder, isDisabledSelector, inputStat
     const itemStore = useSelector(getDropdownItemTextSelectors.itemStoreSelector);
     const options = inputState.matchingIDs.map(id => ({ key: id, text: getDropdownItemTextSelectors.itemTextSelector(itemStore, id), value: id }));
 
-    return <Dropdown search selectOnNavigation={false} selection selectOnBlur={false} className="field-menu-updatable-dropdown"
+    // Styling
+    const dropdownClassName = "field-menu-updatable-dropdown" + isFullscreenStyle ? "" : " small";
+
+    return <Dropdown search selectOnNavigation={false} selection selectOnBlur={false} className={dropdownClassName}
         placeholder={placeholder}
         disabled={isDisabled}
+        fluid={!isFullscreenStyle}
         open={options.length > 0}
 
         //defaultSearchQuery={inputState.inputText}
@@ -162,17 +198,7 @@ const FieldMenuUpdatableDropdown = ({ placeholder, isDisabledSelector, inputStat
 /**
  * Field menu separator.
  */
-const FieldMenuSeparator = () => {
-    return <div className="field-menu-separator" />;
-};
-
-
-/**
- * Field menu group.
- */
-const FieldMenuItemGroup = ({ items, noBorder }) => {
-    let k = 0;
-    const _items = items.map(item => <FieldMenuElement key={k++} {...item} />);
-    const style = { borderRight: noBorder ? "none" : "solid 1px lightgrey" };
-    return <Button.Group className="field-menu-group" style={style}>{_items}</Button.Group>;
+const FieldMenuSeparator = ({ isFullscreenStyle, hideWhenNotFullscreen }) => {
+    const separatorClassName = "field-menu-separator" + (!isFullscreenStyle && hideWhenNotFullscreen ? " hidden" : "");
+    return <div className={separatorClassName} />;
 };

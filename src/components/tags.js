@@ -88,76 +88,87 @@ export default () => {
 // Field menu items
 const fieldMenuItems = [
     {
-        type: "item",
-        icon: "check",
-        title: "Select all tags on page",
-        onClick: tagIDs => selectTags(tagIDs),
-        onClickParamsSelector: state => state.tagsUI.paginationInfo.currentPageTagIDs,
-        isDisabledSelector: state => isFetchingTags(state)
-    },
-    {
-        type: "item",
-        icon: "cancel",
-        title: "Deselect all tags",
-        onClick: clearSelectedTags(),
-        isDisabledSelector: state => isFetchingTags(state)
-    },
+        type: "group",
+        items: [
+            {
+                type: "item",
+                icon: "check",
+                title: "Select all tags on page",
+                onClick: tagIDs => selectTags(tagIDs),
+                onClickParamsSelector: state => state.tagsUI.paginationInfo.currentPageTagIDs,
+                isDisabledSelector: state => isFetchingTags(state)
+            },
+            {
+                type: "item",
+                icon: "cancel",
+                title: "Deselect all tags",
+                onClick: clearSelectedTags(),
+                isDisabledSelector: state => isFetchingTags(state)
+            },
 
-    {
-        type: "separator"
-    },
-    {
-        type: "item",
-        icon: "sort content descending",
-        title: "Sort in ascending order",
-        onClick: params => setTagsPaginationInfoAndFetchPage(params),
-        onClickParams: { sortOrder: "asc" },
-        isDisabledSelector: state => isFetchingTags(state),
-        isActiveSelector: state => state.tagsUI.paginationInfo.sortOrder === "asc"
-    },
-    {
-        type: "item",
-        icon: "sort content ascending",
-        title: "Sort in descending order",
-        onClick: params => setTagsPaginationInfoAndFetchPage(params),
-        onClickParams: { sortOrder: "desc" },
-        isDisabledSelector: state => isFetchingTags(state),
-        isActiveSelector: state => state.tagsUI.paginationInfo.sortOrder === "desc"
-    },
-    
-    {
-        type: "separator"
-    },
-    {
-        type: "item",
-        icon: "font",
-        title: "Sort by tag name",
-        onClick: params => setTagsPaginationInfoAndFetchPage(params),
-        onClickParams: { sortField: "tag_name" },
-        isDisabledSelector: state => isFetchingTags(state),
-        isActiveSelector: state => state.tagsUI.paginationInfo.sortField === "tag_name"
-    },
-    {
-        type: "item",
-        icon: "clock outline",
-        title: "Sort by modify time",
-        onClick: params => setTagsPaginationInfoAndFetchPage(params),
-        onClickParams: { sortField: "modified_at" },
-        isDisabledSelector: state => isFetchingTags(state),
-        isActiveSelector: state => state.tagsUI.paginationInfo.sortField === "modified_at"
-    },
+            {
+                type: "separator"
+            },
+            {
+                type: "item",
+                icon: "sort content descending",
+                title: "Sort in ascending order",
+                onClick: params => setTagsPaginationInfoAndFetchPage(params),
+                onClickParams: { sortOrder: "asc" },
+                isDisabledSelector: state => isFetchingTags(state),
+                isActiveSelector: state => state.tagsUI.paginationInfo.sortOrder === "asc"
+            },
+            {
+                type: "item",
+                icon: "sort content ascending",
+                title: "Sort in descending order",
+                onClick: params => setTagsPaginationInfoAndFetchPage(params),
+                onClickParams: { sortOrder: "desc" },
+                isDisabledSelector: state => isFetchingTags(state),
+                isActiveSelector: state => state.tagsUI.paginationInfo.sortOrder === "desc"
+            },
+            
+            {
+                type: "separator"
+            },
+            {
+                type: "item",
+                icon: "font",
+                title: "Sort by tag name",
+                onClick: params => setTagsPaginationInfoAndFetchPage(params),
+                onClickParams: { sortField: "tag_name" },
+                isDisabledSelector: state => isFetchingTags(state),
+                isActiveSelector: state => state.tagsUI.paginationInfo.sortField === "tag_name"
+            },
+            {
+                type: "item",
+                icon: "clock outline",
+                title: "Sort by modify time",
+                onClick: params => setTagsPaginationInfoAndFetchPage(params),
+                onClickParams: { sortField: "modified_at" },
+                isDisabledSelector: state => isFetchingTags(state),
+                isActiveSelector: state => state.tagsUI.paginationInfo.sortField === "modified_at"
+            },
 
-    {
-        type: "separator"
+            {
+                type: "separator",
+                hideWhenNotFullscreen: true
+            }
+        ]
     },
     {
-        type: "filter",
-        isDisabledSelector: state => isFetchingTags(state),
-        placeholder: "Filter tags",
-        valueSelector: state => state.tagsUI.paginationInfo.filterText,
-        onChange: params => setTagsPaginationInfo(params),    // action for updating input input text (which is kept in state)
-        onChangeDelayed: params => setTagsPaginationInfoAndFetchPage(params),     // action for performing a fetch with a delay from the last onChange event
-        getOnChangeParams: text => ({ filterText: text })
+        type: "group",
+        items: [
+            {
+                type: "filter",
+                isDisabledSelector: state => isFetchingTags(state),
+                placeholder: "Filter tags",
+                valueSelector: state => state.tagsUI.paginationInfo.filterText,
+                onChange: params => setTagsPaginationInfo(params),    // action for updating input input text (which is kept in state)
+                onChangeDelayed: params => setTagsPaginationInfoAndFetchPage(params),     // action for performing a fetch with a delay from the last onChange event
+                getOnChangeParams: text => ({ filterText: text })
+            }
+        ]
     }
 ];
 

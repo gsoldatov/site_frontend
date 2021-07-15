@@ -119,115 +119,141 @@ export default () => {
 // Field menu items
 const fieldMenuItems = [
     {
-        type: "item",
-        icon: "check",
-        title: "Select all objects on page",
-        onClick: objectIDs => selectObjects(objectIDs),
-        onClickParamsSelector: state => state.objectsUI.paginationInfo.currentPageObjectIDs,
-        isDisabledSelector: state => isFetchingObjects(state)
-    },
-    {
-        type: "item",
-        icon: "cancel",
-        title: "Deselect all objects",
-        onClick: clearSelectedObjects(),
-        isDisabledSelector: state => isFetchingObjects(state)
+        type: "group",
+        items: [
+            {
+                type: "item",
+                icon: "check",
+                title: "Select all objects on page",
+                onClick: objectIDs => selectObjects(objectIDs),
+                onClickParamsSelector: state => state.objectsUI.paginationInfo.currentPageObjectIDs,
+                isDisabledSelector: state => isFetchingObjects(state)
+            },
+            {
+                type: "item",
+                icon: "cancel",
+                title: "Deselect all objects",
+                onClick: clearSelectedObjects(),
+                isDisabledSelector: state => isFetchingObjects(state)
+            },
+            
+            {
+                type: "separator"
+            },
+            {
+                type: "item",
+                icon: "sort content descending",
+                title: "Sort in ascending order",
+                onClick: params => setObjectsPaginationInfoAndFetchPage(params),
+                onClickParams: { sortOrder: "asc" },
+                isDisabledSelector: state => isFetchingObjects(state),
+                isActiveSelector: state => state.objectsUI.paginationInfo.sortOrder === "asc"
+            },
+            {
+                type: "item",
+                icon: "sort content ascending",
+                title: "Sort in descending order",
+                onClick: params => setObjectsPaginationInfoAndFetchPage(params),
+                onClickParams: { sortOrder: "desc" },
+                isDisabledSelector: state => isFetchingObjects(state),
+                isActiveSelector: state => state.objectsUI.paginationInfo.sortOrder === "desc"
+            },
+        
+            {
+                type: "separator"
+            },
+            {
+                type: "item",
+                icon: "font",
+                title: "Sort by object name",
+                onClick: params => setObjectsPaginationInfoAndFetchPage(params),
+                onClickParams: { sortField: "object_name" },
+                isDisabledSelector: state => isFetchingObjects(state),
+                isActiveSelector: state => state.objectsUI.paginationInfo.sortField === "object_name"
+            },
+            {
+                type: "item",
+                icon: "clock outline",
+                title: "Sort by modify time",
+                onClick: params => setObjectsPaginationInfoAndFetchPage(params),
+                onClickParams: { sortField: "modified_at" },
+                isDisabledSelector: state => isFetchingObjects(state),
+                isActiveSelector: state => state.objectsUI.paginationInfo.sortField === "modified_at"
+            },
+        
+            {
+                type: "separator",
+                hideWhenNotFullscreen: true
+            },
+        ]
     },
     
     {
-        type: "separator"
-    },
-    {
-        type: "item",
-        icon: "sort content descending",
-        title: "Sort in ascending order",
-        onClick: params => setObjectsPaginationInfoAndFetchPage(params),
-        onClickParams: { sortOrder: "asc" },
-        isDisabledSelector: state => isFetchingObjects(state),
-        isActiveSelector: state => state.objectsUI.paginationInfo.sortOrder === "asc"
-    },
-    {
-        type: "item",
-        icon: "sort content ascending",
-        title: "Sort in descending order",
-        onClick: params => setObjectsPaginationInfoAndFetchPage(params),
-        onClickParams: { sortOrder: "desc" },
-        isDisabledSelector: state => isFetchingObjects(state),
-        isActiveSelector: state => state.objectsUI.paginationInfo.sortOrder === "desc"
+        type: "group",
+        items: [
+            {
+                type: "filter",
+                isDisabledSelector: state => isFetchingObjects(state),
+                placeholder: "Filter objects",
+                valueSelector: state => state.objectsUI.paginationInfo.filterText,
+                onChange: params => setObjectsPaginationInfo(params),    // action for updating input input text (which is kept in state)
+                onChangeDelayed: params => setObjectsPaginationInfoAndFetchPage(params),     // action for performing a fetch with a delay from the last onChange event
+                getOnChangeParams: text => ({ filterText: text })
+            },
+
+            {
+                type: "separator",
+                hideWhenNotFullscreen: true
+            }
+        ]
     },
 
     {
-        type: "separator"
-    },
-    {
-        type: "item",
-        icon: "font",
-        title: "Sort by object name",
-        onClick: params => setObjectsPaginationInfoAndFetchPage(params),
-        onClickParams: { sortField: "object_name" },
-        isDisabledSelector: state => isFetchingObjects(state),
-        isActiveSelector: state => state.objectsUI.paginationInfo.sortField === "object_name"
-    },
-    {
-        type: "item",
-        icon: "clock outline",
-        title: "Sort by modify time",
-        onClick: params => setObjectsPaginationInfoAndFetchPage(params),
-        onClickParams: { sortField: "modified_at" },
-        isDisabledSelector: state => isFetchingObjects(state),
-        isActiveSelector: state => state.objectsUI.paginationInfo.sortField === "modified_at"
+        type: "group",
+        items: [
+            {
+                type: "dropdown",
+                placeholder: "Filter by object type",
+                isDisabledSelector: state => isFetchingObjects(state),
+                defaultValueSelector: state => state.objectsUI.paginationInfo.objectTypes,
+                options: [
+                    { key: 1, text: "Links", value: "link" },
+                    { key: 2, text: "Markdown", value: "markdown" },
+                    { key: 3, text: "To-Do Lists", value: "to_do_list" },
+                    { key: 4, text: "Composite", value: "composite" }
+                ],
+                getOnChangeAction: (e, data) => setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })
+            },
+
+            {
+                type: "separator",
+                hideWhenNotFullscreen: true
+            }
+        ]
     },
 
     {
-        type: "separator"
-    },
-    {
-        type: "filter",
-        isDisabledSelector: state => isFetchingObjects(state),
-        placeholder: "Filter objects",
-        valueSelector: state => state.objectsUI.paginationInfo.filterText,
-        onChange: params => setObjectsPaginationInfo(params),    // action for updating input input text (which is kept in state)
-        onChangeDelayed: params => setObjectsPaginationInfoAndFetchPage(params),     // action for performing a fetch with a delay from the last onChange event
-        getOnChangeParams: text => ({ filterText: text })
-    },
-
-    {
-        type: "separator"
-    },
-    {
-        type: "dropdown",
-        placeholder: "Filter by object type",
-        isDisabledSelector: state => isFetchingObjects(state),
-        defaultValueSelector: state => state.objectsUI.paginationInfo.objectTypes,
-        options: [
-            { key: 1, text: "Links", value: "link" },
-            { key: 2, text: "Markdown", value: "markdown" },
-            { key: 3, text: "To-Do Lists", value: "to_do_list" },
-            { key: 4, text: "Composite", value: "composite" }
-        ],
-        getOnChangeAction: (e, data) => setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })
-    },
-
-    {
-        type: "separator"
-    },
-    {
-        type: "updatableDropdown",
-        placeholder: "Filter objects by tags", 
-        isDisabledSelector: state => isFetchingObjects(state), 
-        inputStateSelector: state => state.objectsUI.tagsFilterInput, 
-        existingIDsSelector: state => state.objectsUI.paginationInfo.tagsFilter,
-        onSearchChange: setTagsFilterInput,
-        onSearchChangeDelayed: tagsFilterDropdownFetch,
-        onChange: setTagsFilterAndFetchPage,
-        getDropdownItemTextSelectors: { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name }
-    },
-    {
-        type: "item",
-        icon: "remove",
-        title: "Clear tags filter",
-        onClick: params => setTagsFilterAndFetchPage(),
-        isDisabledSelector: state => isFetchingObjects(state) || state.objectsUI.paginationInfo.tagsFilter.length == 0
+        type: "group",
+        items: [
+            {
+                type: "updatableDropdown",
+                placeholder: "Filter objects by tags", 
+                isDisabledSelector: state => isFetchingObjects(state), 
+                inputStateSelector: state => state.objectsUI.tagsFilterInput, 
+                existingIDsSelector: state => state.objectsUI.paginationInfo.tagsFilter,
+                onSearchChange: setTagsFilterInput,
+                onSearchChangeDelayed: tagsFilterDropdownFetch,
+                onChange: setTagsFilterAndFetchPage,
+                getDropdownItemTextSelectors: { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name }
+            },
+            {
+                type: "item",
+                icon: "remove",
+                title: "Clear tags filter",
+                onClick: params => setTagsFilterAndFetchPage(),
+                isDisabledSelector: state => isFetchingObjects(state) || state.objectsUI.paginationInfo.tagsFilter.length == 0
+            }
+        ]
     }
 ];
 

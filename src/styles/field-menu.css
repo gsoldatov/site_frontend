@@ -2,23 +2,48 @@
     Field menu styles. 
 *************************/
 
+/* Menu */
 .ui.menu.field-menu {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 1em;
 }
 
-/* .ui.buttons.field-menu-group, .ui.icon.input.field-menu-filter {
-    margin-left: 3px;
-    margin-right: 3px;
+
+/* Group */
+div.field-menu-group {
+    display: flex;
+}
+
+div.field-menu-group.small {
+    /* Expand to take full line in menu on small screens */
+    width: 100%
+}
+
+/* div.field-menu-group.small:not(:last-child) {
+    margin-bottom: 0.25em;
 } */
 
+
+/* Button */
 .ui.button.field-menu-button {
     margin-right: 0px;
 }
 
+
+/* Separator */
 .field-menu-separator {
     margin: 0px;
     padding: 0px;
     border-left: solid 0.6em rgba(255, 255, 255, 1);
+}
+
+.field-menu-separator.hidden {
+    display: none;
+}
+
+
+/* Filter */
+div.field-menu-group.small div.ui.input {
+    flex: 1 1 auto;
 }
