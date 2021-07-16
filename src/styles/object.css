@@ -21,6 +21,7 @@ div.ui.selection.dropdown.object-type-dropdown-switch {
 /* Remove scrollbar in dropdown option list caused by icon displaying */
 div.ui.selection.dropdown.object-type-dropdown-switch > .visible.menu.transition {
     overflow-y: hidden; /* remove scrollbar */
+    max-height: max-content; /* override height (default style limit number of displayed elements to 3) */
 }
 
 div.ui.selection.dropdown.object-type-dropdown-switch > .visible.menu.transition > .item > i {
