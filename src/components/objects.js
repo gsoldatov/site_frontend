@@ -33,6 +33,8 @@ export default () => {
         {
             type: "item",
             text: "Add Object",
+            icon: "add",
+            iconColor: "green",
             isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state),
             isVisibleSelector: state => !isObjectsTagsEditActive(state),
             onClick: () => dispatch(setRedirectOnRender("/objects/add"))
@@ -40,6 +42,7 @@ export default () => {
         {
             type: "item",
             text: "Edit Object",
+            icon: "edit outline",
             isActiveSelector: state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchingOrShowingDeleteDialogObjects(state),
             isVisibleSelector: state => !isObjectsTagsEditActive(state),
             onClick: () => dispatch(setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.objectsEdit))
@@ -47,6 +50,8 @@ export default () => {
         {
             type: "item",
             text: "Delete",
+            icon: "trash alternate",
+            iconColor: "red",
             isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state) && state.objectsUI.selectedObjectIDs.length > 0,
             isVisibleSelector: state => !state.objectsUI.showDeleteDialog && !isObjectsTagsEditActive(state),
             onClick: () => dispatch(setShowDeleteDialogObjects(true))
@@ -64,10 +69,14 @@ export default () => {
             buttons: [
                 {
                     text: "Yes",
+                    icon: "check",
+                    color: "green",
                     onClick: deleteSubobjects => dispatch(onDeleteFetch(deleteSubobjects))
                 },
                 {
                     text: "No",
+                    icon: "cancel",
+                    color: "red",
                     onClick: () => dispatch(setShowDeleteDialogObjects(false))
                 }
             ]
@@ -76,6 +85,8 @@ export default () => {
         {
             type: "item",
             text: "Update Tags",
+            icon: "check",
+            iconColor: "green",
             isActiveSelector: state => !isFetchingObjects(state),
             isVisibleSelector: state => isObjectsTagsEditActive(state),
             onClick: () => dispatch(onObjectsTagsUpdateFetch())
@@ -83,6 +94,8 @@ export default () => {
         {
             type: "item",
             text: "Cancel Tag Update",
+            icon: "cancel",
+            iconColor: "red",
             isActiveSelector: state => !isFetchingObjects(state),
             isVisibleSelector: state => isObjectsTagsEditActive(state),
             onClick: () => dispatch(setCurrentObjectsTags({ added: [], removed: [] }))

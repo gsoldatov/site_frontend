@@ -26,3 +26,9 @@ body {
 div.ui.celled.grid {
     margin: 0;  /* fix height to remove browser scrollbar */
 }
+
+div.ui.celled.grid .row .two.wide.column {
+    /* reduce side menu padding */
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}

@@ -30,6 +30,7 @@ export const AddObject = () => {
         {
             type: "item",
             text: "Save",
+            icon: "save outline",
             isActiveSelector: state => !isFetchingObject(state) && 
                                     getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255,
             onClick: () => dispatch(addObjectOnSaveFetch())
@@ -38,6 +39,7 @@ export const AddObject = () => {
         {
             type: "item",
             text: "Reset",
+            icon: "undo",
             isVisibleSelector: state => !state.objectUI.showResetDialog,
             isActiveSelector: state => !isFetchingObject(state),
             onClick: () => dispatch(setShowResetDialogObject(true))
@@ -51,10 +53,14 @@ export const AddObject = () => {
             buttons: [
                 {
                     text: "Yes",
+                    icon: "check",
+                    color: "green",
                     onClick: resetCompositeSubobjects => dispatch(resetEditedObjects({ hideObjectResetDialog: true, allowResetToDefaults: true, resetCompositeSubobjects }))
                 },
                 {
                     text: "No",
+                    icon: "cancel",
+                    color: "red",
                     onClick: () => dispatch(setShowResetDialogObject(false))
                 }
             ]
@@ -63,6 +69,8 @@ export const AddObject = () => {
         {
             type: "item",
             text: "Cancel",
+            icon: "sign-out",
+            iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingObject(state),
             onClick: () => dispatch(setRedirectOnRender("/objects"))
         }
@@ -82,6 +90,8 @@ export const EditObject = () => {
         {
             type: "item",
             text: "Add Object",
+            icon: "add",
+            iconColor: "green",
             isActiveSelector: state => !isFetchingObject(state),
             onClick: () => dispatch(setRedirectOnRender("/objects/add"))
         },
@@ -89,6 +99,7 @@ export const EditObject = () => {
         {
             type: "item",
             text: "Save",
+            icon: "save outline",
             isActiveSelector: state => !isFetchingObject(state) && 
                                     getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255,
             onClick: () => dispatch(editObjectOnSaveFetch())
@@ -97,6 +108,7 @@ export const EditObject = () => {
         {
             type: "item",
             text: "Reset",
+            icon: "undo",
             isVisibleSelector: state => !state.objectUI.showResetDialog,
             isActiveSelector: state => !isFetchingOrOnLoadFetchFailed(state),
             onClick: () => dispatch(setShowResetDialogObject(true))
@@ -110,10 +122,14 @@ export const EditObject = () => {
             buttons: [
                 {
                     text: "Yes",
+                    icon: "check",
+                    color: "green",
                     onClick: resetCompositeSubobjects => dispatch(resetEditedObjects({ hideObjectResetDialog: true, resetCompositeSubobjects }))
                 },
                 {
                     text: "No",
+                    icon: "cancel",
+                    color: "red",
                     onClick: () => dispatch(setShowResetDialogObject(false))
                 }
             ]
@@ -122,6 +138,8 @@ export const EditObject = () => {
         {
             type: "item",
             text: "Delete",
+            icon: "trash alternate",
+            iconColor: "red",
             isVisibleSelector: state => !state.objectUI.showDeleteDialog,
             isActiveSelector: state => !isFetchingOrOnLoadFetchFailed(state),
             onClick: () => dispatch(setShowDeleteDialogObject(true))
@@ -135,10 +153,14 @@ export const EditObject = () => {
             buttons: [
                 {
                     text: "Yes",
+                    icon: "check",
+                    color: "green",
                     onClick: deleteSubobjects => dispatch(editObjectOnDeleteFetch(deleteSubobjects))
                 },
                 {
                     text: "No",
+                    icon: "cancel",
+                    color: "red",
                     onClick: () => dispatch(setShowDeleteDialogObject(false))
                 }
             ]
@@ -147,6 +169,8 @@ export const EditObject = () => {
         {
             type: "item",
             text: "Cancel",
+            icon: "sign-out",
+            iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingObject(state),
             onClick: () => dispatch(setRedirectOnRender("/objects"))
         }

@@ -26,6 +26,7 @@ export const AddTag = () => {
         {
             type: "item",
             text: "Save",
+            icon: "save outline",
             isActiveSelector: state => !isFetchingTag(state) && 
                                     state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255,
             onClick: () => dispatch(addTagOnSaveFetch())
@@ -33,6 +34,8 @@ export const AddTag = () => {
         {
             type: "item",
             text: "Cancel",
+            icon: "sign-out",
+            iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingTag(state),
             onClick: () => dispatch(setRedirectOnRender("/tags"))
         }
@@ -51,12 +54,15 @@ export const EditTag = () => {
         {
             type: "item",
             text: "Add Tag",
+            icon: "add",
+            iconColor: "green",
             isActiveSelector: state => !isFetchingTag(state),
             onClick: () => dispatch(setRedirectOnRender("/tags/add"))
         },
         {
             type: "item",
             text: "Save",
+            icon: "save outline",
             isActiveSelector: state => !isFetchingTag(state) && 
                                     state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255,
             onClick: () => dispatch(editTagOnSaveFetch())
@@ -64,6 +70,8 @@ export const EditTag = () => {
         {
             type: "item",
             text: "Delete",
+            icon: "trash alternate",
+            iconColor: "red",
             isVisibleSelector: state => !state.tagUI.showDeleteDialog,
             isActiveSelector: state => !isFetchinOrShowingDialogTag(state) && state.tagUI.currentTag.tag_id !== 0,
             onClick: () => dispatch(setShowDeleteDialogTag(true))
@@ -75,10 +83,14 @@ export const EditTag = () => {
             buttons: [
                 {
                     text: "Yes",
+                    icon: "check",
+                    color: "green",
                     onClick: () => dispatch(editTagOnDeleteFetch())
                 },
                 {
                     text: "No",
+                    icon: "cancel",
+                    color: "red",
                     onClick: () => dispatch(setShowDeleteDialogTag(false))
                 }
             ]
@@ -86,6 +98,8 @@ export const EditTag = () => {
         {
             type: "item",
             text: "Cancel",
+            icon: "sign-out",
+            iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingTag(state),
             onClick: () => dispatch(setRedirectOnRender("/tags"))
         }

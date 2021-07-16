@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Button, Checkbox, Container, Header, Menu } from "semantic-ui-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { Button, Checkbox, Container, Header, Icon, Menu } from "semantic-ui-react";
 
-import { useDispatch, useSelector } from "react-redux";
+import { OnResizeWrapper } from "./on-resize-wrapper";
+
 
 import StyleSideMenu from "../../styles/side-menu.css";
 
@@ -11,14 +13,27 @@ import StyleSideMenu from "../../styles/side-menu.css";
  */
 export default ({ items }) => {
     if (!items) return null;
-    
+
+    // Fullscreen style & on resize update
+    const [isFullscreenStyle, setIsFullscreenStyle] = useState(false);
+    const [dialogButtonsFullscreenStyle, setDialogButtonsFullscreenStyle] = useState(false);
+    const onResizeCallback = useMemo(() => computedStyle => {
+        const width = parseInt(computedStyle.width.replace("px", ""));
+        setIsFullscreenStyle(width >= 100);
+        setDialogButtonsFullscreenStyle(width >= 221);
+    });
+
+    // Items
     let k = 0;
-    const itemComponents = items.map(item => <SideMenuElement key={k++} {...item} />);
+    const itemComponents = items.map(item => <SideMenuElement key={k++} {...item} 
+        isFullscreenStyle={isFullscreenStyle} dialogButtonsFullscreenStyle={dialogButtonsFullscreenStyle} />);
 
     return (
-        <Menu vertical fluid>
-            {itemComponents}
-        </Menu>
+        <OnResizeWrapper callback={onResizeCallback}>
+            <Menu vertical fluid className="side-menu">
+                {itemComponents}
+            </Menu>
+        </OnResizeWrapper>
     );
 }
 
@@ -46,23 +61,53 @@ const SideMenuElement = props => {
 /**
  * Basic side menu item.
  */
-const SideMenuItem = ({ text, isActiveSelector, onClick }) => {
+const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, onClick, isFullscreenStyle }) => {
     const isActive = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : true;
     const _onClick = isActive ? () => onClick() : undefined;
+
+    // Icon
+    const _icon = icon && <Icon name={icon} color={iconColor} flipped={iconFlipped} />;
+
+    // Text
+    const _text = isFullscreenStyle && text;
     
-    return <Menu.Item as="div" className="side-menu-item" disabled={!isActive} onClick={_onClick}>{text}</Menu.Item>;
+    return (
+        <Menu.Item className="side-menu-item-container" disabled={!isActive}> 
+            <Button icon={!isFullscreenStyle} className="side-menu-item" onClick={_onClick} disabled={!isActive} title={text}>
+                {_icon}
+                {_text}
+            </Button>
+        </Menu.Item>
+    );
+
+    // return <Menu.Item as="div" className="side-menu-item" disabled={!isActive} onClick={_onClick}>{text}</Menu.Item>;    // TODO delete
 };
 
 
 /** 
  * Side menu dialog (header, checkbox and clickable buttons).
  */
-const SideMenuDialog = ({ text, buttons, isCheckboxDisplayedSelector, checkboxText }) => {
+const SideMenuDialog = ({ text, buttons, isCheckboxDisplayedSelector, checkboxText, isFullscreenStyle, dialogButtonsFullscreenStyle }) => {
+    // Header
+    const header = isFullscreenStyle ? (
+        <Header className="side-menu-dialog-header" as="h5" textAlign="center">{text}</Header>
+    )
+    : (
+        <Icon className="side-menu-dialog-header" name="question circle outline" color="blue" title={text} />
+    );
+
     // Checkbox
     const [isChecked, setIsChecked] = useState(false);
     const isCheckboxDisplayed = useSelector(isCheckboxDisplayedSelector || (state => false));
+    const _checkboxText = isFullscreenStyle && checkboxText;
+    const checkboxIcon = isCheckboxDisplayed && !isFullscreenStyle && (
+        <Icon name="asterisk" size="small" color="grey" title={checkboxText} />
+    );
     const checkbox = isCheckboxDisplayed && (
-        <Checkbox className="side-menu-dialog-checkbox-container" label={checkboxText} checked={isChecked} onChange={() => setIsChecked(!isChecked)} />
+        <div className="side-menu-dialog-checkbox-container">
+            <Checkbox label={_checkboxText} checked={isChecked} onChange={() => setIsChecked(!isChecked)} />
+            {checkboxIcon}
+        </div>
     );
     
     // Reset isChecked when isCheckboxDisplayed changes
@@ -72,11 +117,21 @@ const SideMenuDialog = ({ text, buttons, isCheckboxDisplayedSelector, checkboxTe
 
     // Buttons
     let k = 0;
-    const _buttons = buttons.map(btn => <Button key={k++} onClick={() => btn.onClick(isChecked)}>{btn.text}</Button>);
+    const _buttons = buttons.map(btn => {
+        const icon = btn.icon && <Icon name={btn.icon} />;
+        const _text = dialogButtonsFullscreenStyle && btn.text;
+
+        return (
+            <Button key={k++} className="side-menu-dialog-button" size="small" icon={!dialogButtonsFullscreenStyle} color={btn.color} onClick={() => btn.onClick(isChecked)} title={btn.text}>
+                {icon}
+                {_text}
+            </Button>
+        );
+    });
     
     return (
         <Menu.Item className="side-menu-dialog">
-            <Header className="side-menu-dialog-header" as="h5" textAlign="center">{text}</Header>
+            {header}
             {checkbox}
             <Container className="side-menu-dialog-buttons">{_buttons}</Container>
         </Menu.Item>

@@ -27,18 +27,23 @@ export default () => {
         {
             type: "item",
             text: "Add Tag",
+            icon: "add",
+            iconColor: "green",
             isActiveSelector: state => !isFetchinOrShowingDialogTags(state),
             onClick: () => dispatch(setRedirectOnRender("/tags/add"))
         },
         {
             type: "item",
             text: "Edit Tag",
+            icon: "edit outline",
             isActiveSelector: state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state),
             onClick: () => dispatch(setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.tagsEdit))
         },
         {
             type: "item",
             text: "Delete",
+            icon: "trash alternate",
+            iconColor: "red",
             isActiveSelector: state => !isFetchinOrShowingDialogTags(state) && state.tagsUI.selectedTagIDs.length > 0,
             isVisibleSelector: state => !state.tagsUI.showDeleteDialog,
             onClick: () => dispatch(setShowDeleteDialogTags(true))
@@ -50,10 +55,14 @@ export default () => {
             buttons: [
                 {
                     text: "Yes",
+                    icon: "check",
+                    color: "green",
                     onClick: () => dispatch(onDeleteFetch())
                 },
                 {
                     text: "No",
+                    icon: "cancel",
+                    color: "red",
                     onClick: () => dispatch(setShowDeleteDialogTags(false))
                 }
             ]
