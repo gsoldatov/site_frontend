@@ -36,6 +36,7 @@ div.inline-item-list-wrapper {
     line-height: 1.8em;
 }
 
+
 /* Item input (input + datalist version) */
 /* span.inline-input-span {
     margin-top: 0.3em;
@@ -57,15 +58,11 @@ i.input-toggle:hover {
     cursor: pointer;
 } */
 
+
 /* Inline input */
 span.inline-input-span {
     margin-top: 0.3em;
     margin-bottom: 0.3em;
-}
-
-span.inline-input-span i.input-toggle {
-    margin-left: 0.25em;
-    margin-right: 0.25em;
 }
 
 span.inline-input-span i.input-toggle:hover {
@@ -104,7 +101,25 @@ span.inline-input-span div.visible.menu.transition>div.item:not([non-existing]) 
     padding-right: 0.4em !important;
 }
 
-/* Item margin & padding */
+
+/* Inline item */
+span.inline-item {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+    margin-right: 0.75em;
+
+    display: flex;      /* Sets inline item text height to 100% of the container's */
+    align-items: center;
+
+    border: 1px solid;
+    border-radius: 4px;
+    
+    white-space: nowrap;    /* keep the element on one line */
+
+    cursor: pointer;
+    user-select: none;
+}
+
 span.inline-item-text {
     padding-left: 0.4em;
     padding-right: 0.4em;
@@ -114,48 +129,42 @@ i.inline-item-link-icon {
     padding-right: 0.4em;
 }
 
-span.inline-item, span.inline-item-red, span.inline-item-green, span.inline-item-blue, span.inline-item-orange {
-    margin-top: 0.3em;
-    margin-bottom: 0.3em;
+
+/* Specific item styles */
+span.inline-item {
+    border-color: gray;
+    color: rgba(64, 64, 64);
+    font-weight: normal;
 }
 
-/* Item colors & other */
-span.inline-item, span.inline-item-red, span.inline-item-green, span.inline-item-blue, span.inline-item-orange {
-    display: flex;      /* Sets inline item text height to 100% of the container's */
-    align-items: center;
-
-    margin-right: 1em;
-
-    border: 1px solid;
-    border-radius: 4px;
-    
-    white-space: nowrap;    /* keep the element on one line */
-
-    cursor: pointer;
-}
-
-span.inline-item-red {
-    color: rgba(255, 0, 0, 1);
-    background-color: rgba(255, 255, 255, 1);
-    border-color: rgba(255, 0, 0, 1);
-
+span.inline-item.deleted {
+    color: white;
+    font-weight: bold;
     text-decoration: line-through;
+
+    background-color: rgb(200, 45, 45);
+    border-color: rgba(200, 45, 45, 1);
 }
 
-span.inline-item-green {
-    color: rgb(0, 128, 0);
-    background-color: rgba(0, 128, 0, 0.05);
-    border-color: rgba(0, 128, 0, 0.5);
+span.inline-item.existing {
+    color: white;
+    font-weight: bold;
+    /* background-color: rgba(33, 186, 69, 0.5); */
+    background-color: rgba(0, 108, 108, 0.75);
+    border-color: rgba(0, 108, 108, 0.75);
 }
 
-span.inline-item-blue {
-    color: rgb(0, 0, 192);
-    background-color: rgba(0, 0, 192, 0.05);
-    border-color: rgba(0, 0, 192, 0.5);
+span.inline-item.new {
+    color: white;
+    font-weight: bold;
+
+    background-color: rgb(32, 107, 165);
+    border-color: rgb(32, 107, 165);
 }
 
-span.inline-item-orange {
-    color: rgba(0, 0, 0, 1);
-    background-color: rgba(255, 165, 0, 0.5);
-    border-color: rgb(255, 165, 0);
+span.inline-item.filter {
+    color: black;
+    font-weight: bold;
+
+    background-color: rgba(251, 189, 8, 0.45);
 }

@@ -279,8 +279,8 @@ const TagsFilterItem = memo(({ id }) => {
     const dispatch = useDispatch();
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     // const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
-    // const itemClassName = isRemoved ? "inline-item-red" : "inline-item";
-    const itemClassName = "inline-item-orange";
+    // const itemClassName = isRemoved ? "inline-item deleted" : "inline-item";
+    const itemClassName = "inline-item filter";
     const onClick = useMemo(() => () => dispatch(setTagsFilterAndFetchPage(id)), [id]);
     const itemLink = `/tags/${id}`;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
@@ -304,7 +304,7 @@ const CommonCurrentTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
-    const itemClassName = isRemoved ? "inline-item-red" : "inline-item";
+    const itemClassName = isRemoved ? "inline-item deleted" : "inline-item";
     const onClick = useMemo(() => () => dispatch(setCurrentObjectsTags({ removed: [id] })), [id]);
     const itemLink = `/tags/${id}`;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
@@ -312,7 +312,7 @@ const CommonCurrentTagItem = memo(({ id }) => {
 const AddedTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
     const text = useSelector(state => typeof(id) === "string" ? id : (state.tags[id] ? state.tags[id].tag_name : id));
-    const itemClassName = typeof(id) === "number" ? "inline-item-green" : "inline-item-blue";
+    const itemClassName = typeof(id) === "number" ? "inline-item existing" : "inline-item new";
     const onClick = useMemo(() => () => dispatch(setCurrentObjectsTags({ added: [id] })), [id]);
     const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
@@ -322,7 +322,7 @@ const PartiallyAppliedTagItem = memo(({ id }) => {
     const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
     const isAdded = useSelector(state => state.objectsUI.addedTags.includes(id));
     const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
-    const itemClassName = isAdded ? "inline-item-green" : isRemoved ? "inline-item-red" : "inline-item";
+    const itemClassName = isAdded ? "inline-item existing" : isRemoved ? "inline-item deleted" : "inline-item";
     const onClick = useMemo(
         () => isAdded ? () => dispatch(setCurrentObjectsTags({ added: [id], removed: [id] })) :   // current => added => removed => current
         isRemoved ? () => dispatch(setCurrentObjectsTags({ removed: [id] })) : 
