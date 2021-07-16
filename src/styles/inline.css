@@ -63,22 +63,25 @@ span.inline-input-span {
     margin-bottom: 0.3em;
 }
 
-i.input-toggle {
+span.inline-input-span i.input-toggle {
     margin-left: 0.25em;
     margin-right: 0.25em;
 }
 
-i.input-toggle:hover {
+span.inline-input-span i.input-toggle:hover {
     cursor: pointer;
 }
 
-.ui.search.selection.dropdown.inline-input {    /* SUIR container tag */
+span.inline-input-span .ui.search.selection.dropdown.inline-input {    /* SUIR container tag */
     min-height: 0;
     padding: 0;
     height: 100%;
+
+    max-width: 42em;
 }
 
-.ui.search.selection.dropdown.inline-input>input.search, .ui.search.selection.dropdown.inline-input>.divider.text { /* SUIR inner input & search query display tags */
+span.inline-input-span .ui.search.selection.dropdown.inline-input>input.search,
+span.inline-input-span .ui.search.selection.dropdown.inline-input>.divider.text { /* SUIR inner input & search query display tags */
     padding-top: 0;
     padding-bottom: 0;
     padding-left: 0.4em;
@@ -86,12 +89,12 @@ i.input-toggle:hover {
     line-height: 1.8em;
 }
 
-.ui.search.selection.dropdown.inline-input>.divider.text {  /* Center query text vertically */
+span.inline-input-span .ui.search.selection.dropdown.inline-input > .divider.text {  /* Center query text vertically */
     display: flex;
     align-items: center;
 }
 
-div.visible.menu.transition>div.item:not([non-existing]) {
+span.inline-input-span div.visible.menu.transition>div.item:not([non-existing]) {
     display: flex;
     align-items: center;
     line-height: 1.8em;

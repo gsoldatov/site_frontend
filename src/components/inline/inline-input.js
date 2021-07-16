@@ -23,8 +23,8 @@ export const InlineInput = memo(({ placeholder, inputStateSelector, setInputStat
         if (inputRef.current) inputRef.current.handleFocus();
     }, [is.isDisplayed]);
 
-    // // Handle focus removal event (onBlur)
-    // const handleBlur = () => resetInput();
+    // Handle focus removal event (onBlur)
+    const handleBlur = () => resetInput();
 
     // Close input & add item handlers
     const resetInput = () => {
@@ -41,8 +41,30 @@ export const InlineInput = memo(({ placeholder, inputStateSelector, setInputStat
         }
     };
 
-    // Handle keydown event (Enter + Esc)
+    // Width update effect (if placed in `handleKeyDown`, it's not triggered when adding an item or pasting text)
+    useEffect(() => {
+        if (inputRef.current) {
+            // Ref to HTML container element must be obtained separately
+            const container = inputRef.current.ref.current;
+            const inputElement = container.querySelector("input.search");
+            const dividerElement = container.querySelector("div.divider");
+            
+            if (inputElement) {
+                inputElement.style.width = "inherit";  // reset
+                inputElement.style.width = `clamp(14em, calc(${inputElement.scrollWidth}px + 0.8em), 42em)`;    // set to text width
+
+                // Update width of a placeholder <div>
+                if (dividerElement) {
+                    dividerElement.style.width = "inherit";  // reset
+                    dividerElement.style.width = inputElement.style.width;
+                }
+            }
+        }
+    })
+
+    // Handle keydown event (Enter + Esc) + update width
     const handleKeyDown = (e, data) => {
+        // Handle specific keys
         if (e.key === "Enter" && is.inputText.length > 0) addItem();
         else if (e.key === "Escape") resetInput();
     };
@@ -85,7 +107,7 @@ export const InlineInput = memo(({ placeholder, inputStateSelector, setInputStat
         onSearchChange={handleSearchChange}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        // onBlur={handleBlur}
+        onBlur={handleBlur}
     />;
 
     // Add button currently can't add selected value from dropdown and can't be clicked if onBlur event is enabled
