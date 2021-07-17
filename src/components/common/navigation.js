@@ -11,7 +11,7 @@ import StyleNavigation from "../../styles/navigation.css";
 /**
  * Navigation bar.
  */
-export default ({ layoutClassName }) => {
+export default ({ }) => {
     const location = useLocation();
 
     // Stacked menu expand/collapse control display
@@ -21,7 +21,7 @@ export default ({ layoutClassName }) => {
     const onResizeCallback = useMemo(() => computedStyle => {
         const width = parseInt(computedStyle.width.replace("px", ""));
         setIsStacked(width < 768);     // SUIR @media threshold
-    }, [layoutClassName]);
+    });
 
     const expandToggle = useMemo(() => {
         const icon = isExpanded ? "close" : "bars";
@@ -32,7 +32,7 @@ export default ({ layoutClassName }) => {
                 </Menu.Item>
             )
         );
-    }, [isExpanded, isStacked, layoutClassName]);
+    }, [isExpanded, isStacked]);
 
     // Menu items
     const rightMenuClassName = "navigation-right-menu" + (
