@@ -2,9 +2,10 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from "@testing-library/dom";
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from "@testing-library/dom";
 
 import { getMockedPageTagIDs } from "./mocks/mock-fetch-handlers-tags";
+import { getSideMenuItem, getSideMenuDialogControls } from "./test-utils/ui-common";
 import { renderWithWrappers } from "./test-utils/render";
 import createStore from "../src/store/create-store";
 
@@ -19,10 +20,13 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { paginationGetComputedStyle } = require("./mocks/mock-get-computed-style");
+
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
+        global.getComputedStyle = jest.fn(paginationGetComputedStyle);
     });
 });
 
@@ -39,11 +43,11 @@ test("Load page with a fetch error", async () => {
     await waitFor(() => getByText(container, "Failed to fetch data.", { exact: false }));
 
     // Check if buttons are not enabled
-    let editTagButton = getByText(container, "Edit Tag");
-    let deleteButton = getByText(container, "Delete");
-    expect(editTagButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    let editTagButton = getSideMenuItem(container, "Edit Tag");
+    let deleteButton = getSideMenuItem(container, "Delete");
+    expect(editTagButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
     // expect(editTagButton.onclick).toBeNull();
-    expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    expect(deleteButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
     // expect(deleteButton.onclick).toBeNull();
     
 
@@ -215,16 +219,16 @@ test("Side menu buttons during fetch", async () => {
         store: store
     });
 
-    let addTagButton = getByText(container, "Add Tag");
-    let editTagButton = getByText(container, "Edit Tag");
-    let deleteTagButton = getByText(container, "Delete");
+    let addTagButton = getSideMenuItem(container, "Add a New Tag");
+    let editTagButton = getSideMenuItem(container, "Edit Tag");
+    let deleteTagButton = getSideMenuItem(container, "Delete");
 
     // Check if buttons can't be clicked during fetch
     await waitFor(() => expect(
         store.getState().tagsUI.fetch.isFetching === true
-        && addTagButton.className.startsWith("disabled") // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
-        && editTagButton.className.startsWith("disabled")
-        && deleteTagButton.className.startsWith("disabled")
+        && addTagButton.classList.contains("disabled") // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        && editTagButton.classList.contains("disabled")
+        && deleteTagButton.classList.contains("disabled")
         // && addTagButton.onclick === null
         // && editTagButton.onclick === null
         // && deleteTagButton.onclick === null
@@ -246,7 +250,7 @@ test("Side menu add tag button", async () => {
     await waitFor(() => getByText(container, "tag #1"));
 
     // Check if add button click redirects to add tag page
-    let addTagButton = getByText(container, "Add Tag");
+    let addTagButton = getSideMenuItem(container, "Add a New Tag");
     fireEvent.click(addTagButton);
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/add"));
 });
@@ -266,8 +270,8 @@ test("Side menu edit tag button", async () => {
     await waitFor(() => getByText(container, "tag #1"));
 
     // Check if edit tag button is disabled if a single tag is not selected
-    let editTagButton = getByText(container, "Edit Tag");
-    expect(editTagButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    let editTagButton = getSideMenuItem(container, "Edit Tag");
+    expect(editTagButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
     // expect(editTagButton.onclick).toBeNull();
 
     // Get tags
@@ -304,8 +308,8 @@ test("Side menu delete button", async () => {
     await waitFor(() => getByText(container, "tag #1"));
 
     // Check if edit tag button is disabled if a single tag is not selected
-    let deleteButton = getByText(container, "Delete");
-    expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    let deleteButton = getSideMenuItem(container, "Delete");
+    expect(deleteButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
     // expect(deleteButton.onclick).toBeNull();
 
     // Select two tags
@@ -319,22 +323,17 @@ test("Side menu delete button", async () => {
     // Click delete button and check if a confirmation dialog appeared
     expect(deleteButton.onclick).toBeTruthy();
     fireEvent.click(deleteButton);
-    let sideMenu = container.querySelector(".vertical.menu");
-    let dialog = sideMenu.querySelector(".side-menu-dialog");
-    expect(dialog).toBeTruthy();
 
     // Click "No" button and check if dialog was closed
-    let dialogNoButton = getByText(dialog, "No");
-    fireEvent.click(dialogNoButton);
-    expect(sideMenu.querySelector(".side-menu-dialog")).toBeNull();
+    expect(getSideMenuDialogControls(container).header.title).toEqual("Delete Selected Tags?");
+    fireEvent.click(getSideMenuDialogControls(container).buttons["No"]);
+    expect(getSideMenuDialogControls(container)).toBeNull();
     getByText(mainTagField, "tag #1");
 
     // Delete selected tags
-    deleteButton = getByText(container, "Delete");
+    deleteButton = getSideMenuItem(container, "Delete");
     fireEvent.click(deleteButton);
-    dialog = sideMenu.querySelector(".side-menu-dialog");
-    let dialogYesButton = getByText(dialog, "Yes");
-    fireEvent.click(dialogYesButton);
+    fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
     // Check if deleted tags were removed from the state and the page
     await waitFor(() => expect(Object.keys(store.getState().tags)).toEqual(expect.not.arrayContaining(["1", "2"])));
@@ -426,7 +425,8 @@ test("Field menu, tag filter", async () => {
     await waitFor(() => getByText(container, "tag #1"));
 
     // Filter with matching tags and check if they are correctly displayed
-    let tagFilterInput = container.querySelector(".field-menu-filter").querySelector("input");
+    // let tagFilterInput = container.querySelector(".field-menu-filter").querySelector("input");
+    let tagFilterInput = getByPlaceholderText(container, "Filter tags");
     expect(tagFilterInput).toBeTruthy();
     fireEvent.change(tagFilterInput, { target: { value: "some text" } });
     await waitForFetch(store);

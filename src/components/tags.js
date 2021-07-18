@@ -26,7 +26,7 @@ export default () => {
     const sideMenuItems = useMemo(() => [
         {
             type: "item",
-            text: "Add Tag",
+            text: "Add a New Tag",
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchinOrShowingDialogTags(state),

@@ -32,7 +32,7 @@ export default () => {
     const sideMenuItems = useMemo(() => [
         {
             type: "item",
-            text: "Add Object",
+            text: "Add a New Object",
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state),

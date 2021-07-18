@@ -4,6 +4,7 @@ import { Switch, Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
+import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils/ui-objects-tags";
 import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "./test-utils/ui-object";
 import { renderWithWrappers } from "./test-utils/render";
@@ -157,11 +158,11 @@ describe("Add object page", () => {
         expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
 
         // Get to /objects page and back
-        const cancelButton = getByText(container, "Cancel");
+        const cancelButton = getSideMenuItem(container, "Cancel");
         fireEvent.click(cancelButton);
         await waitFor(() => getByText(container, "object #1"));
 
-        const addObjectButton = getByText(container, "Add Object");
+        const addObjectButton = getSideMenuItem(container, "Add a New Object");
         fireEvent.click(addObjectButton);
 
         // Check if added tag is displayed
@@ -206,7 +207,7 @@ describe("Add object page", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe("https://google.com"));
     
         // Save object
-        let saveButton = getByText(container, "Save");   
+        let saveButton = getSideMenuItem(container, "Save");   
         fireEvent.click(saveButton);
         const object_id = 1000; // mock object returned has this id
     
@@ -287,7 +288,7 @@ describe("Edit object page", () => {
         fireEvent.click(deletedTag);
     
         // Update the tag and check if tags are updated
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
         fireEvent.click(saveButton);
     
         await waitFor(() => getCurrentObject(store.getState()).currentTagIDs.includes(6));
@@ -331,10 +332,9 @@ describe("Edit object page", () => {
         expect(store.getState().objectsTags.hasOwnProperty("1")).toBeTruthy();
     
         // Delete the object and check if its tags were removed
-        let deleteButton = getByText(container, "Delete");
+        let deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        let confimationDialogButtonYes = getByText(container, "Yes");
-        fireEvent.click(confimationDialogButtonYes);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
         expect(store.getState().objectsTags.hasOwnProperty("1")).toBeFalsy();
@@ -402,7 +402,7 @@ describe("Edit object page", () => {
         expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(1);
 
         // Get to /objects page and back
-        const cancelButton = getByText(container, "Cancel");
+        const cancelButton = getSideMenuItem(container, "Cancel");
         fireEvent.click(cancelButton);
         await waitFor(() => getByText(container, "object #1"));
 

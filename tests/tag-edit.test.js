@@ -4,6 +4,7 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, queryByText } from "@testing-library/dom";
 
+import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
 import { renderWithWrappers } from "./test-utils/render";
 import createStore from "../src/store/create-store";
 
@@ -36,11 +37,11 @@ test("Load a non-existing tag + check buttons", async () => {
     await waitFor(() => getByText(container, "not found", { exact: false }));
 
     // Check if save and delete buttons can't be clicked if tag fetch failed
-    let saveButton = getByText(container, "Save");
-    let deleteButton = getByText(container, "Delete");
-    expect(saveButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    let saveButton = getSideMenuItem(container, "Save");
+    let deleteButton = getSideMenuItem(container, "Delete");
+    expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
     // expect(saveButton.onclick).toBeNull();  
-    expect(deleteButton.className.startsWith("disabled")).toBeTruthy();
+    expect(deleteButton.classList.contains("disabled")).toBeTruthy();
     // expect(deleteButton.onclick).toBeNull();
 });
 
@@ -110,7 +111,7 @@ test("Check 'Add Tag' button", async () => {
 
     // Check if object information is displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
-    let addTagButton = getByText(container, "Add Tag");
+    let addTagButton = getSideMenuItem(container, "Add a New Tag");
     fireEvent.click(addTagButton);
     expect(history.entries[history.length - 1].pathname).toBe("/tags/add");
 });
@@ -138,7 +139,7 @@ test("Modify a tag and click cancel", async () => {
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_description).toBe("modified tag description"));
 
     // Check if cancel button redirects to /tags page and does not modify tag values
-    let cancelButton = getByText(container, "Cancel");
+    let cancelButton = getSideMenuItem(container, "Cancel");
     fireEvent.click(cancelButton);
     expect(history.entries[history.length - 1].pathname).toBe("/tags");
     for (let attr of ["tag_id", "tag_name", "tag_description", "created_at", "modified_at"]) {
@@ -155,20 +156,18 @@ test("Delete a tag", async () => {
 
     // Wait for tag information to be displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
-    let deleteButton = getByText(container, "Delete");
+    let deleteButton = getSideMenuItem(container, "Delete");
     fireEvent.click(deleteButton);
 
     // Check if confirmation dialog has appeared
-    getByText(container, "Delete This Tag?");
-    let confimationDialogButtonNo = getByText(container, "No");
-    fireEvent.click(confimationDialogButtonNo);
-    expect(queryByText(container, "Delete This Tag?")).toBeNull();
+    expect(getSideMenuDialogControls(container).header.title).toEqual("Delete This Tag?");
+    fireEvent.click(getSideMenuDialogControls(container).buttons["No"]);
+    expect(getSideMenuDialogControls(container)).toBeNull();
 
     // Check if delete removes the tag and redirects
-    deleteButton = getByText(container, "Delete");
+    deleteButton = getSideMenuItem(container, "Delete");
     fireEvent.click(deleteButton);
-    let confimationDialogButtonYes = getByText(container, "Yes");
-    fireEvent.click(confimationDialogButtonYes);
+    fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags"));
     expect(store.getState().tags[1]).toBeUndefined();
@@ -184,10 +183,9 @@ test("Delete a tag with fetch error", async () => {
     // Wait for tag information to be displayed on the page and try to delete the tag
     await waitFor(() => getByText(container, "Tag Information"));
     setFetchFail(true);
-    let deleteButton = getByText(container, "Delete");
+    let deleteButton = getSideMenuItem(container, "Delete");
     fireEvent.click(deleteButton);
-    let confimationDialogButtonYes = getByText(container, "Yes");
-    fireEvent.click(confimationDialogButtonYes);
+    fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
     // Check if error message is displayed and tag is not deleted from state
     await waitFor(() => getByText(container, "Failed to fetch data."));
@@ -203,7 +201,7 @@ test("Save an existing tag", async () => {
 
     // Wait for tag information to be displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
-    let saveButton = getByText(container, "Save");
+    let saveButton = getSideMenuItem(container, "Save");
     let tagNameInput = getByPlaceholderText(container, "Tag name");
     let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
     let oldTag = {...store.getState().tags[1]};
@@ -238,7 +236,7 @@ test("Update a tag", async () => {
 
     // Wait for tag information to be displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
-    let saveButton = getByText(container, "Save");
+    let saveButton = getSideMenuItem(container, "Save");
     let tagNameInput = getByPlaceholderText(container, "Tag name");
     let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
 
@@ -262,7 +260,7 @@ test("Update a tag with fetch error", async () => {
     // Wait for tag information to be displayed on the page and try modifying the tag
     await waitFor(() => getByText(container, "Tag Information"));
     let tag = {...store.getState().tags[1]};
-    let saveButton = getByText(container, "Save");
+    let saveButton = getSideMenuItem(container, "Save");
     let tagNameInput = getByPlaceholderText(container, "Tag name");
     let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
     fireEvent.change(tagNameInput, { target: { value: "error" } });

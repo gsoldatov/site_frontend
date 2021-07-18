@@ -5,7 +5,8 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, waitFor } from "@testing-library/dom";
 
 import { compareArrays } from "./test-utils/data-checks";
-import { renderWithWrappers} from "./test-utils/render";
+import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
+import { renderWithWrappers } from "./test-utils/render";
 import createStore from "../src/store/create-store";
 
 import { EditTag } from "../src/components/tag";
@@ -44,17 +45,16 @@ test("Edit tag => delete a tag and check objects' tags", async () => {
     store.dispatch(setObjectsTags(objects));
     
     // Route component is required for matching (getting :id part of the URL in the EditObject component)
-    let { container, history, debug } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
+    let { container, history } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
         route: "/tags/1",
         store: store
     });
 
     // Wait for tag information to be displayed on the page and delete the tag
     await waitFor(() => getByText(container, "Tag Information"));
-    let deleteButton = getByText(container, "Delete");
+    let deleteButton = getSideMenuItem(container, "Delete");
     fireEvent.click(deleteButton);
-    let confimationDialogButtonYes = getByText(container, "Yes");
-    fireEvent.click(confimationDialogButtonYes);
+    fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
     // Wait for deletion to complete => check objects' tags
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags"));
@@ -96,12 +96,9 @@ test("Tags => delete tags and check objects' tags", async () => {
     fireEvent.click(secondTagCheckbox);
 
     // Delete selected tags
-    let deleteButton = getByText(container, "Delete");
+    let deleteButton = getSideMenuItem(container, "Delete");
     fireEvent.click(deleteButton);
-    let sideMenu = container.querySelector(".vertical.menu");
-    let dialog = sideMenu.querySelector(".side-menu-dialog");
-    let dialogYesButton = getByText(dialog, "Yes");
-    fireEvent.click(dialogYesButton);
+    fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
     // Check if deleted tags were removed from the state and the page
     await waitFor(() => expect(Object.keys(store.getState().tags)).toEqual(expect.not.arrayContaining(["1", "2"])));

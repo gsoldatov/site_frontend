@@ -5,6 +5,7 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
 import { renderWithWrappers } from "./test-utils/render";
+import { getSideMenuItem, getSideMenuDialogControls } from "./test-utils/ui-common";
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickGeneralTabButton, clickDataTabButton, resetObject } from "./test-utils/ui-object";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 
@@ -41,9 +42,9 @@ describe("UI checks", () => {
         expect(objectDescriptionInput.value).toBe("");
     
         // Check if an empty name can't be submitted
-        let saveButton = getByText(container, "Save");
-        let cancelButton = getByText(container, "Cancel");
-        expect(saveButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        let saveButton = getSideMenuItem(container, "Save");
+        let cancelButton = getSideMenuItem(container, "Cancel");
+        expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
         // expect(saveButton.onclick).toBeNull(); 
     
         // Check if cancel button redirects to /objects page
@@ -157,10 +158,9 @@ describe("Reset new object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
     
         // Cancel reset
-        let resetButton = getByText(container, "Reset");
+        let resetButton = getSideMenuItem(container, "Reset");
         fireEvent.click(resetButton);
-        const confimationDialogButtonNo = getByText(container, "No");
-        fireEvent.click(confimationDialogButtonNo);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["No"]);
     
         linkInput = getByPlaceholderText(container, "Link");
         expect(linkInput.value).toEqual(linkValue);
@@ -439,7 +439,7 @@ describe("Persist new object state", () => {
         await waitFor(() => expect(store.getState().editedObjects[firstSubobjectID].object_name).toEqual(newSubobjectName));
 
         // Click cancel button
-        fireEvent.click(getByText(container, "Cancel"));
+        fireEvent.click(getSideMenuItem(container, "Cancel"));
 
         // Check if second subobject is removed from state.editedObjects and first isn't
         await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty(secondSubobjectID));
@@ -456,7 +456,7 @@ describe("Save new object errors", () => {
     
         // Check if an error message is displayed and object is not added to the state
         let objectNameInput = getByPlaceholderText(container, "Object name");
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
         fireEvent.change(objectNameInput, { target: { value: "error" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("error"));  // wait for object_name to be updated in state
     
@@ -480,7 +480,7 @@ describe("Save new object errors", () => {
         });
 
         const objectNameInput = getByPlaceholderText(container, "Object name");
-        const saveButton = getByText(container, "Save");
+        const saveButton = getSideMenuItem(container, "Save");
     
         // Set a valid object name
         fireEvent.change(objectNameInput, { target: { value: "New object" } });
@@ -502,7 +502,7 @@ describe("Save new object errors", () => {
         });
     
         const objectNameInput = getByPlaceholderText(container, "Object name");
-        const saveButton = getByText(container, "Save");
+        const saveButton = getSideMenuItem(container, "Save");
     
         // Set a valid object name
         fireEvent.change(objectNameInput, { target: { value: "New object" } });
@@ -524,7 +524,7 @@ describe("Save new object errors", () => {
         });
 
         const objectNameInput = getByPlaceholderText(container, "Object name");
-        const saveButton = getByText(container, "Save");
+        const saveButton = getSideMenuItem(container, "Save");
     
         // Set a valid object name
         fireEvent.change(objectNameInput, { target: { value: "New object" } });
@@ -551,7 +551,7 @@ describe("Save new object errors", () => {
         fireEvent.click(compositeOption);
         fireEvent.change(getByPlaceholderText(container, "Object name"), { target: { value: "New object" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe("New object"));
-        fireEvent.click(getByText(container, "Save"));
+        fireEvent.click(getSideMenuItem(container, "Save"));
 
         // Check if error message is displayed and save did not occur
         await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
@@ -582,7 +582,7 @@ describe("Save new object errors", () => {
         fireEvent.click(getSubobjectCardMenuButtons(cards[0][1]).fullDeleteButton);
 
         // Click save button and check if error message is displayed and save did not occur
-        fireEvent.click(getByText(container, "Save"));
+        fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
         expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
         expect(store.getState().objects[1]).toBeUndefined();
@@ -611,7 +611,7 @@ describe("Save new object errors", () => {
         await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe("new link value"));
 
         // Click save button and check if error message is displayed and save did not occur
-        fireEvent.click(getByText(container, "Save"));
+        fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Object name is required.", { exact: false }));
         expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
         expect(store.getState().objects[1]).toBeUndefined();
@@ -641,7 +641,7 @@ describe("Save new object errors", () => {
         await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe(""));
 
         // Click save button and check if error message is displayed and save did not occur
-        fireEvent.click(getByText(container, "Save"));
+        fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
         expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
         expect(store.getState().objects[1]).toBeUndefined();
@@ -660,7 +660,7 @@ describe("Save new object", () => {
     
         let objectNameInput = getByPlaceholderText(container, "Object name");
         let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
     
         // Check if object is redirected after adding a correct object
         fireEvent.change(objectNameInput, { target: { value: "new object" } });
@@ -704,7 +704,7 @@ describe("Save new object", () => {
     
         let objectNameInput = getByPlaceholderText(container, "Object name");
         let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
         
         // Enter attributes
         fireEvent.change(objectNameInput, { target: { value: "new object" } });
@@ -750,7 +750,7 @@ describe("Save new object", () => {
     
         let objectNameInput = getByPlaceholderText(container, "Object name");
         let objectDescriptionInput = getByPlaceholderText(container, "Object description");
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
     
         // Enter attributes
         fireEvent.change(objectNameInput, { target: { value: "new object" } });
@@ -838,7 +838,7 @@ describe("Save new object", () => {
         await waitFor(() => expect(store.getState().editedObjects[0].composite.subobjects[modifiedExistingID].is_expanded).toBeFalsy());
 
         // Check if object is redirected after adding a correct object
-        fireEvent.click(getByText(container, "Save"));
+        fireEvent.click(getSideMenuItem(container, "Save"));
         const object_id = 1000; // mock object returned has this id
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
         

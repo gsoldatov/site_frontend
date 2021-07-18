@@ -2,6 +2,7 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, queryByText, waitFor } from "@testing-library/dom";
 
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../test-utils/ui-objects-tags";
+import { getSideMenuItem, getSideMenuDialogControls } from "./ui-common";
 
 
 export const getCurrentObject = state => state.editedObjects[state.objectUI.currentObjectID];
@@ -71,11 +72,11 @@ export const clickDataTabButton = container => {
  * If `resetSubobjects` is true, checks the "Reset subobjects" checkbox before accepting.
  */
 export const resetObject = (container, resetSubobjects) => {
-    const resetButton = getByText(container, "Reset");
+    const resetButton = getSideMenuItem(container, "Reset");
     fireEvent.click(resetButton);
-    if (resetSubobjects) fireEvent.click(container.querySelector(".side-menu-dialog-checkbox-container").querySelector("input"));
-    const confimationDialogButtonYes = getByText(container, "Yes");
-    fireEvent.click(confimationDialogButtonYes);
+    const sideMenuControls = getSideMenuDialogControls(container);
+    if (resetSubobjects) fireEvent.click(sideMenuControls.checkbox);
+    fireEvent.click(sideMenuControls.buttons["Yes"]);
 };
 
 
@@ -83,16 +84,16 @@ export const resetObject = (container, resetSubobjects) => {
  * For the /objects page tag update (expects container to be an /objects/:id page)
  */
 export const addAndRemoveTags = async (container, store) => {
-    let inputToggle = getByTitle(container, "Click to add tags");
-    expect(inputToggle).toBeTruthy();
-    fireEvent.click(inputToggle);
-    let input = getInlineInputField({ container });
-
     // Remove an "existing" tag
     const tagOne = getTagInlineItem({ container, text: "tag #1" });
     fireEvent.click(tagOne);
 
     // Add a new tag
+    let inputToggle = getByTitle(container, "Click to add tags");
+    fireEvent.click(inputToggle)
+    let input = getInlineInputField({ container });
+
+
     fireEvent.change(input, { target: { value: "new tag" } });
     await waitFor(() => expect(store.getState().objectUI.tagsInput.matchingIDs.length).toEqual(10));
     let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });

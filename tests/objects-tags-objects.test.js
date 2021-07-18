@@ -2,9 +2,10 @@ import React from "react";
 import { Switch, Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from "@testing-library/dom";
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText, screen } from "@testing-library/dom";
 
 import { getStoreWithTwoSelectedObjects } from "./mocks/data-objects-tags";
+import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils/ui-objects-tags";
 import { addAndRemoveTags } from "./test-utils/ui-object";
 import { compareArrays } from "./test-utils/data-checks";
@@ -232,12 +233,9 @@ test("Check object deletion", async () => {
     await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
     
     // Delete selected objects
-    let deleteButton = getByText(container, "Delete");
+    let deleteButton = getSideMenuItem(container, "Delete");
     fireEvent.click(deleteButton);
-    let sideMenu = container.querySelector(".vertical.menu");
-    let dialog = sideMenu.querySelector(".side-menu-dialog");
-    let dialogYesButton = getByText(dialog, "Yes");
-    fireEvent.click(dialogYesButton);
+    fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
     // Check if objects tags were removed
     await waitFor(() => expect(store.getState().objectsTags.hasOwnProperty("1")).toBeFalsy());
@@ -246,15 +244,15 @@ test("Check object deletion", async () => {
 
 
 test("Check side menu", async () => {    
-    const defaultItems = ["Add Object", "Edit Object", "Delete"];
+    const defaultItems = ["Add a New Object", "Edit Object", "Delete"];
     const updateItems = ["Update Tags", "Cancel Tag Update"];
     const checkIfDefaultItemsRendered = () => {
-        defaultItems.forEach(item => getByText(sideMenu, item));
-        updateItems.forEach(item => expect(queryByText(sideMenu, item)).toBeFalsy());
+        defaultItems.forEach(item => getSideMenuItem(container, item));
+        updateItems.forEach(item => expect(getSideMenuItem(container, item)).toBeFalsy());
     };
     const checkIfUpdateItemsRendered = () => {
-        updateItems.forEach(item => getByText(sideMenu, item));
-        defaultItems.forEach(item => expect(queryByText(sideMenu, item)).toBeFalsy());
+        updateItems.forEach(item => getSideMenuItem(container, item));
+        defaultItems.forEach(item => expect(getSideMenuItem(container, item)).toBeFalsy());
     };
 
     let store = await getStoreWithTwoSelectedObjects();
@@ -267,7 +265,6 @@ test("Check side menu", async () => {
 
     // Wait for the objects to be loaded
     await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
-    let sideMenu = container.querySelector(".vertical.menu");
     checkIfDefaultItemsRendered();
 
     // Add a new tag
@@ -279,7 +276,7 @@ test("Check side menu", async () => {
     checkIfUpdateItemsRendered();
     
     // Cancel tag update
-    let cancelTagUpdateButton = getByText(sideMenu, "Cancel Tag Update");
+    let cancelTagUpdateButton = getSideMenuItem(container, "Cancel Tag Update");
     fireEvent.click(cancelTagUpdateButton);
     checkIfDefaultItemsRendered();
     expect(store.getState().objectsUI.addedTags.length).toEqual(0);
@@ -290,7 +287,7 @@ test("Check side menu", async () => {
     checkIfUpdateItemsRendered();
 
     // Cancel tag update
-    cancelTagUpdateButton = getByText(sideMenu, "Cancel Tag Update");
+    cancelTagUpdateButton = getSideMenuItem(container, "Cancel Tag Update");
     fireEvent.click(cancelTagUpdateButton);
     checkIfDefaultItemsRendered();
     expect(store.getState().objectsUI.removedTagIDs.length).toEqual(0);
@@ -306,7 +303,7 @@ test("Check side menu", async () => {
     checkIfUpdateItemsRendered();
 
     // Cancel tag update
-    cancelTagUpdateButton = getByText(sideMenu, "Cancel Tag Update");
+    cancelTagUpdateButton = getSideMenuItem(container, "Cancel Tag Update");
     fireEvent.click(cancelTagUpdateButton);
     checkIfDefaultItemsRendered();
     expect(store.getState().objectsUI.addedTags.length).toEqual(0);
@@ -316,7 +313,7 @@ test("Check side menu", async () => {
     checkIfUpdateItemsRendered();
 
     // Cancel tag update
-    cancelTagUpdateButton = getByText(sideMenu, "Cancel Tag Update");
+    cancelTagUpdateButton = getSideMenuItem(container, "Cancel Tag Update");
     fireEvent.click(cancelTagUpdateButton);
     checkIfDefaultItemsRendered();
     expect(store.getState().objectsUI.removedTagIDs.length).toEqual(0);
@@ -333,24 +330,23 @@ test("Check tags update + editedObjects reset", async () => {
     let store = await getStoreWithTwoSelectedObjects();
     await store.dispatch(getNonCachedTags([7]));    // additional tags is required to test adding of an existing tag
 
-    const render = route => renderWithWrappers(
+    // Add & remove tags for two objects on the /objects/:id page without saving the changes
+    let {container, history } = renderWithWrappers(
         <Switch>
             <Route exact path="/objects"><Objects /></Route>
             <Route exact path="/objects/:id"><EditObject /></Route>
         </Switch>
-    , { route, store });
+    , { route: "/objects/1", store });
 
-    // Add & remove tags for two objects on the /objects/:id page without saving the changes
-    var {container } = render("/objects/1");
     await waitFor(() => getByText(container, "Object Information"));
     await addAndRemoveTags(container, store);
 
-    var {container } = render("/objects/3");
+    history.push("/objects/3");
     await waitFor(() => getByText(container, "Object Information"));
     await addAndRemoveTags(container, store);
 
     // Wait for the /objects page to be loaded
-    var {container } = render("/objects");
+    history.push("/objects");
     await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
 
     // Add an existing tag
@@ -378,12 +374,11 @@ test("Check tags update + editedObjects reset", async () => {
     fireEvent.click(tagFour);
 
     // Click update tags button
-    let sideMenu = container.querySelector(".vertical.menu");
-    let updateTagsButton = getByText(sideMenu, "Update Tags");
+    let updateTagsButton = getSideMenuItem(container, "Update Tags");
     fireEvent.click(updateTagsButton);
 
     // Wait for tags to update
-    await waitFor(() => expect(queryByText(sideMenu, "Update Tags")).toBeFalsy());
+    await waitFor(() => expect(getSideMenuItem(container, "Update Tags")).toBeFalsy());
 
     // Check objects tags & modified_at time
     expect(compareArrays([-1, 2, 3, 7], store.getState().objectsTags[1].sort())).toBeTruthy();

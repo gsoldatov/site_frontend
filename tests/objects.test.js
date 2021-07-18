@@ -5,6 +5,7 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from "@testing-library/dom";
 
 import { getMockedPageObjectIDs } from "./mocks/mock-fetch-handlers-objects";
+import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
 import { renderWithWrappers } from "./test-utils/render";
 import { getCurrentObject } from "./test-utils/ui-object";
 import createStore from "../src/store/create-store";
@@ -22,10 +23,13 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { paginationGetComputedStyle } = require("./mocks/mock-get-computed-style");
+
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
+        global.getComputedStyle = jest.fn(paginationGetComputedStyle);
     });
 });
 
@@ -44,11 +48,11 @@ describe("Page load and pagination", () => {
         await waitFor(() => getByText(container, "Failed to fetch data."));
     
         // Check if buttons are not enabled
-        let editObjectButton = getByText(container, "Edit Object");
-        let deleteButton = getByText(container, "Delete");
-        expect(editObjectButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        let editObjectButton = getSideMenuItem(container, "Edit Object");
+        let deleteButton = getSideMenuItem(container, "Delete");
+        expect(editObjectButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
         // expect(editObjectButton.onclick).toBeNull();
-        expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        expect(deleteButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
         // expect(deleteButton.onclick).toBeNull();
     
         // Check if pagination is not rendered
@@ -221,16 +225,16 @@ describe("Side menu", () => {
             store: store
         });
 
-        let addObjectButton = getByText(container, "Add Object");
-        let editObjectButton = getByText(container, "Edit Object");
-        let deleteObjectButton = getByText(container, "Delete");
+        let addObjectButton = getSideMenuItem(container, "Add a New Object");
+        let editObjectButton = getSideMenuItem(container, "Edit Object");
+        let deleteObjectButton = getSideMenuItem(container, "Delete");
 
         // Check if buttons can't be clicked during fetch
         await waitFor(() => expect(
             store.getState().objectsUI.fetch.isFetching === true
-            && addObjectButton.className.startsWith("disabled") // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
-            && editObjectButton.className.startsWith("disabled")
-            && deleteObjectButton.className.startsWith("disabled")
+            && addObjectButton.classList.contains("disabled") // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+            && editObjectButton.classList.contains("disabled")
+            && deleteObjectButton.classList.contains("disabled")
             // && addObjectButton.onclick === null
             // && editObjectButton.onclick === null
             // && deleteObjectButton.onclick === null
@@ -252,7 +256,7 @@ describe("Side menu", () => {
         await waitFor(() => getByText(container, "object #1"));
 
         // Check if add button click redirects to add object page
-        let addObjectButton = getByText(container, "Add Object");
+        let addObjectButton = getSideMenuItem(container, "Add a New Object");
         fireEvent.click(addObjectButton);
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/add"));
     });
@@ -272,8 +276,8 @@ describe("Side menu", () => {
         await waitFor(() => getByText(container, "object #1"));
 
         // Check if edit object button is disabled if a single object is not selected
-        let editObjectButton = getByText(container, "Edit Object");
-        expect(editObjectButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        let editObjectButton = getSideMenuItem(container, "Edit Object");
+        expect(editObjectButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
         // expect(editObjectButton.onclick).toBeNull();
 
         // Get objects
@@ -315,7 +319,7 @@ describe("Side menu", () => {
         fireEvent.change(objectNameInput, { target: { value: objectNameText } });
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe(objectNameText));
         
-        const cancelButton = getByText(container, "Cancel");
+        const cancelButton = getSideMenuItem(container, "Cancel");
         fireEvent.click(cancelButton);
 
         // Wait for the objects to be loaded
@@ -325,8 +329,8 @@ describe("Side menu", () => {
         expect(Object.keys(store.getState().editedObjects).includes("1")).toBeTruthy();
 
         // Check if edit object button is disabled if a single object is not selected
-        let deleteButton = getByText(container, "Delete");
-        expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        let deleteButton = getSideMenuItem(container, "Delete");
+        expect(deleteButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
         // expect(deleteButton.onclick).toBeNull();
 
         // Select two objects
@@ -340,22 +344,17 @@ describe("Side menu", () => {
         // Click delete button and check if a confirmation dialog appeared
         expect(deleteButton.onclick).toBeTruthy();
         fireEvent.click(deleteButton);
-        let sideMenu = container.querySelector(".vertical.menu");
-        let dialog = sideMenu.querySelector(".side-menu-dialog");
-        expect(dialog).toBeTruthy();
 
         // Click "No" button and check if dialog was closed
-        let dialogNoButton = getByText(dialog, "No");
-        fireEvent.click(dialogNoButton);
-        expect(sideMenu.querySelector(".side-menu-dialog")).toBeNull();
+        expect(getSideMenuDialogControls(container).header.title).toEqual("Delete Selected Objects?");
+        fireEvent.click(getSideMenuDialogControls(container).buttons["No"]);
+        expect(getSideMenuDialogControls(container)).toBeNull();
         getByText(mainObjectField, "object #1");
 
         // Delete selected objects
-        deleteButton = getByText(container, "Delete");
+        deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        dialog = sideMenu.querySelector(".side-menu-dialog");
-        let dialogYesButton = getByText(dialog, "Yes");
-        fireEvent.click(dialogYesButton);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
         // Check if deleted objects were removed from the state and the page
         await waitFor(() => expect(Object.keys(store.getState().objects)).toEqual(expect.not.arrayContaining(["1", "2"])));
@@ -387,11 +386,9 @@ describe("Side menu", () => {
         await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
 
         // Delete composite object with subobjects
-        const deleteButton = getByText(container, "Delete");
+        const deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        const dialog = container.querySelector(".vertical.menu").querySelector(".side-menu-dialog");
-        let dialogYesButton = getByText(dialog, "Yes");
-        fireEvent.click(dialogYesButton);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
         // Check if composite object is deleted and deselected
         await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty("1"));
@@ -433,12 +430,10 @@ describe("Side menu", () => {
         await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
 
         // Delete composite object with subobjects
-        const deleteButton = getByText(container, "Delete");
+        const deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        const dialog = container.querySelector(".vertical.menu").querySelector(".side-menu-dialog");
-        fireEvent.click(dialog.querySelector(".side-menu-dialog-checkbox-container").querySelector("input"));
-        let dialogYesButton = getByText(dialog, "Yes");
-        fireEvent.click(dialogYesButton);
+        fireEvent.click(getSideMenuDialogControls(container).checkbox);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
         // Check if composite object is deleted and deselected
         await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty("1"));
@@ -547,7 +542,8 @@ describe("Field menu", () => {
         await waitFor(() => getByText(container, "object #1"));
 
         // Filter with matching objects and check if they are correctly displayed
-        let objectFilterInput = container.querySelector(".field-menu-filter").querySelector("input");
+        // let objectFilterInput = container.querySelector(".field-menu-filter").querySelector("input");
+        let objectFilterInput = getByPlaceholderText(container, "Filter objects");
         expect(objectFilterInput).toBeTruthy();
         fireEvent.change(objectFilterInput, { target: { value: "some text" } });
         await waitForFetch(store);

@@ -53,7 +53,7 @@ export const EditTag = () => {
     const editTagSideMenuItems = useMemo(() => [
         {
             type: "item",
-            text: "Add Tag",
+            text: "Add a New Tag",
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingTag(state),

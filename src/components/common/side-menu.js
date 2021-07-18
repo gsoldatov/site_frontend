@@ -79,8 +79,6 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
             </Button>
         </Menu.Item>
     );
-
-    // return <Menu.Item as="div" className="side-menu-item" disabled={!isActive} onClick={_onClick}>{text}</Menu.Item>;    // TODO delete
 };
 
 
@@ -90,7 +88,7 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
 const SideMenuDialog = ({ text, buttons, isCheckboxDisplayedSelector, checkboxText, isFullscreenStyle, dialogButtonsFullscreenStyle }) => {
     // Header
     const header = isFullscreenStyle ? (
-        <Header className="side-menu-dialog-header" as="h5" textAlign="center">{text}</Header>
+        <Header className="side-menu-dialog-header" as="h5" textAlign="center" title={text}>{text}</Header>
     )
     : (
         <Icon className="side-menu-dialog-header" name="question circle outline" color="blue" title={text} />

@@ -5,6 +5,7 @@ import { fireEvent, screen } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { renderWithWrappers } from "./test-utils/render";
+import { getSideMenuItem } from "./test-utils/ui-common";
 
 import { AddTag, EditTag } from "../src/components/tag";
 import { addTags } from "../src/actions/data-tags";
@@ -39,9 +40,9 @@ test("Render and click cancel button", async () => {
     expect(tagDescriptionInput.value).toBe("");
 
     // Check if an empty name can't be submitted
-    let saveButton = getByText(container, "Save");
-    let cancelButton = getByText(container, "Cancel");
-    expect(saveButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    let saveButton = getSideMenuItem(container, "Save");
+    let cancelButton = getSideMenuItem(container, "Cancel");
+    expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
     // expect(saveButton.onclick).toBeNull();   
     
 
@@ -60,7 +61,7 @@ test("Modify tag name and try saving an existing (in local state) tag name", asy
     // Check if input is updating the state
     let tagNameInput = getByPlaceholderText(container, "Tag name");
     let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
-    let saveButton = getByText(container, "Save");
+    let saveButton = getSideMenuItem(container, "Save");
     fireEvent.change(tagNameInput, { target: { value: "existing tag_name" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("existing tag_name"));
     fireEvent.change(tagDescriptionInput, { target: { value: "tag description" } });
@@ -68,7 +69,7 @@ test("Modify tag name and try saving an existing (in local state) tag name", asy
     
     // Check if existing tag_name (in store) is not added
     store.dispatch(addTags([{ tag_id: 1, tag_name: "existing tag_name", tag_description: "", created_at: new Date(), modified_at: new Date() }]));
-    saveButton = getByText(container, "Save");
+    saveButton = getSideMenuItem(container, "Save");
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "already exists", { exact: false }));
 });
@@ -82,7 +83,7 @@ test("Try saving an existing (on backend) tag name", async () => {
 
     // Check if existing tag_name (on backend) is not added
     let tagNameInput = getByPlaceholderText(container, "Tag name");
-    let saveButton = getByText(container, "Save");
+    let saveButton = getSideMenuItem(container, "Save");
     fireEvent.change(tagNameInput, { target: { value: "existing tag_name" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("existing tag_name"));  // wait for tag_name to be updated in state
     fireEvent.click(saveButton);
@@ -92,13 +93,13 @@ test("Try saving an existing (on backend) tag name", async () => {
 
 test("Handle fetch error", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history, store, debug } = renderWithWrappers(<Route exact path="/tags/:id"><AddTag /></Route>, {
+    let { container, history, store } = renderWithWrappers(<Route exact path="/tags/:id"><AddTag /></Route>, {
         route: "/tags/add"
     });
 
     // Check if an error message is displayed and tag is not added to the state
     let tagNameInput = getByPlaceholderText(container, "Tag name");
-    let saveButton = getByText(container, "Save");
+    let saveButton = getSideMenuItem(container, "Save");
     fireEvent.change(tagNameInput, { target: { value: "error" } });
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("error"));  // wait for tag_name to be updated in state
     setFetchFail(true);
@@ -118,7 +119,7 @@ test("Save a new tag", async () => {
 
     let tagNameInput = getByPlaceholderText(container, "Tag name");
     let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
-    let saveButton = getByText(container, "Save");
+    let saveButton = getSideMenuItem(container, "Save");
 
     // Check if tag is redirected after adding a correct tag
     fireEvent.change(tagNameInput, { target: { value: "new tag" } });

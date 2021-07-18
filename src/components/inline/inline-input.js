@@ -60,7 +60,7 @@ export const InlineInput = memo(({ placeholder, inputStateSelector, setInputStat
                 }
             }
         }
-    })
+    });
 
     // Handle keydown event (Enter + Esc) + update width
     const handleKeyDown = (e, data) => {

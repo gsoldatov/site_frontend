@@ -89,7 +89,7 @@ export const EditObject = () => {
     const editObjectSideMenuItems = useMemo(() => [
         {
             type: "item",
-            text: "Add Object",
+            text: "Add a New Object",
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingObject(state),

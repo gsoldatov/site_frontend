@@ -2,10 +2,11 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, queryByText, getByTitle, queryByPlaceholderText, screen } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText } from "@testing-library/dom";
 
 import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers } from "./test-utils/render";
+import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
 import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, resetObject, getObjectTypeSwitchElements } from "./test-utils/ui-object";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 import { getTDLByObjectID } from "./mocks/data-to-do-lists";
@@ -48,15 +49,16 @@ describe("Load object errors & UI checks", () => {
         await waitFor(() => getByText(container, "Failed to fetch data."));
     
         // Check if save and delete buttons can't be clicked if object fetch failed
-        let saveButton = getByText(container, "Save");
-        let resetButton = getByText(container, "Reset");
-        let deleteButton = getByText(container, "Delete");
-        let cancelButton = getByText(container, "Cancel");
-        expect(saveButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        getSideMenuItem
+        let saveButton = getSideMenuItem(container, "Save");
+        let resetButton = getSideMenuItem(container, "Reset");
+        let deleteButton = getSideMenuItem(container, "Delete");
+        let cancelButton = getSideMenuItem(container, "Cancel");
+        expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
         // expect(saveButton.onclick).toBeNull(); 
-        expect(resetButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        expect(resetButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
         // expect(deleteButton.onclick).toBeNull(); 
-        expect(deleteButton.className.startsWith("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+        expect(deleteButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
         // expect(deleteButton.onclick).toBeNull(); 
     });
 
@@ -72,7 +74,7 @@ describe("Load object errors & UI checks", () => {
     });
 
 
-    test("Check 'Add Object' button", async () => {
+    test("Check 'Add a New Object' button", async () => {
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
         let { container, history } = renderWithWrappers(
             <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
@@ -81,7 +83,7 @@ describe("Load object errors & UI checks", () => {
     
         // Check if object information is displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
-        let addObjectButton = getByText(container, "Add Object");
+        let addObjectButton = getSideMenuItem(container, "Add a New Object");
         fireEvent.click(addObjectButton);
         expect(history.entries[history.length - 1].pathname).toBe("/objects/add");
     });
@@ -552,10 +554,9 @@ describe("Reset object", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
 
         // Cancel reset
-        let resetButton = getByText(container, "Reset");
+        let resetButton = getSideMenuItem(container, "Reset");
         fireEvent.click(resetButton);
-        const confimationDialogButtonNo = getByText(container, "No");
-        fireEvent.click(confimationDialogButtonNo);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["No"]);
     
         linkInput = getByPlaceholderText(container, "Link");
         expect(linkInput.value).toEqual(linkValue);
@@ -713,7 +714,7 @@ describe("Persist edited object state", () => {
         expect(Object.keys(store.getState().editedObjects).includes("1")).toBeTruthy();
 
         // Trigger a redirect and check if the object was removed from editedObjects storage due to not being changed
-        const cancelButton = getByText(container, "Cancel");
+        const cancelButton = getSideMenuItem(container, "Cancel");
         fireEvent.click(cancelButton);
         expect(Object.keys(store.getState().editedObjects).includes("1")).toBeFalsy();
     });
@@ -861,7 +862,7 @@ describe("Persist edited object state", () => {
         await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(subobjectID));
 
         // Click cancel button
-        fireEvent.click(getByText(container, "Cancel"));
+        fireEvent.click(getSideMenuItem(container, "Cancel"));
 
         // Check if object and subobject are removed from state.editedObjects
         await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty(subobjectID));
@@ -880,7 +881,7 @@ describe("Persist edited object state", () => {
         await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(subobjectID));
 
         // Click cancel button
-        fireEvent.click(getByText(container, "Cancel"));
+        fireEvent.click(getSideMenuItem(container, "Cancel"));
 
         // Check if object and subobject are removed from state.editedObjects
         await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty(subobjectID));
@@ -906,7 +907,7 @@ describe("Persist edited object state", () => {
         await waitFor(() => expect(store.getState().editedObjects[card.id].object_name).toEqual(newSubobjectName));
 
         // Click cancel button
-        fireEvent.click(getByText(container, "Cancel"));
+        fireEvent.click(getSideMenuItem(container, "Cancel"));
 
         // Check if object is removed from state.editedObjects and subobject is not
         await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty("3001"));
@@ -937,7 +938,7 @@ describe("Persist edited object state", () => {
         const [firstSubobjectID, secondSubobjectID] = getSubobjectCards(container, { expectedNumbersOfCards: [2] })[0].map(card => card.id.toString());
 
         // Click cancel button
-        fireEvent.click(getByText(container, "Cancel"));
+        fireEvent.click(getSideMenuItem(container, "Cancel"));
 
         // Check if unmodified subobject is removed from state.editedObjects, modified is not and object itself is not
         await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty(secondSubobjectID));
@@ -957,10 +958,9 @@ describe("Delete object", () => {
         // Wait for object information to be displayed on the page and try to delete the object
         await waitFor(() => getByText(container, "Object Information"));
         setFetchFail(true);
-        let deleteButton = getByText(container, "Delete");
+        let deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        let confimationDialogButtonYes = getByText(container, "Yes");
-        fireEvent.click(confimationDialogButtonYes);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         // Check if error message is displayed and object is not deleted from state
         await waitFor(() => getByText(container, "Failed to fetch data."));
@@ -978,20 +978,18 @@ describe("Delete object", () => {
     
         // Wait for object information to be displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
-        let deleteButton = getByText(container, "Delete");
+        let deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
     
         // Check if confirmation dialog has appeared
-        getByText(container, "Delete This Object?");
-        let confimationDialogButtonNo = getByText(container, "No");
-        fireEvent.click(confimationDialogButtonNo);
-        expect(queryByText(container, "Delete This Object?")).toBeNull();
+        expect(getSideMenuDialogControls(container).header.title).toEqual("Delete This Object?");
+        fireEvent.click(getSideMenuDialogControls(container).buttons["No"]);
+        expect(getSideMenuDialogControls(container)).toBeNull();
     
         // Check if delete removes the object and redirects
-        deleteButton = getByText(container, "Delete");
+        deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        let confimationDialogButtonYes = getByText(container, "Yes");
-        fireEvent.click(confimationDialogButtonYes);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
         expect(store.getState().objects[1]).toBeUndefined();
@@ -1011,10 +1009,9 @@ describe("Delete object", () => {
         await waitFor(() => getByText(container, "Object Information"));
     
         // Check if delete removes the object and redirects
-        let deleteButton = getByText(container, "Delete");
+        let deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        let confimationDialogButtonYes = getByText(container, "Yes");
-        fireEvent.click(confimationDialogButtonYes);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
         expect(store.getState().objects[1001]).toBeUndefined();
@@ -1033,10 +1030,9 @@ describe("Delete object", () => {
         await waitFor(() => getByText(container, "Object Information"));
     
         // Check if delete removes the object and redirects
-        let deleteButton = getByText(container, "Delete");
+        let deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        let confimationDialogButtonYes = getByText(container, "Yes");
-        fireEvent.click(confimationDialogButtonYes);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
         expect(store.getState().objects[2001]).toBeUndefined();
@@ -1069,10 +1065,9 @@ describe("Delete object", () => {
         await waitFor(() => expect(store.getState().editedObjects[existingSubobjectID].object_name).toEqual(newSubobjectName));
 
         // Delete composite object without deleting subobjects
-        let deleteButton = getByText(container, "Delete");
+        let deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        let confimationDialogButtonYes = getByText(container, "Yes");
-        fireEvent.click(confimationDialogButtonYes);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         // Check if redirect occured
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
@@ -1119,11 +1114,10 @@ describe("Delete object", () => {
         await waitFor(() => expect(store.getState().editedObjects[existingSubobjectID].object_name).toEqual(newSubobjectName));
 
         // Delete composite object and subobjects
-        let deleteButton = getByText(container, "Delete");
+        let deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
-        fireEvent.click(container.querySelector(".side-menu-dialog-checkbox-container").querySelector("input"));
-        let confimationDialogButtonYes = getByText(container, "Yes");
-        fireEvent.click(confimationDialogButtonYes);
+        fireEvent.click(getSideMenuDialogControls(container).checkbox);
+        fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         // Check if redirect occured
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
@@ -1157,7 +1151,7 @@ describe("Update object errors", () => {
         await waitFor(() => getByText(container, "Object Information"));
         let oldObject = {...store.getState().objects[1]};
         let oldLink = {...store.getState().links[1]};
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
         let objectNameInput = getByPlaceholderText(container, "Object name");
         let objectDescriptionInput = getByPlaceholderText(container, "Object description");
     
@@ -1192,7 +1186,7 @@ describe("Update object errors", () => {
     
         // Wait for object information to be displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
         let oldObjectData = {...store.getState().links[1]};
     
         // Check if an empty link is not saved
@@ -1214,7 +1208,7 @@ describe("Update object errors", () => {
     
         // Wait for object information to be displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
         let oldObjectData = {...store.getState().markdown[1001]};
     
         // Clear raw text
@@ -1242,7 +1236,7 @@ describe("Update object errors", () => {
     
         // Wait for object information to be displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
         let oldObjectData = {...store.getState().toDoLists[2001]};
         clickDataTabButton(container);
         const TDLContainer = container.querySelector(".to-do-list-container");
@@ -1282,7 +1276,7 @@ describe("Update object errors", () => {
         fireEvent.click(getSubobjectCardMenuButtons(cards[0][1]).deleteButton);
 
         // Click save button and check if error message is displayed and save did not occur
-        fireEvent.click(getByText(container, "Save"));
+        fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
         expect(Object.keys(store.getState().composite[3001].subobjects).length).toEqual(1);
     });
@@ -1306,7 +1300,7 @@ describe("Update object errors", () => {
         await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe("new link value"));
 
         // Click save button and check if error message is displayed and save did not occur
-        fireEvent.click(getByText(container, "Save"));
+        fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Object name is required.", { exact: false }));
     });
 
@@ -1328,7 +1322,7 @@ describe("Update object errors", () => {
         await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe(""));
 
         // Click save button and check if error message is displayed and save did not occur
-        fireEvent.click(getByText(container, "Save"));
+        fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
         expect(store.getState().links[card.id].link).not.toEqual("");
     });
@@ -1344,7 +1338,7 @@ describe("Update object", () => {
     
         // Wait for object information to be displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
         let objectNameInput = getByPlaceholderText(container, "Object name");
         let objectDescriptionInput = getByPlaceholderText(container, "Object description");
     
@@ -1376,7 +1370,7 @@ describe("Update object", () => {
     
         // Wait for object information to be displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
     
         // Modify attributes
         let objectNameInput = getByPlaceholderText(container, "Object name");
@@ -1412,7 +1406,7 @@ describe("Update object", () => {
     
         // Wait for object information to be displayed on the page
         await waitFor(() => getByText(container, "Object Information"));
-        let saveButton = getByText(container, "Save");
+        let saveButton = getSideMenuItem(container, "Save");
     
         // Modify attributes
         let objectNameInput = getByPlaceholderText(container, "Object name");
@@ -1496,7 +1490,7 @@ describe("Update object", () => {
         await waitFor(() => expect(store.getState().editedObjects[3001].composite.subobjects[modifiedExistingID].is_expanded).toBeFalsy());
 
         // Click save button and wait for the object to be updated
-        fireEvent.click(getByText(container, "Save"));
+        fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => expect(store.getState().objects[3001].object_name).toEqual(updatedObjectName));
         const object_id = 3001;
         const state = store.getState();
