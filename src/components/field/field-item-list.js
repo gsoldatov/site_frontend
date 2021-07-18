@@ -24,7 +24,10 @@ export const FieldItemList = ({ header, ItemComponent, itemIDsSelector, isExpand
     , [header]);
 
     // Expand/collapse block
-    const itemListClassName = !isExpandable || isExpanded ? "field-item-list" : "field-item-list-collapsed";
+    let itemListClassName = "field-item-list";
+    if (isExpandable && !isExpanded) itemListClassName += " collapsed";
+    if (!header) itemListClassName += " no-header";
+    // const itemListClassName = !isExpandable || isExpanded ? "field-item-list" : "field-item-list-collapsed";
     const expandDiv = useMemo(() => 
         isExpandable && isExpandRequired && items.length > 0 && (
         <div className="field-item-list-expand-div" onClick={() => setIsExpanded(!isExpanded)}>

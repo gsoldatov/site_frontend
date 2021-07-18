@@ -17,7 +17,7 @@
     /* text-decoration: underline; */
 }
 
-.field-item-list, .field-item-list-collapsed {
+.field-item-list {
     line-height: 1.5em;
     display: flex;
     flex-flow: row wrap;
@@ -25,9 +25,13 @@
     align-items: center;
 }
 
-.field-item-list-collapsed {
+.field-item-list.collapsed {
     max-height: 2em;
     overflow: hidden;
+}
+
+.field-item-list.no-header {
+    padding-top: 0.25em;
 }
 
 /****** Expand/collapse ******/
