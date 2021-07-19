@@ -9,9 +9,18 @@ import StyleNavigation from "../../styles/navigation.css";
 
 
 /**
+ * Navigation bar item description
+ */
+const navigationItems = [
+    { to: "/", text: "Index" },
+    { to: "/objects", text: "Objects" },
+    { to: "/tags", text: "Tags" }
+]
+
+/**
  * Navigation bar.
  */
-export default ({ }) => {
+export default ({ itemOnClickCallback }) => {
     const location = useLocation();
 
     // Stacked menu expand/collapse control display
@@ -39,20 +48,36 @@ export default ({ }) => {
         isStacked ? " is-stacked" : ""  // add a top-border when menu is vertical (instead of pseudo-elements displayed before other menu items)
     );
 
-    const menuItems = (!isStacked || isExpanded) && (   // displayed when menu is not stacked or stacked and expanded
-        <>
-            <Menu.Item as={NavLink} exact to="/">Index</Menu.Item>
-            <Menu.Item as={NavLink} exact to="/objects">Objects</Menu.Item>
-            <Menu.Item as={NavLink} exact to="/tags">Tags</Menu.Item>
+    let menuItems;
+    if (!isStacked || isExpanded) {
+        menuItems = navigationItems.map((item, k) => 
+            <Menu.Item key={k} as={NavLink} exact to={item.to} onClick={itemOnClickCallback}>{item.text}</Menu.Item>
+        );
 
-            <Menu.Menu position="right" className={rightMenuClassName}>
+        menuItems.push(
+            <Menu.Menu key={-1} position="right" className={rightMenuClassName}>
                 <Menu.Item className="nagivation-bar-button-container">
                     <Button className="navigation-bar-button" color="blue">Login</Button>
                     <Button className="navigation-bar-button" color="teal">Sign Up</Button>
                 </Menu.Item>
             </Menu.Menu>
-        </>
-    );
+        );
+    }
+
+    // const menuItems = (!isStacked || isExpanded) && (   // displayed when menu is not stacked or stacked and expanded
+    //     <>
+    //         <Menu.Item as={NavLink} exact to="/">Index</Menu.Item>
+    //         <Menu.Item as={NavLink} exact to="/objects">Objects</Menu.Item>
+    //         <Menu.Item as={NavLink} exact to="/tags">Tags</Menu.Item>
+
+    //         <Menu.Menu position="right" className={rightMenuClassName}>
+    //             <Menu.Item className="nagivation-bar-button-container">
+    //                 <Button className="navigation-bar-button" color="blue">Login</Button>
+    //                 <Button className="navigation-bar-button" color="teal">Sign Up</Button>
+    //             </Menu.Item>
+    //         </Menu.Menu>
+    //     </>
+    // );
     
     // `vertical` <Menu> prop is used instead of `stackable` prop of <Menu> to avoid inconsistency when when displaying composite object page
     // (small viewport width forces navbar to be stackable even body width is > 768px)

@@ -195,6 +195,8 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
         dispatch(onLoad);
     }, [objectID]);
 
+    const navigationBarItemOnClickcallback = useMemo(() => () => dispatch(clearUnsavedCurrentEditedObject()));
+
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
     const pageBody = loadIndicatorAndError || (
         <>
@@ -207,7 +209,7 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     // Custom layout classname for composite objects (to allow multicolumn subobjects)
     const className = objectType === "composite" && selectedTab === 1 ? "composite-object-page" : undefined;
 
-    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} />;
+    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} navigationBarItemOnClickcallback={navigationBarItemOnClickcallback} />;
 };
 
 
