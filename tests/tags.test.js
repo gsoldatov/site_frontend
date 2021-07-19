@@ -289,6 +289,7 @@ test("Side menu edit tag button", async () => {
     // Deselect a tag, click edit tag button and check if it redirected to /tags/:id
     fireEvent.click(secondTagCheckbox);
     await waitFor(() => expect(store.getState().tagsUI.selectedTagIDs).toEqual(expect.arrayContaining([1])));
+    editTagButton = getSideMenuItem(container, "Edit Tag");   // get the element again to properly click it
     fireEvent.click(editTagButton);
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/1"));
 });

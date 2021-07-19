@@ -257,6 +257,15 @@ div.menu.composite-subobject-card-menu {
     padding-right: 0;
 }
 
+.ui.secondary.menu div.item.composite-subobject-secondary-menu-item.link {
+    padding-top: 0;     /* Remove excess padding when compared to non-link items */
+    padding-bottom: 0;
+}
+
+.ui.secondary.menu div.item.composite-subobject-secondary-menu-item a button {
+    margin-right: 0;
+}
+
 
 /* Deleted subobject message */
 div.ui.message.deleted-subobject-message {

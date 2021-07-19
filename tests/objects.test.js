@@ -295,6 +295,7 @@ describe("Side menu", () => {
         // Deselect a object, click edit object button and check if it redirected to /objects/:id
         fireEvent.click(secondObjectCheckbox);
         await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs).toEqual(expect.arrayContaining([1])));
+        editObjectButton = getSideMenuItem(container, "Edit Object");   // get the element again to properly click it
         fireEvent.click(editObjectButton);
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/1"));
     });

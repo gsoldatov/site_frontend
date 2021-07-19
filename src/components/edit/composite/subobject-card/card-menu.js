@@ -1,13 +1,14 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 import { Button, Menu } from "semantic-ui-react";
 
-import { setRedirectOnRender } from "../../../../actions/common";
+import { clearUnsavedCurrentEditedObject } from "../../../../actions/object";
 import { enumDeleteModes } from "../../../../store/state-templates/composite-subobjects";
 
-
 const _tabIndexes = { "general": 0, "data": 1 };
+
 
 /**
  * Subobject card top menu.
@@ -20,9 +21,10 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
     const onTabChange = (e, data) => { updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, selected_tab: _tabIndexes[data.name] }}); };
 
     // Menu button callbacks
-    const editObjectPageCallback = useMemo(() => () => {
-        dispatch(setRedirectOnRender(`/objects/${subobjectID}`, { deleteCurrentEditedObject: true }));
-    }, [objectID, subobjectID]);
+    const editObjectPageCallback = useMemo(() => () => { dispatch(clearUnsavedCurrentEditedObject()); });
+    // const editObjectPageCallback = useMemo(() => () => {
+    //     dispatch(setRedirectOnRender(`/objects/${subobjectID}`, { deleteCurrentEditedObject: true }));
+    // }, [objectID, subobjectID]);
     const resetSubbjectCallback = useMemo(() => () => { setIsResetDialogDisplayed(true) }, [objectID, subobjectID]);
     const deleteSubobjectCallback = useMemo(() => () => { 
         updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, deleteMode: enumDeleteModes.subobjectOnly }}); 
@@ -34,20 +36,24 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
         updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, deleteMode: enumDeleteModes.none }}); 
     }, [objectID, subobjectID]);
 
-    const secondaryMenuButtonProps = [
-        { 
+    const secondaryMenuItemProps = useMemo(() => [
+        {
+            type: "link",
             icon: "edit outline", 
             title: "Open edit page of this object", 
+            linkURL: `/objects/${subobjectID}`,
             onClick: editObjectPageCallback,
             isVisibleSelector: state => subobjectID > 0
         },
         { 
+            type: "button",
             icon: "undo", 
             title: "Reset object", 
             isDisabledSelector: state => isResetDialogDisplayed,
             onClick: resetSubbjectCallback
         },
         { 
+            type: "button",
             icon: "trash alternate", 
             title: "Delete subobject", 
             isVisibleSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none,
@@ -55,6 +61,7 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
             onClick: deleteSubobjectCallback
         },
         { 
+            type: "button",
             icon: "trash alternate", 
             title: "Fully delete subobject", 
             color: "red",
@@ -63,6 +70,7 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
             onClick: fullyDeleteSubobjectCallback
         },
         { 
+            type: "button",
             icon: "undo", 
             title: "Restore deleted subobject", 
             color: "green",
@@ -70,13 +78,14 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
             isDisabledSelector: state => isResetDialogDisplayed,
             onClick: restoreDeletedSubobjectCallback
         }
-    ];
+    ], [subobjectID]);
 
-    const secondaryMenuButtons = secondaryMenuButtonProps.map((btn, k) => {
-        const isVisible = useSelector(btn.isVisibleSelector || (state => true));
-        const isDisabled = useSelector(btn.isDisabledSelector || (state => false));
+    const secondaryMenuItems = secondaryMenuItemProps.map((item, k) => {
+        const isVisible = useSelector(item.isVisibleSelector || (state => true));
+        const isDisabled = useSelector(item.isDisabledSelector || (state => false));
         return (
-            <MenuButton key={k} isVisible={isVisible} isDisabled={isDisabled} icon={btn.icon} color={btn.color} title={btn.title} onClick={btn.onClick} />
+            <MenuItem key={k} type={item.type} isVisible={isVisible} isDisabled={isDisabled} icon={item.icon} color={item.color} title={item.title} 
+                onClick={item.onClick} linkURL={item.linkURL} />
         );
     });
 
@@ -90,19 +99,40 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
                 Data
             </Menu.Item>
 
-            {secondaryMenuButtons}
+            {secondaryMenuItems}
         </Menu>
     );
 };
 
 
-class MenuButton extends React.PureComponent {
+class MenuItem extends React.PureComponent {
     render() {
-        const { isVisible, isDisabled, icon, color, title, onClick } = this.props;
+        const { type, isVisible, isDisabled, icon, color, title, onClick, linkURL } = this.props;
+
+        
+        let item;
+        if (type === "button") {
+            // Button
+            item = <Button basic size="mini" icon={icon} color={color} title={title} disabled={isDisabled} onClick={onClick} />;
+        } else if (type === "link") {
+            // Link
+            item = <Button basic size="mini" icon={icon} color={color} title={title} disabled={isDisabled} />;
+
+            if (!isDisabled) {
+                item = (
+                    <Link to={linkURL} onClick={onClick}>
+                        {item}
+                    </Link>
+                );
+            }
+        }
+
+        let menuItemClassName = "composite-subobject-secondary-menu-item";
+        if (type === "link") menuItemClassName += " link";
 
         return isVisible && (
-            <Menu.Item className="composite-subobject-secondary-menu-item">
-               <Button basic size="mini" icon={icon} color={color} title={title} disabled={isDisabled} onClick={onClick} />
+            <Menu.Item className={menuItemClassName}>
+               {item}
             </Menu.Item>
         );
     }
