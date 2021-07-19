@@ -1,6 +1,5 @@
 import { SET_REDIRECT_ON_RENDER } from "../actions/common";
-import { objectHasNoChanges } from "../store/state-util/objects";
-import { getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects } from "./helpers/object";
+import { getStateAfterObjectPageLeave } from "./helpers/object";
 
 
 function setRedirectOnRender(state, action) {

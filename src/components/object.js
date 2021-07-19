@@ -15,7 +15,7 @@ import { InlineInput } from "./inline/inline-input";
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
 import { setRedirectOnRender } from "../actions/common";
 import { resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
-         setShowResetDialogObject, setShowDeleteDialogObject } from "../actions/object";
+         setShowResetDialogObject, setShowDeleteDialogObject, clearUnsavedCurrentEditedObject } from "../actions/object";
 import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
 
 
@@ -67,12 +67,13 @@ export const AddObject = () => {
         },
 
         {
-            type: "item",
+            type: "linkItem",
             text: "Cancel",
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingObject(state),
-            onClick: () => dispatch(setRedirectOnRender("/objects"))
+            linkURL: "/objects",
+            onClick: () => dispatch(clearUnsavedCurrentEditedObject())
         }
     ]);
 
@@ -88,12 +89,13 @@ export const EditObject = () => {
 
     const editObjectSideMenuItems = useMemo(() => [
         {
-            type: "item",
+            type: "linkItem",
             text: "Add a New Object",
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingObject(state),
-            onClick: () => dispatch(setRedirectOnRender("/objects/add"))
+            linkURL: "/objects/add",
+            onClick: () => dispatch(clearUnsavedCurrentEditedObject())
         },
 
         {
@@ -167,12 +169,13 @@ export const EditObject = () => {
         },
 
         {
-            type: "item",
+            type: "linkItem",
             text: "Cancel",
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingObject(state),
-            onClick: () => dispatch(setRedirectOnRender("/objects"))
+            linkURL: "/objects",
+            onClick: () => dispatch(clearUnsavedCurrentEditedObject())
         }
     ], [id]);
 

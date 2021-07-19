@@ -12,8 +12,9 @@
 }
 
 
-/* Item */
-div.side-menu-item-container button.ui.button.side-menu-item {
+/* Item & link item */
+div.side-menu-item-container button.ui.button.side-menu-item,
+div.side-menu-item-container div.side-menu-item {
     background-color: white;
     color: black;
     font-weight: normal;
@@ -27,8 +28,25 @@ div.side-menu-item-container button.ui.button.side-menu-item {
     border-radius: 0;
 }
 
-div.side-menu-item-container button.ui.button.side-menu-item:not(.disabled):hover {
+div.side-menu-item-container button.ui.button.side-menu-item:not(.disabled):hover,
+div.side-menu-item-container div.side-menu-item:not(.disabled):hover {
     background-color: rgb(230, 230, 230);
+}
+
+/* Link item */
+div.side-menu-item-container div.side-menu-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.side-menu-item-container div.side-menu-item.disabled {
+    opacity: 0.45;  /* SUIR opacity for disabled buttons */
+}
+
+div.side-menu-item-container div.side-menu-item.disabled:hover {
+    cursor: default;
+    pointer-events: none; /* Disable title display on hover */
 }
 
 
@@ -84,35 +102,3 @@ div.ui.container.side-menu-dialog-buttons .side-menu-dialog-button {
     max-width: 90px;
     margin-bottom: var(--side-menu-dialog-button-bottom-margin);
 }
-
-
-/*
-div.item.side-menu-item, div.disabled.item.side-menu-item {
-    text-align: center;
-}
-
-div.item.side-menu-item:not([rows]):hover {     /* not pseudoclass is required to get the higher priority over Semantic UI styles * /
-    background-color: #cacbcd;
-    cursor: pointer;
-}
-
-
-/* Dialog * /
-.ui.header.side-menu-dialog-header {
-    margin-bottom: 0.75em;    
-}
-
-div.ui.container.side-menu-dialog-buttons {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-div.ui.checkbox.side-menu-dialog-checkbox-container {
-    margin-bottom: 0.75em;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-*/

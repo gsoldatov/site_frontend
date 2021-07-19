@@ -31,13 +31,13 @@ export default () => {
     // Side menu items
     const sideMenuItems = useMemo(() => [
         {
-            type: "item",
+            type: "linkItem",
             text: "Add a New Object",
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state),
             isVisibleSelector: state => !isObjectsTagsEditActive(state),
-            onClick: () => dispatch(setRedirectOnRender("/objects/add"))
+            linkURL: "/objects/add"
         },
         {
             type: "item",

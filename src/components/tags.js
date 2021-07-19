@@ -25,12 +25,12 @@ export default () => {
     // Side menu items
     const sideMenuItems = useMemo(() => [
         {
-            type: "item",
+            type: "linkItem",
             text: "Add a New Tag",
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchinOrShowingDialogTags(state),
-            onClick: () => dispatch(setRedirectOnRender("/tags/add"))
+            linkURL: "/tags/add"
         },
         {
             type: "item",

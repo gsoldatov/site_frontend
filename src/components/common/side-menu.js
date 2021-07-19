@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button, Checkbox, Container, Header, Icon, Menu } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
-
 
 import StyleSideMenu from "../../styles/side-menu.css";
 
@@ -50,6 +50,8 @@ const SideMenuElement = props => {
     switch(props.type) {
         case "item":
             return <SideMenuItem {...props} />;
+        case "linkItem":
+            return <SideMenuLinkItem {...props} />;
         case "dialog":
             return <SideMenuDialog {...props} />;
         default:
@@ -77,6 +79,42 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
                 {_icon}
                 {_text}
             </Button>
+        </Menu.Item>
+    );
+};
+
+
+/**
+ * Side menu item wrapped in a link and without a button.
+ */
+ const SideMenuLinkItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, linkURL, onClick, isFullscreenStyle }) => {
+    const isActive = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : true;
+
+    // Icon
+    const _icon = icon && <Icon name={icon} color={iconColor} flipped={iconFlipped} />;
+
+    // Text
+    const _text = isFullscreenStyle && text;
+
+    let divClassName = "side-menu-item";
+    if (!isActive) divClassName += " disabled";
+
+    let result = (
+        <div className={divClassName} title={text}>
+            {_icon}
+            {_text}    
+        </div>
+    );
+
+    if (isActive) result = (
+        <Link to={linkURL} onClick={onClick}>
+            {result}
+        </Link>
+    );
+    
+    return (
+        <Menu.Item className="side-menu-item-container" disabled={!isActive}>
+            {result}
         </Menu.Item>
     );
 };

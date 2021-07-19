@@ -32,12 +32,12 @@ export const AddTag = () => {
             onClick: () => dispatch(addTagOnSaveFetch())
         },
         {
-            type: "item",
+            type: "linkItem",
             text: "Cancel",
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingTag(state),
-            onClick: () => dispatch(setRedirectOnRender("/tags"))
+            linkURL: "/tags"
         }
     ]);
 
@@ -52,12 +52,12 @@ export const EditTag = () => {
     // Side menu items
     const editTagSideMenuItems = useMemo(() => [
         {
-            type: "item",
+            type: "linkItem",
             text: "Add a New Tag",
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingTag(state),
-            onClick: () => dispatch(setRedirectOnRender("/tags/add"))
+            linkURL: "/tags/add"
         },
         {
             type: "item",
@@ -96,12 +96,12 @@ export const EditTag = () => {
             ]
         },
         {
-            type: "item",
+            type: "linkItem",
             text: "Cancel",
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingTag(state),
-            onClick: () => dispatch(setRedirectOnRender("/tags"))
+            linkURL: "/tags"
         }
     ], [id]);
 
