@@ -43,7 +43,7 @@ export const addObjectOnSaveFetch = () => {
 
         if (!responseHasError(result)) {
             dispatch(setObjectOnSaveFetchState(false, ""));
-            dispatch(setRedirectOnRender(`/objects/${result.object_id}`, true));
+            dispatch(setRedirectOnRender(`/objects/${result.object_id}`, { deleteNewObject: true }));
         } else {
             dispatch(setObjectOnSaveFetchState(false, result.error));
         }

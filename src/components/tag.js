@@ -7,7 +7,6 @@ import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } fr
 import Layout from "./common/layout";
 
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../store/state-util/ui-tag";
-import { setRedirectOnRender } from "../actions/common";
 import { loadAddTagPage, setCurrentTag, setShowDeleteDialogTag } from "../actions/tag";
 import { addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../fetches/ui-tag";
 

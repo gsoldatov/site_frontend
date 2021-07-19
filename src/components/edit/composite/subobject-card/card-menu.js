@@ -21,7 +21,7 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
 
     // Menu button callbacks
     const editObjectPageCallback = useMemo(() => () => {
-        dispatch(setRedirectOnRender(`/objects/${subobjectID}`))
+        dispatch(setRedirectOnRender(`/objects/${subobjectID}`, { deleteCurrentEditedObject: true }));
     }, [objectID, subobjectID]);
     const resetSubbjectCallback = useMemo(() => () => { setIsResetDialogDisplayed(true) }, [objectID, subobjectID]);
     const deleteSubobjectCallback = useMemo(() => () => { 

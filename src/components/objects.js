@@ -12,7 +12,7 @@ import { InlineItemList } from "./inline/inline-item-list";
 import { InlineItem } from "./inline/inline-item";
 import { InlineInput } from "./inline/inline-input";
 
-import { REDIRECT_ON_RENDER_PATH_CREATORS, setRedirectOnRender } from "../actions/common";
+import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../actions/common";
 import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo,
         setShowDeleteDialogObjects, toggleObjectSelection, setCurrentObjectsTags, setObjectsTagsInput, setTagsFilterInput  } from "../actions/objects";
 import { objectsOnLoadFetch, pageFetch, setObjectsPaginationInfoAndFetchPage, onDeleteFetch, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch, 
