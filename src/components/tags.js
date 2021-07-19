@@ -33,11 +33,11 @@ export default () => {
             linkURL: "/tags/add"
         },
         {
-            type: "item",
+            type: "linkItem",
             text: "Edit Tag",
             icon: "edit outline",
             isActiveSelector: state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state),
-            onClick: () => dispatch(setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.tagsEdit))
+            linkURLSelector: REDIRECT_ON_RENDER_PATH_CREATORS.tagsEdit
         },
         {
             type: "item",

@@ -87,7 +87,8 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
 /**
  * Side menu item wrapped in a link and without a button.
  */
- const SideMenuLinkItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, linkURL, onClick, isFullscreenStyle }) => {
+ const SideMenuLinkItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, linkURL, linkURLSelector, onClick, isFullscreenStyle }) => {
+    const _linkURL = typeof(linkURLSelector) === "function" ? useSelector(linkURLSelector) : linkURL;
     const isActive = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : true;
 
     // Icon
@@ -107,7 +108,7 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
     );
 
     if (isActive) result = (
-        <Link to={linkURL} onClick={onClick}>
+        <Link to={_linkURL} onClick={onClick}>
             {result}
         </Link>
     );

@@ -40,12 +40,12 @@ export default () => {
             linkURL: "/objects/add"
         },
         {
-            type: "item",
+            type: "linkItem",
             text: "Edit Object",
             icon: "edit outline",
             isActiveSelector: state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchingOrShowingDeleteDialogObjects(state),
             isVisibleSelector: state => !isObjectsTagsEditActive(state),
-            onClick: () => dispatch(setRedirectOnRender(REDIRECT_ON_RENDER_PATH_CREATORS.objectsEdit))
+            linkURLSelector: REDIRECT_ON_RENDER_PATH_CREATORS.objectsEdit
         },
         {
             type: "item",
