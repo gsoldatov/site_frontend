@@ -13,8 +13,7 @@
 
 
 /* Item & link item */
-div.side-menu-item-container button.ui.button.side-menu-item,
-div.side-menu-item-container div.side-menu-item {
+div.side-menu-item-container button.ui.button.side-menu-item {
     background-color: white;
     color: black;
     font-weight: normal;
@@ -28,25 +27,8 @@ div.side-menu-item-container div.side-menu-item {
     border-radius: 0;
 }
 
-div.side-menu-item-container button.ui.button.side-menu-item:not(.disabled):hover,
-div.side-menu-item-container div.side-menu-item:not(.disabled):hover {
+div.side-menu-item-container button.ui.button.side-menu-item:not(.disabled):hover {
     background-color: rgb(230, 230, 230);
-}
-
-/* Link item */
-div.side-menu-item-container div.side-menu-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-div.side-menu-item-container div.side-menu-item.disabled {
-    opacity: 0.45;  /* SUIR opacity for disabled buttons */
-}
-
-div.side-menu-item-container div.side-menu-item.disabled:hover {
-    cursor: default;
-    pointer-events: none; /* Disable title display on hover */
 }
 
 

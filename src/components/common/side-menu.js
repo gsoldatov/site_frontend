@@ -97,14 +97,11 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
     // Text
     const _text = isFullscreenStyle && text;
 
-    let divClassName = "side-menu-item";
-    if (!isActive) divClassName += " disabled";
-
     let result = (
-        <div className={divClassName} title={text}>
+        <Button icon={!isFullscreenStyle} className="side-menu-item" disabled={!isActive} title={text}>
             {_icon}
-            {_text}    
-        </div>
+            {_text}
+        </Button>
     );
 
     if (isActive) result = (
