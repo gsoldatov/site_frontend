@@ -1,7 +1,7 @@
 import { getStateWithAddedObjects, getStateWithAddedObjectsData, getStateWithDeletedObjects } from "./data-objects";
 import { getStateWithDeletedEditedNewSubobjects, getStateWithResetEditedObjects } from "./object";
 
-import { enumDeleteModes, subobjectDefaults } from "../../store/state-templates/composite-subobjects";
+import { enumDeleteModes, getSubobjectDefaults } from "../../store/state-templates/composite-subobjects";
 import { getNewSubobjectID } from "../../store/state-util/composite";
 import { objectHasNoChanges } from "../../store/state-util/objects";
 import { deepCopy } from "../../util/copy";
@@ -26,7 +26,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         };
 
         const { row, column } = update;
-        newCompositeData.subobjects[newID] = { ...deepCopy(subobjectDefaults), row, column };
+        newCompositeData.subobjects[newID] = { ...getSubobjectDefaults(), row, column };
 
         newState.editedObjects[objectID] = {
             ...newState.editedObjects[objectID],
@@ -47,7 +47,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
             newState = getStateWithResetEditedObjects(newState, [subobjectID]);
         }
         const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };
-        newSubobjects[subobjectID] = { ...deepCopy(subobjectDefaults), row, column };
+        newSubobjects[subobjectID] = { ...getSubobjectDefaults(), row, column };
         
         return {
             ...newState,
@@ -71,7 +71,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         if (oldSubobjectState === undefined) return state;
         
         const newSubobjectState = { ...oldSubobjectState };
-        for (let attr of Object.keys(subobjectDefaults))
+        for (let attr of Object.keys(getSubobjectDefaults()))
             if (update[attr] !== undefined) newSubobjectState[attr] = update[attr];
         
         return {

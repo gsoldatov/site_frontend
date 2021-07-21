@@ -1,3 +1,6 @@
+import { deepCopy } from "../../util/copy";
+
+
 /**
  * Subobject's `deleteMode` values.
  */
@@ -10,7 +13,7 @@ export const enumDeleteModes = {
 /**
  * Composite object's subobject default state.
  */
-export const subobjectDefaults = {
+const subobjectDefaults = {
     row: -1, 
     column: -1, 
     selected_tab: 0, 
@@ -18,3 +21,9 @@ export const subobjectDefaults = {
     deleteMode: enumDeleteModes.none, 
     fetchError: ""
 };
+
+
+/**
+ * Returns a deep copy of a composite subobject's default state.
+ */
+export const getSubobjectDefaults = () => deepCopy(subobjectDefaults);

@@ -1,7 +1,7 @@
 import { getSortedItemIDs, getVisibleSortedItemIDs, getNewItemID, getPreviousItemIndent, 
         getParentIDs, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
 import { deepCopy } from "../../util/copy";
-import { itemDefaults } from "../../store/state-templates/to-do-list-item";
+import { getItemDefaults } from "../../store/state-templates/to-do-list-item";
 
 
 /*
@@ -23,6 +23,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
     // Expands all parents of the new item.
     if (command === "add") {
         const newItem = {};
+        const itemDefaults = getItemDefaults();
         Object.keys(itemDefaults).forEach(k => {
             newItem[k] = update[k] !== undefined ? update[k] : itemDefaults[k];
         });
@@ -52,7 +53,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
     // Updates the properties of the item with provided `id` to values passed in the props.
     if (command === "update") {
         const newItem = {};
-        Object.keys(itemDefaults).forEach(k => {
+        Object.keys(getItemDefaults()).forEach(k => {
             newItem[k] = update[k] !== undefined ? update[k] : toDoList.items[update.id][k];
         });
         const newItems = deepCopy(toDoList.items);
@@ -165,8 +166,8 @@ export const getUpdatedToDoList = (toDoList, update) => {
         const newItems = deepCopy(toDoList.items);
         delete newItems[update.id];
         const { item_state, commentary, indent } = toDoList.items[update.id];
-        newItems[newCurrID] = {...itemDefaults, item_text: update.before, item_state, commentary, indent};
-        newItems[newCurrID + 1] = {...itemDefaults, item_text: update.after, item_state, commentary, indent};
+        newItems[newCurrID] = {...getItemDefaults(), item_text: update.before, item_state, commentary, indent};
+        newItems[newCurrID + 1] = {...getItemDefaults(), item_text: update.after, item_state, commentary, indent};
 
         return {
             ...toDoList,
@@ -206,7 +207,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
 
         // Replace merged items with a new one
         const newItem = {
-            ...itemDefaults,
+            ...getItemDefaults(),
             item_text: toDoList.items[prevID].item_text + toDoList.items[id].item_text,
             item_state: toDoList.items[prevID].item_state,
             commentary: toDoList.items[prevID].commentary,
@@ -268,7 +269,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
 
         // Replace merged items with a new one
         const newItem = {
-            ...itemDefaults,
+            ...getItemDefaults(),
             item_text: toDoList.items[id].item_text + toDoList.items[nextID].item_text,
             item_state: toDoList.items[id].item_state,
             commentary: toDoList.items[id].commentary,

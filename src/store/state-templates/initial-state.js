@@ -1,3 +1,6 @@
+import { deepCopy } from "../../util/copy";
+
+
 /**
  * Initial app state.
  */
@@ -132,4 +135,8 @@ const initialState = {
     }
 };
 
-export default initialState;
+
+/**
+ * Returns a deepcopy of application's initial state.
+ */
+export default () => deepCopy(initialState);

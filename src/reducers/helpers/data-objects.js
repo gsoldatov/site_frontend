@@ -1,4 +1,4 @@
-import { subobjectDefaults } from "../../store/state-templates/composite-subobjects";
+import { getSubobjectDefaults } from "../../store/state-templates/composite-subobjects";
 
 
 const _objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description"];
@@ -67,7 +67,7 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
                 let subobjects = {};
                 od["object_data"].subobjects.forEach(so => {
                     const { object_id, row, column, selected_tab, is_expanded } = so;
-                    subobjects[object_id] = { ...subobjectDefaults, row, column, selected_tab, is_expanded };
+                    subobjects[object_id] = { ...getSubobjectDefaults(), row, column, selected_tab, is_expanded };
                 })
                 newComposite[od["object_id"]] = { subobjects };
             default:

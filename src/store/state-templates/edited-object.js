@@ -1,7 +1,7 @@
 /**
  * Default state of an edited object.
  */
-export const defaultEditedObjectState = {
+export const defaultEditedObjectState = {       // `getDefaultEditedObjectState` function from reducers/helpers/object should be used to get default state
     // attributes
     object_id: -1,
     object_type: "link",
