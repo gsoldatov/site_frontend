@@ -1,24 +1,22 @@
 import { createStore, applyMiddleware } from "redux";
 import thunkMiddleware from "redux-thunk";
 
-import { LocalStorageProxy } from "./local-storage";
+import { LocalStorageManager } from "./local-storage-manager";
 import getRootReducer from "../reducers/root";
 
 
-const createStoreFunc = (params = {}) => {
-    const useLocalStorage = params.useLocalStorage || false,
-          enableDebugLogging = params.enableDebugLogging || false;
-    const proxy = new LocalStorageProxy(useLocalStorage, enableDebugLogging);
+const createStoreFunc = ({ useLocalStorage = false, enableDebugLogging = false, saveTimeout = 1000 } = {}) => {
+    const manager = new LocalStorageManager({ useLocalStorage, enableDebugLogging, saveTimeout });
     const store = createStore(
         getRootReducer(enableDebugLogging),
-        proxy.loadState(),
+        manager.loadState(),
         applyMiddleware(
             thunkMiddleware
         )
     );
 
     if (useLocalStorage) {
-        store.subscribe(() => proxy.saveState(store));
+        store.subscribe(() => manager.saveState(store));
     }
 
     return store;
