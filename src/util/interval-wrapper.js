@@ -30,15 +30,16 @@ class IntervalRunner {
                 clearTimeout(this.timerID);
             }
             this.timerID = setTimeout(this.run, this.interval, ...params);
+            return this.abort;
         } else {
             if (timeSinceLastExec >= this.interval) {
                 this.run(...params);
+                return null;
             } else if (!this.timerID) {
                 this.timerID = setTimeout(this.run, this.interval - timeSinceLastExec, ...params);
+                return this.abort;
             }            
         }
-
-        return this.abort;
     }
 }
 
