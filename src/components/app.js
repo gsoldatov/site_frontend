@@ -11,26 +11,48 @@ import createStore from "../store/create-store";
 import { AddTag, EditTag } from "./tag";
 import Tags from "./tags";
 import { AddObject, EditObject } from "./object";
+import { EditedObjects } from "./edited-objects";
 import Objects from "./objects";
 import { NotFound } from "./not-found";
 
 
 export const App = () => {
+    EditedObjects
+
     return (
         <Switch>
+            {/* Tags */}
             <Route exact path="/tags">
                 <Tags />
             </Route>
-            <Route exact path="/tags/:id" render={props => props.match.params.id === "add" ? <AddTag /> : <EditTag /> }/>
+            
+            <Route exact path="/tags/add">
+                <AddTag />
+            </Route>
+            <Route exact path="/tags/:id">
+                <EditTag />
+            </Route>
+
+            {/* Objects */}
             <Route exact path={["/objects", "/"]}>
                 <Objects />
             </Route>
-            <Route exact path="/objects/:id" render={props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> }/>
+            
+            <Route exact path="/objects/edited">
+                <EditedObjects />
+            </Route>
+            <Route exact path="/objects/add">
+                <AddObject />
+            </Route>
+            <Route exact path="/objects/:id">
+                <EditObject />
+            </Route>
+
             <Route>
                 <NotFound />
             </Route>
         </Switch>
-    )
+    );
 };
 
 
