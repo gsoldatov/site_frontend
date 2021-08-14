@@ -19,6 +19,7 @@ import { objectsOnLoadFetch, pageFetch, setObjectsPaginationInfoAndFetchPage, on
         setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../fetches/ui-objects";
 import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive } from "../store/state-util/ui-objects";
 import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector } from "../store/state-util/ui-objects";
+import { enumObjectTypes } from "../util/enum-object-types";
 
 
 /**
@@ -229,12 +230,7 @@ const fieldMenuItems = [
                 placeholder: "Filter by object type",
                 isDisabledSelector: state => isFetchingObjects(state),
                 defaultValueSelector: state => state.objectsUI.paginationInfo.objectTypes,
-                options: [
-                    { key: 1, text: "Links", value: "link" },
-                    { key: 2, text: "Markdown", value: "markdown" },
-                    { key: 3, text: "To-Do Lists", value: "to_do_list" },
-                    { key: 4, text: "Composite", value: "composite" }
-                ],
+                options: Object.values(enumObjectTypes).map((t, k) => ({ key: k, text: t.multipleName, value: t.type })),
                 getOnChangeAction: (e, data) => setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })
             },
 

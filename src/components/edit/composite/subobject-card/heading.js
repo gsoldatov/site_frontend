@@ -6,7 +6,7 @@ import { createSelector } from "reselect";
 import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified, getObjectDataFromStore } from "../../../../store/state-util/objects";
 import { subobjectStateIsModified, nonCompositeSubobjectIsValid, getNonCompositeSubobjectValidationError } from "../../../../store/state-util/composite";
 import { enumDeleteModes } from "../../../../store/state-templates/composite-subobjects";
-
+import { enumObjectTypes } from "../../../../util/enum-object-types";
 
 /**
  * Subobject card heading line with object type and name, object name and indicators.
@@ -80,29 +80,14 @@ const HeadingLeft = ({ objectID, subobjectID, updateCallback, isHoveredOver, onE
     return (
         <>
             {expandButton}
-            <div className="composite-subobject-card-heading-object-type-icon" title={objectTypeIconTitleMapping[objectType]}>
-                <Icon name={objectTypeIconMapping[objectType]} />
+            <div className="composite-subobject-card-heading-object-type-icon" title={enumObjectTypes[objectType].name}>
+                <Icon name={enumObjectTypes[objectType].icon} />
             </div>
             <div className={headingTextClassName} title={headingText}>
                 {headingText}
             </div>
         </>
     );
-};
-
-
-const objectTypeIconMapping = {
-    link: "linkify",
-    markdown: "arrow down",
-    to_do_list: "check square outline",
-    composite: "copy outline"
-};
-
-const objectTypeIconTitleMapping = {
-    link: "Link",
-    markdown: "Markdown",
-    to_do_list: "To-do list",
-    composite: "Composite object"
 };
 
 

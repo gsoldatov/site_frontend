@@ -231,7 +231,7 @@ describe("Load object from state", () => {
     
         // Check if object type is displayed, but can't be changed
         const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
-        getByText(selectedObjectType, "To-Do List");
+        getByText(selectedObjectType, "To-do list");
         fireEvent.click(switchContainer);
         expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
     
@@ -257,7 +257,7 @@ describe("Load object from state", () => {
 
         // Check if object type is displayed, but can't be changed
         const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
-        getByText(selectedObjectType, "Composite");
+        getByText(selectedObjectType, "Composite object");
         fireEvent.click(switchContainer);
         expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
 
@@ -411,7 +411,7 @@ describe("Load object from backend", () => {
     
         // Check if object type is displayed, but can't be changed
         const { switchContainer, selectedObjectType, dropdownOptionsContainer } = getObjectTypeSwitchElements(container);
-        getByText(selectedObjectType, "To-Do List");
+        getByText(selectedObjectType, "To-do list");
         fireEvent.click(switchContainer);
         expect(dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
     

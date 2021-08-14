@@ -30,8 +30,8 @@ export const getObjectTypeSwitchElements = container => {
     const dropdownOptionsContainer = switchContainer.querySelector("div.menu.transition");
     const linkOption = getByText(dropdownOptionsContainer, "Link").parentNode;
     const markdownOption = getByText(dropdownOptionsContainer, "Markdown").parentNode;
-    const toDoListOption = getByText(dropdownOptionsContainer, "To-Do List").parentNode;
-    const compositeOption = (queryByText(dropdownOptionsContainer, "Composite") || {}).parentNode;
+    const toDoListOption = getByText(dropdownOptionsContainer, "To-do list").parentNode;
+    const compositeOption = (queryByText(dropdownOptionsContainer, "Composite object") || {}).parentNode;
     return { switchContainer, selectedObjectType, dropdownOptionsContainer, linkOption, markdownOption, toDoListOption, compositeOption };
 };
 

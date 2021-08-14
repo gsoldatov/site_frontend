@@ -609,7 +609,7 @@ describe("Field menu", () => {
         
         // Check if correct objects are displayed when markdown only is selected
         await deselectObjectType("Markdown");
-        await selectObjectType("To-Do Lists");
+        await selectObjectType("To-do lists");
         expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeFalsy();
         expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("to_do_list")).toBeTruthy();
         checkObjectsDisplay(store, container);
@@ -625,7 +625,7 @@ describe("Field menu", () => {
         // Check if correct objects are displayed when all object types are deselected
         await deselectObjectType("Links");
         await deselectObjectType("Markdown");
-        await deselectObjectType("To-Do Lists");
+        await deselectObjectType("To-do lists");
         expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeFalsy();
         expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeFalsy();
         expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("to_do_list")).toBeFalsy();

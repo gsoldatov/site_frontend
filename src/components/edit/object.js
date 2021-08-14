@@ -10,6 +10,7 @@ import { SubobjectsContainer } from "./composite/subobjects";
 
 import { setEditedObject } from "../../actions/object";
 import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-object";
+import { enumObjectTypes } from "../../util/enum-object-types";
 
 import StyleObject from "../../styles/object.css";
 
@@ -17,12 +18,7 @@ import StyleObject from "../../styles/object.css";
 /*
     Add/edit object sub-components
 */
-const objectTypeDropdownOptions = [
-    { key: 1, text: "Link", value: "link", icon: "linkify" },
-    { key: 2, text: "Markdown", value: "markdown", icon: "arrow down" },
-    { key: 3, text: "To-Do List", value: "to_do_list", icon: "check square outline" },
-    { key: 4, text: "Composite", value: "composite", icon: "copy outline" }
-];
+const objectTypeDropdownOptions = Object.values(enumObjectTypes).map((t, k) => ({ key: k, text: t.name, value: t.type, icon: t.icon }));
 const newSubobjectDropdownOptions = objectTypeDropdownOptions.filter(option => option.value !== "composite");
 
 

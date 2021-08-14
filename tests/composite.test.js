@@ -464,7 +464,7 @@ describe("Subobject card tabs", () => {
         // Add an existing to-do list object
         await addAnExistingSubobject(container, 0, "to_do_list subobject", store, { waitForObjectLoad: true });
         card = getSubobjectCards(container, { expectedNumbersOfCards: [3] })[0][2];
-        getByText(getSubobjectCardAttributeElements(card).selectedObjectType, "To-Do List");
+        getByText(getSubobjectCardAttributeElements(card).selectedObjectType, "To-do list");
 
         // Check if to-do list data is displayed
         clickSubobjectCardDataTabButton(card);
@@ -475,7 +475,7 @@ describe("Subobject card tabs", () => {
         // Add an existing composite object
         await addAnExistingSubobject(container, 0, "composite subobject", store, { waitForObjectLoad: true });
         card = getSubobjectCards(container, { expectedNumbersOfCards: [4] })[0][3];
-        getByText(getSubobjectCardAttributeElements(card).selectedObjectType, "Composite");
+        getByText(getSubobjectCardAttributeElements(card).selectedObjectType, "Composite object");
 
         // Check if data tab placeholder is displayed
         clickSubobjectCardDataTabButton(card);
