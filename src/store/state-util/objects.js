@@ -2,6 +2,7 @@ import { deepCopy } from "../../util/copy";
 import { deepEqual } from "../../util/equality-checks";
 import { enumDeleteModes } from "../state-templates/composite-subobjects";
 import { getSubobjectDisplayOrder } from "./composite";
+import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
 /*
     Functions for checking/getting objects state.
 */
@@ -252,14 +253,17 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
 
 
 /**
- * Returns true if state of the object with provided `objectID` in state.editedObjects has no changes compared to its last saved state.
+ * Returns true if state of the object with provided `objectID` in state.editedObjects has no changes compared to its last saved state (or default edited object state, if object is new).
  * 
  * If object is not present in any of the storages (state.editedObjects, state.objects, state.objectsTags, data storages), returns `defaultReturnValue` (defaults to true).
  */
  export const objectHasNoChanges = (state, objectID, defaultReturnValue) => {
-    defaultReturnValue = defaultReturnValue !== undefined ? defaultReturnValue : true;
+    // New edited object
+    if (objectID === 0) return deepEqual(state.editedObjects[objectID], getDefaultEditedObjectState(0));
 
+    // Existing edited object
     // Return default value if objectID is missing is editedObjects or attribute / tag / data storages
+    defaultReturnValue = defaultReturnValue !== undefined ? defaultReturnValue : true;
     if (!state.editedObjects.hasOwnProperty(objectID) || !state.objects.hasOwnProperty(objectID) || !state.objectsTags.hasOwnProperty(objectID) || !objectDataIsInState(state, objectID)) 
         return defaultReturnValue;
     

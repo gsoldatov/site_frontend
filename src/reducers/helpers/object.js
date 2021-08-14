@@ -175,30 +175,24 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID) => {
 
 /**
  * Returns the state with unchanged editedObjects being removed from it.
- * 
- *  - If current edited object is new:
- *      - if `deleteNewObject` is true, removes new object and, its new and unchanged existing subobjects, if it's composite;
- *      - if `deleteNewObject` is false and the object is composite, remove unchanged existing subobjects;
- *  - if current edited object is existing:
+ *  - If `deleteNewObject` is true, removes new object and, its new and unchanged existing subobjects, if it's composite;
+ *  - if `deleteNewObject` is false:
  *      - if current edited object is unchanged:
  *          - removes it;
  *          - removes all subobjects for composite objects;
  *      - if current edited object is changed:
  *          - removes all unchanged subobjects for composite objects.
  */
-export const getStateAfterObjectPageLeave = (state, deleteNewObject) => {
+ export const getStateAfterObjectPageLeave = (state, deleteNewObject) => {
     const currentObjectID = state.objectUI.currentObjectID;
     let newState = state;
-    // New object
-    if (currentObjectID === 0) {
-        if (deleteNewObject) newState = getStateWithRemovedEditedObjects(newState, [0]);
-        else newState = getStateWithRemovedUnchangedEditedSubobjects(newState, currentObjectID);
-    }
-    // Existing object
+
+    // Force delete of new object
+    if (deleteNewObject) newState = getStateWithRemovedEditedObjects(newState, [0]);
     else {
         if (objectHasNoChanges(state, currentObjectID, false)) newState = getStateWithRemovedEditedObjects(newState, [currentObjectID]);
         else newState = getStateWithRemovedUnchangedEditedSubobjects(newState, currentObjectID);
     }
 
     return newState;
-}
+};

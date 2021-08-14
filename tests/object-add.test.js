@@ -445,6 +445,28 @@ describe("Persist new object state", () => {
         await waitFor(() => expect(store.getState().editedObjects).not.toHaveProperty(secondSubobjectID));
         expect(store.getState().editedObjects).toHaveProperty(firstSubobjectID); 
     });
+
+
+    test("Unchanged new object removal from edited objects storage", async () => {
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
+            route: "/objects/add", store
+        });
+        expect(Object.keys(store.getState().editedObjects).includes("0")).toBeTruthy();
+
+        // Update object name
+        let objectNameInput = getByPlaceholderText(container, "Object name");
+        const objectNameValue = "new object";
+        fireEvent.change(objectNameInput, { target: { value: objectNameValue } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe(objectNameValue));
+
+        // Reset object
+        resetObject(container);
+
+        // Trigger a redirect and check if the object was removed from editedObjects storage due to not being changed
+        const cancelButton = getSideMenuItem(container, "Cancel");
+        fireEvent.click(cancelButton);
+        expect(Object.keys(store.getState().editedObjects).includes("0")).toBeFalsy();
+    });
 });
 
 
