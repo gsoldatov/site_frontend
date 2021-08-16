@@ -56,13 +56,19 @@ export const EditedObjects = () => {
         const { open, content } = confirmState;
         const confirm = <Confirm open={open} content={content}
             onConfirm={handleConfirm} onCancel={handleCancel} />;
+        
+        // Subobject parents
+        const parentObjects = {};
+        for (let editedObject of Object.values(editedObjects)) {
+            for (let subobjectID of Object.keys(editedObject.composite.subobjects)) {
+                parentObjects[subobjectID] = parentObjects[subobjectID] || [];
+                parentObjects[subobjectID].push(editedObject["object_id"]);
+            }
+        }
 
         // Table items
         const items = Object.keys(editedObjects).map(objectID => {
-            // Don't render new subobjects on top level
-            if (parseInt(objectID) < 0) return null;
-
-            return <EditedObjectItem key={objectID} objectID={objectID}
+            return <EditedObjectItem key={objectID} objectID={objectID} parentObjects={parentObjects[objectID]}
                 setConfirmState={setConfirmState} />;
         });
 
@@ -70,6 +76,16 @@ export const EditedObjects = () => {
             <>
                 {confirm}
                 <Table striped unstackable>
+                    <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell>Object Name</Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                        <Table.HeaderCell></Table.HeaderCell>
+                    </Table.Row>
+                    </Table.Header>
                     <Table.Body>
                         {items}
                     </Table.Body>
@@ -86,15 +102,17 @@ export const EditedObjects = () => {
 /**
  * A single item in edited objects table
  */
-const EditedObjectItem = memo(({ objectID, setConfirmState }) => {
+const EditedObjectItem = memo(({ objectID, setConfirmState, parentObjects = [] }) => {
     objectID = parseInt(objectID);
     
     const editedObject = useSelector(state => state.editedObjects[objectID]);
     
     // Is new icon
+    const isNewColor = objectID === 0 ? "green" : "black";
+    const isNewTitle = objectID === 0 ? "Object is new" : "New subobject of another object";
     const isNewIcon = objectID <= 0 ? (
-        <div className="edited-objects-item-is-new-icon-container" title="Object is new">
-            <Icon name="plus" color="green" />
+        <div className="edited-objects-item-is-new-icon-container" title={isNewTitle}>
+            <Icon name="plus" color={isNewColor} />
         </div>
     ) : null;
 
@@ -107,8 +125,11 @@ const EditedObjectItem = memo(({ objectID, setConfirmState }) => {
     );
 
     // Object name and page link
-    const objectURL = objectID > 0 ? `/objects/${objectID}`
-        : objectID == 0 ? "/objects/add" : null;
+    let objectURL = objectID > 0 ? `/objects/${objectID}`
+        : objectID == 0 ? "/objects/add" 
+        : parentObjects.length > 0 ? (
+            parentObjects[0] === 0 ? `/objects/add` : `/objects/${parentObjects[0]}`
+        ) : null;
     let objectName = <span>{editedObject.object_name || "<unnamed>"}</span>;
     if (objectURL) objectName = (
         <Link to={objectURL}>
@@ -116,8 +137,18 @@ const EditedObjectItem = memo(({ objectID, setConfirmState }) => {
         </Link>
     );
 
+    // Parents
+    const parents = parentObjects.map((parentID, i) => {
+        const URL = parentID === 0 ? "/objects/add" : `/objects/${parentID}`;
+        const text = `[${i + 1}]`;
+        return <Link key={parentID} className="edited-objects-object-parent-link" to={URL} title="Parent object of this object">{text}</Link>;
+    });
+
     // Edited subobjects indicatior
     const editedSubobjectsIndicator = <EditedSubobjectsIndicator objectID={objectID} />;
+
+    // Controls
+    const controls = objectID >= 0 ? <EditedObjectControls objectID={objectID} setConfirmState={setConfirmState} /> : null;
 
     return (
         <Table.Row>
@@ -136,6 +167,11 @@ const EditedObjectItem = memo(({ objectID, setConfirmState }) => {
                 {objectName}
             </Table.Cell>
 
+            {/* Parents */}
+            <Table.Cell className="edited-objects-item-cell" collapsing>
+                {parents}
+            </Table.Cell>
+
             {/* Edited subobjects indicator */}
             <Table.Cell className="edited-objects-item-cell" collapsing>
                 {editedSubobjectsIndicator}
@@ -143,7 +179,7 @@ const EditedObjectItem = memo(({ objectID, setConfirmState }) => {
 
             {/* Controls */}
             <Table.Cell className="edited-objects-item-cell controls" collapsing>
-                <EditedObjectControls objectID={objectID} setConfirmState={setConfirmState} />
+                {controls}
             </Table.Cell>
         </Table.Row>
     )

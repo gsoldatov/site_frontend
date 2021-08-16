@@ -17,6 +17,12 @@ td.edited-objects-item-cell.collapsing .edited-objects-item-is-new-icon-containe
 }
 
 
+/* Object parent links */
+.edited-objects-object-parent-link:not(:last-child) {
+    margin-right: 0.25em;
+}
+
+
 /* Edited subobjects indicator */
 td.edited-objects-item-cell div.label {
     user-select: none;
