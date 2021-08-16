@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { Button, Icon, Label, Menu } from "semantic-ui-react";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -24,7 +24,7 @@ const navigationItems = [
 /**
  * Navigation bar.
  */
-export default ({ itemOnClickCallback }) => {
+export default memo(({ itemOnClickCallback }) => {
     const location = useLocation();
 
     // Stacked menu expand/collapse control display
@@ -99,4 +99,4 @@ export default ({ itemOnClickCallback }) => {
             </Menu>
         </OnResizeWrapper>
     );
-};
+});

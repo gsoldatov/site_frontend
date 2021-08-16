@@ -1,0 +1,37 @@
+/* Placeholder */
+.edited-objects-placeholder {
+    width: 100%;
+    text-align: center;
+}
+
+
+/* Collapsed table cells margin & padding */
+td.edited-objects-item-cell.collapsing {
+    padding-right: 0;
+}
+
+td.edited-objects-item-cell.collapsing .edited-objects-item-object-type-icon-container i,
+td.edited-objects-item-cell.collapsing .edited-objects-item-is-new-icon-container i
+{
+    margin-right: 0;
+}
+
+
+/* Edited subobjects indicator */
+td.edited-objects-item-cell div.label {
+    user-select: none;
+}
+
+
+/* Controls */
+/* .ui.table td.collapsing.edited-objects-item-cell.controls {
+    width: 50px; /* Set fixed width to avoid line breaks * /
+} */
+
+.edited-objects-item-control-container i {
+    cursor: pointer;
+}
+
+.edited-objects-item-control-container:last-child {
+    margin-right: 0.25em;
+}

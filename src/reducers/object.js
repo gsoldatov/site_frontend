@@ -1,4 +1,4 @@
-import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, RESET_EDITED_OBJECTS,
+import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
     SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_OBJECT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
     SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
     SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
@@ -9,7 +9,7 @@ import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tag
 import { getCurrentObject } from "../store/state-util/ui-object";
 
 import { getDefaultEditedObjectState, getStateWithResetEditedObjects, getStateWithResetEditedExistingSubobjects, getStateWithDeletedEditedNewSubobjects, 
-    getStateAfterObjectPageLeave } from "./helpers/object";
+    getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects} from "./helpers/object";
 import { getUpdatedToDoList } from "./helpers/object-to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 
@@ -133,6 +133,19 @@ function resetEditedObjects(state, action) {
         }
 
     return newState;
+}
+
+
+/*
+    Removes edited objects with provided `objectIDs` from the state. 
+    Removes all new subobjects of composite objects.
+    If `removeSubobjects` is true, also removes existing subobjects of composite objects.
+*/
+function removeEditedObjects(state, action) {
+    const { objectIDs, removeSubobjects } = action;
+
+    // Remove edited objects and their non-composite children
+    return getStateWithRemovedEditedObjects(state, objectIDs, removeSubobjects);
 }
 
 
@@ -433,6 +446,7 @@ const root = {
     LOAD_ADD_OBJECT_PAGE: loadAddObjectPage,
     LOAD_EDIT_OBJECT_PAGE: loadEditObjectPage,
     RESET_EDITED_OBJECTS: resetEditedObjects,
+    REMOVE_EDITED_OBJECTS: removeEditedObjects,
     SET_EDITED_OBJECT: setEditedObject,
     CLEAR_UNSAVED_CURRENT_EDITED_OBJECT: clearUnsavedCurrentEditedObject,
     SET_OBJECT_TAGS_INPUT: setObjectTagsInput,

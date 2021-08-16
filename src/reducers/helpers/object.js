@@ -67,11 +67,13 @@ export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDef
 /** 
  * Deletes the specified `objectIDs` from the state.editedObjects.
  * 
- * Composite objects' subobjects from `objectIDs`, also have all of thier new & unmodified existing children deleted.
+ * Composite objects' subobjects from `objectIDs`, also have all of thier new & unmodified existing non-composite children deleted.
+ * 
+ * If `deleteAllSubobjects` is true, deletes all non-composite subobjects.
  * 
  * Returns the state after delete(-s).
  */
-export const getStateWithRemovedEditedObjects = (state, objectIDs) => {
+export const getStateWithRemovedEditedObjects = (state, objectIDs, deleteAllSubobjects) => {
     if (objectIDs.length === 0) return state;
 
     let newEditedObjects = { ...state.editedObjects };
@@ -81,8 +83,15 @@ export const getStateWithRemovedEditedObjects = (state, objectIDs) => {
 
         if (newEditedObjects[objectID].object_type === "composite") {
             Object.keys(newEditedObjects[objectID].composite.subobjects).forEach(subobjectID => {
-                const intSubobjectID = parseInt(subobjectID);
-                if (intSubobjectID < 0 || (intSubobjectID > 0 && objectHasNoChanges(state, intSubobjectID)))
+                subobjectID = parseInt(subobjectID);
+                const objectType = newEditedObjects[subobjectID] ? newEditedObjects[subobjectID].object_type : null;
+                // Delete subobject if it's not composite AND 
+                // (all subobjects are set to be deleted OR subobject is new or unmodified existing)
+                if (objectType !== "composite" &&
+                    (
+                        deleteAllSubobjects ||
+                        subobjectID < 0 || (subobjectID > 0 && objectHasNoChanges(state, subobjectID))
+                    ))
                     delete newEditedObjects[subobjectID];
             });
         }

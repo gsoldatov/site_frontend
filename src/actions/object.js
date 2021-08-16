@@ -1,6 +1,7 @@
 export const LOAD_ADD_OBJECT_PAGE = "LOAD_ADD_OBJECT_PAGE";
 export const LOAD_EDIT_OBJECT_PAGE = "LOAD_EDIT_OBJECT_PAGE";
 export const RESET_EDITED_OBJECTS = "RESET_EDITED_OBJECTS";
+export const REMOVE_EDITED_OBJECTS = "REMOVE_EDITED_OBJECTS";
 export const SET_EDITED_OBJECT = "SET_EDITED_OBJECT";
 export const CLEAR_UNSAVED_CURRENT_EDITED_OBJECT = "CLEAR_UNSAVED_CURRENT_EDITED_OBJECT";
 export const SET_OBJECT_TAGS_INPUT = "SET_OBJECT_TAGS_INPUT";
@@ -18,6 +19,7 @@ export const loadAddObjectPage               = () => ({ type: LOAD_ADD_OBJECT_PA
 export const loadEditObjectPage              = currentObjectID => ({ type: LOAD_EDIT_OBJECT_PAGE, currentObjectID });
 export const resetEditedObjects              = ({ objectIDs, hideObjectResetDialog, allowResetToDefaults, resetCompositeSubobjects }) => ({ 
                                                 type: RESET_EDITED_OBJECTS, objectIDs, hideObjectResetDialog, allowResetToDefaults, resetCompositeSubobjects });
+export const removeEditedObjects             = (objectIDs, removeSubobjects) => ({ type: REMOVE_EDITED_OBJECTS, objectIDs, removeSubobjects });
 export const setEditedObject                 = (object, objectID) => ({ type: SET_EDITED_OBJECT, object, objectID });
 export const clearUnsavedCurrentEditedObject = (deleteNewObject) => ({ type: CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, deleteNewObject });
 export const setObjectTagsInput              = inputState => ({ type: SET_OBJECT_TAGS_INPUT, tagsInput: inputState });
