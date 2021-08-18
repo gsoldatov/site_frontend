@@ -65,7 +65,7 @@ export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDef
 
 
 /** 
- * Deletes the specified `objectIDs` from the state.editedObjects.
+ * Deletes the specified `objectIDs` from the state.editedObjects and deselects them on the edited page.
  * 
  * Composite objects' subobjects from `objectIDs`, also have all of thier new & unmodified existing non-composite children deleted.
  * 
@@ -99,7 +99,12 @@ export const getStateWithRemovedEditedObjects = (state, objectIDs, deleteAllSubo
         delete newEditedObjects[objectID];
     });
 
-    return { ...state, editedObjects: newEditedObjects };
+    let newState = { ...state, editedObjects: newEditedObjects };
+
+    // Deselect deleted edited objects on the /objects/edited page
+    newState = deselectNonExistantEditedObjects(newState);
+
+    return newState;
 };
 
 
@@ -204,4 +209,20 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID) => {
     }
 
     return newState;
+};
+
+
+/**
+ * Returns the state with non-existant edited objects being removed from state.editedObjectsUI.selectedObjectIds.
+ */
+export const deselectNonExistantEditedObjects = (state) => {
+    const newSelectedObjectIDs = new Set([...state.editedObjectsUI.selectedObjectIDs].filter(objectID => objectID in state.editedObjects));
+    
+    return {
+        ...state,
+        editedObjectsUI: {
+            ...state.editedObjectsUI,
+            selectedObjectIDs: newSelectedObjectIDs
+        }
+    };
 };

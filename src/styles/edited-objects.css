@@ -5,6 +5,13 @@
 }
 
 
+/* Table headers */
+.ui.table thead th.edited-objects-header-cell.collapsing {
+    white-space: nowrap;    /* Display on a single line */
+    padding-right: 0;
+}
+
+
 /* Collapsed table cells margin & padding */
 td.edited-objects-item-cell.collapsing {
     padding-right: 0;

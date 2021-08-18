@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import { Confirm, Icon, Label, Table } from "semantic-ui-react";
+import { Checkbox, Confirm, Icon, Label, Table } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { createSelector } from "reselect";
@@ -15,6 +15,7 @@ import { InlineInput } from "./inline/inline-input";
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
 import { removeEditedObjects, resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
          setShowResetDialogObject, setShowDeleteDialogObject, clearUnsavedCurrentEditedObject } from "../actions/object";
+import { loadEditedObjectsPage, toggleEditedObjectSelection, toggleAllObjectsSelection } from "../actions/edited-objects";
 import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
 import { enumObjectTypes } from "../util/enum-object-types";
 
@@ -25,8 +26,13 @@ import StyleEditedObjects from "../styles/edited-objects.css";
  * /objects/edited page components.
  */
 export const EditedObjects = () => {
+    const dispatch = useDispatch();
     const editedObjects = useSelector(state => state.editedObjects);
-    let body;
+
+    // Reset page UI on load
+    useEffect(() => {
+        dispatch(loadEditedObjectsPage());
+    }, []);
 
     // Confirm state
     const [confirmState, setConfirmState] = useState({
@@ -46,6 +52,7 @@ export const EditedObjects = () => {
 
     
     // No edited objects exist
+    let body;
     if (Object.keys(editedObjects).length === 0)
         body = (
             <div className="edited-objects-placeholder">No edited objects found.</div>
@@ -68,24 +75,15 @@ export const EditedObjects = () => {
 
         // Table items
         const items = Object.keys(editedObjects).map(objectID => {
-            return <EditedObjectItem key={objectID} objectID={objectID} parentObjects={parentObjects[objectID]}
-                setConfirmState={setConfirmState} />;
+            return <EditedObjectItem key={objectID} objectID={objectID} 
+                parentObjects={parentObjects[objectID]} setConfirmState={setConfirmState} />;
         });
 
         body = (
             <>
                 {confirm}
                 <Table striped unstackable>
-                    <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell></Table.HeaderCell>
-                        <Table.HeaderCell></Table.HeaderCell>
-                        <Table.HeaderCell>Object Name</Table.HeaderCell>
-                        <Table.HeaderCell></Table.HeaderCell>
-                        <Table.HeaderCell></Table.HeaderCell>
-                        <Table.HeaderCell></Table.HeaderCell>
-                    </Table.Row>
-                    </Table.Header>
+                    <EditedObjectsTableHeader setConfirmState={setConfirmState} />
                     <Table.Body>
                         {items}
                     </Table.Body>
@@ -100,12 +98,50 @@ export const EditedObjects = () => {
 
 
 /**
+ * Edited objects' table header.
+ */
+const EditedObjectsTableHeader = ({ setConfirmState }) => {
+    const dispatch = useDispatch();
+    
+    // Toggle all selection checkbox
+    const isChecked = useSelector(state => state.editedObjectsUI.selectedObjectIDs.size === Object.keys(state.editedObjects).length);
+    const isIndeterminate = useSelector(state => state.editedObjectsUI.selectedObjectIDs.size < Object.keys(state.editedObjects).length && state.editedObjectsUI.selectedObjectIDs.size > 0);
+    const checkBoxOnClick = useMemo(() => () => dispatch(toggleAllObjectsSelection()));
+    const checkbox = <Checkbox checked={isChecked} indeterminate={isIndeterminate} onClick={checkBoxOnClick} />;
+
+    // Selected edited objects controls
+    const controls = <SelectedEditedObjectControls setConfirmState={setConfirmState} />;
+
+    return (
+        <Table.Header>
+            <Table.Row>
+                <Table.HeaderCell className="edited-objects-header-cell collapsing">{checkbox}</Table.HeaderCell>
+                <Table.HeaderCell className="edited-objects-header-cell collapsing"></Table.HeaderCell>
+                <Table.HeaderCell className="edited-objects-header-cell collapsing"></Table.HeaderCell>
+                <Table.HeaderCell>Object Name</Table.HeaderCell>
+                <Table.HeaderCell className="edited-objects-header-cell collapsing"></Table.HeaderCell>
+                <Table.HeaderCell className="edited-objects-header-cell collapsing"></Table.HeaderCell>
+                <Table.HeaderCell className="edited-objects-header-cell collapsing">{controls}</Table.HeaderCell>
+            </Table.Row>
+        </Table.Header>
+    );
+};
+
+
+/**
  * A single item in edited objects table
  */
-const EditedObjectItem = memo(({ objectID, setConfirmState, parentObjects = [] }) => {
+const EditedObjectItem = memo(({ objectID, parentObjects = [], setConfirmState }) => {
+    const dispatch = useDispatch();
+    const strObjectID = objectID;
     objectID = parseInt(objectID);
     
     const editedObject = useSelector(state => state.editedObjects[objectID]);
+
+    // Checkbox
+    const isChecked = useSelector(state => state.editedObjectsUI.selectedObjectIDs.has(strObjectID));
+    const checkBoxOnClick = useMemo(() => () => dispatch(toggleEditedObjectSelection(strObjectID)), [objectID]);
+    const checkbox = <Checkbox checked={isChecked} onClick={checkBoxOnClick} />;
     
     // Is new icon
     const isNewColor = objectID === 0 ? "green" : "black";
@@ -152,6 +188,11 @@ const EditedObjectItem = memo(({ objectID, setConfirmState, parentObjects = [] }
 
     return (
         <Table.Row>
+            {/* Checkbox */}
+            <Table.Cell className="edited-objects-item-cell" collapsing>
+                {checkbox}
+            </Table.Cell>
+
             {/* Is new icon */}
             <Table.Cell className="edited-objects-item-cell" collapsing>
                 {isNewIcon}
@@ -214,7 +255,7 @@ const EditedSubobjectsIndicator = ({ objectID }) => {
 /**
  * Edited object controls.
  */
-const EditedObjectControls = ({ objectID, setConfirmState }) => {
+ const EditedObjectControls = ({ objectID, setConfirmState }) => {
     const dispatch = useDispatch();
     const editedObject = useSelector(state => state.editedObjects[objectID]);
 
@@ -236,6 +277,44 @@ const EditedObjectControls = ({ objectID, setConfirmState }) => {
     );
     const deleteWithSubobjectsControl = editedObject.object_type === "composite" && (
         <span className="edited-objects-item-control-container" title="Remove edited object with subobjects" onClick={deleteWithSubobjectsCallback}>
+            <Icon name="cancel" color="red" />
+        </span>
+    );
+
+    return (
+        <>
+            {deleteControl}
+            {deleteWithSubobjectsControl}
+        </>
+    );
+};
+
+
+/**
+ * Selected edited object controls.
+ */
+ const SelectedEditedObjectControls = ({ setConfirmState }) => {
+    const dispatch = useDispatch();
+    const selectedEditedObjectIDs = useSelector(state => state.editedObjectsUI.selectedObjectIDs);
+
+    const deleteCallback = useMemo(() => () => setConfirmState({
+        open: true,
+        content: "Delete selected edited objects?",
+        onConfirm: () => dispatch(removeEditedObjects(selectedEditedObjectIDs, false))
+    }));
+    const deleteWithSubobjectsCallback = useMemo(() => () => setConfirmState({
+        open: true,
+        content: "Delete selected edited objects and their subobjects?",
+        onConfirm: () => dispatch(removeEditedObjects(selectedEditedObjectIDs, true))
+    }));
+
+    const deleteControl = (
+        <span className="edited-objects-item-control-container" title="Remove selected edited objects" onClick={deleteCallback}>
+            <Icon name="cancel" color="black" />
+        </span>
+    );
+    const deleteWithSubobjectsControl = (
+        <span className="edited-objects-item-control-container" title="Remove selected edited objects with subobjects" onClick={deleteWithSubobjectsCallback}>
             <Icon name="cancel" color="red" />
         </span>
     );

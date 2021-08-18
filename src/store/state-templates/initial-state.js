@@ -132,6 +132,11 @@ const initialState = {
             isFetching: false,
             fetchError: ""
         }
+    },
+
+    // /objects/edited page UI controllers
+    editedObjectsUI: {
+        selectedObjectIDs: new Set()
     }
 };
 

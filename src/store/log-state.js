@@ -1,4 +1,4 @@
-const LOGGING_ORDER = ["tagUI", "tagsUI", "objectUI", "objectsUI", "tags", "objects", "links", "markdown", "toDoLists"];
+const LOGGING_ORDER = ["tagUI", "tagsUI", "objectUI", "objectsUI", "editedObjectsUI", "tags", "objects", "links", "markdown", "toDoLists", "composite"];
 
 
 /**
@@ -7,47 +7,52 @@ const LOGGING_ORDER = ["tagUI", "tagsUI", "objectUI", "objectsUI", "tags", "obje
  * Prints top-level parts of the state set in the LOGGING_ORDER list, then prints the rest of the state.
  */
 export default (state, topLevelHeader) => {
-     const log = (state, header, isTopLevel = false) => {
-         let oneLine = true;
-         if (typeof(state) === "object" && state !== null) {
-             if (state instanceof Array) {
-                 for (let item of state) {
-                     if (typeof(item) === "object") {
-                         oneLine = false;
-                         break;
-                     }
-                 }
-             } else {
-                 for (let item of Object.values(state)) {
-                     if (typeof(item) === "object" && item !== null) {
-                         oneLine = false;
-                         break;
-                     }
-                 }
-             }
-         }
- 
-         if (oneLine) {
-             console.log(`${header}: ${JSON.stringify(state)}`);
-         } else {
-             console.groupCollapsed(header);
-             if (typeof(state) === "object") {
-                 if (state instanceof Array) {
-                     for (let item in state) {
-                         log(state[item], item);
-                     }
-                 } else {
-                     let keys = isTopLevel ? topLeveLoggingOrder : Object.keys(state);
-                     for (let key of keys) {
-                         log(state[key], key);
-                     }
-                 }
-             }
-             console.groupEnd();
-         }
-     }
- 
-     let topLeveLoggingOrder = [...LOGGING_ORDER, ...Object.keys(state).filter(k => LOGGING_ORDER.indexOf(k) === -1)];
-     log(state, topLevelHeader, true);
+    const log = (state, header, isTopLevel = false) => {
+        let oneLine = true;
+        if (typeof(state) === "object" && state !== null) {
+            if (state instanceof Array || state instanceof Set) {
+                for (let item of state) {
+                    if (typeof(item) === "object") {
+                        oneLine = false;
+                        break;
+                    }
+                }
+            } else {
+                for (let item of Object.values(state)) {
+                    if (typeof(item) === "object" && item !== null) {
+                        oneLine = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (oneLine) {
+            const headerText = header ? `${header}: ` : "";
+            if (state instanceof Set) console.log(headerText + `<${[...state.values()].join(", ")}>`);
+            else console.log(headerText + `${JSON.stringify(state)}`);
+        } else {
+            console.groupCollapsed(header);
+            if (typeof(state) === "object") {
+                if (state instanceof Array) {
+                    for (let item in state) {
+                        log(state[item], item);
+                    }
+                } else if (state instanceof Set) {
+                    for (let item of state.values())
+                        log(item, undefined);
+                } else {
+                    let keys = isTopLevel ? topLeveLoggingOrder : Object.keys(state);
+                    for (let key of keys) {
+                        log(state[key], key);
+                    }
+                }
+            }
+            console.groupEnd();
+        }
+    }
+
+    let topLeveLoggingOrder = [...LOGGING_ORDER, ...Object.keys(state).filter(k => LOGGING_ORDER.indexOf(k) === -1)];
+    log(state, topLevelHeader, true);
  };
  

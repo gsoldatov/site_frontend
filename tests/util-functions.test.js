@@ -24,6 +24,17 @@ describe("Deep copy", () => {
         for (let i in a) expect(a[i]).toEqual(b[i]);
     });
 
+    
+    test("Set", () => {
+        let a = new Set(["a", "b", "c"]);
+        let b = deepCopy(a);
+
+        expect(b.size).toEqual(3);
+        b.add("d");
+        expect(b.size).toEqual(4);
+        expect(a.size).toEqual(3);
+    });
+
 
     test("Datetime", () => {
         const a = new Date();

@@ -8,6 +8,7 @@ import tag from "./tag";
 import tags from "./tags";
 import object from "./object";
 import objects from "./objects";
+import editedObjects from "./edited-objects";
 
 function getActionHandlers(rootObjects) {
     let actionHandlers = {};
@@ -28,7 +29,7 @@ function getActionHandlers(rootObjects) {
     return actionHandlers;
 }
 
-const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, common, tag, tags, object, objects });
+const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, common, tag, tags, object, objects, editedObjects });
 
 export default function getRootReducer (enableDebugLogging) {
     return (state, action) => {
