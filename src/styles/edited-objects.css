@@ -23,6 +23,11 @@ td.edited-objects-item-cell.collapsing .edited-objects-item-is-new-icon-containe
     margin-right: 0;
 }
 
+/* Wrappable collapsed cells (parent links) */
+.ui.table td.edited-objects-item-cell.collapsing.wrappable {
+    white-space: normal;
+}
+
 
 /* Object parent links */
 .edited-objects-object-parent-link:not(:last-child) {

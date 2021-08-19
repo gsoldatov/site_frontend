@@ -221,7 +221,7 @@ const EditedObjectItem = memo(({ objectID, parentObjects = [], parentNames = [],
             </Table.Cell>
 
             {/* Parents */}
-            <Table.Cell className="edited-objects-item-cell" collapsing>
+            <Table.Cell className="edited-objects-item-cell wrappable" width="one" collapsing>
                 {parents}
             </Table.Cell>
 
