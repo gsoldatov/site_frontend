@@ -65,18 +65,21 @@ export const EditedObjects = () => {
             onConfirm={handleConfirm} onCancel={handleCancel} />;
         
         // Subobject parents
-        const parentObjects = {};
+        const parentObjects = {}, parentNames = {};
         for (let editedObject of Object.values(editedObjects)) {
             for (let subobjectID of Object.keys(editedObject.composite.subobjects)) {
                 parentObjects[subobjectID] = parentObjects[subobjectID] || [];
                 parentObjects[subobjectID].push(editedObject["object_id"]);
+
+                parentNames[subobjectID] = parentNames[subobjectID] || [];
+                parentNames[subobjectID].push(editedObject["object_name"])
             }
         }
 
         // Table items
         const items = Object.keys(editedObjects).map(objectID => {
             return <EditedObjectItem key={objectID} objectID={objectID} 
-                parentObjects={parentObjects[objectID]} setConfirmState={setConfirmState} />;
+                parentObjects={parentObjects[objectID]} parentNames={parentNames[objectID]} setConfirmState={setConfirmState} />;
         });
 
         body = (
@@ -131,7 +134,7 @@ const EditedObjectsTableHeader = ({ setConfirmState }) => {
 /**
  * A single item in edited objects table
  */
-const EditedObjectItem = memo(({ objectID, parentObjects = [], setConfirmState }) => {
+const EditedObjectItem = memo(({ objectID, parentObjects = [], parentNames = [], setConfirmState }) => {
     const dispatch = useDispatch();
     const strObjectID = objectID;
     objectID = parseInt(objectID);
@@ -174,11 +177,20 @@ const EditedObjectItem = memo(({ objectID, parentObjects = [], setConfirmState }
     );
 
     // Parents
-    const parents = parentObjects.map((parentID, i) => {
+    const parents = [];
+    for (let i in parentObjects) {
+        const parentID = parentObjects[i];
         const URL = parentID === 0 ? "/objects/add" : `/objects/${parentID}`;
-        const text = `[${i + 1}]`;
-        return <Link key={parentID} className="edited-objects-object-parent-link" to={URL} title="Parent object of this object">{text}</Link>;
-    });
+        const text = `[${parseInt(i) + 1}]`;
+        
+        const title = "This object is a subobject of " + (parentNames[i].length > 0 ? `"${parentNames[i]}"` : "<unnamed>");
+        parents.push(<Link key={parentID} className="edited-objects-object-parent-link" to={URL} title={title}>{text}</Link>);
+    }
+    // const parents = parentObjects.map((parentID, i) => {
+    //     const URL = parentID === 0 ? "/objects/add" : `/objects/${parentID}`;
+    //     const text = `[${i + 1}]`;
+    //     return <Link key={parentID} className="edited-objects-object-parent-link" to={URL} title="Parent object of this object">{text}</Link>;
+    // });
 
     // Edited subobjects indicatior
     const editedSubobjectsIndicator = <EditedSubobjectsIndicator objectID={objectID} />;
