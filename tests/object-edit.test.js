@@ -22,7 +22,7 @@ import { enumDeleteModes } from "../src/store/state-templates/composite-subobjec
 
 
 /*
-    /objects/edit page tests.
+    /objects/:id page tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch

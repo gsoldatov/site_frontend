@@ -1,22 +1,12 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { Checkbox, Confirm, Icon, Label, Table } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
-import { createSelector } from "reselect";
+import { Link } from "react-router-dom";
 
-import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "./edit/common";
-import { ObjectTypeSelector, ObjectViewEditSwitch } from "./edit/object";
 import Layout from "./common/layout";
-import { InlineItemListBlock, InlineItemListWrapper } from "./inline/inline-item-list-containers";
-import { InlineItemList } from "./inline/inline-item-list";
-import { InlineItem } from "./inline/inline-item";
-import { InlineInput } from "./inline/inline-input";
 
-import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
-import { removeEditedObjects, resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
-         setShowResetDialogObject, setShowDeleteDialogObject, clearUnsavedCurrentEditedObject } from "../actions/object";
+import { removeEditedObjects } from "../actions/object";
 import { loadEditedObjectsPage, toggleEditedObjectSelection, toggleAllObjectsSelection } from "../actions/edited-objects";
-import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
 import { enumObjectTypes } from "../util/enum-object-types";
 
 import StyleEditedObjects from "../styles/edited-objects.css";
@@ -85,7 +75,7 @@ export const EditedObjects = () => {
         body = (
             <>
                 {confirm}
-                <Table striped unstackable>
+                <Table striped unstackable className="edited-objects-table">
                     <EditedObjectsTableHeader setConfirmState={setConfirmState} />
                     <Table.Body>
                         {items}
