@@ -178,22 +178,14 @@ export function getMockedPageObjectIDs(pI) {
         return [];
     }
 
-    // Not all object types are displayed
-    if (pI.object_types.length == 1) {
-        // Link object type
-        if (pI.object_types.includes("link")) {
-            return getList(6, 46, 2);
-        }
-
-        // Markdown object type
-        if (pI.object_types.includes("markdown")) {
-            return getList(1006, 1046, 2);
-        }
-
-        // To-do list object type
-        if (pI.object_types.includes("to_do_list")) {
-            return getList(2006, 2046, 2);
-        }
+    // One or more object type is selected
+    if (pI.object_types.length > 0) {
+        let objectIDs = [];
+        if (pI.object_types.includes("link")) objectIDs = objectIDs.concat(getList(11, 20, 1));
+        if (pI.object_types.includes("markdown")) objectIDs = objectIDs.concat(getList(1011, 1020, 1));
+        if (pI.object_types.includes("to_do_list")) objectIDs = objectIDs.concat(getList(2011, 2020, 1));
+        if (pI.object_types.includes("composite")) objectIDs = objectIDs.concat(getList(3011, 3020, 1));
+        return objectIDs;
     }
     // All object types are displayed
     else if (pI.object_types.length !== 1) {

@@ -4,7 +4,7 @@ import { Switch, Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from "@testing-library/dom";
 
-import { getMockedPageObjectIDs } from "./mocks/mock-fetch-handlers-objects";
+import { waitForFetch, checkObjectsDisplay, selectObjectTypeInFilter, deselectObjectTypeInFilter, searchTagInFilter, checkIfTagIsAddedToFilter } from "./test-utils/ui-objects";
 import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
 import { renderWithWrappers } from "./test-utils/render";
 import { getCurrentObject } from "./test-utils/ui-object";
@@ -454,8 +454,6 @@ describe("Side menu", () => {
         expect(state.links).not.toHaveProperty("2");
         expect(state.editedObjects).not.toHaveProperty("2");
     });
-    
-    
 });
 
 
@@ -557,30 +555,6 @@ describe("Field menu", () => {
 
 
     test("Object type filter", async () => {
-        const selectObjectType = async type => {
-            // Open dropdown menu
-            const dropdownIcon = dropdown.querySelector("i.dropdown");
-            expect(dropdownIcon).toBeTruthy();
-            fireEvent.click(dropdownIcon);
-            
-            // Click on the corresponding menu item to select object type
-            const menuItems = dropdown.querySelector(".visible.menu.transition");
-            expect(menuItems).toBeTruthy();
-            const typeItem = getByText(menuItems, type).parentNode;
-            fireEvent.click(typeItem);
-
-            // Close dropdown menu
-            await waitForFetch(store);
-            fireEvent.click(dropdownIcon);
-        };
-
-        const deselectObjectType = async type => {
-            // Deselect object type
-            const deselectIcon = getByText(dropdown, type).querySelector("i.delete.icon");
-            expect(deselectIcon).toBeTruthy();
-            fireEvent.click(deselectIcon);
-            await waitForFetch(store);
-        };
         // Route component is required for matching (getting :id part of the URL in the Object component)
         let { store, container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
             route: "/objects"
@@ -595,64 +569,45 @@ describe("Field menu", () => {
         await waitFor(() => getByText(container, "object #1"));
         expect(store.getState().objectsUI.paginationInfo.objectTypes.length).toEqual(0);
 
-        // Check if correct objects are displayed when links only are selected
-        await selectObjectType("Links");
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeTruthy();
+        // Select each object type separately
+        const objectTypeNames = ["Links", "Markdown", "To-do lists", "Composite objects"], objectTypes = ["link", "markdown", "to_do_list", "composite"];
+
+        for (let i in objectTypeNames) {
+            await selectObjectTypeInFilter(objectTypeNames[i], dropdown, store);
+            expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeTruthy();
+            checkObjectsDisplay(store, container);
+            await deselectObjectTypeInFilter(objectTypeNames[i], dropdown, store);
+            expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeFalsy();
+        }
+
+        // Select 2 object types at the same time (links + markdown)
+        await selectObjectTypeInFilter(objectTypeNames[0], dropdown, store);
+        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[0])).toBeTruthy();
+        await selectObjectTypeInFilter(objectTypeNames[1], dropdown, store);
+        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[1])).toBeTruthy();
+        checkObjectsDisplay(store, container);
+        await deselectObjectTypeInFilter(objectTypeNames[0], dropdown, store);
+        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[0])).toBeFalsy();
+        await deselectObjectTypeInFilter(objectTypeNames[1], dropdown, store);
+        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[1])).toBeFalsy();
+
+        // Select all object types
+        for (let i in objectTypeNames) {
+            await selectObjectTypeInFilter(objectTypeNames[i], dropdown, store);
+            expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeTruthy();
+        }
         checkObjectsDisplay(store, container);
 
-        // Check if correct objects are displayed when markdown only is selected
-        await deselectObjectType("Links");
-        await selectObjectType("Markdown");
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeFalsy();
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeTruthy();
-        checkObjectsDisplay(store, container);
-        
-        // Check if correct objects are displayed when markdown only is selected
-        await deselectObjectType("Markdown");
-        await selectObjectType("To-do lists");
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeFalsy();
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("to_do_list")).toBeTruthy();
-        checkObjectsDisplay(store, container);
-
-        // Check if correct objects are displayed when all object types are selected
-        await selectObjectType("Links");
-        await selectObjectType("Markdown");
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeTruthy();
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeTruthy();
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("to_do_list")).toBeTruthy();
-        checkObjectsDisplay(store, container);
-
-        // Check if correct objects are displayed when all object types are deselected
-        await deselectObjectType("Links");
-        await deselectObjectType("Markdown");
-        await deselectObjectType("To-do lists");
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("link")).toBeFalsy();
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("markdown")).toBeFalsy();
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes("to_do_list")).toBeFalsy();
+        // Deselect all object types
+        for (let i in objectTypeNames) {
+            await deselectObjectTypeInFilter(objectTypeNames[i], dropdown, store);
+            expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeFalsy();
+        }
         checkObjectsDisplay(store, container);
     });
 
 
     test("Tags filter", async () => {
-        const searchTag = async text => {    
-            let oldMatchingIDs = store.getState().objectsUI.tagsFilterInput.matchingIDs;
-            fireEvent.change(tagsFilterInput, { target: { value: text } });
-            await waitFor(() => expect(oldMatchingIDs).not.toBe(store.getState().objectsUI.tagsFilterInput.matchingIDs));
-        };
-
-        const checkIfTagIsAddedToFilter = async id => {
-            await waitFor(() => expect(store.getState().objectsUI.paginationInfo.tagsFilter.includes(id)).toBeTruthy());     // tag is added to tagsFilter
-            expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();      // dropdown list is not displayed
-            expect(tagsFilterInput.value).toEqual("");                                              // search text is reset
-            getByText(getByText(container, "Tags Filter").parentNode, `tag #${id}`);                // tags filter block is displayed and contains the added tag
-            // if (store.getState().objectsUI.paginationInfo.tagsFilter.length < 3)
-            //     checkObjectsDisplay(store, container);                                                  // correct objects are displayed
-            // else
-            //     getByText(container, "No objects found.");      // no objects are found if 3 or more tags are in the filter
-            checkObjectsDisplay(store, container);                                                  // correct objects are displayed
-            if (store.getState().objectsUI.paginationInfo.tagsFilter.length > 2) getByText(container, "No objects found.");      // no objects are found if 3 or more tags are in the filter
-        };
-
         // Route component is required for matching (getting :id part of the URL in the Object component)
         let { store, container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
             route: "/objects"
@@ -675,33 +630,33 @@ describe("Field menu", () => {
         // Try filtering with a non-existing tag
         const tagsFilterInput = tagsFilterContainer.querySelector("input.search");
         expect(tagsFilterInput).toBeTruthy();
-        await searchTag("not found");
+        await searchTagInFilter("not found", tagsFilterInput, store);
         fireEvent.keyDown(tagsFilterInput, { key: "Enter", code: "Enter" });
         expect(store.getState().objectsUI.paginationInfo.tagsFilter.length).toEqual(0);     // no filter was added
         expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();  // dropdown list is not displayed
 
         // Add and item via Enter key press (tag #3)
-        await searchTag("tag #");
+        await searchTagInFilter("tag #", tagsFilterInput, store);
         let dropdownList = tagsFilterContainer.querySelector(".visible.menu.transition");
         expect(dropdownList).toBeTruthy();
         fireEvent.keyDown(tagsFilterInput, { key: "ArrowDown", code: "ArrowDown" });
         fireEvent.keyDown(tagsFilterInput, { key: "ArrowDown", code: "ArrowDown" });
         fireEvent.keyDown(tagsFilterInput, { key: "Enter", code: "Enter" });
-        await checkIfTagIsAddedToFilter(3);
+        await checkIfTagIsAddedToFilter(3, container, store);
 
         // Add and item via click (tag #4)
-        await searchTag("tag #");
+        await searchTagInFilter("tag #", tagsFilterInput, store);
         dropdownList = tagsFilterContainer.querySelector(".visible.menu.transition");
         expect(dropdownList).toBeTruthy();
         fireEvent.click(getByText(dropdownList, "tag #4"));
-        await checkIfTagIsAddedToFilter(4);
+        await checkIfTagIsAddedToFilter(4, container, store);
 
         // Add and item via click (tag #5) and check if no objects are found
-        await searchTag("tag #");
+        await searchTagInFilter("tag #", tagsFilterInput, store);
         dropdownList = tagsFilterContainer.querySelector(".visible.menu.transition");
         expect(dropdownList).toBeTruthy();
         fireEvent.click(getByText(dropdownList, "tag #5"));
-        await checkIfTagIsAddedToFilter(5);
+        await checkIfTagIsAddedToFilter(5, container, store);
 
         // Remove a tag from filter by clicking on it
         fireEvent.click(getByText(getByText(container, "Tags Filter").parentNode, `tag #5`));
@@ -719,7 +674,7 @@ describe("Field menu", () => {
         expect(queryByText(container, "Tags Filter")).toBeFalsy();
 
         // Search text is reset on blur
-        await searchTag("tag #");
+        await searchTagInFilter("tag #", tagsFilterInput, store);
         let eventHandlers;                                      // workaround to call onBlur event of the tags filter input container, which should reset tagsFilterInput state; 
         Object.keys(tagsFilterContainer).forEach(key => {       // fireEvent.blur(clearTagsFilterButton) does not trigger the event
             if (key.indexOf("reactEventHandlers") > -1) eventHandlers = tagsFilterContainer[key];
@@ -732,36 +687,3 @@ describe("Field menu", () => {
         expect(store.getState().objectsUI.tagsFilterInput.matchingIDs).toEqual([]);         // matching IDs are reset in the state
     });
 });
-
-
-async function waitForFetch(store) {
-    // wait to fetch to start and end
-    await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching).toBeTruthy());
-    await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching).toBeFalsy());
-}
-
-
-function getPageObjectIDsFromMock(store) {
-    // get object IDs which are returned by mock fetch handler
-    const pI = store.getState().objectsUI.paginationInfo;
-    return getMockedPageObjectIDs({
-        page: pI.currentPage,
-        items_per_page: pI.itemsPerPage,
-        order_by: pI.sortField,
-        sort_order: pI.sortOrder,
-        filter_text: pI.filterText,
-        object_types: pI.objectTypes,
-        tags_filter: pI.tagsFilter
-    });
-}
-
-
-function checkObjectsDisplay(store, container) {
-    // Check if objects are correctly displayed on the page (proper object IDs and object order)
-    let objectIDs = getPageObjectIDsFromMock(store);
-    let displayedObjects = queryAllByText(container, "object #", { exact: false });
-    expect(objectIDs.length).toEqual(displayedObjects.length);
-    for (let i = 0; i < objectIDs.length; i++) {
-        expect(displayedObjects[i].textContent.replace(/\D/g, "")).toEqual(objectIDs[i].toString());
-    }
-}
