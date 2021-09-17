@@ -34,7 +34,7 @@ export class LocalStorageManager {
         try {
             // Get list of saved edited objects
             const savedEditedObjects = getListOfSavedEditedObjects();
-            const loadedEditedObjects = [], deletedEditedObjects = new Set();
+            const loadedEditedObjects = {}, deletedEditedObjects = new Set();
 
             // Try to load saved edited objects
             savedEditedObjects.forEach(objectID => {
@@ -62,7 +62,7 @@ export class LocalStorageManager {
 
             // Load edited objects into the state
             state.editedObjects = loadedEditedObjects;
-            this.log(`Finished loading edited objects from state, loaded: ${loadedEditedObjects.length}, removed invalid: ${savedEditedObjects.length - loadedEditedObjects.length}`);
+            this.log(`Finished loading edited objects from state, loaded: ${Object.keys(loadedEditedObjects).length}, removed invalid: ${savedEditedObjects.length - Object.keys(loadedEditedObjects).length}`);
         } catch (e) {
             this.log("Error when loading state from local storage:\n" + e.message);
         }
