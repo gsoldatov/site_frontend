@@ -1,11 +1,16 @@
 import { deepCopy } from "../../util/copy";
 
+import { getDefaultAuthState } from "./auth";
+
 
 /**
  * Initial app state.
  */
 const initialState = {
     redirectOnRender: "",
+
+    // auth
+    auth: getDefaultAuthState(),
 
     // tags storage
     tags: {},

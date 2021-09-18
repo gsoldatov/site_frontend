@@ -1,6 +1,7 @@
 import getInitialState from "./state-templates/initial-state";
 import intervalWrapper from "../util/interval-wrapper";
 import { defaultEditedObjectState } from "./state-templates/edited-object";
+import { getDefaultAuthState } from "./state-templates/auth";
 
 
 /**
@@ -17,6 +18,8 @@ export class LocalStorageManager {
         this.save = this.save.bind(this);
 
         this.saveState = intervalWrapper(this.save, saveTimeout, false);
+
+        this._authStateKeys = Object.keys(getDefaultAuthState());
     }
 
     /**
@@ -31,6 +34,42 @@ export class LocalStorageManager {
             return state;
         }
 
+        // Load auth info
+        this.loadAuthInfo(state);
+
+        // Load edited objects
+        this.loadEditedObjects(state);
+
+        // Update previousState and return state
+        this.previousState = state;
+        return state;
+    }
+
+    /**
+     * Loads auth information into the `state` object.
+     */
+    loadAuthInfo(state) {
+        try {
+            let authInfo = getAuthInfo();
+
+            // Save auth info if it was missing
+            if (authInfo === null) {
+                authInfo = getDefaultAuthState();
+                setAuthInfo(authInfo);
+            }
+
+            // Add auth info to the state
+            state.auth = authInfo;
+            this.log(`Loaded auth information for ${authInfo.user_id > 0 ? "user " + authInfo.user_id : "anonymous"} from local storage.`);
+        } catch(e) {
+            this.log(`Error when loading auth info from local storage:\n` + e.message);
+        }
+    }
+
+    /**
+     * Loads edited objects from localStorage into the `state` object.
+     */
+    loadEditedObjects(state) {
         try {
             // Get list of saved edited objects
             const savedEditedObjects = getListOfSavedEditedObjects();
@@ -40,7 +79,7 @@ export class LocalStorageManager {
             savedEditedObjects.forEach(objectID => {
                 let editedObject = localStorage.getItem(getEditedObjectKey(objectID));
                 if (editedObject === null) {
-                    this.log(`Skipping load of invalid data from localStorage for object "${objectID}"`);
+                    this.log(`Skipping load of invalid data from local storage for object "${objectID}"`);
                     deletedEditedObjects.add(objectID);
                     return;
                 } else {
@@ -62,18 +101,14 @@ export class LocalStorageManager {
 
             // Load edited objects into the state
             state.editedObjects = loadedEditedObjects;
-            this.log(`Finished loading edited objects from state, loaded: ${Object.keys(loadedEditedObjects).length}, removed invalid: ${savedEditedObjects.length - Object.keys(loadedEditedObjects).length}`);
+            this.log(`Finished loading edited objects from local storage, loaded: ${Object.keys(loadedEditedObjects).length}, removed invalid: ${savedEditedObjects.length - Object.keys(loadedEditedObjects).length}`);
         } catch (e) {
-            this.log("Error when loading state from local storage:\n" + e.message);
+            this.log("Error when loading edited objects from local storage:\n" + e.message);
         }
-
-        // Update previousState and return state
-        this.previousState = state;
-        return state;
-    };
+    }
 
     /**
-     * Saves changed edited objects to the localStorage.
+     * Saves changes in auth info & edited objects to the localStorage.
      */
     save(store) {
         // Exit if localStorage usage is disabled
@@ -82,12 +117,40 @@ export class LocalStorageManager {
             return;
         }
 
+        const currentState = store.getState();
+
+        this.saveAuthInfo(store);
+        this.saveEditedObjects(store);
+
+        // Update previous state
+        this.previousState = currentState;
+    }
+
+    saveAuthInfo(store) {
+        try {
+            // Get current & previous state
+            const currentState = store.getState(), previousState = this.previousState;
+
+            for (let key of this._authStateKeys) {
+                if (currentState.auth[key] != previousState.auth[key]) {
+                    setAuthInfo(currentState.auth);
+                    this.log("Saved auth information to the local storage.")
+                    return;
+                }
+            }
+            this.log("Auth information did not change.")
+        } catch(e) {
+            this.log("Error during auth information save:\n" + e.message);
+        }
+    }
+
+    saveEditedObjects(store) {
         // Get current & previous state
         const currentState = store.getState(), previousState = this.previousState;
 
         // Exit if edited objects did not change
         if (currentState.editedObjects === previousState.editedObjects) {
-            this.log("Edited objects did not change, exiting save function");
+            this.log("Edited objects did not change.");
             this.previousState = currentState;
             return;
         }
@@ -121,7 +184,7 @@ export class LocalStorageManager {
             setListOfSavedEditedObjects(savedEditedObjects);
             this.log(`Saved state to local storage:\nSaved ${numberOfSavedObjects} edited objects, removed ${numberOfRemovedObjects} objects.`);
         } catch (e) {
-            this.log("Error during state save:\n" + e.message);
+            this.log("Error during edited objects save:\n" + e.message);
             // Try to save savedEditedObjects if error occured in the middle of the function execution
             try {
                 if (savedEditedObjects) {
@@ -129,9 +192,6 @@ export class LocalStorageManager {
                     this.log(`Partially saved state to local storage:\nSaved ${numberOfSavedObjects} edited objects, removed ${numberOfRemovedObjects} objects.`);
                 }
             } catch (e) {}
-        } finally {
-            // Update previous state
-            this.previousState = currentState;
         }
     }
 
@@ -142,13 +202,30 @@ export class LocalStorageManager {
 
 
 /**
+ * Returns a deserialized auth information saved in local storage.
+ */
+const getAuthInfo = () => {
+    let authInfo = localStorage.getItem("authInfo");
+    if (!authInfo) return null;
+    else return deserializeData(authInfo);
+};
+
+/**
+ * Saves `auth` object with auth info to the local storage.
+ */
+const setAuthInfo = auth => {
+    localStorage.setItem("authInfo", serializeData(auth));
+};
+
+
+/**
  * Returns a localStorage key for the provided `objectID`.
  */
 const getEditedObjectKey = objectID => `editedObject_${objectID}`;
 
 
 /**
- * Returns a deserialized list of edited objects saved in localStorage.
+ * Returns a deserialized list of edited objects saved in local storage.
  */
 const getListOfSavedEditedObjects = () => {
     let savedEditedObjects = localStorage.getItem("savedEditedObjects");
@@ -158,7 +235,7 @@ const getListOfSavedEditedObjects = () => {
 
 
 /**
- * Saves list of provided Array of edited objects into localStorage
+ * Saves list of provided Array of edited objects into local storage.
  */
 const setListOfSavedEditedObjects = savedEditedObjects => {
     if (savedEditedObjects instanceof Set) savedEditedObjects = new Array(...savedEditedObjects);
@@ -168,7 +245,7 @@ const setListOfSavedEditedObjects = savedEditedObjects => {
 
 
 /**
- * Validates the integrity of the state parsed from localStorage.
+ * Validates the integrity of the state parsed from local storage.
  * 
  * Non-empty sub-objects of expectedState are recursively checked over the same criteria, as the state object itself.
  * 
@@ -220,7 +297,7 @@ const validateState = (expectedState, parsedState) => {
 
 
 /**
- * Deserializes provided `data` from localStorage.
+ * Deserializes provided `data` from local storage.
  */
 const deserializeData = data => {
     return JSON.parse(data);
@@ -232,7 +309,7 @@ const deserializeData = data => {
 
 
 /**
- * Serializes provided `data` into the format in which it will be stored in localStorage.
+ * Serializes provided `data` into the format in which it will be stored in local storage.
  */
 const serializeData = data => {
     return JSON.stringify(data);
