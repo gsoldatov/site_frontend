@@ -1,6 +1,6 @@
 import config from "../config";
 
-import { runFetch, getErrorFromResponse, responseHasError } from "./common";
+import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { viewObjectsFetch, deleteObjectsFetch } from "./data-objects";
 import { tagsSearchFetch, objectsTagsUpdateFetch } from "./data-tags";
 
@@ -8,6 +8,8 @@ import { setObjectsFetch, setObjectsPaginationInfo, setObjectsTagsInput, setCurr
         setShowDeleteDialogObjects, setTagsFilterInput, setTagsFilter } from "../actions/objects";
 
 import { isFetchingObjects } from "../store/state-util/ui-objects";
+
+import { enumResponseErrorType } from "../util/enum-response-error-type";
 
 
 const backendURL = config.backendURL;
@@ -61,15 +63,23 @@ export const pageFetch = currentPage => {
         dispatch(setObjectsPaginationInfo({ currentPage: currentPage }));
         dispatch(setObjectsFetch(true, ""));
 
-        let result = await dispatch(getPageObjectIDs());   // Fetch IDs of objects to display on the page
-        if (responseHasError(result)) dispatch(setObjectsFetch(false, result.error));
-        else {  // Fetch missing object data
-            let nonCachedObjects = getState().objectsUI.paginationInfo.currentPageObjectIDs.filter(object_id => !(object_id in state.objects));
-            if (nonCachedObjects.length !== 0) {
-                result = await dispatch(viewObjectsFetch(nonCachedObjects));
-                dispatch(setObjectsFetch(false, responseHasError(result) ? result.error : ""));
-            } else dispatch(setObjectsFetch(false, ""));
+        // Fetch IDs of objects to display on the page
+        let result = await dispatch(getPageObjectIDs());
+
+        // Handle fetch errors
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            dispatch(setObjectsFetch(false, errorMessage));
+            return;
         }
+
+        // Is fetch is successful, fetch missing object data
+        let nonCachedObjects = getState().objectsUI.paginationInfo.currentPageObjectIDs.filter(object_id => !(object_id in state.objects));
+        if (nonCachedObjects.length !== 0) {
+            result = await dispatch(viewObjectsFetch(nonCachedObjects));
+            dispatch(setObjectsFetch(false, getResponseErrorType(result) === enumResponseErrorType.general ? result.error : ""));
+        } else dispatch(setObjectsFetch(false, ""));
     };
 };
 
@@ -100,6 +110,7 @@ const getPageObjectIDs = () => {
             case 200:
                 let json = await response.json();
                 dispatch(setObjectsPaginationInfo({ totalItems: json["total_items"], currentPageObjectIDs: json["object_ids"] }));
+                return json;
             default:
                 return await getErrorFromResponse(response);
         }
@@ -124,12 +135,18 @@ export const onDeleteFetch = deleteSubobjects => {
         // Run view fetch & delete objects data
         dispatch(setObjectsFetch(true, ""));
         const result = await dispatch(deleteObjectsFetch(state.objectsUI.selectedObjectIDs, deleteSubobjects));
-        if (!responseHasError(result)) {
-            dispatch(setObjectsPaginationInfo({ currentPageObjectIDs: state.objectsUI.paginationInfo.currentPageObjectIDs.filter(id => !result.includes(id)) }));  // delete from current page
-            dispatch(setObjectsFetch(false, ""));
-        } else {
-            dispatch(setObjectsFetch(false, result.error));
+
+        // Handle fetch errors
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            dispatch(setObjectsFetch(false, errorMessage));
+            return;
         }
+
+        // Handle successful fetch end
+        dispatch(setObjectsPaginationInfo({ currentPageObjectIDs: state.objectsUI.paginationInfo.currentPageObjectIDs.filter(id => !result.includes(id)) }));  // delete from current page
+        dispatch(setObjectsFetch(false, ""));
     };
 };
 
@@ -150,7 +167,7 @@ const dropdownFetchThunkCreatorCreator = (actionCreator, inputTextSelector) => {
             // Run fetch & update matching tags
             const result = await dispatch(tagsSearchFetch({queryText, existingIDs}));
 
-            if (!responseHasError(result)) {
+            if (getResponseErrorType(result) === enumResponseErrorType.none) {
                 // Update matching tags if input text didn't change during fetch
                 if (inputText === inputTextSelector(getState())) dispatch(actionCreator({ matchingIDs: result }));
             }
@@ -181,11 +198,17 @@ export function onObjectsTagsUpdateFetch() {
         const objUI = state.objectsUI;
         const result = await dispatch(objectsTagsUpdateFetch(objUI.selectedObjectIDs, objUI.addedTags, objUI.removedTagIDs));
 
-        if (!responseHasError(result)) {
-            // Reset added & removed tags
-            dispatch(setCurrentObjectsTags({ added: [], removed: [] }));
-            dispatch(setObjectsFetch(false, ""));
-        } else
-            dispatch(setObjectsFetch(false, result.error));
+        // Handle fetch errors
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            dispatch(setObjectsFetch(false, errorMessage));
+            return;
+        }
+
+        // Handle successful fetch end
+        // Reset added & removed tags
+        dispatch(setCurrentObjectsTags({ added: [], removed: [] }));
+        dispatch(setObjectsFetch(false, ""));
     };
 };

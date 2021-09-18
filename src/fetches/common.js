@@ -11,6 +11,8 @@
 //     };
 //  };
 
+import { enumResponseErrorType } from "../util/enum-response-error-type";
+
 // Old version  // TODO delete
 // export const runFetch = async (url, params) => {
 //     try {
@@ -33,7 +35,8 @@ export const runFetch = async (url, params) => {
 
 
 /**
- * Returns an error message from `response` or undefined if there is none.
+ * Parses a non-successful `response` object and returns an object with `authError` or `error` attribute containing a corresponding error message.
+ * `response` is an object with 'status' property (returned by fetch or created manually).
  */
 export const getErrorFromResponse = async response => {
     switch (response.status) {
@@ -42,12 +45,21 @@ export const getErrorFromResponse = async response => {
         case 500:
             return { error: await response.text() };
         default:
+            // Return error in a different attribute for token-related errors to handle them separately later
+            if ("authError" in response) return { authError: response.authError };
+
+            // Return a general error
             return { error: (await response.json())._error };
     }
 };
 
 
 /**
- * Returns true if provided `response` contains an error.
+ * Accepts a fetch `response` object returns an `enumResponseErrorType` value corresponding to the error present (or not) in the response.
  */
-export const responseHasError = response => (response || {}).error !== undefined ? true : false;
+export const getResponseErrorType = response => {
+    response = response || {};
+    if ("authError" in response) return enumResponseErrorType.auth;
+    if ("error" in response) return enumResponseErrorType.general;
+    return enumResponseErrorType.none;
+};

@@ -1,5 +1,6 @@
 import config from "../config";
-import { runFetch, getErrorFromResponse, responseHasError } from "./common";
+import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
+import { enumResponseErrorType } from "../util/enum-response-error-type";
 
 import { addTags, deleteTags, setObjectsTags } from "../actions/data-tags";
 import { addObjects } from "../actions/data-objects";
@@ -7,6 +8,7 @@ import { deselectTags } from "../actions/tags";
 import { resetEditedObjectsTags } from "../actions/object";
 
 import { checkIfTagNameExists } from "../store/state-util/tags";
+
 
 
 const backendURL = config.backendURL;
@@ -183,7 +185,7 @@ export const tagsSearchFetch = ({queryText, existingIDs}) => {
 
                 // Fetch non-cahced tags
                 response = await dispatch(getNonCachedTags(tagIDs));
-                if (responseHasError(response)) return response;  // return error message in case of network error
+                if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
                 return tagIDs;
             case 404:
                 return [];
@@ -236,7 +238,7 @@ export const objectsTagsUpdateFetch = (object_ids, added_tags, removed_tag_ids) 
 
                 // Fetch non-cahced tags
                 response = await dispatch(getNonCachedTags(json.tag_updates.added_tag_ids));
-                if (responseHasError(response)) return response;  // return error message in case of network error
+                if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
                 return json;
             default:
                 return await getErrorFromResponse(response);

@@ -1,6 +1,7 @@
 import config from "../config";
 
-import { runFetch, getErrorFromResponse, responseHasError } from "./common";
+import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
+import { enumResponseErrorType } from "../util/enum-response-error-type";
 import { getNonCachedTags } from "./data-tags";
 
 import { setObjectsTags } from "../actions/data-tags";
@@ -111,7 +112,7 @@ export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
                     let allObjectsTags = new Set();
                     data["objects"].forEach(object => object.current_tag_ids.forEach(tagID => allObjectsTags.add(tagID)));
                     response = await dispatch(getNonCachedTags([...allObjectsTags]));
-                    if (responseHasError(response)) return response;  // return error message in case of network error
+                    if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
                 }
 
                 return data;
@@ -177,7 +178,7 @@ export const updateObjectFetch = obj => {
 
                 // Fetch non-cached tags
                 response = await dispatch(getNonCachedTags(getState().objectsTags[object.object_id]));
-                if (responseHasError(response)) return response;  // return error message in case of network error
+                if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
 
                 return object;
             case 404:
@@ -254,8 +255,8 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
                 let state = getState();
                 let nonCachedObjectIDs = objectIDs.filter(objectID => !(objectID in state.objects && objectID in state.objectsTags))
                 if (nonCachedObjectIDs.length > 0) {
-                    let result = await dispatch(viewObjectsFetch(nonCachedObjectIDs, undefined));
-                    if (responseHasError(result)) return result;
+                    response = await dispatch(viewObjectsFetch(nonCachedObjectIDs, undefined));
+                    if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
                 }
 
                 return objectIDs;

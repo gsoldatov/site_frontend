@@ -1,10 +1,12 @@
-import { responseHasError } from "./common";
+import { getResponseErrorType } from "./common";
 import { addTagFetch, viewTagsFetch, updateTagFetch, deleteTagsFetch } from "./data-tags";
 
 import { setRedirectOnRender } from "../actions/common";
 import { loadEditTagPage, setTagOnLoadFetchState, setTagOnSaveFetchState, setShowDeleteDialogTag, setCurrentTag } from "../actions/tag";
 
 import { isFetchingTag } from "../store/state-util/ui-tag";
+
+import { enumResponseErrorType } from "../util/enum-response-error-type";
 
 
 /**
@@ -21,12 +23,17 @@ export const addTagOnSaveFetch = () => {
         const tagAttributes = { tag_name: state.tagUI.currentTag.tag_name, tag_description: state.tagUI.currentTag.tag_description };
         const result = await dispatch(addTagFetch(tagAttributes));
 
-        if (!responseHasError(result)) {
-            dispatch(setTagOnSaveFetchState(false, ""));
-            dispatch(setRedirectOnRender(`/tags/${result.tag_id}`));
-        } else {
-            dispatch(setTagOnSaveFetchState(false, result.error));
+        // Handle fetch errors
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            dispatch(setTagOnSaveFetchState(false, errorMessage));
+            return;
         }
+
+        // Handle successful fetch end
+        dispatch(setTagOnSaveFetchState(false, ""));
+        dispatch(setRedirectOnRender(`/tags/${result.tag_id}`));
     };
 };
 
@@ -50,12 +57,17 @@ export const editTagOnLoadFetch = tag_id => {
         dispatch(setTagOnLoadFetchState(true, ""));
         const result = await dispatch(viewTagsFetch( [tag_id] ));
 
-        if (!responseHasError(result)) {
-            dispatch(setCurrentTag(result[0]));
-            dispatch(setTagOnLoadFetchState(false, ""));
-        } else {
-            dispatch(setTagOnLoadFetchState(false, result.error));
+        // Handle fetch errors
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            dispatch(setTagOnLoadFetchState(false, errorMessage));
+            return;
         }
+
+        // Handle successful fetch end
+        dispatch(setCurrentTag(result[0]));
+        dispatch(setTagOnLoadFetchState(false, ""));
     };
 };
 
@@ -75,13 +87,18 @@ export const editTagOnSaveFetch = () => {
         const { tag_id, tag_name, tag_description } = state.tagUI.currentTag;
         const tagAttributes = { tag_id, tag_name, tag_description };
         const result = await dispatch(updateTagFetch(tagAttributes));
-        
-        if (!responseHasError(result)) {
-            dispatch(setCurrentTag(result));
-            dispatch(setTagOnSaveFetchState(false, ""));
-        } else {
-            dispatch(setTagOnSaveFetchState(false, result.error));
+
+        // Handle fetch errors
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            dispatch(setTagOnSaveFetchState(false, errorMessage));
+            return;
         }
+
+        // Handle successful fetch end
+        dispatch(setCurrentTag(result));
+        dispatch(setTagOnSaveFetchState(false, ""));
     };
 };
 
@@ -99,13 +116,18 @@ export const editTagOnDeleteFetch = () => {
         dispatch(setShowDeleteDialogTag(false));
 
         // Run fetch & delete tag data from state
-        dispatch(setTagOnLoadFetchState(true, ""));
+        dispatch(setTagOnSaveFetchState(true, ""));
         const result = await dispatch(deleteTagsFetch( [state.tagUI.currentTag.tag_id] ));
 
-        if (!responseHasError(result)) {
-            dispatch(setRedirectOnRender("/tags"));
-        } else {
-            dispatch(setTagOnLoadFetchState(false, result.error));
+        // Handle fetch errors
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            dispatch(setTagOnSaveFetchState(false, errorMessage));
+            return;
         }
+
+        // Handle successful fetch end
+        dispatch(setRedirectOnRender("/tags"));
     };
 };
