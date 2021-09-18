@@ -95,15 +95,12 @@ const getPageObjectIDs = () => {
                 }
             })
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
                 let json = await response.json();
                 dispatch(setObjectsPaginationInfo({ totalItems: json["total_items"], currentPageObjectIDs: json["object_ids"] }));
-            case 400:
-            case 404:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     };

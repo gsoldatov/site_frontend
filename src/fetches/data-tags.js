@@ -31,15 +31,13 @@ export const addTagFetch = tag => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tag })
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
                 let tag = (await response.json()).tag;
                 dispatch(addTags([tag]));
                 return tag;
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     };
@@ -60,7 +58,6 @@ export const viewTagsFetch = tagIDs => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tag_ids: tagIDs.map(id => parseInt(id)) })
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
@@ -70,8 +67,7 @@ export const viewTagsFetch = tagIDs => {
             case 404:
                 const error = tagIDs.length > 1 ? "Tags not found." : "Tag not found.";
                 return { error };
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     }; 
@@ -110,7 +106,6 @@ export const updateTagFetch = tag => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tag })
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
@@ -119,8 +114,7 @@ export const updateTagFetch = tag => {
                 return tag;
             case 404:
                 return { error: "Tag not found." };
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     };
@@ -141,7 +135,6 @@ export const deleteTagsFetch = tagIDs => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tag_ids: tagIDs.map(id => parseInt(id)) })
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
@@ -149,8 +142,7 @@ export const deleteTagsFetch = tagIDs => {
                 dispatch(deselectTags(tagIDs));
                 dispatch(deleteTags(tagIDs));
                 return tagIDs;
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     }; 
@@ -184,7 +176,6 @@ export const tagsSearchFetch = ({queryText, existingIDs}) => {
             headers: { "Content-Type": "application/json" },
             body: payload
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
@@ -196,8 +187,7 @@ export const tagsSearchFetch = ({queryText, existingIDs}) => {
                 return tagIDs;
             case 404:
                 return [];
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     };
@@ -221,7 +211,6 @@ export const objectsTagsUpdateFetch = (object_ids, added_tags, removed_tag_ids) 
             headers: { "Content-Type": "application/json" },
             body: payload
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
@@ -249,8 +238,7 @@ export const objectsTagsUpdateFetch = (object_ids, added_tags, removed_tag_ids) 
                 response = await dispatch(getNonCachedTags(json.tag_updates.added_tag_ids));
                 if (responseHasError(response)) return response;  // return error message in case of network error
                 return json;
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     };

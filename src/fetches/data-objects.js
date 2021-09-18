@@ -49,7 +49,6 @@ export const addObjectFetch = obj => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
@@ -64,8 +63,7 @@ export const addObjectFetch = obj => {
                 dispatch(addObjects([object]));         // Add object
                 dispatch(addObjectData([{ object_id: object.object_id, object_type: object.object_type, object_data: object_data }]));
                 return object;
-            case 400:
-            case 500:
+            default:
                 return getErrorFromResponse(response);
         }
     };
@@ -97,7 +95,6 @@ export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
@@ -121,8 +118,7 @@ export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
             case 404:
                 const error = Math.max(objectIDs.length, objectDataIDs.length) > 1 ? "Objects not found." : "Object not found.";
                 return { error };
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     }; 
@@ -165,7 +161,6 @@ export const updateObjectFetch = obj => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
@@ -187,8 +182,7 @@ export const updateObjectFetch = obj => {
                 return object;
             case 404:
                 return { error: "Object not found." };
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     };
@@ -212,15 +206,13 @@ export const deleteObjectsFetch = (objectIDs, deleteSubobjects) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ object_ids: objectIDs.map(id => parseInt(id)), delete_subobjects: deleteSubobjects })
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
 
         switch (response.status) {
             case 200:
             case 404:   // Objects not present in the database should be deleted from state
                 dispatch(deleteObjects({ objectIDs, deleteSubobjects }));
                 return objectIDs;
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     }; 
@@ -254,8 +246,6 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
             headers: { "Content-Type": "application/json" },
             body: payload
         });
-        if (responseHasError(response)) return response;  // return error message in case of network error
-
         switch (response.status) {
             case 200:
                 let objectIDs = (await response.json()).object_ids;
@@ -271,8 +261,7 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
                 return objectIDs;
             case 404:
                 return [];
-            case 400:
-            case 500:
+            default:
                 return await getErrorFromResponse(response);
         }
     };
