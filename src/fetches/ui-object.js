@@ -2,7 +2,7 @@ import config from "../config";
 
 import { getResponseErrorType } from "./common";
 import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch, objectsSearchFetch } from "./data-objects";
-import { tagsSearchFetch } from "./data-tags";
+import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
 
 import { setRedirectOnRender } from "../actions/common";
 import { loadAddObjectPage, loadEditObjectPage, resetEditedObjects, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
@@ -82,6 +82,17 @@ export const editObjectOnLoadFetch = object_id => {
             let objectIDs = fetchAttributesAndTags ? [object_id] : undefined;
             let objectDataIDs = fetchData ? [object_id] : undefined;
             let result = await dispatch(viewObjectsFetch(objectIDs, objectDataIDs));
+
+            // Handle fetch errors
+            const responseErrorType = getResponseErrorType(result);
+            if (responseErrorType > enumResponseErrorType.none) {
+                const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+                dispatch(setObjectOnLoadFetchState(false, errorMessage));
+                return;
+            }
+        } else {
+            // Fetch missing tags if object attributes, tags & data are present in the state
+            let result = await dispatch(getNonCachedTags(state.objectsTags[object_id]));
 
             // Handle fetch errors
             const responseErrorType = getResponseErrorType(result);
