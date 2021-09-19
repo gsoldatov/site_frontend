@@ -60,7 +60,7 @@ export const pageFetch = currentPage => {
 const getPageTagIDs = () => {
     return async (dispatch, getState) => {
         const pI = getState().tagsUI.paginationInfo;
-        let response = await runFetch(`${backendURL}/tags/get_page_tag_ids`, {
+        let response = await dispatch(runFetch(`${backendURL}/tags/get_page_tag_ids`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -72,7 +72,7 @@ const getPageTagIDs = () => {
                     filter_text: pI.filterText
                 }
             })
-        });
+        }));
 
         switch (response.status) {
             case 200:

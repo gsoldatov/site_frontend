@@ -45,11 +45,11 @@ export const addObjectFetch = obj => {
             }
         };
         
-        let response = await runFetch(`${backendURL}/objects/add`, {
+        let response = await dispatch(runFetch(`${backendURL}/objects/add`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
-        });
+        }));
 
         switch (response.status) {
             case 200:
@@ -91,11 +91,11 @@ export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
         if (objectIDsLength > 0) payload["object_ids"] = objectIDs;
         if (objectDataIDsLength > 0) payload["object_data_ids"] = objectDataIDs;
 
-        let response = await runFetch(`${backendURL}/objects/view`, {
+        let response = await dispatch(runFetch(`${backendURL}/objects/view`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
-        });
+        }));
 
         switch (response.status) {
             case 200:
@@ -157,11 +157,11 @@ export const updateObjectFetch = obj => {
             }
         };
         
-        let response = await runFetch(`${backendURL}/objects/update`, {
+        let response = await dispatch(runFetch(`${backendURL}/objects/update`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
-        });
+        }));
 
         switch (response.status) {
             case 200:
@@ -202,11 +202,11 @@ export const updateObjectFetch = obj => {
 export const deleteObjectsFetch = (objectIDs, deleteSubobjects) => {
     return async (dispatch, getState) => {
         deleteSubobjects = deleteSubobjects || false;
-        let response = await runFetch(`${backendURL}/objects/delete`, {
+        let response = await dispatch(runFetch(`${backendURL}/objects/delete`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ object_ids: objectIDs.map(id => parseInt(id)), delete_subobjects: deleteSubobjects })
-        });
+        }));
 
         switch (response.status) {
             case 200:
@@ -242,11 +242,12 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
             }
         });
 
-        let response = await runFetch(`${backendURL}/objects/search`, {
+        let response = await dispatch(runFetch(`${backendURL}/objects/search`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: payload
-        });
+        }));
+        
         switch (response.status) {
             case 200:
                 let objectIDs = (await response.json()).object_ids;

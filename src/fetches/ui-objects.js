@@ -90,7 +90,7 @@ export const pageFetch = currentPage => {
 const getPageObjectIDs = () => {
     return async (dispatch, getState) => {
         const pI = getState().objectsUI.paginationInfo;
-        let response = await runFetch(`${backendURL}/objects/get_page_object_ids`, {
+        let response = await dispatch(runFetch(`${backendURL}/objects/get_page_object_ids`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -104,7 +104,7 @@ const getPageObjectIDs = () => {
                     tags_filter: pI.tagsFilter
                 }
             })
-        });
+        }));
 
         switch (response.status) {
             case 200:

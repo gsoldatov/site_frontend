@@ -1,36 +1,67 @@
-// /**  // TODO replace old runFetch
-//  * Thunk, which runs a fetch to `url` with `fetchParams`. Returns response object.
-//  *  
-//  * Catches network (and CORS) errors and returns an object with `error` property in this case.
-//  * 
-//  * Additional parameters can be passed via `thunkParams` argument:
-//  * - `useAccessToken`: can be set to false to avoid checking current access token for expiration and adding it in 'Authorization' header.
-//  */
-//  export const runFetch = async (url, fetchParams, thunkParams = {}) => {
-//     return async (dispatch, getState) => {
-//     };
-//  };
-
+import { setAuthInformation } from "../actions/auth";
+import { getDefaultAuthState } from "../store/state-templates/auth";
 import { enumResponseErrorType } from "../util/enum-response-error-type";
 
-// Old version  // TODO delete
-// export const runFetch = async (url, params) => {
-//     try {
-//         return await fetch(url, params);
-//     } catch (e) {
-//         if (e instanceof TypeError && e.message.indexOf("NetworkError") > -1) return { error: "Failed to fetch data." };
-//         // throw e;
-//     }
-// };
 
-// TODO replace with thunk
-export const runFetch = async (url, params) => {
-    try {
-        return await fetch(url, params);
-    } catch (e) {
-        if (e instanceof TypeError && e.message.indexOf("NetworkError") > -1) return { status: "network", error: "Failed to fetch data." };
-        // throw e;
-    }
+/**
+ * Thunk, which runs a fetch to `url` with `fetchParams`. Returns response object.
+ *  
+ * Catches network (and CORS) errors and returns an object with `error` property in this case.
+ * 
+ * Additional parameters can be passed via `thunkParams` argument:
+ * - `useAccessToken`: can be set to false to avoid checking current access token for expiration and adding it in 'Authorization' header.
+ */
+export const runFetch = (url, fetchParams, thunkParams = {}) => {
+    return async (dispatch, getState) => {
+        const { useAccessToken = true } = thunkParams;
+
+        const state = getState();
+
+        if (useAccessToken) {
+            // Check if access token expired
+            if (state.auth.access_token_expiration_time.length > 0 || new Date(state.auth.access_token_expiration_time) <= Date.now()) {
+                dispatch(setAuthInformation(getDefaultAuthState()));
+                return { authError: "Invalid token" };
+            }
+
+            // Add 'Authorization' header if token is present
+            if (state.auth.access_token.length > 0) {
+                fetchParams.headers = fetchParams.headers || {};
+                fetchParams.headers["Authorization"] = `Bearer ${state.auth.access_token}`;
+            }
+        }
+
+        try {
+            // Send request
+            let response = await fetch(url, fetchParams);
+
+            // Handle response (update auth information)
+            switch (response.status) {
+                case 200:
+                    if (useAccessToken) {
+                        // Update access_token_expiration_time if it was updated on the server
+                        const body = await response.json();
+                        if ("auth" in body && "access_token_expiration_time" in body.auth)
+                            dispatch(setAuthInformation({ access_token_expiration_time: body.auth["access_token_expiration_time"] }));
+                    }
+                    return response;
+                case 401:
+                    if (useAccessToken) {
+                        // Reset auth information if it's invalid and return authError
+                        dispatch(setAuthInformation(getDefaultAuthState()));
+                        return { authError: "Invalid token" };
+                    } else
+                        // Retun a regular error for requests sent without token info
+                        return response;
+                default:
+                    return response;
+            }
+        } catch (e) {
+            // Handle network errors
+            if (e instanceof TypeError && e.message.indexOf("NetworkError") > -1) return { status: "network", error: "Failed to fetch data." };
+            else throw e;
+        }
+    };
 };
 
 

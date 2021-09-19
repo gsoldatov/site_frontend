@@ -28,11 +28,11 @@ export const addTagFetch = tag => {
         if (checkIfTagNameExists(state, tag)) return { error: "Tag name already exists." };
         
         // Run fetch & handle response
-        let response = await runFetch(`${backendURL}/tags/add`, {
+        let response = await dispatch(runFetch(`${backendURL}/tags/add`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tag })
-        });
+        }));
 
         switch (response.status) {
             case 200:
@@ -55,11 +55,11 @@ export const addTagFetch = tag => {
  */
 export const viewTagsFetch = tagIDs => {
     return async (dispatch, getState) => {
-        let response = await runFetch(`${backendURL}/tags/view`, {
+        let response = await dispatch(runFetch(`${backendURL}/tags/view`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tag_ids: tagIDs.map(id => parseInt(id)) })
-        });
+        }));
 
         switch (response.status) {
             case 200:
@@ -103,11 +103,11 @@ export const updateTagFetch = tag => {
         if (checkIfTagNameExists(state, tag)) return { error: "Tag name already exists." };
         
         // Run fetch & handle response
-        let response = await runFetch(`${backendURL}/tags/update`, {
+        let response = await dispatch(runFetch(`${backendURL}/tags/update`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tag })
-        });
+        }));
 
         switch (response.status) {
             case 200:
@@ -132,11 +132,11 @@ export const updateTagFetch = tag => {
  */
 export const deleteTagsFetch = tagIDs => {
     return async (dispatch, getState) => {
-        let response = await runFetch(`${backendURL}/tags/delete`, {
+        let response = await dispatch(runFetch(`${backendURL}/tags/delete`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tag_ids: tagIDs.map(id => parseInt(id)) })
-        });
+        }));
 
         switch (response.status) {
             case 200:
@@ -173,11 +173,11 @@ export const tagsSearchFetch = ({queryText, existingIDs}) => {
             }
         });
 
-        let response = await runFetch(`${backendURL}/tags/search`, {
+        let response = await dispatch(runFetch(`${backendURL}/tags/search`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: payload
-        });
+        }));
 
         switch (response.status) {
             case 200:
@@ -208,11 +208,11 @@ export const objectsTagsUpdateFetch = (object_ids, added_tags, removed_tag_ids) 
         // Run tags update fetch
         let payload = JSON.stringify({ object_ids, added_tags, removed_tag_ids });
 
-        let response = await runFetch(`${backendURL}/objects/update_tags`, {
+        let response = await dispatch(runFetch(`${backendURL}/objects/update_tags`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: payload
-        });
+        }));
 
         switch (response.status) {
             case 200:
