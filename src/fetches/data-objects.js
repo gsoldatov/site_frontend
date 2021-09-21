@@ -9,6 +9,7 @@ import { addObjects, addObjectData, deleteObjects } from "../actions/data-object
 import { setEditedObject, setObjectOnSaveFetchState } from "../actions/object";
 
 import { validateObject, serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
+import { addedObjectAttributes, updatedObjectAttributes } from "../store/state-templates/edited-object";
 
 
 const backendURL = config.backendURL;
@@ -35,19 +36,8 @@ export const addObjectFetch = obj => {
 
         // Run fetch & handle response
         let object_data = serializeObjectData(state, obj);
-        let payload = {
-            object: {
-                object_type: obj.object_type,
-                object_name: obj.object_name,
-                object_description: obj.object_description,
-                is_published: obj.is_published,
-                owner_id: obj.owner_id,
-
-                added_tags: obj.addedTags,
-                
-                object_data
-            }
-        };
+        let payload = { object: { added_tags: obj.addedTags, object_data }};
+        for (let attr of addedObjectAttributes) payload.object[attr] = obj[attr];
         
         let response = await dispatch(runFetch(`${backendURL}/objects/add`, {
             method: "POST",
@@ -150,20 +140,9 @@ export const updateObjectFetch = obj => {
 
         // Run fetch & handle response
         let object_data = serializeObjectData(state, obj);
-        let payload = {
-            object: {
-                object_id: obj.object_id,
-                object_name: obj.object_name,
-                object_description: obj.object_description,
-                is_published: obj.is_published,
-                owner_id: obj.owner_id,
-                
-                added_tags: obj.addedTags,
-                removed_tag_ids: obj.removedTagIDs,
-
-                object_data
-            }
-        };
+        updatedObjectAttributes
+        let payload = { object: { added_tags: obj.addedTags, removed_tag_ids: obj.removedTagIDs, object_data }};
+        for (let attr of updatedObjectAttributes) payload.object[attr] = obj[attr];
         
         let response = await dispatch(runFetch(`${backendURL}/objects/update`, {
             method: "PUT",

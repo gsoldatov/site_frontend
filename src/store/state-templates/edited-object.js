@@ -3,10 +3,30 @@
  */
 export const objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description", "is_published", "owner_id"];
 
+
+/**
+ * List of object attributes (excluding tags & data) serialized into JSON when sending a request to add it.
+ */
+export const addedObjectAttributes = ["object_type" ,"object_name", "object_description", "is_published", "owner_id"];
+
+
+/**
+ * List of object attributes (excluding tags & data) serialized into JSON when sending a request to update it.
+ */
+export const updatedObjectAttributes = ["object_id" ,"object_name", "object_description", "is_published", "owner_id"];
+
+
+/**
+ * List of object attributes of a subobject, which are serialized into JSON when adding/updating it.
+ * 
+ * Object id, tags & data, as well as composite properties (column & row positions, selected_tab, etc.), are added separately (see `serializeObjectData` function).
+ */
+export const compositeSubobjectObjectAttributes = ["object_name", "object_description", "object_type", "is_published", "owner_id"];
+
+
 /**
  * Default state of an edited object.
- * TODO: place all lists here
- * NOTE: update `objectAttributes` and add/update object data fetches when updating object attributes.
+ * NOTE: update other lists in the file when updating object attributes.
  */
 export const defaultEditedObjectState = {       // `getDefaultEditedObjectState` function from reducers/helpers/object should be used to get default state
     // attributes

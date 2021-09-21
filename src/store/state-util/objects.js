@@ -3,6 +3,7 @@ import { deepEqual } from "../../util/equality-checks";
 import { enumDeleteModes } from "../state-templates/composite-subobjects";
 import { getSubobjectDisplayOrder } from "./composite";
 import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
+import { compositeSubobjectObjectAttributes } from "../state-templates/edited-object";
 /*
     Functions for checking/getting objects state.
 */
@@ -140,7 +141,7 @@ export const serializeObjectData = (state, obj) => {
                         )
                     ) {
                         // Attributes
-                        for (let attr of ["object_name", "object_description", "object_type", "is_published"])
+                        for (let attr of compositeSubobjectObjectAttributes)
                             subobject[attr] = eso[attr];
                         
                         // Data

@@ -43,6 +43,10 @@ export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDef
             ...stateAfterReset, 
             ...deepCopy(state.objects[objectID] || {})
         };
+
+        // Set object's `owner_id` to current user, if it's not set after attributes reset
+        if (stateAfterReset.owner_id <= 0) stateAfterReset.owner_id = state.auth.user_id;
+
         
         // Set object's current tags (added & removed tags are already reset)
         const tags = state.objectsTags[objectID];
