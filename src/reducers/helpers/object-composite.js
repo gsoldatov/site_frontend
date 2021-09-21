@@ -122,6 +122,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
     // - removes deleted and fully deleted existing subobjects from state;
     // - updates new & modified subobjects in state.editedObjects (maps subobject IDs & created_at & modified_at timestamps);
     // - adds new & modified subobject attributes & data to state storages;
+    // - adds empty records in objectsTags storage for new subobjects;
     // - maps subobject IDs of the saved composite object and removes deleted subobjects in state.editedObjects[objectID];
     // - updates subobject row positions in state.editedObjects[objectID].
     // Object attributes, tags & data of the saved object are added to the storages in the add/update fetch functions.
@@ -147,21 +148,24 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         newState = getStateWithDeletedObjects(newState, fullyDeletedExistingSubobjectIDs);
 
         // Map new subobject IDs in state.editedObjects and update object_id, created_at & modified_at values
+        // Also add empty records in objectsTags storage for new subobjects
         const objectUpdateTimeStamp = object.modified_at;
         const IDMapping = object.object_data.id_mapping;
         const modifiedExistingSubobjectIDs = object_data.subobjects.filter(so => so.object_id > 0 && so.object_name !== undefined).map(so => so.object_id);
-        let newEditedObjects = {};
+        let newEditedObjects = {}, newObjectsTags = {};
         for (let oldObjectID of Object.keys(newState.editedObjects)) {
             const isNewSubobject = IDMapping[oldObjectID] !== undefined;
             const isModifiedExistingSubobject = modifiedExistingSubobjectIDs.indexOf(parseInt(oldObjectID)) > -1;
 
             // If edited object was a new subobject, copy it, update its ID and add created_at & modified_at values
+            // Add an empty list as its current tags
             if (isNewSubobject) {
                 const newObjectID = IDMapping[oldObjectID];
                 newEditedObjects[newObjectID] = { ...newState.editedObjects[oldObjectID] };
                 newEditedObjects[newObjectID].object_id = newObjectID;
                 newEditedObjects[newObjectID].created_at = objectUpdateTimeStamp;
                 newEditedObjects[newObjectID].modified_at = objectUpdateTimeStamp;
+                newObjectsTags[newObjectID] = [];
             }
             // If edited object was an existing modified subobject, copy it and update its modified_at value
             else if (isModifiedExistingSubobject) {
@@ -173,7 +177,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
                 newEditedObjects[oldObjectID] = newState.editedObjects[oldObjectID];
             }
         }
-        newState = { ...newState, editedObjects: newEditedObjects };
+        newState = { ...newState, editedObjects: newEditedObjects, objectsTags: { ...state.objectsTags, ...newObjectsTags } };
 
         // Filter new & modified existing subobjects and map new subobject IDs from object_data
         let subobjectsToAddToState = object_data.subobjects.filter(so => so.object_name !== undefined).map(so => {

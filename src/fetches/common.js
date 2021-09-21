@@ -47,9 +47,10 @@ export const runFetch = (url, fetchParams, thunkParams = {}) => {
                     if (useAccessToken) {
                         // Update access_token_expiration_time if it was updated on the server
                         const body = await response.clone().json();     // Clone object to allow response body consumption downstream
-                        if ("auth" in body && "access_token_expiration_time" in body.auth)
+                        if ("auth" in body && "access_token_expiration_time" in body.auth) {
                             dispatch(setAuthInformation({ access_token_expiration_time: body.auth["access_token_expiration_time"] }));
                             console.log(`ADDED NEW TOKEN EXPIRATION TIME: ${body.auth["access_token_expiration_time"]}`)
+                        }
                     }
                     return response;
                 case 401:
