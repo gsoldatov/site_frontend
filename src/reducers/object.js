@@ -12,6 +12,7 @@ import { getDefaultEditedObjectState, getStateWithResetEditedObjects, getStateWi
     getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects} from "./helpers/object";
 import { getUpdatedToDoList } from "./helpers/object-to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
+import { objectAttributes } from "../store/state-templates/edited-object";
 
 
 function loadAddObjectPage(state, action) {
@@ -19,7 +20,7 @@ function loadAddObjectPage(state, action) {
     let editedObjects = state.editedObjects;
     if (editedObjects[0] === undefined) {
         editedObjects = deepCopy(editedObjects);
-        editedObjects[0] = getDefaultEditedObjectState(0);
+        editedObjects[0] = getDefaultEditedObjectState({ object_id: 0, owner_id: state.auth.user_id });
     }
 
     return {
@@ -203,17 +204,15 @@ function setEditedObject(state, action) {
 
     const newObject = {
         ...oldObject,
-        object_id: action.object.object_id !== undefined ? action.object.object_id : oldObject.object_id,
-        object_type: action.object.object_type !== undefined ? action.object.object_type : oldObject.object_type,
-        object_name: action.object.object_name !== undefined ? action.object.object_name : oldObject.object_name,
-        object_description: action.object.object_description !== undefined ? action.object.object_description : oldObject.object_description,
-        created_at: action.object.created_at !== undefined ? action.object.created_at : oldObject.created_at,
-        modified_at: action.object.modified_at !== undefined ? action.object.modified_at : oldObject.modified_at,
 
         link,
         markdown,
         toDoList
     };
+
+    objectAttributes.forEach(attr => {
+        if (attr in action.object) newObject[attr] = action.object[attr];
+    });
 
     return {
         ...state,

@@ -1,7 +1,5 @@
 import { getSubobjectDefaults } from "../../store/state-templates/composite-subobjects";
-
-
-const _objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description"];
+import { objectAttributes } from "../../store/state-templates/edited-object";
 
 
 /**
@@ -14,7 +12,7 @@ export const getStateWithAddedObjects = (state, objects) => {
     objects.forEach(object => {
         const object_id = object.object_id;
         newObjects[object_id] = {};
-        _objectAttributes.forEach(attr => newObjects[object_id][attr] = object[attr]);
+        objectAttributes.forEach(attr => newObjects[object_id][attr] = object[attr]);
     });
     return {
         ...state,

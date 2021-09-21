@@ -140,7 +140,7 @@ export const serializeObjectData = (state, obj) => {
                         )
                     ) {
                         // Attributes
-                        for (let attr of ["object_name", "object_description", "object_type"])
+                        for (let attr of ["object_name", "object_description", "object_type", "is_published"])
                             subobject[attr] = eso[attr];
                         
                         // Data
@@ -259,7 +259,7 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
  */
  export const objectHasNoChanges = (state, objectID, defaultReturnValue) => {
     // New edited object
-    if (objectID === 0) return deepEqual(state.editedObjects[objectID], getDefaultEditedObjectState(0));
+    if (objectID === 0) return deepEqual(state.editedObjects[objectID], getDefaultEditedObjectState({ object_id: 0, owner_id: state.auth.user_id }));
 
     // Existing edited object
     // Return default value if objectID is missing is editedObjects or attribute / tag / data storages

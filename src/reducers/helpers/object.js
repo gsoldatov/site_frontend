@@ -5,11 +5,14 @@ import { getObjectDataFromStore, objectHasNoChanges } from "../../store/state-ut
 
 /**
  * Returns a deep copy of default edited object state.
- * Sets `object_id` in the returned object if it's provided.
+ * Sets `object_id` and `owner_id` in the returned object if they are provided as `overrideValues` attributes.
  */
-export const getDefaultEditedObjectState = object_id => {
+export const getDefaultEditedObjectState = (overrideValues = {}) => {
+    const { object_id, owner_id } = overrideValues;
+
     const defaultState = deepCopy(defaultEditedObjectState);
     if (object_id !== undefined) defaultState.object_id = object_id;
+    if (owner_id !== undefined) defaultState.owner_id = owner_id;
     return defaultState;
 };
 
@@ -31,7 +34,7 @@ export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDef
 
     const newEditedObjects = {...state.editedObjects};
     objectIDs.forEach(objectID => {
-        let stateAfterReset = getDefaultEditedObjectState(objectID);
+        let stateAfterReset = getDefaultEditedObjectState({ object_id: objectID });
 
         // Set object attributes
         const attributes = state.objects[objectID];

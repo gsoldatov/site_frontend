@@ -40,7 +40,11 @@ export const addObjectFetch = obj => {
                 object_type: obj.object_type,
                 object_name: obj.object_name,
                 object_description: obj.object_description,
+                is_published: obj.is_published,
+                owner_id: obj.owner_id,
+
                 added_tags: obj.addedTags,
+                
                 object_data
             }
         };
@@ -151,9 +155,13 @@ export const updateObjectFetch = obj => {
                 object_id: obj.object_id,
                 object_name: obj.object_name,
                 object_description: obj.object_description,
-                object_data,
+                is_published: obj.is_published,
+                owner_id: obj.owner_id,
+                
                 added_tags: obj.addedTags,
-                removed_tag_ids: obj.removedTagIDs
+                removed_tag_ids: obj.removedTagIDs,
+
+                object_data
             }
         };
         

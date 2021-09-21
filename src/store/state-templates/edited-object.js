@@ -1,5 +1,12 @@
 /**
+ * List of object attributes (excluding tags, data & UI settings).
+ */
+export const objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description", "is_published", "owner_id"];
+
+/**
  * Default state of an edited object.
+ * TODO: place all lists here
+ * NOTE: update `objectAttributes` and add/update object data fetches when updating object attributes.
  */
 export const defaultEditedObjectState = {       // `getDefaultEditedObjectState` function from reducers/helpers/object should be used to get default state
     // attributes
@@ -9,6 +16,8 @@ export const defaultEditedObjectState = {       // `getDefaultEditedObjectState`
     object_description: "",
     created_at: "",
     modified_at: "",
+    is_published: false,
+    owner_id: 0,
 
     // object's tags
     currentTagIDs: [],   
