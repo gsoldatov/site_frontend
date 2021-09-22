@@ -18,6 +18,9 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         // Add a new edited object
         const newID = update.subobjectID !== undefined ? update.subobjectID : getNewSubobjectID(state);     // take existing subobjectID if it's passed
         let newState = getStateWithResetEditedObjects(state, [newID], true);
+
+        // Set new object's `is_published` to its parents' value
+        newState.editedObjects[newID].is_published = newState.editedObjects[objectID].is_published;
         
         // Add the new object to composite data
         let newCompositeData = {
@@ -338,5 +341,23 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
                 }
             }
         };
+    }
+
+    // Toggles `is_published` of all subobjects based on the provided `subobjectsIsPublishedState` value.
+    // If `subobjectsIsPublishedState` == "yes", sets `is_published` values to false, otherwise - to true.
+    if (command === "toggleSubobjectsIsPublished") {
+        const editedObject = state.editedObjects[objectID];
+        if (editedObject.object_type !== "composite") return state;
+
+        const { subobjectsIsPublishedState } = update;
+        const newIsPublished = subobjectsIsPublishedState !== "yes";
+
+        const newEditedObjects = {};
+        Object.keys(editedObject.composite.subobjects).forEach(subobjectID => {
+            if (subobjectID in state.editedObjects)
+                newEditedObjects[subobjectID] = { ...state.editedObjects[subobjectID], is_published: newIsPublished };
+        })
+
+        return { ...state, editedObjects: { ...state.editedObjects, ...newEditedObjects }};
     }
 }

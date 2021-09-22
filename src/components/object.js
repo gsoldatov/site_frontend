@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 
 import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "./edit/common";
-import { ObjectTypeSelector, ObjectViewEditSwitch } from "./edit/object";
+import { ObjectTypeSelector, ObjectViewEditSwitch, ObjectIsPublishedSwitch, SubobjectsIsPublishedSwitch } from "./edit/object";
 import Layout from "./common/layout";
 import { InlineItemListBlock, InlineItemListWrapper } from "./inline/inline-item-list-containers";
 import { InlineItemList } from "./inline/inline-item-list";
@@ -244,6 +244,12 @@ const ObjectTabPanes = ({ objectID }) => {
             { menuItem: "Data", render: () =>
                 <Tab.Pane>
                     <ObjectViewEditSwitch objectID={objectID} />
+                </Tab.Pane>
+            },
+            { menuItem: "Display", render: () =>
+                <Tab.Pane>
+                    <ObjectIsPublishedSwitch objectID={objectID} />
+                    <SubobjectsIsPublishedSwitch objectID={objectID} />
                 </Tab.Pane>
             }
         ];

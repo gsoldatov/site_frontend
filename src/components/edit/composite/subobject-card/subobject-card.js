@@ -5,6 +5,7 @@ import { Heading } from "./heading";
 import { CardMenu } from "./card-menu";
 import { CardGeneralTab } from "./general-tab";
 import { CardDataTab } from "./data-tab";
+import { CardDisplayTab } from "./display-tab";
 import { CardPlaceholder } from "./placeholders/error";
 import { LoadingPlaceholder } from "./placeholders/loading";
 import { DeletedPlaceholder } from "./placeholders/deleted";
@@ -79,6 +80,7 @@ class SubobjectCard extends React.PureComponent {
                     isSubobjectDeleted ? <DeletedPlaceholder />
                     : selectedTab === 0 ? <CardGeneralTab subobjectID={subobjectID} />
                     : selectedTab === 1 ? <CardDataTab subobjectID={subobjectID} />
+                    : selectedTab === 2 ? <CardDisplayTab subobjectID={subobjectID} />
                     : null
                 )
                 : null;

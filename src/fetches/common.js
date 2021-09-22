@@ -17,14 +17,10 @@ export const runFetch = (url, fetchParams, thunkParams = {}) => {
 
         const state = getState();
 
-        console.log(`IN RUN FETCH FOR ${url}`)
-        console.log(state.auth)
-
         if (useAccessToken) {
             // Check if access token expired
             if (state.auth.access_token_expiration_time.length > 0 && new Date(state.auth.access_token_expiration_time) <= Date.now()) {
                 dispatch(setAuthInformation(getDefaultAuthState()));
-                console.log("TOKEN EXPIRED, RETURNING INVALID DATE")
                 return { authError: "Invalid token" };
             }
 
@@ -38,8 +34,6 @@ export const runFetch = (url, fetchParams, thunkParams = {}) => {
         try {
             // Send request
             let response = await fetch(url, fetchParams);
-            console.log(`GOT RESPONSE WITH ${response.status} STATUS`)
-            // console.log(`RESPONSE BODY: ${await response.text()}`)
 
             // Handle response (update auth information)
             switch (response.status) {
@@ -49,7 +43,6 @@ export const runFetch = (url, fetchParams, thunkParams = {}) => {
                         const body = await response.clone().json();     // Clone object to allow response body consumption downstream
                         if ("auth" in body && "access_token_expiration_time" in body.auth) {
                             dispatch(setAuthInformation({ access_token_expiration_time: body.auth["access_token_expiration_time"] }));
-                            console.log(`ADDED NEW TOKEN EXPIRATION TIME: ${body.auth["access_token_expiration_time"]}`)
                         }
                     }
                     return response;
@@ -57,7 +50,6 @@ export const runFetch = (url, fetchParams, thunkParams = {}) => {
                     if (useAccessToken) {
                         // Reset auth information if it's invalid and return authError
                         dispatch(setAuthInformation(getDefaultAuthState()));
-                        console.log("GOT 401 RESPONSE, RESETTING AUTH INFO")
                         return { authError: "Invalid token" };
                     } else
                         // Retun a regular error for requests sent without token info

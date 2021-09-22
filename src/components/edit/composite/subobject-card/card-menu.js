@@ -7,7 +7,7 @@ import { Button, Menu } from "semantic-ui-react";
 import { clearUnsavedCurrentEditedObject } from "../../../../actions/object";
 import { enumDeleteModes } from "../../../../store/state-templates/composite-subobjects";
 
-const _tabIndexes = { "general": 0, "data": 1 };
+const _tabIndexes = { "general": 0, "data": 1, "display": 2 };
 
 
 /**
@@ -97,6 +97,10 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
 
             <Menu.Item name="data" active={selectedTab === _tabIndexes["data"]} disabled={isTabChangeDisabled} onClick={onTabChange}>
                 Data
+            </Menu.Item>
+
+            <Menu.Item name="display" active={selectedTab === _tabIndexes["display"]} disabled={isTabChangeDisabled} onClick={onTabChange}>
+                Display
             </Menu.Item>
 
             {secondaryMenuItems}

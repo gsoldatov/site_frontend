@@ -27,3 +27,12 @@ div.ui.selection.dropdown.object-type-dropdown-switch > .visible.menu.transition
 div.ui.selection.dropdown.object-type-dropdown-switch > .visible.menu.transition > .item > i {
     margin-top: -0.5em; /* fix icon positioning */
 }
+
+/* Object is published checkbox */
+div.ui.checkbox.object-is-published-checkbox-container {
+    display: block;
+}
+
+div.ui.checkbox.object-is-published-checkbox-container:not(:last-child) {
+    margin-bottom: 0.75em;
+}

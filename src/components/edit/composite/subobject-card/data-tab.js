@@ -4,7 +4,7 @@ import { ObjectViewEditSwitch } from "../../object";
 
 
 /**
- * Subobject card "General" tab content. 
+ * Subobject card "Data" tab content. 
  */
 export const CardDataTab = ({ subobjectID }) => {
     return (
