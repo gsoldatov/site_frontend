@@ -23,7 +23,8 @@ function handleAdd(body) {
     const createdAt =  new Date();
     const modifiedAt = new Date((new Date(createdAt)).setDate(createdAt.getDate() + 1));
     const response = { object_id: objectID, object_type: object["object_type"], object_name: object["object_name"], object_description: object["object_description"], 
-                        created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString() };
+                        created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString(), 
+                        is_published: object["is_published"], owner_id: object["owner_id"] || 1 };
 
     // Set object's tags (autogenerate & cache tag_ids for provided tag names => add all tag_ids to the object)
     const tagUpdates = { added_tag_ids: [] };
@@ -73,7 +74,7 @@ function handleView(body) {
             return object;
         }
 
-        return generateObjectAttributes({ object_id: id });
+        return generateObjectAttributes(id);
     });
 
     // Set object_data list
@@ -256,7 +257,7 @@ function handleObjectsSearch(body) {
         }
 
     // Generate object attributes & data and cache them
-    const object = generateObjectAttributes({ object_id: objectID, object_name: query_text, object_type });
+    const object = generateObjectAttributes(objectID, { object_name: query_text, object_type });
     const objectData = generateObjectData(objectID, object_type);
 
     // Cache object attributes & data

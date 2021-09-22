@@ -16,10 +16,12 @@ export function mockFetch(URL, {
 
     const URLPath = URL.replace(config["backendURL"], "");
     const handler = getHandler(URLPath, method);
-    if (!handler) {
-        throw new Error(`Fetch handler not found for URL "${URLPath}" and method "${method}".`);
-    }
-    return Promise.resolve(handler(body));
+    if (!handler) throw new Error(`Fetch handler not found for URL "${URLPath}" and method "${method}".`);
+    
+    let response = handler(body);
+    response.clone = () => ({...response});
+    return Promise.resolve(response);
+    // return Promise.resolve(handler(body));
 }
 
 export function resetMocks() {

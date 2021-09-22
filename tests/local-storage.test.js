@@ -6,7 +6,7 @@ import { fireEvent } from "@testing-library/react";
 import { getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { renderWithWrappers } from "./test-utils/render";
-import { getEditedObjectLocalStorageKey } from "./test-utils/local-storage";
+import { getEditedObjectLocalStorageKey, waitForAuthInfoToBeSavedIntoLocalStorage } from "./test-utils/local-storage";
 import { getSideMenuItem, getSideMenuDialogControls } from "./test-utils/ui-common";
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickDataTabButton, resetObject } from "./test-utils/ui-object";
 import { addANewSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCards } from "./test-utils/ui-composite";
@@ -15,6 +15,9 @@ import { AddObject, EditObject } from "../src/components/object";
 import Objects from "../src/components/objects";
 import { getMappedSubobjectID } from "./mocks/data-composite";
 import createStore from "../src/store/create-store";
+import { getDefaultAuthState } from "../src/store/state-templates/auth";
+
+import { setAuthInformation } from "../src/actions/auth";
 
 
 /*
@@ -34,7 +37,7 @@ beforeEach(() => {
 });
 
 
-describe("New object page", () => {
+describe("Edited objects > New object page", () => {
     test("Unsaved object persistance", async () => {
         // Render new object page and modify object name
         let storeOne = createStore({ useLocalStorage: true, saveTimeout: 50 });
@@ -153,7 +156,7 @@ describe("New object page", () => {
 });
 
 
-describe("Existing object page", () => {
+describe("Edited objects > Existing object page", () => {
     test("Unsaved object persistance", async () => {
         // Render existing object page and modify object name
         let storeOne = createStore({ useLocalStorage: true, saveTimeout: 50 });
@@ -163,6 +166,7 @@ describe("Existing object page", () => {
             store: storeOne
         });
         await waitForEditObjectPageLoad(container, storeOne);
+        
 
         // Modify object name
         let objectNameInput = getByPlaceholderText(container, "Object name");
@@ -325,5 +329,43 @@ describe("Existing object page", () => {
             expect(localStorage.getItem(getEditedObjectLocalStorageKey(existingSubobjectID))).toBeFalsy();
             expect(localStorage.getItem(getEditedObjectLocalStorageKey(newSubobjectID))).toBeFalsy();
         });
+    });
+});
+
+
+
+describe("Auth information", () => {
+    test("Save auth updates into local storage", async () => {
+        const store = createStore({ useLocalStorage: true, saveTimeout: 25 });
+        let authInfo = getDefaultAuthState();
+
+        // Modify each attribute in auth info and check if it's saved to the local storage
+        for (let [k, v] of [["access_token", "some value"], ["access_token_expiration_time", "some value"], ["user_id", 50], ["user_level", 20]]) {
+            authInfo[k] = v;
+            store.dispatch(setAuthInformation(authInfo));
+            await waitForAuthInfoToBeSavedIntoLocalStorage(authInfo);
+        }
+    });
+
+
+    test("Load auth from local storage", async () => {
+        let store = createStore({ useLocalStorage: true, saveTimeout: 25 });
+        
+        // Check if default auth information is correctly loaded if no auth is saved in the local storage
+        let authInfo = getDefaultAuthState();
+        expect(store.getState().auth).toMatchObject(authInfo);
+        expect(authInfo).toMatchObject(store.getState().auth);
+
+        // Wait for auth info to be saved into local storage, then clear it
+        await waitForAuthInfoToBeSavedIntoLocalStorage(authInfo);
+        localStorage.clear();
+
+        // Set a non-default auth info into localStorage, then check if it's correctly read into state on store initialization
+        authInfo = { access_token: "some_token", access_token_expiration_time: (new Date()).toISOString(), user_id: 15, user_level: 10 }
+        localStorage.setItem("authInfo", JSON.stringify(authInfo));
+
+        store = createStore({ useLocalStorage: true, saveTimeout: 25 });
+        expect(store.getState().auth).toMatchObject(authInfo);
+        expect(authInfo).toMatchObject(store.getState().auth);
     });
 });

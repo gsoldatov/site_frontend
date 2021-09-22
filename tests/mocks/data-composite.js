@@ -1,5 +1,5 @@
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
-import { setObjectsTags } from "../../src/actions/data-tags";
+import { addTags, setObjectsTags } from "../../src/actions/data-tags";
 import { resetEditedObjects } from "../../src/actions/object";
 import createStore from "../../src/store/create-store";
 import { enumDeleteModes } from "../../src/store/state-templates/composite-subobjects";
@@ -19,7 +19,9 @@ export const mapAndCacheNewSubobjects = (requestObjectData, createdAt, modifiedA
             id_mapping[subobject.object_id] = newID;
 
             _cachedObjects[newID] = { object_id: newID, object_type: subobject["object_type"], object_name: subobject["object_name"], object_description: subobject["object_description"], 
-                created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString(), tag_updates: { added_tag_ids: [] } };
+                created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString(), 
+                is_published: subobject["is_published"], owner_id: subobject["owner_id"] || 1,
+                tag_updates: { added_tag_ids: [] } };
             _cachedObjectData[newID] = subobject["object_data"];
         }
     });
@@ -35,15 +37,21 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
     let objects = [
         { 
             object_id: 1, object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            is_published: false, owner_id: 1,
+            current_tag_ids: [1, 2, 3, 4, 5] 
         },
         { 
             object_id: 2, object_type: "link", object_name: "link subobject", object_description: "link subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            is_published: false, owner_id: 1,
+            current_tag_ids: [] 
         },
         { 
             object_id: 3, object_type: "markdown", object_name: "markdown subobject", object_description: "markdown subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            is_published: false, owner_id: 1,
+            current_tag_ids: [] 
         }
     ];
     let objectData = [
@@ -71,7 +79,9 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
     let objects = [
         { 
             object_id: 1, object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            is_published: false, owner_id: 1,
+            current_tag_ids: [1, 2, 3, 4, 5] 
         }
     ];
     let objectData = [
@@ -80,10 +90,13 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
             { object_id: 3, row: 1, column: 0, selected_tab: 0, is_expanded: true }
         ]}}
     ];
+    let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
 
     store.dispatch(addObjects(objects));
     store.dispatch(setObjectsTags(objects));
     store.dispatch(addObjectData(objectData));
+    store.dispatch(addTags(tags));
 
     return store;
  };
@@ -98,11 +111,15 @@ export const getStoreWithModifiedCompositeObject = () => {
     let objects = [
         { 
             object_id: 1, object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            is_published: false, owner_id: 1,
+            current_tag_ids: [1, 2, 3, 4, 5] 
         },
         { 
             object_id: 2, object_type: "link", object_name: "link subobject", object_description: "link subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            is_published: false, owner_id: 1,
+            current_tag_ids: [] 
         }
     ];
     let objectData = [
@@ -112,11 +129,14 @@ export const getStoreWithModifiedCompositeObject = () => {
         ]}},
         { object_id: 2, object_type: "link", object_data: {"link": "https://test.link"} }
     ];
+    let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
 
     store.dispatch(addObjects(objects));
     store.dispatch(setObjectsTags(objects));
     store.dispatch(addObjectData(objectData));
     store.dispatch(resetEditedObjects({objectIDs: [1, 2, -1], allowResetToDefaults: true }));
+    store.dispatch(addTags(tags));
 
     return store;
 };

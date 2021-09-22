@@ -2,7 +2,7 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, screen } from "@testing-library/dom";
 
 import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers } from "./test-utils/render";
@@ -817,7 +817,7 @@ describe("Persist edited object state", () => {
 
     test("Composite data and subobjects", async () => {
         let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route: "/objects/3001", store
+            route: "/objects/3001"
         });
 
         // Wait for the page to load
@@ -845,7 +845,9 @@ describe("Persist edited object state", () => {
 
         // Return to main object page
         history.push(`/objects/3001`);
+        await waitFor(() => getByText(container, "Object Information"));
         clickDataTabButton(container);
+        
         card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
         expect(getSubobjectCardAttributeElements(card).subobjectNameInput.value).toEqual(newSubobjectName);
     });

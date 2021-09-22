@@ -21,19 +21,21 @@ export const getObjectTypeFromID = objectID => {
 /**
  * Returns object attributes if the format returned by /objects/view handler.
  * 
- * Accepts `object_id` and, optionally, other object attributes.
+ * Accepts `object_id` and, optionally, other object attributes inside `overrideValues` object.
  * 
  * Attribute values are defined based on the provided `objectID` value.
  */
-export const generateObjectAttributes = ({ object_id, object_type, object_name, object_description, created_at, modified_at, current_tag_ids }) => {
+export const generateObjectAttributes = (object_id, overrideValues = {}) => {
     return {
         object_id,
-        object_type: object_type !== undefined ? object_type : getObjectTypeFromID(object_id),
-        object_name: object_name !== undefined ? object_name : `object #${object_id}`,
-        object_description: object_description !== undefined ? object_description : `object #${object_id} description`,
-        created_at: created_at !== undefined ? created_at : (new Date(Date.now() - 24*60*60*1000 - object_id)).toUTCString(),
-        modified_at: modified_at !== undefined ? modified_at : (new Date(Date.now() - object_id)).toUTCString(),
-        current_tag_ids: current_tag_ids !== undefined ? current_tag_ids : [1, 2, 3, 4, 5]
+        object_type: "object_type" in overrideValues ? overrideValues.object_type : getObjectTypeFromID(object_id),
+        object_name: "object_name" in overrideValues ? overrideValues.object_name : `object #${object_id}`,
+        object_description: "object_description" in overrideValues ? overrideValues.object_description : `object #${object_id} description`,
+        created_at: "created_at" in overrideValues ? overrideValues.created_at : (new Date(Date.now() - 24*60*60*1000 - object_id)).toUTCString(),
+        modified_at: "modified_at" in overrideValues ? overrideValues.modified_at : (new Date(Date.now() - object_id)).toUTCString(),
+        is_published: "is_published" in overrideValues ? overrideValues.is_published : false,
+        owner_id: "owner_id" in overrideValues ? overrideValues.owner_id : 1,
+        current_tag_ids: "current_tag_ids" in overrideValues ? overrideValues.current_tag_ids : [1, 2, 3, 4, 5]
     };
 };
 

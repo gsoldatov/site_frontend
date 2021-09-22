@@ -104,7 +104,7 @@ describe("Basic load and UI checks", () => {
         // View object page of the first subobject
         const subobjectIDs = Object.keys(store.getState().editedObjects[0].composite.subobjects);
         history.push(`/objects/${subobjectIDs[0]}`);
-        // await waitForEditObjectPageLoad(container, store);
+        await waitFor(() => getByText(container, "Object Information"));
         clickGeneralTabButton(container);
 
         // Check if object name is updated, then update it again
@@ -485,6 +485,7 @@ describe("Subobject card tabs", () => {
         const subobjectID = card.id;
         const objectPageLink = card.querySelector(".default-object-data-page-link");
         fireEvent.click(objectPageLink);
+        await waitFor(() => getByText(container, "Object Information"));
         clickGeneralTabButton(container);
         const objectNameInput = getByPlaceholderText(container, "Object name");
         expect(objectNameInput.value).toEqual("composite subobject");
@@ -617,9 +618,9 @@ describe("Subobject card menu buttons", () => {
             });
     
             // Select composite object type and go to data tab
-        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
-        fireEvent.click(switchContainer);
-        fireEvent.click(compositeOption);
+            const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+            fireEvent.click(switchContainer);
+            fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject
@@ -635,6 +636,7 @@ describe("Subobject card menu buttons", () => {
             fireEvent.click(getSubobjectCardMenuButtons(card).viewObjectPageButton);
 
             // Check if modified name is displayed
+            await waitFor(() => getByText(container, "Object Information"));
             clickGeneralTabButton(container);
             const nameInput = getByPlaceholderText(container, "Object name");
             expect(nameInput.value).toEqual(objectName);
@@ -647,9 +649,9 @@ describe("Subobject card menu buttons", () => {
             });
     
             // Select composite object type and go to data tab
-        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
-        fireEvent.click(switchContainer);
-        fireEvent.click(compositeOption);
+            const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+            fireEvent.click(switchContainer);
+            fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject
@@ -698,9 +700,9 @@ describe("Subobject card menu buttons", () => {
             });
 
             // Select composite object type and go to data tab
-        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
-        fireEvent.click(switchContainer);
-        fireEvent.click(compositeOption);
+            const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+            fireEvent.click(switchContainer);
+            fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject
@@ -710,6 +712,7 @@ describe("Subobject card menu buttons", () => {
 
             // Open subobject page and add a new subobject
             history.push(`/objects/${subobjectID}`);
+            await waitFor(() => getByText(container, "Object Information"));
             // fireEvent.click(getSubobjectCardMenuButtons(card).viewObjectPageButton);
             clickDataTabButton(container);
             const subobjectsBeforeUpdate = Object.keys(store.getState().editedObjects[subobjectID].composite.subobjects).length;
@@ -907,6 +910,7 @@ describe("Indicators", () => {
 
         // Go to first subobject page and add a tag
         history.push(`/objects/${cards[0][0].id}`);
+        await waitFor(() => getByText(container, "Object Information"));
         clickGeneralTabButton(container);
 
         let inputToggle = getByTitle(container, "Click to add tags");
@@ -922,6 +926,7 @@ describe("Indicators", () => {
 
         // Go to second subobject page and remove a tag
         history.push(`/objects/${cards[0][1].id}`);
+        await waitFor(() => getByText(container, "Object Information"));
         clickGeneralTabButton(container);
 
         let tag = getByText(container, "tag #1");
@@ -930,6 +935,7 @@ describe("Indicators", () => {
 
         // Go to composite object page and check if indicators appeared on both subobjects
         history.push(`/objects/3001`);
+        await waitFor(() => getByText(container, "Object Information"));
         clickDataTabButton(container);
 
         cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
