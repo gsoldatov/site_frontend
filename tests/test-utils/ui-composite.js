@@ -152,7 +152,8 @@ export const getSubobjectCardTabSelectionButtons = card => {
 
     return {
         subobjectGeneralTabButton: queryByText(cardMenu, "General"),
-        subobjectDataTabButton: queryByText(cardMenu, "Data")
+        subobjectDataTabButton: queryByText(cardMenu, "Data"),
+        subobjectDisplayTabButton: queryByText(cardMenu, "Display")
     };
 };
 
@@ -167,11 +168,20 @@ export const clickSubobjectCardAttributeTabButton = card => {
 
 
 /**
- * Gets attribute tab button from card menu and clicks it.
+ * Gets data tab button from card menu and clicks it.
  */
 export const clickSubobjectCardDataTabButton = card => {
     const { subobjectDataTabButton } = getSubobjectCardTabSelectionButtons(card);
     if (subobjectDataTabButton) fireEvent.click(subobjectDataTabButton);
+};
+
+
+/**
+ * Gets display tab button from card menu and clicks it.
+ */
+ export const clickSubobjectCardDisplayTabButton = card => {
+    const { subobjectDisplayTabButton } = getSubobjectCardTabSelectionButtons(card);
+    if (subobjectDisplayTabButton) fireEvent.click(subobjectDisplayTabButton);
 };
 
 

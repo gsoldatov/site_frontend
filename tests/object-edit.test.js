@@ -2,13 +2,15 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, screen } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, queryByText } from "@testing-library/dom";
 
 import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers } from "./test-utils/render";
 import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
-import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, resetObject, getObjectTypeSwitchElements } from "./test-utils/ui-object";
-import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
+import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, clickDisplayTabButton, clickPublishObjectCheckbox,
+    resetObject, getObjectTypeSwitchElements } from "./test-utils/ui-object";
+import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
+    getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 import { getTDLByObjectID } from "./mocks/data-to-do-lists";
 import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject, getMappedSubobjectID } from "./mocks/data-composite";
 
@@ -49,7 +51,6 @@ describe("Load object errors & UI checks", () => {
         await waitFor(() => getByText(container, "Failed to fetch data."));
     
         // Check if save and delete buttons can't be clicked if object fetch failed
-        getSideMenuItem
         let saveButton = getSideMenuItem(container, "Save");
         let resetButton = getSideMenuItem(container, "Reset");
         let deleteButton = getSideMenuItem(container, "Delete");
@@ -116,6 +117,29 @@ describe("Load object errors & UI checks", () => {
 
         fireEvent.click(getByText(cards[0][0], "Restore"));
         expect(store.getState().editedObjects[1].composite.subobjects[2].deleteMode).toEqual(enumDeleteModes.none);
+    });
+
+
+    test("Toggle `is published` setting", async () => {
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container, store } = renderWithWrappers(
+            <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
+            { route: "/objects/1" }
+        );
+        
+        // Load page
+        await waitFor(() => getByText(container, "Object Information"));
+        expect(store.getState().editedObjects[1].is_published).toBeFalsy();
+        clickDisplayTabButton(container);
+        expect(queryByText(container, "Publish subobjects")).toBeFalsy();   // not render for a non-composite object
+
+        // Publish object
+        clickPublishObjectCheckbox(container);
+        expect(store.getState().editedObjects[1].is_published).toBeTruthy();
+
+        // Unpublish object
+        clickPublishObjectCheckbox(container);
+        expect(store.getState().editedObjects[1].is_published).toBeFalsy();
     });
 });
 
@@ -1332,7 +1356,7 @@ describe("Update object errors", () => {
 
 
 describe("Update object", () => {
-    test("Update a link object", async () => {
+    test("Update a link object + check all attributes update", async () => {
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
         let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
             route: "/objects/1"
@@ -1355,11 +1379,18 @@ describe("Update object", () => {
         let linkInput = getByPlaceholderText(container, "Link");
         fireEvent.change(linkInput, { target: { value: "https://test.link.modified" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe("https://test.link.modified"));
+
+        // Publish object
+        expect(store.getState().editedObjects[1].is_published).toBeFalsy();
+        clickDisplayTabButton(container);
+        clickPublishObjectCheckbox(container);
+        expect(store.getState().editedObjects[1].is_published).toBeTruthy();
     
         //  Save object
         fireEvent.click(saveButton);
         await waitFor(() => expect(store.getState().objects[1].object_name).toEqual("modified object name"));
         expect(store.getState().objects[1].object_description).toEqual("modified object description");
+        expect(store.getState().objects[1].is_published).toBeTruthy();
         expect(store.getState().links[1].link).toEqual("https://test.link.modified");
     });
     
@@ -1472,6 +1503,9 @@ describe("Update object", () => {
         clickSubobjectCardDataTabButton(cards[0][2]);
         fireEvent.change(getByPlaceholderText(cards[0][2], "Link"), { target: { value: firstLink }});
         await waitFor(() => expect(store.getState().editedObjects[firstNewID].link).toEqual(firstLink));
+        clickSubobjectCardDisplayTabButton(cards[0][2]);
+        clickPublishObjectCheckbox(cards[0][2]);
+        expect(store.getState().editedObjects[firstNewID].is_published).toBeTruthy();
 
         const secondNewName = "second new subobject", secondLink = "http://second.link";
         fireEvent.change(getSubobjectCardAttributeElements(cards[0][3]).subobjectNameInput, { target: { value: secondNewName } });
@@ -1522,6 +1556,8 @@ describe("Update object", () => {
 
             expect(state.composite[object_id].subobjects).toHaveProperty(mappedID);
             expect(state.editedObjects[object_id].composite.subobjects).toHaveProperty(mappedID);
+
+            expect(state.editedObjects[object_id].is_published).toEqual(subobjectID === firstNewName);  // first new subobject is published
         }
 
         // Unmodified and modified existing subobjects (are present in state.editedObjects and in subobjects of saved object)

@@ -2,12 +2,14 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByText } from "@testing-library/dom";
 
 import { renderWithWrappers } from "./test-utils/render";
 import { getSideMenuItem, getSideMenuDialogControls } from "./test-utils/ui-common";
-import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickGeneralTabButton, clickDataTabButton, resetObject } from "./test-utils/ui-object";
-import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
+import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickGeneralTabButton, clickDataTabButton, 
+    clickDisplayTabButton, clickPublishObjectCheckbox, resetObject } from "./test-utils/ui-object";
+import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
+    getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 
 import { AddObject, EditObject } from "../src/components/object";
 import { getMappedSubobjectID } from "./mocks/data-composite";
@@ -89,6 +91,25 @@ describe("UI checks", () => {
         clickDataTabButton(container);
         expect(getCurrentObject(store.getState()).object_type).toEqual("link");
         getByPlaceholderText(container, "Link", { exact: false });
+    });
+
+
+    test("Toggle `is published` setting", async () => {
+        let { store, container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+
+        expect(store.getState().editedObjects[0].is_published).toBeFalsy();
+        clickDisplayTabButton(container);
+        expect(queryByText(container, "Publish subobjects")).toBeFalsy();   // not render for a non-composite object
+
+        // Publish object
+        clickPublishObjectCheckbox(container);
+        expect(store.getState().editedObjects[0].is_published).toBeTruthy();
+
+        // Unpublish object
+        clickPublishObjectCheckbox(container);
+        expect(store.getState().editedObjects[0].is_published).toBeFalsy();
     });
 
 
@@ -674,7 +695,7 @@ describe("Save new object errors", () => {
 
 
 describe("Save new object", () => {
-    test("Save link + check new object state reset", async () => {
+    test("Save link + check all attributes + check new object state reset", async () => {
         let { container, history, store } = renderWithWrappers(
             <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
             { route: "/objects/add" }
@@ -694,19 +715,32 @@ describe("Save new object", () => {
         let linkInput = getByPlaceholderText(container, "Link");
         const linkValue = "https://google.com"
         fireEvent.change(linkInput, { target: { value: linkValue } });
-        await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));    
+        await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
+        
+        // Publish object
+        expect(store.getState().editedObjects[0].is_published).toBeFalsy();
+        clickDisplayTabButton(container);
+        clickPublishObjectCheckbox(container);
+        expect(store.getState().editedObjects[0].is_published).toBeTruthy();
+
+        // Save object
         fireEvent.click(saveButton);
         const object_id = 1000; // mock object returned has this id
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
-        expect(getByPlaceholderText(container, "Link").value).toEqual(linkValue);
             
         clickGeneralTabButton(container);
         expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
         expect(getByPlaceholderText(container, "Object description").value).toEqual("new object description");
         getByText(container, "Created at:");
         getByText(container, "Modified at:");
-    
+
+        clickDataTabButton(container);
+        expect(getByPlaceholderText(container, "Link").value).toEqual(linkValue);    
         expect(store.getState().links[object_id].link).toEqual(linkValue);
+
+        clickDisplayTabButton(container);
+        expect(getByText(container, "Publish Object").parentNode.classList.contains("checked")).toBeTruthy();
+        expect(store.getState().objects[object_id].is_published).toBeTruthy();
     
         // Check if new object state was reset
         expect(Object.keys(store.getState().editedObjects).includes("0")).toBeFalsy();  // numeric keys are converted to strings
@@ -840,6 +874,9 @@ describe("Save new object", () => {
         clickSubobjectCardDataTabButton(cards[0][1]);
         fireEvent.change(getByPlaceholderText(cards[0][1], "Link"), { target: { value: firstLink }});
         await waitFor(() => expect(store.getState().editedObjects[firstNewID].link).toEqual(firstLink));
+        clickSubobjectCardDisplayTabButton(cards[0][1]);
+        clickPublishObjectCheckbox(cards[0][1]);
+        expect(store.getState().editedObjects[firstNewID].is_published).toBeTruthy();
 
         const secondNewName = "second new subobject", secondLink = "http://second.link";
         fireEvent.change(getSubobjectCardAttributeElements(cards[0][2]).subobjectNameInput, { target: { value: secondNewName } });
@@ -891,6 +928,8 @@ describe("Save new object", () => {
 
             expect(state.composite[object_id].subobjects).toHaveProperty(mappedID);
             expect(state.editedObjects[object_id].composite.subobjects).toHaveProperty(mappedID);
+
+            expect(state.editedObjects[object_id].is_published).toEqual(subobjectID === firstNewName);  // first new subobject is published
         }
 
         // Unmodified and modified existing subobjects (are present in state.editedObjects and in subobjects of saved object)

@@ -6,9 +6,10 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle, screen } from "@t
 
 import { checkRenderedItemsOrder } from "./test-utils/to-do-lists";
 import { renderWithWrappers } from "./test-utils/render";
-import { getCurrentObject, clickDataTabButton, getObjectTypeSelectingElements, clickGeneralTabButton, getObjectTypeSwitchElements } from "./test-utils/ui-object";
+import { getCurrentObject, clickDataTabButton, getObjectTypeSelectingElements, clickGeneralTabButton, clickDisplayTabButton, 
+    clickPublishObjectCheckbox, getObjectTypeSwitchElements } from "./test-utils/ui-object";
 import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElements, getSubobjectCards, getAddSubobjectMenu, getAddSubobjectMenuDropdown,
-    clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons, 
+    clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons, 
     getSubobjectCardIndicators, getSubobjectExpandToggleButton, startSubobjectCardDrag, getSubobjectGridColumnContainers, getNewColumnDropzones } from "./test-utils/ui-composite";
 import { getDropdownOptionsContainer, getInlineInputField } from "./test-utils/ui-objects-tags";
 
@@ -159,6 +160,72 @@ describe("Basic load and UI checks", () => {
 
         // Check if no subobjects were added
         getSubobjectCards(container, { expectedNumbersOfCards: [0] });
+    });
+
+
+    test("Load a new object and toggle published settings of object & subobjects", async () => {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
+            route: "/objects/add"
+        });
+        expect(store.getState().editedObjects[0].is_published).toBeFalsy();
+    
+        // Select composite object type
+        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+        fireEvent.click(switchContainer);
+        fireEvent.click(compositeOption);
+    
+        // Publish object
+        clickDisplayTabButton(container);
+        clickPublishObjectCheckbox(container);
+        expect(store.getState().editedObjects[0].is_published).toBeTruthy();
+    
+        // Add a new subobject & check if it has the same `is_published` setting as parent
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        let firstSubobjectID = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0].id;
+        expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeTruthy();
+    
+        // Unpublish object
+        clickDisplayTabButton(container);
+        clickPublishObjectCheckbox(container);
+        expect(store.getState().editedObjects[0].is_published).toBeFalsy();
+    
+        // Add a new subobject & check if it has the same `is_published` setting as parent
+        clickDataTabButton(container);
+        addANewSubobject(container);
+        let secondSubobjectID = getSubobjectCards(container, { expectedNumbersOfCards: [2] })[0][1].id;
+        expect(store.getState().editedObjects[secondSubobjectID].is_published).toBeFalsy();
+    
+        // Check if "Publish Subobjects" checkbox is indeterminate state
+        clickDisplayTabButton(container);
+        const publishSubobjectsContainer = getByText(container, "Publish Subobjects").parentNode;
+        const publishSubobjectsInput = publishSubobjectsContainer.querySelector("input");
+        expect(publishSubobjectsContainer.classList.contains("indeterminate")).toBeTruthy();
+    
+        // Publish all subobjects & check state
+        fireEvent.click(publishSubobjectsInput);
+        expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeTruthy();
+        expect(store.getState().editedObjects[secondSubobjectID].is_published).toBeTruthy();
+    
+        // Publish all subobjects & check state
+        fireEvent.click(publishSubobjectsInput);
+        expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeFalsy();
+        expect(store.getState().editedObjects[secondSubobjectID].is_published).toBeFalsy();
+    
+        // Publish first subobject & check state
+        clickDataTabButton(container);
+        let firstSubobjectCard = getSubobjectCards(container, { expectedNumbersOfCards: [2] })[0][0];
+        clickSubobjectCardDisplayTabButton(firstSubobjectCard);
+    
+        const publishFirstSubobjectCheckboxContainer = getByText(firstSubobjectCard, "Publish Object").parentNode;
+        expect(publishFirstSubobjectCheckboxContainer.classList.contains("checked")).toBeFalsy();
+        clickPublishObjectCheckbox(firstSubobjectCard);
+        expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeTruthy();
+    
+        // Unpublish first subobject & check state
+        expect(publishFirstSubobjectCheckboxContainer.classList.contains("checked")).toBeTruthy();
+        clickPublishObjectCheckbox(firstSubobjectCard);
+        expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeFalsy();
     });
 });
 

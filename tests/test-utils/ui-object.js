@@ -44,7 +44,8 @@ const getObjectTabMenuButtons = container => {
     expect(tabMenu).toBeTruthy();
     const generalTabButton = getByText(tabMenu, "General");
     const dataTabButton = getByText(tabMenu, "Data");
-    return { generalTabButton, dataTabButton };
+    const displayTabButton = getByText(tabMenu, "Display");
+    return { generalTabButton, dataTabButton, displayTabButton };
 };
 
 
@@ -63,6 +64,15 @@ export const clickGeneralTabButton = container => {
 export const clickDataTabButton = container => {
     const { dataTabButton } = getObjectTabMenuButtons(container);
     fireEvent.click(dataTabButton);
+};
+
+
+/**
+ * Click on display tab pane
+ */
+ export const clickDisplayTabButton = container => {
+    const { displayTabButton } = getObjectTabMenuButtons(container);
+    fireEvent.click(displayTabButton);
 };
 
 
@@ -99,4 +109,13 @@ export const addAndRemoveTags = async (container, store) => {
     let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
     expect(dropdown).toBeTruthy();
     fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
+};
+
+
+/**
+ * Clicks on 'Publish Object' checkbox
+ */
+export const clickPublishObjectCheckbox = container => {
+    const checkbox = getByText(container, "Publish Object").parentNode.querySelector("input");
+    fireEvent.click(checkbox);
 };
