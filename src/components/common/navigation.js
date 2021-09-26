@@ -1,12 +1,13 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { Button, Icon, Label, Menu } from "semantic-ui-react";
-import { NavLink, useHistory } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { NavLink, useHistory, useLocation } from "react-router-dom";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
 
+import { enumUserLevels } from "../../util/enum-user-levels";
+
 import StyleNavigation from "../../styles/navigation.css";
-import { useSelector } from "react-redux";
 
 
 /**
@@ -14,11 +15,14 @@ import { useSelector } from "react-redux";
  */
 const navigationItems = [
     { to: "/", text: "Index" },
-    { to: "/objects", text: "Objects" },
+    { to: "/objects", text: "Objects", 
+        isDisplayedSelector: state => state.auth.user_level > enumUserLevels.anonymous },
     { to: "/objects/edited", text: "Edited Objects", 
         labelTextSelector: state => Object.keys(state.editedObjects).length || undefined, 
-        labelColorSelector: state => Object.keys(state.editedObjects).length > 0 ? "green" : "grey" },
-    { to: "/tags", text: "Tags" }
+        labelColorSelector: state => Object.keys(state.editedObjects).length > 0 ? "green" : "grey",
+        isDisplayedSelector: state => state.auth.user_level > enumUserLevels.anonymous },
+    { to: "/tags", text: "Tags",
+        isDisplayedSelector: state => state.auth.user_level > enumUserLevels.anonymous }
 ]
 
 /**
