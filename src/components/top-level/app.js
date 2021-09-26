@@ -8,6 +8,8 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../../store/create-store";
+import { IndexPage } from "./index";
+import { LoginPage } from "./login";
 import { AddTag, EditTag } from "./tag";
 import Tags from "./tags";
 import { AddObject, EditObject } from "./object";
@@ -21,6 +23,16 @@ export const App = () => {
 
     return (
         <Switch>
+            {/* Index */}
+            <Route exact path="/">
+                <IndexPage />
+            </Route>
+
+            {/* Auth */}
+            <Route exact path="/auth/login">
+                <LoginPage />
+            </Route>
+
             {/* Tags */}
             <Route exact path="/tags">
                 <Tags />
@@ -34,7 +46,7 @@ export const App = () => {
             </Route>
 
             {/* Objects */}
-            <Route exact path={["/objects", "/"]}>
+            <Route exact path={["/objects"]}>
                 <Objects />
             </Route>
             
