@@ -9,7 +9,7 @@ import { defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrd
 import { renderWithWrappers } from "./test-utils/render";
 import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "./test-utils/ui-object";
 
-import { AddObject, EditObject } from "../src/components/object";
+import { AddObject, EditObject } from "../src/components/top-level/object";
 import * as caret from "../src/util/caret";
 
 

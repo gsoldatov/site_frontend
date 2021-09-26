@@ -10,8 +10,8 @@ import { renderWithWrappers } from "./test-utils/render";
 import { getCurrentObject } from "./test-utils/ui-object";
 import createStore from "../src/store/create-store";
 
-import Objects from "../src/components/objects";
-import { EditObject } from "../src/components/object";
+import Objects from "../src/components/top-level/objects";
+import { EditObject } from "../src/components/top-level/object";
 import { setObjectsPaginationInfo } from "../src/actions/objects";
 import { getStoreWithModifiedCompositeObject } from "./mocks/data-composite";
 

@@ -4,18 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 
-import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "./edit/common";
-import { ObjectTypeSelector, ObjectViewEditSwitch, ObjectIsPublishedSwitch, SubobjectsIsPublishedSwitch } from "./edit/object";
-import Layout from "./common/layout";
-import { InlineItemListBlock, InlineItemListWrapper } from "./inline/inline-item-list-containers";
-import { InlineItemList } from "./inline/inline-item-list";
-import { InlineItem } from "./inline/inline-item";
-import { InlineInput } from "./inline/inline-input";
+import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "../edit/common";
+import { ObjectTypeSelector, ObjectViewEditSwitch, ObjectIsPublishedSwitch, SubobjectsIsPublishedSwitch } from "../edit/object";
+import Layout from "../common/layout";
+import { InlineItemListBlock, InlineItemListWrapper } from "../inline/inline-item-list-containers";
+import { InlineItemList } from "../inline/inline-item-list";
+import { InlineItem } from "../inline/inline-item";
+import { InlineInput } from "../inline/inline-input";
 
-import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../store/state-util/ui-object";
+import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../../store/state-util/ui-object";
 import { resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
-         setShowResetDialogObject, setShowDeleteDialogObject, clearUnsavedCurrentEditedObject } from "../actions/object";
-import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../fetches/ui-object";
+         setShowResetDialogObject, setShowDeleteDialogObject, clearUnsavedCurrentEditedObject } from "../../actions/object";
+import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../../fetches/ui-object";
 
 
 /*

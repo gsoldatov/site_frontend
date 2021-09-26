@@ -3,14 +3,14 @@ import { Header } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "./edit/common";
-import Layout from "./common/layout";
+import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "../edit/common";
+import Layout from "../common/layout";
 
-import { isFetchingTag, isFetchinOrShowingDialogTag } from "../store/state-util/ui-tag";
-import { loadAddTagPage, setCurrentTag, setShowDeleteDialogTag } from "../actions/tag";
-import { addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../fetches/ui-tag";
+import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../store/state-util/ui-tag";
+import { loadAddTagPage, setCurrentTag, setShowDeleteDialogTag } from "../../actions/tag";
+import { addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../../fetches/ui-tag";
 
-import StyleTag from "../styles/tag.css";
+import StyleTag from "../../styles/tag.css";
 
 
 /*

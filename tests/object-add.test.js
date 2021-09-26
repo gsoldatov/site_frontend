@@ -11,7 +11,7 @@ import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElement
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
     getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
 
-import { AddObject, EditObject } from "../src/components/object";
+import { AddObject, EditObject } from "../src/components/top-level/object";
 import { getMappedSubobjectID } from "./mocks/data-composite";
 
 

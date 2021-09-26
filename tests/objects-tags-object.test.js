@@ -10,8 +10,8 @@ import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObjec
 import { renderWithWrappers } from "./test-utils/render";
 
 import createStore from "../src/store/create-store";
-import { AddObject, EditObject } from "../src/components/object";
-import Objects from "../src/components/objects";
+import { AddObject, EditObject } from "../src/components/top-level/object";
+import Objects from "../src/components/top-level/objects";
 import { setObjectsTags } from "../src/actions/data-tags";
 import { getNonCachedTags } from "../src/fetches/data-tags";
 import { addObjects, addObjectData } from "../src/actions/data-objects";

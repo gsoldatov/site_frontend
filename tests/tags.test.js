@@ -9,7 +9,7 @@ import { getSideMenuItem, getSideMenuDialogControls } from "./test-utils/ui-comm
 import { renderWithWrappers } from "./test-utils/render";
 import createStore from "../src/store/create-store";
 
-import Tags from "../src/components/tags";
+import Tags from "../src/components/top-level/tags";
 import { setTagsPaginationInfo } from "../src/actions/tags";
 
 

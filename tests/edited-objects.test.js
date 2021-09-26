@@ -8,7 +8,7 @@ import { getStoreWithEditedObjects } from "./mocks/data-edited-objects";
 import { getEditedObjectsHeaderCells, getEditedObjectItemRow, clickDeleteControl, 
     clickConfirmButton, clickCheckbox } from "./test-utils/ui-edited-objects";
 
-import { EditedObjects } from "../src/components/edited-objects";
+import { EditedObjects } from "../src/components/top-level/edited-objects";
 
 
 

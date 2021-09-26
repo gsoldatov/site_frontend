@@ -3,13 +3,13 @@ import { Checkbox, Confirm, Icon, Label, Table } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import Layout from "./common/layout";
+import Layout from "../common/layout";
 
-import { removeEditedObjects } from "../actions/object";
-import { loadEditedObjectsPage, toggleEditedObjectSelection, toggleAllObjectsSelection } from "../actions/edited-objects";
-import { enumObjectTypes } from "../util/enum-object-types";
+import { removeEditedObjects } from "../../actions/object";
+import { loadEditedObjectsPage, toggleEditedObjectSelection, toggleAllObjectsSelection } from "../../actions/edited-objects";
+import { enumObjectTypes } from "../../util/enum-object-types";
 
-import StyleEditedObjects from "../styles/edited-objects.css";
+import StyleEditedObjects from "../../styles/edited-objects.css";
 
 
 /**

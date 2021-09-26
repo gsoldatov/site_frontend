@@ -11,8 +11,8 @@ import { getSideMenuItem, getSideMenuDialogControls } from "./test-utils/ui-comm
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickDataTabButton, resetObject } from "./test-utils/ui-object";
 import { addANewSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCards } from "./test-utils/ui-composite";
 
-import { AddObject, EditObject } from "../src/components/object";
-import Objects from "../src/components/objects";
+import { AddObject, EditObject } from "../src/components/top-level/object";
+import Objects from "../src/components/top-level/objects";
 import { getMappedSubobjectID } from "./mocks/data-composite";
 import createStore from "../src/store/create-store";
 import { getDefaultAuthState } from "../src/store/state-templates/auth";

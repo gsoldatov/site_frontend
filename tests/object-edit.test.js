@@ -16,7 +16,7 @@ import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject, 
 
 import createStore from "../src/store/create-store";
 
-import { AddObject, EditObject } from "../src/components/object";
+import { AddObject, EditObject } from "../src/components/top-level/object";
 import { setObjectsTags } from "../src/actions/data-tags";
 import { addObjects, addObjectData } from "../src/actions/data-objects";
 import { enumDeleteModes } from "../src/store/state-templates/composite-subobjects";

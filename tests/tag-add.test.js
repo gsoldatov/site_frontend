@@ -7,7 +7,7 @@ import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 import { renderWithWrappers } from "./test-utils/render";
 import { getSideMenuItem } from "./test-utils/ui-common";
 
-import { AddTag, EditTag } from "../src/components/tag";
+import { AddTag, EditTag } from "../src/components/top-level/tag";
 import { addTags } from "../src/actions/data-tags";
 
 

@@ -13,7 +13,7 @@ import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElem
     getSubobjectCardIndicators, getSubobjectExpandToggleButton, startSubobjectCardDrag, getSubobjectGridColumnContainers, getNewColumnDropzones } from "./test-utils/ui-composite";
 import { getDropdownOptionsContainer, getInlineInputField } from "./test-utils/ui-objects-tags";
 
-import { AddObject, EditObject } from "../src/components/object";
+import { AddObject, EditObject } from "../src/components/top-level/object";
 import { enumDeleteModes } from "../src/store/state-templates/composite-subobjects";
 import { compareArrays } from "./test-utils/data-checks";
 

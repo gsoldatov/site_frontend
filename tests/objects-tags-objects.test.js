@@ -11,8 +11,8 @@ import { addAndRemoveTags } from "./test-utils/ui-object";
 import { compareArrays } from "./test-utils/data-checks";
 import { renderWithWrappers } from "./test-utils/render";
 
-import Objects from "../src/components/objects";
-import { EditObject } from "../src/components/object";
+import Objects from "../src/components/top-level/objects";
+import { EditObject } from "../src/components/top-level/object";
 import { getNonCachedTags } from "../src/fetches/data-tags";
 
 

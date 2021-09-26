@@ -2,16 +2,16 @@ import React, { useEffect, useMemo, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "semantic-ui-react";
 
-import Layout from "./common/layout";
-import Error from "./common/error";
-import FieldMenu from "./field/field-menu";
-import { FieldItemList, FieldItem } from "./field/field-item-list";
-import FieldPagination from "./field/field-pagination";
+import Layout from "../common/layout";
+import Error from "../common/error";
+import FieldMenu from "../field/field-menu";
+import { FieldItemList, FieldItem } from "../field/field-item-list";
+import FieldPagination from "../field/field-pagination";
 
-import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../actions/common";
-import { selectTags, clearSelectedTags, setTagsPaginationInfo, setShowDeleteDialogTags, toggleTagSelection } from "../actions/tags";
-import { setTagsPaginationInfoAndFetchPage, pageFetch, onDeleteFetch } from "../fetches/ui-tags";
-import { isFetchingTags, isFetchinOrShowingDialogTags } from "../store/state-util/ui-tags";
+import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../../actions/common";
+import { selectTags, clearSelectedTags, setTagsPaginationInfo, setShowDeleteDialogTags, toggleTagSelection } from "../../actions/tags";
+import { setTagsPaginationInfoAndFetchPage, pageFetch, onDeleteFetch } from "../../fetches/ui-tags";
+import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../store/state-util/ui-tags";
 
 
 /**

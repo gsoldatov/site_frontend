@@ -9,8 +9,8 @@ import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-comm
 import { renderWithWrappers } from "./test-utils/render";
 import createStore from "../src/store/create-store";
 
-import { EditTag } from "../src/components/tag";
-import Tags from "../src/components/tags";
+import { EditTag } from "../src/components/top-level/tag";
+import Tags from "../src/components/top-level/tags";
 import { setObjectsTags } from "../src/actions/data-tags";
 import { addObjects } from "../src/actions/data-objects";
 

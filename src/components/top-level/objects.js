@@ -1,25 +1,25 @@
-import React, { memo, useEffect, useMemo, useRef } from "react";
+import React, { memo, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "semantic-ui-react";
 
-import Layout from "./common/layout";
-import Error from "./common/error";
-import FieldMenu from "./field/field-menu";
-import { FieldItemList, FieldItem } from "./field/field-item-list";
-import FieldPagination from "./field/field-pagination";
-import { InlineItemListBlock, InlineItemListWrapper } from "./inline/inline-item-list-containers";
-import { InlineItemList } from "./inline/inline-item-list";
-import { InlineItem } from "./inline/inline-item";
-import { InlineInput } from "./inline/inline-input";
+import Layout from "../common/layout";
+import Error from "../common/error";
+import FieldMenu from "../field/field-menu";
+import { FieldItemList, FieldItem } from "../field/field-item-list";
+import FieldPagination from "../field/field-pagination";
+import { InlineItemListBlock, InlineItemListWrapper } from "../inline/inline-item-list-containers";
+import { InlineItemList } from "../inline/inline-item-list";
+import { InlineItem } from "../inline/inline-item";
+import { InlineInput } from "../inline/inline-input";
 
-import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../actions/common";
+import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../../actions/common";
 import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo,
-        setShowDeleteDialogObjects, toggleObjectSelection, setCurrentObjectsTags, setObjectsTagsInput, setTagsFilterInput  } from "../actions/objects";
+        setShowDeleteDialogObjects, toggleObjectSelection, setCurrentObjectsTags, setObjectsTagsInput, setTagsFilterInput  } from "../../actions/objects";
 import { objectsOnLoadFetch, pageFetch, setObjectsPaginationInfoAndFetchPage, onDeleteFetch, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch, 
-        setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../fetches/ui-objects";
-import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive } from "../store/state-util/ui-objects";
-import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector } from "../store/state-util/ui-objects";
-import { enumObjectTypes } from "../util/enum-object-types";
+        setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../../fetches/ui-objects";
+import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive } from "../../store/state-util/ui-objects";
+import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector } from "../../store/state-util/ui-objects";
+import { enumObjectTypes } from "../../util/enum-object-types";
 
 
 /**
