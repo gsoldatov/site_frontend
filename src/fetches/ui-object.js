@@ -1,5 +1,3 @@
-import config from "../config";
-
 import { getResponseErrorType } from "./common";
 import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch, objectsSearchFetch } from "./data-objects";
 import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
@@ -13,9 +11,6 @@ import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-objec
 import { objectDataIsInState } from "../store/state-util/objects";
 
 import { enumResponseErrorType } from "../util/enum-response-error-type";
-
-
-const backendURL = config.backendURL;
 
 
 /**

@@ -1,9 +1,11 @@
-import React, { memo, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { memo, useMemo, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Icon, Label, Menu } from "semantic-ui-react";
 import { NavLink, useHistory, useLocation } from "react-router-dom";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
+
+import { registrationStatusFetch, logoutFetch } from "../../fetches/auth";
 
 import { enumUserLevels } from "../../util/enum-user-levels";
 
@@ -60,7 +62,7 @@ export default memo(({ itemOnClickCallback }) => {
     if (!isStacked || isExpanded) {
         menuItems = navigationItems.map((item, k) => <NavbarItem key={k} item={item} itemOnClickCallback={itemOnClickCallback} />);
 
-        menuItems.push(<AuthSubMenu key={-1} containerClassName={rightMenuClassName} />);
+        menuItems.push(<NavbarSecondaryMenu key={-1} containerClassName={rightMenuClassName} />);
     }
     
     // `vertical` <Menu> prop is used instead of `stackable` prop of <Menu> to avoid inconsistency when when displaying composite object page
@@ -102,17 +104,76 @@ const NavbarItem = ({ item, itemOnClickCallback }) => {
 /**
  * Navigation bar's secondary menu component with auth controls.
  */
-const AuthSubMenu = ({ containerClassName }) => {
-    const history = useHistory();
-
-    const loginOnClick = useMemo(() => () => history.push("/auth/login"));
-
+const NavbarSecondaryMenu = ({ containerClassName }) => {
+    const isUserLoggedIn = useSelector(state => state.auth.user_level > enumUserLevels.anonymous);
+    const content = isUserLoggedIn ? <LoggedInSecondaryMenu /> : <LoggedOutSecondaryMenu />;
+    
     return (
         <Menu.Menu position="right" className={containerClassName}>
-            <Menu.Item className="nagivation-bar-button-container">
-                <Button className="navigation-bar-button" color="blue" onClick={loginOnClick}>Login</Button>
-                <Button className="navigation-bar-button" color="teal">Sign Up</Button>
-            </Menu.Item>
+            {content}
         </Menu.Menu>
+    );
+};
+
+
+/**
+ * Navbar's secondary menu content for anonymous users.
+ */
+const LoggedOutSecondaryMenu = () => {
+    const history = useHistory();
+    const dispatch = useDispatch();
+
+    // Login button
+    const loginOnClick = useMemo(() => () => history.push("/auth/login"));
+
+    // Sign up button is disabled by default. After first render, a fetch is run to check if registration is enabled.
+    // If yes, registration button becomes available.
+    const [isSignUpEnabled, setIsSignUpEnabled] = useState(false);
+    useEffect(() => {
+        const updateSignUpEnabled = async () => {
+            setIsSignUpEnabled(await dispatch(registrationStatusFetch()));
+        };
+        updateSignUpEnabled();
+    });
+
+    const signUpOnClick = useMemo(() => {
+        return isSignUpEnabled ? () => history.push("/auth/register") : undefined
+    }, [isSignUpEnabled]);
+    const signUpClassName = "navigation-bar-button" + (isSignUpEnabled ? "" : " is-disabled")
+    const signUpTitle = isSignUpEnabled ? "" : "Registration is currently unavailable.";
+    const signUpColor = "teal";  // overriden by CSS rules for disabled button
+
+    return (
+        <Menu.Item className="nagivation-bar-button-container">
+            <Button className="navigation-bar-button" color="blue" onClick={loginOnClick}>Login</Button>
+            <Button className={signUpClassName} color={signUpColor} onClick={signUpOnClick} title={signUpTitle}>
+                Sign Up
+            </Button>
+        </Menu.Item>
+    );
+};
+
+
+/**
+ * Navbar's secondary menu content for anonymous users.
+ */
+const LoggedInSecondaryMenu = () => {
+    const dispatch = useDispatch();
+
+    // Username
+    const username = useSelector(state => state.auth.user_id in state.users ? state.users[state.auth.user_id].username : "%username%");
+
+    // Logout button
+    const logoutOnClick = useMemo(() => () => {
+        dispatch(logoutFetch());
+    });
+    
+    return (
+        <Menu.Item className="nagivation-bar-button-container">
+            <span className="navigation-bar-username">{username}</span>
+            <Button className="navigation-bar-button" color="teal" onClick={logoutOnClick}>
+                Logout
+            </Button>
+        </Menu.Item>
     );
 };

@@ -12,6 +12,9 @@ const initialState = {
     // auth
     auth: getDefaultAuthState(),
 
+    // users storage
+    users: {},
+
     // tags storage
     tags: {},
 
