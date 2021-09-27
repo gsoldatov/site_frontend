@@ -40,9 +40,12 @@ export const runFetch = (url, fetchParams, thunkParams = {}) => {
                 case 200:
                     if (useAccessToken) {
                         // Update access_token_expiration_time if it was updated on the server
-                        const body = await response.clone().json();     // Clone object to allow response body consumption downstream
-                        if ("auth" in body && "access_token_expiration_time" in body.auth) {
-                            dispatch(setAuthInformation({ access_token_expiration_time: body.auth["access_token_expiration_time"] }));
+                        const contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            const body = await response.clone().json();     // Clone object to allow response body consumption downstream
+                            if ("auth" in body && "access_token_expiration_time" in body.auth) {
+                                dispatch(setAuthInformation({ access_token_expiration_time: body.auth["access_token_expiration_time"] }));
+                            }
                         }
                     }
                     return response;
