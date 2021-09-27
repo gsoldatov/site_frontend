@@ -15,22 +15,43 @@ export default ({ items }) => {
     if (!items) return null;
 
     // Fullscreen style & on resize update
-    const [isFullscreenStyle, setIsFullscreenStyle] = useState(false);
-    const [dialogButtonsFullscreenStyle, setDialogButtonsFullscreenStyle] = useState(false);
+    const [sideMenuIsStacked, setSideMenuIsStacked] = useState(window.innerWidth < 768);    // Toggles side menu mobile styling
+    const [itemFullscreenStyle, setItemFullscreenStyle] = useState(false);                  // Toggles icon only side menu items on small widths
+    const [dialogButtonsFullscreenStyle, setDialogButtonsFullscreenStyle] = useState(false);    // Toggles icon only confirmation dialog on small widths
     const onResizeCallback = useMemo(() => computedStyle => {
         const width = parseInt(computedStyle.width.replace("px", ""));
-        setIsFullscreenStyle(width >= 100);
+        setSideMenuIsStacked(window.innerWidth < 768);       // 768 = SUIR @media threshold
+        setItemFullscreenStyle(width >= 100);
         setDialogButtonsFullscreenStyle(width >= 221);
     });
 
+    // Stacked menu expand/collaps control display
+    const [sideMenuIsExpanded, setSideMenuIsExpanded] = useState(false);
+
+    const expandToggle = useMemo(() => {
+        const icon = sideMenuIsExpanded ? "close" : "bars";
+        return (
+            !sideMenuIsStacked ? null : (
+                <Menu.Item className="side-menu-expand-container">
+                    <Icon className="side-menu-expand-toggle" name={icon} onClick={() => setSideMenuIsExpanded(!sideMenuIsExpanded)}/>
+                </Menu.Item>
+            )
+        );
+    }, [sideMenuIsExpanded, sideMenuIsStacked]);
+
     // Items
-    let k = 0;
-    const itemComponents = items.map(item => <SideMenuElement key={k++} {...item} 
-        isFullscreenStyle={isFullscreenStyle} dialogButtonsFullscreenStyle={dialogButtonsFullscreenStyle} />);
+    let itemComponents;
+    if (!sideMenuIsStacked || sideMenuIsExpanded) {
+        itemComponents = items.map((item, k) => <SideMenuElement key={k} {...item} 
+            itemFullscreenStyle={itemFullscreenStyle} dialogButtonsFullscreenStyle={dialogButtonsFullscreenStyle} />);
+    }
+
+    const sideMenuClassName = "side-menu" + (sideMenuIsStacked ? " is-stacked" : "");
 
     return (
         <OnResizeWrapper callback={onResizeCallback}>
-            <Menu vertical fluid className="side-menu">
+            <Menu vertical fluid className={sideMenuClassName}>
+                {expandToggle}
                 {itemComponents}
             </Menu>
         </OnResizeWrapper>
@@ -63,7 +84,7 @@ const SideMenuElement = props => {
 /**
  * Basic side menu item.
  */
-const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, onClick, isFullscreenStyle }) => {
+const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, onClick, itemFullscreenStyle }) => {
     const isActive = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : true;
     const _onClick = isActive ? () => onClick() : undefined;
 
@@ -71,11 +92,11 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
     const _icon = icon && <Icon name={icon} color={iconColor} flipped={iconFlipped} />;
 
     // Text
-    const _text = isFullscreenStyle && text;
+    const _text = itemFullscreenStyle && text;
     
     return (
         <Menu.Item className="side-menu-item-container" disabled={!isActive}> 
-            <Button icon={!isFullscreenStyle} className="side-menu-item" onClick={_onClick} disabled={!isActive} title={text}>
+            <Button icon={!itemFullscreenStyle} className="side-menu-item" onClick={_onClick} disabled={!isActive} title={text}>
                 {_icon}
                 {_text}
             </Button>
@@ -87,7 +108,7 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
 /**
  * Side menu item wrapped in a link and without a button.
  */
- const SideMenuLinkItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, linkURL, linkURLSelector, onClick, isFullscreenStyle }) => {
+ const SideMenuLinkItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, linkURL, linkURLSelector, onClick, itemFullscreenStyle }) => {
     const _linkURL = typeof(linkURLSelector) === "function" ? useSelector(linkURLSelector) : linkURL;
     const isActive = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : true;
 
@@ -95,10 +116,10 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
     const _icon = icon && <Icon name={icon} color={iconColor} flipped={iconFlipped} />;
 
     // Text
-    const _text = isFullscreenStyle && text;
+    const _text = itemFullscreenStyle && text;
 
     let result = (
-        <Button icon={!isFullscreenStyle} className="side-menu-item" disabled={!isActive} title={text}>
+        <Button icon={!itemFullscreenStyle} className="side-menu-item" disabled={!isActive} title={text}>
             {_icon}
             {_text}
         </Button>
@@ -121,9 +142,9 @@ const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActiveSelector, on
 /** 
  * Side menu dialog (header, checkbox and clickable buttons).
  */
-const SideMenuDialog = ({ text, buttons, isCheckboxDisplayedSelector, checkboxText, isFullscreenStyle, dialogButtonsFullscreenStyle }) => {
+const SideMenuDialog = ({ text, buttons, isCheckboxDisplayedSelector, checkboxText, itemFullscreenStyle, dialogButtonsFullscreenStyle }) => {
     // Header
-    const header = isFullscreenStyle ? (
+    const header = itemFullscreenStyle ? (
         <Header className="side-menu-dialog-header" as="h5" textAlign="center" title={text}>{text}</Header>
     )
     : (
@@ -133,8 +154,8 @@ const SideMenuDialog = ({ text, buttons, isCheckboxDisplayedSelector, checkboxTe
     // Checkbox
     const [isChecked, setIsChecked] = useState(false);
     const isCheckboxDisplayed = useSelector(isCheckboxDisplayedSelector || (state => false));
-    const _checkboxText = isFullscreenStyle && checkboxText;
-    const checkboxIcon = isCheckboxDisplayed && !isFullscreenStyle && (
+    const _checkboxText = itemFullscreenStyle && checkboxText;
+    const checkboxIcon = isCheckboxDisplayed && !itemFullscreenStyle && (
         <Icon name="asterisk" size="small" color="grey" title={checkboxText} />
     );
     const checkbox = isCheckboxDisplayed && (

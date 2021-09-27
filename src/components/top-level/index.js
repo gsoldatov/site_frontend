@@ -8,7 +8,7 @@ import Layout from "../common/layout";
  */
 export const IndexPage = () => {
     const body = (
-        <div>Index page</div>
+        <div style={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}>Index page</div>
     );
 
     return <Layout body={body} />;

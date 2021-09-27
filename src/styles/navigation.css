@@ -38,6 +38,7 @@ span.navigation-bar-username {
 div.ui.menu.navigation-bar div.nagivation-bar-button-container {
     display: flex;
     justify-content: center;
+    align-items: center;
     padding-left: 0;
     padding-right: 0;
 }

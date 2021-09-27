@@ -6,11 +6,29 @@
     --side-menu-dialog-button-bottom-margin: 0.25em;
 }
 
+/* Stacked side menu grid column */
+div.ui.stackable.celled.grid > .row > .two.wide.column.stacked-side-menu-column {
+    padding: 0 !important; /* does not override SUIR styles without !important */
+}
+
+/* Stacked menu */
+.ui.menu.side-menu.is-stacked {
+    border-width: 0;
+}
+
 /* Container */
 .ui.menu.side-menu div.side-menu-item-container {
     padding: 0;
 }
 
+/* Stacked menu expand/collapse toggle */
+.side-menu-expand-container {
+    min-height: 3em;
+}
+
+.side-menu-expand-container i:hover {
+    cursor: pointer;
+}
 
 /* Item & link item */
 div.side-menu-item-container button.ui.button.side-menu-item {
