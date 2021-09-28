@@ -87,7 +87,6 @@ const NavbarItem = ({ item, itemOnClickCallback }) => {
     const isDisplayed = useSelector(item.isDisplayedSelector || (state => true));
     const labelText = useSelector(item.labelTextSelector || (state => undefined));
     const labelColor = useSelector(item.labelColorSelector || (state => "grey"));
-
     if (!isDisplayed) return null;
 
     const label = labelText !== undefined ? <Label size="tiny" circular color={labelColor}>{labelText}</Label> : null;
@@ -106,6 +105,12 @@ const NavbarItem = ({ item, itemOnClickCallback }) => {
  */
 const NavbarSecondaryMenu = ({ containerClassName }) => {
     const isUserLoggedIn = useSelector(state => state.auth.user_level > enumUserLevels.anonymous);
+
+    const location = useLocation();
+    const isMenuDisplayed = location.pathname.startsWith("/auth/") === false;
+
+    if (!isMenuDisplayed) return null;
+    
     const content = isUserLoggedIn ? <LoggedInSecondaryMenu /> : <LoggedOutSecondaryMenu />;
     
     return (

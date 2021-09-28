@@ -1,0 +1,19 @@
+/**************************************
+    Auth login & register pages styles. 
+**************************************/
+
+div.auth-form-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+form.ui.form.auth-form {
+    max-width: 500px;
+    width: 100%;
+}
+
+div.auth-form-submit-button-container {
+    display: flex;
+    justify-content: center;
+}
