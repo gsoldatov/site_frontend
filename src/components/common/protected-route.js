@@ -29,19 +29,3 @@ export const ProtectedRoute = ({ childrenRenderedSelector, fallbackRoute, addQue
         </Route>
     );
 };
-
-    // - protected route wrapper: TODO remove
-    //     - properties:
-    //         - childrenRenderedSelector;
-    //         - fallback route;
-    //         - add from query string boolean;
-    //         ? Router component properties;      // or render Router > ProtectedRouteWrapper > Component in App.js
-    //     - if childrenRendered condition is not met, render `Redirect` component for fallback route:
-    //         - optionally, adds "from" query string;
-    //     - otherwise, render children;
-
-    //     - protect components:
-    //         - /auth/login, /auth/register => redirect to index if logged in;
-    //         - all others, except for index => redirect to /auth/login?from=%location% if not logged in;
-    //
-    // - add ?from=%location.path% for login button in the navbar;

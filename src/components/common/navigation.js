@@ -126,10 +126,15 @@ const NavbarSecondaryMenu = ({ containerClassName }) => {
  */
 const LoggedOutSecondaryMenu = () => {
     const history = useHistory();
+    const location = useLocation();
     const dispatch = useDispatch();
 
     // Login button
-    const loginOnClick = useMemo(() => () => history.push("/auth/login"));
+    const loginOnClick = useMemo(() => () => {
+        let query = new URLSearchParams();
+        query.append("from", location.pathname);
+        history.push(`/auth/login?${query.toString()}`);
+    }, [location]);
 
     // Sign up button is disabled by default. After first render, a fetch is run to check if registration is enabled.
     // If yes, registration button becomes available.
