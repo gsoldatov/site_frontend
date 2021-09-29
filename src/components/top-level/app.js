@@ -13,6 +13,7 @@ import { ProtectedRoute } from "../common/protected-route";
 
 import { IndexPage } from "./index";
 import { LoginPage } from "./login";
+import { RegisterPage } from "./register";
 import { AddTag, EditTag } from "./tag";
 import Tags from "./tags";
 import { AddObject, EditObject } from "./object";
@@ -39,6 +40,11 @@ export const App = () => {
             <ProtectedRoute exact path="/auth/login"
                 childrenRenderedSelector={isAnonymousCondition} fallbackRoute="/">
                 <LoginPage />
+            </ProtectedRoute>
+
+            <ProtectedRoute exact path="/auth/register"
+                childrenRenderedSelector={isAnonymousCondition} fallbackRoute="/">
+                <RegisterPage />
             </ProtectedRoute>
 
             {/* Tags */}

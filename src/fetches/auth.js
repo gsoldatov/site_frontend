@@ -6,7 +6,7 @@ import { getNonCachedUsers } from "./data-users";
 import { setAuthInformation } from "../actions/auth";
 import { resetStateExceptForEditedObjects, setRedirectOnRender } from "../actions/common";
 
-import { validateLoginAndPassword } from "../store/state-util/auth";
+import { validateLoginCredentials, validateRegisterCredentials } from "../store/state-util/auth";
 import { enumUserLevels } from "../util/enum-user-levels";
 import { enumResponseErrorType } from "../util/enum-response-error-type";
 
@@ -39,6 +39,45 @@ export const registrationStatusFetch = () => {
 
 
 /**
+ * Fetches backend to register a user with provided credentials.
+ * Returns an object with auth information in case of success or any occured errors.
+ */
+ export const registerFetch = (login, password, password_repeat, username) => {
+    return async (dispatch, getState) => {
+        // Validate entered credentials
+        let validationErrors = validateRegisterCredentials(login, password, password_repeat, username);
+        if (Object.keys(validationErrors.errors).length > 0) return validationErrors;
+
+        // Fetch backend
+        let response = await dispatch(runFetch(`${backendURL}/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ login, password, password_repeat, username })
+        }));
+
+        // Handle response
+        switch (response.status) {
+            case 200:
+                return {};
+            default:
+                const errorJSON = await getErrorFromResponse(response);
+                if ("error" in errorJSON) {
+                    // Attribute backend error message to a specific form field
+                    const errors = {};
+                    const match = errorJSON.error.match(/Submitted (\w+) already exists/);
+                    if (match && ["login", "username"].includes(match[1])) errors[match[1]] = match[0];
+                    else errors.form = errorJSON.error;
+
+                    return { errors };
+                }
+
+                return { errors: { form: errorJSON.error }};
+        }
+    };
+};
+
+
+/**
  * Fetches provided `login` and `password` to acquire an access token, if there is none.
  * Returns an object with auth information in case of success or any occured errors.
  */
@@ -48,7 +87,7 @@ export const loginFetch = (login, password) => {
         if (getState().auth.user_level > enumUserLevels.anonymous) return { errors: { form: "You are already logged in." }};
 
         // Validate entered credentials
-        let validationErrors = validateLoginAndPassword(login, password);
+        let validationErrors = validateLoginCredentials(login, password);
         if (Object.keys(validationErrors.errors).length > 0) return validationErrors;
 
         // Fetch backend

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router";
 import { Button, Message, Form } from "semantic-ui-react";
@@ -12,6 +12,10 @@ import StyleAuth from "../../styles/auth.css";
 
 
 const getDefaultErrors = () => ({ login: "", password: "", form: "" });
+
+const _messages = {
+    registrationComplete: "You have successfully registered. Login to continue."
+};
 
 /**
  * Login page component.
@@ -29,10 +33,19 @@ export const LoginPage = () => {
     const passwordError = errors.password.length > 0 ? { content: errors.password, pointing: "above" } : undefined;
     const formHasError = errors.form.length > 0;
 
+    // Form message
+    const [message, setMessage] = useState("");
+    const formHasMessage = message.length > 0;
+    useEffect(() => {   // Set message based on URL query params
+        const message = _messages[(new URLSearchParams(location.search)).get("message")];
+        setMessage(message || "");
+    }, []);
+
     // Sumbit logic
     const onSubmit = useMemo(() => async e => {
         // Reset errors & freeze form
         e.preventDefault();
+        setMessage("");
         setErrors(getDefaultErrors());
         setIsDisabled(true);
 
@@ -54,7 +67,8 @@ export const LoginPage = () => {
 
     const body = (
         <div className="auth-form-container">
-            <Form className="auth-form" size="large" error={formHasError} onSubmit={onSubmit}>
+            <Form className="auth-form" size="large" error={formHasError} success={formHasMessage} onSubmit={onSubmit}>
+                <Message success content={message} />
                 <Message error content={errors.form} />
                 <Form.Input error={loginError} name="login" label="Login" disabled={isDisabled} />
                 <Form.Input error={passwordError} name="password" label="Password" type="password" disabled={isDisabled} />
