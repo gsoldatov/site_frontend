@@ -38,19 +38,18 @@ export const LoginPage = () => {
 
         // Submit credentials
         const result = await dispatch(loginFetch(e.target.login.value, e.target.password.value));
-
-        // Unfreeze form
-        setIsDisabled(false);
         
         // Handle errors
         if ("errors" in result) {
             setErrors({ ...getDefaultErrors(), ...result.errors });
+            setIsDisabled(false);
             return;
         }
 
         // Handle successful login
         const redirectPath = (new URLSearchParams(location.search)).get("from") || "/";
-        dispatch(setRedirectOnRender(redirectPath));
+        const decodedPath = decodeURIComponent(redirectPath);   // Deocde URL-encoded string
+        dispatch(setRedirectOnRender(decodedPath));
     }, [location]);
 
     const body = (
