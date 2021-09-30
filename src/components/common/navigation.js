@@ -64,12 +64,14 @@ export default memo(({ itemOnClickCallback }) => {
 
         menuItems.push(<NavbarSecondaryMenu key={-1} containerClassName={rightMenuClassName} />);
     }
+
+    const mainMenuClassname = "navigation-bar" + (isStacked ? " is-stacked" : "");
     
     // `vertical` <Menu> prop is used instead of `stackable` prop of <Menu> to avoid inconsistency when when displaying composite object page
     // (small viewport width forces navbar to be stackable even body width is > 768px)
     return (
         <OnResizeWrapper callback={onResizeCallback}>
-            <Menu inverted fluid vertical={isStacked} size="large" className="navigation-bar"
+            <Menu inverted fluid vertical={isStacked} size="large" className={mainMenuClassname}
                 activeIndex={location.pathname}
             >
                 {expandToggle}

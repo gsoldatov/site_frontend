@@ -8,6 +8,10 @@ div.ui.menu.navigation-bar {
 }
 
 
+div.ui.menu.navigation-bar:not(.is-stacked) {
+    min-height: 52px;   /* Same for when with & without secondary menu */
+}
+
 /* Menu items */
 div.ui.menu.navigation-bar > .item {
     display: flex;
