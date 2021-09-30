@@ -1,8 +1,7 @@
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
 import { addTags, setObjectsTags } from "../../src/actions/data-tags";
 import { resetEditedObjects } from "../../src/actions/object";
-import createStore from "../../src/store/create-store";
-import { enumDeleteModes } from "../../src/store/state-templates/composite-subobjects";
+import { createTestStore } from "../test-utils/create-test-store";
 
 import { _cachedObjects, _cachedObjectData } from "./mock-fetch-handlers-objects";
 
@@ -33,7 +32,7 @@ export const mapAndCacheNewSubobjects = (requestObjectData, createdAt, modifiedA
  * Returns a Redux store with a composite object `1` and its subobjects (`2`, `3`) present in attribute, tag and data storages.
  */
 export const getStoreWithCompositeObjectAndSubobjects = () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createTestStore({ enableDebugLogging: false });
     let objects = [
         { 
             object_id: 1, object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
@@ -75,7 +74,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
  * Returns a Redux store with a composite object `1` (but not its subobjects) present in attribute, tag and data storages.
  */
  export const getStoreWithCompositeObject = () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createTestStore({ enableDebugLogging: false });
     let objects = [
         { 
             object_id: 1, object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
@@ -106,7 +105,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
   * Returns a Redux store with a composite object `1` and its subobjects (`2`, `-1`) present in storages and editedObjects.
   */
 export const getStoreWithModifiedCompositeObject = () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createTestStore({ enableDebugLogging: false });
 
     let objects = [
         { 

@@ -7,7 +7,7 @@ import { render } from "@testing-library/react";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 
-import createStore from "../../src/store/create-store";
+import { createTestStore } from "./create-test-store";
 
 
 export function renderWithWrappers(ui, params) {
@@ -32,7 +32,7 @@ export function renderWithWrappers(ui, params) {
 }
 
 const getRenderParams = (params = {}) => {
-    const store = params.store || createStore({ useLocalStorage: false, enableDebugLogging: false }),
+    const store = params.store || createTestStore({ useLocalStorage: false, enableDebugLogging: false }),
           route = params.route || "/";
     const history = createMemoryHistory({ initialEntries: [route] });
     return { store, history };

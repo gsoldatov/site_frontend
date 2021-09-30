@@ -1,4 +1,4 @@
-import createStore from "../../src/store/create-store";
+import { createTestStore } from "../test-utils/create-test-store";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { addObjects } from "../../src/actions/data-objects";
@@ -10,7 +10,7 @@ import { selectObjects } from "../../src/actions/objects";
  */
 export async function getStoreWithTwoSelectedObjects() {
     
-    let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+    let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
     let objects = [ { object_id: 1, object_type: "link", object_name: "object #1", object_description: "object description", 
                     created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
                     is_published: false, owner_id: 1, current_tag_ids: [1, 2, 3, 4] },

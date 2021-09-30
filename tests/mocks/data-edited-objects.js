@@ -1,7 +1,7 @@
 import { resetEditedObjects, setEditedObject } from "../../src/actions/object";
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
 import { setObjectsTags } from "../../src/actions/data-tags";
-import createStore from "../../src/store/create-store";
+import { createTestStore } from "../test-utils/create-test-store";
 
 
 /**
@@ -17,7 +17,7 @@ import createStore from "../../src/store/create-store";
  * - 23: existing to-do list;
  */
 export const getStoreWithEditedObjects = () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createTestStore({ enableDebugLogging: false });
 
     store.dispatch(resetEditedObjects({ objectIDs: [0, 1, -1, /*10, 11,*/ /*12,*/ 21, 22, 23], allowResetToDefaults: true }));
 

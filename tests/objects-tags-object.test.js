@@ -9,7 +9,7 @@ import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } fr
 import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "./test-utils/ui-object";
 import { renderWithWrappers } from "./test-utils/render";
 
-import createStore from "../src/store/create-store";
+import { createTestStore } from "./test-utils/create-test-store";
 import { AddObject, EditObject } from "../src/components/top-level/object";
 import Objects from "../src/components/top-level/objects";
 import { setObjectsTags } from "../src/actions/data-tags";
@@ -221,7 +221,7 @@ describe("Add object page", () => {
 
 describe("Edit object page", () => {
     test("Load object tags from state", async () => {
-        let store = createStore({ enableDebugLogging: false });
+        let store = createTestStore({ enableDebugLogging: false });
         let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
                         created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
         let objectData = { object_id: 1, object_type: "link", object_data: {"link": "https://test.link"} };

@@ -6,7 +6,7 @@ import { getByText, getByPlaceholderText, waitFor, queryByText } from "@testing-
 
 import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
 import { renderWithWrappers } from "./test-utils/render";
-import createStore from "../src/store/create-store";
+import { createTestStore } from "./test-utils/create-test-store";
 
 import { AddTag, EditTag } from "../src/components/top-level/tag";
 import { addTags, deleteTags } from "../src/actions/data-tags";
@@ -60,7 +60,7 @@ test("Load a tag with fetch error", async () => {
 
 
 test("Load a tag from state", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createTestStore({ enableDebugLogging: false });
     let tag = { tag_id: 1, tag_name: "tag name", tag_description: "tag description", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
     store.dispatch(addTags([tag]));
     // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -118,7 +118,7 @@ test("Check 'Add Tag' button", async () => {
 
 
 test("Modify a tag and click cancel", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createTestStore({ enableDebugLogging: false });
     let tag = { tag_id: 1, tag_name: "tag name", tag_description: "tag description", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
     store.dispatch(addTags([tag]));
     // Route component is required for matching (getting :id part of the URL in the Tag component)

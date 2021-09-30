@@ -31,7 +31,7 @@ function handleAdd(body) {
         ? {_error: "Submitted tag name already exists."}
         : {tag: { tag_id: 1000, tag_name: tag["tag_name"], tag_description: tag["tag_description"], created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString() }};
     
-    return {status: status, json: () => Promise.resolve(responseObj)};
+    return { status: status, body: responseObj };
 }
 
 
@@ -58,7 +58,7 @@ function handleView(body) {
         }
         : { _error: "Tags not found." };
     
-    return { status: status, json: () => Promise.resolve(responseObj) };
+    return { status: status, body: responseObj };
 }
 
 
@@ -69,7 +69,7 @@ function handleDelete(body) {
         ? { tag_ids: tag_ids }
         : {_error: "Tags not found."};
     
-    return {status: status, json: () => Promise.resolve(responseObj)};
+    return { status: status, body: responseObj };
 }
 
 
@@ -83,7 +83,7 @@ function handleUpdate(body) {
             modified_at: (new Date()).toUTCString()
         }}
         : {_error: "Tag name already exists."};
-    return {status: status, json: () => Promise.resolve(responseObj)};
+    return { status: status, body: responseObj };
 }
 
 
@@ -91,7 +91,7 @@ function handleGetPageTagIDs(body) {
     const pI = JSON.parse(body).pagination_info;
     const tagIDs = getMockedPageTagIDs(pI);
     if (tagIDs.length === 0) {
-        return {status: 404, json: () => Promise.resolve({_error: "No tags found."})};
+        return { status: 404, body: { _error: "No tags found." }};
     }
 
     const responseObj = {
@@ -103,7 +103,7 @@ function handleGetPageTagIDs(body) {
         filter_text: pI.filter_text,
         tag_ids: tagIDs
     };
-    return {status: 200, json: () => Promise.resolve(responseObj)};
+    return { status: 200, body: responseObj };
 }
 
 
@@ -160,7 +160,7 @@ export function getMockedPageTagIDs(pI) {
 function handleTagsSearch(body) {
     // Handle not found case
     const query = JSON.parse(body).query;
-    if (query.query_text === "not found") return {status: 404, json: () => Promise.resolve({ "_error": "Tags not found." })};
+    if (query.query_text === "not found") return { status: 404, body: { _error: "Tags not found." }};
 
     // Handle success case
     const maximumValues = query.maximum_values || 10;
@@ -171,7 +171,7 @@ function handleTagsSearch(body) {
         if (!existingIds.includes(id)) tagIDs.push(id);
         id++;
     }
-    return {status: 200, json: () => Promise.resolve({ "tag_ids": tagIDs })};
+    return { status: 200, body: { "tag_ids": tagIDs }};
 }
 
 export const tagsHandlersList = new Map([

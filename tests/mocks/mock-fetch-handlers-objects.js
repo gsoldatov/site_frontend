@@ -16,7 +16,7 @@ function handleAdd(body) {
 
     // // Handle existing object_name case  // unique constraint on lowered object_name is removed
     // if (object["object_name"] === "existing object_name")
-    //     return {status: 400, json: () => Promise.resolve({_error: "Submitted object name already exists."})};
+    //     return {status: 400, body: { _error: "Submitted object name already exists." }};
 
     // Set attributes of the new object
     const objectID = 1000;
@@ -42,7 +42,7 @@ function handleAdd(body) {
     _cachedObjectData[objectID] = object["object_data"];
 
     // Send response
-    return { status: 200, json: () => Promise.resolve({ object: response })};
+    return { status: 200, body: { object: response }};
 }
 
 
@@ -60,7 +60,7 @@ function handleView(body) {
     
     // Return 404 response if both object_ids and object_data_ids do not "exist"
     if (object_ids.length === 0 && object_data_ids.length === 0)
-        return {status: 404, json: () => Promise.resolve({_error: "Objects not found."})};
+        return { status: 404, body: { _error: "Objects not found." }};
 
     // Set objects list
     let objects = object_ids.map(id => {
@@ -89,7 +89,7 @@ function handleView(body) {
     });
 
     // Send response
-    return {status: 200, json: () => Promise.resolve({objects: objects, object_data: object_data})};
+    return { status: 200, body: { objects: objects, object_data: object_data }};
 }
 
 
@@ -100,7 +100,7 @@ function handleDelete(body) {
         ? { object_ids: object_ids }
         : {_error: "Objects not found."};
     
-    return {status: status, json: () => Promise.resolve(responseObj)};
+    return { status: status, body: responseObj };
 }
 
 
@@ -109,7 +109,7 @@ function handleUpdate(body) {
 
     // // Handle existing name case // unique constraint on lowered object_name is removed
     // if (object.object_name === "existing object name")
-    //     return { status: 400, json: () => Promise.resolve({_error: "Object name already exists."}) };
+    //     return { status: 400, body: { _error: "Object name already exists." }};
     
     // Set object's tags (autogenerate & cache tag_ids for provided tag names => add all tag_ids to the object)
     const tagUpdates = { added_tag_ids: [], removed_tag_ids: object.removed_tag_ids };
@@ -133,7 +133,7 @@ function handleUpdate(body) {
 
     if (objectType === "composite") response.object["object_data"] = mapAndCacheNewSubobjects(object["object_data"], createdAt, modifiedAt);
 
-    return { status: 200, json: () => Promise.resolve(response) };
+    return { status: 200, body: response };
 }
 
 
@@ -141,7 +141,7 @@ function handleGetPageObjectIDs(body) {
     const pI = JSON.parse(body).pagination_info;
     const objectIDs = getMockedPageObjectIDs(pI);
     if (objectIDs.length === 0) {
-        return {status: 404, json: () => Promise.resolve({_error: "No objects found."})};
+        return { status: 404, body: { _error: "No objects found." }};
     }
 
     const responseObj = {
@@ -153,7 +153,7 @@ function handleGetPageObjectIDs(body) {
         filter_text: pI.filter_text,
         object_ids: objectIDs
     };
-    return {status: 200, json: () => Promise.resolve(responseObj)};  
+    return { status: 200, body: responseObj };  
 }
 
 
@@ -237,7 +237,7 @@ function handleUpdateTags(body) {
         },
         modified_at: (new Date(2001, 0, 1, 12, 30, 0)).toISOString()
     };
-    return { status: 200, json: () => Promise.resolve(responseObj) };
+    return { status: 200, body: responseObj };
 }
 
 
@@ -267,7 +267,7 @@ function handleObjectsSearch(body) {
 
     // Return object_id of the generated object
     const responseObj = { object_ids: [objectID] };
-    return { status: 200, json: () => Promise.resolve(responseObj) };
+    return { status: 200, body: responseObj };
 }
 
 

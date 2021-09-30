@@ -14,7 +14,7 @@ import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButt
 import { getTDLByObjectID } from "./mocks/data-to-do-lists";
 import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject, getMappedSubobjectID } from "./mocks/data-composite";
 
-import createStore from "../src/store/create-store";
+import { createTestStore } from "./test-utils/create-test-store";
 
 import { AddObject, EditObject } from "../src/components/top-level/object";
 import { setObjectsTags } from "../src/actions/data-tags";
@@ -146,7 +146,7 @@ describe("Load object errors & UI checks", () => {
 
 describe("Load object from state", () => {
     test("Load a link object from state", async () => {
-        let store = createStore({ enableDebugLogging: false });
+        let store = createTestStore({ enableDebugLogging: false });
         let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
                         created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
         let objectData = { object_id: 1, object_type: "link", object_data: {"link": "https://test.link"} };
@@ -181,7 +181,7 @@ describe("Load object from state", () => {
 
 
     test("Load a markdown object from state", async () => {
-        let store = createStore({ enableDebugLogging: false });
+        let store = createTestStore({ enableDebugLogging: false });
         let object = { object_id: 1, object_type: "markdown", object_name: "object name", object_description: "object description", 
                         created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
         let objectData = { object_id: 1, object_type: "markdown", object_data: {"raw_text": "**Test text**"} };
@@ -231,7 +231,7 @@ describe("Load object from state", () => {
 
 
     test("Load a to-do list object from state", async () => {
-        let store = createStore();
+        let store = createTestStore();
         let object = { object_id: 1, object_type: "to_do_list", object_name: "object name", object_description: "object description", 
                         created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
         let objectData = { object_id: 1, object_type: "to_do_list", object_data: getTDLByObjectID(2001) };
@@ -316,7 +316,7 @@ describe("Load object from state", () => {
 
 describe("Load object from backend", () => {
     test("Load a link object attributes from state and data from backend", async () => {
-        let store = createStore({ enableDebugLogging: false });
+        let store = createTestStore({ enableDebugLogging: false });
         let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
                         created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
         store.dispatch(addObjects([object]));
@@ -373,7 +373,7 @@ describe("Load object from backend", () => {
 
     
     test("Load a markdown object attributes from state and data from backend", async () => {
-        let store = createStore({ enableDebugLogging: false });
+        let store = createTestStore({ enableDebugLogging: false });
         let object = { object_id: 1001, object_type: "markdown", object_name: "object name", object_description: "object description", 
                         created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
         store.dispatch(addObjects([object]));
@@ -413,7 +413,7 @@ describe("Load object from backend", () => {
 
 
     test("Load a to-do list object attributes from state and data from backend", async () => {
-        let store = createStore({ enableDebugLogging: false });
+        let store = createTestStore({ enableDebugLogging: false });
         let object = { object_id: 2001, object_type: "to_do_list", object_name: "object name", object_description: "object description", 
                         created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
         store.dispatch(addObjects([object]));
@@ -727,7 +727,7 @@ describe("Reset object", () => {
 
 describe("Persist edited object state", () => {
     test("Unchanged objects removal from edited objects storage", async () => {
-        let store = createStore({ enableDebugLogging: false });
+        let store = createTestStore({ enableDebugLogging: false });
         const render = route => renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
             route, store
         });

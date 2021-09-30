@@ -14,7 +14,8 @@ import { addANewSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttr
 import { AddObject, EditObject } from "../src/components/top-level/object";
 import Objects from "../src/components/top-level/objects";
 import { getMappedSubobjectID } from "./mocks/data-composite";
-import createStore from "../src/store/create-store";
+import { createTestStore } from "./test-utils/create-test-store";
+
 import { getDefaultAuthState } from "../src/store/state-templates/auth";
 
 import { setAuthInformation } from "../src/actions/auth";
@@ -40,7 +41,7 @@ beforeEach(() => {
 describe("Edited objects > New object page", () => {
     test("Unsaved object persistance", async () => {
         // Render new object page and modify object name
-        let storeOne = createStore({ useLocalStorage: true, saveTimeout: 50 });
+        let storeOne = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
         
         var { container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add",
@@ -71,7 +72,7 @@ describe("Edited objects > New object page", () => {
         ReactDOM.unmountComponentAtNode(container);
 
         // Rerender page with another store
-        let storeTwo = createStore({ useLocalStorage: true });
+        let storeTwo = createTestStore({ useLocalStorage: true });
         var { container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
             route: "/objects/add",
             store: storeTwo
@@ -85,7 +86,7 @@ describe("Edited objects > New object page", () => {
 
     test("New composite object save", async () => {
         // Render new object page
-        let store = createStore({ useLocalStorage: true, saveTimeout: 50 });
+        let store = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
         let { container, history } = renderWithWrappers(
             <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
@@ -159,7 +160,7 @@ describe("Edited objects > New object page", () => {
 describe("Edited objects > Existing object page", () => {
     test("Unsaved object persistance", async () => {
         // Render existing object page and modify object name
-        let storeOne = createStore({ useLocalStorage: true, saveTimeout: 50 });
+        let storeOne = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
         var { container } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
             route: "/objects/1", 
@@ -193,7 +194,7 @@ describe("Edited objects > Existing object page", () => {
         ReactDOM.unmountComponentAtNode(container);
 
         // Rerender page with another store
-        let storeTwo = createStore({ useLocalStorage: true });
+        let storeTwo = createTestStore({ useLocalStorage: true });
         var { container } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
             route: "/objects/1", 
             store: storeTwo
@@ -208,7 +209,7 @@ describe("Edited objects > Existing object page", () => {
 
     test("Unchanged composite object removal", async () => {
         // Render existing object page and modify object name
-        let store = createStore({ useLocalStorage: true, saveTimeout: 50 });
+        let store = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
         var { container } = renderWithWrappers(
             <Switch>
@@ -277,7 +278,7 @@ describe("Edited objects > Existing object page", () => {
 
     test("Deleted composite object removal", async () => {
         // Render existing object page and modify object name
-        let store = createStore({ useLocalStorage: true, saveTimeout: 50 });
+        let store = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
         var { container } = renderWithWrappers(
             <Switch>
@@ -336,7 +337,7 @@ describe("Edited objects > Existing object page", () => {
 
 describe("Auth information", () => {
     test("Save auth updates into local storage", async () => {
-        const store = createStore({ useLocalStorage: true, saveTimeout: 25 });
+        const store = createTestStore({ useLocalStorage: true, saveTimeout: 25, addAdminToken: false });
         let authInfo = getDefaultAuthState();
 
         // Modify each attribute in auth info and check if it's saved to the local storage
@@ -349,7 +350,7 @@ describe("Auth information", () => {
 
 
     test("Load auth from local storage", async () => {
-        let store = createStore({ useLocalStorage: true, saveTimeout: 25 });
+        let store = createTestStore({ useLocalStorage: true, saveTimeout: 25, addAdminToken: false });
         
         // Check if default auth information is correctly loaded if no auth is saved in the local storage
         let authInfo = getDefaultAuthState();
@@ -364,7 +365,7 @@ describe("Auth information", () => {
         authInfo = { access_token: "some_token", access_token_expiration_time: (new Date()).toISOString(), user_id: 15, user_level: 10 }
         localStorage.setItem("authInfo", JSON.stringify(authInfo));
 
-        store = createStore({ useLocalStorage: true, saveTimeout: 25 });
+        store = createTestStore({ useLocalStorage: true, saveTimeout: 25, addAdminToken: false });
         expect(store.getState().auth).toMatchObject(authInfo);
         expect(authInfo).toMatchObject(store.getState().auth);
     });

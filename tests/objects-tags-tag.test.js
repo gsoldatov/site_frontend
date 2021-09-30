@@ -7,7 +7,7 @@ import { getByText, waitFor } from "@testing-library/dom";
 import { compareArrays } from "./test-utils/data-checks";
 import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
 import { renderWithWrappers } from "./test-utils/render";
-import createStore from "../src/store/create-store";
+import { createTestStore } from "./test-utils/create-test-store";
 
 import { EditTag } from "../src/components/top-level/tag";
 import Tags from "../src/components/top-level/tags";
@@ -31,7 +31,7 @@ beforeEach(() => {
 
 
 test("Edit tag => delete a tag and check objects' tags", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createTestStore({ enableDebugLogging: false });
     let objects = [
         { object_id: 1, object_type: "link", object_name: "object one", object_description: "", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3] },
@@ -65,7 +65,7 @@ test("Edit tag => delete a tag and check objects' tags", async () => {
 
 
 test("Tags => delete tags and check objects' tags", async () => {
-    let store = createStore({ enableDebugLogging: false });
+    let store = createTestStore({ enableDebugLogging: false });
     let objects = [
         { object_id: 1, object_type: "link", object_name: "object one", object_description: "", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4] },

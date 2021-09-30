@@ -8,7 +8,7 @@ import { waitForFetch, checkObjectsDisplay, selectObjectTypeInFilter, deselectOb
 import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
 import { renderWithWrappers } from "./test-utils/render";
 import { getCurrentObject } from "./test-utils/ui-object";
-import createStore from "../src/store/create-store";
+import { createTestStore } from "./test-utils/create-test-store";
 
 import Objects from "../src/components/top-level/objects";
 import { EditObject } from "../src/components/top-level/object";
@@ -61,7 +61,7 @@ describe("Page load and pagination", () => {
     
     
     test("Load a page without pagination", async () => {
-        let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 100}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -79,7 +79,7 @@ describe("Page load and pagination", () => {
     
     
     test("Load page 1 of 5 and click on page 5", async () => {
-        let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 20}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -119,7 +119,7 @@ describe("Page load and pagination", () => {
     
     
     test("Load page 1 of 10 and check pagination gaps", async () => {
-        let store = createStore({ useLocalStorage: false });
+        let store = createTestStore({ useLocalStorage: false });
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -216,7 +216,7 @@ describe("Page load and pagination", () => {
 
 describe("Side menu", () => {
     test("Buttons during fetch", async () => {
-        let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -243,7 +243,7 @@ describe("Side menu", () => {
 
 
     test("Add object button", async () => {
-        let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -263,7 +263,7 @@ describe("Side menu", () => {
 
 
     test("Edit object button", async () => {
-        let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -302,7 +302,7 @@ describe("Side menu", () => {
 
 
     test("Delete button + edited objects removal", async () => {
-        let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
 
         const render = route => renderWithWrappers(
@@ -459,7 +459,7 @@ describe("Side menu", () => {
 
 describe("Field menu", () => {
     test("Select + deselect", async () => {
-        let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -488,7 +488,7 @@ describe("Field menu", () => {
 
 
     test("Sort buttons", async () => {
-        let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         const objectsPerPage = 10;
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: objectsPerPage}));
         
@@ -528,7 +528,7 @@ describe("Field menu", () => {
 
 
     test("Object filter", async () => {
-        let store = createStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
