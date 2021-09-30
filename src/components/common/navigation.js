@@ -5,7 +5,7 @@ import { NavLink, useHistory, useLocation } from "react-router-dom";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
 
-import { registrationStatusFetch, logoutFetch } from "../../fetches/auth";
+import { registrationStatusFetch, logoutFetch, getCurrentUserData } from "../../fetches/auth";
 
 import { enumUserLevels } from "../../util/enum-user-levels";
 
@@ -170,8 +170,13 @@ const LoggedOutSecondaryMenu = () => {
 const LoggedInSecondaryMenu = () => {
     const dispatch = useDispatch();
 
+    // Ensure user information is in the state
+    useEffect(() => {
+        dispatch(getCurrentUserData());
+    }), [];
+
     // Username
-    const username = useSelector(state => state.auth.user_id in state.users ? state.users[state.auth.user_id].username : "%username%");
+    const username = useSelector(state => state.auth.user_id in state.users ? state.users[state.auth.user_id].username : "");
 
     // Logout button
     const logoutOnClick = useMemo(() => () => {

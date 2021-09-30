@@ -151,3 +151,21 @@ export const logoutFetch = () => {
 
     };
 };
+
+
+/**
+ * Fetches basic information for user with user_id = state.auth.user_id if it's missing.
+ */
+ export const getCurrentUserData = () => {
+    return async (dispatch, getState) => {
+        const user_id = getState().auth.user_id;
+
+        let result = await dispatch(getNonCachedUsers([user_id], false));
+
+        // Handle fetch errors
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) return { errors: { form: "Failed to fetch user information." }};
+
+        return {};
+    };
+};
