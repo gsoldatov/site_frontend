@@ -4,10 +4,10 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from "@testing-library/dom";
 
-import { getMockedPageTagIDs } from "./mocks/mock-fetch-handlers-tags";
-import { getSideMenuItem, getSideMenuDialogControls } from "./test-utils/ui-common";
-import { renderWithWrappers } from "./test-utils/render";
-import { createTestStore } from "./test-utils/create-test-store";
+import { getMockedPageTagIDs } from "./_mocks/mock-fetch-handlers-tags";
+import { getSideMenuItem, getSideMenuDialogControls } from "./_util/ui-common";
+import { renderWithWrappers } from "./_util/render";
+import { createTestStore } from "./_util/create-test-store";
 
 import Tags from "../src/components/top-level/tags";
 import { setTagsPaginationInfo } from "../src/actions/tags";
@@ -19,8 +19,8 @@ import { setTagsPaginationInfo } from "../src/actions/tags";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
-        const { paginationGetComputedStyle } = require("./mocks/mock-get-computed-style");
+        const { mockFetch, setFetchFail } = require("./_mocks/mock-fetch");
+        const { paginationGetComputedStyle } = require("./_mocks/mock-get-computed-style");
 
         // reset fetch mocks
         jest.resetAllMocks();

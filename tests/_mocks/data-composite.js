@@ -1,7 +1,7 @@
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
 import { addTags, setObjectsTags } from "../../src/actions/data-tags";
 import { resetEditedObjects } from "../../src/actions/object";
-import { createTestStore } from "../test-utils/create-test-store";
+import { createTestStore } from "../_util/create-test-store";
 
 import { _cachedObjects, _cachedObjectData } from "./mock-fetch-handlers-objects";
 

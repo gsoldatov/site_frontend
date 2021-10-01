@@ -4,16 +4,16 @@ import { Switch, Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from "@testing-library/dom";
 
-import { waitForFetch, checkObjectsDisplay, selectObjectTypeInFilter, deselectObjectTypeInFilter, searchTagInFilter, checkIfTagIsAddedToFilter } from "./test-utils/ui-objects";
-import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
-import { renderWithWrappers } from "./test-utils/render";
-import { getCurrentObject } from "./test-utils/ui-object";
-import { createTestStore } from "./test-utils/create-test-store";
+import { waitForFetch, checkObjectsDisplay, selectObjectTypeInFilter, deselectObjectTypeInFilter, searchTagInFilter, checkIfTagIsAddedToFilter } from "./_util/ui-objects";
+import { getSideMenuDialogControls, getSideMenuItem } from "./_util/ui-common";
+import { renderWithWrappers } from "./_util/render";
+import { getCurrentObject } from "./_util/ui-object";
+import { createTestStore } from "./_util/create-test-store";
+import { getStoreWithModifiedCompositeObject } from "./_mocks/data-composite";
 
 import Objects from "../src/components/top-level/objects";
 import { EditObject } from "../src/components/top-level/object";
 import { setObjectsPaginationInfo } from "../src/actions/objects";
-import { getStoreWithModifiedCompositeObject } from "./mocks/data-composite";
 
 
 /*
@@ -22,8 +22,8 @@ import { getStoreWithModifiedCompositeObject } from "./mocks/data-composite";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
-        const { paginationGetComputedStyle } = require("./mocks/mock-get-computed-style");
+        const { mockFetch, setFetchFail } = require("./_mocks/mock-fetch");
+        const { paginationGetComputedStyle } = require("./_mocks/mock-get-computed-style");
 
         // reset fetch mocks
         jest.resetAllMocks();

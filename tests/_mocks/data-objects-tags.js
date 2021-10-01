@@ -1,4 +1,4 @@
-import { createTestStore } from "../test-utils/create-test-store";
+import { createTestStore } from "../_util/create-test-store";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { addObjects } from "../../src/actions/data-objects";

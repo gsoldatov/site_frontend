@@ -4,17 +4,17 @@ import { Switch, Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
-import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
-import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils/ui-objects-tags";
-import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "./test-utils/ui-object";
-import { renderWithWrappers } from "./test-utils/render";
+import { createTestStore } from "../_util/create-test-store";
+import { renderWithWrappers } from "../_util/render";
+import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
+import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
+import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "../_util/ui-object";
 
-import { createTestStore } from "./test-utils/create-test-store";
-import { AddObject, EditObject } from "../src/components/top-level/object";
-import Objects from "../src/components/top-level/objects";
-import { setObjectsTags } from "../src/actions/data-tags";
-import { getNonCachedTags } from "../src/fetches/data-tags";
-import { addObjects, addObjectData } from "../src/actions/data-objects";
+import { AddObject, EditObject } from "../../src/components/top-level/object";
+import Objects from "../../src/components/top-level/objects";
+import { setObjectsTags } from "../../src/actions/data-tags";
+import { getNonCachedTags } from "../../src/fetches/data-tags";
+import { addObjects, addObjectData } from "../../src/actions/data-objects";
 
 
 /*
@@ -23,7 +23,7 @@ import { addObjects, addObjectData } from "../src/actions/data-objects";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

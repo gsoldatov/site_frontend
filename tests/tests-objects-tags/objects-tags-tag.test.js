@@ -4,15 +4,15 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, waitFor } from "@testing-library/dom";
 
-import { compareArrays } from "./test-utils/data-checks";
-import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
-import { renderWithWrappers } from "./test-utils/render";
-import { createTestStore } from "./test-utils/create-test-store";
+import { compareArrays } from "../_util/data-checks";
+import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
+import { renderWithWrappers } from "../_util/render";
+import { createTestStore } from "../_util/create-test-store";
 
-import { EditTag } from "../src/components/top-level/tag";
-import Tags from "../src/components/top-level/tags";
-import { setObjectsTags } from "../src/actions/data-tags";
-import { addObjects } from "../src/actions/data-objects";
+import { EditTag } from "../../src/components/top-level/tag";
+import Tags from "../../src/components/top-level/tags";
+import { setObjectsTags } from "../../src/actions/data-tags";
+import { addObjects } from "../../src/actions/data-objects";
 
 
 /*
@@ -21,7 +21,7 @@ import { addObjects } from "../src/actions/data-objects";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

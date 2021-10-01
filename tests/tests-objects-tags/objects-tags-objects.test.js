@@ -4,16 +4,16 @@ import { Switch, Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText, screen } from "@testing-library/dom";
 
-import { getStoreWithTwoSelectedObjects } from "./mocks/data-objects-tags";
-import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
-import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "./test-utils/ui-objects-tags";
-import { addAndRemoveTags } from "./test-utils/ui-object";
-import { compareArrays } from "./test-utils/data-checks";
-import { renderWithWrappers } from "./test-utils/render";
+import { getStoreWithTwoSelectedObjects } from "../_mocks/data-objects-tags";
+import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
+import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
+import { addAndRemoveTags } from "../_util/ui-object";
+import { compareArrays } from "../_util/data-checks";
+import { renderWithWrappers } from "../_util/render";
 
-import Objects from "../src/components/top-level/objects";
-import { EditObject } from "../src/components/top-level/object";
-import { getNonCachedTags } from "../src/fetches/data-tags";
+import Objects from "../../src/components/top-level/objects";
+import { EditObject } from "../../src/components/top-level/object";
+import { getNonCachedTags } from "../../src/fetches/data-tags";
 
 
 /*
@@ -22,7 +22,7 @@ import { getNonCachedTags } from "../src/fetches/data-tags";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

@@ -1,7 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { getByText, waitFor, queryAllByText } from "@testing-library/dom";
 
-import { getMockedPageObjectIDs } from "../mocks/mock-fetch-handlers-objects";
+import { getMockedPageObjectIDs } from "../_mocks/mock-fetch-handlers-objects";
 
 
 /**

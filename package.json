@@ -53,9 +53,9 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/mocks/file-mock.js",
-      "\\.(css|less)$": "<rootDir>/tests/mocks/style-mock.js",
-      "parse-markdown\\.worker(?:\\.jsx?)?$": "<rootDir>/tests/mocks/markdown-parse-worker-mock.js"
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/_mocks/file-mock.js",
+      "\\.(css|less)$": "<rootDir>/tests/_mocks/style-mock.js",
+      "parse-markdown\\.worker(?:\\.jsx?)?$": "<rootDir>/tests/_mocks/markdown-parse-worker-mock.js"
     }
   }
 }

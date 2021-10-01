@@ -4,13 +4,13 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, queryByTitle, queryByText } from "@testing-library/dom";
 
-import { compareItemData, getDefaultSortOrder, getRenderedItemIndent, checkRenderedItemsOrder } from "./test-utils/to-do-lists";
-import { defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "./mocks/data-to-do-lists";
-import { renderWithWrappers } from "./test-utils/render";
-import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "./test-utils/ui-object";
+import { compareItemData, getDefaultSortOrder, getRenderedItemIndent, checkRenderedItemsOrder } from "../_util/to-do-lists";
+import { renderWithWrappers } from "../_util/render";
+import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../_util/ui-object";
+import { defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "../_mocks/data-to-do-lists";
 
-import { AddObject, EditObject } from "../src/components/top-level/object";
-import * as caret from "../src/util/caret";
+import { AddObject, EditObject } from "../../src/components/top-level/object";
+import * as caret from "../../src/util/caret";
 
 
 /*
@@ -19,7 +19,7 @@ import * as caret from "../src/util/caret";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

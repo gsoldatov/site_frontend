@@ -4,15 +4,15 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByText } from "@testing-library/dom";
 
-import { renderWithWrappers } from "./test-utils/render";
-import { getSideMenuItem, getSideMenuDialogControls } from "./test-utils/ui-common";
+import { renderWithWrappers } from "../_util/render";
+import { getSideMenuItem, getSideMenuDialogControls } from "../_util/ui-common";
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickGeneralTabButton, clickDataTabButton, 
-    clickDisplayTabButton, clickPublishObjectCheckbox, resetObject } from "./test-utils/ui-object";
+    clickDisplayTabButton, clickPublishObjectCheckbox, resetObject } from "../_util/ui-object";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
-    getSubobjectCards, getSubobjectExpandToggleButton } from "./test-utils/ui-composite";
+    getSubobjectCards, getSubobjectExpandToggleButton } from "../_util/ui-composite";
 
-import { AddObject, EditObject } from "../src/components/top-level/object";
-import { getMappedSubobjectID } from "./mocks/data-composite";
+import { AddObject, EditObject } from "../../src/components/top-level/object";
+import { getMappedSubobjectID } from "../_mocks/data-composite";
 
 
 /*
@@ -21,7 +21,7 @@ import { getMappedSubobjectID } from "./mocks/data-composite";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

@@ -4,11 +4,11 @@ import { Route } from "react-router-dom";
 import { fireEvent, screen } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 
-import { renderWithWrappers } from "./test-utils/render";
-import { getSideMenuItem } from "./test-utils/ui-common";
+import { renderWithWrappers } from "../_util/render";
+import { getSideMenuItem } from "../_util/ui-common";
 
-import { AddTag, EditTag } from "../src/components/top-level/tag";
-import { addTags } from "../src/actions/data-tags";
+import { AddTag, EditTag } from "../../src/components/top-level/tag";
+import { addTags } from "../../src/actions/data-tags";
 
 
 /*
@@ -17,7 +17,7 @@ import { addTags } from "../src/actions/data-tags";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

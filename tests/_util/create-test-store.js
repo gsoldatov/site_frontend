@@ -1,6 +1,6 @@
 import createStore from "../../src/store/create-store";
 
-import { getMockLoginResponse } from "../mocks/data-auth";
+import { getMockLoginResponse } from "../_mocks/data-auth";
 
 import { setAuthInformation } from "../../src/actions/auth";
 

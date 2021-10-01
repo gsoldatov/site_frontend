@@ -5,16 +5,16 @@ import { Switch, Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByPlaceholderText, waitFor } from "@testing-library/dom";
 
-import { renderWithWrappers } from "./test-utils/render";
-import { getEditedObjectLocalStorageKey, waitForAuthInfoToBeSavedIntoLocalStorage } from "./test-utils/local-storage";
-import { getSideMenuItem, getSideMenuDialogControls } from "./test-utils/ui-common";
-import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickDataTabButton, resetObject } from "./test-utils/ui-object";
-import { addANewSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCards } from "./test-utils/ui-composite";
+import { renderWithWrappers } from "./_util/render";
+import { getEditedObjectLocalStorageKey, waitForAuthInfoToBeSavedIntoLocalStorage } from "./_util/local-storage";
+import { getSideMenuItem, getSideMenuDialogControls } from "./_util/ui-common";
+import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickDataTabButton, resetObject } from "./_util/ui-object";
+import { addANewSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCards } from "./_util/ui-composite";
+import { createTestStore } from "./_util/create-test-store";
+import { getMappedSubobjectID } from "./_mocks/data-composite";
 
 import { AddObject, EditObject } from "../src/components/top-level/object";
 import Objects from "../src/components/top-level/objects";
-import { getMappedSubobjectID } from "./mocks/data-composite";
-import { createTestStore } from "./test-utils/create-test-store";
 
 import { getDefaultAuthState } from "../src/store/state-templates/auth";
 
@@ -27,7 +27,7 @@ import { setAuthInformation } from "../src/actions/auth";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("./_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

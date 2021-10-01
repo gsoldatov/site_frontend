@@ -2,21 +2,20 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle, screen } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
-import { checkRenderedItemsOrder } from "./test-utils/to-do-lists";
-import { renderWithWrappers } from "./test-utils/render";
+import { compareArrays } from "../_util/data-checks";
+import { checkRenderedItemsOrder } from "../_util/to-do-lists";
+import { renderWithWrappers } from "../_util/render";
 import { getCurrentObject, clickDataTabButton, getObjectTypeSelectingElements, clickGeneralTabButton, clickDisplayTabButton, 
-    clickPublishObjectCheckbox, getObjectTypeSwitchElements } from "./test-utils/ui-object";
+    clickPublishObjectCheckbox, getObjectTypeSwitchElements } from "../_util/ui-object";
 import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElements, getSubobjectCards, getAddSubobjectMenu, getAddSubobjectMenuDropdown,
     clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons, 
-    getSubobjectCardIndicators, getSubobjectExpandToggleButton, startSubobjectCardDrag, getSubobjectGridColumnContainers, getNewColumnDropzones } from "./test-utils/ui-composite";
-import { getDropdownOptionsContainer, getInlineInputField } from "./test-utils/ui-objects-tags";
+    getSubobjectCardIndicators, getSubobjectExpandToggleButton, startSubobjectCardDrag, getSubobjectGridColumnContainers, getNewColumnDropzones } from "../_util/ui-composite";
+import { getDropdownOptionsContainer, getInlineInputField } from "../_util/ui-objects-tags";
 
-import { AddObject, EditObject } from "../src/components/top-level/object";
-import { enumDeleteModes } from "../src/store/state-templates/composite-subobjects";
-import { compareArrays } from "./test-utils/data-checks";
-
+import { AddObject, EditObject } from "../../src/components/top-level/object";
+import { enumDeleteModes } from "../../src/store/state-templates/composite-subobjects";
 
 
 /*
@@ -25,7 +24,7 @@ import { compareArrays } from "./test-utils/data-checks";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

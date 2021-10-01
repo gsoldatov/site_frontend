@@ -1,7 +1,7 @@
 import { resetEditedObjects, setEditedObject } from "../../src/actions/object";
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
 import { setObjectsTags } from "../../src/actions/data-tags";
-import { createTestStore } from "../test-utils/create-test-store";
+import { createTestStore } from "../_util/create-test-store";
 
 
 /**

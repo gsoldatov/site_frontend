@@ -4,12 +4,12 @@ import { Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, queryByText } from "@testing-library/dom";
 
-import { getSideMenuDialogControls, getSideMenuItem } from "./test-utils/ui-common";
-import { renderWithWrappers } from "./test-utils/render";
-import { createTestStore } from "./test-utils/create-test-store";
+import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
+import { renderWithWrappers } from "../_util/render";
+import { createTestStore } from "../_util/create-test-store";
 
-import { AddTag, EditTag } from "../src/components/top-level/tag";
-import { addTags, deleteTags } from "../src/actions/data-tags";
+import { AddTag, EditTag } from "../../src/components/top-level/tag";
+import { addTags, deleteTags } from "../../src/actions/data-tags";
 
 
 /*
@@ -18,7 +18,7 @@ import { addTags, deleteTags } from "../src/actions/data-tags";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("./mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

@@ -1,7 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, queryByText, waitFor } from "@testing-library/dom";
 
-import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../test-utils/ui-objects-tags";
+import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
 import { getSideMenuItem, getSideMenuDialogControls } from "./ui-common";
 
 
