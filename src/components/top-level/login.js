@@ -24,8 +24,14 @@ export const LoginPage = () => {
     const dispatch = useDispatch();
     const location = useLocation();
 
-    // Form disable property
+    // Form disable control
     const [isDisabled, setIsDisabled] = useState(false);
+
+    // Form input state
+    const [formValues, setFormValues] = useState({ login: "", password: "" });
+    const handleFormChange = e => {
+        setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    };
 
     // Form & field errors
     const [errors, setErrors] = useState(getDefaultErrors());
@@ -42,7 +48,7 @@ export const LoginPage = () => {
     }, []);
 
     // Sumbit logic
-    const onSubmit = useMemo(() => async e => {
+    const onSubmit = async e => {
         // Reset errors & freeze form
         e.preventDefault();
         setMessage("");
@@ -50,7 +56,7 @@ export const LoginPage = () => {
         setIsDisabled(true);
 
         // Submit credentials
-        const result = await dispatch(loginFetch(e.target.login.value, e.target.password.value));
+        const result = await dispatch(loginFetch(formValues.login, formValues.password));
         
         // Handle errors
         if ("errors" in result) {
@@ -63,15 +69,15 @@ export const LoginPage = () => {
         const redirectPath = (new URLSearchParams(location.search)).get("from") || "/";
         const decodedPath = decodeURIComponent(redirectPath);   // Deocde URL-encoded string
         dispatch(setRedirectOnRender(decodedPath));
-    }, [location]);
+    };
 
     const body = (
         <div className="auth-form-container">
             <Form className="auth-form" size="large" error={formHasError} success={formHasMessage} onSubmit={onSubmit}>
                 <Message success content={message} />
                 <Message error content={errors.form} />
-                <Form.Input error={loginError} name="login" label="Login" disabled={isDisabled} />
-                <Form.Input error={passwordError} name="password" label="Password" type="password" disabled={isDisabled} />
+                <Form.Input error={loginError} name="login" label="Login" disabled={isDisabled} value={formValues.login} onChange={handleFormChange}  />
+                <Form.Input error={passwordError} name="password" label="Password" type="password" disabled={isDisabled} value={formValues.password} onChange={handleFormChange}  />
                 <div className="auth-form-submit-button-container">
                     <Button type="submit" color="blue" disabled={isDisabled}>Sumbit</Button>
                 </div>

@@ -64,7 +64,7 @@ export const registrationStatusFetch = () => {
                 if ("error" in errorJSON) {
                     // Attribute backend error message to a specific form field
                     const errors = {};
-                    const match = errorJSON.error.match(/Submitted (\w+) already exists/);
+                    const match = errorJSON.error.match(/Submitted (\w+) already exists./);
                     if (match && ["login", "username"].includes(match[1])) errors[match[1]] = match[0];
                     else errors.form = errorJSON.error;
 

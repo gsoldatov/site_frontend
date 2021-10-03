@@ -29,7 +29,7 @@ export default ({ items }) => {
     const [sideMenuIsExpanded, setSideMenuIsExpanded] = useState(false);
 
     const expandToggle = useMemo(() => {
-        const icon = sideMenuIsExpanded ? "close" : "bars";
+        const icon = sideMenuIsExpanded ? "close" : "options";
         return (
             !sideMenuIsStacked ? null : (
                 <Menu.Item className="side-menu-expand-container">

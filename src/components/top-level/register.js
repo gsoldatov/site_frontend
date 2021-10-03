@@ -18,8 +18,14 @@ const getDefaultErrors = () => ({ login: "", password: "", passwordRepeat: "", u
 export const RegisterPage = () => {
     const dispatch = useDispatch();
 
-    // Form disable property
+    // Form disable control
     const [isDisabled, setIsDisabled] = useState(true);
+
+    // Form input state
+    const [formValues, setFormValues] = useState({ login: "", password: "", passwordRepeat: "", username: "" });
+    const handleFormChange = e => {
+        setFormValues({ ...formValues, [e.target.name]: e.target.value });
+    };
 
     // Form & field errors
     const [errors, setErrors] = useState(getDefaultErrors());
@@ -30,14 +36,14 @@ export const RegisterPage = () => {
     const formHasError = errors.form.length > 0;
 
     // Sumbit logic
-    const onSubmit = useMemo(() => async e => {
+    const onSubmit = async e => {
         // Reset errors & freeze form
         e.preventDefault();
         setErrors(getDefaultErrors());
         setIsDisabled(true);
 
         // Submit credentials
-        const result = await dispatch(registerFetch(e.target.login.value, e.target.password.value, e.target.passwordRepeat.value, e.target.username.value));
+        const result = await dispatch(registerFetch(formValues.login, formValues.password, formValues.passwordRepeat, formValues.username));
         
         // Handle errors
         if ("errors" in result) {
@@ -48,7 +54,7 @@ export const RegisterPage = () => {
 
         // Handle successful login
         dispatch(setRedirectOnRender("/auth/login?message=registrationComplete"));
-    });
+    };
 
     // Fetch backend to check if registration is available and enable form, if so.
     useEffect(() => {
@@ -62,12 +68,12 @@ export const RegisterPage = () => {
 
     const body = (
         <div className="auth-form-container">
-            <Form className="auth-form" size="large" error={formHasError} onSubmit={onSubmit}>
+            <Form className="auth-form" size="large" autoComplete="off" error={formHasError} onSubmit={onSubmit}>
                 <Message error content={errors.form} />
-                <Form.Input error={loginError} name="login" label="Login" disabled={isDisabled} />
-                <Form.Input error={passwordError} name="password" label="Password" type="password" disabled={isDisabled} />
-                <Form.Input error={passwordRepeatError} name="passwordRepeat" label="Repeat password" type="password" disabled={isDisabled} />
-                <Form.Input error={usernameError} name="username" label="Username" disabled={isDisabled} />
+                <Form.Input error={loginError} name="login" label="Login" disabled={isDisabled} value={formValues.login} onChange={handleFormChange} />
+                <Form.Input error={passwordError} name="password" label="Password" type="password" disabled={isDisabled} value={formValues.password} onChange={handleFormChange} />
+                <Form.Input error={passwordRepeatError} name="passwordRepeat" label="Repeat password" type="password" disabled={isDisabled} value={formValues.passwordRepeat} onChange={handleFormChange} />
+                <Form.Input error={usernameError} name="username" label="Username" disabled={isDisabled} value={formValues.username} onChange={handleFormChange} />
                 <div className="auth-form-submit-button-container">
                     <Button type="submit" color="blue" disabled={isDisabled}>Register</Button>
                 </div>

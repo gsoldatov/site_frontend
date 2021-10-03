@@ -24,8 +24,8 @@ import { NotFound } from "./not-found";
 import { enumUserLevels } from "../../util/enum-user-levels";
 
 
-const isAuthenticatedCondition = state => state.auth.user_level > enumUserLevels.anonymous;
-const isAnonymousCondition = state => state.auth.user_level === enumUserLevels.anonymous;
+export const isAuthenticatedCondition = state => state.auth.user_level > enumUserLevels.anonymous;
+export const isAnonymousCondition = state => state.auth.user_level === enumUserLevels.anonymous;
 
 
 export const App = () => {

@@ -146,7 +146,7 @@ const LoggedOutSecondaryMenu = () => {
             setIsSignUpEnabled(await dispatch(registrationStatusFetch()));
         };
         updateSignUpEnabled();
-    });
+    }, []);
 
     const signUpOnClick = useMemo(() => {
         return isSignUpEnabled ? () => history.push("/auth/register") : undefined
@@ -175,7 +175,7 @@ const LoggedInSecondaryMenu = () => {
     // Ensure user information is in the state
     useEffect(() => {
         dispatch(getCurrentUserData());
-    }), [];
+    }, []);
 
     // Username
     const username = useSelector(state => state.auth.user_id in state.users ? state.users[state.auth.user_id].username : "");

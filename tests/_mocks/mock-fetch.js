@@ -86,13 +86,13 @@ export const clearFixedRouteResponse = (URL, method) => {
  * Returns a response object with status & body, if such were set for the provide combinantion of `URL` & `method`.
  */
 const getFixedRouteResponse = (URL, method) => {
-    fixedRouteResponses.forEach(r => {
+    for (let r of fixedRouteResponses) {
         if (r.URL === URL && r.method === method) {
             const response = { status: r.status };
             if ("body" in r) response.body = r.body;
             return response;
         }
-    });
+    }
 };
 
 
