@@ -42,7 +42,7 @@ const ViewUser = ({ setIsEditMode }) => {
     const user = useSelector(state => state.users[id]);
 
     // User fetch & error state
-    const [isFetcing, setIsFetching] = useState(true);
+    const [isFetching, setIsFetching] = useState(true);
     const [error, setError] = useState("");
 
     // Fetch missing user data
@@ -54,17 +54,18 @@ const ViewUser = ({ setIsEditMode }) => {
             setIsFetching(false);
         };
         
-        fetchData();
+        if (parseInt(id) > 0) fetchData();
+        else setError("User not found.");
     }, [id, fullViewMode]);
-
-    // Loading placeholder
-    if (isFetcing || user === undefined) return (
-        <Loader active inline="centered">Loading...</Loader>
-    );
 
     // Error message
     if (error.length > 0) return (
         <Message error content={error} />
+    );
+
+    // Loading placeholder
+    if (isFetching || user === undefined) return (
+        <Loader active inline="centered">Loading...</Loader>
     );
 
     // User data

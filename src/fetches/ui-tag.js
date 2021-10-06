@@ -46,6 +46,13 @@ export const editTagOnLoadFetch = tag_id => {
         // Set initial page state
         dispatch(loadEditTagPage());
 
+        // Exit if tag_id is not valid
+        tag_id = parseInt(tag_id);
+        if (!(tag_id > 0)) {
+            dispatch(setTagOnLoadFetchState(false, "Object not found."));
+            return;
+        }
+
         // Check local tag storage
         let state = getState();
         if (tag_id in state.tags) {

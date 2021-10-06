@@ -59,8 +59,14 @@ export const addObjectOnSaveFetch = () => {
 export const editObjectOnLoadFetch = object_id => {
     return async (dispatch, getState) => {
         // Set initial page state
-        object_id = parseInt(object_id);
         dispatch(loadEditObjectPage(object_id));
+
+        // Exit if object_id is not valid
+        object_id = parseInt(object_id);
+        if (!(object_id > 0)) {
+            dispatch(setObjectOnLoadFetchState(false, "Object not found."));
+            return;
+        }
 
         // Update fetch status
         dispatch(setObjectOnLoadFetchState(true, ""));
