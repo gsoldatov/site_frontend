@@ -159,8 +159,9 @@ export const logoutFetch = () => {
  export const getCurrentUserData = () => {
     return async (dispatch, getState) => {
         const user_id = getState().auth.user_id;
+        const fullViewMode = getState().auth.user_level === enumUserLevels.admin;
 
-        let result = await dispatch(getNonCachedUsers([user_id], false));
+        let result = await dispatch(getNonCachedUsers([user_id], fullViewMode));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);

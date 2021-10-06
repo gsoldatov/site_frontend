@@ -13,6 +13,12 @@ const backendURL = config.backendURL;
  */
  export const viewUsersFetch = (userIDs, fullViewMode) => {
     return async (dispatch, getState) => {
+        userIDs = userIDs.map(id => {
+            const intID = parseInt(id);
+            if (isNaN(intID)) throw Error(`Failed to parse user_id '${id}' in viewUsersFetch.`)
+            return intID;
+        });
+
         let response = await dispatch(runFetch(`${backendURL}/users/view`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
