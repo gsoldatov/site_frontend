@@ -14,6 +14,7 @@ import { ProtectedRoute } from "../common/protected-route";
 import { IndexPage } from "./index";
 import { LoginPage } from "./login";
 import { RegisterPage } from "./register";
+import { UserPage } from "./user";
 import { AddTag, EditTag } from "./tag";
 import Tags from "./tags";
 import { AddObject, EditObject } from "./object";
@@ -46,6 +47,11 @@ export const App = () => {
                 childrenRenderedSelector={isAnonymousCondition} fallbackRoute="/">
                 <RegisterPage />
             </ProtectedRoute>
+
+            {/* Users */}
+            <Route exact path="/users/:id">
+                <UserPage />
+            </Route>
 
             {/* Tags */}
             <ProtectedRoute exact path="/tags"

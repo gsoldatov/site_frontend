@@ -30,21 +30,13 @@ i.navigation-bar-expand-toggle:hover {
 }
 
 
-/* Right menu */
-span.navigation-bar-username {
-    text-decoration: underline;
-    font-weight: bold;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-}
-
 /* Right menu buttons */
 div.ui.menu.navigation-bar div.nagivation-bar-button-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 
 div.navigation-right-menu.is-stacked {
@@ -72,4 +64,13 @@ div.ui.menu.navigation-bar .item > button.navigation-bar-button.is-disabled:hove
     background-color: grey;     /* Overrides button color set in the component code; also set for :hover pseudoclass to disable color change on hover */
     cursor: default;
     opacity: 0.45;  /* SUIR opacity for disabled buttons */
+}
+
+
+/* Right menu user page link */
+a.navigation-bar-username {
+    text-decoration: underline;
+    font-weight: bold;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
 }

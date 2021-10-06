@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Icon, Label, Menu } from "semantic-ui-react";
-import { NavLink, useHistory, useLocation } from "react-router-dom";
+import { Link, NavLink, useHistory, useLocation } from "react-router-dom";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
 
@@ -177,7 +177,8 @@ const LoggedInSecondaryMenu = () => {
         dispatch(getCurrentUserData());
     }, []);
 
-    // Username
+    // User params
+    const userPageLink = "/users/" + useSelector(state => state.auth.user_id);
     const username = useSelector(state => state.auth.user_id in state.users ? state.users[state.auth.user_id].username : "");
 
     // Logout button
@@ -187,7 +188,7 @@ const LoggedInSecondaryMenu = () => {
     
     return (
         <Menu.Item className="nagivation-bar-button-container">
-            <span className="navigation-bar-username">{username}</span>
+            <Link className="navigation-bar-username" to={userPageLink}>{username}</Link>
             <Button className="navigation-bar-button" color="teal" onClick={logoutOnClick}>
                 Logout
             </Button>
