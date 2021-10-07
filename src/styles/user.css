@@ -2,7 +2,60 @@
          User page styles. 
 **************************************/
 
-/* User page view mode */
+/* View mode */
+.user-page-view-header-container {
+    display: flex;
+    align-items: center;
+}
+
+/* View mode to edit mode button */
+.user-page-view-edit-mode-button-container {
+    margin-left: 1em;
+    margin-top: -0.25em;
+    margin-bottom: 1em;
+}
+
+.ui.basic.black.button.user-page-view-edit-mode-button {
+    /* Button positioning */
+    padding: 0px;
+
+    /* Disable borders */
+    border: 0px !important;
+    box-shadow: none !important;
+    border-radius: 0;
+}
+
+/* View mode item title */
 .user-page-view-item-title {
     font-weight: bold;
+}
+
+
+/* Edit mode header */
+.user-page-edit-header {
+    width: 100%;
+    text-align: center;
+}
+
+/* Edit mode */
+div.user-page-form-container,
+div.user-page-edit-message-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+form.ui.form.user-page-form,
+.user-page-edit-message {
+    max-width: 500px;
+    width: 100%;
+}
+
+div.user-page-form-button-container {
+    display: flex;
+    justify-content: center;
+}
+
+div.user-page-edit-message-container {
+    margin-bottom: 1em;
 }
