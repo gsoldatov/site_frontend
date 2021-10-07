@@ -84,7 +84,7 @@ export const registrationStatusFetch = () => {
 export const loginFetch = (login, password) => {
     return async (dispatch, getState) => {
         // Exit if logged in
-        if (getState().auth.user_level > enumUserLevels.anonymous) return { errors: { form: "You are already logged in." }};
+        if (getState().auth.numeric_user_level > enumUserLevels.anonymous) return { errors: { form: "You are already logged in." }};
 
         // Validate entered credentials
         let validationErrors = validateLoginCredentials(login, password);
@@ -159,7 +159,7 @@ export const logoutFetch = () => {
  export const getCurrentUserData = () => {
     return async (dispatch, getState) => {
         const user_id = getState().auth.user_id;
-        const fullViewMode = getState().auth.user_level === enumUserLevels.admin;
+        const fullViewMode = getState().auth.numeric_user_level === enumUserLevels.admin;
 
         let result = await dispatch(getNonCachedUsers([user_id], fullViewMode));
 

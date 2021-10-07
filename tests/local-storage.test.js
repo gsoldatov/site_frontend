@@ -341,7 +341,7 @@ describe("Auth information", () => {
         let authInfo = getDefaultAuthState();
 
         // Modify each attribute in auth info and check if it's saved to the local storage
-        for (let [k, v] of [["access_token", "some value"], ["access_token_expiration_time", "some value"], ["user_id", 50], ["user_level", 20]]) {
+        for (let [k, v] of [["access_token", "some value"], ["access_token_expiration_time", "some value"], ["user_id", 50], ["numeric_user_level", 20]]) {
             authInfo[k] = v;
             store.dispatch(setAuthInformation(authInfo));
             await waitForAuthInfoToBeSavedIntoLocalStorage(authInfo);
@@ -362,7 +362,7 @@ describe("Auth information", () => {
         localStorage.clear();
 
         // Set a non-default auth info into localStorage, then check if it's correctly read into state on store initialization
-        authInfo = { access_token: "some_token", access_token_expiration_time: (new Date()).toISOString(), user_id: 15, user_level: 10 }
+        authInfo = { access_token: "some_token", access_token_expiration_time: (new Date()).toISOString(), user_id: 15, numeric_user_level: 10 }
         localStorage.setItem("authInfo", JSON.stringify(authInfo));
 
         store = createTestStore({ useLocalStorage: true, saveTimeout: 25, addAdminToken: false });

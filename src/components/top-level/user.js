@@ -35,7 +35,7 @@ export const UserPage = () => {
 const ViewUser = ({ setIsEditMode }) => {
     const dispatch = useDispatch();
     const { id } = useParams();
-    const fullViewMode = useSelector(state => state.auth.user_level === enumUserLevels.admin);
+    const fullViewMode = useSelector(state => state.auth.numeric_user_level === enumUserLevels.admin);
     const canEdit = useSelector(state => fullViewMode || state.auth.user_id === id);
     const user = useSelector(state => state.users[id]);
 
@@ -127,7 +127,7 @@ const getDefaultErrors = () => ({ login: "", password: "", passwordRepeat: "", u
 const EditUser = ({ setIsEditMode }) => {
     const dispatch = useDispatch();
     const { id } = useParams();
-    const fullViewMode = useSelector(state => state.auth.user_level === enumUserLevels.admin);
+    const fullViewMode = useSelector(state => state.auth.numeric_user_level === enumUserLevels.admin);
     const user = useSelector(state => state.users[id]);
 
     // Form disable control

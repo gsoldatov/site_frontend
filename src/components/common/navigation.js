@@ -18,13 +18,13 @@ import StyleNavigation from "../../styles/navigation.css";
 const navigationItems = [
     { to: "/", text: "Index" },
     { to: "/objects", text: "Objects", 
-        isDisplayedSelector: state => state.auth.user_level > enumUserLevels.anonymous },
+        isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous },
     { to: "/objects/edited", text: "Edited Objects", 
         labelTextSelector: state => Object.keys(state.editedObjects).length || undefined, 
         labelColorSelector: state => Object.keys(state.editedObjects).length > 0 ? "green" : "grey",
-        isDisplayedSelector: state => state.auth.user_level > enumUserLevels.anonymous },
+        isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous },
     { to: "/tags", text: "Tags",
-        isDisplayedSelector: state => state.auth.user_level > enumUserLevels.anonymous }
+        isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous }
 ]
 
 /**
@@ -106,7 +106,7 @@ const NavbarItem = ({ item, itemOnClickCallback }) => {
  * Navigation bar's secondary menu component with auth controls.
  */
 const NavbarSecondaryMenu = ({ containerClassName }) => {
-    const isUserLoggedIn = useSelector(state => state.auth.user_level > enumUserLevels.anonymous);
+    const isUserLoggedIn = useSelector(state => state.auth.numeric_user_level > enumUserLevels.anonymous);
 
     const location = useLocation();
     const isMenuDisplayed = location.pathname.startsWith("/auth/") === false;

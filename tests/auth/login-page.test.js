@@ -121,7 +121,8 @@ test("Correct login", async () => {
 
     // Wait for the auth info to be added to the state
     await waitFor(() => {
-        const expectedAuth = { ...body.auth, user_level: enumUserLevels[body.auth.user_level] };   // replace string user level with numeric
+        const expectedAuth = { ...body.auth, numeric_user_level: enumUserLevels[body.auth.user_level] };   // replace string user level with numeric
+        delete expectedAuth["user_level"];
         expect(deepEqual(store.getState().auth, expectedAuth)).toBeTruthy();
     });
 
@@ -158,7 +159,8 @@ test("Correct login with URL query params", async () => {
 
     // Wait for the auth info to be added to the state
     await waitFor(() => {
-        const expectedAuth = { ...body.auth, user_level: enumUserLevels[body.auth.user_level] };   // replace string user level with numeric
+        const expectedAuth = { ...body.auth, numeric_user_level: enumUserLevels[body.auth.user_level] };   // replace string user level with numeric
+        delete expectedAuth["user_level"];
         expect(deepEqual(store.getState().auth, expectedAuth)).toBeTruthy();
     });
 

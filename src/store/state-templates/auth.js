@@ -10,7 +10,7 @@ const defaultAuthState = {
     "access_token": "",
     "access_token_expiration_time": "",
     "user_id": 0,
-    "user_level": enumUserLevels.anonymous
+    "numeric_user_level": enumUserLevels.anonymous
 };
 
 
