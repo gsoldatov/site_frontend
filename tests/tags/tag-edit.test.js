@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
@@ -43,6 +44,21 @@ test("Load a non-existing tag + check buttons", async () => {
     // expect(saveButton.onclick).toBeNull();  
     expect(deleteButton.classList.contains("disabled")).toBeTruthy();
     // expect(deleteButton.onclick).toBeNull();
+});
+
+
+test("Load tags with invalid IDs", async () => {
+    for (let tagID of ["0", "str"]) {
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
+            route: `/tags/${tagID}`
+        });
+    
+        // Check if error message if displayed
+        await waitFor(() => getByText(container, "not found", { exact: false }));
+
+        ReactDOM.unmountComponentAtNode(container);
+    }
 });
 
 

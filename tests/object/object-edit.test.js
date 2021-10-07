@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
@@ -71,6 +72,21 @@ describe("Load object errors & UI checks", () => {
     
         // Check if error message if displayed
         await waitFor(() => getByText(container, "not found", { exact: false }));
+    });
+
+
+    test("Load objects with invalid IDs", async () => {
+        for (let objectID of ["0", "str"]) {
+            // Route component is required for matching (getting :id part of the URL in the EditObject component)
+            let { container } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
+                route: `/objects/${objectID}`
+            });
+        
+            // Check if error message if displayed
+            await waitFor(() => getByText(container, "not found", { exact: false }));
+
+            ReactDOM.unmountComponentAtNode(container);
+        }
     });
 
 
