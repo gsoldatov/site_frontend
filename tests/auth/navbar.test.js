@@ -5,6 +5,7 @@ import { fireEvent, waitFor, getByText } from "@testing-library/dom";
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
 import { getNavigationBarElements } from "../_util/ui-navbar";
+import { getUserPageViewModeElements } from "../_util/ui-user";
 
 import { App } from "../../src/components/top-level/app";
 
@@ -168,7 +169,7 @@ describe("Secondary menu logged out state", () => {
 
 
 describe("Secondary menu logged in state", () => {
-    test("Username & logout button", async () => {
+    test("Elements rendering", async () => {
         // Render login page
         const store = createTestStore({ addAdminToken: true });
         let { container, history } = renderWithWrappers(<App />, {
@@ -184,11 +185,43 @@ describe("Secondary menu logged in state", () => {
         expect(secondaryMenu.logoutButton).toBeTruthy();
         expect(secondaryMenu.loginButton).toBeFalsy();
         expect(secondaryMenu.registerButton).toBeFalsy();
+    });
 
+
+    test("User page link", async () => {
+        // Render login page
+        const store = createTestStore({ addAdminToken: true });
+        let { container, history } = renderWithWrappers(<App />, {
+            route: "/objects/add", store
+        });
+
+        // Wait for user information to be loaded into state
+        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+
+        const { secondaryMenu } = getNavigationBarElements(container);
         const state = store.getState();
         const username = state.users[state.auth.user_id].username;
         expect(secondaryMenu.profileLink.textContent).toEqual(username);
         
+        fireEvent.click(secondaryMenu.profileLink);
+        expect(history.entries[history.length - 1].pathname).toBe("/users/1");
+
+        // Wait for user data fetch to end
+        await waitFor(() => expect(getUserPageViewModeElements(container).loader).toBeFalsy());
+    });
+
+
+    test("Logout button", async () => {
+        // Render login page
+        const store = createTestStore({ addAdminToken: true });
+        let { container, history } = renderWithWrappers(<App />, {
+            route: "/objects/add", store
+        });
+
+        // Wait for user information to be loaded into state
+        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+
+        const { secondaryMenu } = getNavigationBarElements(container);
         fireEvent.click(secondaryMenu.logoutButton);
         await waitFor(() => expect(store.getState().auth).toEqual(getDefaultAuthState()));
         expect(history.entries[history.length - 1].pathname).toBe("/");

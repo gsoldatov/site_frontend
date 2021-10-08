@@ -1,6 +1,11 @@
 import { getMockUserData } from "./data-users";
 
 
+function handleUpdateUsers(body) {
+    return { status: 200, body: {}};
+}
+
+
 function handleViewUsers(body) {
     const bodyJSON = JSON.parse(body)
     const { user_ids, full_view_mode } = bodyJSON;
@@ -11,5 +16,6 @@ function handleViewUsers(body) {
 
 
 export const usersHandlersList = new Map([
+    ["/users/update", {"PUT": handleUpdateUsers}],
     ["/users/view", {"POST": handleViewUsers}]
 ]);

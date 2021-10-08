@@ -61,12 +61,16 @@ const ViewUser = ({ setIsEditMode }) => {
 
     // Error message
     if (error.length > 0) return (
-        <Message error content={error} />
+        <div className = "user-page-view-container">
+            <Message error content={error} />
+        </div>
     );
 
     // Loading placeholder
     if (isFetching || user === undefined) return (
-        <Loader active inline="centered">Loading...</Loader>
+        <div className = "user-page-view-container">
+            <Loader active inline="centered">Loading...</Loader>
+        </div>
     );
 
     // User data
@@ -118,8 +122,7 @@ const ViewUser = ({ setIsEditMode }) => {
 };
 
 
-// const getDefaultErrors = () => ({ login: "", password: "", passwordRepeat: "", username: "", token_owner_password: "", form: "" });  // TODO replace
-const getDefaultErrors = () => ({ login: "", password: "", passwordRepeat: "", username: "", token_owner_password: "" });
+const getDefaultErrors = () => ({ login: "", password: "", passwordRepeat: "", username: "", tokenOwnerPassword: "" });
 
 /**
  * Edit user data component.
@@ -135,12 +138,10 @@ const EditUser = ({ setIsEditMode }) => {
 
     // Form input state
     const [formValues, setFormValues] = useState({ login: "", password: "", passwordRepeat: "", username: "", 
-        user_level: user.user_level, can_login: user.can_login, can_edit_objects: user.can_edit_objects, token_owner_password: "" });
+        user_level: user.user_level, can_login: user.can_login, can_edit_objects: user.can_edit_objects, tokenOwnerPassword: "" });
     const handleFormChange = (e, data) => {
-        // console.log("IN handleFormChange, e.target.name = ", e.target.name, ", type = ", e.type, ", e.target.value = ", e.target.value)
-        // console.log(data)
-        // console.log(Object.keys(e))
-        setFormValues({ ...formValues, [data.name]: data.value });
+        const value = ["can_login", "can_edit_objects"].includes(data.name) ? data.checked : data.value;
+        setFormValues({ ...formValues, [data.name]: value });
     };
 
     // Form & field errors
@@ -149,7 +150,7 @@ const EditUser = ({ setIsEditMode }) => {
     const passwordError = errors.password.length > 0 ? { content: errors.password, pointing: "above" } : undefined;
     const passwordRepeatError = errors.passwordRepeat.length > 0 ? { content: errors.passwordRepeat, pointing: "above" } : undefined;
     const usernameError = errors.username.length > 0 ? { content: errors.username, pointing: "above" } : undefined;
-    const tokenOwnerPasswordError = errors.token_owner_password.length > 0 ? { content: errors.token_owner_password, pointing: "above" } : undefined;
+    const tokenOwnerPasswordError = errors.tokenOwnerPassword.length > 0 ? { content: errors.tokenOwnerPassword, pointing: "above" } : undefined;
 
     // Form message
     const [formMessage, setFormMessage] = useState({ type: "", content: "" });
@@ -198,7 +199,7 @@ const EditUser = ({ setIsEditMode }) => {
             <Header as="h3" className="user-page-edit-header">{`Update User Data of ${user.username}`}</Header>
             {message}
             <div className="user-page-form-container">
-                <Form className="user-page-form" size="large" autoComplete="off" onSubmit={onUpdate}>
+                <Form className="user-page-form" size="large" autoComplete="off">
                     <Form.Input error={loginError} name="login" label="New login" disabled={isDisabled} value={formValues.login} onChange={handleFormChange} />
                     <Form.Group widths="equal">
                         <Form.Input error={passwordError} name="password" label="New password" type="password" disabled={isDisabled} value={formValues.password} onChange={handleFormChange} />
@@ -208,10 +209,10 @@ const EditUser = ({ setIsEditMode }) => {
 
                     {adminFields}
 
-                    <Form.Input error={tokenOwnerPasswordError} name="token_owner_password" label="Your current password" type="password" disabled={isDisabled} value={formValues.token_owner_password} onChange={handleFormChange} required />
+                    <Form.Input error={tokenOwnerPasswordError} name="tokenOwnerPassword" label="Your current password" type="password" disabled={isDisabled} value={formValues.tokenOwnerPassword} onChange={handleFormChange} required />
 
                     <div className="user-page-form-button-container">
-                        <Button type="submit" color="green" disabled={isDisabled}>Update</Button>
+                        <Button color="green" disabled={isDisabled} onClick={onUpdate}>Update</Button>
                         <Button color="red" disabled={isDisabled} onClick={onCancel}>Cancel</Button>
                     </div>
                 </Form>

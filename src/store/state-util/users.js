@@ -7,7 +7,7 @@
  * Validates user credentials submitted in the update form.
  */
 export const validateUserUpdates = updates => {
-    const { login, password, passwordRepeat, username, token_owner_password } = updates;
+    const { login, password, passwordRepeat, username, tokenOwnerPassword } = updates;
     const errors = {};
 
     if (login.length > 255) errors.login = "Login is too long.";
@@ -15,8 +15,8 @@ export const validateUserUpdates = updates => {
     if (password.length > 72) errors.password = "Password is too long.";
     if (password !== passwordRepeat) errors.passwordRepeat = "Password must be repeated correctly.";
     if (username.length > 255) errors.username = "Username is too long.";
-    if (token_owner_password.length < 8) errors.token_owner_password = "Password is too short.";
-    if (token_owner_password.length > 72) errors.token_owner_password = "Password is too long.";
+    if (tokenOwnerPassword.length < 8) errors.tokenOwnerPassword = "Password is too short.";
+    if (tokenOwnerPassword.length > 72) errors.tokenOwnerPassword = "Password is too long.";
     return { errors };
 };
 
@@ -35,8 +35,9 @@ export const getUpdatedUserValues = (state, updates) => {
         result.password_repeat = updates.password_repeat;
     }
 
-    for (let attr of ["user_level", "can_login", "can_edit_objects"])
+    for (let attr of ["user_level", "can_login", "can_edit_objects"]) {
         if (updates[attr] !== undefined && updates[attr] !== currentUserData[attr]) result[attr] = updates[attr];
+    }
 
     return result;
 };

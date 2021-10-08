@@ -92,7 +92,7 @@ export const waitForFormErrorMessage = async (container, formType, errorText) =>
 
 
 /**
- * Checks if a registration form inside `container` of a provided `formType` (login/register) properly displays `errorText` for the input with the provided `inputName`, 
+ * Checks if a form inside `container` of a provided `formType` (login/register) properly displays `errorText` for the input with the provided `inputName`, 
  * while other input errors are not displayed.
  */
 export const checkValidInputErrorDisplay = async (container, formType, inputName, errorText) => {

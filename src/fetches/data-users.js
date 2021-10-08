@@ -27,7 +27,7 @@ export const updateUsersFetch = updates => {
         let response = await dispatch(runFetch(`${backendURL}/users/update`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user, token_owner_password: updates.token_owner_password })
+            body: JSON.stringify({ user, token_owner_password: updates.tokenOwnerPassword })
         }));
 
         // Handle response
@@ -44,12 +44,12 @@ export const updateUsersFetch = updates => {
                 let match = errorJSON.error.match(/Submitted (\w+) already exists./);
                 if (match && ["login", "username"].includes(match[1])) errors[match[1]] = match[0];
                 
-                if (errorJSON.error.indexOf("Token owner password is incorrect.") > -1) errors.token_owner_password = "Incorrect password.";
+                if (errorJSON.error.indexOf("Token owner password is incorrect.") > -1) errors.tokenOwnerPassword = "Incorrect password.";
                 
                 if (Object.keys(errors).length > 0) return { errors };
 
                 // Return an unattributed error message otherwise
-                return { message: { "type": error, content: errorJSON.error }};
+                return { message: { "type": "error", content: errorJSON.error }};
         }
     };
 };
