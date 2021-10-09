@@ -142,10 +142,15 @@ const LoggedOutSecondaryMenu = () => {
     // If yes, registration button becomes available.
     const [isSignUpEnabled, setIsSignUpEnabled] = useState(false);
     useEffect(() => {
+        let isComponentMounted = true;  // workaround to avoid setting state if component was unmounted     https://www.benmvp.com/blog/handling-async-react-component-effects-after-unmount/
+
         const updateSignUpEnabled = async () => {
-            setIsSignUpEnabled(await dispatch(registrationStatusFetch()));
+            const result = await dispatch(registrationStatusFetch());
+            if (isComponentMounted) setIsSignUpEnabled(result);
         };
         updateSignUpEnabled();
+
+        return () => { isComponentMounted = false; };
     }, []);
 
     const signUpOnClick = useMemo(() => {

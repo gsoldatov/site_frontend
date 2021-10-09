@@ -20,6 +20,7 @@ export const UserPage = () => {
     // View/edit mode state
     const [isEditMode, setIsEditMode] = useState(false);
 
+    // Display view mode 
     const body = isEditMode
         ? <EditUser setIsEditMode={setIsEditMode} />
         : <ViewUser setIsEditMode={setIsEditMode} />
@@ -131,7 +132,7 @@ const EditUser = ({ setIsEditMode }) => {
     const dispatch = useDispatch();
     const { id } = useParams();
     const fullViewMode = useSelector(state => state.auth.numeric_user_level === enumUserLevels.admin);
-    const user = useSelector(state => state.users[id]);
+    const user = useSelector(state => state.users[id]) || {};   // empty object is required to avoid errors when component is rendered after a logout was performed
 
     // Form disable control
     const [isDisabled, setIsDisabled] = useState(false);
@@ -200,6 +201,10 @@ const EditUser = ({ setIsEditMode }) => {
             {message}
             <div className="user-page-form-container">
                 <Form className="user-page-form" size="large" autoComplete="off">
+                    {/* Disable form autocompletion */}
+                    <input type="text" style={{ display: "none" }} />
+                    <input type="password" style={{ display: "none" }} />
+
                     <Form.Input error={loginError} name="login" label="New login" disabled={isDisabled} value={formValues.login} onChange={handleFormChange} />
                     <Form.Group widths="equal">
                         <Form.Input error={passwordError} name="password" label="New password" type="password" disabled={isDisabled} value={formValues.password} onChange={handleFormChange} />
