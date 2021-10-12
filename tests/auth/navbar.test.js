@@ -36,7 +36,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
             route: "/", store
         });
 
-        // Wait for /auth/get_registration_status to be called
+        // Wait for registration status to be fetched from backend
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
         // Check navbar elements rendering
@@ -59,7 +59,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
             const store = createTestStore({ addAdminToken: false });
             let { container } = renderWithWrappers(<App />, { route, store });
             
-            // Wait for /auth/get_registration_status to be called (on /auth/register page only)
+            // Wait for registration status to be fetched from backend (on /auth/register page only)
             if (route === "/auth/register") await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
             // Check navbar elements rendering
@@ -98,7 +98,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
 describe("Secondary menu logged out state", () => {
     test("Registration button disabled", async () => {
         // Disable registration in mock fetch
-        addFixedRouteResponse("/auth/get_registration_status", "GET", 200, { registration_allowed: false });
+        addFixedRouteResponse("/settings/view", "POST", 200, { settings: { non_admin_registration_allowed: false }});
 
         // Render login page
         const store = createTestStore({ addAdminToken: false });
@@ -106,7 +106,7 @@ describe("Secondary menu logged out state", () => {
             route: "/", store
         });
 
-        // Wait for /auth/get_registration_status to be called
+        // Wait for registration status to be fetched from backend
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
         const { secondaryMenu } = getNavigationBarElements(container);
@@ -129,7 +129,7 @@ describe("Secondary menu logged out state", () => {
             route: "/", store
         });
 
-        // Wait for /auth/get_registration_status to be called
+        // Wait for registration status to be fetched from backend
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
         const { secondaryMenu } = getNavigationBarElements(container);
@@ -143,7 +143,7 @@ describe("Secondary menu logged out state", () => {
         fireEvent.click(secondaryMenu.registerButton);
         expect(history.entries[history.length - 1].pathname).toBe("/auth/register");
 
-        // Wait for /auth/get_registration_status to be called (to prevent error message)
+        // Wait for registration status to be fetched from backend (to prevent error message)
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
     });
 
@@ -155,7 +155,7 @@ describe("Secondary menu logged out state", () => {
             route: "/", store
         });
 
-        // Wait for /auth/get_registration_status to be called
+        // Wait for registration status to be fetched from backend
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
         const { secondaryMenu } = getNavigationBarElements(container);
@@ -226,7 +226,7 @@ describe("Secondary menu logged in state", () => {
         await waitFor(() => expect(store.getState().auth).toEqual(getDefaultAuthState()));
         expect(history.entries[history.length - 1].pathname).toBe("/");
 
-        // Wait for /auth/get_registration_status to be called (to prevent error message);
+        // Wait for registration status to be fetched from backend (to prevent error message);
         // /auth/logout was also called when "Logout" button was clicked
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(3));
     });

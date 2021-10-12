@@ -2,12 +2,13 @@ import config from "../../src/config";
 import { resetTagsCache, tagsHandlersList } from "./mock-fetch-handlers-tags";
 import { resetObjectsCaches, objectsHandlersList } from "./mock-fetch-handlers-objects";
 import { authHandlersList } from "./mock-fetch-handlers-auth";
+import { settingsHandlersList } from "./mock-fetch-handlers-settings";
 import { usersHandlersList } from "./mock-fetch-handlers-users";
 
 
 let isFailingFetch;
 let fixedRouteResponses = [];
-const handlerLists = [authHandlersList, tagsHandlersList, objectsHandlersList, usersHandlersList];   // add new handler lists here
+const handlerLists = [authHandlersList, tagsHandlersList, objectsHandlersList, settingsHandlersList, usersHandlersList];   // NOTE: add new handler lists here
 
 
 export function mockFetch(URL, {

@@ -27,7 +27,7 @@ beforeEach(() => {
 
 test("Load register page with disabled admin registration", async () => {
     // Disable registration in mock fetch
-    addFixedRouteResponse("/auth/get_registration_status", "GET", 200, { registration_allowed: false });
+    addFixedRouteResponse("/settings/view", "POST", 200, { settings: { non_admin_registration_allowed: false }});
 
     // Render register page
     const store = createTestStore({ addAdminToken: false });

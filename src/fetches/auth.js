@@ -20,9 +20,12 @@ const backendURL = config.backendURL;
  */
 export const registrationStatusFetch = () => {
     return async (dispatch, getState) => {
-        let response = await dispatch(runFetch(`${backendURL}/auth/get_registration_status`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
+        let response = await dispatch(runFetch(`${backendURL}/settings/view`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                setting_names: ["non_admin_registration_allowed"]
+            })
         },
         { useAccessToken: false }
         ));
@@ -30,7 +33,7 @@ export const registrationStatusFetch = () => {
         switch (response.status) {
             case 200:
                 let json = await response.json();
-                return json["registration_allowed"];
+                return json.settings.non_admin_registration_allowed;
             default:
                 return false;
         }
