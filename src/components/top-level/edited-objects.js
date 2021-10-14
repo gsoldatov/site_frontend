@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
-import { Checkbox, Confirm, Icon, Label, Table } from "semantic-ui-react";
+import { Checkbox, Confirm, Icon, Label, Message, Table } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -45,7 +45,7 @@ export const EditedObjects = () => {
     let body;
     if (Object.keys(editedObjects).length === 0)
         body = (
-            <div className="edited-objects-placeholder">No edited objects found.</div>
+            <Message info>No edited objects found.</Message>
         );
     // Edited objects exist
     else {
