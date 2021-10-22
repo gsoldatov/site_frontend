@@ -40,7 +40,7 @@ export const updateSettingsFetch = settings => {
 
         switch (response.status) {
             case 200:
-                return { message: "Settings were successfully updated. "};
+                return { message: "Settings were successfully updated."};
             default:
                 return await getErrorFromResponse(response);
         }

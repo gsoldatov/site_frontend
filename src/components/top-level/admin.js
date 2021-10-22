@@ -22,7 +22,7 @@ export const AdminPage = () => {
     ]);
     
     const body = (
-        <Tab panes={tabPanes}>
+        <Tab className="admin-page-tabs-container" panes={tabPanes}>
             {tabPanes}
         </Tab>
     );
