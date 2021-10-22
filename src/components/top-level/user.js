@@ -171,7 +171,7 @@ const EditUser = ({ setIsEditMode }) => {
         // Handle errors & messages and enable form
         if ("errors" in result) setErrors({ ...getDefaultErrors(), ...result.errors });        
         if ("message" in result) setFormMessage(result.message);
-        if (Object.keys(result).length > 0) setIsDisabled(false);   // don't update form if an empty object was return (to avoid updating unmounted components)
+        if (Object.keys(result).length > 0) setIsDisabled(false);   // don't update form if an empty object was returned (to avoid updating unmounted components)
     };
 
     const onCancel = useMemo(() => () => setIsEditMode(false), [setIsEditMode]);

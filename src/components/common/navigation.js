@@ -24,7 +24,9 @@ const navigationItems = [
         labelColorSelector: state => Object.keys(state.editedObjects).length > 0 ? "green" : "grey",
         isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous },
     { to: "/tags", text: "Tags",
-        isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous }
+        isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous },
+    { to: "/admin", text: "Admin Page",
+        isDisplayedSelector: state => state.auth.numeric_user_level === enumUserLevels.admin }
 ]
 
 /**

@@ -14,6 +14,7 @@ import { ProtectedRoute } from "../common/protected-route";
 import { IndexPage } from "./index";
 import { LoginPage } from "./login";
 import { RegisterPage } from "./register";
+import { AdminPage } from "./admin";
 import { UserPage } from "./user";
 import { AddTag, EditTag } from "./tag";
 import Tags from "./tags";
@@ -26,6 +27,7 @@ import { enumUserLevels } from "../../util/enum-user-levels";
 
 
 export const isAuthenticatedCondition = state => state.auth.numeric_user_level > enumUserLevels.anonymous;
+export const isAuthenticatedAdminCondition = state => state.auth.numeric_user_level === enumUserLevels.admin;
 export const isAnonymousCondition = state => state.auth.numeric_user_level === enumUserLevels.anonymous;
 
 
@@ -36,6 +38,14 @@ export const App = () => {
             <Route exact path="/">
                 <IndexPage />
             </Route>
+
+            {/* Admin */}
+            <ProtectedRoute exact path="/admin" childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                <ProtectedRoute exact path="/admin"
+                    childrenRenderedSelector={isAuthenticatedAdminCondition} fallbackRoute="/">
+                    <AdminPage />
+                </ProtectedRoute>
+            </ProtectedRoute>
 
             {/* Auth */}
             <ProtectedRoute exact path="/auth/login"

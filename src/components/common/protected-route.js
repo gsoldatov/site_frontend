@@ -20,12 +20,17 @@ export const ProtectedRoute = ({ childrenRenderedSelector, fallbackRoute, addQue
             searchParams.append("from", location.pathname);
             redirectTo += "?" + searchParams.toString();
         }
-        children = <Redirect to={redirectTo} />;
+        return <Redirect to={redirectTo} />;
     }
 
-    return (
-        <Route {...rest} >
-            {children}
+    // Wrap in <Route> component only if the child itself is not a <Route> or a <ProtectedRoute>
+    // (to allow nested <ProtectedRoute> usage)
+    let result = children;
+    if (children.type !== Route && children.type !== ProtectedRoute) result = (
+        <Route {...rest}>
+            {result}
         </Route>
-    );
+    )
+    
+    return result;
 };

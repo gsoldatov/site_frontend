@@ -6,7 +6,7 @@ import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
 
 import { App, isAnonymousCondition, isAuthenticatedCondition } from "../../src/components/top-level/app";
-
+import { ProtectedRoute } from "../../src/components/common/protected-route";
 import { setAuthInformation } from "../../src/actions/auth";
 
 import { deepEqual } from "../../src/util/equality-checks";
@@ -30,10 +30,26 @@ beforeEach(() => {
 
 
 test("Render authenticated-only routes without a token", async () => {
+    // // Get authenticated-only routes
+    // const routes = App().props.children.filter(child => child.props.childrenRenderedSelector === isAuthenticatedCondition)
+    //     .map(child => child.props.path.replace(":id", "1"));
+    // expect(routes.length).toEqual(7);
+
     // Get authenticated-only routes
-    const routes = App().props.children.filter(child => child.props.childrenRenderedSelector === isAuthenticatedCondition)
-        .map(child => child.props.path.replace(":id", "1"));
-    expect(routes.length).toEqual(7);
+    let routes = [];
+    let children = App().props.children;
+    while (children.length > 0) {   // <ProtectedRoute> components may nest another <ProtectedRoute>, 
+        const newChildren = [];
+
+        children.forEach(child => {
+            if (child.props.children.type === ProtectedRoute) newChildren.push(child.props.children);
+            if (child.props.childrenRenderedSelector === isAuthenticatedCondition) routes.push(child.props.path.replace(":id", "1"));
+        });
+
+        children = newChildren;
+    }
+
+    expect(routes.length).toEqual(8);
 
     // Render each protected route without a token in store & check if it's redirected to login page
     for (let route of routes) {
@@ -46,9 +62,25 @@ test("Render authenticated-only routes without a token", async () => {
 
 
 test("Render anonymous-only routes with a token", async () => {
+    // // Get anonymous-only routes
+    // const routes = App().props.children.filter(child => child.props.childrenRenderedSelector === isAnonymousCondition)
+    //     .map(child => child.props.path.replace(":id", "1"));
+    // expect(routes.length).toEqual(2);
+
     // Get anonymous-only routes
-    const routes = App().props.children.filter(child => child.props.childrenRenderedSelector === isAnonymousCondition)
-        .map(child => child.props.path.replace(":id", "1"));
+    let routes = [];
+    let children = App().props.children;
+    while (children.length > 0) {   // <ProtectedRoute> components may nest another <ProtectedRoute>, 
+        const newChildren = [];
+
+        children.forEach(child => {
+            if (child.props.children.type === ProtectedRoute) newChildren.push(child.props.children);
+            if (child.props.childrenRenderedSelector === isAnonymousCondition) routes.push(child.props.path.replace(":id", "1"));
+        });
+
+        children = newChildren;
+    }
+
     expect(routes.length).toEqual(2);
 
     // Render each protected route with a token in store & check if it's redirected to index page

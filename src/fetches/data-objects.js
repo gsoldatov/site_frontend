@@ -15,7 +15,6 @@ import { addedObjectAttributes, updatedObjectAttributes } from "../store/state-t
 const backendURL = config.backendURL;
 
 
-
 /**
  * Fetches backend to add provided edited object `obj` as a new object.
  * 
