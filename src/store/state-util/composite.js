@@ -4,7 +4,7 @@
 
 import { deepEqual } from "../../util/equality-checks";
 import { validateNonCompositeObject } from "./objects";
-import { isFetchingObject } from "./ui-object";
+import { isFetchingObject } from "./ui-objects-edit";
 
 
 /**

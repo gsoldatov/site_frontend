@@ -2,8 +2,8 @@ import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form } from "semantic-ui-react";
 
-import { setEditedObject } from "../../actions/object";
-import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-object";
+import { setEditedObject } from "../../actions/objects-edit";
+import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-objects-edit";
 
 /**
  * Link input form.

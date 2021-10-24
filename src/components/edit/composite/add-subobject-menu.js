@@ -3,7 +3,7 @@ import { DropTarget } from "react-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown } from "semantic-ui-react";
 
-import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../fetches/ui-object";
+import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../fetches/ui-objects-edit";
 
 import intervalWrapper from "../../../util/interval-wrapper";
 

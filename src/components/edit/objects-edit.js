@@ -8,8 +8,8 @@ import { MarkdownContainer } from "./markdown";
 import { TDLContainer } from "./to-do-list/to-do-list";
 import { SubobjectsContainer } from "./composite/subobjects";
 
-import { setEditedObject } from "../../actions/object";
-import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-object";
+import { setEditedObject } from "../../actions/objects-edit";
+import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-objects-edit";
 import { enumObjectTypes } from "../../util/enum-object-types";
 
 import StyleObject from "../../styles/object.css";

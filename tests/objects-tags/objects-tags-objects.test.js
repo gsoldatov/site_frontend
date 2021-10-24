@@ -7,12 +7,12 @@ import { getByText, getByTitle, waitFor, queryByText, queryAllByText, screen } f
 import { getStoreWithTwoSelectedObjects } from "../_mocks/data-objects-tags";
 import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
-import { addAndRemoveTags } from "../_util/ui-object";
+import { addAndRemoveTags } from "../_util/ui-objects-edit";
 import { compareArrays } from "../_util/data-checks";
 import { renderWithWrappers } from "../_util/render";
 
 import Objects from "../../src/components/top-level/objects";
-import { EditObject } from "../../src/components/top-level/object";
+import { EditObject } from "../../src/components/top-level/objects-edit";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 
 

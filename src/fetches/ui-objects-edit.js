@@ -5,9 +5,9 @@ import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
 import { setRedirectOnRender } from "../actions/common";
 import { loadNewObjectPage, loadEditObjectPage, resetEditedObjects, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
         setShowDeleteDialogObject, setEditedObject, 
-        setEditedObjectTags, setObjectTagsInput, setAddCompositeSubobjectMenu } from "../actions/object";
+        setEditedObjectTags, setObjectTagsInput, setAddCompositeSubobjectMenu } from "../actions/objects-edit";
 
-import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-object";
+import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-objects-edit";
 import { objectDataIsInState } from "../store/state-util/objects";
 
 import { enumResponseErrorType } from "../util/enum-response-error-type";

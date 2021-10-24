@@ -5,8 +5,8 @@ import FieldMenu from "../../field/field-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 
-import { setEditedObject } from "../../../actions/object";
-import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-object";
+import { setEditedObject } from "../../../actions/objects-edit";
+import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-objects-edit";
 import { getSortedItemIDs, getVisibleItemIDs, getIsTDLDragAndDropEnabledSelector } from "../../../store/state-util/to-do-lists";
 
 import StyleTDL from "../../../styles/to-do-lists.css";

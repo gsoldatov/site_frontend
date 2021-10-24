@@ -18,7 +18,7 @@ import { AdminPage } from "./admin";
 import { UserPage } from "./user";
 import { NewTag, EditTag } from "./tag";
 import Tags from "./tags";
-import { NewObject, EditObject } from "./object";
+import { NewObject, EditObject } from "./objects-edit";
 import { EditedObjects } from "./edited-objects";
 import Objects from "./objects";
 import { NotFound } from "./not-found";

@@ -10,14 +10,14 @@ import { compareArrays } from "../_util/data-checks";
 import { renderWithWrappers } from "../_util/render";
 import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, clickDisplayTabButton, clickPublishObjectCheckbox,
-    resetObject, getObjectTypeSwitchElements } from "../_util/ui-object";
+    resetObject, getObjectTypeSwitchElements } from "../_util/ui-objects-edit";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
     getSubobjectCards, getSubobjectExpandToggleButton } from "../_util/ui-composite";
 
 import { getTDLByObjectID } from "../_mocks/data-to-do-lists";
 import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject, getMappedSubobjectID } from "../_mocks/data-composite";
 
-import { NewObject, EditObject } from "../../src/components/top-level/object";
+import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { addObjects, addObjectData } from "../../src/actions/data-objects";
 import { enumDeleteModes } from "../../src/store/state-templates/composite-subobjects";

@@ -1,4 +1,4 @@
-import { isFetchingObject } from "./ui-object";
+import { isFetchingObject } from "./ui-objects-edit";
 /*
     Functions for checking/getting data and UI state for to-do lists.
 */

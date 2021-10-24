@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { ObjectTypeSelector } from "../../../edit/object";
+import { ObjectTypeSelector } from "../../../edit/objects-edit";
 import { TimeStamps, NameDescriptionInput } from "../../../edit/common";
 
-import { setEditedObject } from "../../../../actions/object";
+import { setEditedObject } from "../../../../actions/objects-edit";
 
 /**
  * Subobject card "General" tab content. 

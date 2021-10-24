@@ -1,6 +1,6 @@
 import { fireEvent } from "@testing-library/react";
 import { getByText, queryByPlaceholderText, queryByRole, queryByText, queryByTitle, waitFor } from "@testing-library/dom";
-import { getObjectTypeSwitchElements } from "./ui-object";
+import { getObjectTypeSwitchElements } from "./ui-objects-edit";
 
 
 expect.extend({

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { Button, Menu } from "semantic-ui-react";
 
-import { clearUnsavedCurrentEditedObject } from "../../../../actions/object";
+import { clearUnsavedCurrentEditedObject } from "../../../../actions/objects-edit";
 import { enumDeleteModes } from "../../../../store/state-templates/composite-subobjects";
 
 const _tabIndexes = { "general": 0, "data": 1, "display": 2 };

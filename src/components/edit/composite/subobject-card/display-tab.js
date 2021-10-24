@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ObjectIsPublishedSwitch } from "../../object";
+import { ObjectIsPublishedSwitch } from "../../objects-edit";
 
 
 /**

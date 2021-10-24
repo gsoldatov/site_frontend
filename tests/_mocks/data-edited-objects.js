@@ -1,4 +1,4 @@
-import { resetEditedObjects, setEditedObject } from "../../src/actions/object";
+import { resetEditedObjects, setEditedObject } from "../../src/actions/objects-edit";
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { createTestStore } from "../_util/create-test-store";

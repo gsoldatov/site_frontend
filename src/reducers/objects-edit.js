@@ -2,11 +2,11 @@ import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, RESET_EDITED_OBJECTS, REMO
     SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_OBJECT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
     SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
     SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
-    } from "../actions/object";
+    } from "../actions/objects-edit";
 import { deepCopy } from "../util/copy";
 
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
-import { getCurrentObject } from "../store/state-util/ui-object";
+import { getCurrentObject } from "../store/state-util/ui-objects-edit";
 
 import { getDefaultEditedObjectState, getStateWithResetEditedObjects, getStateWithResetEditedExistingSubobjects, getStateWithDeletedEditedNewSubobjects, 
     getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects} from "./helpers/object";

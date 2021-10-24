@@ -7,11 +7,11 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByText } fro
 import { renderWithWrappers } from "../_util/render";
 import { getSideMenuItem, getSideMenuDialogControls } from "../_util/ui-common";
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickGeneralTabButton, clickDataTabButton, 
-    clickDisplayTabButton, clickPublishObjectCheckbox, resetObject } from "../_util/ui-object";
+    clickDisplayTabButton, clickPublishObjectCheckbox, resetObject } from "../_util/ui-objects-edit";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
     getSubobjectCards, getSubobjectExpandToggleButton } from "../_util/ui-composite";
 
-import { NewObject, EditObject } from "../../src/components/top-level/object";
+import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
 import { getMappedSubobjectID } from "../_mocks/data-composite";
 
 

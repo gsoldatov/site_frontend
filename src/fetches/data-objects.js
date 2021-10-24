@@ -6,7 +6,7 @@ import { getNonCachedTags } from "./data-tags";
 
 import { setObjectsTags } from "../actions/data-tags";
 import { addObjects, addObjectData, deleteObjects } from "../actions/data-objects";
-import { setEditedObject, setObjectOnSaveFetchState } from "../actions/object";
+import { setEditedObject, setObjectOnSaveFetchState } from "../actions/objects-edit";
 
 import { validateObject, serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
 import { addedObjectAttributes, updatedObjectAttributes } from "../store/state-templates/edited-object";

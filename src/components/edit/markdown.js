@@ -5,8 +5,8 @@ import { Form } from "semantic-ui-react";
 import FieldMenu from "../field/field-menu";
 import { OnResizeWrapper } from "../common/on-resize-wrapper";
 
-import { setEditedObject, setMarkdownDisplayMode } from "../../actions/object";
-import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-object";
+import { setEditedObject, setMarkdownDisplayMode } from "../../actions/objects-edit";
+import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-objects-edit";
 import intervalWrapper from "../../util/interval-wrapper";
 
 import ParseMarkdownWorker from "../../util/parse-markdown.worker";

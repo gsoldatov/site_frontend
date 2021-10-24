@@ -6,10 +6,10 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholde
 
 import { compareItemData, getDefaultSortOrder, getRenderedItemIndent, checkRenderedItemsOrder } from "../_util/to-do-lists";
 import { renderWithWrappers } from "../_util/render";
-import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../_util/ui-object";
+import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../_util/ui-objects-edit";
 import { defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "../_mocks/data-to-do-lists";
 
-import { NewObject, EditObject } from "../../src/components/top-level/object";
+import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
 import * as caret from "../../src/util/caret";
 
 
