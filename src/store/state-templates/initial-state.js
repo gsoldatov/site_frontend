@@ -74,7 +74,7 @@ const initialState = {
     // edited objects
     editedObjects: {},
 
-    // /objects/:id page UI controllers
+    // /objects/edit/:id page UI controllers
     objectUI: {
         currentObjectID: -1,
 

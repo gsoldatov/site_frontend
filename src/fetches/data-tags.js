@@ -28,7 +28,7 @@ export const addTagFetch = tag => {
         if (checkIfTagNameExists(state, tag)) return { error: "Tag name already exists." };
         
         // Run fetch & handle response
-        let response = await dispatch(runFetch(`${backendURL}/tags/add`, {
+        let response = await dispatch(runFetch(`${backendURL}/tags/new`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tag })

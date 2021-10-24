@@ -91,7 +91,7 @@ export const resetObject = (container, resetSubobjects) => {
 
 
 /**
- * For the /objects page tag update (expects container to be an /objects/:id page)
+ * For the /objects page tag update (expects container to be an /objects/edit/:id page)
  */
 export const addAndRemoveTags = async (container, store) => {
     // Remove an "existing" tag

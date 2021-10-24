@@ -15,7 +15,7 @@ export const SET_ADD_COMPOSITE_SUBOBJECT_MENU = "SET_ADD_COMPOSITE_SUBOBJECT_MEN
 export const SET_OBJECT_ON_LOAD_FETCH_STATE = "SET_OBJECT_ON_LOAD_FETCH_STATE";
 export const SET_OBJECT_ON_SAVE_FETCH_STATE = "SET_OBJECT_ON_SAVE_FETCH_STATE";
 
-export const loadAddObjectPage               = () => ({ type: LOAD_ADD_OBJECT_PAGE });
+export const loadNewObjectPage               = () => ({ type: LOAD_ADD_OBJECT_PAGE });
 export const loadEditObjectPage              = currentObjectID => ({ type: LOAD_EDIT_OBJECT_PAGE, currentObjectID });
 export const resetEditedObjects              = ({ objectIDs, hideObjectResetDialog, allowResetToDefaults, resetCompositeSubobjects }) => ({ 
                                                 type: RESET_EDITED_OBJECTS, objectIDs, hideObjectResetDialog, allowResetToDefaults, resetCompositeSubobjects });

@@ -30,7 +30,7 @@ export default () => {
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchinOrShowingDialogTags(state),
-            linkURL: "/tags/add"
+            linkURL: "/tags/new"
         },
         {
             type: "linkItem",

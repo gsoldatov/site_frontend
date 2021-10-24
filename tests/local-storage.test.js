@@ -13,7 +13,7 @@ import { addANewSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttr
 import { createTestStore } from "./_util/create-test-store";
 import { getMappedSubobjectID } from "./_mocks/data-composite";
 
-import { AddObject, EditObject } from "../src/components/top-level/object";
+import { NewObject, EditObject } from "../src/components/top-level/object";
 import Objects from "../src/components/top-level/objects";
 
 import { getDefaultAuthState } from "../src/store/state-templates/auth";
@@ -22,7 +22,7 @@ import { setAuthInformation } from "../src/actions/auth";
 
 
 /*
-    /objects/add page tests.
+    /objects/edit/new page tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
@@ -43,8 +43,8 @@ describe("Edited objects > New object page", () => {
         // Render new object page and modify object name
         let storeOne = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
         
-        var { container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add",
+        var { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new",
             store: storeOne
         });
 
@@ -73,8 +73,8 @@ describe("Edited objects > New object page", () => {
 
         // Rerender page with another store
         let storeTwo = createTestStore({ useLocalStorage: true });
-        var { container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add",
+        var { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new",
             store: storeTwo
         });
 
@@ -89,8 +89,8 @@ describe("Edited objects > New object page", () => {
         let store = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
         let { container, history } = renderWithWrappers(
-            <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
-            { route: "/objects/add", store }
+            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            { route: "/objects/edit/new", store }
         );
 
         // Set object name and type
@@ -120,7 +120,7 @@ describe("Edited objects > New object page", () => {
         // Save the object
         fireEvent.click(getSideMenuItem(container, "Save"));
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
         
         // Check added object and subobject
         const strObjectID = object_id.toString();
@@ -162,8 +162,8 @@ describe("Edited objects > Existing object page", () => {
         // Render existing object page and modify object name
         let storeOne = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
-        var { container } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route: "/objects/1", 
+        var { container } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            route: "/objects/edit/1", 
             store: storeOne
         });
         await waitForEditObjectPageLoad(container, storeOne);
@@ -195,8 +195,8 @@ describe("Edited objects > Existing object page", () => {
 
         // Rerender page with another store
         let storeTwo = createTestStore({ useLocalStorage: true });
-        var { container } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route: "/objects/1", 
+        var { container } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            route: "/objects/edit/1", 
             store: storeTwo
         });
         await waitForEditObjectPageLoad(container, storeTwo);
@@ -214,9 +214,9 @@ describe("Edited objects > Existing object page", () => {
         var { container } = renderWithWrappers(
             <Switch>
                 <Route exact path="/objects"><Objects /></Route>
-                <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />
+                <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />
             </Switch>, 
-            { route: "/objects/3001", store }
+            { route: "/objects/edit/3001", store }
         );
         await waitForEditObjectPageLoad(container, store);
 
@@ -283,9 +283,9 @@ describe("Edited objects > Existing object page", () => {
         var { container } = renderWithWrappers(
             <Switch>
                 <Route exact path="/objects"><Objects /></Route>
-                <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />
+                <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />
             </Switch>, 
-            { route: "/objects/3001", store }
+            { route: "/objects/edit/3001", store }
         );
         await waitForEditObjectPageLoad(container, store);
     

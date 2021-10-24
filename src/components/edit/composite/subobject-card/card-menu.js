@@ -23,7 +23,7 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
     // Menu button callbacks
     const editObjectPageCallback = useMemo(() => () => { dispatch(clearUnsavedCurrentEditedObject()); });
     // const editObjectPageCallback = useMemo(() => () => {
-    //     dispatch(setRedirectOnRender(`/objects/${subobjectID}`, { deleteCurrentEditedObject: true }));
+    //     dispatch(setRedirectOnRender(`/objects/edit/${subobjectID}`, { deleteCurrentEditedObject: true }));
     // }, [objectID, subobjectID]);
     const resetSubbjectCallback = useMemo(() => () => { setIsResetDialogDisplayed(true) }, [objectID, subobjectID]);
     const deleteSubobjectCallback = useMemo(() => () => { 
@@ -41,7 +41,7 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
             type: "link",
             icon: "edit outline", 
             title: "Open edit page of this object", 
-            linkURL: `/objects/${subobjectID}`,
+            linkURL: `/objects/edit/${subobjectID}`,
             onClick: editObjectPageCallback,
             isVisibleSelector: state => subobjectID > 0
         },

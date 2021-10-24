@@ -7,17 +7,17 @@ import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } fr
 import Layout from "../common/layout";
 
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../store/state-util/ui-tag";
-import { loadAddTagPage, setCurrentTag, setShowDeleteDialogTag } from "../../actions/tag";
+import { loadNewTagPage, setCurrentTag, setShowDeleteDialogTag } from "../../actions/tag";
 import { addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../../fetches/ui-tag";
 
 import StyleTag from "../../styles/tag.css";
 
 
 /*
-    /objects/:id page components.
+    /objects/edit/:id page components.
 */
 // Exports
-export const AddTag = () => {
+export const NewTag = () => {
     const dispatch = useDispatch();
 
     // Side menu items
@@ -40,7 +40,7 @@ export const AddTag = () => {
         }
     ]);
 
-    return <Tag sideMenuItems={addTagSideMenuItems} onLoad={loadAddTagPage()} header="Add a New Tag" />;
+    return <Tag sideMenuItems={addTagSideMenuItems} onLoad={loadNewTagPage()} header="Add a New Tag" />;
 };
 
 
@@ -56,7 +56,7 @@ export const EditTag = () => {
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingTag(state),
-            linkURL: "/tags/add"
+            linkURL: "/tags/new"
         },
         {
             type: "item",

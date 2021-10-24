@@ -175,7 +175,7 @@ function handleTagsSearch(body) {
 }
 
 export const tagsHandlersList = new Map([
-    ["/tags/add", {"POST": handleAdd}],
+    ["/tags/new", {"POST": handleAdd}],
     ["/tags/view", {"POST": handleView}],
     ["/tags/delete", {"DELETE": handleDelete}],
     ["/tags/update", {"PUT": handleUpdate}],

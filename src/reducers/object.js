@@ -15,7 +15,7 @@ import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
 
 
-function loadAddObjectPage(state, action) {
+function loadNewObjectPage(state, action) {
     // Add a new edited object if it's missing
     let editedObjects = state.editedObjects;
     if (editedObjects[0] === undefined) {
@@ -107,7 +107,7 @@ function loadEditObjectPage(state, action) {
     If `objectIDs` is provided, resets the object with these IDs; otherwise, resets currently edited object.
     Does not reset new subobjects (with `objectID` < 0).
 
-    If `hideObjectResetDialog` is true, hides reset dialog on /objects/:id page.
+    If `hideObjectResetDialog` is true, hides reset dialog on /objects/edit/:id page.
 */
 function resetEditedObjects(state, action) {
     const { allowResetToDefaults, hideObjectResetDialog, resetCompositeSubobjects } = action;
@@ -442,7 +442,7 @@ function setObjectOnSaveFetchState(state, action) {
 
 
 const root = {
-    LOAD_ADD_OBJECT_PAGE: loadAddObjectPage,
+    LOAD_ADD_OBJECT_PAGE: loadNewObjectPage,
     LOAD_EDIT_OBJECT_PAGE: loadEditObjectPage,
     RESET_EDITED_OBJECTS: resetEditedObjects,
     REMOVE_EDITED_OBJECTS: removeEditedObjects,

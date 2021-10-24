@@ -8,12 +8,12 @@ import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
 import { getSideMenuItem } from "../_util/ui-common";
 
-import { AddTag, EditTag } from "../../src/components/top-level/tag";
+import { NewTag, EditTag } from "../../src/components/top-level/tag";
 import { addTags } from "../../src/actions/data-tags";
 
 
 /*
-    /tags/add page tests.
+    /tags/new page tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
@@ -29,8 +29,8 @@ beforeEach(() => {
 
 test("Render authenticated-only route without a token", async () => {
     const store = createTestStore({ addAdminToken: false });
-    let { container, history } = renderWithWrappers(<Route exact path="/tags/:id"><AddTag /></Route>, {
-        route: "/tags/add",
+    let { container, history } = renderWithWrappers(<Route exact path="/tags/:id"><NewTag /></Route>, {
+        route: "/tags/new",
         store
     });
 

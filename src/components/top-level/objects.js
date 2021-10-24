@@ -38,7 +38,7 @@ export default () => {
             iconColor: "green",
             isActiveSelector: state => !isFetchingOrShowingDeleteDialogObjects(state),
             isVisibleSelector: state => !isObjectsTagsEditActive(state),
-            linkURL: "/objects/add"
+            linkURL: "/objects/edit/new"
         },
         {
             type: "linkItem",
@@ -277,7 +277,7 @@ const paginationInfoSelector = state => state.objectsUI.paginationInfo;
 const ObjectsFieldItem = memo(({ id }) => {
     const textSelector = useMemo(() => state => state.objects[id] ? state.objects[id].object_name : "?", [id]);
     const isCheckedSelector = useMemo(() => state => state.objectsUI.selectedObjectIDs.includes(id), [id]);
-    const link = useMemo(() => `/objects/${id}`, [id]);
+    const link = useMemo(() => `/objects/edit/${id}`, [id]);
     return <FieldItem id={id} textSelector={textSelector} link={link} 
     isCheckedSelector={isCheckedSelector} onChange={toggleObjectSelection} />;
 });

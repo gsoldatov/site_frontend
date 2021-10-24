@@ -19,10 +19,10 @@ import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjec
 
 
 /*
-    /objects/:id page components.
+    /objects/edit/:id page components.
 */
 // Exports
-export const AddObject = () => {
+export const NewObject = () => {
     const dispatch = useDispatch();
 
     const addObjectSideMenuItems = useMemo(() => [
@@ -93,7 +93,7 @@ export const EditObject = () => {
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingObject(state),
-            linkURL: "/objects/add",
+            linkURL: "/objects/edit/new",
             onClick: () => dispatch(clearUnsavedCurrentEditedObject())
         },
 

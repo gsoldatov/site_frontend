@@ -134,7 +134,7 @@ test("Correct login", async () => {
 test("Correct login with URL query params", async () => {
     // Render login page
     const params = new URLSearchParams();
-    const redirectPath = "/objects/1";
+    const redirectPath = "/objects/edit/1";
     params.append("from", redirectPath);
     params.append("message", "registrationComplete");
     const store = createTestStore({ addAdminToken: false });

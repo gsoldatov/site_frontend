@@ -258,7 +258,7 @@ describe("Side menu", () => {
         // Check if add button click redirects to add object page
         let addObjectButton = getSideMenuItem(container, "Add a New Object");
         fireEvent.click(addObjectButton);
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/add"));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/edit/new"));
     });
 
 
@@ -292,12 +292,12 @@ describe("Side menu", () => {
         fireEvent.click(editObjectButton);     // editObjectButton.onclick is not null after handler is added, although the button is not clickable, so checking onclick prop on being null is not viable
         expect(history.entries[history.length - 1].pathname).toBe("/objects");
 
-        // Deselect a object, click edit object button and check if it redirected to /objects/:id
+        // Deselect a object, click edit object button and check if it redirected to /objects/edit/:id
         fireEvent.click(secondObjectCheckbox);
         await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs).toEqual(expect.arrayContaining([1])));
         editObjectButton = getSideMenuItem(container, "Edit Object");   // get the element again to properly click it
         fireEvent.click(editObjectButton);
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/1"));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/edit/1"));
     });
 
 
@@ -308,12 +308,12 @@ describe("Side menu", () => {
         const render = route => renderWithWrappers(
             <Switch>
                 <Route exact path="/objects"><Objects /></Route>
-                <Route exact path="/objects/:id"><EditObject /></Route>
+                <Route exact path="/objects/edit/:id"><EditObject /></Route>
             </Switch>
         , { route, store });
         
         // Render an object with id = 1 page and modify it to keep it in the editedObjects storage, then click cancel button
-        var { container } = render("/objects/1");
+        var { container } = render("/objects/edit/1");
         await waitFor(() => getByText(container, "Object Information"));
         let objectNameInput = getByPlaceholderText(container, "Object name");
         const objectNameText = "modified name";

@@ -252,7 +252,7 @@ test("Side menu add tag button", async () => {
     // Check if add button click redirects to add tag page
     let addTagButton = getSideMenuItem(container, "Add a New Tag");
     fireEvent.click(addTagButton);
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/add"));
+    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/new"));
 });
 
 

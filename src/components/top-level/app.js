@@ -16,9 +16,9 @@ import { LoginPage } from "./login";
 import { RegisterPage } from "./register";
 import { AdminPage } from "./admin";
 import { UserPage } from "./user";
-import { AddTag, EditTag } from "./tag";
+import { NewTag, EditTag } from "./tag";
 import Tags from "./tags";
-import { AddObject, EditObject } from "./object";
+import { NewObject, EditObject } from "./object";
 import { EditedObjects } from "./edited-objects";
 import Objects from "./objects";
 import { NotFound } from "./not-found";
@@ -69,9 +69,9 @@ export const App = () => {
                 <Tags />
             </ProtectedRoute>
             
-            <ProtectedRoute exact path="/tags/add"
+            <ProtectedRoute exact path="/tags/new"
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <AddTag />
+                <NewTag />
             </ProtectedRoute>
             <ProtectedRoute exact path="/tags/:id"
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
@@ -88,11 +88,11 @@ export const App = () => {
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
                 <EditedObjects />
             </ProtectedRoute>
-            <ProtectedRoute exact path="/objects/add"
+            <ProtectedRoute exact path="/objects/edit/new"
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <AddObject />
+                <NewObject />
             </ProtectedRoute>
-            <ProtectedRoute exact path="/objects/:id"
+            <ProtectedRoute exact path="/objects/edit/:id"
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
                 <EditObject />
             </ProtectedRoute>

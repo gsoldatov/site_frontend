@@ -330,18 +330,18 @@ test("Check tags update + editedObjects reset", async () => {
     let store = await getStoreWithTwoSelectedObjects();
     await store.dispatch(getNonCachedTags([7]));    // additional tags is required to test adding of an existing tag
 
-    // Add & remove tags for two objects on the /objects/:id page without saving the changes
+    // Add & remove tags for two objects on the /objects/edit/:id page without saving the changes
     let {container, history } = renderWithWrappers(
         <Switch>
             <Route exact path="/objects"><Objects /></Route>
-            <Route exact path="/objects/:id"><EditObject /></Route>
+            <Route exact path="/objects/edit/:id"><EditObject /></Route>
         </Switch>
-    , { route: "/objects/1", store });
+    , { route: "/objects/edit/1", store });
 
     await waitFor(() => getByText(container, "Object Information"));
     await addAndRemoveTags(container, store);
 
-    history.push("/objects/3");
+    history.push("/objects/edit/3");
     await waitFor(() => getByText(container, "Object Information"));
     await addAndRemoveTags(container, store);
 

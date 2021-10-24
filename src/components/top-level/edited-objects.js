@@ -154,10 +154,10 @@ const EditedObjectItem = memo(({ objectID, parentObjects = [], parentNames = [],
     );
 
     // Object name and page link
-    let objectURL = objectID > 0 ? `/objects/${objectID}`
-        : objectID == 0 ? "/objects/add" 
+    let objectURL = objectID > 0 ? `/objects/edit/${objectID}`
+        : objectID == 0 ? "/objects/edit/new" 
         : parentObjects.length > 0 ? (
-            parentObjects[0] === 0 ? `/objects/add` : `/objects/${parentObjects[0]}`
+            parentObjects[0] === 0 ? `/objects/edit/new` : `/objects/edit/${parentObjects[0]}`
         ) : null;
     let objectName = <span>{editedObject.object_name || "<unnamed>"}</span>;
     if (objectURL) objectName = (
@@ -170,14 +170,14 @@ const EditedObjectItem = memo(({ objectID, parentObjects = [], parentNames = [],
     const parents = [];
     for (let i in parentObjects) {
         const parentID = parentObjects[i];
-        const URL = parentID === 0 ? "/objects/add" : `/objects/${parentID}`;
+        const URL = parentID === 0 ? "/objects/edit/new" : `/objects/edit/${parentID}`;
         const text = `[${parseInt(i) + 1}]`;
         
         const title = "This object is a subobject of " + (parentNames[i].length > 0 ? `"${parentNames[i]}"` : "<unnamed>");
         parents.push(<Link key={parentID} className="edited-objects-object-parent-link" to={URL} title={title}>{text}</Link>);
     }
     // const parents = parentObjects.map((parentID, i) => {
-    //     const URL = parentID === 0 ? "/objects/add" : `/objects/${parentID}`;
+    //     const URL = parentID === 0 ? "/objects/edit/new" : `/objects/edit/${parentID}`;
     //     const text = `[${i + 1}]`;
     //     return <Link key={parentID} className="edited-objects-object-parent-link" to={URL} title="Parent object of this object">{text}</Link>;
     // });

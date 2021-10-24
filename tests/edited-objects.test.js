@@ -102,7 +102,7 @@ test("Object names and object page links", () => {
 
     // Check if empty-named subobject is named as <unnamed>
     const unnamedObjectRow = getEditedObjectItemRow(container, "<unnamed>");
-    expect(unnamedObjectRow.objectNameCell.childNodes[0].href.indexOf("/objects/11")).toBeGreaterThan(-1);
+    expect(unnamedObjectRow.objectNameCell.childNodes[0].href.indexOf("/objects/edit/11")).toBeGreaterThan(-1);
 
     // Check if named objects are displayed correctly
     for (let objectName of ["new composite", "existing composite", "new subobject", "existing subobject link",
@@ -113,15 +113,15 @@ test("Object names and object page links", () => {
 
     // Check if new object link is correct
     const newObjectRow = getEditedObjectItemRow(container, "new composite");
-    expect(newObjectRow.objectNameCell.childNodes[0].href.indexOf("/objects/add")).toBeGreaterThan(-1);
+    expect(newObjectRow.objectNameCell.childNodes[0].href.indexOf("/objects/edit/new")).toBeGreaterThan(-1);
 
     // Check if existing object link is correct
     const existingLinkRow = getEditedObjectItemRow(container, "existing link");
-    expect(existingLinkRow.objectNameCell.childNodes[0].href.indexOf("/objects/21")).toBeGreaterThan(-1);
+    expect(existingLinkRow.objectNameCell.childNodes[0].href.indexOf("/objects/edit/21")).toBeGreaterThan(-1);
 
     // Check if new subobject links to its parent's object page
     const newSubobjectRow = getEditedObjectItemRow(container, "new subobject");
-    expect(newSubobjectRow.objectNameCell.childNodes[0].href.indexOf("/objects/add")).toBeGreaterThan(-1);
+    expect(newSubobjectRow.objectNameCell.childNodes[0].href.indexOf("/objects/edit/new")).toBeGreaterThan(-1);
 });
 
 
@@ -141,13 +141,13 @@ test("Parent links", () => {
     // Check if object with a single parent has a correct link
     const newSubobjectLinkRow = getEditedObjectItemRow(container, "new subobject");
     expect(newSubobjectLinkRow.parentLinksCell.childNodes.length).toEqual(1);
-    expect(newSubobjectLinkRow.parentLinksCell.childNodes[0].href.indexOf("/objects/add")).toBeGreaterThan(-1);
+    expect(newSubobjectLinkRow.parentLinksCell.childNodes[0].href.indexOf("/objects/edit/new")).toBeGreaterThan(-1);
     
     // Check if object with two parents has correct links
     const existingSubobjectLinkRow = getEditedObjectItemRow(container, "existing subobject link");
     expect(existingSubobjectLinkRow.parentLinksCell.childNodes.length).toEqual(2);
-    expect(existingSubobjectLinkRow.parentLinksCell.childNodes[0].href.indexOf("/objects/add")).toBeGreaterThan(-1);
-    expect(existingSubobjectLinkRow.parentLinksCell.childNodes[1].href.indexOf("/objects/1")).toBeGreaterThan(-1);
+    expect(existingSubobjectLinkRow.parentLinksCell.childNodes[0].href.indexOf("/objects/edit/new")).toBeGreaterThan(-1);
+    expect(existingSubobjectLinkRow.parentLinksCell.childNodes[1].href.indexOf("/objects/edit/1")).toBeGreaterThan(-1);
 });
 
 

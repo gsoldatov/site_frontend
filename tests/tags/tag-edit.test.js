@@ -9,7 +9,7 @@ import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { renderWithWrappers } from "../_util/render";
 import { createTestStore } from "../_util/create-test-store";
 
-import { AddTag, EditTag } from "../../src/components/top-level/tag";
+import { NewTag, EditTag } from "../../src/components/top-level/tag";
 import { addTags, deleteTags } from "../../src/actions/data-tags";
 
 
@@ -121,7 +121,7 @@ test("Load a tag from backend", async () => {
 test("Check 'Add Tag' button", async () => {
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container, history } = renderWithWrappers(
-        <Route exact path="/tags/:id" render={ props => props.match.params.id === "add" ? <AddTag /> : <EditTag /> } />, 
+        <Route exact path="/tags/:id" render={ props => props.match.params.id === "new" ? <NewTag /> : <EditTag /> } />, 
         { route: "/tags/1" }
     );
 
@@ -129,7 +129,7 @@ test("Check 'Add Tag' button", async () => {
     await waitFor(() => getByText(container, "Tag Information"));
     let addTagButton = getSideMenuItem(container, "Add a New Tag");
     fireEvent.click(addTagButton);
-    expect(history.entries[history.length - 1].pathname).toBe("/tags/add");
+    expect(history.entries[history.length - 1].pathname).toBe("/tags/new");
 });
 
 

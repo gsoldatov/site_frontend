@@ -3,7 +3,7 @@ import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch
 import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
 
 import { setRedirectOnRender } from "../actions/common";
-import { loadAddObjectPage, loadEditObjectPage, resetEditedObjects, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
+import { loadNewObjectPage, loadEditObjectPage, resetEditedObjects, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
         setShowDeleteDialogObject, setEditedObject, 
         setEditedObjectTags, setObjectTagsInput, setAddCompositeSubobjectMenu } from "../actions/object";
 
@@ -14,11 +14,11 @@ import { enumResponseErrorType } from "../util/enum-response-error-type";
 
 
 /**
- * Loads default state of /objects/add page & loads composite object's subobject data.
+ * Loads default state of /objects/edit/new page & loads composite object's subobject data.
  */
 export const addObjectOnLoad = () => {
     return (dispatch, getState) => {
-        dispatch(loadAddObjectPage());
+        dispatch(loadNewObjectPage());
         dispatch(loadCompositeSubobjectsFetch(0));
     };
 };
@@ -48,7 +48,7 @@ export const addObjectOnSaveFetch = () => {
 
         // Handle successful fetch end
         dispatch(setObjectOnSaveFetchState(false, ""));
-        dispatch(setRedirectOnRender(`/objects/${result.object_id}`, { deleteNewObject: true }));
+        dispatch(setRedirectOnRender(`/objects/edit/${result.object_id}`, { deleteNewObject: true }));
     };
 };
 

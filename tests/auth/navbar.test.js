@@ -79,7 +79,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
         // Render login page
         const store = createTestStore({ addAdminToken: true });
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/1", store
+            route: "/objects/edit/1", store
         });
 
         // Wait for page to load
@@ -173,7 +173,7 @@ describe("Secondary menu logged in state", () => {
         // Render login page
         const store = createTestStore({ addAdminToken: true });
         let { container, history } = renderWithWrappers(<App />, {
-            route: "/objects/add", store
+            route: "/objects/edit/new", store
         });
 
         // Wait for user information to be loaded into state
@@ -192,7 +192,7 @@ describe("Secondary menu logged in state", () => {
         // Render login page
         const store = createTestStore({ addAdminToken: true });
         let { container, history } = renderWithWrappers(<App />, {
-            route: "/objects/add", store
+            route: "/objects/edit/new", store
         });
 
         // Wait for user information to be loaded into state
@@ -215,7 +215,7 @@ describe("Secondary menu logged in state", () => {
         // Render login page
         const store = createTestStore({ addAdminToken: true });
         let { container, history } = renderWithWrappers(<App />, {
-            route: "/objects/add", store
+            route: "/objects/edit/new", store
         });
 
         // Wait for user information to be loaded into state

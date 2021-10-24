@@ -11,12 +11,12 @@ import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElement
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
     getSubobjectCards, getSubobjectExpandToggleButton } from "../_util/ui-composite";
 
-import { AddObject, EditObject } from "../../src/components/top-level/object";
+import { NewObject, EditObject } from "../../src/components/top-level/object";
 import { getMappedSubobjectID } from "../_mocks/data-composite";
 
 
 /*
-    /objects/add page tests.
+    /objects/edit/new page tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
@@ -32,8 +32,8 @@ beforeEach(() => {
 
 describe("UI checks", () => {
     test("Render page and click cancel button", async () => {
-        let { container, history } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
         
         // Check if add object page was loaded with empty input fields
@@ -56,8 +56,8 @@ describe("UI checks", () => {
 
 
     test("Select different object types", async () => {
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         // Select markdown object type and check if markdown inputs are rendered
@@ -95,8 +95,8 @@ describe("UI checks", () => {
 
 
     test("Toggle `is published` setting", async () => {
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         expect(store.getState().editedObjects[0].is_published).toBeFalsy();
@@ -114,8 +114,8 @@ describe("UI checks", () => {
 
 
     test("Change markdown display modes & render markdown", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
         // Change object type
         let { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
@@ -159,8 +159,8 @@ describe("UI checks", () => {
 
 describe("Reset new object state", () => {
     test("Cancel reset, reset attributes and link", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
     
         // Edit attributes & link
@@ -199,8 +199,8 @@ describe("Reset new object state", () => {
 
 
     test("Reset markdown", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         const { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
@@ -222,8 +222,8 @@ describe("Reset new object state", () => {
 
 
     test("Reset to-do list", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
@@ -242,8 +242,8 @@ describe("Reset new object state", () => {
 
 
     test("Reset composite (without subobjects)", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -277,8 +277,8 @@ describe("Reset new object state", () => {
 
 
     test("Reset composite (with subobjects)", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -313,9 +313,9 @@ describe("Reset new object state", () => {
 
 describe("Persist new object state", () => {
     test("Attributes and link data", async () => {
-        // Render /objects/add and update object name + link
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route: "/objects/add", store
+        // Render /objects/edit/new and update object name + link
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            route: "/objects/edit/new", store
         });
 
         let objectNameInput = getByPlaceholderText(container, "Object name");
@@ -329,11 +329,11 @@ describe("Persist new object state", () => {
         fireEvent.change(linkInput, { target: { value: linkValue } });
         await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
 
-        // Render /objects/1, then render /objects/add and check if the state was saved
-        history.push("/objects/1");
+        // Render /objects/edit/1, then render /objects/edit/new and check if the state was saved
+        history.push("/objects/edit/1");
         await waitForEditObjectPageLoad(container, store);
 
-        history.push("/objects/add");
+        history.push("/objects/edit/new");
         await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
         clickGeneralTabButton(container);
         objectNameInput = getByPlaceholderText(container, "Object name");
@@ -346,9 +346,9 @@ describe("Persist new object state", () => {
 
 
     test("Markdown data", async () => {
-        // Render /objects/add and update markdown text
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route: "/objects/add", store
+        // Render /objects/edit/new and update markdown text
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            route: "/objects/edit/new", store
         });
 
         const { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
@@ -362,11 +362,11 @@ describe("Persist new object state", () => {
         fireEvent.change(inputForm, { target: { value: rawText } });
         await waitFor(() => expect(getCurrentObject(store.getState()).markdown.raw_text).toEqual(rawText));
 
-        // Render /objects/1, then render /objects/add and check if the state was saved
-        history.push("/objects/1");
+        // Render /objects/edit/1, then render /objects/edit/new and check if the state was saved
+        history.push("/objects/edit/1");
         await waitForEditObjectPageLoad(container, store);
 
-        history.push("/objects/add");
+        history.push("/objects/edit/new");
         await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
         clickDataTabButton(container);
         await waitFor(() => expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText));
@@ -374,9 +374,9 @@ describe("Persist new object state", () => {
 
 
     test("To-do list data", async () => {
-        // Render /objects/add and update to-do list items
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route: "/objects/add", store
+        // Render /objects/edit/new and update to-do list items
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            route: "/objects/edit/new", store
         });
 
         const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
@@ -388,11 +388,11 @@ describe("Persist new object state", () => {
         fireEvent.input(newItemInput, { target: { innerHTML: "new value" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).toDoList.items[0].item_text).toBe(newItemText));
 
-        // Render /objects/1, then render /objects/add and check if the state was saved
-        history.push("/objects/1");
+        // Render /objects/edit/1, then render /objects/edit/new and check if the state was saved
+        history.push("/objects/edit/1");
         await waitForEditObjectPageLoad(container, store);
 
-        history.push("/objects/add");
+        history.push("/objects/edit/new");
         await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
 
         clickDataTabButton(container);
@@ -401,9 +401,9 @@ describe("Persist new object state", () => {
 
 
     test("Composite data and subobjects", async () => {
-        // Render /objects/add and add a new & an existing subobject
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route: "/objects/add", store
+        // Render /objects/edit/new and add a new & an existing subobject
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            route: "/objects/edit/new", store
         });
 
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -421,11 +421,11 @@ describe("Persist new object state", () => {
         fireEvent.change(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput, { target: { value: newSubobjectName } });
         await waitFor(() => expect(store.getState().editedObjects[firstSubobjectID].object_name).toEqual(newSubobjectName));
 
-        // Render /objects/1, then render /objects/add and check if the state was saved
-        history.push("/objects/1");
+        // Render /objects/edit/1, then render /objects/edit/new and check if the state was saved
+        history.push("/objects/edit/1");
         await waitForEditObjectPageLoad(container, store);
 
-        history.push("/objects/add");
+        history.push("/objects/edit/new");
         await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
         clickDataTabButton(container);
 
@@ -438,9 +438,9 @@ describe("Persist new object state", () => {
 
 
     test("Composite unchanged existing subobject removal", async () => {
-        // Render /objects/add and add a new & an existing subobject
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route: "/objects/add", store
+        // Render /objects/edit/new and add a new & an existing subobject
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            route: "/objects/edit/new", store
         });
 
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -469,8 +469,8 @@ describe("Persist new object state", () => {
 
 
     test("Unchanged new object removal from edited objects storage", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, {
-            route: "/objects/add", store
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            route: "/objects/edit/new", store
         });
         expect(Object.keys(store.getState().editedObjects).includes("0")).toBeTruthy();
 
@@ -493,8 +493,8 @@ describe("Persist new object state", () => {
 
 describe("Save new object errors", () => {
     test("Handle save fetch error", async () => {
-        let { container, history, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, history, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
     
         // Check if an error message is displayed and object is not added to the state
@@ -511,15 +511,15 @@ describe("Save new object errors", () => {
         setFetchFail(true);
         fireEvent.click(saveButton);
         await waitFor(() => getByText(container, "Failed to fetch data."));
-        expect(history.entries[history.length - 1].pathname).toBe("/objects/add");
+        expect(history.entries[history.length - 1].pathname).toBe("/objects/edit/new");
         expect(store.getState().objects[1000]).toBeUndefined(); // mock object returned has this id
         setFetchFail();   // reset fetch fail
     });
 
 
     test("Link with incorrect data", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         const objectNameInput = getByPlaceholderText(container, "Object name");
@@ -540,8 +540,8 @@ describe("Save new object errors", () => {
 
 
     test("Markdown with incorrect data", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
     
         const objectNameInput = getByPlaceholderText(container, "Object name");
@@ -562,8 +562,8 @@ describe("Save new object errors", () => {
 
 
     test("To-do list with incorrect data", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         const objectNameInput = getByPlaceholderText(container, "Object name");
@@ -584,8 +584,8 @@ describe("Save new object errors", () => {
 
 
     test("Composite object without subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         // Modify object name and type, then click save button
@@ -598,15 +598,15 @@ describe("Save new object errors", () => {
 
         // Check if error message is displayed and save did not occur
         await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
-        expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
+        expect(history.entries[history.length - 1].pathname).toEqual("/objects/edit/new");
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().composite[1]).toBeUndefined();
     });
 
 
     test("Composite object without non-deleted subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         // Modify object type and name
@@ -627,15 +627,15 @@ describe("Save new object errors", () => {
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
-        expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
+        expect(history.entries[history.length - 1].pathname).toEqual("/objects/edit/new");
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().composite[1]).toBeUndefined();
     });
 
 
     test("Composite object a with a new subobject with incorrect attributes", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         // Modify object type and name
@@ -656,7 +656,7 @@ describe("Save new object errors", () => {
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Object name is required.", { exact: false }));
-        expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
+        expect(history.entries[history.length - 1].pathname).toEqual("/objects/edit/new");
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().composite[1]).toBeUndefined();
         expect(store.getState().editedObjects).toHaveProperty(card.id);
@@ -664,8 +664,8 @@ describe("Save new object errors", () => {
 
 
     test("Composite object a with an existing subobject with incorrect data", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-            route: "/objects/add"
+        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            route: "/objects/edit/new"
         });
 
         // Modify object type and name
@@ -686,7 +686,7 @@ describe("Save new object errors", () => {
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
-        expect(history.entries[history.length - 1].pathname).toEqual("/objects/add");
+        expect(history.entries[history.length - 1].pathname).toEqual("/objects/edit/new");
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().composite[1]).toBeUndefined();
         expect(store.getState().editedObjects).toHaveProperty(card.id);
@@ -697,8 +697,8 @@ describe("Save new object errors", () => {
 describe("Save new object", () => {
     test("Save link + check all attributes + check new object state reset", async () => {
         let { container, history, store } = renderWithWrappers(
-            <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
-            { route: "/objects/add" }
+            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            { route: "/objects/edit/new" }
         );
     
         let objectNameInput = getByPlaceholderText(container, "Object name");
@@ -726,7 +726,7 @@ describe("Save new object", () => {
         // Save object
         fireEvent.click(saveButton);
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
             
         clickGeneralTabButton(container);
         expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
@@ -749,8 +749,8 @@ describe("Save new object", () => {
 
     test("Save markdown", async () => {
         let { container, history, store } = renderWithWrappers(
-            <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
-            { route: "/objects/add" }
+            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            { route: "/objects/edit/new" }
         );
     
         // Change object type
@@ -780,7 +780,7 @@ describe("Save new object", () => {
         // Check if object is redirected after adding a correct object
         fireEvent.click(saveButton);
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
         expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText);
         
         clickGeneralTabButton(container);
@@ -795,8 +795,8 @@ describe("Save new object", () => {
 
     test("Save to-do list", async () => {
         let { container, history, store } = renderWithWrappers(
-            <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
-            { route: "/objects/add" }
+            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            { route: "/objects/edit/new" }
         );
     
         // Change object type
@@ -823,7 +823,7 @@ describe("Save new object", () => {
         // Check if object is redirected after adding a correct object
         fireEvent.click(saveButton);
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
         
         let TDLContainer = container.querySelector(".to-do-list-container");
         getByText(TDLContainer, "new value");
@@ -839,8 +839,8 @@ describe("Save new object", () => {
     
     test("Save composite", async () => {
         let { container, history, store } = renderWithWrappers(
-            <Route exact path="/objects/:id" render={ props => props.match.params.id === "add" ? <AddObject /> : <EditObject /> } />, 
-            { route: "/objects/add" }
+            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            { route: "/objects/edit/new" }
         );
 
         // Modify object type and name
@@ -899,7 +899,7 @@ describe("Save new object", () => {
         // Check if object is redirected after adding a correct object
         fireEvent.click(getSideMenuItem(container, "Save"));
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/${object_id}`));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
         
         // Check added object (is added to state.editedObjects & state.composite and has 4 subobjects in both states)
         const strObjectID = object_id.toString();

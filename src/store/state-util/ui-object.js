@@ -2,7 +2,7 @@ import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
 
 
 /*
-    Functions for checking/getting data from a /objects/:id page UI state.
+    Functions for checking/getting data from a /objects/edit/:id page UI state.
 */
 
 

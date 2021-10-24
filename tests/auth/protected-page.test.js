@@ -99,7 +99,7 @@ test("Render authenticated-only route with an expired token", async () => {
     expirationTime.setDate(expirationTime.getDate() - 1);
     store.dispatch(setAuthInformation({ access_token_expiration_time: expirationTime.toISOString() }));
     let { container, history } = renderWithWrappers(<App />, {
-        route: "/objects/1", store
+        route: "/objects/edit/1", store
     });
     
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/auth/login`));
@@ -114,7 +114,7 @@ test("Fetch backend with an invalid token", async () => {
     // Render object's edit page
     const store = createTestStore({ addAdminToken: true });
     let { container, history } = renderWithWrappers(<App />, {
-        route: "/objects/1", store
+        route: "/objects/edit/1", store
     });
     
     // Check if a redirect occured & token was cleared

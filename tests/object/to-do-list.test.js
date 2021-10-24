@@ -9,7 +9,7 @@ import { renderWithWrappers } from "../_util/render";
 import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../_util/ui-object";
 import { defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "../_mocks/data-to-do-lists";
 
-import { AddObject, EditObject } from "../../src/components/top-level/object";
+import { NewObject, EditObject } from "../../src/components/top-level/object";
 import * as caret from "../../src/util/caret";
 
 
@@ -29,8 +29,8 @@ beforeEach(() => {
 
 
 test("Load a new to-do list", async () => {
-    let { container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add"
+    let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        route: "/objects/edit/new"
     });
 
     // Select to-do list object type
@@ -54,8 +54,8 @@ test("Load a new to-do list", async () => {
 
 
 test("Load an existing to-do list", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/2001"
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        route: "/objects/edit/2001"
     });
 
     // Check if object information is displayed on the page
@@ -117,8 +117,8 @@ test("Load an existing to-do list", async () => {
 
 
 test("Add, edit & delete items", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add"
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        route: "/objects/edit/new"
     });
 
     // Select to-do list object type
@@ -154,8 +154,8 @@ test("Add, edit & delete items", async () => {
 
 
 test("Delete with children button", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/2001"
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        route: "/objects/edit/2001"
     });
 
     // Check if object information is displayed on the page
@@ -185,8 +185,8 @@ test("Delete with children button", async () => {
 
 
 test("Change item states", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/2001"
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        route: "/objects/edit/2001"
     });
 
     // Check if object information is displayed on the page
@@ -210,8 +210,8 @@ test("Change item states", async () => {
 
 
 test("Change item sort", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/2908"
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        route: "/objects/edit/2908"
     });
 
     // Check if object information is displayed on the page
@@ -250,8 +250,8 @@ test("Change item sort", async () => {
 
 
 test("Expand/collapse button", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/2001"
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        route: "/objects/edit/2001"
     });
 
     // Check if object information is displayed on the page
@@ -298,8 +298,8 @@ test("Expand/collapse button", async () => {
 
 
 test("New item input indenation", async () => {
-    let { container } = renderWithWrappers(<Route exact path="/objects/:id"><AddObject /></Route>, {
-        route: "/objects/add"
+    let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        route: "/objects/edit/new"
     });
 
     // Select to-do list object type
@@ -373,8 +373,8 @@ test("New item input indenation", async () => {
 
 
 test("Item input indenation", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-        route: "/objects/2915"
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        route: "/objects/edit/2915"
     });
 
     // Check if object information is displayed on the page
@@ -465,8 +465,8 @@ describe("Commentaries", () => {
         /* (*)
             Not checking if comment input is displayed on comment button mouseEnter, because it does not trigger the displayed in test env (onClick is used instead).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2001"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2001"
         });
 
         // Check if object information is displayed on the page
@@ -514,8 +514,8 @@ describe("Commentaries", () => {
         /* (*)
             Not checking if comment input is displayed on comment button mouseEnter, because it does not trigger the displayed in test env (onClick is used instead).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2001"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2001"
         });
     
         // Check if object information is displayed on the page
@@ -557,8 +557,8 @@ describe("Keybinds (default sort)", () => {
             Not checking caret position update, because it's set to 0 in test env and is not updated by input & keyDown event.
             Test should also check all cases for position updating when moving down/up (beginning, middle, end).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2909"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2909"
         });
     
         // Check if object information is displayed on the page
@@ -611,8 +611,8 @@ describe("Keybinds (default sort)", () => {
             In testing environment, caret position is set to 0 and is not changed by KeyDown events => split is checked for the case when full item text is moved into the second item.
             Test should also check if item text is correctly split when caret position != 0.
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2901"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2901"
         });
     
         // Check if object information is displayed on the page
@@ -665,8 +665,8 @@ describe("Keybinds (default sort)", () => {
         
 
 
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2902"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2902"
         });
 
         // Check if object information is displayed on the page
@@ -725,8 +725,8 @@ describe("Keybinds (default sort)", () => {
                 - if two non-empty item texts are correctly merged;
                 - backspace keypress does nothing when caret is at the beginning of the first item (for default and state sort).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2903"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2903"
         });
 
         // Check if object information is displayed on the page
@@ -787,8 +787,8 @@ describe("Keybinds (default sort)", () => {
 
 
     test("Tab / Shift + Tab", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2001"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2001"
         });
 
         // Check if object information is displayed on the page
@@ -826,8 +826,8 @@ describe("Keybinds (default sort)", () => {
 
 
     test("Shift + Space", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2001"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2001"
         });
 
         // Check if object information is displayed on the page
@@ -856,8 +856,8 @@ describe("Keybinds (default sort)", () => {
 
 
     test("Ctrl + Space", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2001"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2001"
         });
 
         // Check if object information is displayed on the page
@@ -891,8 +891,8 @@ describe("Keybinds (sort by state)", () => {
     });
 
     test("Up/down", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2910"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2910"
         });
 
         // Check if object information is displayed on the page
@@ -942,8 +942,8 @@ describe("Keybinds (sort by state)", () => {
 
 
     test("Enter", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2905"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2905"
         });
     
         // Check if object information is displayed on the page
@@ -989,8 +989,8 @@ describe("Keybinds (sort by state)", () => {
             - delete in a non-empty item (with the caret at the end);
             - delete in the last item (with the caret at the end).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2906"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2906"
         });
 
         // Check if object information is displayed on the page
@@ -1053,8 +1053,8 @@ describe("Keybinds (sort by state)", () => {
             In testing environment, caret position is set to 0 and is not changed by KeyDown events.
             - backspace in the first item (with the caret at the beginning).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2907"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2907"
         });
 
         // Check if object information is displayed on the page
@@ -1111,8 +1111,8 @@ describe("Keybinds (sort by state)", () => {
 
 
     test("Tab / Shift + Tab", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2904"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2904"
         });
 
         // Check if object information is displayed on the page
@@ -1152,8 +1152,8 @@ describe("Keybinds (sort by state)", () => {
 
 describe("Drag and drop", () => {
     test("Drop item without children on another item", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2911"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2911"
         });
 
         // Check if object information is displayed on the page
@@ -1201,8 +1201,8 @@ describe("Drag and drop", () => {
 
 
     test("Drop item without children on another item and change its indent", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2912"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2912"
         });
 
         // Check if object information is displayed on the page
@@ -1257,8 +1257,8 @@ describe("Drag and drop", () => {
 
     
     test("Drop item on a new item input", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2912"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2912"
         });
 
         // Check if object information is displayed on the page
@@ -1309,8 +1309,8 @@ describe("Drag and drop", () => {
 
 
     test("Drop an item with children", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2913"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2913"
         });
 
         // Check if object information is displayed on the page
@@ -1357,8 +1357,8 @@ describe("Drag and drop", () => {
 
 
     test("Drag last item with children", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2913"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2913"
         });
 
         // Check if object information is displayed on the page
@@ -1403,8 +1403,8 @@ describe("Drag and drop", () => {
 
 
     test("Abort dragging an item with children", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2913"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2913"
         });
 
         // Check if object information is displayed on the page
@@ -1434,8 +1434,8 @@ describe("Drag and drop", () => {
 
 
     test("Drag collapsed item with children", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2914"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2914"
         });
 
         // Check if object information is displayed on the page
@@ -1470,8 +1470,8 @@ describe("Drag and drop", () => {
 
 
     test("Drag an item with children into a collapsed item child position", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2914"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2914"
         });
 
         // Check if object information is displayed on the page
@@ -1501,8 +1501,8 @@ describe("Drag and drop", () => {
 
 
     test("Drag and drop is disabled when list is sorted by state", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2904"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2904"
         });
 
         // Check if object information is displayed on the page
@@ -1521,8 +1521,8 @@ describe("Drag and drop", () => {
 
 
     test("Drag and drop is disabled when item input is hovered", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/:id"><EditObject /></Route>, {
-            route: "/objects/2001"
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2001"
         });
 
         // Check if object information is displayed on the page
