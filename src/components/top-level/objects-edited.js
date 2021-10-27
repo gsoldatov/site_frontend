@@ -9,7 +9,7 @@ import { removeEditedObjects } from "../../actions/objects-edit";
 import { loadObjectsEditedPage, toggleEditedObjectSelection, toggleAllObjectsSelection } from "../../actions/objects-edited";
 import { enumObjectTypes } from "../../util/enum-object-types";
 
-import StyleEditedObjects from "../../styles/edited-objects.css";
+import StyleObjectsEdited from "../../styles/objects-edited.css";
 
 
 /**

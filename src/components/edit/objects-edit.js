@@ -12,7 +12,7 @@ import { setEditedObject } from "../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-objects-edit";
 import { enumObjectTypes } from "../../util/enum-object-types";
 
-import StyleObject from "../../styles/object.css";
+import StyleObjectsEdit from "../../styles/objects-edit.css";
 
 
 /*

@@ -1,3 +1,7 @@
+/*******************************
+  /objects/edited page styles.
+*******************************/
+
 /* Table headers */
 .ui.table thead th.edited-objects-header-cell.collapsing {
     white-space: nowrap;    /* Display on a single line */
