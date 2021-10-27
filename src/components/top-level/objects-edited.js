@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Layout from "../common/layout";
 
 import { removeEditedObjects } from "../../actions/objects-edit";
-import { loadEditedObjectsPage, toggleEditedObjectSelection, toggleAllObjectsSelection } from "../../actions/edited-objects";
+import { loadObjectsEditedPage, toggleEditedObjectSelection, toggleAllObjectsSelection } from "../../actions/objects-edited";
 import { enumObjectTypes } from "../../util/enum-object-types";
 
 import StyleEditedObjects from "../../styles/edited-objects.css";
@@ -15,13 +15,13 @@ import StyleEditedObjects from "../../styles/edited-objects.css";
 /**
  * /objects/edited page components.
  */
-export const EditedObjects = () => {
+export const ObjectsEdited = () => {
     const dispatch = useDispatch();
     const editedObjects = useSelector(state => state.editedObjects);
 
     // Reset page UI on load
     useEffect(() => {
-        dispatch(loadEditedObjectsPage());
+        dispatch(loadObjectsEditedPage());
     }, []);
 
     // Confirm state
@@ -76,7 +76,7 @@ export const EditedObjects = () => {
             <>
                 {confirm}
                 <Table striped unstackable className="edited-objects-table">
-                    <EditedObjectsTableHeader setConfirmState={setConfirmState} />
+                    <ObjectsEditedTableHeader setConfirmState={setConfirmState} />
                     <Table.Body>
                         {items}
                     </Table.Body>
@@ -93,7 +93,7 @@ export const EditedObjects = () => {
 /**
  * Edited objects' table header.
  */
-const EditedObjectsTableHeader = ({ setConfirmState }) => {
+const ObjectsEditedTableHeader = ({ setConfirmState }) => {
     const dispatch = useDispatch();
     
     // Toggle all selection checkbox

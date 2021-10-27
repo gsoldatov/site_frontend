@@ -19,7 +19,7 @@ import { UserPage } from "./user";
 import { NewTag, EditTag } from "./tag";
 import Tags from "./tags";
 import { NewObject, EditObject } from "./objects-edit";
-import { EditedObjects } from "./edited-objects";
+import { ObjectsEdited } from "./objects-edited";
 import ObjectsList from "./objects-list";
 import { NotFound } from "./not-found";
 
@@ -86,7 +86,7 @@ export const App = () => {
             
             <ProtectedRoute exact path="/objects/edited"
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <EditedObjects />
+                <ObjectsEdited />
             </ProtectedRoute>
             <ProtectedRoute exact path="/objects/edit/new"
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>

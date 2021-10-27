@@ -10,7 +10,7 @@ import tag from "./tag";
 import tags from "./tags";
 import objectEdit from "./objects-edit";
 import objectsList from "./objects-list";
-import editedObjects from "./edited-objects";
+import objectsEdited from "./objects-edited";
 
 function getActionHandlers(rootObjects) {
     let actionHandlers = {};
@@ -31,7 +31,7 @@ function getActionHandlers(rootObjects) {
     return actionHandlers;
 }
 
-const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, dataUsers, auth, common, tag, tags, objectEdit, objectsList, editedObjects });
+const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, dataUsers, auth, common, tag, tags, objectEdit, objectsList, objectsEdited });
 
 export default function getRootReducer (enableDebugLogging) {
     return (state, action) => {

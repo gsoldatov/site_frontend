@@ -6,9 +6,9 @@ import { getByTitle, queryByTitle } from "@testing-library/dom";
 import { getStoreWithEditedObjects } from "./_mocks/data-edited-objects";
 import { renderWithWrappers } from "./_util/render";
 import { getEditedObjectsHeaderCells, getEditedObjectItemRow, clickDeleteControl, 
-    clickConfirmButton, clickCheckbox } from "./_util/ui-edited-objects";
+    clickConfirmButton, clickCheckbox } from "./_util/ui-objects-edited";
 
-import { EditedObjects } from "../src/components/top-level/edited-objects";
+import { ObjectsEdited } from "../src/components/top-level/objects-edited";
 
 
 
@@ -32,7 +32,7 @@ test("Check row number", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
 
@@ -50,7 +50,7 @@ test("New object indicators", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
 
@@ -72,7 +72,7 @@ test("Objet type icons", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
 
@@ -96,7 +96,7 @@ test("Object names and object page links", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
 
@@ -130,7 +130,7 @@ test("Parent links", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
 
@@ -156,7 +156,7 @@ test("Subobject indicators", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
 
@@ -179,7 +179,7 @@ test("Delete control", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
     expect(Object.keys(store.getState().editedObjects).length).toEqual(8);
@@ -227,7 +227,7 @@ test("Delete with subobjects controls", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
     expect(Object.keys(store.getState().editedObjects).length).toEqual(8);
@@ -269,7 +269,7 @@ test("Checkbox selection/deselection", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
 
@@ -294,7 +294,7 @@ test("Select/deselect all objects", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
     expect(Object.keys(store.getState().editedObjects).length).toEqual(8);
@@ -326,7 +326,7 @@ test("Delete selected objects", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
     expect(Object.keys(store.getState().editedObjects).length).toEqual(8);
@@ -372,7 +372,7 @@ test("Delete selected objects with subobjects", () => {
     const store = getStoreWithEditedObjects();
 
     // Load edited objects page
-    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><EditedObjects /></Route>, {
+    let { container } = renderWithWrappers(<Route exact path="/objects/edited"><ObjectsEdited /></Route>, {
         route: "/objects/edited", store
     });
     expect(Object.keys(store.getState().editedObjects).length).toEqual(8);

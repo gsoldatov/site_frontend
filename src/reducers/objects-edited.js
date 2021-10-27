@@ -1,7 +1,7 @@
-import { LOAD_EDITED_OBJECTS_PAGE, TOGGLE_EDITED_OBJECT_SELECTION, TOGGLE_ALL_OBJECTS_SELECTION } from "../actions/edited-objects";
+import { LOAD_OBJECTS_EDITED_PAGE, TOGGLE_EDITED_OBJECT_SELECTION, TOGGLE_ALL_OBJECTS_SELECTION } from "../actions/objects-edited";
 
 
-function loadEditedObjectsPage(state, action) {
+function loadObjectsEditedPage(state, action) {
     return {
         ...state,
         editedObjectsUI: {
@@ -45,7 +45,7 @@ function toggleAllObjectsSelection(state, action) {
 
 
 const root = {
-    LOAD_EDITED_OBJECTS_PAGE: loadEditedObjectsPage,
+    LOAD_OBJECTS_EDITED_PAGE: loadObjectsEditedPage,
     TOGGLE_EDITED_OBJECT_SELECTION: toggleEditedObjectSelection,
     TOGGLE_ALL_OBJECTS_SELECTION: toggleAllObjectsSelection
 };
