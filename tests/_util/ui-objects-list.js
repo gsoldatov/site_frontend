@@ -1,7 +1,8 @@
 import { fireEvent } from "@testing-library/react";
-import { getByText, waitFor, queryAllByText } from "@testing-library/dom";
+import { getByText, getByTitle, waitFor, queryAllByText } from "@testing-library/dom";
 
 import { getMockedPageObjectIDs } from "../_mocks/mock-fetch-handlers-objects";
+import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
 
 
 /**
@@ -44,7 +45,7 @@ const getPageObjectIDsFromMock = store => {
 
 
 /**
- * Selects provided object `type` in the object type filter on the /objects page.
+ * Selects provided object `type` in the object type filter on the /objects/list page.
  */
 export const selectObjectTypeInFilter = async (type, dropdown, store) => {
     // Open dropdown menu
@@ -65,7 +66,7 @@ export const selectObjectTypeInFilter = async (type, dropdown, store) => {
 
 
 /**
- * Deselects provided object `type` in the object type filter on the /objects page.
+ * Deselects provided object `type` in the object type filter on the /objects/list page.
  */
 export const deselectObjectTypeInFilter = async (type, dropdown, store) => {
     // Deselect object type
@@ -87,7 +88,7 @@ export const searchTagInFilter = async (tag, tagsFilterInput, store) => {
 
 
 /**
- * Checks if a tag with the provided `tagID` was added to /objects `tagsFilterInput`
+ * Checks if a tag with the provided `tagID` was added to /objects/list `tagsFilterInput`
  */
 export const checkIfTagIsAddedToFilter = async (tagID, container, store) => {
     const tagsFilterContainer = getByText(container, "Filter objects by tags").parentNode;
@@ -103,4 +104,26 @@ export const checkIfTagIsAddedToFilter = async (tagID, container, store) => {
     //     getByText(container, "No objects found.");      // no objects are found if 3 or more tags are in the filter
     checkObjectsDisplay(store, container);                                                  // correct objects are displayed
     if (store.getState().objectsUI.paginationInfo.tagsFilter.length > 2) getByText(container, "No objects found.");      // no objects are found if 3 or more tags are in the filter
+};
+
+
+/**
+ * For the /objects/list page tag update (expects container to be an /objects/list page)
+ */
+export const addAndRemoveTags = async (container, store) => {
+    // Remove an "existing" tag
+    const tagOne = getTagInlineItem({ container, text: "tag #1" });
+    fireEvent.click(tagOne);
+
+    // Add a new tag
+    let inputToggle = getByTitle(container, "Click to add tags");
+    fireEvent.click(inputToggle)
+    let input = getInlineInputField({ container });
+
+
+    fireEvent.change(input, { target: { value: "new tag" } });
+    await waitFor(() => expect(store.getState().objectUI.tagsInput.matchingIDs.length).toEqual(10));
+    let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
+    expect(dropdown).toBeTruthy();
+    fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
 };

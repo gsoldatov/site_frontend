@@ -71,7 +71,7 @@ export const NewObject = () => {
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingObject(state),
-            linkURL: "/objects",
+            linkURL: "/objects/list",
             onClick: () => dispatch(clearUnsavedCurrentEditedObject())
         }
     ]);
@@ -173,7 +173,7 @@ export const EditObject = () => {
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingObject(state),
-            linkURL: "/objects",
+            linkURL: "/objects/list",
             onClick: () => dispatch(clearUnsavedCurrentEditedObject())
         }
     ], [id]);

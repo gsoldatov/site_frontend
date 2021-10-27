@@ -17,7 +17,7 @@ import StyleNavigation from "../../styles/navigation.css";
  */
 const navigationItems = [
     { to: "/", text: "Index" },
-    { to: "/objects", text: "Objects", 
+    { to: "/objects/list", text: "Objects", 
         isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous },
     { to: "/objects/edited", text: "Edited Objects", 
         labelTextSelector: state => Object.keys(state.editedObjects).length || undefined, 

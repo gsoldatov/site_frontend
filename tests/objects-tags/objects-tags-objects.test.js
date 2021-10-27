@@ -7,17 +7,17 @@ import { getByText, getByTitle, waitFor, queryByText, queryAllByText, screen } f
 import { getStoreWithTwoSelectedObjects } from "../_mocks/data-objects-tags";
 import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
-import { addAndRemoveTags } from "../_util/ui-objects-edit";
+import { addAndRemoveTags } from "../_util/ui-objects-list";
 import { compareArrays } from "../_util/data-checks";
 import { renderWithWrappers } from "../_util/render";
 
-import Objects from "../../src/components/top-level/objects";
+import ObjectsList from "../../src/components/top-level/objects-list";
 import { EditObject } from "../../src/components/top-level/objects-edit";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 
 
 /*
-    Object tagging tests for /objects page.
+    Object tagging tests for /objects/list page.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
@@ -33,8 +33,8 @@ beforeEach(() => {
 
 test("Check page without selected objects", async () => {    
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-        route: "/objects"
+    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        route: "/objects/list"
     });
 
     // Wait for the objects to be loaded
@@ -60,8 +60,8 @@ test("Check page without selected objects", async () => {
 
 test("Check tags appearance for one selected object", async () => {
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container, store } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-        route: "/objects"
+    let { container, store } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        route: "/objects/list"
     });
 
     // Wait for the objects to be loaded and select an object
@@ -88,8 +88,8 @@ test("Check tags appearance for two selected objects", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-        route: "/objects",
+    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        route: "/objects/list",
         store: store
     });
 
@@ -115,8 +115,8 @@ test("Check common and partially applied tags on click behaviour", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-        route: "/objects",
+    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        route: "/objects/list",
         store: store
     });
 
@@ -149,8 +149,8 @@ test("Check tags input & added tags", async () => {
     await store.dispatch(getNonCachedTags([7]));    // additional tags is required to test adding of an existing tag
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-        route: "/objects",
+    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        route: "/objects/list",
         store: store
     });
 
@@ -191,8 +191,8 @@ test("Check adding existing tags with tag input", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-        route: "/objects",
+    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        route: "/objects/list",
         store: store
     });
 
@@ -224,8 +224,8 @@ test("Check object deletion", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-        route: "/objects",
+    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        route: "/objects/list",
         store: store
     });
 
@@ -258,8 +258,8 @@ test("Check side menu", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-        route: "/objects",
+    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        route: "/objects/list",
         store: store
     });
 
@@ -333,7 +333,7 @@ test("Check tags update + editedObjects reset", async () => {
     // Add & remove tags for two objects on the /objects/edit/:id page without saving the changes
     let {container, history } = renderWithWrappers(
         <Switch>
-            <Route exact path="/objects"><Objects /></Route>
+            <Route exact path="/objects/list"><ObjectsList /></Route>
             <Route exact path="/objects/edit/:id"><EditObject /></Route>
         </Switch>
     , { route: "/objects/edit/1", store });
@@ -346,7 +346,7 @@ test("Check tags update + editedObjects reset", async () => {
     await addAndRemoveTags(container, store);
 
     // Wait for the /objects page to be loaded
-    history.push("/objects");
+    history.push("/objects/list");
     await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
 
     // Add an existing tag

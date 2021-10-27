@@ -4,20 +4,20 @@ import { Switch, Route } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from "@testing-library/dom";
 
-import { waitForFetch, checkObjectsDisplay, selectObjectTypeInFilter, deselectObjectTypeInFilter, searchTagInFilter, checkIfTagIsAddedToFilter } from "./_util/ui-objects";
+import { waitForFetch, checkObjectsDisplay, selectObjectTypeInFilter, deselectObjectTypeInFilter, searchTagInFilter, checkIfTagIsAddedToFilter } from "./_util/ui-objects-list";
 import { getSideMenuDialogControls, getSideMenuItem } from "./_util/ui-common";
 import { renderWithWrappers } from "./_util/render";
 import { getCurrentObject } from "./_util/ui-objects-edit";
 import { createTestStore } from "./_util/create-test-store";
 import { getStoreWithModifiedCompositeObject } from "./_mocks/data-composite";
 
-import Objects from "../src/components/top-level/objects";
+import ObjectsList from "../src/components/top-level/objects-list";
 import { EditObject } from "../src/components/top-level/objects-edit";
-import { setObjectsPaginationInfo } from "../src/actions/objects";
+import { setObjectsPaginationInfo } from "../src/actions/objects-list";
 
 
 /*
-    /objects page tests.
+    /objects/list page tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
@@ -40,8 +40,8 @@ describe("Page load and pagination", () => {
         setFetchFail(true);
     
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects"
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list"
         });
     
         // Check if error message if displayed
@@ -65,8 +65,8 @@ describe("Page load and pagination", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 100}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store: store
         });
     
@@ -83,8 +83,8 @@ describe("Page load and pagination", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 20}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store: store
         });
     
@@ -123,8 +123,8 @@ describe("Page load and pagination", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store: store
         });
     
@@ -220,8 +220,8 @@ describe("Side menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store: store
         });
 
@@ -247,8 +247,8 @@ describe("Side menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container, history } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container, history } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store: store
         });
 
@@ -267,8 +267,8 @@ describe("Side menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container, history } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container, history } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store: store
         });
 
@@ -290,7 +290,7 @@ describe("Side menu", () => {
         fireEvent.click(secondObjectCheckbox);
         await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs).toEqual(expect.arrayContaining([1, 2])));
         fireEvent.click(editObjectButton);     // editObjectButton.onclick is not null after handler is added, although the button is not clickable, so checking onclick prop on being null is not viable
-        expect(history.entries[history.length - 1].pathname).toBe("/objects");
+        expect(history.entries[history.length - 1].pathname).toBe("/objects/list");
 
         // Deselect a object, click edit object button and check if it redirected to /objects/edit/:id
         fireEvent.click(secondObjectCheckbox);
@@ -307,7 +307,7 @@ describe("Side menu", () => {
 
         const render = route => renderWithWrappers(
             <Switch>
-                <Route exact path="/objects"><Objects /></Route>
+                <Route exact path="/objects/list"><ObjectsList /></Route>
                 <Route exact path="/objects/edit/:id"><EditObject /></Route>
             </Switch>
         , { route, store });
@@ -371,8 +371,8 @@ describe("Side menu", () => {
         let store = getStoreWithModifiedCompositeObject();
 
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store
         });
 
@@ -415,8 +415,8 @@ describe("Side menu", () => {
         let store = getStoreWithModifiedCompositeObject();
 
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store
         });
 
@@ -463,8 +463,8 @@ describe("Field menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store: store
         });
 
@@ -493,8 +493,8 @@ describe("Field menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: objectsPerPage}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store: store
         });
 
@@ -532,8 +532,8 @@ describe("Field menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects",
+        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list",
             store: store
         });
 
@@ -556,8 +556,8 @@ describe("Field menu", () => {
 
     test("Object type filter", async () => {
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { store, container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects"
+        let { store, container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list"
         });
 
         const dropdown = getByText(container, "Filter by object type").parentNode;
@@ -609,8 +609,8 @@ describe("Field menu", () => {
 
     test("Tags filter", async () => {
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { store, container } = renderWithWrappers(<Route exact path="/objects"><Objects /></Route>, {
-            route: "/objects"
+        let { store, container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+            route: "/objects/list"
         });
 
         // Dropdown is disabled during fetch 

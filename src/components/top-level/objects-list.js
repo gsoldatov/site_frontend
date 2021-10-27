@@ -14,11 +14,11 @@ import { InlineInput } from "../inline/inline-input";
 
 import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../../actions/common";
 import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo,
-        setShowDeleteDialogObjects, toggleObjectSelection, setCurrentObjectsTags, setObjectsTagsInput, setTagsFilterInput  } from "../../actions/objects";
+        setShowDeleteDialogObjects, toggleObjectSelection, setCurrentObjectsTags, setObjectsTagsInput, setTagsFilterInput  } from "../../actions/objects-list";
 import { objectsOnLoadFetch, pageFetch, setObjectsPaginationInfoAndFetchPage, onDeleteFetch, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch, 
         setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../../fetches/ui-objects";
-import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive } from "../../store/state-util/ui-objects";
-import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector } from "../../store/state-util/ui-objects";
+import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive,
+    commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector } from "../../store/state-util/ui-objects-list";
 import { enumObjectTypes } from "../../util/enum-object-types";
 
 
@@ -273,7 +273,7 @@ const pageObjectIDsSelector = state => state.objectsUI.paginationInfo.currentPag
 const paginationInfoSelector = state => state.objectsUI.paginationInfo;
 
 
-// FieldItem creating component for /objects page
+// FieldItem creating component for /objects/list page
 const ObjectsFieldItem = memo(({ id }) => {
     const textSelector = useMemo(() => state => state.objects[id] ? state.objects[id].object_name : "?", [id]);
     const isCheckedSelector = useMemo(() => state => state.objectsUI.selectedObjectIDs.includes(id), [id]);

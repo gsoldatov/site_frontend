@@ -1,7 +1,6 @@
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, queryByText, waitFor } from "@testing-library/dom";
+import { getByText, queryByText, waitFor } from "@testing-library/dom";
 
-import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
 import { getSideMenuItem, getSideMenuDialogControls } from "./ui-common";
 
 
@@ -87,28 +86,6 @@ export const resetObject = (container, resetSubobjects) => {
     const sideMenuControls = getSideMenuDialogControls(container);
     if (resetSubobjects) fireEvent.click(sideMenuControls.checkbox);
     fireEvent.click(sideMenuControls.buttons["Yes"]);
-};
-
-
-/**
- * For the /objects page tag update (expects container to be an /objects/edit/:id page)
- */
-export const addAndRemoveTags = async (container, store) => {
-    // Remove an "existing" tag
-    const tagOne = getTagInlineItem({ container, text: "tag #1" });
-    fireEvent.click(tagOne);
-
-    // Add a new tag
-    let inputToggle = getByTitle(container, "Click to add tags");
-    fireEvent.click(inputToggle)
-    let input = getInlineInputField({ container });
-
-
-    fireEvent.change(input, { target: { value: "new tag" } });
-    await waitFor(() => expect(store.getState().objectUI.tagsInput.matchingIDs.length).toEqual(10));
-    let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
-    expect(dropdown).toBeTruthy();
-    fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
 };
 
 

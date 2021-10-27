@@ -2,11 +2,11 @@ import { createTestStore } from "../_util/create-test-store";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { addObjects } from "../../src/actions/data-objects";
-import { selectObjects } from "../../src/actions/objects";
+import { selectObjects } from "../../src/actions/objects-list";
 
 
 /**
- * Creats a store with 2 selected objects in the state (for /objects page)
+ * Creats a store with 2 selected objects in the state (for /objects/list page)
  */
 export async function getStoreWithTwoSelectedObjects() {
     

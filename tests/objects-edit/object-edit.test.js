@@ -1032,7 +1032,7 @@ describe("Delete object", () => {
         fireEvent.click(deleteButton);
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().objectsTags[1]).toBeUndefined();
         expect(store.getState().links[1]).toBeUndefined();
@@ -1054,7 +1054,7 @@ describe("Delete object", () => {
         fireEvent.click(deleteButton);
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
         expect(store.getState().objects[1001]).toBeUndefined();
         expect(store.getState().markdown[1001]).toBeUndefined();
         expect(store.getState().editedObjects[1001]).toBeUndefined();
@@ -1075,7 +1075,7 @@ describe("Delete object", () => {
         fireEvent.click(deleteButton);
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
         expect(store.getState().objects[2001]).toBeUndefined();
         expect(store.getState().toDoLists[2001]).toBeUndefined();
         expect(store.getState().editedObjects[2001]).toBeUndefined();
@@ -1111,7 +1111,7 @@ describe("Delete object", () => {
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         // Check if redirect occured
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
         const state = store.getState();
 
         // Check if composite object is removed from state
@@ -1161,7 +1161,7 @@ describe("Delete object", () => {
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         // Check if redirect occured
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
         const state = store.getState();
 
         // Check if composite object is removed from state

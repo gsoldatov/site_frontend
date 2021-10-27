@@ -1,7 +1,7 @@
 import { SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
-    SET_OBJECTS_PAGINATION_INFO, SET_TAGS_FILTER, SET_TAGS_FILTER_INPUT, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects";
+    SET_OBJECTS_PAGINATION_INFO, SET_TAGS_FILTER, SET_TAGS_FILTER_INPUT, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects-list";
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
-import { commonTagIDsSelector } from "../store/state-util/ui-objects";
+import { commonTagIDsSelector } from "../store/state-util/ui-objects-list";
 
 
 function setObjectsTagsInput(state, action) {

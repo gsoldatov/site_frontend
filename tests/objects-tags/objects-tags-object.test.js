@@ -11,7 +11,7 @@ import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } fr
 import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "../_util/ui-objects-edit";
 
 import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
-import Objects from "../../src/components/top-level/objects";
+import ObjectsList from "../../src/components/top-level/objects-list";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 import { addObjects, addObjectData } from "../../src/actions/data-objects";
@@ -141,7 +141,7 @@ describe("Add object page", () => {
         // Render switch with /objects/edit/:id and /objects page at /objects/edit/new
         let { container, store } = renderWithWrappers(
             <Switch>
-                <Route exact path="/objects"><Objects /></Route>
+                <Route exact path="/objects/list"><ObjectsList /></Route>
                 <Route exact path="/objects/edit/:id"><NewObject /></Route>
             </Switch>
         , { route: "/objects/edit/new" });
@@ -336,7 +336,7 @@ describe("Edit object page", () => {
         fireEvent.click(deleteButton);
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects"));
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
         expect(store.getState().objectsTags.hasOwnProperty("1")).toBeFalsy();
     });
 
@@ -378,7 +378,7 @@ describe("Edit object page", () => {
         // Render switch with /objects/edit/:id and /objects page at /objects/edit/new
         let { container, store } = renderWithWrappers(
             <Switch>
-                <Route exact path="/objects"><Objects /></Route>
+                <Route exact path="/objects/list"><ObjectsList /></Route>
                 <Route exact path="/objects/edit/:id"><EditObject /></Route>
             </Switch>
         , { route: "/objects/edit/1" });

@@ -173,7 +173,7 @@ export const editObjectOnDeleteFetch = deleteSubobjects => {
         }
 
         // Handle successful fetch end
-        dispatch(setRedirectOnRender("/objects"));
+        dispatch(setRedirectOnRender("/objects/list"));
     };      
 };
 

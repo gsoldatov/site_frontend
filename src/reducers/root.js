@@ -9,7 +9,7 @@ import common from "./common";
 import tag from "./tag";
 import tags from "./tags";
 import objectEdit from "./objects-edit";
-import objects from "./objects";
+import objectsList from "./objects-list";
 import editedObjects from "./edited-objects";
 
 function getActionHandlers(rootObjects) {
@@ -31,7 +31,7 @@ function getActionHandlers(rootObjects) {
     return actionHandlers;
 }
 
-const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, dataUsers, auth, common, tag, tags, objectEdit, objects, editedObjects });
+const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, dataUsers, auth, common, tag, tags, objectEdit, objectsList, editedObjects });
 
 export default function getRootReducer (enableDebugLogging) {
     return (state, action) => {

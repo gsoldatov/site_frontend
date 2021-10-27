@@ -14,7 +14,7 @@ import { createTestStore } from "./_util/create-test-store";
 import { getMappedSubobjectID } from "./_mocks/data-composite";
 
 import { NewObject, EditObject } from "../src/components/top-level/objects-edit";
-import Objects from "../src/components/top-level/objects";
+import ObjectsList from "../src/components/top-level/objects-list";
 
 import { getDefaultAuthState } from "../src/store/state-templates/auth";
 
@@ -213,7 +213,7 @@ describe("Edited objects > Existing object page", () => {
 
         var { container } = renderWithWrappers(
             <Switch>
-                <Route exact path="/objects"><Objects /></Route>
+                <Route exact path="/objects/list"><ObjectsList /></Route>
                 <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />
             </Switch>, 
             { route: "/objects/edit/3001", store }
@@ -282,7 +282,7 @@ describe("Edited objects > Existing object page", () => {
 
         var { container } = renderWithWrappers(
             <Switch>
-                <Route exact path="/objects"><Objects /></Route>
+                <Route exact path="/objects/list"><ObjectsList /></Route>
                 <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />
             </Switch>, 
             { route: "/objects/edit/3001", store }

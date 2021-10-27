@@ -20,7 +20,7 @@ import { NewTag, EditTag } from "./tag";
 import Tags from "./tags";
 import { NewObject, EditObject } from "./objects-edit";
 import { EditedObjects } from "./edited-objects";
-import Objects from "./objects";
+import ObjectsList from "./objects-list";
 import { NotFound } from "./not-found";
 
 import { enumUserLevels } from "../../util/enum-user-levels";
@@ -79,9 +79,9 @@ export const App = () => {
             </ProtectedRoute>
 
             {/* Objects */}
-            <ProtectedRoute exact path="/objects"
+            <ProtectedRoute exact path="/objects/list"
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <Objects />
+                <ObjectsList />
             </ProtectedRoute>
             
             <ProtectedRoute exact path="/objects/edited"

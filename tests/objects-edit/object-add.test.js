@@ -51,7 +51,7 @@ describe("UI checks", () => {
     
         // Check if cancel button redirects to /objects page
         fireEvent.click(cancelButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/objects");
+        expect(history.entries[history.length - 1].pathname).toBe("/objects/list");
     });
 
 

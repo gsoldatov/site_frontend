@@ -5,9 +5,9 @@ import { viewObjectsFetch, deleteObjectsFetch } from "./data-objects";
 import { tagsSearchFetch, objectsTagsUpdateFetch } from "./data-tags";
 
 import { setObjectsFetch, setObjectsPaginationInfo, setObjectsTagsInput, setCurrentObjectsTags, 
-        setShowDeleteDialogObjects, setTagsFilterInput, setTagsFilter } from "../actions/objects";
+        setShowDeleteDialogObjects, setTagsFilterInput, setTagsFilter } from "../actions/objects-list";
 
-import { isFetchingObjects } from "../store/state-util/ui-objects";
+import { isFetchingObjects } from "../store/state-util/ui-objects-list";
 
 import { enumResponseErrorType } from "../util/enum-response-error-type";
 

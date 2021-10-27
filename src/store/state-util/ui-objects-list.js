@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 /*
-    Functions for checking/getting data from a /objects page UI state.
+    Functions for checking/getting data from a /objects/list page UI state.
 */
 
 
@@ -23,7 +23,7 @@ export const isObjectsTagsEditActive = state => state.objectsUI.addedTags.length
 
 
 /**
- * Resets added and common & partially applied tag caches on the /objects page.
+ * Resets added and common & partially applied tag caches on the /objects/list page.
  */
 export const resetObjectCaches = () => {
     commonAndPartiallyAppliedTagsCache = {};
@@ -31,7 +31,7 @@ export const resetObjectCaches = () => {
 };
 
 /**
- * Selector with memoization for calculating common and partially applied tags on /objects page.
+ * Selector with memoization for calculating common and partially applied tags on /objects/list page.
  * Calculates and caches lists of common & partially applied tag IDs for the current ids in the state.objectsUI.selectedObjectIDs list.
  */
 export const commonAndPartiallyAppliedTagsSelector = createSelector(
@@ -64,19 +64,19 @@ export const commonAndPartiallyAppliedTagsSelector = createSelector(
 
 
 /**
- * Selector with memoization which returns common tag IDs of selected objects on /objects page.
+ * Selector with memoization which returns common tag IDs of selected objects on /objects/list page.
  */
 export const commonTagIDsSelector = createSelector(commonAndPartiallyAppliedTagsSelector, commonAndPartiallyAppliedTags => commonAndPartiallyAppliedTags.commonTagIDs);
 
 
 /**
- * Selector with memoization which returns partially applied tag IDs of selected objects on /objects page.
+ * Selector with memoization which returns partially applied tag IDs of selected objects on /objects/list page.
  */
  export const partiallyAppliedTagIDsSelector = createSelector(commonAndPartiallyAppliedTagsSelector, commonAndPartiallyAppliedTags => commonAndPartiallyAppliedTags.partiallyAppliedTagIDs);
 
 
 /**
- * Selector with memoization which returns common, partially applied and added existing tags for selected objects on /objects page.
+ * Selector with memoization which returns common, partially applied and added existing tags for selected objects on /objects/list page.
  */
 export const existingIDsSelector = createSelector(
     state => state.objectsUI.addedTags,
@@ -89,7 +89,7 @@ export const existingIDsSelector = createSelector(
 
 
 /**
- * Selector with memoization for calculating added tags on /objects page.
+ * Selector with memoization for calculating added tags on /objects/list page.
  * Calculates and caches lists of tag ids/tags to be displayed in added tags inline item list (filters out partially applied tag ids).
  */
 export const addedTagsSelector = createSelector(
