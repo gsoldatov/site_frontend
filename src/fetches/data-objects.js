@@ -38,7 +38,7 @@ export const addObjectFetch = obj => {
         let payload = { object: { added_tags: obj.addedTags, object_data }};
         for (let attr of addedObjectAttributes) payload.object[attr] = obj[attr];
         
-        let response = await dispatch(runFetch(`${backendURL}/objects/edit/new`, {
+        let response = await dispatch(runFetch(`${backendURL}/objects/add`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)

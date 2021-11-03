@@ -272,7 +272,7 @@ function handleObjectsSearch(body) {
 
 
 export const objectsHandlersList = new Map([
-    ["/objects/edit/new", {"POST": handleAdd}],
+    ["/objects/add", {"POST": handleAdd}],
     ["/objects/view", {"POST": handleView}],
     ["/objects/delete", {"DELETE": handleDelete}],
     ["/objects/update", {"PUT": handleUpdate}],
