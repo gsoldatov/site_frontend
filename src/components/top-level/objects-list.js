@@ -16,7 +16,7 @@ import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../../actions/common";
 import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo,
         setShowDeleteDialogObjects, toggleObjectSelection, setCurrentObjectsTags, setObjectsTagsInput, setTagsFilterInput  } from "../../actions/objects-list";
 import { objectsOnLoadFetch, pageFetch, setObjectsPaginationInfoAndFetchPage, onDeleteFetch, objectsTagsDropdownFetch, onObjectsTagsUpdateFetch, 
-        setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../../fetches/ui-objects";
+        setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../../fetches/ui-objects-list";
 import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive,
     commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector } from "../../store/state-util/ui-objects-list";
 import { enumObjectTypes } from "../../util/enum-object-types";
