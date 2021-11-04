@@ -51,10 +51,10 @@ div.markdown-view-edit-item.small:last-child {
 }
 
 /* Parsed markdown */
-h3.markdown-header {
+/* h3.markdown-header {
     padding-bottom: 0.25em;
     border-bottom: solid 1px rgb(150, 150, 150);
-}
+} */
 
 blockquote.markdown-blockquote {
     padding: 0.5em;
