@@ -98,6 +98,16 @@ export const EditObject = () => {
         },
 
         {
+            type: "linkItem",
+            text: "View Object",
+            icon: "eye",
+            iconColor: "black",
+            isActiveSelector: state => !isFetchingObject(state),
+            linkURL: `/objects/view/${id}`,
+            onClick: () => dispatch(clearUnsavedCurrentEditedObject())
+        },
+
+        {
             type: "item",
             text: "Save",
             icon: "save outline",
