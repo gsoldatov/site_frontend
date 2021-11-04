@@ -19,6 +19,7 @@ import { UserPage } from "./user";
 import { NewTag, EditTag } from "./tag";
 import Tags from "./tags";
 import { NewObject, EditObject } from "./objects-edit";
+import { ObjectsView } from "./objects-view";
 import { ObjectsEdited } from "./objects-edited";
 import ObjectsList from "./objects-list";
 import { NotFound } from "./not-found";
@@ -88,6 +89,7 @@ export const App = () => {
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
                 <ObjectsEdited />
             </ProtectedRoute>
+            
             <ProtectedRoute exact path="/objects/edit/new"
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
                 <NewObject />
@@ -96,6 +98,10 @@ export const App = () => {
                 childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
                 <EditObject />
             </ProtectedRoute>
+
+            <Route exact path="/objects/view/:id">
+                <ObjectsView />
+            </Route>
 
             {/* Not found */}
             <Route>

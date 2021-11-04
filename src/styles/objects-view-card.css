@@ -1,0 +1,42 @@
+/***********************************************
+  /objects/view/:id page's object card styles.
+***********************************************/
+
+
+/* Timestamp */
+.objects-view-timestamp {
+    font-family: Arial, Helvetica, sans-serif;
+    color: gray;
+    margin-bottom: 0.25em;
+}
+
+
+/* Object header */
+.object-view-header-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Object header buttons */
+.objects-view-header-button-container {
+    margin-left: 0.75em;
+    margin-top: -0.25em;
+    margin-bottom: 1em;
+}
+
+.ui.basic.black.button.objects-view-header-button {
+    /* Button positioning */
+    padding: 0px;
+
+    /* Disable borders */
+    border: 0px !important;
+    box-shadow: none !important;
+    border-radius: 0;
+}
+
+/* Object description */
+.objects-view-description pre {
+    font-family: inherit;
+    margin-top: 0;
+    margin-bottom: 0;
+}
