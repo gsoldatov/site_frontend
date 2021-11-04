@@ -44,10 +44,16 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedS
     return (
         <div className="created-modified-timestamps-container">
             <div className="created-modified-timestamps-item">
-                <p><b>Created at: </b> {createdAt}</p>
+                <p>
+                    <b>Created at:</b>
+                    <span className="created-modified-timestamps-value">{createdAt}</span>
+                </p>
             </div>
             <div className="created-modified-timestamps-item">
-                <p><b>Modified at: </b> {modifiedAt}</p>
+                <p>
+                    <b>Modified at:</b>
+                    <span className="created-modified-timestamps-value">{modifiedAt}</span>
+                </p>
             </div>
         </div>
     );

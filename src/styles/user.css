@@ -30,6 +30,12 @@
     font-weight: bold;
 }
 
+/* View mode timestamp value */
+.user-page-view-item-value.timestamp {
+    font-family: Arial, Helvetica, sans-serif;
+    color: gray;
+}
+
 
 /* Edit mode header */
 .user-page-edit-header {

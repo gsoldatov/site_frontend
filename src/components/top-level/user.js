@@ -89,7 +89,7 @@ const ViewUser = ({ setIsEditMode }) => {
     const registeredAt = (
         <div className="user-page-view-item-container">
             <span className="user-page-view-item-title">Registered at: </span>
-            <span className="user-page-view-item-value">{(new Date(user.registered_at)).toLocaleString()}</span>
+            <span className="user-page-view-item-value timestamp">{(new Date(user.registered_at)).toLocaleString()}</span>
         </div>
     );
     const userLevel = fullViewMode && (
