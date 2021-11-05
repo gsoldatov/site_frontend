@@ -14,7 +14,7 @@ export const ObjectDescription = ({ objectID }) => {
     const text = useSelector(state => state.objects[objectID].object_description);
 
 
-    return (
+    return text.length > 0 && (
         <div className="objects-view-description">
             <pre>
                 {text}

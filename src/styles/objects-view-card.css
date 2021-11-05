@@ -10,7 +10,6 @@
     margin-bottom: 0.25em;
 }
 
-
 /* Object header */
 .object-view-header-container {
     display: flex;
@@ -43,4 +42,9 @@
     font-family: inherit;
     margin-top: 0;
     margin-bottom: 0;
+}
+
+/* Object data */
+.objects-view-data {
+    margin-bottom: 1em;
 }

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Header, Loader, Message } from "semantic-ui-react";
+import { Loader, Message } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
 
 import { objectsViewOnLoadFetch } from "../../fetches/ui-objects-view";
 
 import { ObjectAttributes } from "./object-attributes/object-attributes";
 import { ObjectTagList } from "./object-tags";
+import { ObjectDataSwitch } from "./object-data/object-data-switch";
 
 import StyleObjectsViewCard from "../../styles/objects-view-card.css";
 
@@ -68,6 +69,7 @@ export const ObjectsViewCard = ({ objectID }) => {
     return (
         <div className = "objects-view-card-container">
             <ObjectAttributes objectID={objectID} />
+            <ObjectDataSwitch objectID={objectID} />
             <ObjectTagList objectID={objectID} />
             {test}
         </div>
