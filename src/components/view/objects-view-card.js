@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { objectsViewOnLoadFetch } from "../../fetches/ui-objects-view";
 
 import { ObjectAttributes } from "./object-attributes/object-attributes";
+import { ObjectTagList } from "./object-tags";
 
 import StyleObjectsViewCard from "../../styles/objects-view-card.css";
 
@@ -67,6 +68,7 @@ export const ObjectsViewCard = ({ objectID }) => {
     return (
         <div className = "objects-view-card-container">
             <ObjectAttributes objectID={objectID} />
+            <ObjectTagList objectID={objectID} />
             {test}
         </div>
     );

@@ -35,6 +35,10 @@
 }
 
 /* Object description */
+.objects-view-description {
+    margin-bottom: 1em;
+}
+
 .objects-view-description pre {
     font-family: inherit;
     margin-top: 0;

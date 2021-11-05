@@ -24,6 +24,17 @@ div.inline-item-list-block {
     border-radius: 4px;
 }
 
+div.inline-item-list-block.borderless {
+    border: 0;
+    border-radius: 0;
+
+    /* Reverse paddings & margins of child elements */
+    margin-left: -0.4em;
+    margin-right: -0.4em;
+    margin-top: -0.3em;
+    margin-bottom: -0.3em;
+}
+
 div.inline-item-list-wrapper {
     display: flex;
     flex-wrap: wrap; 

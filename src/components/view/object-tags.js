@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { InlineItem } from "../inline/inline-item";
+import { InlineItemList } from "../inline/inline-item-list";
 import { InlineItemListBlock, InlineItemListWrapper } from "../inline/inline-item-list-containers";
 
 
@@ -10,16 +11,10 @@ import { InlineItemListBlock, InlineItemListWrapper } from "../inline/inline-ite
  */
 export const ObjectTagList = ({ objectID }) => {
     const tagsSelector = useMemo(() => state => state.objectsTags[objectID], [objectID]);
+    const showTagList = useSelector(state => (state.objectsTags[objectID] || []).length > 0);
 
-    /*
-    TODO custom CSS class for block and/or wrapper:
-    - single line header & tag list;
-    - no container borders;
-    ? smaller margin/padding;
-    */
-
-    return (
-        <InlineItemListBlock header="Tags">
+    return showTagList && (
+        <InlineItemListBlock header="Tags" borderless>
             <InlineItemListWrapper>
                 <InlineItemList itemIDSelector={tagsSelector} ItemComponent={Tag} />
             </InlineItemListWrapper>
@@ -31,10 +26,10 @@ export const ObjectTagList = ({ objectID }) => {
 /**
  * A single tag in the object view page.
  */
-const Tag = ({ tagID }) => {
-    const tagName = useSelector(state => state.tags[tagID].tag_name);
+const Tag = ({ id }) => {
+    const tagName = useSelector(state => state.tags[id].tag_name);
 
     return (
-        <InlineItem text={tagName} itemClassName="objects-view-tag" />
+        <InlineItem text={tagName} itemClassName="inline-item" />
     );
 };

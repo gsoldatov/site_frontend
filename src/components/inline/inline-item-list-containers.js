@@ -8,13 +8,14 @@ import StyleInline from "../../styles/inline.css";
  * 
  * Highest level component for inline itemlists. Contains one or more <InlineItemListWrapper> components.
  */
-export const InlineItemListBlock = ({header, children}) => {
+export const InlineItemListBlock = ({ header, children, borderless = false }) => {
     const _header = header && <div className="inline-item-list-block-header">{header}</div>;
+    const className = "inline-item-list-block" + (borderless ? " borderless" : "");
 
     return (
         <>
             {_header}
-            <div className="inline-item-list-block">
+            <div className={className}>
                 {children}
             </div>
         </>
