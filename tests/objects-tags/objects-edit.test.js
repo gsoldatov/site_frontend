@@ -376,7 +376,7 @@ describe("Edit object page", () => {
 
     test("Persist added and removed tags", async () => {
         // Render switch with /objects/edit/:id and /objects page at /objects/edit/new
-        let { container, store } = renderWithWrappers(
+        let { container, store, history } = renderWithWrappers(
             <Switch>
                 <Route exact path="/objects/list"><ObjectsList /></Route>
                 <Route exact path="/objects/edit/:id"><EditObject /></Route>
@@ -401,12 +401,13 @@ describe("Edit object page", () => {
         fireEvent.click(deletedTag);
         expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(1);
 
-        // Get to /objects page and back
+        // Get to /objects/list page and back
         const cancelButton = getSideMenuItem(container, "Cancel");
         fireEvent.click(cancelButton);
-        await waitFor(() => getByText(container, "object #1"));
 
-        fireEvent.click(getByText(container, "object #1"));
+        history.push("/objects/edit/1");
+        // await waitFor(() => getByText(container, "object #1"));
+        // fireEvent.click(getByText(container, "object #1"));
         await waitFor(() => getByText(container, "Object Information"));
 
         // Check if added and removed tags are displayed
