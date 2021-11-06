@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 
 import FieldMenu from "../../field/field-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 
-import { setEditedObject } from "../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-objects-edit";
-import { getSortedItemIDs, getVisibleItemIDs, getIsTDLDragAndDropEnabledSelector } from "../../../store/state-util/to-do-lists";
+import { getSortedItemIDs, getVisibleItemIDs } from "../../../store/state-util/to-do-lists";
 
 import StyleTDL from "../../../styles/to-do-lists.css";
 
@@ -15,24 +13,19 @@ import StyleTDL from "../../../styles/to-do-lists.css";
 /**
  * To-do list data container component.
  */
-export const TDLContainer = ({ objectID }) => {
-    const dispatch = useDispatch();
-    const canDrag = useSelector(getIsTDLDragAndDropEnabledSelector(objectID));
-    const updateCallback = useMemo(
-        () => params => dispatch(setEditedObject(params, objectID))
-    , [objectID]);
+export const TDLContainer = ({ objectID, toDoList, updateCallback, canDrag }) => {
 
     return (
         <div className="to-do-list-container">
             <div className="to-do-list-container-header">To-Do List</div>
-            <TDLMenu updateCallback={updateCallback} objectID={objectID} />
-            <TDLItems updateCallback={updateCallback} objectID={objectID} canDrag={canDrag} />    
+            <TDLMenu updateCallback={updateCallback} toDoList={toDoList} />
+            <TDLItems updateCallback={updateCallback} objectID={objectID} toDoList={toDoList} canDrag={canDrag} />    
         </div>
     );
 };
 
 
-const TDLMenu = ({ objectID, updateCallback }) => {
+const TDLMenu = ({ toDoList, updateCallback }) => {
     const fieldMenuItems = [
         {
             type: "item",
@@ -40,7 +33,7 @@ const TDLMenu = ({ objectID, updateCallback }) => {
             title: "Default sort",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "default" }},
-            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).toDoList.sort_type === "default"
+            isActiveSelector: () => toDoList.sort_type === "default"
         },
         {
             type: "item",
@@ -48,7 +41,7 @@ const TDLMenu = ({ objectID, updateCallback }) => {
             title: "Sort by state",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "state", newItemInputIndent: 0 }},     // also reset new item input indent when sorting by state
-            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).toDoList.sort_type === "state"
+            isActiveSelector: () => toDoList.sort_type === "state"
         }
     ];
 
@@ -56,9 +49,8 @@ const TDLMenu = ({ objectID, updateCallback }) => {
 };
 
 
-const TDLItems = ({ updateCallback, objectID, canDrag }) => {
+const TDLItems = ({ objectID, toDoList, updateCallback, canDrag }) => {
     const itemsRef = useRef();
-    const toDoList = useSelector(getEditedOrDefaultObjectSelector(objectID)).toDoList;
     const itemOrder = toDoList.itemOrder;
 
     // State checks performed to update dangerouslySetInnerHTML of <TDLItem> and <Comment> components when needed

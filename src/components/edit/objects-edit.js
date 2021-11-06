@@ -10,6 +10,7 @@ import { SubobjectsContainer } from "./composite/subobjects";
 
 import { setEditedObject } from "../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-objects-edit";
+import { getIsTDLDragAndDropEnabledSelector } from "../../store/state-util/to-do-lists";
 import { enumObjectTypes } from "../../util/enum-object-types";
 
 import StyleObjectsEdit from "../../styles/objects-edit.css";
@@ -72,9 +73,17 @@ export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
  * If `subobjectCard` is true, displays default component for composite objects and styles if accordingly.
  */
 export const ObjectViewEditSwitch = ({ objectID, subobjectCard = false }) => {
+    const dispatch = useDispatch();
     const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
     const objectTypeSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).object_type, [objectID]);
     const objectType = useSelector(objectTypeSelector);
+
+    // To-do list props
+    const toDoList = useSelector(getEditedOrDefaultObjectSelector(objectID)).toDoList;
+    const canDragToDoList = useSelector(getIsTDLDragAndDropEnabledSelector(objectID));
+    const toDoListUpdateCallback = useMemo(
+        () => params => dispatch(setEditedObject(params, objectID))
+    , [objectID]);
 
     switch (objectType) {
         case "link":
@@ -82,7 +91,7 @@ export const ObjectViewEditSwitch = ({ objectID, subobjectCard = false }) => {
         case "markdown":
             return <MarkdownContainer objectID={objectID} />;
         case "to_do_list":
-            return <TDLContainer objectID={objectID} />;
+            return <TDLContainer objectID={objectID} toDoList={toDoList} canDrag={canDragToDoList} updateCallback={toDoListUpdateCallback} />;
         case "composite":
             if (subobjectCard)
                 return <DefaultObjectData objectID={objectID} subobjectCard />;
