@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { ObjectDataLink } from "./object-data-link";
 import { ObjectDataMarkdown } from "./object-data-markdown";
+import { ObjectDataToDoList } from "./object-data-to-do-list";
 
 
 /**
@@ -15,6 +16,8 @@ export const ObjectDataSwitch = ({ objectID }) => {
             return <ObjectDataLink objectID={objectID} />;
         case "markdown":
             return <ObjectDataMarkdown objectID={objectID} />;
+        case "to_do_list":
+            return <ObjectDataToDoList objectID={objectID} />;
         default:
             return null;
     }

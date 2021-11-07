@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { useSelector } from "react-redux";
 
 import FieldMenu from "../../field/field-menu";
@@ -18,14 +18,14 @@ export const TDLContainer = ({ objectID, toDoList, updateCallback, canDrag }) =>
     return (
         <div className="to-do-list-container">
             <div className="to-do-list-container-header">To-Do List</div>
-            <TDLMenu updateCallback={updateCallback} toDoList={toDoList} />
+            <TDLMenu updateCallback={updateCallback} sortType={toDoList.sort_type} />
             <TDLItems updateCallback={updateCallback} objectID={objectID} toDoList={toDoList} canDrag={canDrag} />    
         </div>
     );
 };
 
 
-const TDLMenu = ({ toDoList, updateCallback }) => {
+const TDLMenu = memo(({ sortType, updateCallback }) => {
     const fieldMenuItems = [
         {
             type: "item",
@@ -33,7 +33,7 @@ const TDLMenu = ({ toDoList, updateCallback }) => {
             title: "Default sort",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "default" }},
-            isActiveSelector: () => toDoList.sort_type === "default"
+            isActiveSelector: () => sortType === "default"
         },
         {
             type: "item",
@@ -41,12 +41,12 @@ const TDLMenu = ({ toDoList, updateCallback }) => {
             title: "Sort by state",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "state", newItemInputIndent: 0 }},     // also reset new item input indent when sorting by state
-            isActiveSelector: () => toDoList.sort_type === "state"
+            isActiveSelector: () => sortType === "state"
         }
     ];
 
     return <FieldMenu size="mini" className="to-do-list-menu" items={fieldMenuItems} />;
-};
+});
 
 
 const TDLItems = ({ objectID, toDoList, updateCallback, canDrag }) => {

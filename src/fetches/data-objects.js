@@ -139,7 +139,6 @@ export const updateObjectFetch = obj => {
 
         // Run fetch & handle response
         let object_data = serializeObjectData(state, obj);
-        updatedObjectAttributes
         let payload = { object: { added_tags: obj.addedTags, removed_tag_ids: obj.removedTagIDs, object_data }};
         for (let attr of updatedObjectAttributes) payload.object[attr] = obj[attr];
         
