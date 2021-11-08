@@ -59,3 +59,8 @@ h5, h5.ui.header {
 h6, h6.ui.header {
     color: gray;
 }
+
+/* Lists */
+ul:last-child {
+    margin-bottom: 0;
+}

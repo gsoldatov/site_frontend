@@ -14,7 +14,7 @@ import StyleObjectsViewCard from "../../styles/objects-view-card.css";
 /**
  * Container for object/subobject attributes, tags and data.
  */
-export const ObjectsViewCard = ({ objectID }) => {
+export const ObjectsViewCard = ({ objectID, isSubobject = false }) => {
     const dispatch = useDispatch();
 
     // User fetch & error state
@@ -49,39 +49,16 @@ export const ObjectsViewCard = ({ objectID }) => {
         </div>
     );
 
-    const test = (  // TODO delete
-        <>
-            {/* <Header as="h1">Header 1</Header>
-            <div>Some text</div>
-            <Header as="h2">Header 2</Header>
-            <div>Some text</div>
-            <Header as="h3">Header 3</Header>
-            <div>Some text</div>
-            <Header as="h4">Header 4</Header>
-            <div>Some text</div>
-            <Header as="h5">Header 5</Header>
-            <div>Some text</div>
-            <Header as="h6">Header 6</Header>
-            <div>Some text</div> */}
-        </>
-    )
+    // Object card
+    const containerClassName = "objects-view-card-container"
+        .concat(isSubobject ? " subobject" : "");
+    const tagList = !isSubobject && <ObjectTagList objectID={objectID} />;
 
     return (
-        <div className = "objects-view-card-container">
-            <ObjectAttributes objectID={objectID} />
-            <ObjectDataSwitch objectID={objectID} />
-            <ObjectTagList objectID={objectID} />
-            {test}
+        <div className = {containerClassName}>
+            <ObjectAttributes objectID={objectID} isSubobject={isSubobject} />
+            <ObjectDataSwitch objectID={objectID} isSubobject={isSubobject} />
+            {tagList}
         </div>
     );
-
-    /*
-    TODO:
-    + fetch object attributes, tags and data;
-    + display loader and fetch error;
-    - display object attributes;
-    - display object data;
-    - display object tags;
-    + clear unused imports;
-    */
 };

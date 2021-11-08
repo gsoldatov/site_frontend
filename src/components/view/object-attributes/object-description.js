@@ -6,10 +6,11 @@ import { Header } from "semantic-ui-react";
 /**
  * Object view description.
  */
-export const ObjectDescription = ({ objectID }) => {
+export const ObjectDescription = ({ objectID, isSubobject = false }) => {
     /*
     TODO
     - hide description is display property is not set;
+    - separate hide checks for subobjcets;
     */
     const text = useSelector(state => state.objects[objectID].object_description);
 
