@@ -1,19 +1,19 @@
 /**
  * List of object attributes (excluding tags, data & UI settings).
  */
-export const objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description", "is_published", "owner_id"];
+export const objectAttributes = ["object_id", "object_type", "created_at", "modified_at", "object_name", "object_description", "is_published", "show_description", "owner_id"];
 
 
 /**
  * List of object attributes (excluding tags & data) serialized into JSON when sending a request to add it.
  */
-export const addedObjectAttributes = ["object_type" ,"object_name", "object_description", "is_published", "owner_id"];
+export const addedObjectAttributes = ["object_type" ,"object_name", "object_description", "is_published", "show_description", "owner_id"];
 
 
 /**
  * List of object attributes (excluding tags & data) serialized into JSON when sending a request to update it.
  */
-export const updatedObjectAttributes = ["object_id" ,"object_name", "object_description", "is_published", "owner_id"];
+export const updatedObjectAttributes = ["object_id" ,"object_name", "object_description", "is_published", "show_description", "owner_id"];
 
 
 /**
@@ -21,7 +21,7 @@ export const updatedObjectAttributes = ["object_id" ,"object_name", "object_desc
  * 
  * Object id, tags & data, as well as composite properties (column & row positions, selected_tab, etc.), are added separately (see `serializeObjectData` function).
  */
-export const compositeSubobjectObjectAttributes = ["object_name", "object_description", "object_type", "is_published", "owner_id"];
+export const compositeSubobjectObjectAttributes = ["object_name", "object_description", "object_type", "is_published", "show_description", "owner_id"];
 
 
 /**
@@ -37,6 +37,7 @@ export const defaultEditedObjectState = {       // `getDefaultEditedObjectState`
     created_at: "",
     modified_at: "",
     is_published: false,
+    show_description: false,
     owner_id: 0,
 
     // object's tags
@@ -45,7 +46,10 @@ export const defaultEditedObjectState = {       // `getDefaultEditedObjectState`
     removedTagIDs: [],
 
     // data
-    link: "",
+    link: {
+        link: "",
+        show_description_as_link: false,
+    },
     markdown: { 
         raw_text: "", 
         parsed: "" 

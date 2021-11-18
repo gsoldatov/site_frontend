@@ -484,7 +484,7 @@ describe("Subobject card tabs", () => {
         // Edit link value and check if it was updated
         const linkText = "test text";
         fireEvent.change(linkInput, { target: { value: linkText } });
-        await waitFor(() => expect(store.getState().editedObjects[cards[0][0].id].link).toEqual(linkText));
+        await waitFor(() => expect(store.getState().editedObjects[cards[0][0].id].link.link).toEqual(linkText));
     });
 
 
@@ -507,12 +507,12 @@ describe("Subobject card tabs", () => {
         // Check if link data is displayed
         clickSubobjectCardDataTabButton(card);
         const linkInput = getByPlaceholderText(card, "Link");
-        expect(linkInput.value).toEqual(store.getState().editedObjects[card.id].link);
+        expect(linkInput.value).toEqual(store.getState().editedObjects[card.id].link.link);
         
         // Edit link value and check if it was updated
         const linkText = "test text";
         fireEvent.change(linkInput, { target: { value: linkText } });
-        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toEqual(linkText));
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toEqual(linkText));
 
         // Add an existing markdown object
         await addAnExistingSubobject(container, 0, "markdown subobject", store, { waitForObjectLoad: true });
@@ -738,7 +738,7 @@ describe("Subobject card menu buttons", () => {
             const linkInput = getByPlaceholderText(card, "Link");
             const linkText = "test text";
             fireEvent.change(linkInput, { target: { value: linkText } });
-            await waitFor(() => expect(store.getState().editedObjects[card.id].link).toEqual(linkText));
+            await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toEqual(linkText));
 
             // Click reset button & close dialog
             const { resetButton } = getSubobjectCardMenuButtons(card);
@@ -756,7 +756,7 @@ describe("Subobject card menu buttons", () => {
             const secondEditedObject = store.getState().editedObjects[card.id];
             expect(secondEditedObject.object_name).toEqual(unchangedEditedObject.object_name);
             expect(secondEditedObject.object_description).toEqual(unchangedEditedObject.object_description);
-            expect(secondEditedObject.link).toEqual(unchangedEditedObject.link);
+            expect(secondEditedObject.link.link).toEqual(unchangedEditedObject.link.link);
         });
 
 
@@ -900,11 +900,11 @@ describe("Indicators", () => {
         clickSubobjectCardDataTabButton(card);
         const linkInput = getByPlaceholderText(card, "Link");
         fireEvent.change(linkInput, { target: { value: "" } });
-        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toEqual(""));
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toEqual(""));
         expect(getSubobjectCardIndicators(card).validationError).toBeTruthy();
 
         fireEvent.change(linkInput, { target: { value: link } });
-        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toEqual(link));
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toEqual(link));
         expect(getSubobjectCardIndicators(card).validationError).toBeFalsy();
     });
 
@@ -1027,7 +1027,7 @@ describe("Indicators", () => {
         clickSubobjectCardDataTabButton(card);
         const linkInput = getByPlaceholderText(card, "Link");
         fireEvent.change(linkInput, { target: { value: "updated value" } });
-        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toEqual("updated value"));
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toEqual("updated value"));
         expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedData).toBeTruthy();
     });
 

@@ -115,7 +115,7 @@ describe("Edited objects > New object page", () => {
         await waitFor(() => expect(store.getState().editedObjects[newSubobjectID].object_name).toEqual(newSubobjectName));
         clickSubobjectCardDataTabButton(cards[0][0]);
         fireEvent.change(getByPlaceholderText(cards[0][0], "Link"), { target: { value: newSubobjectLink }});
-        await waitFor(() => expect(store.getState().editedObjects[newSubobjectID].link).toEqual(newSubobjectLink));
+        await waitFor(() => expect(store.getState().editedObjects[newSubobjectID].link.link).toEqual(newSubobjectLink));
 
         // Save the object
         fireEvent.click(getSideMenuItem(container, "Save"));

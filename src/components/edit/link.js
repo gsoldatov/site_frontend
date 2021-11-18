@@ -11,9 +11,9 @@ import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-obje
 export const LinkInput = ({ objectID }) => {
     const dispatch = useDispatch();
     
-    const link = useSelector(getEditedOrDefaultObjectSelector(objectID)).link;
+    const link = useSelector(getEditedOrDefaultObjectSelector(objectID)).link.link;
 
-    const handleLinkChange = useRef(e => dispatch(setEditedObject({ link: e.target.value }, objectID))).current;
+    const handleLinkChange = useRef(e => dispatch(setEditedObject({ link: { link: e.target.value }}, objectID))).current;
 
     return (
         <Form>

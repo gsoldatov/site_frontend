@@ -16,43 +16,11 @@ export const ObjectDataCompositeBasic = ({ objectID }) => {
         return 1;
     });
 
-    console.log("IN ObjectDataCompositeBasic RENDER, subobjectIDOrder =", subobjectIDOrder)
-
-    const subobjectCards = subobjectIDOrder.map((subobjectID, key) => <ObjectsViewCard key={key} objectID={subobjectID} isSubobject />);
+    const subobjectCards = subobjectIDOrder.map((subobjectID, key) => <ObjectsViewCard key={key} objectID={objectID} subobjectID={subobjectID} isSubobject />);
 
     return (
         <div className="objects-view-data composite-basic">
             {subobjectCards}
         </div>
     );
-
-
-
-    //              - basic display mode:
-    //                 - displays subobject cards:
-    //                     - always in single column;
-    //                     - ordered by column > row;
-    //                 - cards:
-    //                     - header;
-    //                     - link to standalone view page;
-    //                     - link to edit page;
-    //                     - description;  // optionally (if displayed and not link with merged link and description (and description length > 0))
-                        
-    //                     - subobject data:
-    //                         - link:
-    //                             - modes:
-    //                             - link URL;
-    //                             - merged link and description;
-
-    //                             - markdown:
-    //                                 - rendered markdown;
-                                
-    //                             - to-do list:
-    //                                 - display to-do list data;
-    //                                 - disable editing for non-owning non-admins;
-    //                                 - allow editing for admins and owners:
-    //                                     - run debounced update fetch when to-do list data is updated;
-                                
-    //                             - composite:
-    //                                 - link to standalone view page;
 };

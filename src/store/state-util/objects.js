@@ -1,6 +1,6 @@
 import { deepCopy } from "../../util/copy";
 import { deepEqual } from "../../util/equality-checks";
-import { enumDeleteModes } from "../state-templates/composite-subobjects";
+import { enumDeleteModes, serializedCompositeObjectDataProps } from "../state-templates/composite-subobjects";
 import { getSubobjectDisplayOrder } from "./composite";
 import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
 import { compositeSubobjectObjectAttributes } from "../state-templates/edited-object";
@@ -69,7 +69,7 @@ export const validateNonCompositeObject = obj => {
 
     switch (obj.object_type) {
         case "link":
-            if (obj.link.length === 0) throw Error("Link value is required.");
+            if (obj.link.link.length === 0) throw Error("Link value is required.");
             break;
         case "markdown":
             if (obj.markdown.raw_text.length === 0) throw Error("Markdown text is required.");
@@ -93,7 +93,7 @@ export const serializeObjectData = (state, obj) => {
     // This will prevent potential inconsistency in local storage due to user inputs during the add fetch.
     switch (obj.object_type) {
         case "link":
-            return { link: obj.link };
+            return deepCopy(obj.link);
         case "markdown":
             return { raw_text: obj.markdown.raw_text };
         case "to_do_list":
@@ -126,7 +126,7 @@ export const serializeObjectData = (state, obj) => {
                 const so = nonDeletedSubobjects[subobjectID];
                 const object_id = parseInt(subobjectID);
                 const subobject = { object_id };
-                for (let attr of ["row", "column", "selected_tab", "is_expanded"])
+                for (let attr of serializedCompositeObjectDataProps)
                     subobject[attr] = so[attr];
 
                 // Add subobjects' attributes & data changes
@@ -163,7 +163,7 @@ export const serializeObjectData = (state, obj) => {
             }
 
             // Return serialized composite object data
-            return { subobjects, deleted_subobjects };
+            return { subobjects, deleted_subobjects, display_mode: obj.composite.display_mode, numerate_chapters: obj.composite.numerate_chapters };
         default:
             return null;
     }
@@ -185,7 +185,7 @@ export const getObjectDataFromStore = (state, objectID, formatAsEditedObjectProp
     switch (objectType) {
         case "link":
             return formatAsEditedObjectProps
-                ? { ...state.links[objectID] }
+                ? { link: deepCopy(state.links[objectID]) }
                 : state.links[objectID];
         case "markdown":
             return formatAsEditedObjectProps
@@ -331,7 +331,7 @@ export const objectDataIsModified = (objectData, editedObject) => {
 
     switch(editedObject.object_type) {
         case "link":
-            return objectData.link !== editedObject.link;
+            return !deepEqual(objectData, editedObject.link);
         case "markdown":
             return objectData.raw_text !== editedObject.markdown.raw_text;
         case "to_do_list":

@@ -28,11 +28,23 @@ div.ui.selection.dropdown.object-type-dropdown-switch > .visible.menu.transition
     margin-top: -0.5em; /* fix icon positioning */
 }
 
-/* Object is published checkbox */
-div.ui.checkbox.object-is-published-checkbox-container {
+
+/* Display tab controls */
+.objects-edit-display-control-container:not(:last-child) {
+    margin-bottom: 1em;
+}
+
+/* Display tab controls, checkbox */
+div.ui.checkbox.objects-edit-display-checkbox-container {
     display: block;
 }
 
-div.ui.checkbox.object-is-published-checkbox-container:not(:last-child) {
-    margin-bottom: 0.75em;
+/* Display tab controls, dropdown */
+.objects-edit-display-dropdown-container {
+    display: flex;
+    align-items: center;
+}
+
+.objects-edit-display-label {
+    margin-right: 0.5em;
 }

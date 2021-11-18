@@ -80,7 +80,7 @@ class SubobjectCard extends React.PureComponent {
                     isSubobjectDeleted ? <DeletedPlaceholder />
                     : selectedTab === 0 ? <CardGeneralTab subobjectID={subobjectID} />
                     : selectedTab === 1 ? <CardDataTab subobjectID={subobjectID} />
-                    : selectedTab === 2 ? <CardDisplayTab subobjectID={subobjectID} />
+                    : selectedTab === 2 ? <CardDisplayTab objectID={objectID} subobjectID={subobjectID} />
                     : null
                 )
                 : null;

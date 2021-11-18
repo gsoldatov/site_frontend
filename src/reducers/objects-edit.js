@@ -13,6 +13,7 @@ import { getDefaultEditedObjectState, getStateWithResetEditedObjects, getStateWi
 import { getUpdatedToDoList } from "./helpers/object-to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
+import { getSubobjectDefaults } from "../store/state-templates/composite-subobjects";
 
 
 function loadNewObjectPage(state, action) {
@@ -161,31 +162,41 @@ function removeEditedObjects(state, action) {
 function setEditedObject(state, action) {
     const objectID = action.objectID !== undefined ? action.objectID : state.objectUI.currentObjectID;
     const oldObject = state.editedObjects[objectID];
-    if (oldObject === undefined) return state;      // don't update non-existing objects (i.e. when saving new Markdown object & redirecting to its pag before it's data was parsed after last update)
-
+    if (oldObject === undefined) return state;      // don't update non-existing objects (i.e. when saving new Markdown object & redirecting to its page before it's data was parsed after last update)
+    
     // Composite
-    const aCompositeUpdate = action.object.compositeUpdate;
-    if (aCompositeUpdate !== undefined) return getStateWithCompositeUpdate(state, objectID, aCompositeUpdate);
+    let newComposite = oldObject.composite;
+    if ("compositeUpdate" in action.object) return getStateWithCompositeUpdate(state, objectID, action.object.compositeUpdate);
+    else if ("composite" in action.object) {
+        newComposite = { ...newComposite };
+        for (let attr of Object.keys(getSubobjectDefaults()))
+            if (action.object.composite[attr] !== undefined) newLink[attr] = action.object.composite[attr];
+    }
 
     // Links
-    const link = action.object.link !== undefined ? action.object.link : oldObject.link;
+    let newLink = oldObject.link;
+    if ("link" in action.object) {
+        newLink = { ...newLink };
+        for (let attr of ["link", "show_description_as_link"])
+            if (action.object.link[attr] !== undefined) newLink[attr] = action.object.link[attr];
+    }
 
     // Markdown
-    const aMD = action.object.markdown;
-    const markdown = aMD !== undefined ? {
-        raw_text: aMD.raw_text !== undefined ? aMD.raw_text : oldObject.markdown.raw_text,
-        parsed: aMD.parsed !== undefined ? aMD.parsed : oldObject.markdown.parsed
-    } : oldObject.markdown;
+    let newMarkdown = oldObject.markdown;
+    if ("markdown" in action.object) {
+        newMarkdown = { ...newMarkdown };
+        for (let attr of ["raw_text", "parsed"])
+            if (action.object.markdown[attr] !== undefined) newMarkdown[attr] = action.object.markdown[attr];
+    }
 
     // To-do lists
-    let toDoList;
-    const aTDL = action.object.toDoList;
-    const aTDLItemUpdate = action.object.toDoListItemUpdate;
-
-    if (aTDLItemUpdate !== undefined) {
-        toDoList = getUpdatedToDoList(oldObject.toDoList, aTDLItemUpdate);
-    } else if (aTDL !== undefined) {
-        toDoList = {
+    let newToDoList = oldObject.toDoList;
+    if ("toDoListItemUpdate" in action.object) {
+        newToDoList = getUpdatedToDoList(oldObject.toDoList, action.object.toDoListItemUpdate);
+    } else if ("toDoList" in action.object) {
+        const aTDL = action.object.toDoList;
+        
+        newToDoList = {
             itemOrder: aTDL.itemOrder !== undefined ? aTDL.itemOrder : oldObject.toDoList.itemOrder,
             setFocusOnID: aTDL.setFocusOnID !== undefined ? aTDL.setFocusOnID : oldObject.toDoList.setFocusOnID,
             caretPositionOnFocus: aTDL.caretPositionOnFocus !== undefined ? aTDL.caretPositionOnFocus : oldObject.toDoList.caretPositionOnFocus,
@@ -198,16 +209,15 @@ function setEditedObject(state, action) {
             sort_type: aTDL.sort_type !== undefined ? aTDL.sort_type : oldObject.toDoList.sort_type,
             items: aTDL.items !== undefined ? aTDL.items : oldObject.toDoList.items
         };
-    } else {
-        toDoList = oldObject.toDoList;
     }
 
     const newObject = {
         ...oldObject,
 
-        link,
-        markdown,
-        toDoList
+        link: newLink,
+        markdown: newMarkdown,
+        toDoList: newToDoList,
+        composite: newComposite
     };
 
     objectAttributes.forEach(attr => {

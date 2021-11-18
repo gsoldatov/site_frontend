@@ -204,7 +204,7 @@ describe("Add object page", () => {
         clickDataTabButton(container);
         let linkInput = getByPlaceholderText(container, "Link");
         fireEvent.change(linkInput, { target: { value: "https://google.com" } });
-        await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe("https://google.com"));
+        await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe("https://google.com"));
     
         // Save object
         let saveButton = getSideMenuItem(container, "Save");   

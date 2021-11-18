@@ -14,8 +14,9 @@ import StyleObjectsViewCard from "../../styles/objects-view-card.css";
 /**
  * Container for object/subobject attributes, tags and data.
  */
-export const ObjectsViewCard = ({ objectID, isSubobject = false }) => {
+export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false }) => {
     const dispatch = useDispatch();
+    const _id = isSubobject ? subobjectID : objectID;
 
     // User fetch & error state
     const [isFetching, setIsFetching] = useState(true);
@@ -25,7 +26,7 @@ export const ObjectsViewCard = ({ objectID, isSubobject = false }) => {
     useEffect(() => {
         const fetchData = async () => {
             setIsFetching(true);
-            const result = await dispatch(objectsViewOnLoadFetch(objectID));
+            const result = await dispatch(objectsViewOnLoadFetch(_id));
 
             if ("error" in result) setError(result.error);
             setIsFetching(false);
@@ -33,7 +34,7 @@ export const ObjectsViewCard = ({ objectID, isSubobject = false }) => {
         
         if (parseInt(objectID) > 0) fetchData();
         else setError("User not found.");
-    }, [objectID]);
+    }, [_id]);
 
     // Error message
     if (error.length > 0) return (
@@ -56,8 +57,8 @@ export const ObjectsViewCard = ({ objectID, isSubobject = false }) => {
 
     return (
         <div className = {containerClassName}>
-            <ObjectAttributes objectID={objectID} isSubobject={isSubobject} />
-            <ObjectDataSwitch objectID={objectID} isSubobject={isSubobject} />
+            <ObjectAttributes objectID={objectID} subobjectID={subobjectID} isSubobject={isSubobject} />
+            <ObjectDataSwitch objectID={objectID} subobjectID={subobjectID} isSubobject={isSubobject} />
             {tagList}
         </div>
     );

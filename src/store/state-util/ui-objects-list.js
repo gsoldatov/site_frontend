@@ -23,14 +23,6 @@ export const isObjectsTagsEditActive = state => state.objectsUI.addedTags.length
 
 
 /**
- * Resets added and common & partially applied tag caches on the /objects/list page.
- */
-export const resetObjectCaches = () => {
-    commonAndPartiallyAppliedTagsCache = {};
-    addedTagsCache = {};
-};
-
-/**
  * Selector with memoization for calculating common and partially applied tags on /objects/list page.
  * Calculates and caches lists of common & partially applied tag IDs for the current ids in the state.objectsUI.selectedObjectIDs list.
  */

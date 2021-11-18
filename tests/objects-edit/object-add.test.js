@@ -176,7 +176,7 @@ describe("Reset new object state", () => {
         let linkInput = getByPlaceholderText(container, "Link");
         const linkValue = "https://test.link"
         fireEvent.change(linkInput, { target: { value: linkValue } });
-        await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
+        await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe(linkValue));
     
         // Cancel reset
         let resetButton = getSideMenuItem(container, "Reset");
@@ -327,7 +327,7 @@ describe("Persist new object state", () => {
         let linkInput = getByPlaceholderText(container, "Link");
         const linkValue = "https://test.link"
         fireEvent.change(linkInput, { target: { value: linkValue } });
-        await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
+        await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe(linkValue));
 
         // Render /objects/edit/1, then render /objects/edit/new and check if the state was saved
         history.push("/objects/edit/1");
@@ -507,7 +507,7 @@ describe("Save new object errors", () => {
         let linkInput = getByPlaceholderText(container, "Link");
         const linkValue = "https://google.com"
         fireEvent.change(linkInput, { target: { value: linkValue } });
-        await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
+        await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe(linkValue));
         setFetchFail(true);
         fireEvent.click(saveButton);
         await waitFor(() => getByText(container, "Failed to fetch data."));
@@ -651,7 +651,7 @@ describe("Save new object errors", () => {
         const card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
         clickSubobjectCardDataTabButton(card);
         fireEvent.change(getByPlaceholderText(card, "Link"), { target: { value: "new link value" }});
-        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe("new link value"));
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toBe("new link value"));
 
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
@@ -681,7 +681,7 @@ describe("Save new object errors", () => {
         const card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
         clickSubobjectCardDataTabButton(card);
         fireEvent.change(getByPlaceholderText(card, "Link"), { target: { value: "" }});
-        await waitFor(() => expect(store.getState().editedObjects[card.id].link).toBe(""));
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toBe(""));
 
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
@@ -715,7 +715,7 @@ describe("Save new object", () => {
         let linkInput = getByPlaceholderText(container, "Link");
         const linkValue = "https://google.com"
         fireEvent.change(linkInput, { target: { value: linkValue } });
-        await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
+        await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe(linkValue));
         
         // Publish object
         expect(store.getState().editedObjects[0].is_published).toBeFalsy();
@@ -736,7 +736,7 @@ describe("Save new object", () => {
 
         clickDataTabButton(container);
         expect(getByPlaceholderText(container, "Link").value).toEqual(linkValue);    
-        expect(store.getState().links[object_id].link).toEqual(linkValue);
+        expect(store.getState().links[object_id].link.link).toEqual(linkValue);
 
         clickDisplayTabButton(container);
         expect(getByText(container, "Publish Object").parentNode.classList.contains("checked")).toBeTruthy();
@@ -883,7 +883,7 @@ describe("Save new object", () => {
         await waitFor(() => expect(store.getState().editedObjects[secondNewID].object_name).toEqual(secondNewName));
         clickSubobjectCardDataTabButton(cards[0][2]);
         fireEvent.change(getByPlaceholderText(cards[0][2], "Link"), { target: { value: secondLink }});
-        await waitFor(() => expect(store.getState().editedObjects[secondNewID].link).toEqual(secondLink));
+        await waitFor(() => expect(store.getState().editedObjects[secondNewID].link.link).toEqual(secondLink));
 
         // Modify existing subobject and collapse its card
         const unModifiedExistingTimestamp = store.getState().objects[unmodifiedExistingID].modified_at;
@@ -892,7 +892,7 @@ describe("Save new object", () => {
         await waitFor(() => expect(store.getState().editedObjects[modifiedExistingID].object_name).toEqual(modifiedExistingName));
         clickSubobjectCardDataTabButton(cards[0][6]);
         fireEvent.change(getByPlaceholderText(cards[0][6], "Link"), { target: { value: modifiedExistingLink }});
-        await waitFor(() => expect(store.getState().editedObjects[modifiedExistingID].link).toEqual(modifiedExistingLink));
+        await waitFor(() => expect(store.getState().editedObjects[modifiedExistingID].link.link).toEqual(modifiedExistingLink));
         fireEvent.click(getSubobjectExpandToggleButton(cards[0][6]));
         await waitFor(() => expect(store.getState().editedObjects[0].composite.subobjects[modifiedExistingID].is_expanded).toBeFalsy());
 
