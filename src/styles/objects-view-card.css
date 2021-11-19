@@ -2,6 +2,14 @@
   /objects/view/:id page's object card styles.
 ***********************************************/
 
+/* Main objects-view-card */
+@media(min-width: 768px) {
+    .objects-view-card-container:not(.subobject) {
+        box-shadow: 0 0 4px rgba(0,0,0,0.5);
+        padding: 0.5rem;
+    }
+}
+
 /* Timestamp */
 .objects-view-timestamp {
     font-family: Arial, Helvetica, sans-serif;
