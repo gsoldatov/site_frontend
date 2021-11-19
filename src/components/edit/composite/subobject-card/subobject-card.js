@@ -32,13 +32,13 @@ class SubobjectCard extends React.PureComponent {
     setIsMouseOverDraggable (isMouseOverDraggable) { this.setState({ isMouseOverDraggable }); }
 
     render() {
-        const { objectID, subobjectID, updateCallback, selectedTab, isExpanded, isSubbjectEdited, fetchError, isSubobjectDeleted } = this.props;
+        const { objectID, subobjectID, updateCallback, selectedTab, isExpanded, isSubobjectEdited, fetchError, isSubobjectDeleted } = this.props;
         const { isResetDialogDisplayed } = this.state;
         const { connectDragSource, connectDropTarget, isDragging, isDraggedOver } = this.props;
         let result, isDraggable = false;
         
         // Render fetch error message, when object could not be fetched
-        if (!isSubbjectEdited && fetchError.length > 0) {
+        if (!isSubobjectEdited && fetchError.length > 0) {
             let cardClassName = "composite-subobject-card no-padding is-draggable";
             if (isDraggedOver) cardClassName += " is-dragged-over";
             if (isDragging) cardClassName += " is-dragged";
@@ -52,7 +52,7 @@ class SubobjectCard extends React.PureComponent {
         }
 
         // Render placeholder if object is not added into state.editedObjects
-        else if (!isSubbjectEdited) {
+        else if (!isSubobjectEdited) {
             let cardClassName = "composite-subobject-card no-padding";
             if (isDraggedOver) cardClassName += " is-dragged-over";
             // if (isDragging) cardClassName += " is-dragged";  // loading card is not draggable

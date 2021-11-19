@@ -49,11 +49,11 @@ export const SubobjectsContainer = ({ objectID }) => {
             let fetchError = composite.subobjects[subobjectID].fetchError;
             let selectedTab = composite.subobjects[subobjectID].selected_tab;
             let isExpanded = composite.subobjects[subobjectID].is_expanded;
-            let isSubbjectEdited = editedObjects[subobjectID] !== undefined;
+            let isSubobjectEdited = editedObjects[subobjectID] !== undefined;
             let isSubobjectDeleted = composite.subobjects[subobjectID].deleteMode !== enumDeleteModes.none;
 
             columnItems.push(<DraggableSubobjectCard key={subobjectID} objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback}
-                selectedTab={selectedTab} isExpanded={isExpanded} isSubbjectEdited={isSubbjectEdited} fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} 
+                selectedTab={selectedTab} isExpanded={isExpanded} isSubobjectEdited={isSubobjectEdited} fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} 
                 canDrag={canDrag} />);
         }
         
