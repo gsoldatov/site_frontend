@@ -23,8 +23,23 @@ body {
     overflow-x: auto;   /* enable horizontal scrollbar when required */
 }
 
-div.ui.celled.grid {
-    margin: 0;  /* fix height to remove browser scrollbar */
+div.ui.grid {
+    margin-left: 0;  /* fix height to remove browser scrollbar */
+    margin-right: 0;
+}
+
+div.ui.grid > .row:first-child {
+    padding-bottom: 0; /* Remove padding of the navbar row */
+}
+
+@media(max-width:767px) {
+    div.ui.grid {
+        margin-top: 0; /* Stop stacked navbar from moving above screen  */
+    }
+
+    div.ui.grid > .two.column.row:nth-child(2) > .column.stacked-side-menu-column {
+        padding: 0 !important; /* Remove padding for stacked side menu */
+    }
 }
 
 div.ui.celled.grid .row .two.wide.column {

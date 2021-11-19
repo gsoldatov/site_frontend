@@ -49,7 +49,7 @@ export default ({ sideMenuItems, body, className, navigationBarItemOnClickcallba
 
     return (
         <OnResizeWrapper callback={onResizeCallback}>
-            <Grid stackable celled className={className}>
+            <Grid stackable className={className}>
                 <Grid.Row className={className}>
                     <Navigation itemOnClickCallback={navigationBarItemOnClickcallback} />
                 </Grid.Row>

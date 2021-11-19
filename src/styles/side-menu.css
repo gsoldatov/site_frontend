@@ -6,11 +6,6 @@
     --side-menu-dialog-button-bottom-margin: 0.25em;
 }
 
-/* Stacked side menu grid column */
-div.ui.stackable.celled.grid > .row > .two.wide.column.stacked-side-menu-column {
-    padding: 0 !important; /* does not override SUIR styles without !important */
-}
-
 /* Stacked menu */
 .ui.menu.side-menu.is-stacked {
     border-width: 0;
