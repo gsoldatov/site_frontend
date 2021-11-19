@@ -33,7 +33,7 @@ export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false }) 
         };
         
         if (parseInt(objectID) > 0) fetchData();
-        else setError("User not found.");
+        else setError("Object not found.");
     }, [_id]);
 
     // Error message
