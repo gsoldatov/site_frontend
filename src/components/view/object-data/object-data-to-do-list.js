@@ -48,7 +48,7 @@ export const ObjectDataToDoList = ({ objectID }) => {
             const result = await dispatch(toDoListObjectUpdateFetch(objectID, toDoList));
             if ("error" in result) setError(result.error);
         }
-    }, 250, true)), [isReadonly]);
+    }, 1000, true)), [isReadonly]);
     
     // Update callback
     const updateCallback = useMemo(() => params => {
@@ -79,7 +79,7 @@ export const ObjectDataToDoList = ({ objectID }) => {
         <div className="objects-view-data to-do-list">
             {readonlyMessage}
             {errorMessage}
-            <TDLContainer objectID={objectID} toDoList={toDoListRef.current} canDrag={canDrag} updateCallback={updateCallback} />
+            <TDLContainer objectID={objectID} toDoList={toDoListRef.current} canDrag={canDrag} updateCallback={updateCallback} dontDispatchOnClickHandlers />
         </div>
     );
 };

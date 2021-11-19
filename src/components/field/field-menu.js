@@ -72,7 +72,7 @@ const FieldMenuGroup = ({ items, size, isFullscreenStyle }) => {
 /**
  * Field menu button.
  */
-const FieldMenuItem = ({ icon, title, size = "medium", isDisabledSelector, isActiveSelector, onClick, onClickParamsSelector, onClickParams }) => {
+const FieldMenuItem = ({ icon, title, size = "medium", isDisabledSelector, isActiveSelector, onClick, onClickParamsSelector, onClickParams, dontDispatchOnClickHandler = false }) => {
     const dispatch = useDispatch();
     const isDisabled = typeof(isDisabledSelector) === "function" ? useSelector(isDisabledSelector) : false;
     const isActiveTemp = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : false;     // temp variable is used to avoid placing the hook in a condition block
@@ -80,7 +80,8 @@ const FieldMenuItem = ({ icon, title, size = "medium", isDisabledSelector, isAct
     const _onClickParams = useSelector(typeof(onClickParamsSelector) === "function" ? onClickParamsSelector : state => null) || onClickParams;
     const handleClick = () => {
         if (isDisabled) return;
-        dispatch(typeof(onClick) === "function" ? onClick(_onClickParams) : onClick);
+        if (dontDispatchOnClickHandler) onClick(_onClickParams);
+        else dispatch(typeof(onClick) === "function" ? onClick(_onClickParams) : onClick);
     };
 
     return <Button basic className="field-menu-button" size={size} icon={icon} title={title} active={isActive} disabled={isDisabled} onClick={handleClick} />;

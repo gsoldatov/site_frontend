@@ -13,19 +13,19 @@ import StyleTDL from "../../../styles/to-do-lists.css";
 /**
  * To-do list data container component.
  */
-export const TDLContainer = ({ objectID, toDoList, updateCallback, canDrag }) => {
+export const TDLContainer = ({ objectID, toDoList, updateCallback, canDrag, dontDispatchOnClickHandlers = false }) => {
 
     return (
         <div className="to-do-list-container">
             <div className="to-do-list-container-header">To-Do List</div>
-            <TDLMenu updateCallback={updateCallback} sortType={toDoList.sort_type} />
+            <TDLMenu updateCallback={updateCallback} sortType={toDoList.sort_type} dontDispatchOnClickHandlers={dontDispatchOnClickHandlers} />
             <TDLItems updateCallback={updateCallback} objectID={objectID} toDoList={toDoList} canDrag={canDrag} />    
         </div>
     );
 };
 
 
-const TDLMenu = memo(({ sortType, updateCallback }) => {
+const TDLMenu = memo(({ sortType, updateCallback, dontDispatchOnClickHandlers }) => {
     const fieldMenuItems = [
         {
             type: "item",
@@ -33,7 +33,8 @@ const TDLMenu = memo(({ sortType, updateCallback }) => {
             title: "Default sort",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "default" }},
-            isActiveSelector: () => sortType === "default"
+            isActiveSelector: () => sortType === "default",
+            dontDispatchOnClickHandler: dontDispatchOnClickHandlers
         },
         {
             type: "item",
@@ -41,7 +42,8 @@ const TDLMenu = memo(({ sortType, updateCallback }) => {
             title: "Sort by state",
             onClick: updateCallback,
             onClickParams: { toDoList: { sort_type: "state", newItemInputIndent: 0 }},     // also reset new item input indent when sorting by state
-            isActiveSelector: () => sortType === "state"
+            isActiveSelector: () => sortType === "state",
+            dontDispatchOnClickHandler: dontDispatchOnClickHandlers
         }
     ];
 
