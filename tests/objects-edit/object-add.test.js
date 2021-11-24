@@ -94,7 +94,7 @@ describe("UI checks", () => {
     });
 
 
-    test("Toggle `is published` setting", async () => {
+    test("Toggle `is published` setting", async () => {     // TODO move into /objects/view/:id tests & leave a note here
         let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
             route: "/objects/edit/new"
         });
@@ -194,7 +194,7 @@ describe("Reset new object state", () => {
         expect(objectNameInput.value).toEqual("");
         objectDescriptionInput = getByPlaceholderText(container, "Object description");
         expect(objectDescriptionInput.value).toEqual("");
-        expect(getCurrentObject(store.getState()).link).toEqual("");
+        expect(getCurrentObject(store.getState()).link.link).toEqual("");
     });
 
 
@@ -736,7 +736,7 @@ describe("Save new object", () => {
 
         clickDataTabButton(container);
         expect(getByPlaceholderText(container, "Link").value).toEqual(linkValue);    
-        expect(store.getState().links[object_id].link.link).toEqual(linkValue);
+        expect(store.getState().links[object_id].link).toEqual(linkValue);
 
         clickDisplayTabButton(container);
         expect(getByText(container, "Publish Object").parentNode.classList.contains("checked")).toBeTruthy();
@@ -873,7 +873,7 @@ describe("Save new object", () => {
         await waitFor(() => expect(store.getState().editedObjects[firstNewID].object_name).toEqual(firstNewName));
         clickSubobjectCardDataTabButton(cards[0][1]);
         fireEvent.change(getByPlaceholderText(cards[0][1], "Link"), { target: { value: firstLink }});
-        await waitFor(() => expect(store.getState().editedObjects[firstNewID].link).toEqual(firstLink));
+        await waitFor(() => expect(store.getState().editedObjects[firstNewID].link.link).toEqual(firstLink));
         clickSubobjectCardDisplayTabButton(cards[0][1]);
         clickPublishObjectCheckbox(cards[0][1]);
         expect(store.getState().editedObjects[firstNewID].is_published).toBeTruthy();

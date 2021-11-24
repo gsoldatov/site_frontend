@@ -135,7 +135,7 @@ describe("Load object errors & UI checks", () => {
     });
 
 
-    test("Toggle `is published` setting", async () => {
+    test("Toggle `is published` setting", async () => {     // TODO move into /objects/view/:id tests & leave a note here
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
         let { container, store } = renderWithWrappers(
             <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
@@ -313,7 +313,7 @@ describe("Load object from state", () => {
         expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectDescriptionInput.value).toEqual(state.editedObjects[2].object_description);
         clickSubobjectCardDataTabButton(cards[0][0]);
         const linkInput = getByPlaceholderText(cards[0][0], "Link");
-        expect(linkInput.value).toEqual(state.editedObjects[2].link);
+        expect(linkInput.value).toEqual(state.editedObjects[2].link.link);
 
         // Check second subobject
         expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectNameInput.value).toEqual(state.editedObjects[3].object_name);
@@ -486,14 +486,14 @@ describe("Load object from backend", () => {
         expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectDescriptionInput.value).toEqual(state.editedObjects[2].object_description);
         clickSubobjectCardDataTabButton(cards[0][0]);
         let linkInput = getByPlaceholderText(cards[0][0], "Link");
-        expect(linkInput.value).toEqual(state.editedObjects[2].link);
+        expect(linkInput.value).toEqual(state.editedObjects[2].link.link);
 
         // Check second subobject
         expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectNameInput.value).toEqual(state.editedObjects[3].object_name);
         expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectDescriptionInput.value).toEqual(state.editedObjects[3].object_description);
         clickSubobjectCardDataTabButton(cards[0][1]);
         linkInput = getByPlaceholderText(cards[0][1], "Link");
-        expect(linkInput.value).toEqual(state.editedObjects[3].link);
+        expect(linkInput.value).toEqual(state.editedObjects[3].link.link);
     });
 
 
@@ -518,7 +518,7 @@ describe("Load object from backend", () => {
         expect(getSubobjectCardAttributeElements(cards[0][0]).subobjectDescriptionInput.value).toEqual(state.editedObjects[firstID].object_description);
         clickSubobjectCardDataTabButton(cards[0][0]);
         let linkInput = getByPlaceholderText(cards[0][0], "Link");
-        expect(linkInput.value).toEqual(state.editedObjects[firstID].link);
+        expect(linkInput.value).toEqual(state.editedObjects[firstID].link.link);
 
         // Check second subobject
         const secondID = cards[0][1].id;
@@ -590,7 +590,7 @@ describe("Reset object", () => {
         let linkInput = getByPlaceholderText(container, "Link");
         const linkValue = "https://modified.link"
         fireEvent.change(linkInput, { target: { value: linkValue } });
-        await waitFor(() => expect(getCurrentObject(store.getState()).link).toBe(linkValue));
+        await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe(linkValue));
 
         // Cancel reset
         let resetButton = getSideMenuItem(container, "Reset");
@@ -1215,7 +1215,7 @@ describe("Update object errors", () => {
         for (let attr of ["object_name", "object_description", "created_at", "modified_at"]) {
             expect(store.getState().objects[1][attr]).toEqual(oldObject[attr]);
         }
-        expect(store.getState().links[1].link.link).toEqual(oldLink.link.link);
+        expect(store.getState().links[1].link).toEqual(oldLink.link);
     });
     
 
@@ -1237,7 +1237,7 @@ describe("Update object errors", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe(""));
         fireEvent.click(saveButton);
         await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
-        expect(store.getState().links[1].link.link).toEqual(oldObjectData.link.link);
+        expect(store.getState().links[1].link).toEqual(oldObjectData.link);
     });
 
 
@@ -1365,7 +1365,7 @@ describe("Update object errors", () => {
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
-        expect(store.getState().links[card.id].link.link).not.toEqual("");
+        expect(store.getState().links[card.id].link).not.toEqual("");
     });
 });
 
@@ -1406,7 +1406,7 @@ describe("Update object", () => {
         await waitFor(() => expect(store.getState().objects[1].object_name).toEqual("modified object name"));
         expect(store.getState().objects[1].object_description).toEqual("modified object description");
         expect(store.getState().objects[1].is_published).toBeTruthy();
-        expect(store.getState().links[1].link.link).toEqual("https://test.link.modified");
+        expect(store.getState().links[1].link).toEqual("https://test.link.modified");
     });
     
 

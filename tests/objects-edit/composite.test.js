@@ -162,7 +162,7 @@ describe("Basic load and UI checks", () => {
     });
 
 
-    test("Load a new object and toggle published settings of object & subobjects", async () => {
+    test("Load a new object and toggle published settings of object & subobjects", async () => {    // TODO move into /objects/view/:id tests & leave a note here
         let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
             route: "/objects/edit/new"
         });

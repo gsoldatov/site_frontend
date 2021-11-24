@@ -34,6 +34,7 @@ export const generateObjectAttributes = (object_id, overrideValues = {}) => {
         created_at: "created_at" in overrideValues ? overrideValues.created_at : (new Date(Date.now() - 24*60*60*1000 - object_id)).toUTCString(),
         modified_at: "modified_at" in overrideValues ? overrideValues.modified_at : (new Date(Date.now() - object_id)).toUTCString(),
         is_published: "is_published" in overrideValues ? overrideValues.is_published : false,
+        show_description: "show_description" in overrideValues ? overrideValues.is_published : false,
         owner_id: "owner_id" in overrideValues ? overrideValues.owner_id : 1,
         current_tag_ids: "current_tag_ids" in overrideValues ? overrideValues.current_tag_ids : [1, 2, 3, 4, 5]
     };
@@ -58,7 +59,7 @@ export const generateObjectData = (objectID, objectType) => {
     }
 
     // Set object_data
-    let object_data = object_type === "link" ? { link: `https://website${objectID}.com` }
+    let object_data = object_type === "link" ? { link: `https://website${objectID}.com`, show_description_as_link: false }
         : object_type === "markdown" ? { raw_text: `# Markdown Object \\#${objectID}\n1. item 1;\n2. item 2;` }
         : object_type === "to_do_list" ? getTDLByObjectID(objectID)
         : object_type === "composite" ? getCompositeByObjectID(objectID)

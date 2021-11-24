@@ -10,6 +10,8 @@ import { CompositeDisplayModeSwitch } from "./composite-display-mode-switch";
  * Root display tab component both for objects' and subobjects' display tabs.
  */
 export const DisplayTab = memo(({ objectID, subobjectID, isSubobject = false }) => {
+    const _id = isSubobject ? subobjectID : objectID;
+
     const showDescription = isSubobject 
         ? <SubobjectShowDescriptionSwitch objectID={objectID} subobjectID={subobjectID} />
         : <ShowDescriptionSwitch objectID={objectID} />;
@@ -22,7 +24,7 @@ export const DisplayTab = memo(({ objectID, subobjectID, isSubobject = false }) 
 
     return (
         <div className="objects-edit-display-tab-container">
-            <IsPublishedSwitch objectID={objectID} />
+            <IsPublishedSwitch objectID={_id} />
             <SubobjectsIsPublishedSwitch objectID={objectID} isSubobject={isSubobject} />
             {showDescription}
             {showDescriptionAsLink}
