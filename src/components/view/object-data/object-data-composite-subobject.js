@@ -9,8 +9,10 @@ export const ObjectDataCompositeSubobject = ({ objectID }) => {
     const msg = "Click here to view the object";
 
     return (
-        <Link to={`/objects/view/${objectID}`}>
-            {msg}
-        </Link>
+        <div className="objects-view-data composite-basic">
+            <Link to={`/objects/view/${objectID}`}>
+                {msg}
+            </Link>
+        </div>
     );
 };
