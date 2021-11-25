@@ -14,17 +14,19 @@ function handleAdd(body) {
     if (!["link", "markdown", "to_do_list", "composite"].includes(object["object_type"]))
         throw new Exception("Received unexpected object_type in handleAdd");
 
-    // // Handle existing object_name case  // unique constraint on lowered object_name is removed
-    // if (object["object_name"] === "existing object_name")
-    //     return {status: 400, body: { _error: "Submitted object name already exists." }};
-
     // Set attributes of the new object
     const objectID = 1000;
     const createdAt =  new Date();
     const modifiedAt = new Date((new Date(createdAt)).setDate(createdAt.getDate() + 1));
-    const response = { object_id: objectID, object_type: object["object_type"], object_name: object["object_name"], object_description: object["object_description"], 
-                        created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString(), 
-                        is_published: object["is_published"], owner_id: object["owner_id"] || 1 };
+
+    const response = { ...object, 
+        object_id: objectID, 
+        created_at: createdAt.toDateString(),
+        modified_at: modifiedAt.toDateString(),
+        owner_id: object["owner_id"] || 1 
+    };
+    for (let attr of ["added_tags", "removed_tag_ids", "object_data"])
+        delete response[attr];
 
     // Set object's tags (autogenerate & cache tag_ids for provided tag names => add all tag_ids to the object)
     const tagUpdates = { added_tag_ids: [] };
@@ -106,10 +108,6 @@ function handleDelete(body) {
 
 function handleUpdate(body) {
     const object = JSON.parse(body).object;
-
-    // // Handle existing name case // unique constraint on lowered object_name is removed
-    // if (object.object_name === "existing object name")
-    //     return { status: 400, body: { _error: "Object name already exists." }};
     
     // Set object's tags (autogenerate & cache tag_ids for provided tag names => add all tag_ids to the object)
     const tagUpdates = { added_tag_ids: [], removed_tag_ids: object.removed_tag_ids };
@@ -130,6 +128,8 @@ function handleUpdate(body) {
         modified_at: modifiedAt.toDateString(),
         tag_updates: tagUpdates
     }};
+    for (let attr of ["added_tags", "removed_tag_ids", "object_data"])
+        delete response[attr];
 
     if (objectType === "composite") response.object["object_data"] = mapAndCacheNewSubobjects(object["object_data"], createdAt, modifiedAt);
 

@@ -2,6 +2,7 @@ import { addObjectData, addObjects } from "../../src/actions/data-objects";
 import { addTags, setObjectsTags } from "../../src/actions/data-tags";
 import { resetEditedObjects } from "../../src/actions/objects-edit";
 import { createTestStore } from "../_util/create-test-store";
+import { generateObjectAttributes, defaultObjectAttributeValueGetters, generateObjectData } from "./data-objects";
 
 import { _cachedObjects, _cachedObjectData } from "./mock-fetch-handlers-objects";
 
@@ -17,14 +18,79 @@ export const mapAndCacheNewSubobjects = (requestObjectData, createdAt, modifiedA
             if (newID === undefined) throw Error (`Received an unexpected object_type "${subobject.object_type}" when mapping subobject id ${subobject.object_id}`);
             id_mapping[subobject.object_id] = newID;
 
-            _cachedObjects[newID] = { object_id: newID, object_type: subobject["object_type"], object_name: subobject["object_name"], object_description: subobject["object_description"], 
-                created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString(), 
-                is_published: subobject["is_published"], owner_id: subobject["owner_id"] || 1,
-                tag_updates: { added_tag_ids: [] } };
+            _cachedObjects[newID] = { 
+                object_id: newID, 
+                created_at: createdAt.toDateString(), 
+                modified_at: modifiedAt.toDateString(),
+                owner_id: subobject["owner_id"] || 1,
+                tag_updates: { added_tag_ids: [] }
+            };
+            for (let attr of Object.keys(defaultObjectAttributeValueGetters))
+                if (["current_tag_ids", "created_at", "modified_at", "owner_id"].indexOf(attr) === -1)
+                    _cachedObjects[newID][attr] = subobject[attr];
             _cachedObjectData[newID] = subobject["object_data"];
+
+            // _cachedObjects[newID] = { object_id: newID, object_type: subobject["object_type"], object_name: subobject["object_name"], object_description: subobject["object_description"], 
+            //     created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString(), 
+            //     is_published: subobject["is_published"], owner_id: subobject["owner_id"] || 1,
+            //     tag_updates: { added_tag_ids: [] } };
+            // _cachedObjectData[newID] = subobject["object_data"];
         }
     });
     return { id_mapping };
+};
+
+
+/**
+ * Returns composite object data (without object id or type).
+ * 
+ * Accepts `object_id` and, optionally, other object attributes inside `overrideValues` object.
+ * 
+ * NOTE: this function must be updated when any changes to composite object data structure are made.
+ */
+ export const generateCompositeObjectData = (object_id, overrideValues = {}) => {
+    const defaultCompositeAttributeValueGetters = {
+        subobjects: () => [
+            generateCompositeSubobject(101, 0, 0)
+        ],
+        display_mode: () => "basic",
+        numerate_chapters: () => false
+    };
+
+    for (let attr of Object.keys(overrideValues))
+        if (!(attr in defaultCompositeAttributeValueGetters)) throw Error(`getCompositeObjectData received an incorrect attribute name in 'overrideValues' object: '${attr}'`);
+
+    const result = {};
+    for (let attr of Object.keys(defaultCompositeAttributeValueGetters))
+        result[attr] = attr in overrideValues ? overrideValues[attr] : defaultCompositeAttributeValueGetters[attr](object_id);
+
+    return result;
+};
+
+
+/**
+ * Returns composite subobject object data (for the `subobjects` array of composite object data).
+ * 
+ * Accepts `object_id`, `column`, `row` and, optionally, other object attributes inside `overrideValues` object.
+ * 
+ * NOTE: this function must be updated when any changes to composite subobject data structure are made.
+ */
+export const generateCompositeSubobject = (object_id, column, row, overrideValues = {}) => {
+    const defaultSubobjectValues = {
+        selected_tab: 0,
+        is_expanded: true,
+        show_description_composite: "inherit",
+        show_description_as_link_composite: "inherit"
+    };
+
+    for (let attr of Object.keys(overrideValues))
+        if (!(attr in defaultSubobjectValues)) throw Error(`getCompositeSubobject received an incorrect attribute name in 'overrideValues' object: '${attr}'`);
+
+    const result = { object_id, column, row };
+    for (let attr of Object.keys(defaultSubobjectValues))
+        result[attr] = attr in overrideValues ? overrideValues[attr] : defaultSubobjectValues[attr];
+    
+    return result;
 };
 
 
@@ -33,33 +99,33 @@ export const mapAndCacheNewSubobjects = (requestObjectData, createdAt, modifiedA
  */
 export const getStoreWithCompositeObjectAndSubobjects = () => {
     let store = createTestStore({ enableDebugLogging: false });
+
     let objects = [
-        { 
-            object_id: 1, object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
+        generateObjectAttributes(1, { 
+            object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString()
+        }),
+        generateObjectAttributes(2, {
+            object_type: "link", object_name: "link subobject", object_description: "link subobject description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
-            is_published: false, owner_id: 1,
-            current_tag_ids: [1, 2, 3, 4, 5] 
-        },
-        { 
-            object_id: 2, object_type: "link", object_name: "link subobject", object_description: "link subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
-            is_published: false, owner_id: 1,
             current_tag_ids: [] 
-        },
-        { 
-            object_id: 3, object_type: "markdown", object_name: "markdown subobject", object_description: "markdown subobject description", 
+        }),
+        generateObjectAttributes(3, {
+            object_type: "markdown", object_name: "markdown subobject", object_description: "markdown subobject description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
-            is_published: false, owner_id: 1,
             current_tag_ids: [] 
-        }
+        })
     ];
     let objectData = [
-        { object_id: 1, object_type: "composite", object_data: { subobjects: [
-            { object_id: 2, row: 0, column: 0, selected_tab: 0, is_expanded: true },
-            { object_id: 3, row: 1, column: 0, selected_tab: 0, is_expanded: true }
-        ]}},
-        { object_id: 2, object_type: "link", object_data: {"link": "https://test.link"} },
-        { object_id: 3, object_type: "markdown", object_data: {"raw_text": "**Test text**"} }
+        generateObjectData(1, "composite", {
+            subobjects: [
+                generateCompositeSubobject(2, 0, 0),
+                generateCompositeSubobject(3, 0, 1)
+            ]            
+        }),
+
+        generateObjectData(2, "link", { "link": "https://test.link" }),
+        generateObjectData(3, "markdown", { "raw_text": "**Test text**" })
     ];
 
     store.dispatch(addObjects(objects));
@@ -76,18 +142,18 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
  export const getStoreWithCompositeObject = () => {
     let store = createTestStore({ enableDebugLogging: false });
     let objects = [
-        { 
-            object_id: 1, object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
+        generateObjectAttributes(1, {
+            object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
-            is_published: false, owner_id: 1,
-            current_tag_ids: [1, 2, 3, 4, 5] 
-        }
+        })
     ];
     let objectData = [
-        { object_id: 1, object_type: "composite", object_data: { subobjects: [
-            { object_id: 2, row: 0, column: 0, selected_tab: 0, is_expanded: true },
-            { object_id: 3, row: 1, column: 0, selected_tab: 0, is_expanded: true }
-        ]}}
+        generateObjectData(1, "composite", {
+            subobjects: [
+                generateCompositeSubobject(2, 0, 0),
+                generateCompositeSubobject(3, 0, 1)
+            ]            
+        })
     ];
     let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
@@ -108,25 +174,25 @@ export const getStoreWithModifiedCompositeObject = () => {
     let store = createTestStore({ enableDebugLogging: false });
 
     let objects = [
-        { 
-            object_id: 1, object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
+        generateObjectAttributes(1, {
+            object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
-            is_published: false, owner_id: 1,
-            current_tag_ids: [1, 2, 3, 4, 5] 
-        },
-        { 
-            object_id: 2, object_type: "link", object_name: "link subobject", object_description: "link subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
-            is_published: false, owner_id: 1,
+        }),
+        generateObjectAttributes(2, {
+            object_type: "link", object_name: "link subobject", object_description: "link subobject description", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(),
             current_tag_ids: [] 
-        }
+        })
     ];
     let objectData = [
-        { object_id: 1, object_type: "composite", object_data: { subobjects: [
-            { object_id: 2, row: 0, column: 0, selected_tab: 0, is_expanded: true },
-            { object_id: -1, row: 1, column: 0, selected_tab: 0, is_expanded: true }
-        ]}},
-        { object_id: 2, object_type: "link", object_data: {"link": "https://test.link"} }
+        generateObjectData(1, "composite", {
+            subobjects: [
+                generateCompositeSubobject(2, 0, 0),
+                generateCompositeSubobject(-1, 0, 1)
+            ]            
+        }),
+
+        generateObjectData(2, "link", { "link": "https://test.link" })
     ];
     let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
@@ -154,8 +220,9 @@ export const getMappedSubobjectID = (subobjectID, subobjectType) => {
 
 /**
  * Returns a mock to-do list object data based on the provided `objectID`.
+ * If `overrideValues` is passed and default object data is returned, the returned attribute value are overriden with provided via this param.
 */
-export const getCompositeByObjectID = objectID => {
+export const getCompositeByObjectID = (objectID, overrideValues) => {
     const strID = objectID.toString();
     switch (strID) {
         case "3901": return compositeWithAllSubobjectTypes;
@@ -164,19 +231,10 @@ export const getCompositeByObjectID = objectID => {
         case "3904": return compositeWithAnUnavailableSubobject;
         case "3905": return compositeWithTwoColumns;
         case "3906": return compositeWithFourColumns;
-        default: return defaultComposite;
+        default: return generateCompositeObjectData(objectID, overrideValues);     // a single link subobject
     }
 };
 
-
-/*
-    link
-*/
-const defaultComposite = {
-    subobjects: [
-        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: true }
-    ]
-};
 
 /*
     link
@@ -184,22 +242,21 @@ const defaultComposite = {
     to_do_list
     composite
 */
-const compositeWithAllSubobjectTypes = {
+const compositeWithAllSubobjectTypes = generateCompositeObjectData(undefined, {
     subobjects: [
-        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: true },
-        { object_id: 1101, row: 1, column: 0, selected_tab: 0, is_expanded: true },
-        { object_id: 2101, row: 2, column: 0, selected_tab: 0, is_expanded: true },
-        { object_id: 3101, row: 3, column: 0, selected_tab: 0, is_expanded: true }
+        generateCompositeSubobject(101, 0, 0),
+        generateCompositeSubobject(1101, 0, 1),
+        generateCompositeSubobject(2101, 0, 2),
+        generateCompositeSubobject(3101, 0, 3)
     ]
-};
+});
 
 /*
     <no subobjects>
 */
-const compositeWithoutSubobjects = {
+const compositeWithoutSubobjects = generateCompositeObjectData(undefined, {
     subobjects: []
-};
-
+});
 
 /*
     <collapsed>
@@ -207,14 +264,14 @@ const compositeWithoutSubobjects = {
     <expanded>
     <expanded>
 */
-const compositeWithCollapsedAndExpandedCards = {
+const compositeWithCollapsedAndExpandedCards = generateCompositeObjectData(undefined, {
     subobjects: [
-        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: false },
-        { object_id: 1101, row: 1, column: 0, selected_tab: 0, is_expanded: false },
-        { object_id: 2101, row: 2, column: 0, selected_tab: 0, is_expanded: true },
-        { object_id: 3101, row: 3, column: 0, selected_tab: 0, is_expanded: true }
-    ]    
-};
+        generateCompositeSubobject(101, 0, 0, { is_expanded: false }),
+        generateCompositeSubobject(1101, 0, 1, { is_expanded: false }),
+        generateCompositeSubobject(2101, 0, 2, { is_expanded: true }),
+        generateCompositeSubobject(3101, 0, 3, { is_expanded: true })
+    ]
+});
 
 
 /*
@@ -222,13 +279,13 @@ const compositeWithCollapsedAndExpandedCards = {
     <available>
     <available>
 */
-const compositeWithAnUnavailableSubobject = {
+const compositeWithAnUnavailableSubobject = generateCompositeObjectData(undefined, {
     subobjects: [
-        { object_id: 9999, row: 0, column: 0, selected_tab: 0, is_expanded: false },
-        { object_id: 1101, row: 1, column: 0, selected_tab: 0, is_expanded: true },
-        { object_id: 2101, row: 2, column: 0, selected_tab: 0, is_expanded: true }
-    ]    
-};
+        generateCompositeSubobject(9999, 0, 0, { is_expanded: false }),
+        generateCompositeSubobject(1101, 0, 1, { is_expanded: true }),
+        generateCompositeSubobject(2101, 0, 2, { is_expanded: true })
+    ]
+});
 
 
 /*
@@ -237,26 +294,39 @@ const compositeWithAnUnavailableSubobject = {
     link    link
     link    link
 */
-const compositeWithTwoColumns = {
+const compositeWithTwoColumns = generateCompositeObjectData(undefined, {
     subobjects: [
-        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: true },
-        { object_id: 102, row: 1, column: 0, selected_tab: 0, is_expanded: true },
-        { object_id: 103, row: 2, column: 0, selected_tab: 0, is_expanded: true },
-        { object_id: 104, row: 3, column: 0, selected_tab: 0, is_expanded: true },
+        generateCompositeSubobject(101, 0, 0),
+        generateCompositeSubobject(102, 0, 1),
+        generateCompositeSubobject(103, 0, 2),
+        generateCompositeSubobject(104, 0, 3),
 
-        { object_id: 105, row: 0, column: 1, selected_tab: 0, is_expanded: true },
-        { object_id: 106, row: 1, column: 1, selected_tab: 0, is_expanded: true },
-        { object_id: 107, row: 2, column: 1, selected_tab: 0, is_expanded: true },
-        { object_id: 108, row: 3, column: 1, selected_tab: 0, is_expanded: true }
+        generateCompositeSubobject(105, 1, 0),
+        generateCompositeSubobject(106, 1, 1),
+        generateCompositeSubobject(107, 1, 2),
+        generateCompositeSubobject(108, 1, 3)
     ]
-};
+});
 
 
 /*
     link    link    link    link
     link            link
 */
-const compositeWithFourColumns = {
+const compositeWithFourColumns = generateCompositeObjectData(undefined, {
+    subobjects: [
+        generateCompositeSubobject(101, 0, 0),
+        generateCompositeSubobject(102, 0, 1),
+
+        generateCompositeSubobject(103, 1, 0),
+
+        generateCompositeSubobject(104, 2, 0),
+        generateCompositeSubobject(105, 2, 1),
+
+        generateCompositeSubobject(106, 3, 0)
+    ]
+});
+{
     subobjects: [
         { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: true },
         { object_id: 102, row: 1, column: 0, selected_tab: 0, is_expanded: true },

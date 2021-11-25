@@ -13,6 +13,7 @@ import { EditTag } from "../../src/components/top-level/tag";
 import Tags from "../../src/components/top-level/tags";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { addObjects } from "../../src/actions/data-objects";
+import { generateObjectAttributes } from "../_mocks/data-objects";
 
 
 /*
@@ -32,13 +33,20 @@ beforeEach(() => {
 
 test("Edit tag => delete a tag and check objects' tags", async () => {
     let store = createTestStore({ enableDebugLogging: false });
+    
     let objects = [
-        { object_id: 1, object_type: "link", object_name: "object one", object_description: "", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3] },
-        { object_id: 2, object_type: "link", object_name: "object two", object_description: "", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1] },
-        { object_id: 3, object_type: "link", object_name: "object three", object_description: "", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [3, 4, 5] }
+        generateObjectAttributes(1, {
+            object_type: "link", object_name: "object one", object_description: "", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3] 
+        }),
+        generateObjectAttributes(2, {
+            object_type: "link", object_name: "object two", object_description: "", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1] 
+        }),
+        generateObjectAttributes(3, {
+            object_type: "link", object_name: "object three", object_description: "", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [3, 4, 5] 
+        })
     ];
 
     store.dispatch(addObjects(objects));
@@ -67,12 +75,18 @@ test("Edit tag => delete a tag and check objects' tags", async () => {
 test("Tags => delete tags and check objects' tags", async () => {
     let store = createTestStore({ enableDebugLogging: false });
     let objects = [
-        { object_id: 1, object_type: "link", object_name: "object one", object_description: "", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4] },
-        { object_id: 2, object_type: "link", object_name: "object two", object_description: "", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2] },
-        { object_id: 3, object_type: "link", object_name: "object three", object_description: "", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [3, 4, 5] }
+        generateObjectAttributes(1, {
+            object_type: "link", object_name: "object one", object_description: "", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4] 
+        }),
+        generateObjectAttributes(2, {
+            object_type: "link", object_name: "object two", object_description: "", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2] 
+        }),
+        generateObjectAttributes(3, {
+            object_type: "link", object_name: "object three", object_description: "", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [3, 4, 5] 
+        })
     ];
 
     store.dispatch(addObjects(objects));

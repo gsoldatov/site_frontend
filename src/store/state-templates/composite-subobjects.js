@@ -23,6 +23,8 @@ export const enumShowDescriptionComposite = {
 
 /**
  * Composite object's subobject default state.
+ * 
+ * NOTE: when subobject attributes are modified, mock data generating functions should be updated as well (see _mocks/data-composite)
  */
 const subobjectDefaults = {
     row: -1, 

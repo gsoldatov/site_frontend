@@ -1,7 +1,9 @@
 import { resetEditedObjects, setEditedObject } from "../../src/actions/objects-edit";
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
 import { setObjectsTags } from "../../src/actions/data-tags";
+
 import { createTestStore } from "../_util/create-test-store";
+import { generateObjectAttributes, generateObjectData } from "./data-objects";
 
 
 /**
@@ -48,20 +50,20 @@ export const getStoreWithEditedObjects = () => {
 
     // 10, 11: existing links (present in storages, 11 was modified)
     let objects = [
-        { 
-            object_id: 10, object_type: "link", object_name: "existing subobject link", object_description: "link subobject description", 
+        generateObjectAttributes(10, { 
+            object_type: "link", object_name: "existing subobject link", object_description: "link subobject description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
             is_published: false, owner_id: 1, current_tag_ids: [] 
-        },
-        { 
-            object_id: 11, object_type: "link", object_name: "existing subobject link 2 (name before modification to unnamed)", object_description: "link subobject description", 
+        }),
+        generateObjectAttributes(11, { 
+            object_type: "link", object_name: "existing subobject link 2 (name before modification to unnamed)", object_description: "link subobject description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
             is_published: false, owner_id: 1, current_tag_ids: [] 
-        }
+        })
     ];
     let objectData = [
-        { object_id: 10, object_type: "link", object_data: {"link": "https://test.link"} },
-        { object_id: 11, object_type: "link", object_data: {"link": "https://test.link"} }
+        generateObjectData(10, "link", { "link": "https://test.link" }),
+        generateObjectData(11, "link", { "link": "https://test.link" })
     ];
 
     store.dispatch(addObjects(objects));

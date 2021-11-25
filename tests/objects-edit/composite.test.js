@@ -903,8 +903,8 @@ describe("Indicators", () => {
         await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toEqual(""));
         expect(getSubobjectCardIndicators(card).validationError).toBeTruthy();
 
-        fireEvent.change(linkInput, { target: { value: link } });
-        await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toEqual(link));
+        fireEvent.change(linkInput, { target: { value: link.link } });
+        await waitFor(() => expect(store.getState().editedObjects[card.id].link.link).toEqual(link.link));
         expect(getSubobjectCardIndicators(card).validationError).toBeFalsy();
     });
 

@@ -21,6 +21,7 @@ import { NewObject, EditObject } from "../../src/components/top-level/objects-ed
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { addObjects, addObjectData } from "../../src/actions/data-objects";
 import { enumDeleteModes } from "../../src/store/state-templates/composite-subobjects";
+import { generateObjectAttributes, generateObjectData } from "../_mocks/data-objects";
 
 
 /*
@@ -162,9 +163,11 @@ describe("Load object errors & UI checks", () => {
 describe("Load object from state", () => {
     test("Load a link object from state", async () => {
         let store = createTestStore({ enableDebugLogging: false });
-        let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
-                        created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
-        let objectData = { object_id: 1, object_type: "link", object_data: {"link": "https://test.link"} };
+        let object = generateObjectAttributes(1, {
+            object_type: "link", object_name: "object name", object_description: "object description", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+        });
+        let objectData = generateObjectData(1, "link", { "link": "https://test.link" });
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
@@ -197,9 +200,11 @@ describe("Load object from state", () => {
 
     test("Load a markdown object from state", async () => {
         let store = createTestStore({ enableDebugLogging: false });
-        let object = { object_id: 1, object_type: "markdown", object_name: "object name", object_description: "object description", 
-                        created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
-        let objectData = { object_id: 1, object_type: "markdown", object_data: {"raw_text": "**Test text**"} };
+        let object = generateObjectAttributes(1, {
+            object_type: "markdown", object_name: "object name", object_description: "object description", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+        });
+        let objectData = generateObjectData(1, "markdown", { "raw_text": "**Test text**" });
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
@@ -247,9 +252,11 @@ describe("Load object from state", () => {
 
     test("Load a to-do list object from state", async () => {
         let store = createTestStore();
-        let object = { object_id: 1, object_type: "to_do_list", object_name: "object name", object_description: "object description", 
-                        created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
-        let objectData = { object_id: 1, object_type: "to_do_list", object_data: getTDLByObjectID(2001) };
+        let object = generateObjectAttributes(1, {
+            object_type: "to_do_list", object_name: "object name", object_description: "object description", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+        });
+        let objectData = generateObjectData(1, "to_do_list", getTDLByObjectID(2001));
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
@@ -332,8 +339,10 @@ describe("Load object from state", () => {
 describe("Load object from backend", () => {
     test("Load a link object attributes from state and data from backend", async () => {
         let store = createTestStore({ enableDebugLogging: false });
-        let object = { object_id: 1, object_type: "link", object_name: "object name", object_description: "object description", 
-                        created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
+        let object = generateObjectAttributes(1, {
+            object_type: "link", object_name: "object name", object_description: "object description", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5]
+        });
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
@@ -389,8 +398,10 @@ describe("Load object from backend", () => {
     
     test("Load a markdown object attributes from state and data from backend", async () => {
         let store = createTestStore({ enableDebugLogging: false });
-        let object = { object_id: 1001, object_type: "markdown", object_name: "object name", object_description: "object description", 
-                        created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
+        let object = generateObjectAttributes(1001, {
+            object_type: "markdown", object_name: "object name", object_description: "object description", 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+        });
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         // Route component is required for matching (getting :id part of the URL in the EditObject component)
@@ -429,8 +440,10 @@ describe("Load object from backend", () => {
 
     test("Load a to-do list object attributes from state and data from backend", async () => {
         let store = createTestStore({ enableDebugLogging: false });
-        let object = { object_id: 2001, object_type: "to_do_list", object_name: "object name", object_description: "object description", 
-                        created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] };
+        let object = generateObjectAttributes(2001, {
+            object_type: "to_do_list", object_name: "object name", object_description: "object description", 
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+        });
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         // Route component is required for matching (getting :id part of the URL in the EditObject component)

@@ -27,7 +27,7 @@ export const compositeSubobjectObjectAttributes = ["object_name", "object_descri
 /**
  * Default state of an edited object.
  * NOTE: update other lists in the file when updating object attributes.
- * NOTE: update `generateObjectAttributes` test function when updating object attributes.
+ * NOTE: when object attributes and data are modified, mock data generating functions should be updated as well (see _mocks/data-objects and attribute/data-generating functions declared/used there).
  */
 export const defaultEditedObjectState = {       // `getDefaultEditedObjectState` function from reducers/helpers/object should be used to get default state
     // attributes
