@@ -64,12 +64,8 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
             case "composite":
                 let subobjects = {};
                 od["object_data"].subobjects.forEach(so => {
-                    const { object_id, row, column, selected_tab, is_expanded, 
-                        show_description, show_description_as_link,
-                        show_description_composite, show_description_as_link_composite } = so;
-                    subobjects[object_id] = { ...getSubobjectDefaults(), row, column, selected_tab, is_expanded, 
-                        show_description_composite: show_description === undefined ? show_description_composite : show_description, 
-                        show_description_as_link_composite: show_description_as_link === undefined ? show_description_as_link_composite : show_description_as_link };
+                    const { object_id, row, column, selected_tab, is_expanded, show_description_composite, show_description_as_link_composite } = so;
+                    subobjects[object_id] = { ...getSubobjectDefaults(), row, column, selected_tab, is_expanded, show_description_composite, show_description_as_link_composite };
                 })
                 newComposite[od["object_id"]] = { 
                     subobjects, 

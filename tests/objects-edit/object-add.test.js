@@ -16,7 +16,13 @@ import { getMappedSubobjectID } from "../_mocks/data-composite";
 
 
 /*
-    /objects/edit/new page tests.
+    /objects/edit/:id page tests for new objects.
+
+    NOTE: the following UI parts of this page are tested in other files:
+    - object tagging;
+    - setting and saving object display properties;
+    - to-do list object data updates;
+    - composite object data updates.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch

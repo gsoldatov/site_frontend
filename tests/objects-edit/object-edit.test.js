@@ -25,7 +25,13 @@ import { generateObjectAttributes, generateObjectData } from "../_mocks/data-obj
 
 
 /*
-    /objects/edit/:id page tests.
+    /objects/edit/:id page tests for existing objects.
+
+    NOTE: the following UI parts of this page are tested in other files:
+    - object tagging;
+    - setting and saving object display properties;
+    - to-do list object data updates;
+    - composite object data updates.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
