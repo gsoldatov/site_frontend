@@ -24,7 +24,7 @@ export const DisplayTab = memo(({ objectID, subobjectID, isSubobject = false }) 
 
     return (
         <div className="objects-edit-display-tab-container">
-            <IsPublishedSwitch objectID={_id} />
+            <IsPublishedSwitch objectID={_id} isSubobject={isSubobject} />
             <SubobjectsIsPublishedSwitch objectID={objectID} isSubobject={isSubobject} />
             {showDescription}
             {showDescriptionAsLink}

@@ -16,7 +16,7 @@ export const ShowDescriptionSwitch = ({ objectID }) => {
 
     return (
         <div className="objects-edit-display-control-container">
-            <Checkbox className="objects-edit-display-checkbox-container" checked={showDescription} onClick={onClick} label="Show description" />
+            <Checkbox className="objects-edit-display-checkbox-container" checked={showDescription} onClick={onClick} label="Show Description" />
         </div>
     );
 };

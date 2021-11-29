@@ -208,6 +208,60 @@ export const getStoreWithModifiedCompositeObject = () => {
 
 
 /**
+ * Returns a Redux store with a composite object with a single subobject of each type (and an additional subobject for ).
+ * If `mainObjectIsNew` is set to true, main object is generated with id = 0.
+ * If `subobjectsAreNew` is set to true, main object's subobjects are generated with negative object IDs (except for composite subobject).
+ */
+export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsNew, subobjectsAreNew) => {
+    let store = createTestStore({ enableDebugLogging: false });
+
+    const mainObjectID = mainObjectIsNew ? 0 : 3201;
+    const linkSubobjectID = subobjectsAreNew ? -2 : 2;
+    const markdownSubobjectID = subobjectsAreNew ? -3 : 3;
+    const TDLSubobjectID = subobjectsAreNew ? -4 : 4;
+    const compositeSubobjectID = 5;
+
+    let objects = [
+        generateObjectAttributes(mainObjectID, { object_type: "composite", object_name: "main composite object" }),
+        generateObjectAttributes(linkSubobjectID, { object_type: "link", object_name: "link subobject" }),
+        generateObjectAttributes(markdownSubobjectID, { object_type: "markdown", object_name: "markdown subobject" }),
+        generateObjectAttributes(TDLSubobjectID, { object_type: "to_do_list", object_name: "to-do list subobject" }),
+        generateObjectAttributes(compositeSubobjectID, { object_type: "composite", object_name: "composite subobject" }),
+        generateObjectAttributes(6, { object_type: "link", object_name: "subobject of a composite subobject" })
+    ];
+
+    let objectData = [
+        generateObjectData(mainObjectID, "composite", {
+            subobjects: [
+                generateCompositeSubobject(linkSubobjectID, 0, 0),
+                generateCompositeSubobject(markdownSubobjectID, 0, 1),
+                generateCompositeSubobject(TDLSubobjectID, 0, 2),
+                generateCompositeSubobject(compositeSubobjectID, 0, 3)
+            ]
+        }),
+        generateObjectData(linkSubobjectID, "link"),
+        generateObjectData(markdownSubobjectID, "markdown"),
+        generateObjectData(TDLSubobjectID, "to_do_list"),
+        generateObjectData(compositeSubobjectID, "composite", {
+            subobjects: [ generateCompositeSubobject(6, 0, 0) ]
+        }),
+        generateObjectData(6, "link")
+    ];
+
+    let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
+
+    store.dispatch(addObjects(objects));
+    store.dispatch(setObjectsTags(objects));
+    store.dispatch(addObjectData(objectData));
+    store.dispatch(resetEditedObjects({objectIDs: [mainObjectID, linkSubobjectID, markdownSubobjectID, TDLSubobjectID, compositeSubobjectID, 6], allowResetToDefaults: true }));
+    store.dispatch(addTags(tags));
+
+    return store;
+};
+
+
+/**
  * Returns mapped id for a `subobjectID` based on its `objectType`.
  */
 export const getMappedSubobjectID = (subobjectID, subobjectType) => {
@@ -326,16 +380,3 @@ const compositeWithFourColumns = generateCompositeObjectData(undefined, {
         generateCompositeSubobject(106, 3, 0)
     ]
 });
-{
-    subobjects: [
-        { object_id: 101, row: 0, column: 0, selected_tab: 0, is_expanded: true },
-        { object_id: 102, row: 1, column: 0, selected_tab: 0, is_expanded: true },
-        
-        { object_id: 103, row: 0, column: 1, selected_tab: 0, is_expanded: true },
-        
-        { object_id: 104, row: 0, column: 2, selected_tab: 0, is_expanded: true },
-        { object_id: 105, row: 1, column: 2, selected_tab: 0, is_expanded: true },
-        
-        { object_id: 106, row: 0, column: 3, selected_tab: 0, is_expanded: true }
-    ]
-};

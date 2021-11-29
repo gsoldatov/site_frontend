@@ -14,11 +14,13 @@ export const ObjectTagList = ({ objectID }) => {
     const showTagList = useSelector(state => (state.objectsTags[objectID] || []).length > 0);
 
     return showTagList && (
-        <InlineItemListBlock header="Tags" borderless>
-            <InlineItemListWrapper>
-                <InlineItemList itemIDSelector={tagsSelector} ItemComponent={Tag} />
-            </InlineItemListWrapper>
-        </InlineItemListBlock>
+        <div className="objects-view-tag-list-container">
+            <InlineItemListBlock header="Tags" borderless>
+                <InlineItemListWrapper>
+                    <InlineItemList itemIDSelector={tagsSelector} ItemComponent={Tag} />
+                </InlineItemListWrapper>
+            </InlineItemListBlock>
+        </div>
     );
 };
 

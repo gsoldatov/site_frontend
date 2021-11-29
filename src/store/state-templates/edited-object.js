@@ -69,7 +69,9 @@ export const defaultEditedObjectState = {       // `getDefaultEditedObjectState`
         items: {}
     },
     composite: {
-        subobjects: {}
+        subobjects: {},
+        display_mode: "basic",
+        numerate_chapters: false
     },
 
     // object UI

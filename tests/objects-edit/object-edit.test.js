@@ -112,6 +112,21 @@ describe("Load object errors & UI checks", () => {
     });
 
 
+    test("Check 'View Object' button", async () => {
+        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        let { container, history } = renderWithWrappers(
+            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            { route: "/objects/edit/1" }
+        );
+    
+        // Check if object information is displayed on the page
+        await waitFor(() => getByText(container, "Object Information"));
+        let viewObjectButton = getSideMenuItem(container, "View Object");
+        fireEvent.click(viewObjectButton);
+        expect(history.entries[history.length - 1].pathname).toBe("/objects/view/1");
+    });
+
+
     test("Load composite object's subobjects with fetch error", async () => {
         let store = getStoreWithCompositeObject();
         setFetchFail(true);
@@ -139,29 +154,6 @@ describe("Load object errors & UI checks", () => {
 
         fireEvent.click(getByText(cards[0][0], "Restore"));
         expect(store.getState().editedObjects[1].composite.subobjects[2].deleteMode).toEqual(enumDeleteModes.none);
-    });
-
-
-    test("Toggle `is published` setting", async () => {     // TODO move into /objects/view/:id tests & leave a note here
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
-            { route: "/objects/edit/1" }
-        );
-        
-        // Load page
-        await waitFor(() => getByText(container, "Object Information"));
-        expect(store.getState().editedObjects[1].is_published).toBeFalsy();
-        clickDisplayTabButton(container);
-        expect(queryByText(container, "Publish subobjects")).toBeFalsy();   // not render for a non-composite object
-
-        // Publish object
-        clickPublishObjectCheckbox(container);
-        expect(store.getState().editedObjects[1].is_published).toBeTruthy();
-
-        // Unpublish object
-        clickPublishObjectCheckbox(container);
-        expect(store.getState().editedObjects[1].is_published).toBeFalsy();
     });
 });
 

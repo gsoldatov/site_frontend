@@ -2,7 +2,7 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByText } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
 import { renderWithWrappers } from "../_util/render";
 import { getSideMenuItem, getSideMenuDialogControls } from "../_util/ui-common";
@@ -97,25 +97,6 @@ describe("UI checks", () => {
         clickDataTabButton(container);
         expect(getCurrentObject(store.getState()).object_type).toEqual("link");
         getByPlaceholderText(container, "Link", { exact: false });
-    });
-
-
-    test("Toggle `is published` setting", async () => {     // TODO move into /objects/view/:id tests & leave a note here
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
-            route: "/objects/edit/new"
-        });
-
-        expect(store.getState().editedObjects[0].is_published).toBeFalsy();
-        clickDisplayTabButton(container);
-        expect(queryByText(container, "Publish subobjects")).toBeFalsy();   // not render for a non-composite object
-
-        // Publish object
-        clickPublishObjectCheckbox(container);
-        expect(store.getState().editedObjects[0].is_published).toBeTruthy();
-
-        // Unpublish object
-        clickPublishObjectCheckbox(container);
-        expect(store.getState().editedObjects[0].is_published).toBeFalsy();
     });
 
 

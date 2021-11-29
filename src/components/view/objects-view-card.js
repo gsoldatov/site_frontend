@@ -57,6 +57,7 @@ export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false }) 
 
     return (
         <div className = {containerClassName}>
+            <div className="objects-view-card-object-id">{_id}</div>
             <ObjectAttributes objectID={objectID} subobjectID={subobjectID} isSubobject={isSubobject} />
             <ObjectDataSwitch objectID={objectID} subobjectID={subobjectID} isSubobject={isSubobject} />
             {tagList}

@@ -9,10 +9,14 @@ import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-o
 /**
  * Component for switching `is_published` setting of the object or composite subobject.
  */
- export const IsPublishedSwitch = ({ objectID }) => {
+ export const IsPublishedSwitch = ({ objectID, isSubobject = false }) => {
     const dispatch = useDispatch();
     const isPublished = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).is_published);
+    const objectType = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).object_type);
     const onClick = useMemo(() => () => dispatch(setEditedObject({ is_published: !isPublished }, objectID)), [objectID, isPublished]);
+
+    // Don't display if subobject is composite
+    if (isSubobject && objectType === "composite") return null;
 
     return (
         <div className="objects-edit-display-control-container">

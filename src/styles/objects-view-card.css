@@ -13,6 +13,11 @@
     }
 }
 
+/* Object id */
+.objects-view-card-object-id {
+    display: none;
+}
+
 /* Timestamp */
 .objects-view-timestamp {
     font-family: Arial, Helvetica, sans-serif;

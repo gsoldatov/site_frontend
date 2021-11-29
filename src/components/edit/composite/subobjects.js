@@ -1,4 +1,4 @@
-import React, { useMemo, memo } from "react";
+import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { DraggableSubobjectCard } from "./subobject-card/subobject-card";
