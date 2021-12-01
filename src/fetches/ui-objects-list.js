@@ -1,7 +1,7 @@
 import config from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
-import { viewObjectsFetch, deleteObjectsFetch } from "./data-objects";
+import { viewObjectsFetch, deleteObjectsFetch, getPageObjectIDs } from "./data-objects";
 import { tagsSearchFetch, objectsTagsUpdateFetch } from "./data-tags";
 
 import { setObjectsFetch, setObjectsPaginationInfo, setObjectsTagsInput, setCurrentObjectsTags, 
@@ -64,7 +64,8 @@ export const pageFetch = currentPage => {
         dispatch(setObjectsFetch(true, ""));
 
         // Fetch IDs of objects to display on the page
-        let result = await dispatch(getPageObjectIDs());
+        const pI = getState().objectsUI.paginationInfo;
+        let result = await dispatch(getPageObjectIDs(pI));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
@@ -74,48 +75,16 @@ export const pageFetch = currentPage => {
             return;
         }
 
-        // Is fetch is successful, fetch missing object data
-        let nonCachedObjects = getState().objectsUI.paginationInfo.currentPageObjectIDs.filter(object_id => !(object_id in state.objects));
+        // Is fetch is successful, update paginantion info and fetch missing object data
+        dispatch(setObjectsPaginationInfo({ totalItems: result["total_items"], currentPageObjectIDs: result["object_ids"] }));
+
+        let nonCachedObjects = result["object_ids"].filter(object_id => !(object_id in state.objects));
         if (nonCachedObjects.length !== 0) {
             result = await dispatch(viewObjectsFetch(nonCachedObjects));
             dispatch(setObjectsFetch(false, getResponseErrorType(result) === enumResponseErrorType.general ? result.error : ""));
         } else dispatch(setObjectsFetch(false, ""));
     };
 };
-
-
-/**
- * Fetches backend and sets object IDs of the current page based on the current pagination info settings.
- */
-const getPageObjectIDs = () => {
-    return async (dispatch, getState) => {
-        const pI = getState().objectsUI.paginationInfo;
-        let response = await dispatch(runFetch(`${backendURL}/objects/get_page_object_ids`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                pagination_info: {
-                    page: pI.currentPage,
-                    items_per_page: pI.itemsPerPage,
-                    order_by: pI.sortField,
-                    sort_order: pI.sortOrder,
-                    filter_text: pI.filterText,
-                    object_types: pI.objectTypes,
-                    tags_filter: pI.tagsFilter
-                }
-            })
-        }));
-
-        switch (response.status) {
-            case 200:
-                let json = await response.json();
-                dispatch(setObjectsPaginationInfo({ totalItems: json["total_items"], currentPageObjectIDs: json["object_ids"] }));
-                return json;
-            default:
-                return await getErrorFromResponse(response);
-        }
-    };
-}
 
 
 /**

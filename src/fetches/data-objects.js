@@ -253,3 +253,35 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
         }
     };
 };
+
+
+/**
+ * Fetches backend for IDs of the objects which correspond to the provided `paginantionInfo` object. 
+ * Returns the list of objectIDs for the current page and total number of objects matching the query.
+ */
+export const getPageObjectIDs = paginationInfo => {
+    return async (dispatch, getState) => {
+        let response = await dispatch(runFetch(`${backendURL}/objects/get_page_object_ids`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                pagination_info: {
+                    page: paginationInfo.currentPage,
+                    items_per_page: paginationInfo.itemsPerPage,
+                    order_by: paginationInfo.sortField,
+                    sort_order: paginationInfo.sortOrder,
+                    filter_text: paginationInfo.filterText,
+                    object_types: paginationInfo.objectTypes,
+                    tags_filter: paginationInfo.tagsFilter
+                }
+            })
+        }));
+
+        switch (response.status) {
+            case 200:
+                return await response.json();
+            default:
+                return await getErrorFromResponse(response);
+        }
+    };
+}
