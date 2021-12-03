@@ -1,6 +1,4 @@
-import config from "../config";
-
-import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
+import { getResponseErrorType } from "./common";
 import { viewObjectsFetch, deleteObjectsFetch, getPageObjectIDs } from "./data-objects";
 import { tagsSearchFetch, objectsTagsUpdateFetch } from "./data-tags";
 
@@ -10,9 +8,6 @@ import { setObjectsFetch, setObjectsPaginationInfo, setObjectsTagsInput, setCurr
 import { isFetchingObjects } from "../store/state-util/ui-objects-list";
 
 import { enumResponseErrorType } from "../util/enum-response-error-type";
-
-
-const backendURL = config.backendURL;
 
 
 /**
@@ -65,7 +60,15 @@ export const pageFetch = currentPage => {
 
         // Fetch IDs of objects to display on the page
         const pI = getState().objectsUI.paginationInfo;
-        let result = await dispatch(getPageObjectIDs(pI));
+        let result = await dispatch(getPageObjectIDs({
+            page: pI.currentPage,
+            items_per_page: pI.itemsPerPage,
+            order_by: pI.sortField,
+            sort_order: pI.sortOrder,
+            filter_text: pI.filterText,
+            object_types: pI.objectTypes,
+            tags_filter: pI.tagsFilter
+        }));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);

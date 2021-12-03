@@ -22,7 +22,7 @@
 .objects-view-timestamp {
     font-family: Arial, Helvetica, sans-serif;
     color: gray;
-    margin-bottom: 0.5em;
+    /* margin-bottom: 0.5em; */
 }
 
 /* Object header */
@@ -31,11 +31,15 @@
     align-items: center;
 }
 
+.object-view-header-container .ui.header {
+    margin-bottom: 0.5rem;
+}
+
 /* Object header buttons */
 .objects-view-header-button-container {
     margin-left: 0.5em;
     margin-top: -0.25em;
-    margin-bottom: 1em;
+    margin-bottom: 0.5rem;
 }
 
 .ui.basic.black.button.objects-view-header-button {
@@ -57,7 +61,7 @@
 
 /* Object description */
 .objects-view-description {
-    margin-bottom: 1em;
+    margin-bottom: 0.5rem;
 }
 
 .objects-view-description pre {

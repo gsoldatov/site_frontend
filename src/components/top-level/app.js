@@ -36,7 +36,7 @@ export const App = () => {
     return (
         <Switch>
             {/* Index */}
-            <Route exact path="/">
+            <Route exact path={["/", "/feed/:page"]}>
                 <IndexPage />
             </Route>
 

@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { objectsViewOnLoadFetch } from "../../fetches/ui-objects-view";
 
 import { ObjectAttributes } from "./object-attributes/object-attributes";
-import { ObjectTagList } from "./object-tags";
+import { ObjectsViewTagList } from "./object-tags";
 import { ObjectDataSwitch } from "./object-data/object-data-switch";
 
 import StyleObjectsViewCard from "../../styles/objects-view-card.css";
@@ -53,7 +53,7 @@ export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false }) 
     // Object card
     const containerClassName = "objects-view-card-container"
         .concat(isSubobject ? " subobject" : "");
-    const tagList = !isSubobject && <ObjectTagList objectID={objectID} />;
+    const tagList = !isSubobject && <ObjectsViewTagList objectID={objectID} />;
 
     return (
         <div className = {containerClassName}>
