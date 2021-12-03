@@ -2,11 +2,6 @@
     Objects feed and object preview styles.
 ***********************************************/
 
-/* Objects feed */
-/* .objects-feed-container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-} */
 
 /* Object preview container */
 @media(min-width: 768px) {
@@ -46,9 +41,9 @@
     margin-bottom: 0.5rem;
 }
 
-/* Object preview tags */
-.object-preview-description {
-    margin-bottom: 0.5rem;
+/* Object preview description */
+.object-preview-description:not(:last-child) {
+    margin-bottom: 1rem;
 }
 
 /* Objects feed pagination */

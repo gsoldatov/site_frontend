@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { InlineItem } from  "../inline/inline-item";
 import { InlineItemList } from "../inline/inline-item-list";
 import { InlineItemListBlock, InlineItemListWrapper } from "../inline/inline-item-list-containers";
+import { InlineTextItem } from "../inline/inline-text-item";
 
 
 /**
@@ -15,8 +16,9 @@ export const ObjectPreviewTagList = ({ objectID }) => {
 
     return showTagList && (
         <div className="object-preview-tag-list-container">
-            <InlineItemListBlock header="Tags" borderless>
+            <InlineItemListBlock borderless>
                 <InlineItemListWrapper>
+                    <InlineTextItem text="Tags:" />
                     <InlineItemList itemIDSelector={tagsSelector} ItemComponent={Tag} />
                 </InlineItemListWrapper>
             </InlineItemListBlock>

@@ -113,22 +113,32 @@ span.inline-input-span div.visible.menu.transition>div.item:not([non-existing]) 
 }
 
 
-/* Inline item */
-span.inline-item {
+/* Inline item & inline text item */
+span.inline-item, span.inline-text-item {
     margin-top: 0.3em;
     margin-bottom: 0.3em;
-    margin-right: 0.75em;
 
     display: flex;      /* Sets inline item text height to 100% of the container's */
     align-items: center;
 
+    white-space: nowrap;    /* keep the element on one line */
+}
+
+span.inline-item:not(:last-child),
+span.inline-text-item:not(:last-child) {
+    margin-right: 0.5em;
+}
+
+span.inline-item {
     border: 1px solid;
     border-radius: 4px;
-    
-    white-space: nowrap;    /* keep the element on one line */
 
     cursor: pointer;
     user-select: none;
+}
+
+span.inline-text-item {
+    font-weight: bold;
 }
 
 span.inline-item-text {
