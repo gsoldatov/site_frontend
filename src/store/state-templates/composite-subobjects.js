@@ -24,6 +24,7 @@ export const enumShowDescriptionComposite = {
 /**
  * Composite object's subobject default state.
  * 
+ * NOTE: when subobject attributes are modified, list(-s) below should be updated as well.
  * NOTE: when subobject attributes are modified, mock data generating functions should be updated as well (see _mocks/data-composite)
  */
 const subobjectDefaults = {
@@ -36,6 +37,12 @@ const subobjectDefaults = {
     show_description_composite: enumShowDescriptionComposite.inherit.value,
     show_description_as_link_composite: enumShowDescriptionComposite.inherit.value
 };
+
+
+/**
+ * Composite subobject state, which is checked for modification.
+ */
+export const subobjectAttributesCheckedForModification = ["row", "column", "selected_tab", "is_expanded", "show_description_composite", "show_description_as_link_composite"];
 
 
 /**
