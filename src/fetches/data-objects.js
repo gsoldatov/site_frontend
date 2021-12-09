@@ -269,7 +269,8 @@ export const getPageObjectIDs = pagination_info => {
 
         switch (response.status) {
             case 200:
-                return await response.json();
+                const result = await response.json();
+                return result.pagination_info;
             default:
                 return await getErrorFromResponse(response);
         }

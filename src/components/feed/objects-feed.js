@@ -21,11 +21,9 @@ export const ObjectsFeed = ({ page }) => {
     const [paginationInfo, setPaginationInfo] = useState({
             page,
             items_per_page: 10,
-            order_by: "modified_at",
+            order_by: "feed_timestamp",
             sort_order: "desc",
-            filter_text: "",
-            object_types: [],
-            tags_filter: [],
+            show_only_displayed_in_feed: true,
 
             totalItems: 0,
             currentPageObjectIDs: []
