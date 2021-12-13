@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Form, Loader } from "semantic-ui-react";
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 import Error from "../common/error";
 
@@ -35,8 +36,8 @@ export const SaveError = ({ fetchSelector }) => {
  * Created at & modified at timestamps.
  */
 export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedSelector }) => {
-    const createdAt = new Date(useSelector(createdAtSelector)).toLocaleString();
-    const modifiedAt = new Date(useSelector(modifiedAtSelector)).toLocaleString();
+    const createdAt = moment(useSelector(createdAtSelector)).format("lll");
+    const modifiedAt = moment(useSelector(modifiedAtSelector)).format("lll");
     const isDisplayed = useSelector(isDisplayedSelector);
     
     if (!isDisplayed) return null;

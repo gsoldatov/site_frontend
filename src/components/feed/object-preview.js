@@ -1,7 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import moment from "moment";
+
 import { Link } from "react-router-dom";
 import { Header } from "semantic-ui-react";
+
 import { ObjectPreviewTagList } from "./object-preview-tags";
 
 
@@ -9,10 +12,10 @@ import { ObjectPreviewTagList } from "./object-preview-tags";
  * Object preivew displayed in the objects feed.
  */
 export const ObjectPreview = ({ objectID }) => {
-    const timestampValue = new Date(useSelector(state => {
+    const timestampValue = moment(useSelector(state => {
         const object = state.objects[objectID];
         return object.feed_timestamp || object.modified_at;
-    })).toLocaleString();
+    })).format("lll");
     
     const objectName = useSelector(state => state.objects[objectID].object_name);
     let objectDescription = useSelector(state => state.objects[objectID].object_description);
