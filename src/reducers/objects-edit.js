@@ -21,7 +21,7 @@ function loadNewObjectPage(state, action) {
     let editedObjects = state.editedObjects;
     if (editedObjects[0] === undefined) {
         editedObjects = deepCopy(editedObjects);
-        editedObjects[0] = getDefaultEditedObjectState({ object_id: 0, owner_id: state.auth.user_id });
+        editedObjects[0] = getDefaultEditedObjectState({ object_id: 0, display_in_feed: true, owner_id: state.auth.user_id });
     }
 
     return {

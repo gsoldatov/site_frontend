@@ -3,7 +3,7 @@ import { deepEqual } from "../../util/equality-checks";
 import { enumDeleteModes, serializedCompositeObjectDataProps } from "../state-templates/composite-subobjects";
 import { getSubobjectDisplayOrder } from "./composite";
 import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
-import { compositeSubobjectObjectAttributes } from "../state-templates/edited-object";
+import { compositeSubobjectObjectAttributes, addedObjectAttributes, updatedObjectAttributes } from "../state-templates/edited-object";
 /*
     Functions for checking/getting objects state.
 */
@@ -65,8 +65,16 @@ export const validateObject = (state, obj) => {
  * Validates a single non-composite edited object `obj` and returns true if its valid.
  */
 export const validateNonCompositeObject = obj => {
+    // Object name
     if (obj.object_name.length === 0) throw Error("Object name is required.");
 
+    // Feed timestamp
+    if (obj.feed_timestamp.length > 0) {
+        let feedTimestampAsDate = new Date(obj.feed_timestamp);
+        if (isNaN(feedTimestampAsDate.getTime())) throw Error("Incorrect feed timestamp format.");
+    }
+
+    // Object data
     switch (obj.object_type) {
         case "link":
             if (obj.link.link.length === 0) throw Error("Link value is required.");
@@ -82,6 +90,36 @@ export const validateNonCompositeObject = obj => {
     }
 
     return true;
+};
+
+
+/**
+ * Accepts an edited object `obj` and returns an object with its attributes and tags serialized for /objects/add fetch.
+ */
+export const serializeObjectAttributesAndTagsForAddFetch = obj => {
+    let result = { added_tags: obj.addedTags };
+    for (let attr of addedObjectAttributes) {
+        if (attr === "feed_timestamp") 
+            result[attr] = obj[attr].length > 0 ? (new Date(obj[attr])).toISOString() : obj[attr];
+        else result[attr] = obj[attr];
+    }
+
+    return result;
+};
+
+
+/**
+ * Accepts an edited object `obj` and returns an object with its attributes and tags serialized for /objects/update fetch.
+ */
+ export const serializeObjectAttributesAndTagsForUpdateFetch = obj => {
+    let result = { added_tags: obj.addedTags, removed_tag_ids: obj.removedTagIDs };
+    for (let attr of updatedObjectAttributes) {
+        if (attr === "feed_timestamp")
+            result[attr] = obj[attr].length > 0 ? (new Date(obj[attr])).toISOString() : obj[attr];
+        else result[attr] = obj[attr];
+    }
+
+    return result;
 };
 
 

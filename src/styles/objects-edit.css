@@ -48,3 +48,9 @@ div.ui.checkbox.objects-edit-display-checkbox-container {
 .objects-edit-display-label {
     margin-right: 0.5em;
 }
+
+/* Display tab controls, timestamp */
+.objects-edit-timestamp-container {
+    display: flex;
+    align-items: center;
+}

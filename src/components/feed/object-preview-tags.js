@@ -31,7 +31,9 @@ export const ObjectPreviewTagList = ({ objectID }) => {
  * A single tag in the object preview.
  */
 const Tag = ({ id }) => {
-    const tagName = useSelector(state => state.tags[id].tag_name);
+    const tagName = useSelector(state => (state.tags[id] || {}).tag_name);
+
+    if (tagName === undefined) return null;
 
     return (
         <InlineItem text={tagName} itemClassName="inline-item" />

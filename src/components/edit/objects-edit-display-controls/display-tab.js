@@ -4,6 +4,8 @@ import { IsPublishedSwitch, SubobjectsIsPublishedSwitch } from "./is-publishied-
 import { ShowDescriptionSwitch, SubobjectShowDescriptionSwitch } from "./show-description-switch";
 import { ShowDescriptionAsLinkSwitch, SubobjectShowDescriptionAsLinkSwitch } from "./show-description-as-link-switch";
 import { CompositeDisplayModeSwitch } from "./composite-display-mode-switch";
+import { DisplayInFeedSwitch } from "./display-in-feed-switch";
+import { FeedTimestampSelector } from "./feed-timestamp-selector";
 
 
 /**
@@ -26,6 +28,8 @@ export const DisplayTab = memo(({ objectID, subobjectID, isSubobject = false }) 
         <div className="objects-edit-display-tab-container">
             <IsPublishedSwitch objectID={_id} isSubobject={isSubobject} />
             <SubobjectsIsPublishedSwitch objectID={objectID} isSubobject={isSubobject} />
+            <DisplayInFeedSwitch objectID={_id} />
+            <FeedTimestampSelector objectID={_id} />
             {showDescription}
             {showDescriptionAsLink}
             {compositeDisplayModeSwitch}

@@ -9,12 +9,16 @@ import { ObjectPreviewTagList } from "./object-preview-tags";
  * Object preivew displayed in the objects feed.
  */
 export const ObjectPreview = ({ objectID }) => {
-    const modifiedAt = new Date(useSelector(state => state.objects[objectID].modified_at)).toLocaleString();
+    const timestampValue = new Date(useSelector(state => {
+        const object = state.objects[objectID];
+        return object.feed_timestamp || object.modified_at;
+    })).toLocaleString();
+    
     const objectName = useSelector(state => state.objects[objectID].object_name);
     let objectDescription = useSelector(state => state.objects[objectID].object_description);
     if (objectDescription.length === 0) objectDescription = "<No description available>";
 
-    const timestamp = <div className="object-preview-timestamp">{modifiedAt}</div>;
+    const timestamp = <div className="object-preview-timestamp">{timestampValue}</div>;
 
     const header = (
         <Header as="h2" className="object-preview-header">

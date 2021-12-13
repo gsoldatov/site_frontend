@@ -40,7 +40,7 @@ export const ObjectsFeed = ({ page }) => {
             setError("");
 
             let newPaginationInfo = { page };
-            for (let attr of ["items_per_page", "order_by", "sort_order", "filter_text", "object_types", "tags_filter"])
+            for (let attr of ["items_per_page", "order_by", "sort_order", "show_only_displayed_in_feed"])
                 newPaginationInfo[attr] = paginationInfo[attr];
 
             const result = await dispatch(loadIndexPageObjects(newPaginationInfo));

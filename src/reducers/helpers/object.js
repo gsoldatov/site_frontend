@@ -5,14 +5,15 @@ import { getObjectDataFromStore, objectHasNoChanges } from "../../store/state-ut
 
 /**
  * Returns a deep copy of default edited object state.
- * Sets `object_id` and `owner_id` in the returned object if they are provided as `overrideValues` attributes.
+ * Sets `object_id`, `display_in_feed` and `owner_id` in the returned object if they are provided as `overrideValues` attributes.
  */
 export const getDefaultEditedObjectState = (overrideValues = {}) => {
-    const { object_id, owner_id } = overrideValues;
+    const overridableAttributes = ["object_id", "display_in_feed", "owner_id"];
 
     const defaultState = deepCopy(defaultEditedObjectState);
-    if (object_id !== undefined) defaultState.object_id = object_id;
-    if (owner_id !== undefined) defaultState.owner_id = owner_id;
+    for (let attr of overridableAttributes)
+        if (attr in overrideValues) defaultState[attr] = overrideValues[attr];
+    
     return defaultState;
 };
 

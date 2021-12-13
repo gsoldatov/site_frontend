@@ -8,7 +8,8 @@ import { setObjectsTags } from "../actions/data-tags";
 import { addObjects, addObjectData, deleteObjects } from "../actions/data-objects";
 import { setEditedObject, setObjectOnSaveFetchState } from "../actions/objects-edit";
 
-import { validateObject, serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
+import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeObjectAttributesAndTagsForUpdateFetch,
+    serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
 import { addedObjectAttributes, updatedObjectAttributes } from "../store/state-templates/edited-object";
 
 
@@ -34,9 +35,9 @@ export const addObjectFetch = obj => {
         }
 
         // Run fetch & handle response
+        let payload = { object: serializeObjectAttributesAndTagsForAddFetch(obj) };
         let object_data = serializeObjectData(state, obj);
-        let payload = { object: { added_tags: obj.addedTags, object_data }};
-        for (let attr of addedObjectAttributes) payload.object[attr] = obj[attr];
+        payload.object.object_data = object_data;
         
         let response = await dispatch(runFetch(`${backendURL}/objects/add`, {
             method: "POST",
@@ -138,9 +139,9 @@ export const updateObjectFetch = obj => {
         }
 
         // Run fetch & handle response
+        let payload = { object: serializeObjectAttributesAndTagsForUpdateFetch(obj) };
         let object_data = serializeObjectData(state, obj);
-        let payload = { object: { added_tags: obj.addedTags, removed_tag_ids: obj.removedTagIDs, object_data }};
-        for (let attr of updatedObjectAttributes) payload.object[attr] = obj[attr];
+        payload.object.object_data = object_data;
         
         let response = await dispatch(runFetch(`${backendURL}/objects/update`, {
             method: "PUT",
