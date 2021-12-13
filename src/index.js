@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { WrappedApp }from "./components/top-level/app";
-import StyleIndex from "./styles/index.css"
+import StyleRoot from "./styles/root.css"
 
 // TODO get preferred locale and set it for moment before rendering the app
 // import moment from "moment";
