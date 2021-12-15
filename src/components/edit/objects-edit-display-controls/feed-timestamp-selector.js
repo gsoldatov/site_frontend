@@ -17,7 +17,7 @@ export const FeedTimestampSelector = ({ objectID }) => {
     // Get current feed_timestamp (ISO-formatted or empty string)
     const strFeedTimestamp = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).feed_timestamp);
     let feedTimestamp = new Date(strFeedTimestamp);
-    if (isNaN(feedTimestamp.getTime())) feedTimestamp = null;
+    if (isNaN(feedTimestamp.getTime())) feedTimestamp = undefined;
 
     // onChange handler
     const onChange = useMemo(() => e => {
@@ -25,13 +25,17 @@ export const FeedTimestampSelector = ({ objectID }) => {
         dispatch(setEditedObject({ feed_timestamp: newFeedTimestamp }, objectID))
     }, [objectID]);
 
+    // Custom render input (required to correct display)
+    const renderInput = props => <input {...props} value={(feedTimestamp) ? props.value : ""} />;
+
     return (
         <div className="objects-edit-display-control-container">
             <div className="objects-edit-timestamp-container">
                 <div className="objects-edit-display-label">
                     Feed Timestamp
                 </div>
-                <Datetime value={feedTimestamp} onChange={onChange} />
+                <Datetime value={feedTimestamp} onChange={onChange}
+                    renderInput={renderInput} />
             </div>
         </div>
     );
