@@ -10,4 +10,4 @@ export const SET_REDIRECT_ON_RENDER = "SET_REDIRECT_ON_RENDER";
 export const RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS = "RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS";
 
 export const setRedirectOnRender = (redirectOnRender = "", additionalParams = {}) => ({ type: SET_REDIRECT_ON_RENDER, redirectOnRender, additionalParams });
-export const resetStateExceptForEditedObjects = () => ({ type: RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS });
+export const resetStateExceptForEditedObjects = options => ({ type: RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS, options });

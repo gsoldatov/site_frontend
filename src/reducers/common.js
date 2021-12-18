@@ -30,6 +30,10 @@ function setRedirectOnRender(state, action) {
 function resetStateExceptForEditedObjects(state, action) {
     const newState = getInitialState();
     newState.editedObjects = state.editedObjects;
+
+    const options = action.options || {};
+    if ("redirectOnRender" in options) newState.redirectOnRender = options.redirectOnRender;
+
     return newState;
 }
 

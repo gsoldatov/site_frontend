@@ -146,8 +146,7 @@ export const logoutFetch = () => {
 
         switch (response.status) {
             case 200:
-                dispatch(setRedirectOnRender("/"));
-                dispatch(resetStateExceptForEditedObjects());
+                dispatch(resetStateExceptForEditedObjects({ redirectOnRender: "/" }));
                 return;
             default:
                 return;
