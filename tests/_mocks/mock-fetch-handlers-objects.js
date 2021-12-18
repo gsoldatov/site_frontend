@@ -21,8 +21,8 @@ function handleAdd(body) {
 
     const response = { ...object, 
         object_id: objectID, 
-        created_at: createdAt.toDateString(),
-        modified_at: modifiedAt.toDateString(),
+        created_at: createdAt.toISOString(),
+        modified_at: modifiedAt.toISOString(),
         owner_id: object["owner_id"] || 1 
     };
     for (let attr of ["added_tags", "removed_tag_ids", "object_data"])
@@ -124,8 +124,8 @@ function handleUpdate(body) {
     const response = { object: {
         ...object,
         object_type: objectType,
-        created_at: createdAt.toDateString(),
-        modified_at: modifiedAt.toDateString(),
+        created_at: createdAt.toISOString(),
+        modified_at: modifiedAt.toISOString(),
         tag_updates: tagUpdates
     }};
     for (let attr of ["added_tags", "removed_tag_ids", "object_data"])
@@ -144,15 +144,23 @@ function handleGetPageObjectIDs(body) {
         return { status: 404, body: { _error: "No objects found." }};
     }
 
-    const responseObj = {
-        page: pI.page,
-        items_per_page: pI.items_per_page,
-        total_items: 100, //?
-        order_by: pI.order_by,
-        sort_order: pI.sort_order,
-        filter_text: pI.filter_text,
-        object_ids: objectIDs
+    // const responseObj = {
+    //     page: pI.page,
+    //     items_per_page: pI.items_per_page,
+    //     total_items: 100, //?
+    //     order_by: pI.order_by,
+    //     sort_order: pI.sort_order,
+    //     filter_text: pI.filter_text,
+    //     object_ids: objectIDs
+    // };
+    const responseObj = { 
+        pagination_info: {
+            ...pI,
+            total_items: 100, //?
+            object_ids: objectIDs
+        }
     };
+
     return { status: 200, body: responseObj };  
 }
 
@@ -170,6 +178,20 @@ export function getMockedPageObjectIDs(pI) {
             }
         }
         return a;
+    }
+
+    // Sort by `feed_timestamp` (feed page)
+    if (pI.order_by === "feed_timestamp") {
+        if (pI.sort_order === "asc") throw Error("Sort by feed_timestamp asc not implemented")
+
+        // Desc
+        if (!pI.show_only_displayed_in_feed) throw Error("Sort by feed_timestamp desc without `show_only_displayed_in_feed` not implemented");
+
+        // Single page
+        if (pI.items_per_page === 100) return [100, 1100, 2100, 3100, 101, 1101, 2101, 3101];
+
+        // Random multiple page
+        return getList(100 + pI.items_per_page * (pI.page - 1), 100 + pI.items_per_page * pI.page - 1);
     }
     
     // Tags filter is not empty

@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
@@ -7,13 +8,15 @@ import { getByText, waitFor} from "@testing-library/dom";
 import { renderWithWrappers } from "../_util/render";
 import { getSideMenuItem } from "../_util/ui-common";
 import { clickDataTabButton, clickDisplayTabButton, getObjectDisplayControls, clickPublishObjectCheckbox, 
-    clickPublishSubbjectsCheckbox, clickShowDescriptionCheckbox, clickShowDescriptionAsLinkCheckbox } from "../_util/ui-objects-edit";
-import { clickSubobjectCardDisplayTabButton, getSubobjectCards } from "../_util/ui-composite";
+    clickPublishSubbjectsCheckbox, clickShowDescriptionCheckbox, clickShowDescriptionAsLinkCheckbox, resetObject, clickDisplayInFeedCheckbox, setFeedTimestampDate } from "../_util/ui-objects-edit";
+import { addANewSubobject, clickSubobjectCardDisplayTabButton, getSubobjectCards, resetSubobject } from "../_util/ui-composite";
+import { getReactDatetimeElements } from "../_util/ui-react-datetime";
 
 import { getStoreWithCompositeObjectAndSubobjectsOfEachType } from "../_mocks/data-composite";
 
 import { EditObject } from "../../src/components/top-level/objects-edit";
 import { setEditedObject } from "../../src/actions/objects-edit";
+
 
 
 /*
@@ -31,493 +34,1042 @@ beforeEach(() => {
 });
 
 
-describe("Object display properties toggling & saving", () => {
-    test("Link display properties", async () => {
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-            route: "/objects/edit/1"
+describe("Object display properties", () => {
+    describe("Publish object", () => {
+        test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
+            const objectTypes = ["link", "markdown", "to_do_list", "composite"];
+
+            for (let i = 0; i < objectTypes.length; i++) {
+                const objectID = 1000 * i + 1;
+                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                    route: `/objects/edit/${objectID}`
+                });
+            
+                // Wait for the page to load and open display tab
+                await waitFor(() => getByText(container, "Object Information"));
+                clickDisplayTabButton(container);
+            
+                // Click checkbox 3 times
+                expect(store.getState().editedObjects[objectID].is_published).toBeFalsy();
+                for (let j = 0; j < 3; j++) {
+                    clickPublishObjectCheckbox(container);
+                    expect(store.getState().editedObjects[objectID].is_published).toEqual(j % 2 === 0);
+                }
+
+                // Reset object
+                resetObject(container, false);
+                expect(store.getState().editedObjects[objectID].is_published).toBeFalsy();
+
+                ReactDOM.unmountComponentAtNode(container);
+            }
         });
-    
-        // Wait for the page to load and open display tab
-        await waitFor(() => getByText(container, "Object Information"));
-        clickDisplayTabButton(container);
-        const displayControls = getObjectDisplayControls(container);
-    
-        // Publish object: click checkbox 3 times
-        expect(store.getState().editedObjects[1].is_published).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickPublishObjectCheckbox(container);
-            expect(store.getState().editedObjects[1].is_published).toEqual(i % 2 === 0);
-        }
 
-        // Published subobjects: not rendered
-        expect(displayControls.publishSubobjects).toBeFalsy();
+
+        test("Link: update", async () => {
+            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/1"
+            });
         
-        // Show description: click checkbox 3 times
-        expect(store.getState().editedObjects[1].show_description).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickShowDescriptionCheckbox(container);
-            expect(store.getState().editedObjects[1].show_description).toEqual(i % 2 === 0);
-        }
+            // Wait for the page to load and open display tab
+            await waitFor(() => getByText(container, "Object Information"));
+            clickDisplayTabButton(container);
 
-        // Show description as link: click checkbox 3 times
-        expect(store.getState().editedObjects[1].link.show_description_as_link).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
+            // Toggle checkbox
+            clickPublishObjectCheckbox(container);
+            expect(store.getState().editedObjects[1].is_published).toBeTruthy();
+
+            // Update object and check if display setting is correctly saved
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
+            await waitFor(() => expect(store.getState().objects[1].is_published).toBeTruthy());
+        });
+    });
+
+
+    describe("Publish subobjects", () => {
+        test("Link, markdown, to-do list: control not rendered", async () => {
+            const objectTypes = ["link", "markdown", "to_do_list", undefined];
+
+            for (let i = 0; i < objectTypes.length - 1; i++) {
+                const objectID = 1000 * i + 1;
+                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                    route: `/objects/edit/${objectID}`
+                });
+
+                // Wait for the page to load and open display tab
+                await waitFor(() => getByText(container, "Object Information"));
+                clickDisplayTabButton(container);
+
+                // Check if control is not rendered
+                expect(getObjectDisplayControls(container).publishSubobjects).toBeFalsy();
+
+                ReactDOM.unmountComponentAtNode(container);
+            }
+        });
+
+
+        test("Composite: toggle & reset", async () => {
+            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3901"
+            });
+        
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+            const subobjectIDs = cards[0].map(card => card.id);
+        
+            // Open display tab
+            clickDisplayTabButton(container);
+    
+            // Publish subobjects: partially published -> fully published -> fully not published -> fully published
+            store.dispatch(setEditedObject({ is_published: true }, subobjectIDs[3]));
+            for (let i = 0; i <= 2; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeFalsy();
+            expect(store.getState().editedObjects[subobjectIDs[3]].is_published).toBeTruthy();
+
+            clickPublishSubbjectsCheckbox(container);
+            for (let i = 0; i <= 3; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeTruthy();
+
+            clickPublishSubbjectsCheckbox(container);
+            for (let i = 0; i <= 3; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeFalsy();
+
+            clickPublishSubbjectsCheckbox(container);
+            for (let i = 0; i <= 3; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeTruthy();
+
+            // Reset object (don't check composite subobject, because it's not reset)
+            resetObject(container, true);
+            for (let i = 0; i <= 2; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeFalsy();
+        });
+
+
+        test("Composite: save", async () => {
+            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3901"
+            });
+        
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+            const subobjectIDs = cards[0].map(card => card.id);
+        
+            // Open display tab
+            clickDisplayTabButton(container);
+
+            // Publish all subobjects
+            clickPublishSubbjectsCheckbox(container);
+            for (let i = 0; i <= 3; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeTruthy();
+
+            // Update object and check if subobjects were updated (except for composite)
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
+            await waitFor(() => {
+                for (let i = 0; i < 3; i++)
+                    expect(store.getState().objects[subobjectIDs[i]].is_published).toBeTruthy();
+            });
+        });
+    });
+
+
+    describe("Show description", () => {
+        test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
+            const objectTypes = ["link", "markdown", "to_do_list", "composite"];
+
+            for (let i = 0; i < objectTypes.length; i++) {
+                const objectID = 1000 * i + 1;
+                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                    route: `/objects/edit/${objectID}`
+                });
+            
+                // Wait for the page to load and open display tab
+                await waitFor(() => getByText(container, "Object Information"));
+                clickDisplayTabButton(container);
+            
+                // Click checkbox 3 times
+                expect(store.getState().editedObjects[objectID].show_description).toBeFalsy();
+                for (let j = 0; j < 3; j++) {
+                    clickShowDescriptionCheckbox(container);
+                    expect(store.getState().editedObjects[objectID].show_description).toEqual(j % 2 === 0);
+                }
+
+                // Reset object
+                resetObject(container, false);
+                expect(store.getState().editedObjects[objectID].show_description).toBeFalsy();
+
+                ReactDOM.unmountComponentAtNode(container);
+            }
+        });
+
+
+        test("Link: update", async () => {
+            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/1"
+            });
+        
+            // Wait for the page to load and open display tab
+            await waitFor(() => getByText(container, "Object Information"));
+            clickDisplayTabButton(container);
+
+            // Toggle checkbox
+            clickShowDescriptionCheckbox(container);
+            expect(store.getState().editedObjects[1].show_description).toBeTruthy();
+
+            // Update object and check if display setting is correctly saved
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
+            await waitFor(() => expect(store.getState().objects[1].show_description).toBeTruthy());
+        });
+    });
+
+
+    describe("Show description as link", () => {
+        test("Markdown, to-do list: control not rendered", async () => {
+            const objectTypes = [undefined, "markdown", "to_do_list", "composite"];
+
+            for (let i = 1; i < objectTypes.length; i++) {
+                const objectID = 1000 * i + 1;
+                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                    route: `/objects/edit/${objectID}`
+                });
+
+                // Wait for the page to load and open display tab
+                await waitFor(() => getByText(container, "Object Information"));
+                clickDisplayTabButton(container);
+
+                // Check if control is not rendered
+                expect(getObjectDisplayControls(container).showDescriptionAsLink).toBeFalsy();
+
+                ReactDOM.unmountComponentAtNode(container);
+            }
+        });
+
+
+        test("Link: toggle & reset", async () => {
+            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/1"
+            });
+        
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+        
+            // Open display tab
+            clickDisplayTabButton(container);
+
+            // Click checkbox 3 times
+            expect(store.getState().editedObjects[1].link.show_description_as_link).toEqual(false);
+            for (let j = 0; j < 3; j++) {
+                clickShowDescriptionAsLinkCheckbox(container);
+                expect(store.getState().editedObjects[1].link.show_description_as_link).toEqual(j % 2 === 0);
+            }
+
+            // Reset object
+            resetObject(container, false);
+            expect(store.getState().editedObjects[1].link.show_description_as_link).toEqual(false);
+        });
+
+
+        test("Link: save", async () => {
+            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/1"
+            });
+        
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+        
+            // Open display tab
+            clickDisplayTabButton(container);
+
+            // Toggle checkbox
             clickShowDescriptionAsLinkCheckbox(container);
-            expect(store.getState().editedObjects[1].link.show_description_as_link).toEqual(i % 2 === 0);
-        }
+            expect(store.getState().editedObjects[1].link.show_description_as_link).toEqual(true);
 
-        // Composite display mode: not rendered
-        expect(displayControls.displayMode.selected).toBeFalsy();
-
-        // Update object and check if display settings are correctly saved
-        let saveButton = getSideMenuItem(container, "Save");
-        fireEvent.click(saveButton);
-        await waitFor(() => expect(store.getState().objects[1].is_published).toBeTruthy());
-
-        const state = store.getState();
-        expect(state.objects[1].show_description).toBeTruthy();
-        expect(state.links[1].show_description_as_link).toBeTruthy();
+            // Update object and check if subobjects were updated (except for composite)
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
+            await waitFor(() => expect(store.getState().links[1].show_description_as_link).toEqual(true));
+        });
     });
 
 
-    test("Markdown display properties", async () => {
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-            route: "/objects/edit/1001"
+    describe("Display in feed", () => {
+        test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
+            const objectTypes = ["link", "markdown", "to_do_list", "composite"];
+
+            for (let i = 0; i < objectTypes.length; i++) {
+                const objectID = 1000 * i + 1;
+                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                    route: `/objects/edit/${objectID}`
+                });
+            
+                // Wait for the page to load and open display tab
+                await waitFor(() => getByText(container, "Object Information"));
+                clickDisplayTabButton(container);
+            
+                // Click checkbox 3 times
+                expect(store.getState().editedObjects[objectID].display_in_feed).toBeFalsy();
+                for (let j = 0; j < 3; j++) {
+                    clickDisplayInFeedCheckbox(container);
+                    expect(store.getState().editedObjects[objectID].display_in_feed).toEqual(j % 2 === 0);
+                }
+
+                // Reset object
+                resetObject(container, false);
+                expect(store.getState().editedObjects[objectID].display_in_feed).toBeFalsy();
+
+                ReactDOM.unmountComponentAtNode(container);
+            }
         });
-    
-        // Wait for the page to load and open display tab
-        await waitFor(() => getByText(container, "Object Information"));
-        clickDisplayTabButton(container);
-        const displayControls = getObjectDisplayControls(container);
-    
-        // Publish object: click checkbox 3 times
-        expect(store.getState().editedObjects[1001].is_published).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickPublishObjectCheckbox(container);
-            expect(store.getState().editedObjects[1001].is_published).toEqual(i % 2 === 0);
-        }
 
-        // Published subobjects: not rendered
-        expect(displayControls.publishSubobjects).toBeFalsy();
+
+        test("Link: update", async () => {
+            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/1"
+            });
         
-        // Show description: click checkbox 3 times
-        expect(store.getState().editedObjects[1001].show_description).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickShowDescriptionCheckbox(container);
-            expect(store.getState().editedObjects[1001].show_description).toEqual(i % 2 === 0);
-        }
+            // Wait for the page to load and open display tab
+            await waitFor(() => getByText(container, "Object Information"));
+            clickDisplayTabButton(container);
 
-        // Show description as link: not rendered
-        expect(displayControls.showDescriptionAsLink).toBeFalsy();
+            // Toggle checkbox
+            clickDisplayInFeedCheckbox(container);
+            expect(store.getState().editedObjects[1].display_in_feed).toBeTruthy();
 
-        // Composite display mode: not rendered
-        expect(displayControls.displayMode.selected).toBeFalsy();
-
-        // Update object and check if display settings are correctly saved
-        let saveButton = getSideMenuItem(container, "Save");
-        fireEvent.click(saveButton);
-        await waitFor(() => expect(store.getState().objects[1001].is_published).toBeTruthy());
-
-        const state = store.getState();
-        expect(state.objects[1001].show_description).toBeTruthy();
+            // Update object and check if display setting is correctly saved
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
+            await waitFor(() => expect(store.getState().objects[1].display_in_feed).toBeTruthy());
+        });
     });
 
 
-    test("To-do list display properties", async () => {
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-            route: "/objects/edit/2001"
+    describe("Feed timestamp", () => {
+        test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
+            const objectTypes = ["link", "markdown", "to_do_list", "composite"];
+
+            for (let i = 0; i < objectTypes.length; i++) {
+                const objectID = 1000 * i + 1;
+                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                    route: `/objects/edit/${objectID}`
+                });
+            
+                // Wait for the page to load and open display tab
+                await waitFor(() => getByText(container, "Object Information"));
+                clickDisplayTabButton(container);
+
+                // Set feed timestamp to an empty string
+                const { feedTimestampContainer } = getObjectDisplayControls(container);
+                let rdtElements = getReactDatetimeElements(feedTimestampContainer);
+                fireEvent.change(rdtElements.input, { target: { value: "" }});
+                expect(store.getState().editedObjects[objectID].feed_timestamp).toEqual("");
+
+                // Set feed timestamp to `newDate`
+                const now = new Date();
+                const newDate = new Date(now.getFullYear(), now.getMonth(), 10);
+                await setFeedTimestampDate(container, newDate);
+                expect(store.getState().editedObjects[objectID].feed_timestamp).toEqual(newDate.toISOString());
+
+                // Reset object
+                resetObject(container, false);
+                expect(store.getState().editedObjects[objectID].feed_timestamp).toEqual(store.getState().objects[objectID].feed_timestamp);
+
+                ReactDOM.unmountComponentAtNode(container);
+            }
         });
-    
-        // Wait for the page to load and open display tab
-        await waitFor(() => getByText(container, "Object Information"));
-        clickDisplayTabButton(container);
-        const displayControls = getObjectDisplayControls(container);
-    
-        // Publish object: click checkbox 3 times
-        expect(store.getState().editedObjects[2001].is_published).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickPublishObjectCheckbox(container);
-            expect(store.getState().editedObjects[2001].is_published).toEqual(i % 2 === 0);
-        }
 
-        // Published subobjects: not rendered
-        expect(displayControls.publishSubobjects).toBeFalsy();
+
+        test("Link: update", async () => {
+            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/1"
+            });
         
-        // Show description: click checkbox 3 times
-        expect(store.getState().editedObjects[2001].show_description).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickShowDescriptionCheckbox(container);
-            expect(store.getState().editedObjects[2001].show_description).toEqual(i % 2 === 0);
-        }
+            // Wait for the page to load and open display tab
+            await waitFor(() => getByText(container, "Object Information"));
+            clickDisplayTabButton(container);
 
-        // Show description as link: not rendered
-        expect(displayControls.showDescriptionAsLink).toBeFalsy();
+            // Set feed timestamp to an empty string
+            const { feedTimestampContainer } = getObjectDisplayControls(container);
+            let rdtElements = getReactDatetimeElements(feedTimestampContainer);
+            fireEvent.change(rdtElements.input, { target: { value: "" }});
+            expect(store.getState().editedObjects[1].feed_timestamp).toEqual("");
 
-        // Composite display mode: not rendered
-        expect(displayControls.displayMode.selected).toBeFalsy();
+            // Set feed timestamp to `newDate`
+            const now = new Date();
+            const newDate = new Date(now.getFullYear(), now.getMonth(), 10);
+            await setFeedTimestampDate(container, newDate);
+            expect(store.getState().editedObjects[1].feed_timestamp).toEqual(newDate.toISOString());
 
-        // Update object and check if display settings are correctly saved
-        let saveButton = getSideMenuItem(container, "Save");
-        fireEvent.click(saveButton);
-        await waitFor(() => expect(store.getState().objects[2001].is_published).toBeTruthy());
-
-        const state = store.getState();
-        expect(state.objects[2001].show_description).toBeTruthy();
+            // Update object and check if display setting is correctly saved
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
+            await waitFor(() => expect(store.getState().objects[1].feed_timestamp).toEqual(newDate.toISOString()));
+        });
     });
 
 
-    test("Composite display properties (main object)", async () => {
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-            route: "/objects/edit/3901"
+    describe("Display mode", () => {
+        test("Link, Markdown, to-do list: control not rendered", async () => {
+            const objectTypes = ["link", "markdown", "to_do_list", undefined];
+
+            for (let i = 0; i < objectTypes.length - 1; i++) {
+                const objectID = 1000 * i + 1;
+                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                    route: `/objects/edit/${objectID}`
+                });
+            
+                // Wait for the page to load and open display tab
+                await waitFor(() => getByText(container, "Object Information"));
+                clickDisplayTabButton(container);
+
+                // Check if control is not rendered
+                expect(getObjectDisplayControls(container).displayMode.selected).toBeUndefined();
+
+                ReactDOM.unmountComponentAtNode(container);
+            }
         });
-    
-        // Wait for the page to load
-        await waitFor(() => getByText(container, "Object Information"));
-        clickDataTabButton(container);
-        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
-        const subobjectIDs = cards[0].map(card => card.id);
-    
-        // Open display tab
-        clickDisplayTabButton(container);
-        const displayControls = getObjectDisplayControls(container);
-    
-        // Publish object: click checkbox 3 times
-        expect(store.getState().editedObjects[3901].is_published).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickPublishObjectCheckbox(container);
-            expect(store.getState().editedObjects[3901].is_published).toEqual(i % 2 === 0);
-        }
 
-        // Published subobjects: partially published -> fully published -> fully not published -> fully published
-        store.dispatch(setEditedObject({ is_published: true }, subobjectIDs[3]));
-        for (let i = 0; i <= 2; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeFalsy();
-        expect(store.getState().editedObjects[subobjectIDs[3]].is_published).toBeTruthy();
 
-        clickPublishSubbjectsCheckbox(container);
-        for (let i = 0; i <= 3; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeTruthy();
-
-        clickPublishSubbjectsCheckbox(container);
-        for (let i = 0; i <= 3; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeFalsy();
-
-        clickPublishSubbjectsCheckbox(container);
-        for (let i = 0; i <= 3; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeTruthy();
+        // NOTE: update this test when new display modes are added to check if control correctly modifies object's `display_mode` value
+        test("Composite: default value", async () => {
+            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: `/objects/edit/3001`
+            });
         
-        // Show description: click checkbox 3 times
-        expect(store.getState().editedObjects[3901].show_description).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickShowDescriptionCheckbox(container);
-            expect(store.getState().editedObjects[3901].show_description).toEqual(i % 2 === 0);
-        }
+            // Wait for the page to load and open display tab
+            await waitFor(() => getByText(container, "Object Information"));
+            clickDisplayTabButton(container);
 
-        // Show description as link: not rendered
-        expect(displayControls.showDescriptionAsLink).toBeFalsy();
+            // Composite display mode: is rendered and eqaul "Basic" by default
+            expect(getObjectDisplayControls(container).displayMode.selected.textContent).toEqual("Basic");
+        });
+    });
 
-        // Composite display mode: is rendered and eqaul "Basic" by default
-        expect(displayControls.displayMode.selected.textContent).toEqual("Basic");
 
-        // Update object and check if display settings are correctly saved
-        let saveButton = getSideMenuItem(container, "Save");
-        fireEvent.click(saveButton);
-        await waitFor(() => expect(store.getState().objects[3901].is_published).toBeTruthy());
+    describe("Show description composite", () => {
+        test("Link, markdown, to-do list, composite: control not rendered", async () => {
+            const objectTypes = ["link", "markdown", "to_do_list", "composite"];
 
-        const state = store.getState();
-        expect(state.objects[3901].show_description).toBeTruthy();
-        for (let i = 0; i <= 2; i++) expect(state.editedObjects[subobjectIDs[i]].is_published).toBeTruthy();     // NOTE: composite subobject is not checked, as it's considered no to be updated
+            for (let i = 0; i < objectTypes.length; i++) {
+                const objectID = 1000 * i + 1;
+                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                    route: `/objects/edit/${objectID}`
+                });
+            
+                // Wait for the page to load and open display tab
+                await waitFor(() => getByText(container, "Object Information"));
+                clickDisplayTabButton(container);
+
+                // Check if control is not rendered
+                expect(getObjectDisplayControls(container).showDescriptionComposite.selected).toBeUndefined();
+
+                ReactDOM.unmountComponentAtNode(container);
+            }
+        });
+    });
+
+
+    describe("Show description as link composite", () => {
+        test("Link, markdown, to-do list, composite: control not rendered", async () => {
+            const objectTypes = ["link", "markdown", "to_do_list", "composite"];
+
+            for (let i = 0; i < objectTypes.length; i++) {
+                const objectID = 1000 * i + 1;
+                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                    route: `/objects/edit/${objectID}`
+                });
+            
+                // Wait for the page to load and open display tab
+                await waitFor(() => getByText(container, "Object Information"));
+                clickDisplayTabButton(container);
+
+                // Check if control is not rendered
+                expect(getObjectDisplayControls(container).showDescriptionAsLinkComposite.selected).toBeUndefined();
+
+                ReactDOM.unmountComponentAtNode(container);
+            }
+        });
     });
 });
 
 
 describe("Composite subobject display properties", () => {
-    test("Link subobject display properties", async () => {
-        const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-            route: "/objects/edit/3201",
-            store
+    describe("Publish subobject", () => {
+        test("Default value inheritance", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+        
+            // Publish object
+            clickDisplayTabButton(container);
+            clickPublishObjectCheckbox(container);
+            expect(store.getState().editedObjects[3201].is_published).toBeTruthy();
+        
+            // Add a new subobject & check if it has the same `is_published` setting as parent
+            clickDataTabButton(container);
+            addANewSubobject(container);
+            let firstSubobjectID = getSubobjectCards(container, { expectedNumbersOfCards: [5] })[0][4].id;
+            expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeTruthy();
+        
+            // Unpublish object
+            clickDisplayTabButton(container);
+            clickPublishObjectCheckbox(container);
+            expect(store.getState().editedObjects[3201].is_published).toBeFalsy();
+        
+            // Add a new subobject & check if it has the same `is_published` setting as parent
+            clickDataTabButton(container);
+            addANewSubobject(container);
+            let secondSubobjectID = getSubobjectCards(container, { expectedNumbersOfCards: [6] })[0][5].id;
+            expect(store.getState().editedObjects[secondSubobjectID].is_published).toBeFalsy();
+        
+            // Check if "Publish Subobjects" checkbox is indeterminate state
+            clickDisplayTabButton(container);
+            const publishSubobjectsContainer = getByText(container, "Publish Subobjects").parentNode;
+            const publishSubobjectsInput = publishSubobjectsContainer.querySelector("input");
+            expect(publishSubobjectsContainer.classList.contains("indeterminate")).toBeTruthy();
+        
+            // Publish all subobjects & check state
+            fireEvent.click(publishSubobjectsInput);
+            expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeTruthy();
+            expect(store.getState().editedObjects[secondSubobjectID].is_published).toBeTruthy();
+        
+            // Publish all subobjects & check state
+            fireEvent.click(publishSubobjectsInput);
+            expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeFalsy();
+            expect(store.getState().editedObjects[secondSubobjectID].is_published).toBeFalsy();
+        
+            // Publish first subobject & check state
+            clickDataTabButton(container);
+            let firstSubobjectCard = getSubobjectCards(container, { expectedNumbersOfCards: [6] })[0][4];
+            clickSubobjectCardDisplayTabButton(firstSubobjectCard);
+        
+            const publishFirstSubobjectCheckboxContainer = getByText(firstSubobjectCard, "Publish Object").parentNode;
+            expect(publishFirstSubobjectCheckboxContainer.classList.contains("checked")).toBeFalsy();
+            clickPublishObjectCheckbox(firstSubobjectCard);
+            expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeTruthy();
+        
+            // Unpublish first subobject & check state
+            expect(publishFirstSubobjectCheckboxContainer.classList.contains("checked")).toBeTruthy();
+            clickPublishObjectCheckbox(firstSubobjectCard);
+            expect(store.getState().editedObjects[firstSubobjectID].is_published).toBeFalsy();
         });
 
-        // Wait for the page to load
-        await waitFor(() => getByText(container, "Object Information"));
 
-        // Check data and get subobject id and card
-        clickDataTabButton(container);
-        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
-        const subobjectID = cards[0].map(card => card.id)[0];
-        expect(store.getState().editedObjects[subobjectID].object_type).toEqual("link");
-        const subobjectCard = cards[0][0];
+        test("Link, markdown, to-do list, composite: toggle & reset", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
 
-        // Wait for composite subobject card to load
-        await waitFor(() => getByText(cards[0][3], "Object Name"));
-        
-        // Click on tested subobject's card display tab
-        clickSubobjectCardDisplayTabButton(subobjectCard);
-        const displayControls = getObjectDisplayControls(subobjectCard);
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
 
-        // Publish object: click checkbox 3 times
-        expect(store.getState().editedObjects[subobjectID].is_published).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+            const subobjectObjectTypes = ["link", "markdown", "to_do_list", "composite"];
+
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+
+            for (let i = 0; i < cards.length; i++) {
+                const subobjectCard = cards[0][i];
+                const subobjectID = subobjectCard.id;
+                expect(store.getState().editedObjects[subobjectID].object_type).toEqual(subobjectObjectTypes[i]);
+
+                // Click on tested subobject's card display tab
+                clickSubobjectCardDisplayTabButton(subobjectCard);
+
+                // Publish object: click checkbox 3 times
+                expect(store.getState().editedObjects[subobjectID].is_published).toBeFalsy();
+                for (let j = 0; j < 3; j++) {
+                    clickPublishObjectCheckbox(subobjectCard);
+                    expect(store.getState().editedObjects[subobjectID].is_published).toEqual(j % 2 === 0);
+                }
+
+                // Reset subobject
+                resetSubobject(subobjectCard);
+                expect(store.getState().editedObjects[subobjectID].is_published).toBeFalsy();
+            }
+        });
+
+
+        test("Link: update", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+
+            const subobjectCard = cards[0][0];
+            const subobjectID = subobjectCard.id;
+            expect(store.getState().editedObjects[subobjectID].object_type).toEqual("link");
+
+            // Click on tested subobject's card display tab
+            clickSubobjectCardDisplayTabButton(subobjectCard);
+
+            // Publish subobject
             clickPublishObjectCheckbox(subobjectCard);
-            expect(store.getState().editedObjects[subobjectID].is_published).toEqual(i % 2 === 0);
-        }
+            expect(store.getState().editedObjects[subobjectID].is_published).toEqual(true);
 
-        // Published subobjects: not rendered
-        expect(displayControls.publishSubobjects).toBeFalsy();
-        
-        // Show description: not rendered
-        expect(displayControls.showDescription).toBeFalsy();
+            // Update object and check if display settings are correctly saved
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
 
-        // Show description composite: inherit => no => inherit => yes
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
-        
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.no);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("No");
-
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.inherit);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
-
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.yes);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Yes");
-
-        // Show description as link: not rendered
-        expect(displayControls.showDescriptionAsLink).toBeFalsy();
-
-        // Show description as link composite: inherit => no => inherit => yes
-        expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("Inherit");
-        
-        fireEvent.click(displayControls.showDescriptionAsLinkComposite.selected);
-        fireEvent.click(displayControls.showDescriptionAsLinkComposite.options.no);
-        expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("No");
-
-        fireEvent.click(displayControls.showDescriptionAsLinkComposite.selected);
-        fireEvent.click(displayControls.showDescriptionAsLinkComposite.options.inherit);
-        expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("Inherit");
-
-        fireEvent.click(displayControls.showDescriptionAsLinkComposite.selected);
-        fireEvent.click(displayControls.showDescriptionAsLinkComposite.options.yes);
-        expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("Yes");
-
-        // Composite display mode: not rendered
-        expect(displayControls.displayMode.selected).toBeFalsy();
-
-        // Update object and check if display settings are correctly saved
-        let saveButton = getSideMenuItem(container, "Save");
-        fireEvent.click(saveButton);
-
-        await waitFor(() => expect(store.getState().objects[subobjectID].is_published).toBeTruthy());
-
-        const state = store.getState();
-        expect(state.composite[3201].subobjects[subobjectID].show_description_composite).toEqual("yes");
-        expect(state.composite[3201].subobjects[subobjectID].show_description_as_link_composite).toEqual("yes");
+            await waitFor(() => expect(store.getState().objects[subobjectID].is_published).toEqual(true));
+        });
     });
 
 
-    test("Markdown subobject display properties", async () => {
-        const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-            route: "/objects/edit/3201",
-            store
+    describe("Show description composite", () => {
+        test("Link, markdown, to-do list, composite: toggle & reset", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+            const subobjectObjectTypes = ["link", "markdown", "to_do_list", "composite"];
+
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+
+            for (let i = 0; i < cards.length; i++) {
+                const subobjectCard = cards[0][i];
+                const subobjectID = subobjectCard.id;
+                expect(store.getState().editedObjects[subobjectID].object_type).toEqual(subobjectObjectTypes[i]);
+
+                // Click on tested subobject's card display tab
+                clickSubobjectCardDisplayTabButton(subobjectCard);
+                const displayControls = getObjectDisplayControls(subobjectCard);
+
+                // Show description composite: inherit => no => inherit => yes
+                expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
+                
+                fireEvent.click(displayControls.showDescriptionComposite.selected);
+                fireEvent.click(displayControls.showDescriptionComposite.options.no);
+                expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("No");
+                expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_composite).toEqual("no");
+
+                fireEvent.click(displayControls.showDescriptionComposite.selected);
+                fireEvent.click(displayControls.showDescriptionComposite.options.inherit);
+                expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
+                expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_composite).toEqual("inherit");
+
+                fireEvent.click(displayControls.showDescriptionComposite.selected);
+                fireEvent.click(displayControls.showDescriptionComposite.options.yes);
+                expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Yes");
+                expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_composite).toEqual("yes");
+
+                // Reset subobject
+                resetSubobject(subobjectCard);
+                expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_composite).toEqual("inherit");
+            }
         });
 
-        // Wait for the page to load
-        await waitFor(() => getByText(container, "Object Information"));
 
-        // Check data and get subobject id and card
-        clickDataTabButton(container);
-        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
-        const subobjectID = cards[0].map(card => card.id)[1];
-        expect(store.getState().editedObjects[subobjectID].object_type).toEqual("markdown");
-        const subobjectCard = cards[0][1];
+        test("Link: update", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
 
-        // Wait for composite subobject card to load
-        await waitFor(() => getByText(cards[0][3], "Object Name"));
-        
-        // Click on tested subobject's card display tab
-        clickSubobjectCardDisplayTabButton(subobjectCard);
-        const displayControls = getObjectDisplayControls(subobjectCard);
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
 
-        // Publish object: click checkbox 3 times
-        expect(store.getState().editedObjects[subobjectID].is_published).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickPublishObjectCheckbox(subobjectCard);
-            expect(store.getState().editedObjects[subobjectID].is_published).toEqual(i % 2 === 0);
-        }
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
 
-        // Published subobjects: not rendered
-        expect(displayControls.publishSubobjects).toBeFalsy();
-        
-        // Show description: not rendered
-        expect(displayControls.showDescription).toBeFalsy();
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
 
-        // Show description composite: inherit => no => inherit => yes
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
-        
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.no);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("No");
+            const subobjectCard = cards[0][0];
+            const subobjectID = subobjectCard.id;
+            expect(store.getState().editedObjects[subobjectID].object_type).toEqual("link");
 
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.inherit);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
+            // Click on tested subobject's card display tab
+            clickSubobjectCardDisplayTabButton(subobjectCard);
+            const displayControls = getObjectDisplayControls(subobjectCard);
 
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.yes);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Yes");
+            // Show description composite: change to yes
+            expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
 
-        // Show description as link: not rendered
-        expect(displayControls.showDescriptionAsLink).toBeFalsy();
+            fireEvent.click(displayControls.showDescriptionComposite.selected);
+            fireEvent.click(displayControls.showDescriptionComposite.options.yes);
+            expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Yes");
+            expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_composite).toEqual("yes");
 
-        // Show description as link composite: not rendered
-        expect(displayControls.showDescriptionAsLinkComposite.selected).toBeFalsy();
+            // Update object and check if display settings are correctly saved
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
 
-        // Composite display mode: not rendered
-        expect(displayControls.displayMode.selected).toBeFalsy();
-
-        // Update object and check if display settings are correctly saved
-        let saveButton = getSideMenuItem(container, "Save");
-        fireEvent.click(saveButton);
-
-        await waitFor(() => expect(store.getState().objects[subobjectID].is_published).toBeTruthy());
-
-        const state = store.getState();
-        expect(state.composite[3201].subobjects[subobjectID].show_description_composite).toEqual("yes");
+            await waitFor(() => expect(store.getState().composite[3201].subobjects[subobjectID].show_description_composite).toEqual("yes"));
+        });
     });
 
 
-    test("To-do list subobject display properties", async () => {
-        const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-            route: "/objects/edit/3201",
-            store
+    describe("Show description as link composite", () => {
+        test("Markdown, to-do list, composite: not rendered", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+            const subobjectObjectTypes = [undefined, "markdown", "to_do_list", "composite"];
+
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+
+            for (let i = 1; i < cards.length; i++) {
+                const subobjectCard = cards[0][i];
+                const subobjectID = subobjectCard.id;
+                expect(store.getState().editedObjects[subobjectID].object_type).toEqual(subobjectObjectTypes[i]);
+
+                // Check if control is not rendered
+                clickSubobjectCardDisplayTabButton(subobjectCard);
+                expect(getObjectDisplayControls(subobjectCard).showDescriptionAsLinkComposite).toBeFalsy();
+            }
         });
 
-        // Wait for the page to load
-        await waitFor(() => getByText(container, "Object Information"));
 
-        // Check data and get subobject id and card
-        clickDataTabButton(container);
-        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
-        const subobjectID = cards[0].map(card => card.id)[2];
-        expect(store.getState().editedObjects[subobjectID].object_type).toEqual("to_do_list");
-        const subobjectCard = cards[0][2];
+        test("Link: toggle & reset", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
 
-        // Wait for composite subobject card to load
-        await waitFor(() => getByText(cards[0][3], "Object Name"));
-        
-        // Click on tested subobject's card display tab
-        clickSubobjectCardDisplayTabButton(subobjectCard);
-        const displayControls = getObjectDisplayControls(subobjectCard);
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
 
-        // Publish object: click checkbox 3 times
-        expect(store.getState().editedObjects[subobjectID].is_published).toBeFalsy();
-        for (let i = 0; i < 3; i++) {
-            clickPublishObjectCheckbox(subobjectCard);
-            expect(store.getState().editedObjects[subobjectID].is_published).toEqual(i % 2 === 0);
-        }
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
 
-        // Published subobjects: not rendered
-        expect(displayControls.publishSubobjects).toBeFalsy();
-        
-        // Show description: not rendered
-        expect(displayControls.showDescription).toBeFalsy();
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+                
+            const subobjectCard = cards[0][0];
+            const subobjectID = subobjectCard.id;
+            expect(store.getState().editedObjects[subobjectID].object_type).toEqual("link");
 
-        // Show description composite: inherit => no => inherit => yes
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
-        
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.no);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("No");
+            // Click on tested subobject's card display tab
+            clickSubobjectCardDisplayTabButton(subobjectCard);
+            const displayControls = getObjectDisplayControls(subobjectCard);
 
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.inherit);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
+            // Show description as link composite: inherit => no => inherit => yes
+            expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("Inherit");
+                
+            fireEvent.click(displayControls.showDescriptionAsLinkComposite.selected);
+            fireEvent.click(displayControls.showDescriptionAsLinkComposite.options.no);
+            expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("No");
+            expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_as_link_composite).toEqual("no");
 
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.yes);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Yes");
+            fireEvent.click(displayControls.showDescriptionAsLinkComposite.selected);
+            fireEvent.click(displayControls.showDescriptionAsLinkComposite.options.inherit);
+            expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("Inherit");
+            expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_as_link_composite).toEqual("inherit");
 
-        // Show description as link: not rendered
-        expect(displayControls.showDescriptionAsLink).toBeFalsy();
+            fireEvent.click(displayControls.showDescriptionAsLinkComposite.selected);
+            fireEvent.click(displayControls.showDescriptionAsLinkComposite.options.yes);
+            expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("Yes");
+            expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_as_link_composite).toEqual("yes");
 
-        // Show description as link composite: not rendered
-        expect(displayControls.showDescriptionAsLinkComposite.selected).toBeFalsy();
+            // Reset subobject
+            resetSubobject(subobjectCard);
+            expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_as_link_composite).toEqual("inherit");
+        });
 
-        // Composite display mode: not rendered
-        expect(displayControls.displayMode.selected).toBeFalsy();
 
-        // Update object and check if display settings are correctly saved
-        let saveButton = getSideMenuItem(container, "Save");
-        fireEvent.click(saveButton);
+        test("Link: update", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
 
-        await waitFor(() => expect(store.getState().objects[subobjectID].is_published).toBeTruthy());
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
 
-        const state = store.getState();
-        expect(state.composite[3201].subobjects[subobjectID].show_description_composite).toEqual("yes");
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+
+            const subobjectCard = cards[0][0];
+            const subobjectID = subobjectCard.id;
+            expect(store.getState().editedObjects[subobjectID].object_type).toEqual("link");
+
+            // Click on tested subobject's card display tab
+            clickSubobjectCardDisplayTabButton(subobjectCard);
+            const displayControls = getObjectDisplayControls(subobjectCard);
+
+            // Show description composite: change to yes
+            expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("Inherit");
+
+            fireEvent.click(displayControls.showDescriptionAsLinkComposite.selected);
+            fireEvent.click(displayControls.showDescriptionAsLinkComposite.options.yes);
+            expect(displayControls.showDescriptionAsLinkComposite.selected.textContent).toEqual("Yes");
+            expect(store.getState().editedObjects[3201].composite.subobjects[subobjectID].show_description_as_link_composite).toEqual("yes");
+
+            // Update object and check if display settings are correctly saved
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
+
+            await waitFor(() => expect(store.getState().composite[3201].subobjects[subobjectID].show_description_as_link_composite).toEqual("yes"));
+        });
     });
 
 
-    test("Composite subobject display properties", async () => {
-        const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-            route: "/objects/edit/3201",
-            store
+    describe("Display in feed", () => {
+        test("Default value of a new subobject", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+
+            // Open data tab and add a new subobject
+            clickDataTabButton(container);
+            addANewSubobject(container);
+            const cards = getSubobjectCards(container, { expectedNumbersOfCards: [5] });
+            const subobjectID = cards[0][4].id;
+            expect(store.getState().editedObjects[subobjectID].display_in_feed).toEqual(false);
         });
 
-        // Wait for the page to load
-        await waitFor(() => getByText(container, "Object Information"));
 
-        // Check data and get subobject id and card
-        clickDataTabButton(container);
-        let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
-        const subobjectID = cards[0].map(card => card.id)[3];
-        expect(store.getState().editedObjects[subobjectID].object_type).toEqual("composite");
-        const subobjectCard = cards[0][3];
+        test("Link, markdown, to-do list, composite: toggle & reset", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
 
-        // Wait for composite subobject card to load
-        await waitFor(() => getByText(cards[0][3], "Object Name"));
-        
-        // Click on tested subobject's card display tab
-        clickSubobjectCardDisplayTabButton(subobjectCard);
-        const displayControls = getObjectDisplayControls(subobjectCard);
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
 
-        // Publish object: not rendered (because it won't be saved with the parent object)
-        expect(displayControls.publishObject).toBeFalsy();
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+            const subobjectObjectTypes = ["link", "markdown", "to_do_list", "composite"];
 
-        // Published subobjects: not rendered
-        expect(displayControls.publishSubobjects).toBeFalsy();
-        
-        // Show description: not rendered
-        expect(displayControls.showDescription).toBeFalsy();
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
 
-        // Show description composite: inherit => no => inherit => yes
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
-        
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.no);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("No");
+            for (let i = 0; i < cards.length; i++) {
+                const subobjectCard = cards[0][i];
+                const subobjectID = subobjectCard.id;
+                expect(store.getState().editedObjects[subobjectID].object_type).toEqual(subobjectObjectTypes[i]);
 
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.inherit);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Inherit");
+                // Click on tested subobject's card display tab
+                clickSubobjectCardDisplayTabButton(subobjectCard);
 
-        fireEvent.click(displayControls.showDescriptionComposite.selected);
-        fireEvent.click(displayControls.showDescriptionComposite.options.yes);
-        expect(displayControls.showDescriptionComposite.selected.textContent).toEqual("Yes");
+                // Click checkbox 3 times
+                expect(store.getState().editedObjects[subobjectID].display_in_feed).toBeFalsy();
+                for (let j = 0; j < 3; j++) {
+                    clickDisplayInFeedCheckbox(subobjectCard);
+                    expect(store.getState().editedObjects[subobjectID].display_in_feed).toEqual(j % 2 === 0);
+                }
 
-        // Show description as link: not rendered
-        expect(displayControls.showDescriptionAsLink).toBeFalsy();
+                // Reset subobject
+                resetSubobject(subobjectCard);
+                expect(store.getState().editedObjects[subobjectID].display_in_feed).toBeFalsy();
+            }
+        });
 
-        // Show description as link composite: not rendered
-        expect(displayControls.showDescriptionAsLinkComposite.selected).toBeFalsy();
 
-        // Composite display mode: not rendered
-        expect(displayControls.displayMode.selected).toBeFalsy();
+        test("Link: update", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
 
-        // Update object and check if display settings are correctly saved
-        let saveButton = getSideMenuItem(container, "Save");
-        fireEvent.click(saveButton);
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
 
-        await waitFor(() => expect(store.getState().composite[3201].subobjects[subobjectID].show_description_composite).toEqual("yes"));
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+
+            const subobjectCard = cards[0][0];
+            const subobjectID = subobjectCard.id;
+            expect(store.getState().editedObjects[subobjectID].object_type).toEqual("link");
+
+            // Click on tested subobject's card display tab
+            clickSubobjectCardDisplayTabButton(subobjectCard);
+
+            // Click checkbox
+            clickDisplayInFeedCheckbox(subobjectCard);
+            expect(store.getState().editedObjects[subobjectID].display_in_feed).toEqual(true);
+
+            // Update object and check if display settings are correctly saved
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
+
+            await waitFor(() => expect(store.getState().objects[subobjectID].display_in_feed).toEqual(true));
+        });
+    });
+
+
+    describe("Feed timestamp", () => {
+        test("Link, markdown, to-do list: toggle & reset", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+            const subobjectObjectTypes = ["link", "markdown", "to_do_list", undefined];
+
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+
+            for (let i = 0; i < cards.length - 1; i++) {
+                const subobjectCard = cards[0][i];
+                const subobjectID = subobjectCard.id;
+                expect(store.getState().editedObjects[subobjectID].object_type).toEqual(subobjectObjectTypes[i]);
+
+                // Click on tested subobject's card display tab
+                clickSubobjectCardDisplayTabButton(subobjectCard);
+
+                // Set feed timestamp to an empty string
+                const { feedTimestampContainer } = getObjectDisplayControls(subobjectCard);
+                let rdtElements = getReactDatetimeElements(feedTimestampContainer);
+                fireEvent.change(rdtElements.input, { target: { value: "" }});
+                expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual("");
+
+                // Set feed timestamp to `newDate`
+                const now = new Date();
+                const newDate = new Date(now.getFullYear(), now.getMonth(), 10);
+                await setFeedTimestampDate(subobjectCard, newDate);
+                expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual(newDate.toISOString());
+
+                // Reset subobject
+                resetSubobject(subobjectCard);
+                expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual("");
+            }
+        });
+
+
+        test("Link: update", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+
+            const subobjectCard = cards[0][0];
+            const subobjectID = subobjectCard.id;
+            expect(store.getState().editedObjects[subobjectID].object_type).toEqual("link");
+
+            // Click on tested subobject's card display tab
+            clickSubobjectCardDisplayTabButton(subobjectCard);
+
+            // Set feed timestamp to an empty string
+            const { feedTimestampContainer } = getObjectDisplayControls(subobjectCard);
+            let rdtElements = getReactDatetimeElements(feedTimestampContainer);
+            fireEvent.change(rdtElements.input, { target: { value: "" }});
+            expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual("");
+
+            // Set feed timestamp to `newDate`
+            const now = new Date();
+            const newDate = new Date(now.getFullYear(), now.getMonth(), 10);
+            await setFeedTimestampDate(subobjectCard, newDate);
+            expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual(newDate.toISOString());
+
+            // Update object and check if display settings are correctly saved
+            let saveButton = getSideMenuItem(container, "Save");
+            fireEvent.click(saveButton);
+
+            await waitFor(() => expect(store.getState().objects[subobjectID].feed_timestamp).toEqual(newDate.toISOString()));
+        });
+    });
+
+
+    describe("Show description; show description as link; display mode", () => {
+        test("Link, markdown, to-do list, composite: not rendered", async () => {
+            const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
+            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                route: "/objects/edit/3201",
+                store
+            });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Object Information"));
+
+            // Check data and get subobject ids and cards
+            clickDataTabButton(container);
+            let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
+            const subobjectObjectTypes = ["link", "markdown", "to_do_list", "composite"];
+
+            // Wait for composite subobject card to load
+            await waitFor(() => getByText(cards[0][3], "Object Name"));
+
+            for (let i = 0; i < cards.length; i++) {
+                const subobjectCard = cards[0][i];
+                const subobjectID = subobjectCard.id;
+                expect(store.getState().editedObjects[subobjectID].object_type).toEqual(subobjectObjectTypes[i]);
+
+                // Check if controls are not rendered
+                clickSubobjectCardDisplayTabButton(subobjectCard);
+                expect(getObjectDisplayControls(subobjectCard).showDescriptionAsLink).toBeFalsy();
+                expect(getObjectDisplayControls(subobjectCard).showDescription).toBeFalsy();
+                expect(getObjectDisplayControls(subobjectCard).displayMode.selected).toBeFalsy();
+            }
+        });
     });
 });

@@ -29,11 +29,11 @@ beforeEach(() => {
 
 
 describe("Conditional rendering of navigation bar's elements", () => {
-    test("Render index page without an access token", async () => {
+    test("Render a page without an access token", async () => {
         // Render login page
         const store = createTestStore({ addAdminToken: false });
         let { container } = renderWithWrappers(<App />, {
-            route: "/", store
+            route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
 
         // Wait for registration status to be fetched from backend
@@ -51,10 +51,19 @@ describe("Conditional rendering of navigation bar's elements", () => {
 
 
     test("Render auth pages", async () => {
-        const routes = App().props.children.filter(child => child.props.path !== undefined && child.props.path.startsWith("/auth/"))
-            .map(child => child.props.path.replace(":id", "1"));
+        // Get auth route paths
+        const replaceRouteParams = route => route.replace(":id", 1);
+        let routes = App().props.children.filter(child => typeof(child.props.path) === "string" && child.props.path.startsWith("/auth/"))  // string paths
+            .map(child => replaceRouteParams(child.props.path));
+        
+        for (let child of App().props.children) // Add paths from array `path` props
+            if (typeof(child.props.path) === "object" && child.props.path instanceof Array)
+                for (let route of child.props.path)
+                    if (route.startsWith("/auth/")) routes.push(replaceRouteParams(route));
+        
         expect(routes.length).toEqual(2);
 
+        // Render auth routes
         for (let route of routes) {
             const store = createTestStore({ addAdminToken: false });
             let { container } = renderWithWrappers(<App />, { route, store });
@@ -103,7 +112,7 @@ describe("Secondary menu logged out state", () => {
         // Render login page
         const store = createTestStore({ addAdminToken: false });
         let { container, history } = renderWithWrappers(<App />, {
-            route: "/", store
+            route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
 
         // Wait for registration status to be fetched from backend
@@ -118,7 +127,7 @@ describe("Secondary menu logged out state", () => {
         
         expect(secondaryMenu.registerButton.classList.contains("is-disabled")).toBeTruthy();
         fireEvent.click(secondaryMenu.registerButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/");
+        expect(history.entries[history.length - 1].pathname).toBe("/non/existing/route");
     });
 
 
@@ -126,7 +135,7 @@ describe("Secondary menu logged out state", () => {
         // Render login page
         const store = createTestStore({ addAdminToken: false });
         let { container, history } = renderWithWrappers(<App />, {
-            route: "/", store
+            route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
 
         // Wait for registration status to be fetched from backend
@@ -152,7 +161,7 @@ describe("Secondary menu logged out state", () => {
         // Render login page
         const store = createTestStore({ addAdminToken: false });
         let { container, history } = renderWithWrappers(<App />, {
-            route: "/", store
+            route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
 
         // Wait for registration status to be fetched from backend
@@ -226,8 +235,17 @@ describe("Secondary menu logged in state", () => {
         await waitFor(() => expect(store.getState().auth).toEqual(getDefaultAuthState()));
         expect(history.entries[history.length - 1].pathname).toBe("/");
 
-        // Wait for registration status to be fetched from backend (to prevent error message);
-        // /auth/logout was also called when "Logout" button was clicked
-        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(3));
+        /* Wait for all fetches to end:
+            - before logout button click:
+                - load current user information;
+            - after logout button click:
+                - logout fetch;
+                - registration status fetch;
+                - index feed fetches:
+                    - current page object IDs;
+                    - objects' attributes;
+                    - objects' tags' attributes;
+        */
+        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(6));
     });
 });

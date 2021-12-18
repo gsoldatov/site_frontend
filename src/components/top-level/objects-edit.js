@@ -55,7 +55,8 @@ export const NewObject = () => {
                     text: "Yes",
                     icon: "check",
                     color: "green",
-                    onClick: resetCompositeSubobjects => dispatch(resetEditedObjects({ hideObjectResetDialog: true, allowResetToDefaults: true, resetCompositeSubobjects }))
+                    onClick: resetCompositeSubobjects => dispatch(resetEditedObjects({ hideObjectResetDialog: true, allowResetToDefaults: true, 
+                        defaultDisplayInFeed: true, resetCompositeSubobjects }))
                 },
                 {
                     text: "No",

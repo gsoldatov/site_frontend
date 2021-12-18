@@ -11,6 +11,7 @@ import { Redirect, Route, useLocation } from "react-router";
 export const ProtectedRoute = ({ childrenRenderedSelector, fallbackRoute, addQueryString = false, children, ...rest }) => {
     const location = useLocation();
     const childrenRendered = useSelector(childrenRenderedSelector);
+    console.log(`IN PROTECTED ROUTE RENDER, path = ${rest.path}, fallbackRoute = ${fallbackRoute}, childrenRendered = ${childrenRendered}`)
 
     // Redirect to fallback page if render condition is not met
     if (!childrenRendered) {

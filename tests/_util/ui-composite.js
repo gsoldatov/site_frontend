@@ -237,6 +237,16 @@ export const getSubobjectExpandToggleButton = card => {
 
 
 /**
+ * Click subobject card's reset button and confirms reset.
+ */
+export const resetSubobject = card => {
+    const { resetButton } = getSubobjectCardMenuButtons(card);
+    fireEvent.click(resetButton);
+    fireEvent.click(getByText(card.querySelector(".subobject-card-dialog-container"), "Yes"));
+};
+
+
+/**
  * Starts drag of the provided `card` of a successfully loaded into state subobject and waits for the card to become dragged (`is-dragged` CSS class is added to it).
  */
 export const startSubobjectCardDrag = async card => {

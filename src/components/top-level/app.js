@@ -5,7 +5,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 
 import { Provider } from "react-redux";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, useLocation } from "react-router-dom";
 
 import createStore from "../../store/create-store";
 
@@ -33,6 +33,8 @@ export const isAnonymousCondition = state => state.auth.numeric_user_level === e
 
 
 export const App = () => {
+    const location = useLocation();
+    console.log("IN APP ROUTE, location =", location.pathname)
     return (
         <Switch>
             {/* Index */}

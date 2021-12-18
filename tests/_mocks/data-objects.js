@@ -46,9 +46,17 @@ export const defaultObjectAttributeValueGetters = {
     object_type: object_id => getObjectTypeFromID(object_id),
     object_name: object_id => `object #${object_id}`,
     object_description: object_id => `object #${object_id} description`,
-    created_at: object_id => (new Date(Date.now() - 24*60*60*1000 - object_id)).toUTCString(),
-    modified_at: object_id => (new Date(Date.now() - object_id)).toUTCString(),
+    created_at: object_id => (new Date(Date.now() - 24*60*60*1000 - object_id)).toISOString(),
+    modified_at: object_id => (new Date(Date.now() - object_id)).toISOString(),
     is_published: () => false,
+    display_in_feed: () => false,
+    feed_timestamp: object_id => {
+        if (object_id < 0) return "";
+
+        const now = new Date();
+        const date = new Date(now.getFullYear(), now.getMonth(), 1, /*0, Math.abs(object_id)*/);
+        return date.toISOString();
+    },
     show_description: () => false,
     owner_id: () => 1,
     current_tag_ids: () => [1, 2, 3, 4, 5]

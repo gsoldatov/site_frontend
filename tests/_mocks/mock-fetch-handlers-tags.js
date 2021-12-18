@@ -29,7 +29,7 @@ function handleAdd(body) {
     const modifiedAt = new Date((new Date(createdAt)).setDate(createdAt.getDate() + 1));
     const responseObj = tag["tag_name"] === "existing tag_name"
         ? {_error: "Submitted tag name already exists."}
-        : {tag: { tag_id: 1000, tag_name: tag["tag_name"], tag_description: tag["tag_description"], created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString() }};
+        : {tag: { tag_id: 1000, tag_name: tag["tag_name"], tag_description: tag["tag_description"], created_at: createdAt.toISOString(), modified_at: modifiedAt.toISOString() }};
     
     return { status: status, body: responseObj };
 }

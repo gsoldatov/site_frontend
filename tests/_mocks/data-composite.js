@@ -20,8 +20,8 @@ export const mapAndCacheNewSubobjects = (requestObjectData, createdAt, modifiedA
 
             _cachedObjects[newID] = { 
                 object_id: newID, 
-                created_at: createdAt.toDateString(), 
-                modified_at: modifiedAt.toDateString(),
+                created_at: createdAt.toISOString(), 
+                modified_at: modifiedAt.toISOString(),
                 owner_id: subobject["owner_id"] || 1,
                 tag_updates: { added_tag_ids: [] }
             };
@@ -31,7 +31,7 @@ export const mapAndCacheNewSubobjects = (requestObjectData, createdAt, modifiedA
             _cachedObjectData[newID] = subobject["object_data"];
 
             // _cachedObjects[newID] = { object_id: newID, object_type: subobject["object_type"], object_name: subobject["object_name"], object_description: subobject["object_description"], 
-            //     created_at: createdAt.toDateString(), modified_at: modifiedAt.toDateString(), 
+            //     created_at: createdAt.toISOString(), modified_at: modifiedAt.toISOString(), 
             //     is_published: subobject["is_published"], owner_id: subobject["owner_id"] || 1,
             //     tag_updates: { added_tag_ids: [] } };
             // _cachedObjectData[newID] = subobject["object_data"];

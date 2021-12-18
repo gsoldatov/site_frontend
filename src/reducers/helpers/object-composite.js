@@ -17,7 +17,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
     if (command === "addNew") {
         // Add a new edited object
         const newID = update.subobjectID !== undefined ? update.subobjectID : getNewSubobjectID(state);     // take existing subobjectID if it's passed
-        let newState = getStateWithResetEditedObjects(state, [newID], true);
+        let newState = getStateWithResetEditedObjects(state, [newID], { allowResetToDefaults: true });
 
         // Set new object's `is_published` to its parents' value
         newState.editedObjects[newID].is_published = newState.editedObjects[objectID].is_published;

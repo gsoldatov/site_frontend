@@ -24,8 +24,10 @@ export const getDefaultEditedObjectState = (overrideValues = {}) => {
  * Sets default attribute/tag/data values if `objectID` is not found in respective storage and `allowResetToDefaults` is true.
  * 
  * Throws an Error if attribute/tag/data are not found and `allowResetToDefaults` is false.
+ * 
+ * If `defaultDisplayInFeed` is provided, all objects without saved object attributes have their `display_in_feed` set to this value.
  */
-export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDefaults) => {
+export const getStateWithResetEditedObjects = (state, objectIDs, { allowResetToDefaults, defaultDisplayInFeed } = {}) => {
     if (objectIDs.length === 0) return state;
 
     const throwIfDataIsMissing = (data, msg) => {
@@ -35,7 +37,9 @@ export const getStateWithResetEditedObjects = (state, objectIDs, allowResetToDef
 
     const newEditedObjects = {...state.editedObjects};
     objectIDs.forEach(objectID => {
-        let stateAfterReset = getDefaultEditedObjectState({ object_id: objectID });
+        const overrideValues = { object_id: objectID };
+        if (defaultDisplayInFeed !== undefined) overrideValues.display_in_feed = defaultDisplayInFeed;
+        let stateAfterReset = getDefaultEditedObjectState(overrideValues);
 
         // Set object attributes
         const attributes = state.objects[objectID];

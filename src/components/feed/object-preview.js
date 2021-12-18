@@ -12,14 +12,18 @@ import { ObjectPreviewTagList } from "./object-preview-tags";
  * Object preivew displayed in the objects feed.
  */
 export const ObjectPreview = ({ objectID }) => {
-    const timestampValue = moment(useSelector(state => {
+    const timestampValue = useSelector(state => {
         const object = state.objects[objectID];
-        return object.feed_timestamp || object.modified_at;
-    })).format("lll");
+        if(!object) return null;
+        return moment(object.feed_timestamp || object.modified_at).format("lll");
+    });
     
-    const objectName = useSelector(state => state.objects[objectID].object_name);
-    let objectDescription = useSelector(state => state.objects[objectID].object_description);
-    if (objectDescription.length === 0) objectDescription = "<No description available>";
+    const objectName = useSelector(state => (state.objects[objectID] || {}).object_name);
+    let objectDescription = useSelector(state => (state.objects[objectID] || {}).object_description);
+    if (objectDescription === "") objectDescription = "<No description available>";
+    
+    // Exit if object is not found (after logout case)
+    if (!objectName) return null;
 
     const timestamp = <div className="object-preview-timestamp">{timestampValue}</div>;
 

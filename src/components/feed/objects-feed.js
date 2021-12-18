@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Loader, Message } from "semantic-ui-react";
 
 import { loadIndexPageObjects } from "../../fetches/ui-index";
@@ -14,13 +14,16 @@ import StyleObjectsFeed from "../../styles/objects-feed.css";
 /**
  * Paginated feed of object previews.
  */
-export const ObjectsFeed = ({ page }) => {
+export const ObjectsFeed = ({ page, items_per_page = 10 }) => {
     const dispatch = useDispatch();
+
+    // Logged user state
+    const userID = useSelector(state => state.auth.user_id);
 
     // Pagination info
     const [paginationInfo, setPaginationInfo] = useState({
             page,
-            items_per_page: 10,
+            items_per_page,
             order_by: "feed_timestamp",
             sort_order: "desc",
             show_only_displayed_in_feed: true,
@@ -33,14 +36,14 @@ export const ObjectsFeed = ({ page }) => {
     const [isFetching, setIsFetching] = useState(true);
     const [error, setError] = useState("");
 
-    // Fetch objects whenever a new page opens
+    // Fetch objects whenever a new page opens and current user or number of items per page is changed
     useEffect(() => {
         const onLoadFetch = async () => {
             setIsFetching(true);
             setError("");
 
-            let newPaginationInfo = { page };
-            for (let attr of ["items_per_page", "order_by", "sort_order", "show_only_displayed_in_feed"])
+            let newPaginationInfo = { page, items_per_page };
+            for (let attr of ["order_by", "sort_order", "show_only_displayed_in_feed"])
                 newPaginationInfo[attr] = paginationInfo[attr];
 
             const result = await dispatch(loadIndexPageObjects(newPaginationInfo));
@@ -60,7 +63,7 @@ export const ObjectsFeed = ({ page }) => {
         };
 
         onLoadFetch();
-    }, [page]);
+    }, [page, items_per_page, userID]);
 
     // Error message
     if (error.length > 0) return (

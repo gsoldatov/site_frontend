@@ -56,9 +56,16 @@ describe("Main object attributes & tags", () => {
         // Wait for the page to load
         await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
 
-        // Check if timestamp is displayed
-        const cardElements = getObjectsViewCardElements({ container });
-        expect(new Date(cardElements.attributes.timestamp.element.textContent)).toEqual(new Date(store.getState().objects[1].modified_at));
+        // Check if feed timestamp is displayed
+        let cardElements = getObjectsViewCardElements({ container });
+        let ed = new Date(store.getState().objects[1].feed_timestamp), dd = new Date(cardElements.attributes.timestamp.element.textContent);
+        expect(ed.getFullYear() === dd.getFullYear() && ed.getMonth() === dd.getMonth() && ed.getDate() === dd.getDate()).toBeTruthy();
+
+        // Check if modified at is used as a fallback for missing feed timestamp
+        store.dispatch(addObjects([{ ...store.getState().objects[1], feed_timestamp: "" }]));
+        cardElements = getObjectsViewCardElements({ container });
+        ed = new Date(store.getState().objects[1].modified_at), dd = new Date(cardElements.attributes.timestamp.element.textContent);
+        expect(ed.getFullYear() === dd.getFullYear() && ed.getMonth() === dd.getMonth() && ed.getDate() === dd.getDate()).toBeTruthy();
     });
 
     test("Header (logged as admin)", async () => {

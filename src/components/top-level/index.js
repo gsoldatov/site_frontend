@@ -9,6 +9,7 @@ import { ObjectsFeed } from "../feed/objects-feed";
  * Index page component.
  */
 export const IndexPage = () => {
+    console.log("IN INDEX PAGE RENDER")
     // Get current page of objects feed from URL param
     let { page } = useParams();
     if (page !== undefined) {

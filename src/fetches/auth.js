@@ -93,6 +93,8 @@ export const loginFetch = (login, password) => {
         let validationErrors = validateLoginCredentials(login, password);
         if (Object.keys(validationErrors.errors).length > 0) return validationErrors;
 
+        console.log("IN LOGIN FETCH, BEFORE FETCH EXECUTION")
+
         // Fetch backend
         let response = await dispatch(runFetch(`${backendURL}/auth/login`, {
             method: "POST",
@@ -101,6 +103,8 @@ export const loginFetch = (login, password) => {
         },
         { useAccessToken: false }
         ));
+
+        console.log("IN LOGIN FETCH, AFTER FETCH EXECUTION")
 
         // Handle response
         switch (response.status) {
@@ -145,8 +149,8 @@ export const logoutFetch = () => {
 
         switch (response.status) {
             case 200:
-                dispatch(resetStateExceptForEditedObjects());
                 dispatch(setRedirectOnRender("/"));
+                dispatch(resetStateExceptForEditedObjects());
                 return;
             default:
                 return;

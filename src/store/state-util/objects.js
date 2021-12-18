@@ -298,7 +298,7 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
  */
  export const objectHasNoChanges = (state, objectID, defaultReturnValue) => {
     // New edited object
-    if (objectID === 0) return deepEqual(state.editedObjects[objectID], getDefaultEditedObjectState({ object_id: 0, owner_id: state.auth.user_id }));
+    if (objectID === 0) return deepEqual(state.editedObjects[objectID], getDefaultEditedObjectState({ object_id: 0, display_in_feed: true, owner_id: state.auth.user_id }));
 
     // Existing edited object
     // Return default value if objectID is missing is editedObjects or attribute / tag / data storages

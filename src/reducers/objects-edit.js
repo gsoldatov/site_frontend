@@ -111,7 +111,7 @@ function loadEditObjectPage(state, action) {
     If `hideObjectResetDialog` is true, hides reset dialog on /objects/edit/:id page.
 */
 function resetEditedObjects(state, action) {
-    const { allowResetToDefaults, hideObjectResetDialog, resetCompositeSubobjects } = action;
+    const { hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed } = action;
     const objectIDs = action.objectIDs || [state.objectUI.currentObjectID];
     let newState = state;
 
@@ -122,7 +122,7 @@ function resetEditedObjects(state, action) {
     if (resetCompositeSubobjects) newState = getStateWithResetEditedExistingSubobjects(newState, objectIDs);
 
     // Reset objects
-    newState = getStateWithResetEditedObjects(newState, objectIDs, allowResetToDefaults);
+    newState = getStateWithResetEditedObjects(newState, objectIDs, { allowResetToDefaults, defaultDisplayInFeed });
 
     // Hide object page reset dialog if required
     if (hideObjectResetDialog)
