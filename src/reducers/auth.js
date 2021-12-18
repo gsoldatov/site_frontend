@@ -15,10 +15,15 @@ function setAuthInformation(state, action) {
         newAuth.numeric_user_level = enumUserLevels[newAuth.numeric_user_level];
         if (newAuth.numeric_user_level === undefined) throw Error(`Received incorrect numeric_user_level value: ${action.auth.numeric_user_level}`);
     }
+
+    // Additional options
+    const options = action.options || {};
+    const newRedirectOnRender = "redirectOnRender" in options ? options.redirectOnRender : state.redirectOnRender;
     
     return {
         ...state,
-        auth: newAuth
+        auth: newAuth,
+        redirectOnRender: newRedirectOnRender
     };
 }
 

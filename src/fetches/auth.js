@@ -93,8 +93,6 @@ export const loginFetch = (login, password) => {
         let validationErrors = validateLoginCredentials(login, password);
         if (Object.keys(validationErrors.errors).length > 0) return validationErrors;
 
-        console.log("IN LOGIN FETCH, BEFORE FETCH EXECUTION")
-
         // Fetch backend
         let response = await dispatch(runFetch(`${backendURL}/auth/login`, {
             method: "POST",
@@ -103,8 +101,6 @@ export const loginFetch = (login, password) => {
         },
         { useAccessToken: false }
         ));
-
-        console.log("IN LOGIN FETCH, AFTER FETCH EXECUTION")
 
         // Handle response
         switch (response.status) {
@@ -119,8 +115,9 @@ export const loginFetch = (login, password) => {
                 if (responseErrorType > enumResponseErrorType.none) return { errors: { form: "Failed to fetch user information." }};
 
                 // Handle successful request ending
-                dispatch(setAuthInformation(auth));
-                return auth;
+                // dispatch(setAuthInformation(auth));      // NOTE: auth information is set simultaneously with redirectOnRender later in login form onSubmit handler;
+                return auth;                                // this is done to avoid double redirect (first to "/", then to specified in URL params for login page route),
+                                                            // which is caused by having a <ProtectedRoute> wrapper over /auth/login route, which redirects auth'd users to index page.
 
             case 429:
                 const retryAfter = parseInt(response.headers.get("Retry-After"));

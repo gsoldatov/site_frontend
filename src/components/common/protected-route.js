@@ -1,17 +1,30 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Route, useLocation } from "react-router";
+
+import { setRedirectOnRender } from "../../actions/common";
 
 
 /**
- * Wrapper for React Router `Route` component. Renders a `Route` with provided route component params wrapping `children` component(-s) 
+ * Wrapper for React Router `Route` component. Renders a `Route` with provided route component params wrapping `children` component(-s).
+ * If state.redirectOnRender is set, redirects to the page specified in it.
  * if `childrenRenderedSelector` returns true or redirects to `fallbackRoute`.
  * If `addQueryString` is true, a query string with 'from' parameter will be added to `fallbackRoute` when redirecting.
  */
 export const ProtectedRoute = ({ childrenRenderedSelector, fallbackRoute, addQueryString = false, children, ...rest }) => {
+    const dispatch = useDispatch();
     const location = useLocation();
     const childrenRendered = useSelector(childrenRenderedSelector);
-    console.log(`IN PROTECTED ROUTE RENDER, path = ${rest.path}, fallbackRoute = ${fallbackRoute}, childrenRendered = ${childrenRendered}`)
+
+    // Redirect if path is specified in state.redirectOnRender and reset the path
+    const redirectOnRender = useSelector(state => state.redirectOnRender);
+    
+    useEffect(() => {
+        if (redirectOnRender) dispatch(setRedirectOnRender(""));
+    }, [redirectOnRender]);
+
+    if (redirectOnRender.length > 0) return <Redirect to={redirectOnRender} />;
+
 
     // Redirect to fallback page if render condition is not met
     if (!childrenRendered) {

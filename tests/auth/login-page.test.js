@@ -29,107 +29,107 @@ beforeEach(() => {
 });
 
 
-// test("Check validation error display", async () => {
-//     // Render login page
-//     const store = createTestStore({ addAdminToken: false });
-//     let { container } = renderWithWrappers(<App />, {
-//         route: "/auth/login", store
-//     });
+test("Check validation error display", async () => {
+    // Render login page
+    const store = createTestStore({ addAdminToken: false });
+    let { container } = renderWithWrappers(<App />, {
+        route: "/auth/login", store
+    });
 
-//     const { inputs, submitButton } = getLoginFormElements(container);
+    const { inputs, submitButton } = getLoginFormElements(container);
 
-//     // Enter & submit form data with omitted login
-//     enterValidFormData(container, "login");
-//     fireEvent.change(inputs.login, { target: { value: "" } });
-//     fireEvent.click(submitButton);
-//     await checkValidInputErrorDisplay(container, "login", "login", "Login is required.");
+    // Enter & submit form data with omitted login
+    enterValidFormData(container, "login");
+    fireEvent.change(inputs.login, { target: { value: "" } });
+    fireEvent.click(submitButton);
+    await checkValidInputErrorDisplay(container, "login", "login", "Login is required.");
 
-//     // Enter & submit form data with a too long login
-//     enterValidFormData(container, "login");
-//     fireEvent.change(inputs.login, { target: { value: "a".repeat(256) } });
-//     fireEvent.click(submitButton);
-//     await checkValidInputErrorDisplay(container, "login", "login", "Login is too long.");
+    // Enter & submit form data with a too long login
+    enterValidFormData(container, "login");
+    fireEvent.change(inputs.login, { target: { value: "a".repeat(256) } });
+    fireEvent.click(submitButton);
+    await checkValidInputErrorDisplay(container, "login", "login", "Login is too long.");
 
-//     // Enter & sumit form data with a too short password
-//     enterValidFormData(container, "login");
-//     fireEvent.change(inputs.password, { target: { value: "a".repeat(7) } });
-//     fireEvent.click(submitButton);
-//     await checkValidInputErrorDisplay(container, "login", "password", "Submitted password is too short.");
+    // Enter & sumit form data with a too short password
+    enterValidFormData(container, "login");
+    fireEvent.change(inputs.password, { target: { value: "a".repeat(7) } });
+    fireEvent.click(submitButton);
+    await checkValidInputErrorDisplay(container, "login", "password", "Submitted password is too short.");
 
-//     // Enter & submit form data with a too long password
-//     enterValidFormData(container, "login");
-//     fireEvent.change(inputs.password, { target: { value: "a".repeat(73) } });
-//     fireEvent.click(submitButton);
-//     await checkValidInputErrorDisplay(container, "login", "password", "Submitted password is too long.");
-// });
-
-
-// test("Check fetch error display & form disabling during fetch", async () => {
-//     // Render login page
-//     const store = createTestStore({ addAdminToken: false });
-//     let { container } = renderWithWrappers(<App />, {
-//         route: "/auth/login", store
-//     });
-
-//     // Add a mock network error
-//     setFetchFail(true);
-
-//     // Enter valid data & submit
-//     enterValidFormData(container, "login");
-//     fireEvent.click(getLoginFormElements(container).submitButton);
-
-//     // Check if form is disabled during fetch
-//     expect(getLoginFormElements(container).submitButton.disabled).toBeTruthy();
-
-//     // Wait for form error message to be displayed
-//     await waitForFormErrorMessage(container, "login", "Failed to fetch data.");
-
-//     // Check if form is enabled after fetch which ended with an error
-//     expect(getLoginFormElements(container).submitButton.disabled).toBeFalsy();
-// });
+    // Enter & submit form data with a too long password
+    enterValidFormData(container, "login");
+    fireEvent.change(inputs.password, { target: { value: "a".repeat(73) } });
+    fireEvent.click(submitButton);
+    await checkValidInputErrorDisplay(container, "login", "password", "Submitted password is too long.");
+});
 
 
-// test("Correct login", async () => {
-//     // Render login page
-//     const store = createTestStore({ addAdminToken: false });
-//     let { container, history } = renderWithWrappers(<App />, {
-//         route: "/auth/login", store
-//     });
+test("Check fetch error display & form disabling during fetch", async () => {
+    // Render login page
+    const store = createTestStore({ addAdminToken: false });
+    let { container } = renderWithWrappers(<App />, {
+        route: "/auth/login", store
+    });
 
-//     expect(deepEqual(store.getState().auth, getDefaultAuthState())).toBeTruthy();
+    // Add a mock network error
+    setFetchFail(true);
 
-//     // Add a mock network error
-//     setFetchFail(true);
+    // Enter valid data & submit
+    enterValidFormData(container, "login");
+    fireEvent.click(getLoginFormElements(container).submitButton);
 
-//     // Enter valid data & submit
-//     enterValidFormData(container, "login");
-//     fireEvent.click(getLoginFormElements(container).submitButton);
+    // Check if form is disabled during fetch
+    expect(getLoginFormElements(container).submitButton.disabled).toBeTruthy();
 
-//     // Wait for form error message to be displayed
-//     await waitForFormErrorMessage(container, "login", "Failed to fetch data.");
+    // Wait for form error message to be displayed
+    await waitForFormErrorMessage(container, "login", "Failed to fetch data.");
 
-//     // Remove the mock network error, set mock login response & submit data again
-//     setFetchFail();
-//     const body = getMockLoginResponse();
-//     addFixedRouteResponse("/auth/login", "POST", 200, body);
-//     fireEvent.click(getLoginFormElements(container).submitButton);
+    // Check if form is enabled after fetch which ended with an error
+    expect(getLoginFormElements(container).submitButton.disabled).toBeFalsy();
+});
 
-//     // Check if form error was reset
-//     let formElements = getLoginFormElements(container);
-//     expect(formElements.errors.form.textContent).toEqual("");
-//     expect(formElements.formContainer.classList.contains("error")).toBeFalsy();
 
-//     // Wait for the auth info to be added to the state
-//     await waitFor(() => {
-//         const expectedAuth = { ...body.auth, numeric_user_level: enumUserLevels[body.auth.user_level] };   // replace string user level with numeric
-//         delete expectedAuth["user_level"];
-//         expect(deepEqual(store.getState().auth, expectedAuth)).toBeTruthy();
-//     });
+test("Correct login", async () => {
+    // Render login page
+    const store = createTestStore({ addAdminToken: false });
+    let { container, history } = renderWithWrappers(<App />, {
+        route: "/auth/login", store
+    });
 
-//     // Wait for redirect to index page and index page fetches to end
-//     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/`));
-//     await waitFor(() => expect(container.querySelector(".object-preview-container")).toBeTruthy());
-// });
+    expect(deepEqual(store.getState().auth, getDefaultAuthState())).toBeTruthy();
+
+    // Add a mock network error
+    setFetchFail(true);
+
+    // Enter valid data & submit
+    enterValidFormData(container, "login");
+    fireEvent.click(getLoginFormElements(container).submitButton);
+
+    // Wait for form error message to be displayed
+    await waitForFormErrorMessage(container, "login", "Failed to fetch data.");
+
+    // Remove the mock network error, set mock login response & submit data again
+    setFetchFail();
+    const body = getMockLoginResponse();
+    addFixedRouteResponse("/auth/login", "POST", 200, body);
+    fireEvent.click(getLoginFormElements(container).submitButton);
+
+    // Check if form error was reset
+    let formElements = getLoginFormElements(container);
+    expect(formElements.errors.form.textContent).toEqual("");
+    expect(formElements.formContainer.classList.contains("error")).toBeFalsy();
+
+    // Wait for the auth info to be added to the state
+    await waitFor(() => {
+        const expectedAuth = { ...body.auth, numeric_user_level: enumUserLevels[body.auth.user_level] };   // replace string user level with numeric
+        delete expectedAuth["user_level"];
+        expect(deepEqual(store.getState().auth, expectedAuth)).toBeTruthy();
+    });
+
+    // Wait for redirect to index page and index page fetches to end
+    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/`));
+    await waitFor(() => expect(container.querySelector(".object-preview-container")).toBeTruthy());
+});
 
 
 test("Correct login with URL query params", async () => {
@@ -151,7 +151,6 @@ test("Correct login with URL query params", async () => {
 
     // Enter valid data & submit
     enterValidFormData(container, "login");
-    console.log("BEFORE CREDENTIALS SUBMIT")
     fireEvent.click(getLoginFormElements(container).submitButton);
 
     // Check if form message was reset
@@ -166,9 +165,6 @@ test("Correct login with URL query params", async () => {
         expect(deepEqual(store.getState().auth, expectedAuth)).toBeTruthy();
     });
 
-    console.log("AFTER AUTH INFO UPDATE")
-
     // Wait for redirect to the specified page
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(redirectPath));
-    console.log("AFTER REDIRECT TO EXPECTED PAGE")
 });

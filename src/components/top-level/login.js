@@ -51,18 +51,13 @@ export const LoginPage = () => {
     // Sumbit logic
     const onSubmit = async e => {
         // Reset errors & freeze form
-        console.log("IN ON SUBMIT START")
         e.preventDefault();
         setMessage("");
         setErrors(getDefaultErrors());
         setIsDisabled(true);
 
-        console.log("IN ON SUBMIT, BEFORE LOGIN FETCH")
-
         // Submit credentials
         const result = await dispatch(loginFetch(formValues.login, formValues.password));
-
-        console.log("IN ON SUBMIT, AFTER LOGIN FETCH")
         
         // Handle errors
         if ("errors" in result) {
@@ -73,9 +68,8 @@ export const LoginPage = () => {
 
         // Handle successful login
         const redirectPath = (new URLSearchParams(location.search)).get("from") || "/";
-        console.log("IN ON SUBMIT, BEFORE REDIRECT, redirectPath =", redirectPath)
-        const decodedPath = decodeURIComponent(redirectPath);   // Deocde URL-encoded string
-        dispatch(setRedirectOnRender(decodedPath));
+        const decodedPath = decodeURIComponent(redirectPath);   // Deocde URL-encoded string        
+        dispatch(setAuthInformation(result, { redirectOnRender: decodedPath }));    // Set auth auth info & `redirectOnRender` to avoid double redirect
     };
 
     const body = (
