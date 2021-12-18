@@ -7,10 +7,9 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-l
 import { compareArrays } from "../_util/data-checks";
 import { checkRenderedItemsOrder } from "../_util/to-do-lists";
 import { renderWithWrappers } from "../_util/render";
-import { getCurrentObject, clickDataTabButton, getObjectTypeSelectingElements, clickGeneralTabButton, clickDisplayTabButton, 
-    clickPublishObjectCheckbox, getObjectTypeSwitchElements } from "../_util/ui-objects-edit";
+import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, getObjectTypeSwitchElements } from "../_util/ui-objects-edit";
 import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElements, getSubobjectCards, getAddSubobjectMenu, getAddSubobjectMenuDropdown,
-    clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons, 
+    clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons, 
     getSubobjectCardIndicators, getSubobjectExpandToggleButton, startSubobjectCardDrag, getSubobjectGridColumnContainers, getNewColumnDropzones } from "../_util/ui-composite";
 import { getDropdownOptionsContainer, getInlineInputField } from "../_util/ui-objects-tags";
 

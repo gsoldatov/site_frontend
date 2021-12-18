@@ -10,7 +10,7 @@ import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
 import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "../_util/ui-objects-edit";
 
-import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
+import { App } from "../../src/components/top-level/app";
 import ObjectsList from "../../src/components/top-level/objects-list";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
@@ -36,7 +36,7 @@ beforeEach(() => {
 
 describe("Add object page", () => {
     test("Check tag input elements", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
     
@@ -62,7 +62,7 @@ describe("Add object page", () => {
     
     
     test("Check input dropdown", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
     
@@ -83,7 +83,7 @@ describe("Add object page", () => {
     
     
     test("Add & remove tags", async () => {
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { store, container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
     
@@ -115,7 +115,7 @@ describe("Add object page", () => {
 
 
     test("Reset tags", async () => {
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { store, container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -140,11 +140,7 @@ describe("Add object page", () => {
 
     test("Persist added tags", async () => {
         // Render switch with /objects/edit/:id and /objects page at /objects/edit/new
-        let { container, store } = renderWithWrappers(
-            <Switch>
-                <Route exact path="/objects/list"><ObjectsList /></Route>
-                <Route exact path="/objects/edit/:id"><NewObject /></Route>
-            </Switch>
+        let { container, store } = renderWithWrappers(<App />
         , { route: "/objects/edit/new" });
 
         // Add a tag
@@ -173,8 +169,7 @@ describe("Add object page", () => {
     
     
     test("Add tags & save object", async () => {
-        let { container, history, store } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+        let { container, history, store } = renderWithWrappers(<App />, 
             { route: "/objects/edit/new" }
         );
     
@@ -234,8 +229,7 @@ describe("Edit object page", () => {
         for (let tag_id of object.current_tag_ids)
             await store.dispatch(getNonCachedTags([tag_id]));
         
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1",
             store: store
         });
@@ -248,8 +242,7 @@ describe("Edit object page", () => {
     
     
     test("Load object tags from backend & test tag removal", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -267,8 +260,7 @@ describe("Edit object page", () => {
     
     
     test("Load object tags from backend, add tags and update the object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -302,7 +294,7 @@ describe("Edit object page", () => {
     
     
     test("Check adding current tags with tag input", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -325,8 +317,7 @@ describe("Edit object page", () => {
     
     
     test("Delete object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -339,14 +330,13 @@ describe("Edit object page", () => {
         fireEvent.click(deleteButton);
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
+        await waitFor(() => expect(store.getState().objectsTags[1]).toBeUndefined());
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
-        expect(store.getState().objectsTags.hasOwnProperty("1")).toBeFalsy();
     });
 
 
     test("Reset added & removed tags", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
 
@@ -382,7 +372,7 @@ describe("Edit object page", () => {
         let { container, store, history } = renderWithWrappers(
             <Switch>
                 <Route exact path="/objects/list"><ObjectsList /></Route>
-                <Route exact path="/objects/edit/:id"><EditObject /></Route>
+                <App />
             </Switch>
         , { route: "/objects/edit/1" });
 

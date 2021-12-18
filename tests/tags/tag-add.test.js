@@ -1,5 +1,4 @@
 import React from "react";
-import { Route } from "react-router-dom";
 
 import { fireEvent, screen } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
@@ -7,7 +6,7 @@ import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 import { renderWithWrappers } from "../_util/render";
 import { getSideMenuItem } from "../_util/ui-common";
 
-import { NewTag, EditTag } from "../../src/components/top-level/tag";
+import { App } from "../../src/components/top-level/app";
 import { addTags } from "../../src/actions/data-tags";
 
 
@@ -27,8 +26,7 @@ beforeEach(() => {
 
 
 test("Render and click cancel button", async () => {
-    // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history } = renderWithWrappers(<Route exact path="/tags/:id"><NewTag /></Route>, {
+    let { container, history } = renderWithWrappers(<App />, {
         route: "/tags/new"
     });
     
@@ -53,8 +51,7 @@ test("Render and click cancel button", async () => {
 
 
 test("Modify tag name and try saving an existing (in local state) tag name", async () => {
-    // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><NewTag /></Route>, {
+    let { container, store } = renderWithWrappers(<App />, {
         route: "/tags/new"
     });
 
@@ -76,8 +73,7 @@ test("Modify tag name and try saving an existing (in local state) tag name", asy
 
 
 test("Try saving an existing (on backend) tag name", async () => {
-    // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, store } = renderWithWrappers(<Route exact path="/tags/:id"><NewTag /></Route>, {
+    let { container, store } = renderWithWrappers(<App />, {
         route: "/tags/new"
     });
 
@@ -92,8 +88,7 @@ test("Try saving an existing (on backend) tag name", async () => {
 
 
 test("Handle fetch error", async () => {
-    // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history, store } = renderWithWrappers(<Route exact path="/tags/:id"><NewTag /></Route>, {
+    let { container, history, store } = renderWithWrappers(<App />, {
         route: "/tags/new"
     });
 
@@ -111,9 +106,7 @@ test("Handle fetch error", async () => {
 
 
 test("Save a new tag", async () => {
-    // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history, store } = renderWithWrappers(
-        <Route exact path="/tags/:id" render={ props => props.match.params.id === "new" ? <NewTag /> : <EditTag /> } />, 
+    let { container, history, store } = renderWithWrappers(<App />, 
         { route: "/tags/new" }
     );
 

@@ -53,10 +53,10 @@ describe("Conditional rendering of navigation bar's elements", () => {
     test("Render auth pages", async () => {
         // Get auth route paths
         const replaceRouteParams = route => route.replace(":id", 1);
-        let routes = App().props.children.filter(child => typeof(child.props.path) === "string" && child.props.path.startsWith("/auth/"))  // string paths
+        let routes = App().props.children.props.children.filter(child => typeof(child.props.path) === "string" && child.props.path.startsWith("/auth/"))  // string paths
             .map(child => replaceRouteParams(child.props.path));
         
-        for (let child of App().props.children) // Add paths from array `path` props
+        for (let child of App().props.children.props.children) // Add paths from array `path` props
             if (typeof(child.props.path) === "object" && child.props.path instanceof Array)
                 for (let route of child.props.path)
                     if (route.startsWith("/auth/")) routes.push(replaceRouteParams(route));

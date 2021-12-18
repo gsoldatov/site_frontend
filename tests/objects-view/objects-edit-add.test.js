@@ -1,5 +1,4 @@
 import React from "react";
-import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, waitFor } from "@testing-library/dom";
@@ -11,10 +10,11 @@ import { clickDataTabButton, clickDisplayTabButton, getObjectDisplayControls, cl
     resetObject, fillRequiredAttributesAndData, setObjectType, setFeedTimestampDate } from "../_util/ui-objects-edit";
 import { addANewSubobject, clickSubobjectCardDisplayTabButton, getSubobjectCards, resetSubobject } from "../_util/ui-composite";
 
-import { NewObject } from "../../src/components/top-level/objects-edit";
+import { App } from "../../src/components/top-level/app";
 import { getMappedSubobjectID, getStoreWithCompositeObjectAndSubobjectsOfEachType } from "../_mocks/data-composite";
 import { setEditedObject } from "../../src/actions/objects-edit";
 import { getReactDatetimeElements } from "../_util/ui-react-datetime";
+
 
 
 /*
@@ -35,7 +35,7 @@ beforeEach(() => {
 describe("Object display properties", () => {
     describe("Publish object", () => {
         test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -61,7 +61,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -87,7 +87,7 @@ describe("Object display properties", () => {
 
     describe("Publish subobjects", () => {
         test("Link, markdown, to-do list: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -103,7 +103,7 @@ describe("Object display properties", () => {
 
 
         test("Composite: reset", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -129,7 +129,7 @@ describe("Object display properties", () => {
 
 
         test("Composite: toggle & save", async () => {
-            let { store, container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -180,7 +180,7 @@ describe("Object display properties", () => {
 
     describe("Show description", () => {
         test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -206,7 +206,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -232,7 +232,7 @@ describe("Object display properties", () => {
 
     describe("Show description as link", () => {
         test("Markdown, to-do list, composite: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -248,7 +248,7 @@ describe("Object display properties", () => {
 
 
         test("Link: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -267,7 +267,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -293,7 +293,7 @@ describe("Object display properties", () => {
 
     describe("Display in feed", () => {
         test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -319,7 +319,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -345,7 +345,7 @@ describe("Object display properties", () => {
     
     describe("Feed timestamp", () => {
         test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -376,7 +376,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -409,7 +409,7 @@ describe("Object display properties", () => {
 
     describe("Display mode", () => {
         test("Link, Markdown, to-do list: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -426,7 +426,7 @@ describe("Object display properties", () => {
 
         // NOTE: update this test when new display modes are added to check if control correctly modifies object's `display_mode` value
         test("Composite: default value", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -441,7 +441,7 @@ describe("Object display properties", () => {
 
     describe("Show description composite", () => {
         test("Link, markdown, to-do list, composite: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -459,7 +459,7 @@ describe("Object display properties", () => {
 
     describe("Show description as link composite", () => {
         test("Link, markdown, to-do list, composite: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -479,7 +479,7 @@ describe("Object display properties", () => {
 describe("Composite subobject display properties", () => {
     describe("Publish subobject", () => {
         test("Default value inheritance", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
             expect(store.getState().editedObjects[0].is_published).toBeFalsy();
@@ -544,7 +544,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link, markdown, to-do list, composite: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -581,7 +581,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -620,7 +620,7 @@ describe("Composite subobject display properties", () => {
     describe("Show description composite", () => {
         test("Link, markdown, to-do list, composite: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -669,7 +669,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -713,7 +713,7 @@ describe("Composite subobject display properties", () => {
     describe("Show description as link composite", () => {
         test("Markdown, to-do list, composite: not rendered", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -740,7 +740,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -786,7 +786,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -829,7 +829,7 @@ describe("Composite subobject display properties", () => {
 
     describe("Display in feed", () => {
         test("Default value of a new subobject", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -847,7 +847,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link, markdown, to-do list, composite: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -884,7 +884,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -923,7 +923,7 @@ describe("Composite subobject display properties", () => {
     describe("Feed timestamp", () => {
         test("Link, markdown, to-do list: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -962,7 +962,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -1006,7 +1006,7 @@ describe("Composite subobject display properties", () => {
     describe("Show description; show description as link; display mode", () => {
         test("Link, markdown, to-do list, composite: not rendered", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });

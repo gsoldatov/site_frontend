@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, queryByText } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, screen } from "@testing-library/dom";
 
 import { createTestStore } from "../_util/create-test-store";
 import { compareArrays } from "../_util/data-checks";
@@ -13,11 +12,12 @@ import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickG
     resetObject, getObjectTypeSwitchElements } from "../_util/ui-objects-edit";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
     getSubobjectCards, getSubobjectExpandToggleButton } from "../_util/ui-composite";
+import { getObjectsViewCardElements } from "../_util/ui-objects-view";
 
 import { getTDLByObjectID } from "../_mocks/data-to-do-lists";
 import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject, getMappedSubobjectID } from "../_mocks/data-composite";
 
-import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
+import { App } from "../../src/components/top-level/app";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { addObjects, addObjectData } from "../../src/actions/data-objects";
 import { enumDeleteModes } from "../../src/store/state-templates/composite-subobjects";
@@ -49,8 +49,7 @@ describe("Load object errors & UI checks", () => {
     test("Load an object with fetch error + check buttons", async () => {
         setFetchFail(true);
     
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -72,8 +71,7 @@ describe("Load object errors & UI checks", () => {
 
 
     test("Load a non-existing object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/9999"
         });
     
@@ -84,8 +82,7 @@ describe("Load object errors & UI checks", () => {
 
     test("Load objects with invalid IDs", async () => {
         for (let objectID of ["0", "str"]) {
-            // Route component is required for matching (getting :id part of the URL in the EditObject component)
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container } = renderWithWrappers(<App />, {
                 route: `/objects/edit/${objectID}`
             });
         
@@ -98,9 +95,7 @@ describe("Load object errors & UI checks", () => {
 
 
     test("Check 'Add a New Object' button", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, history } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+        let { container, history } = renderWithWrappers(<App />, 
             { route: "/objects/edit/1" }
         );
     
@@ -113,9 +108,7 @@ describe("Load object errors & UI checks", () => {
 
 
     test("Check 'View Object' button", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, history } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+        let { container, history } = renderWithWrappers(<App />, 
             { route: "/objects/edit/1" }
         );
     
@@ -124,6 +117,8 @@ describe("Load object errors & UI checks", () => {
         let viewObjectButton = getSideMenuItem(container, "View Object");
         fireEvent.click(viewObjectButton);
         expect(history.entries[history.length - 1].pathname).toBe("/objects/view/1");
+        await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeTruthy());
+        await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
     });
 
 
@@ -131,8 +126,7 @@ describe("Load object errors & UI checks", () => {
         let store = getStoreWithCompositeObject();
         setFetchFail(true);
         
-        let { container, history } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+        let { container, history } = renderWithWrappers(<App />, 
             { 
                 store,
                 route: "/objects/edit/1" 
@@ -169,8 +163,8 @@ describe("Load object from state", () => {
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1",
             store: store
         });
@@ -206,8 +200,8 @@ describe("Load object from state", () => {
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1",
             store: store
         });
@@ -258,8 +252,8 @@ describe("Load object from state", () => {
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1",
             store: store
         });
@@ -291,7 +285,7 @@ describe("Load object from state", () => {
     test("Load a composite object and subobjects from state", async () => {
         let store = getStoreWithCompositeObjectAndSubobjects();
 
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1",
             store: store
         });
@@ -343,8 +337,8 @@ describe("Load object from backend", () => {
         });
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1",
             store: store
         });
@@ -373,8 +367,7 @@ describe("Load object from backend", () => {
     
     
     test("Load a link object from backend", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -402,8 +395,8 @@ describe("Load object from backend", () => {
         });
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1001",
             store: store
         });
@@ -444,8 +437,8 @@ describe("Load object from backend", () => {
         });
         store.dispatch(addObjects([object]));
         store.dispatch(setObjectsTags([object]));
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001",
             store: store
         });
@@ -477,7 +470,7 @@ describe("Load object from backend", () => {
     test("Load a composite object from state and subobjects from backend", async () => {
         let store = getStoreWithCompositeObject();
 
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1",
             store: store
         });
@@ -509,7 +502,7 @@ describe("Load object from backend", () => {
 
 
     test("Load a composite object and subobjects from backend", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3901"
         });
 
@@ -565,7 +558,7 @@ describe("Load object from backend", () => {
 
 
     test("Load a composite object without subobjects from backend", async () => {
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/3902"
         });
 
@@ -579,8 +572,7 @@ describe("Load object from backend", () => {
 
 describe("Reset object", () => {
     test("Cancel reset + reset attributes and link", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -625,8 +617,7 @@ describe("Reset object", () => {
 
     
     test("Reset markdown", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1001"
         });
     
@@ -649,8 +640,7 @@ describe("Reset object", () => {
 
 
     test("Reset to-do list", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
     
@@ -670,7 +660,7 @@ describe("Reset object", () => {
 
 
     test("Reset composite without subobjects", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
     
@@ -706,7 +696,7 @@ describe("Reset object", () => {
 
 
     test("Reset composite with subobjects", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
     
@@ -754,7 +744,7 @@ describe("Reset object", () => {
 describe("Persist edited object state", () => {
     test("Unchanged objects removal from edited objects storage", async () => {
         let store = createTestStore({ enableDebugLogging: false });
-        const render = route => renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        const render = route => renderWithWrappers(<App />, {
             route, store
         });
 
@@ -772,7 +762,7 @@ describe("Persist edited object state", () => {
 
     test("Attributes and link", async () => {
         // Render page of the first object
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", store
         });
         // await waitFor(() => getByText(container, "Object Information"));
@@ -812,7 +802,7 @@ describe("Persist edited object state", () => {
 
     test("Markdown", async () => {
         // Render page of the first object
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/1001", store
         });
         // await waitFor(() => getByText(container, "Object Information"));
@@ -840,7 +830,7 @@ describe("Persist edited object state", () => {
 
     test("To-do list", async () => {
         // Render page of the first object
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001", store
         });
         // await waitFor(() => getByText(container, "Object Information"));
@@ -866,7 +856,7 @@ describe("Persist edited object state", () => {
 
 
     test("Composite data and subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -904,7 +894,7 @@ describe("Persist edited object state", () => {
 
 
     test("Unchanged composite object's and subobject removal", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001", store
         });
 
@@ -923,7 +913,7 @@ describe("Persist edited object state", () => {
 
 
     test("Unchanged composite object and subobject removal", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001", store
         });
 
@@ -942,7 +932,7 @@ describe("Persist edited object state", () => {
 
 
     test("Unchanged composite object's with changed subobject removal", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001", store
         });
 
@@ -968,7 +958,7 @@ describe("Persist edited object state", () => {
 
 
     test("Changed composite object's subobjects removal", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001", store
         });
 
@@ -1002,8 +992,7 @@ describe("Persist edited object state", () => {
 
 describe("Delete object", () => {
     test("Delete a link object with fetch error", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -1023,8 +1012,7 @@ describe("Delete object", () => {
 
 
     test("Delete a link object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -1043,17 +1031,18 @@ describe("Delete object", () => {
         fireEvent.click(deleteButton);
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
+        await waitFor(() => {
+            expect(store.getState().objects[1]).toBeUndefined();
+            expect(store.getState().objectsTags[1]).toBeUndefined();
+            expect(store.getState().links[1]).toBeUndefined();
+            expect(store.getState().editedObjects[1]).toBeUndefined();
+        });
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
-        expect(store.getState().objects[1]).toBeUndefined();
-        expect(store.getState().objectsTags[1]).toBeUndefined();
-        expect(store.getState().links[1]).toBeUndefined();
-        expect(store.getState().editedObjects[1]).toBeUndefined();
     });
 
 
     test("Delete a markdown object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/1001"
         });
     
@@ -1064,17 +1053,19 @@ describe("Delete object", () => {
         let deleteButton = getSideMenuItem(container, "Delete");
         fireEvent.click(deleteButton);
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
-    
+
+        await waitFor(() => {
+            expect(store.getState().objects[1001]).toBeUndefined();
+            expect(store.getState().objectsTags[1001]).toBeUndefined();
+            expect(store.getState().markdown[1001]).toBeUndefined();
+            expect(store.getState().editedObjects[1001]).toBeUndefined();
+        });
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
-        expect(store.getState().objects[1001]).toBeUndefined();
-        expect(store.getState().markdown[1001]).toBeUndefined();
-        expect(store.getState().editedObjects[1001]).toBeUndefined();
     });
 
 
     test("Delete a to-do list object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
     
@@ -1086,16 +1077,18 @@ describe("Delete object", () => {
         fireEvent.click(deleteButton);
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
+        await waitFor(() => {
+            expect(store.getState().objects[2001]).toBeUndefined();
+            expect(store.getState().objectsTags[2001]).toBeUndefined();
+            expect(store.getState().toDoLists[2001]).toBeUndefined();
+            expect(store.getState().editedObjects[2001]).toBeUndefined();
+        });
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
-        expect(store.getState().objects[2001]).toBeUndefined();
-        expect(store.getState().toDoLists[2001]).toBeUndefined();
-        expect(store.getState().editedObjects[2001]).toBeUndefined();
     });
 
 
     test("Delete a composite object without deleting subobjects", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1143,8 +1136,7 @@ describe("Delete object", () => {
 
 
     test("Delete a composite object and subobjects", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1194,8 +1186,7 @@ describe("Delete object", () => {
 
 describe("Update object errors", () => {
     test("Update a link object with fetch error", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -1231,8 +1222,7 @@ describe("Update object errors", () => {
     
 
     test("Save an empty link object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -1253,8 +1243,7 @@ describe("Update object errors", () => {
 
 
     test("Save an empty markdown object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1001"
         });
     
@@ -1281,8 +1270,7 @@ describe("Update object errors", () => {
 
 
     test("Save an empty to-do list object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
     
@@ -1312,7 +1300,7 @@ describe("Update object errors", () => {
 
 
     test("Composite object without non-deleted subobjects", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1335,7 +1323,7 @@ describe("Update object errors", () => {
 
 
     test("Composite object a with a new subobject with incorrect attributes", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1358,7 +1346,7 @@ describe("Update object errors", () => {
 
 
     test("Composite object a with an existing subobject with incorrect data", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1383,8 +1371,7 @@ describe("Update object errors", () => {
 
 describe("Update object", () => {
     test("Update a link object + check all attributes update", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -1422,8 +1409,7 @@ describe("Update object", () => {
     
 
     test("Update a markdown object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/1001"
         });
     
@@ -1458,8 +1444,7 @@ describe("Update object", () => {
     
 
     test("Update a to-do list object", async () => {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
     
@@ -1493,7 +1478,7 @@ describe("Update object", () => {
 
 
     test("Update a composite object", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 

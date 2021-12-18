@@ -9,6 +9,7 @@ import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { renderWithWrappers } from "../_util/render";
 import { createTestStore } from "../_util/create-test-store";
 
+import { App } from "../../src/components/top-level/app";
 import { EditTag } from "../../src/components/top-level/tag";
 import Tags from "../../src/components/top-level/tags";
 import { setObjectsTags } from "../../src/actions/data-tags";
@@ -52,8 +53,7 @@ test("Edit tag => delete a tag and check objects' tags", async () => {
     store.dispatch(addObjects(objects));
     store.dispatch(setObjectsTags(objects));
     
-    // Route component is required for matching (getting :id part of the URL in the EditObject component)
-    let { container, history } = renderWithWrappers(<Route exact path="/tags/:id"><EditTag /></Route>, {
+    let { container, history } = renderWithWrappers(<App />, {
         route: "/tags/1",
         store: store
     });
@@ -93,7 +93,7 @@ test("Tags => delete tags and check objects' tags", async () => {
     store.dispatch(setObjectsTags(objects));
 
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
+    let { container } = renderWithWrappers(<App />, {
         route: "/tags",
         store: store
     });

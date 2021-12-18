@@ -9,6 +9,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../../store/create-store";
 
+import { RedirectOnRenderWrapper } from "../common/redirect-on-render-wrapper";
 import { ProtectedRoute } from "../common/protected-route";
 
 import { IndexPage } from "./index";
@@ -34,80 +35,82 @@ export const isAnonymousCondition = state => state.auth.numeric_user_level === e
 
 export const App = () => {
     return (
-        <Switch>
-            {/* Index */}
-            <Route exact path={["/", "/feed/:page"]}>
-                <IndexPage />
-            </Route>
+        <RedirectOnRenderWrapper>
+            <Switch>
+                {/* Index */}
+                <Route exact path={["/", "/feed/:page"]}>
+                    <IndexPage />
+                </Route>
 
-            {/* Admin */}
-            <ProtectedRoute exact path="/admin" childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <ProtectedRoute exact path="/admin"
-                    childrenRenderedSelector={isAuthenticatedAdminCondition} fallbackRoute="/">
-                    <AdminPage />
+                {/* Admin */}
+                <ProtectedRoute exact path="/admin" childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                    <ProtectedRoute exact path="/admin"
+                        childrenRenderedSelector={isAuthenticatedAdminCondition} fallbackRoute="/">
+                        <AdminPage />
+                    </ProtectedRoute>
                 </ProtectedRoute>
-            </ProtectedRoute>
 
-            {/* Auth */}
-            <ProtectedRoute exact path="/auth/login"
-                childrenRenderedSelector={isAnonymousCondition} fallbackRoute="/">
-                <LoginPage />
-            </ProtectedRoute>
+                {/* Auth */}
+                <ProtectedRoute exact path="/auth/login"
+                    childrenRenderedSelector={isAnonymousCondition} fallbackRoute="/">
+                    <LoginPage />
+                </ProtectedRoute>
 
-            <ProtectedRoute exact path="/auth/register"
-                childrenRenderedSelector={isAnonymousCondition} fallbackRoute="/">
-                <RegisterPage />
-            </ProtectedRoute>
+                <ProtectedRoute exact path="/auth/register"
+                    childrenRenderedSelector={isAnonymousCondition} fallbackRoute="/">
+                    <RegisterPage />
+                </ProtectedRoute>
 
-            {/* Users */}
-            <Route exact path="/users/:id">
-                <UserPage />
-            </Route>
+                {/* Users */}
+                <Route exact path="/users/:id">
+                    <UserPage />
+                </Route>
 
-            {/* Tags */}
-            <ProtectedRoute exact path="/tags"
-                childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <Tags />
-            </ProtectedRoute>
-            
-            <ProtectedRoute exact path="/tags/new"
-                childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <NewTag />
-            </ProtectedRoute>
-            <ProtectedRoute exact path="/tags/:id"
-                childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <EditTag />
-            </ProtectedRoute>
+                {/* Tags */}
+                <ProtectedRoute exact path="/tags"
+                    childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                    <Tags />
+                </ProtectedRoute>
+                
+                <ProtectedRoute exact path="/tags/new"
+                    childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                    <NewTag />
+                </ProtectedRoute>
+                <ProtectedRoute exact path="/tags/:id"
+                    childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                    <EditTag />
+                </ProtectedRoute>
 
-            {/* Objects */}
-            <ProtectedRoute exact path="/objects/list"
-                childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <ObjectsList />
-            </ProtectedRoute>
-            
-            <ProtectedRoute exact path="/objects/edited"
-                childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <ObjectsEdited />
-            </ProtectedRoute>
-            
-            <ProtectedRoute exact path="/objects/edit/new"
-                childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <NewObject />
-            </ProtectedRoute>
-            <ProtectedRoute exact path="/objects/edit/:id"
-                childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                <EditObject />
-            </ProtectedRoute>
+                {/* Objects */}
+                <ProtectedRoute exact path="/objects/list"
+                    childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                    <ObjectsList />
+                </ProtectedRoute>
+                
+                <ProtectedRoute exact path="/objects/edited"
+                    childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                    <ObjectsEdited />
+                </ProtectedRoute>
+                
+                <ProtectedRoute exact path="/objects/edit/new"
+                    childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                    <NewObject />
+                </ProtectedRoute>
+                <ProtectedRoute exact path="/objects/edit/:id"
+                    childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                    <EditObject />
+                </ProtectedRoute>
 
-            <Route exact path="/objects/view/:id">
-                <ObjectsView />
-            </Route>
+                <Route exact path="/objects/view/:id">
+                    <ObjectsView />
+                </Route>
 
-            {/* Not found */}
-            <Route>
-                <NotFound />
-            </Route>
-        </Switch>
+                {/* Not found */}
+                <Route>
+                    <NotFound />
+                </Route>
+            </Switch>
+        </RedirectOnRenderWrapper>
     );
 };
 

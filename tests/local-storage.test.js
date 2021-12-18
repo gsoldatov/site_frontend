@@ -13,6 +13,7 @@ import { addANewSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttr
 import { createTestStore } from "./_util/create-test-store";
 import { getMappedSubobjectID } from "./_mocks/data-composite";
 
+import { App } from "../src/components/top-level/app";
 import { NewObject, EditObject } from "../src/components/top-level/objects-edit";
 import ObjectsList from "../src/components/top-level/objects-list";
 
@@ -88,8 +89,7 @@ describe("Edited objects > New object page", () => {
         // Render new object page
         let store = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
-        let { container, history } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+        let { container, history } = renderWithWrappers(<App />, 
             { route: "/objects/edit/new", store }
         );
 

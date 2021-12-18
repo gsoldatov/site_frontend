@@ -1,5 +1,4 @@
 import React from "react";
-import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
@@ -11,7 +10,7 @@ import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElement
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
     getSubobjectCards, getSubobjectExpandToggleButton } from "../_util/ui-composite";
 
-import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
+import { App } from "../../src/components/top-level/app";
 import { getMappedSubobjectID } from "../_mocks/data-composite";
 
 
@@ -38,7 +37,7 @@ beforeEach(() => {
 
 describe("UI checks", () => {
     test("Render page and click cancel button", async () => {
-        let { container, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
         
@@ -62,7 +61,7 @@ describe("UI checks", () => {
 
 
     test("Select different object types", async () => {
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { store, container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -101,7 +100,7 @@ describe("UI checks", () => {
 
 
     test("Change markdown display modes & render markdown", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
         // Change object type
@@ -146,7 +145,7 @@ describe("UI checks", () => {
 
 describe("Reset new object state", () => {
     test("Cancel reset, reset attributes and link", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
     
@@ -186,7 +185,7 @@ describe("Reset new object state", () => {
 
 
     test("Reset markdown", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -209,7 +208,7 @@ describe("Reset new object state", () => {
 
 
     test("Reset to-do list", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -229,7 +228,7 @@ describe("Reset new object state", () => {
 
 
     test("Reset composite (without subobjects)", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -264,7 +263,7 @@ describe("Reset new object state", () => {
 
 
     test("Reset composite (with subobjects)", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -301,7 +300,7 @@ describe("Reset new object state", () => {
 describe("Persist new object state", () => {
     test("Attributes and link data", async () => {
         // Render /objects/edit/new and update object name + link
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
 
@@ -334,7 +333,7 @@ describe("Persist new object state", () => {
 
     test("Markdown data", async () => {
         // Render /objects/edit/new and update markdown text
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
 
@@ -362,7 +361,7 @@ describe("Persist new object state", () => {
 
     test("To-do list data", async () => {
         // Render /objects/edit/new and update to-do list items
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
 
@@ -389,7 +388,7 @@ describe("Persist new object state", () => {
 
     test("Composite data and subobjects", async () => {
         // Render /objects/edit/new and add a new & an existing subobject
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
 
@@ -426,7 +425,7 @@ describe("Persist new object state", () => {
 
     test("Composite unchanged existing subobject removal", async () => {
         // Render /objects/edit/new and add a new & an existing subobject
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
 
@@ -456,7 +455,7 @@ describe("Persist new object state", () => {
 
 
     test("Unchanged new object removal from edited objects storage", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
         expect(Object.keys(store.getState().editedObjects).includes("0")).toBeTruthy();
@@ -480,7 +479,7 @@ describe("Persist new object state", () => {
 
 describe("Save new object errors", () => {
     test("Handle save fetch error", async () => {
-        let { container, history, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, history, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
     
@@ -505,7 +504,7 @@ describe("Save new object errors", () => {
 
 
     test("Link with incorrect data", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -527,7 +526,7 @@ describe("Save new object errors", () => {
 
 
     test("Markdown with incorrect data", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
     
@@ -549,7 +548,7 @@ describe("Save new object errors", () => {
 
 
     test("To-do list with incorrect data", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -571,7 +570,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object without subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -592,7 +591,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object without non-deleted subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -621,7 +620,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object a with a new subobject with incorrect attributes", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -651,7 +650,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object a with an existing subobject with incorrect data", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -684,7 +683,7 @@ describe("Save new object errors", () => {
 describe("Save new object", () => {
     test("Save link + check all attributes + check new object state reset", async () => {
         let { container, history, store } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            <App />, 
             { route: "/objects/edit/new" }
         );
     
@@ -736,7 +735,7 @@ describe("Save new object", () => {
 
     test("Save markdown", async () => {
         let { container, history, store } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            <App />, 
             { route: "/objects/edit/new" }
         );
     
@@ -782,7 +781,7 @@ describe("Save new object", () => {
 
     test("Save to-do list", async () => {
         let { container, history, store } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            <App />, 
             { route: "/objects/edit/new" }
         );
     
@@ -826,7 +825,7 @@ describe("Save new object", () => {
     
     test("Save composite", async () => {
         let { container, history, store } = renderWithWrappers(
-            <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, 
+            <App />, 
             { route: "/objects/edit/new" }
         );
 

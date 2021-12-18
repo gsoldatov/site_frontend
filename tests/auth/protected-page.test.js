@@ -37,7 +37,7 @@ test("Render authenticated-only routes without a token", async () => {
 
     // Get authenticated-only routes
     let routes = [];
-    let children = App().props.children;
+    let children = App().props.children.props.children;     // children of <Switch> component
     while (children.length > 0) {   // <ProtectedRoute> components may nest another <ProtectedRoute>, 
         const newChildren = [];
 
@@ -69,7 +69,7 @@ test("Render anonymous-only routes with a token", async () => {
 
     // Get anonymous-only routes
     let routes = [];
-    let children = App().props.children;
+    let children = App().props.children.props.children;     // children of <Switch> component
     while (children.length > 0) {   // <ProtectedRoute> components may nest another <ProtectedRoute>, 
         const newChildren = [];
 
