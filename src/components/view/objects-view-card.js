@@ -37,22 +37,24 @@ export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false }) 
     }, [_id]);
 
     // Error message
+    const containerClassName = "objects-view-card-container"
+        .concat(isSubobject ? " subobject" : "");
+    
     if (error.length > 0) return (
-        <div className = "objects-view-card-container">
+        <div className={containerClassName}>
             <Message error content={error} />
         </div>
     );
 
     // Loading placeholder
     if (isFetching) return (
-        <div className = "objects-view-card-container">
+        <div className={containerClassName}>
             <Loader active inline="centered">Loading...</Loader>
         </div>
     );
 
     // Object card
-    const containerClassName = "objects-view-card-container"
-        .concat(isSubobject ? " subobject" : "");
+    
     const tagList = !isSubobject && <ObjectsViewTagList objectID={objectID} />;
 
     return (
