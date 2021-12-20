@@ -6,10 +6,13 @@ import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
 import { getNavigationBarElements } from "../_util/ui-navbar";
 import { getUserPageViewModeElements } from "../_util/ui-user";
+import { getObjectsFeedElements } from "../_util/ui-index";
 
 import { App } from "../../src/components/top-level/app";
 
 import { getDefaultAuthState } from "../../src/store/state-templates/auth";
+import { getAdminPageElements } from "../_util/ui-admin";
+import { getObjectsViewCardElements } from "../_util/ui-objects-view";
 
 
 /*
@@ -30,7 +33,6 @@ beforeEach(() => {
 
 describe("Conditional rendering of navigation bar's elements", () => {
     test("Render a page without an access token", async () => {
-        // Render login page
         const store = createTestStore({ addAdminToken: false });
         let { container } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
@@ -85,7 +87,6 @@ describe("Conditional rendering of navigation bar's elements", () => {
 
 
     test("Render object edit page with an access token", async () => {
-        // Render login page
         const store = createTestStore({ addAdminToken: true });
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", store
@@ -132,7 +133,6 @@ describe("Secondary menu logged out state", () => {
 
 
     test("Registration button enabled", async () => {
-        // Render login page
         const store = createTestStore({ addAdminToken: false });
         let { container, history } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
@@ -158,7 +158,6 @@ describe("Secondary menu logged out state", () => {
 
 
     test("Login button", async () => {
-        // Render login page
         const store = createTestStore({ addAdminToken: false });
         let { container, history } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
@@ -179,7 +178,6 @@ describe("Secondary menu logged out state", () => {
 
 describe("Secondary menu logged in state", () => {
     test("Elements rendering", async () => {
-        // Render login page
         const store = createTestStore({ addAdminToken: true });
         let { container, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
@@ -198,7 +196,6 @@ describe("Secondary menu logged in state", () => {
 
 
     test("User page link", async () => {
-        // Render login page
         const store = createTestStore({ addAdminToken: true });
         let { container, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
@@ -221,31 +218,70 @@ describe("Secondary menu logged in state", () => {
 
 
     test("Logout button", async () => {
-        // Render login page
-        const store = createTestStore({ addAdminToken: true });
-        let { container, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/new", store
-        });
+        // Route load awaiting functions
+        const loadWaiters = {
+            "/": async container => await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy()),
+            "/feed/2": async container => await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy()),
 
-        // Wait for user information to be loaded into state
-        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+            "/admin": async container => await waitFor(() => expect(getAdminPageElements(container).settingsTab.settingControls).toBeTruthy()),
+            
+            "/objects/edit/new": null,
+            "/objects/edit/2": async container => await waitFor(() => getByText(container, "Object Information")),
+            "/objects/edited": null,
+            "/objects/list": async container => await waitFor(() => getByText(container, "object #1")),
+            "/objects/view/2": async container => await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy()),
 
-        const { secondaryMenu } = getNavigationBarElements(container);
-        fireEvent.click(secondaryMenu.logoutButton);
-        await waitFor(() => expect(store.getState().auth).toEqual(getDefaultAuthState()));
-        expect(history.entries[history.length - 1].pathname).toBe("/");
+            "/tags": async container => await waitFor(() => getByText(container, "tag #1")),
+            "/tags/new": null,
+            "/tags/2": async container => await waitFor(() => getByText(container, "Tag Information")),
 
-        /* Wait for all fetches to end:
-            - before logout button click:
-                - load current user information;
-            - after logout button click:
-                - logout fetch;
-                - registration status fetch;
-                - index feed fetches:
-                    - current page object IDs;
-                    - objects' attributes;
-                    - objects' tags' attributes;
-        */
-        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(6));
+            "/users/2": async container => await waitFor(() => expect(getUserPageViewModeElements(container).header).toBeTruthy())
+        }
+        
+        // Get all non-auth routes
+        const replaceRouteParams = route => route.replace(":id", 2).replace(":page", 2);
+        let routes = App().props.children.props.children.filter(child => typeof(child.props.path) === "string" && !child.props.path.startsWith("/auth/"))  // string paths
+            .map(child => replaceRouteParams(child.props.path));
+        
+        for (let child of App().props.children.props.children) // Add paths from array `path` props
+            if (typeof(child.props.path) === "object" && child.props.path instanceof Array)
+                for (let route of child.props.path)
+                    if (!route.startsWith("/auth/")) routes.push(replaceRouteParams(route));
+        
+        expect(routes.length).toEqual(12);
+
+        // Render each route and logout
+        for (let route of routes) {
+            const store = createTestStore({ addAdminToken: true });
+            let { container, history } = renderWithWrappers(<App />, {
+                route, store
+            });
+
+            // Wait for page to load (throw error if route waiter is not defined or explicitly skipped)
+            if (!(route in loadWaiters)) throw Error(`Waiter not found for route '${route}'`);
+            if (typeof(loadWaiters[route]) === "function") await loadWaiters[route](container);
+
+            // Wait for user info to load in state
+            await waitFor(() => {
+                const state = store.getState();
+                expect(state.users[state.auth.user_id]).toBeTruthy();
+            });
+
+            // Click logout button
+            const { secondaryMenu } = getNavigationBarElements(container);
+            fireEvent.click(secondaryMenu.logoutButton);
+            
+            // Check if auth state is reset, redirect to index page is triggered & index on load fetch is started
+            await waitFor(() => {
+                expect(store.getState().auth).toEqual(getDefaultAuthState());
+                expect(history.entries[history.length - 1].pathname).toBe("/")
+                expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
+            });
+
+            // Check if index on load fetch is ended
+            await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+
+            ReactDOM.unmountComponentAtNode(container);
+        }
     });
 });

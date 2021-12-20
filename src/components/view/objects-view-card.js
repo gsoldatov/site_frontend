@@ -54,7 +54,6 @@ export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false }) 
     );
 
     // Object card
-    
     const tagList = !isSubobject && <ObjectsViewTagList objectID={objectID} />;
 
     return (

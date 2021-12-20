@@ -67,12 +67,16 @@ export const ObjectsFeed = ({ page, items_per_page = 10 }) => {
 
     // Error message
     if (error.length > 0) return (
-        <Message error content={error} />
+        <div className="objects-feed-container">
+            <Message error content={error} />
+        </div>
     );
 
     // Loading placeholder
     if (isFetching) return (
-        <Loader active inline="centered">Loading...</Loader>
+        <div className="objects-feed-container">
+            <Loader active inline="centered">Loading...</Loader>
+        </div>
     );
     
     // Object preview & pagination controls
