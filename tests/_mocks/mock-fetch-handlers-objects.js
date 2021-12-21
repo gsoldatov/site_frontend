@@ -187,8 +187,11 @@ export function getMockedPageObjectIDs(pI) {
         // Desc
         if (!pI.show_only_displayed_in_feed) throw Error("Sort by feed_timestamp desc without `show_only_displayed_in_feed` not implemented");
 
-        // Single page
-        if (pI.items_per_page === 100) return [100, 1100, 2100, 3100, 101, 1101, 2101, 3101];
+        // // Single page
+        // if (pI.items_per_page === 100) return [100, 1100, 2100, 3100, 101, 1101, 2101, 3101];
+
+        // No objects found
+        if (pI.page > 10) return [];
 
         // Random multiple page
         return getList(100 + pI.items_per_page * (pI.page - 1), 100 + pI.items_per_page * pI.page - 1);

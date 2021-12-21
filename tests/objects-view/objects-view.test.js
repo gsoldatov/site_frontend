@@ -188,9 +188,10 @@ describe("Main object attributes & tags", () => {
         // Check if each tag name is displayed
         const state = store.getState();
         expect(state.objectsTags[1].length).toEqual(5);
-        const renderedTagNames = [...cardElements.tags.tagElements].map(e => e.querySelector("span").textContent);
-        
+
+        const renderedTagNames = [...cardElements.tags.tagElements].map(e => e.querySelector("span").textContent);        
         expect(renderedTagNames.length).toEqual(5);
+        
         state.objectsTags[1].forEach(tagID => expect(renderedTagNames.indexOf(state.tags[tagID].tag_name)).toBeGreaterThan(-1));
     });
 });
