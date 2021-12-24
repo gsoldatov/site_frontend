@@ -5,6 +5,7 @@ import { ObjectDataMarkdown } from "./object-data-markdown";
 import { ObjectDataToDoList } from "./object-data-to-do-list";
 import { ObjectDataCompositeSubobject } from "./object-data-composite-subobject";
 import { ObjectDataCompositeBasic } from "./object-data-composite-basic";
+import { ObjectDataCompositeGroupedLinks } from "./object-data-composite-grouped-links";
 
 import { enumCompositeObjectDisplayModes } from "../../../util/enum-composite-object-display-modes";
 
@@ -34,6 +35,8 @@ export const ObjectDataSwitch = ({ objectID, subobjectID, isSubobject = false })
             switch (compositeDisplayMode) {
                 case enumCompositeObjectDisplayModes.basic.value:
                     return <ObjectDataCompositeBasic objectID={_id} />;
+                case enumCompositeObjectDisplayModes.groupedLinks.value:
+                    return <ObjectDataCompositeGroupedLinks objectID={_id} />;
                 default:
                     throw Error(`Received unknown displayMode '${compositeDisplayMode}' for composite object '${_id}'`)
             }

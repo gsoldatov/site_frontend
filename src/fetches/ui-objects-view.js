@@ -66,3 +66,31 @@ export const toDoListObjectUpdateFetch = (objectID, toDoList) => {
         return await dispatch(updateObjectFetch(obj));
     };
 };
+
+
+/**
+ * Fetches missing attributes and data of a composite subobject displayed in <ObjectDataCompositeGroupedLinks> component.
+ */
+export const groupedLinksOnLoad = objectID => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const subobjectIDs = Object.keys(state.composite[objectID].subobjects);
+        const subobjectIDsWithNonCachedAttributes = subobjectIDs.filter(suobbjectID => !(suobbjectID in state.objects) || !(suobbjectID in state.objectsTags));
+        const subobjectIDsWithNonCachedData = subobjectIDs.filter(subobjectID => !objectDataIsInState(state, subobjectID));
+
+        // Fetch missing subobject attributes and data
+        if (subobjectIDsWithNonCachedAttributes.length > 0 || subobjectIDsWithNonCachedData.length > 0) {
+            let result = await dispatch(viewObjectsFetch(subobjectIDsWithNonCachedAttributes, subobjectIDsWithNonCachedData));
+
+            // Handle fetch errors
+            const responseErrorType = getResponseErrorType(result);
+            if (responseErrorType > enumResponseErrorType.none) {
+                const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+                return { error: errorMessage };
+            }            
+        }
+
+        // End fetch
+        return {};
+    };
+};

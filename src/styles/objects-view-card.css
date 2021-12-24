@@ -78,10 +78,17 @@
 }
 
 
-/* Composite object basic data display */
-.objects-view-data.composite-basic .objects-view-card-container.subobject:not(:last-child) {
+/* Composite object basic & grouped links data display */
+.objects-view-data.composite-basic .objects-view-card-container.subobject:not(:last-child),
+.objects-view-data.composite-grouped-links .objects-view-card-container.subobject:not(:last-child) {
     /* Add separation between subobjects */
     padding-bottom: 1rem;
     margin-bottom: 1rem;
     border-bottom: solid 1px rgba(34, 36, 38, 0.25);
+}
+
+.objects-view-data.composite-grouped-links > .objects-view-card-container.subobject > .ui.table.grouped-links-table {
+    /* Grouped links table styles */
+    margin-top: 0;
+    margin-bottom: 0;
 }

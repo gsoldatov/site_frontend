@@ -20,9 +20,9 @@ export const CompositeDisplayModeSwitch = ({ objectID }) => {
     const displayMode = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).composite.display_mode);
 
     // On change callback
-    const onChange = useMemo(() => 
-        (e, data) => dispatch(setEditedObject({ composite: { display_mode: data.value }}, objectID))
-    , [objectID]);
+    const onChange = useMemo(() => (e, data) => {
+        dispatch(setEditedObject({ composite: { display_mode: data.value }}, objectID));
+    }, [objectID]);
 
     return isComposite && (
         <div className="objects-edit-display-control-container">

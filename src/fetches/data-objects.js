@@ -79,6 +79,8 @@ export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
         const objectIDsLength = (objectIDs || []).length;
         const objectDataIDsLength = (objectDataIDs || []).length;
         if (objectIDsLength === 0 && objectDataIDsLength === 0) return {};
+        objectIDs = (objectIDs || []).map(objectID => parseInt(objectID));
+        objectDataIDs = (objectDataIDs || []).map(objectID => parseInt(objectID));
 
         // Fetch object attributes & data
         let payload = {};

@@ -13,7 +13,6 @@ import { getDefaultEditedObjectState, getStateWithResetEditedObjects, getStateWi
 import { getUpdatedToDoList } from "./helpers/object-to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
-import { getSubobjectDefaults } from "../store/state-templates/composite-subobjects";
 
 
 function loadNewObjectPage(state, action) {
@@ -169,8 +168,8 @@ function setEditedObject(state, action) {
     if ("compositeUpdate" in action.object) return getStateWithCompositeUpdate(state, objectID, action.object.compositeUpdate);
     else if ("composite" in action.object) {
         newComposite = { ...newComposite };
-        for (let attr of Object.keys(getSubobjectDefaults()))
-            if (action.object.composite[attr] !== undefined) newLink[attr] = action.object.composite[attr];
+        for (let attr of Object.keys(getDefaultEditedObjectState().composite))
+            if (action.object.composite[attr] !== undefined) newComposite[attr] = action.object.composite[attr];
     }
 
     // Links

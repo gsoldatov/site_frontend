@@ -18,7 +18,7 @@ export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false }) 
     const dispatch = useDispatch();
     const _id = isSubobject ? subobjectID : objectID;
 
-    // User fetch & error state
+    // Fetch & error state
     const [isFetching, setIsFetching] = useState(true);
     const [error, setError] = useState("");
 
