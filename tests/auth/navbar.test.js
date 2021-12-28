@@ -21,12 +21,12 @@ import { getObjectsViewCardElements } from "../_util/ui-objects-view";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addFixedRouteResponse } = require("../_mocks/mock-fetch");
+        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
-        global.addFixedRouteResponse = jest.fn(addFixedRouteResponse);
+        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
     });
 });
 
@@ -108,7 +108,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
 describe("Secondary menu logged out state", () => {
     test("Registration button disabled", async () => {
         // Disable registration in mock fetch
-        addFixedRouteResponse("/settings/view", "POST", 200, { settings: { non_admin_registration_allowed: false }});
+        addCustomRouteResponse("/settings/view", "POST", { status: 200, body: { settings: { non_admin_registration_allowed: false }}});
 
         // Render login page
         const store = createTestStore({ addAdminToken: false });

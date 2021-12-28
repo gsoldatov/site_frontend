@@ -19,12 +19,12 @@ import { getDefaultAuthState } from "../../src/store/state-templates/auth";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addFixedRouteResponse } = require("../_mocks/mock-fetch");
+        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
-        global.addFixedRouteResponse = jest.fn(addFixedRouteResponse);
+        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
     });
 });
 
@@ -108,8 +108,8 @@ test("Render authenticated-only route with an expired token", async () => {
 
 test("Fetch backend with an invalid token", async () => {
     // Set mock fetch to return 401 error when fetching an object
-    addFixedRouteResponse("/objects/view", "POST", 401, { _error: "Invalid token." });
-    addFixedRouteResponse("/users/view", "POST", 401, { _error: "Invalid token." });
+    addCustomRouteResponse("/objects/view", "POST", { status: 401, body: { _error: "Invalid token." }});
+    addCustomRouteResponse("/users/view", "POST", { status: 401, body: { _error: "Invalid token." }});
 
     // Render object's edit page
     const store = createTestStore({ addAdminToken: true });

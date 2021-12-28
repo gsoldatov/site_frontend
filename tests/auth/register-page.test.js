@@ -15,19 +15,19 @@ import { App } from "../../src/components/top-level/app";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addFixedRouteResponse } = require("../_mocks/mock-fetch");
+        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
-        global.addFixedRouteResponse = jest.fn(addFixedRouteResponse);
+        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
     });
 });
 
 
 test("Load register page with disabled admin registration", async () => {
     // Disable registration in mock fetch
-    addFixedRouteResponse("/settings/view", "POST", 200, { settings: { non_admin_registration_allowed: false }});
+    addCustomRouteResponse("/settings/view", "POST", { status: 200, body: { settings: { non_admin_registration_allowed: false }}});
 
     // Render register page
     const store = createTestStore({ addAdminToken: false });
@@ -138,7 +138,7 @@ test("Fetch error display for existing data & form disabling during fetch", asyn
     await waitForEnabledRegistationForm(container);
 
     // Add a mock error for non-unique login
-    addFixedRouteResponse("/auth/register", "POST", 400, { _error: "Submitted login already exists." });
+    addCustomRouteResponse("/auth/register", "POST", { status: 400, body: { _error: "Submitted login already exists." }});
 
     // Enter valid data & submit
     enterValidFormData(container, "register");
@@ -154,7 +154,7 @@ test("Fetch error display for existing data & form disabling during fetch", asyn
     expect(getRegistrationFormElements(container).submitButton.disabled).toBeFalsy();
 
     // Add a mock error for non-unique username
-    addFixedRouteResponse("/auth/register", "POST", 400, { _error: "Submitted username already exists." });
+    addCustomRouteResponse("/auth/register", "POST", { status: 400, body: { _error: "Submitted username already exists." }});
 
     // Submit data again
     fireEvent.click(getRegistrationFormElements(container).submitButton);

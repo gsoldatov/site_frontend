@@ -18,12 +18,12 @@ import { App } from "../src/components/top-level/app";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addFixedRouteResponse } = require("./_mocks/mock-fetch");
+        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("./_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
-        global.addFixedRouteResponse = jest.fn(addFixedRouteResponse);
+        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
     });
 });
 
@@ -114,7 +114,7 @@ describe("Feed pagination", () => {
     test("Single page", async () => {
         // Add a mock response
         const pageObjectIDs = [25, 100, 225, 300, 500];
-        addFixedRouteResponse("/objects/get_page_object_ids", "POST", 200, { pagination_info: { object_ids: pageObjectIDs, total_items: pageObjectIDs.length }});
+        addCustomRouteResponse("/objects/get_page_object_ids", "POST", { status: 200, body: { pagination_info: { object_ids: pageObjectIDs, total_items: pageObjectIDs.length }}});
 
         let { container } = renderWithWrappers(<App />, {
             route: "/"

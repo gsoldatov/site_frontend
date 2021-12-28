@@ -5,6 +5,9 @@ import { mapAndCacheNewSubobjects } from "./data-composite";
 export let _cachedObjects = {};      // object & object data caches, which are used to pass object data from add/update to view handler
 export let _cachedObjectData = {};
 export const resetObjectsCaches = () => { _cachedObjects = {}; _cachedObjectData = {} };
+export const setCachedObject = (object) => {
+    _cachedObjects[object.object_id] = object;
+};
 
 
 function handleAdd(body) {
@@ -48,7 +51,7 @@ function handleAdd(body) {
 }
 
 
-function handleView(body) {
+export function handleView(body) {
     // Parse request and get object_ids and object_data_ids (filter)
     let object_ids = [];
     let object_data_ids = [];

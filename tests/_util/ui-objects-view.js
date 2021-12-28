@@ -20,13 +20,29 @@ export const getObjectsViewCardElements = ({ container, card }) => {
         },
         data: {
             link: { element: null },
+            
             markdown: { container: null },
+            
             toDoList: { 
                 container: null,
                 isReadOnlyMessage: null,
                 fetchError: null
             },
+            
             compositeBasic: { subobjectCards: [] },
+            
+            compositeGroupedLinks: {
+                placeholders: {
+                    loading: null,
+                    fetchError: null
+                },
+                subobjectCards: [],
+                linksCard: {
+                    header: null,
+                    linkRows: []
+                }
+            },
+
             compositeSubobjectBasic: { linkToViewPage: null }
         },
         tags: {
@@ -90,6 +106,28 @@ export const getObjectsViewCardElements = ({ container, card }) => {
             // Composite, basic display mode
             if (dataContainer.classList.contains("composite-basic"))
                 result.data.compositeBasic.subobjectCards = dataContainer.querySelectorAll(".objects-view-card-container.subobject");
+            
+            // Composite, grouped_links display mode
+            if (dataContainer.classList.contains("composite-grouped-links")) {
+                result.data.compositeGroupedLinks.placeholders.loading = [...dataContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("loader"))[0];
+                result.data.compositeGroupedLinks.placeholders.fetchError =  [...dataContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("message") && n.classList.contains("error"))[0];
+
+                result.data.compositeGroupedLinks.subobjectCards = [...dataContainer.querySelectorAll(".objects-view-card-container.subobject:not(.link-card)")];
+
+                const linkCard = dataContainer.querySelector(".objects-view-card-container.subobject.link-card");
+                if (linkCard) {
+                    result.data.compositeGroupedLinks.linksCard.header = linkCard.querySelector("h2");
+
+                    const rows = linkCard.querySelectorAll("table.grouped-links-table > tbody > tr");
+                    for (let row of rows) {
+                        const cells = row.querySelectorAll("td");
+                        const cellData = { link: null, description: null };
+                        if (cells[0]) cellData.link = cells[0].querySelector("a");
+                        if (cells[1]) cellData.description = cells[1].textContent;
+                        result.data.compositeGroupedLinks.linksCard.linkRows.push(cellData);
+                    }
+                }
+            }
                 
             // Composite subobject in basic display mode
             if (dataContainer.classList.contains("composite-subobject"))

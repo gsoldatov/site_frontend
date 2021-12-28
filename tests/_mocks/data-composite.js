@@ -285,6 +285,8 @@ export const getCompositeByObjectID = (objectID, overrideValues) => {
         case "3904": return compositeWithAnUnavailableSubobject;
         case "3905": return compositeWithTwoColumns;
         case "3906": return compositeWithFourColumns;
+        case "3907": return compositeWithGroupedLinksDisplayMode;
+        case "3908": return compositeWithGroupedLinksDisplayModeAndNoLinkSubobjects;
         default: return generateCompositeObjectData(objectID, overrideValues);     // a single link subobject
     }
 };
@@ -379,4 +381,28 @@ const compositeWithFourColumns = generateCompositeObjectData(undefined, {
 
         generateCompositeSubobject(106, 3, 0)
     ]
+});
+
+
+export const compositeWithGroupedLinksDisplayMode = generateCompositeObjectData(undefined, {
+    subobjects: [
+        generateCompositeSubobject(1, 0, 0),
+        generateCompositeSubobject(1001, 0, 1),
+        generateCompositeSubobject(2001, 0, 2),
+        generateCompositeSubobject(3001, 1, 0),
+        generateCompositeSubobject(2, 1, 1),
+        generateCompositeSubobject(1002, 1, 2),
+        generateCompositeSubobject(3, 2, 0)
+    ],
+    display_mode: "grouped_links"
+});
+
+
+export const compositeWithGroupedLinksDisplayModeAndNoLinkSubobjects = generateCompositeObjectData(undefined, {
+    subobjects: [
+        generateCompositeSubobject(1001, 0, 1),
+        generateCompositeSubobject(2001, 0, 2),
+        generateCompositeSubobject(3001, 1, 0)
+    ],
+    display_mode: "grouped_links"
 });

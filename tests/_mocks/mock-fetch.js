@@ -7,7 +7,7 @@ import { usersHandlersList } from "./mock-fetch-handlers-users";
 
 
 let isFailingFetch;
-let fixedRouteResponses = [];
+let customRouteResponses = [];
 const handlerLists = [authHandlersList, tagsHandlersList, objectsHandlersList, settingsHandlersList, usersHandlersList];   // NOTE: add new handler lists here
 
 
@@ -22,7 +22,7 @@ export function mockFetch(URL, {
     const URLPath = URL.replace(config["backendURL"], "");
 
     // Lookup the fixed response
-    let response = getFixedRouteResponse(URLPath, method);
+    let response = getCustomRouteResponse(URLPath, method, body);
 
     // Get default response, if a fixed one was not provided
     if (!response) {
@@ -54,7 +54,7 @@ export const resetMocks = () => {
     resetTagsCache();       // reset cache objects
     resetObjectsCaches();
     setFetchFail();   // reset fetch fail parameters
-    fixedRouteResponses = [];
+    customRouteResponses = [];
 };
 
 
@@ -67,31 +67,50 @@ export const setFetchFail = (iff = false) => {
 
 
 /**
- * Forces mock fetch to return provided `status` & `body` when a request is made with the combination of `URL` & `method`.
- * If multiple responses are added for the same `URL` & `method`, the last one will be used.
+ * Overrides default mock fetch response for the provided `URL` and `method`. 
+ * If multiple responses are added for the same `URL` & `method`, the last one will be used first.
+ * 
+ * Expects one of the following argument sets:
+ * 1) `generator` - a function which accepts request body and returns an object with `status` and, optionally, `body` properties;
+ *     if `generator` response does not contain `status` or is not an object, next or default response is used instead;
+ * 2) `status` and, optionally `body` arguments to be returned by the mock.
  */
-export const addFixedRouteResponse = (URL, method, status, body) => {
-    fixedRouteResponses.unshift({ URL, method, status, body });
+export const addCustomRouteResponse = ( URL, method, { generator, status, body } = {}) => {
+    customRouteResponses.unshift({ URL, method, generator, status, body });
 };
 
 
 /**
- * Removes overriden fetch responses for the provided `URL` & `method`.
+ * Removes custom fetch responses for the provided `URL` & `method`.
  */
-export const clearFixedRouteResponse = (URL, method) => {
-    fixedRouteResponses = fixedRouteResponses.filter(r => r.URL !== URL || r.method !== method);
+export const clearCustomRouteResponse = (URL, method) => {
+    customRouteResponses = customRouteResponses.filter(r => r.URL !== URL || r.method !== method);
 };
 
 
 /**
  * Returns a response object with status & body, if such were set for the provide combinantion of `URL` & `method`.
+ * 
+ * If a response generator was set, attempts to generate a response based on the provided request `body`. 
+ * If response status and body are generated, returns them. Otherwise looks up the next generator or fixed response for the the `URL` and `method`.
  */
-const getFixedRouteResponse = (URL, method) => {
-    for (let r of fixedRouteResponses) {
+const getCustomRouteResponse = (URL, method, body) => {
+    for (let r of customRouteResponses) {
         if (r.URL === URL && r.method === method) {
-            const response = { status: r.status };
-            if ("body" in r) response.body = r.body;
-            return response;
+            // Response generator is provided
+            if (r.generator !== undefined) {
+                if (typeof(r.generator) !== "function") throw Error("Generator must be a function.");
+
+                // Return a valid response object, if it was return by the generator.
+                const result = r.generator(body);
+                if (typeof(result) === "object" && result !== null && "status" in result) return result;
+            }
+            else {
+                // Fixed response is provided
+                const response = { status: r.status };
+                if ("body" in r) response.body = r.body;
+                return response;
+            }
         }
     }
 };

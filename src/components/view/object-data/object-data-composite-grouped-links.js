@@ -66,7 +66,7 @@ const GroupedLinksOther = ({ objectID }) => {
     const nonLinkSubobjectIDsSelector = createSelector(
         state => state.composite[objectID].subobjects,
         state => state.objects,
-        (subobjects, objects) => Object.keys(subobjects).filter(subobjectID => objects[subobjectID].object_type !== "link")
+        (subobjects, objects) => Object.keys(subobjects).filter(subobjectID => objects[subobjectID] !== undefined && objects[subobjectID].object_type !== "link")
     );
     const nonLinkSubobjectIDs = useSelector(nonLinkSubobjectIDsSelector);
 
@@ -94,7 +94,7 @@ const GroupedLinksCard = ({ objectID }) => {
     const linkSubobjectIDsSelector = createSelector(
         state => state.composite[objectID].subobjects,
         state => state.objects,
-        (subobjects, objects) => Object.keys(subobjects).filter(subobjectID => objects[subobjectID].object_type === "link")
+        (subobjects, objects) => Object.keys(subobjects).filter(subobjectID => (objects[subobjectID] || {}).object_type === "link")
     );
     const linkSubobjectIDs = useSelector(linkSubobjectIDsSelector);
 
@@ -127,11 +127,11 @@ const GroupedLinksCard = ({ objectID }) => {
     );
 
     return (
-        <div className="objects-view-card-container subobject">
+        <div className="objects-view-card-container subobject link-card">
             {header}
             {linksTable}
         </div>
-    )
+    );
 };
 
 
@@ -142,8 +142,12 @@ const GroupedLinksTableRow = ({ subobjectID }) => {
     const object = useSelector(state => state.objects[subobjectID]);
     const link = useSelector(state => state.links[subobjectID].link);
 
-    if (!object) return null;
-
+    if (!object || !link) return (
+        <Table.Row>
+            <Table.Cell>{"<Link not found.>"}</Table.Cell>
+            <Table.Cell />
+        </Table.Row>
+    );
 
     return (
         <Table.Row>
@@ -151,9 +155,6 @@ const GroupedLinksTableRow = ({ subobjectID }) => {
                 <a href={link}>
                     {object.object_name}
                 </a>
-                {/* <Link  to={link}>
-                    {object.object_name}
-                </Link> */}
             </Table.Cell>
 
             <Table.Cell>

@@ -13,12 +13,12 @@ import { App } from "../src/components/top-level/app";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addFixedRouteResponse } = require("./_mocks/mock-fetch");
+        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("./_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
-        global.addFixedRouteResponse = jest.fn(addFixedRouteResponse);
+        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
     });
 });
 

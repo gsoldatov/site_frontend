@@ -87,7 +87,7 @@
     border-bottom: solid 1px rgba(34, 36, 38, 0.25);
 }
 
-.objects-view-data.composite-grouped-links > .objects-view-card-container.subobject > .ui.table.grouped-links-table {
+.objects-view-data.composite-grouped-links > .objects-view-card-container.subobject.link-card > .ui.table.grouped-links-table {
     /* Grouped links table styles */
     margin-top: 0;
     margin-bottom: 0;

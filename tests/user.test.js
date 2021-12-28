@@ -17,12 +17,12 @@ import { App } from "../src/components/top-level/app";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addFixedRouteResponse } = require("./_mocks/mock-fetch");
+        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("./_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
-        global.addFixedRouteResponse = jest.fn(addFixedRouteResponse);
+        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
     });
 });
 
@@ -73,7 +73,7 @@ describe("View mode", () => {
         test("Load a valid user", async () => {
             // Set mock response & render user page
             const userData = getMockUserData({ user_id: 2, full_view_mode: false });
-            addFixedRouteResponse("/users/view", "POST", 200, { users: [userData] });
+            addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
             const store = createTestStore({ addAdminToken: false });
             let { container } = renderWithWrappers(<App />, {
                 route: `/users/2`, store
@@ -103,7 +103,7 @@ describe("View mode", () => {
 
             for (let ud of userData) {
                 // Set mock response & render user page
-                addFixedRouteResponse("/users/view", "POST", 200, { users: [ud] });
+                addCustomRouteResponse("/users/view", "POST", {status: 200, body: { users: [ud] }});
                 var { container } = renderWithWrappers(<App />, {
                     route: `/users/${ud.user_id}`
                 });
@@ -132,7 +132,7 @@ describe("Edit mode", () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, full_view_mode: true });
         const store = createTestStore({ addAdminUser: true });
-        addFixedRouteResponse("/users/view", "POST", 200, { users: [userData] });
+        addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
         let { container } = renderWithWrappers(<App />, {
             route: `/users/2`, store
         });
@@ -158,7 +158,7 @@ describe("Edit mode", () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, full_view_mode: true });
         const store = createTestStore({ addAdminUser: true });
-        addFixedRouteResponse("/users/view", "POST", 200, { users: [userData] });
+        addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
         let { container } = renderWithWrappers(<App />, {
             route: `/users/2`, store
         });
@@ -216,7 +216,7 @@ describe("Edit mode", () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, full_view_mode: true });
         const store = createTestStore({ addAdminUser: true });
-        addFixedRouteResponse("/users/view", "POST", 200, { users: [userData] });
+        addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
         let { container } = renderWithWrappers(<App />, {
             route: `/users/2`, store
         });
@@ -236,19 +236,19 @@ describe("Edit mode", () => {
         setFetchFail();
 
         // Set mock non-unique login error & submit correct update
-        addFixedRouteResponse("/users/update", "PUT", 400, { _error: "Submitted login already exists." });
+        addCustomRouteResponse("/users/update", "PUT", { status: 400, body: { _error: "Submitted login already exists." }});
         fireEvent.click(updateButton);
         expect(getUserPageEditModeElements(container).message).toBeFalsy();
         await checkValidInputErrorDisplay(container, "login", "Submitted login already exists.");
 
         // Set mock non-unique username error & submit correct update
-        addFixedRouteResponse("/users/update", "PUT", 400, { _error: "Submitted username already exists." });
+        addCustomRouteResponse("/users/update", "PUT", { status: 400, body: { _error: "Submitted username already exists." }});
         fireEvent.click(updateButton);
         expect(getUserPageEditModeElements(container).message).toBeFalsy();
         await checkValidInputErrorDisplay(container, "username", "Submitted username already exists.");
 
         // Set mock non-unique username error & submit correct update
-        addFixedRouteResponse("/users/update", "PUT", 400, { _error: "Token owner password is incorrect." });
+        addCustomRouteResponse("/users/update", "PUT", { status: 400, body: { _error: "Token owner password is incorrect." }});
         fireEvent.click(updateButton);
         expect(getUserPageEditModeElements(container).message).toBeFalsy();
         await checkValidInputErrorDisplay(container, "tokenOwnerPassword", "Incorrect password.");
@@ -259,7 +259,7 @@ describe("Edit mode", () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, user_level: "admin", can_login: true, can_edit_objects: true, full_view_mode: true });
         const store = createTestStore({ addAdminUser: true });
-        addFixedRouteResponse("/users/view", "POST", 200, { users: [userData] });
+        addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
         let { container } = renderWithWrappers(<App />, {
             route: `/users/2`, store
         });

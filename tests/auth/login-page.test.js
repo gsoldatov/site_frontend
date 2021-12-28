@@ -19,12 +19,12 @@ import { enumUserLevels } from "../../src/util/enum-user-levels";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addFixedRouteResponse } = require("../_mocks/mock-fetch");
+        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
-        global.addFixedRouteResponse = jest.fn(addFixedRouteResponse);
+        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
     });
 });
 
@@ -111,7 +111,7 @@ test("Correct login", async () => {
     // Remove the mock network error, set mock login response & submit data again
     setFetchFail();
     const body = getMockLoginResponse();
-    addFixedRouteResponse("/auth/login", "POST", 200, body);
+    addCustomRouteResponse("/auth/login", "POST", { status: 200, body });
     fireEvent.click(getLoginFormElements(container).submitButton);
 
     // Check if form error was reset
@@ -147,7 +147,7 @@ test("Correct login with URL query params", async () => {
 
     // Set mock login response
     const body = getMockLoginResponse();
-    addFixedRouteResponse("/auth/login", "POST", 200, body);
+    addCustomRouteResponse("/auth/login", "POST", { status: 200, body });
 
     // Enter valid data & submit
     enterValidFormData(container, "login");
