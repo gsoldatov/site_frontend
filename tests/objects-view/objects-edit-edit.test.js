@@ -439,7 +439,19 @@ describe("Object display properties", () => {
             clickDisplayTabButton(container);
 
             // Composite display mode: is rendered and eqaul "Basic" by default
+            const displayModeControls = getObjectDisplayControls(container).displayMode;
+            expect(displayModeControls.selected.textContent).toEqual("Basic");
             expect(getObjectDisplayControls(container).displayMode.selected.textContent).toEqual("Basic");
+
+            // Select `grouped_links` display mode
+            fireEvent.click(displayModeControls.selected);
+            fireEvent.click(displayModeControls.options.grouped_links);
+            expect(store.getState().editedObjects[3001].composite.display_mode).toEqual("grouped_links");
+
+            // Select `basic` display mode
+            fireEvent.click(displayModeControls.selected);
+            fireEvent.click(displayModeControls.options.basic);
+            expect(store.getState().editedObjects[3001].composite.display_mode).toEqual("basic");
         });
     });
 

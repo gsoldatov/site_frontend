@@ -147,7 +147,8 @@ export const getObjectDisplayControls = container => {
         result.displayMode = {
             selected: switchContainer.querySelector("div.divider"),
             options: {
-                basic: queryByText(switchContainer.querySelector(".menu.transition"), "Basic").parentNode
+                basic: (queryByText(switchContainer.querySelector(".menu.transition"), "Basic") || {}).parentNode,
+                grouped_links: (queryByText(switchContainer.querySelector(".menu.transition"), "Grouped Links") || {}).parentNode
             }
         };
     }
