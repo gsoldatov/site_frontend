@@ -9,7 +9,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../../store/create-store";
 
-import { RedirectOnRenderWrapper } from "../common/redirect-on-render-wrapper";
+import { LocationManagerWrapper } from "../common/location-manager-wrapper";
 import { ProtectedRoute } from "../common/protected-route";
 
 import { IndexPage } from "./index";
@@ -35,7 +35,7 @@ export const isAnonymousCondition = state => state.auth.numeric_user_level === e
 
 export const App = () => {
     return (
-        <RedirectOnRenderWrapper>
+        <LocationManagerWrapper>
             <Switch>
                 {/* Index */}
                 <Route exact path={["/", "/feed/:page"]}>
@@ -110,7 +110,7 @@ export const App = () => {
                     <NotFound />
                 </Route>
             </Switch>
-        </RedirectOnRenderWrapper>
+        </LocationManagerWrapper>
     );
 };
 

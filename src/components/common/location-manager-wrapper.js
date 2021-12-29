@@ -6,18 +6,20 @@ import { setRedirectOnRender } from "../../actions/common";
 
 
 /**
- * Wrapper component, which monitors `state.redirectOnRender` and redirects to the specified URL, when it's provided.
- * If `state.redirectOnRender` is empty, renders its children.
+ * Wrapper component for managing redirects set in `state.redirectOnRender` & dispatching state updates based on URL changes.
  */
-export const RedirectOnRenderWrapper = ({ children }) => {
+export const LocationManagerWrapper = ({ children }) => {
     const dispatch = useDispatch();
     const redirectOnRender = useSelector(state => state.redirectOnRender);
     
+    // Clear state.redirectOnRender after a redirect
     useEffect(() => {
         if (redirectOnRender) dispatch(setRedirectOnRender(""));
     }, [redirectOnRender]);
 
+    // Redirect
     if (redirectOnRender.length > 0) return <Redirect to={redirectOnRender} />;
 
+    // Render children
     return children;
 };
