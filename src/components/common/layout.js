@@ -9,7 +9,7 @@ import SideMenu from "./side-menu";
 /**
  * Page layout with navigation, side menu and main content (body).
  */
-export default ({ sideMenuItems, body, className, navigationBarItemOnClickcallback }) => {
+export default ({ sideMenuItems, body, className }) => {
     // Side menu column (hide if it's stacked & no `sideMenuItems` are provided)
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);
     const onResizeCallback = useMemo(() => computedStyle => {
@@ -35,7 +35,7 @@ export default ({ sideMenuItems, body, className, navigationBarItemOnClickcallba
         <OnResizeWrapper callback={onResizeCallback}>
             <Grid stackable className={className}>
                 <Grid.Row className={className}>
-                    <Navigation itemOnClickCallback={navigationBarItemOnClickcallback} />
+                    <Navigation />
                 </Grid.Row>
                 <Grid.Row columns={mainRowColumns} className={className}>
                     {sideMenuColumn}

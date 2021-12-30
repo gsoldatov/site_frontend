@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 import { Button, Menu } from "semantic-ui-react";
 
-import { clearUnsavedCurrentEditedObject } from "../../../../actions/objects-edit";
 import { enumDeleteModes } from "../../../../store/state-templates/composite-subobjects";
 
 const _tabIndexes = { "general": 0, "data": 1, "display": 2 };
@@ -21,10 +20,6 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
     const onTabChange = (e, data) => { updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, selected_tab: _tabIndexes[data.name] }}); };
 
     // Menu button callbacks
-    const editObjectPageCallback = useMemo(() => () => { dispatch(clearUnsavedCurrentEditedObject()); });
-    // const editObjectPageCallback = useMemo(() => () => {
-    //     dispatch(setRedirectOnRender(`/objects/edit/${subobjectID}`, { deleteCurrentEditedObject: true }));
-    // }, [objectID, subobjectID]);
     const resetSubbjectCallback = useMemo(() => () => { setIsResetDialogDisplayed(true) }, [objectID, subobjectID]);
     const deleteSubobjectCallback = useMemo(() => () => { 
         updateCallback({ compositeUpdate: { command: "updateSubobject", subobjectID, deleteMode: enumDeleteModes.subobjectOnly }}); 
@@ -42,7 +37,6 @@ export const CardMenu = ({ objectID, subobjectID, updateCallback, isResetDialogD
             icon: "edit outline", 
             title: "Open edit page of this object", 
             linkURL: `/objects/edit/${subobjectID}`,
-            onClick: editObjectPageCallback,
             isVisibleSelector: state => subobjectID > 0
         },
         { 

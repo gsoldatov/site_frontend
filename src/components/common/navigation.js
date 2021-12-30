@@ -32,7 +32,7 @@ const navigationItems = [
 /**
  * Navigation bar.
  */
-export default memo(({ itemOnClickCallback }) => {
+export default memo(() => {
     const location = useLocation();
 
     // Stacked menu expand/collapse control display
@@ -62,7 +62,7 @@ export default memo(({ itemOnClickCallback }) => {
 
     let menuItems;
     if (!isStacked || isExpanded) {
-        menuItems = navigationItems.map((item, k) => <NavbarItem key={k} item={item} itemOnClickCallback={itemOnClickCallback} />);
+        menuItems = navigationItems.map((item, k) => <NavbarItem key={k} item={item} />);
 
         menuItems.push(<NavbarSecondaryMenu key={-1} containerClassName={rightMenuClassName} />);
     }
@@ -87,7 +87,7 @@ export default memo(({ itemOnClickCallback }) => {
 /**
  * Navigation bar's item component.
  */
-const NavbarItem = ({ item, itemOnClickCallback }) => {
+const NavbarItem = ({ item }) => {
     const isDisplayed = useSelector(item.isDisplayedSelector || (state => true));
     const labelText = useSelector(item.labelTextSelector || (state => undefined));
     const labelColor = useSelector(item.labelColorSelector || (state => "grey"));
@@ -96,7 +96,7 @@ const NavbarItem = ({ item, itemOnClickCallback }) => {
     const label = labelText !== undefined ? <Label size="tiny" circular color={labelColor}>{labelText}</Label> : null;
 
     return (
-        <Menu.Item as={NavLink} exact to={item.to} onClick={itemOnClickCallback}>
+        <Menu.Item as={NavLink} exact to={item.to}>
             {item.text}
             {label}
         </Menu.Item>

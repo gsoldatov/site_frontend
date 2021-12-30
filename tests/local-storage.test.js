@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Switch, Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByPlaceholderText, waitFor } from "@testing-library/dom";
@@ -14,8 +13,6 @@ import { createTestStore } from "./_util/create-test-store";
 import { getMappedSubobjectID } from "./_mocks/data-composite";
 
 import { App } from "../src/components/top-level/app";
-import { NewObject, EditObject } from "../src/components/top-level/objects-edit";
-import ObjectsList from "../src/components/top-level/objects-list";
 
 import { getDefaultAuthState } from "../src/store/state-templates/auth";
 
@@ -44,7 +41,7 @@ describe("Edited objects > New object page", () => {
         // Render new object page and modify object name
         let storeOne = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
         
-        var { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new",
             store: storeOne
         });
@@ -74,7 +71,7 @@ describe("Edited objects > New object page", () => {
 
         // Rerender page with another store
         let storeTwo = createTestStore({ useLocalStorage: true });
-        var { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new",
             store: storeTwo
         });
@@ -162,7 +159,7 @@ describe("Edited objects > Existing object page", () => {
         // Render existing object page and modify object name
         let storeOne = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
-        var { container } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", 
             store: storeOne
         });
@@ -195,7 +192,7 @@ describe("Edited objects > Existing object page", () => {
 
         // Rerender page with another store
         let storeTwo = createTestStore({ useLocalStorage: true });
-        var { container } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", 
             store: storeTwo
         });
@@ -211,11 +208,7 @@ describe("Edited objects > Existing object page", () => {
         // Render existing object page and modify object name
         let store = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
-        var { container } = renderWithWrappers(
-            <Switch>
-                <Route exact path="/objects/list"><ObjectsList /></Route>
-                <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />
-            </Switch>, 
+        var { container } = renderWithWrappers(<App />, 
             { route: "/objects/edit/3001", store }
         );
         await waitForEditObjectPageLoad(container, store);
@@ -280,11 +273,7 @@ describe("Edited objects > Existing object page", () => {
         // Render existing object page and modify object name
         let store = createTestStore({ useLocalStorage: true, saveTimeout: 50 });
 
-        var { container } = renderWithWrappers(
-            <Switch>
-                <Route exact path="/objects/list"><ObjectsList /></Route>
-                <Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />
-            </Switch>, 
+        var { container } = renderWithWrappers(<App />,
             { route: "/objects/edit/3001", store }
         );
         await waitForEditObjectPageLoad(container, store);

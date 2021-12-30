@@ -21,7 +21,7 @@ export const resetEditedObjects              = ({ objectIDs, hideObjectResetDial
                                                 type: RESET_EDITED_OBJECTS, objectIDs, hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed });
 export const removeEditedObjects             = (objectIDs, removeSubobjects) => ({ type: REMOVE_EDITED_OBJECTS, objectIDs, removeSubobjects });
 export const setEditedObject                 = (object, objectID) => ({ type: SET_EDITED_OBJECT, object, objectID });
-export const clearUnsavedCurrentEditedObject = (deleteNewObject) => ({ type: CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, deleteNewObject });
+export const clearUnsavedCurrentEditedObject = ({ deleteNewObject, editedObjectID, excludedObjectID }) => ({ type: CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, deleteNewObject, editedObjectID, excludedObjectID });
 export const setObjectTagsInput              = inputState => ({ type: SET_OBJECT_TAGS_INPUT, tagsInput: inputState });
 export const setEditedObjectTags             = tagUpdates => ({ type: SET_EDITED_OBJECT_TAGS, tagUpdates });
 export const resetEditedObjectsTags          = (objectIDs, modified_at) => ({ type: RESET_EDITED_OBJECTS_TAGS, objectIDs, modified_at });

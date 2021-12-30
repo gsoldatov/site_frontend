@@ -15,7 +15,7 @@ import { InlineInput } from "../inline/inline-input";
 
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../../store/state-util/ui-objects-edit";
 import { resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
-         setShowResetDialogObject, setShowDeleteDialogObject, clearUnsavedCurrentEditedObject } from "../../actions/objects-edit";
+         setShowResetDialogObject, setShowDeleteDialogObject } from "../../actions/objects-edit";
 import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../../fetches/ui-objects-edit";
 
 
@@ -73,8 +73,7 @@ export const NewObject = () => {
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingObject(state),
-            linkURL: "/objects/list",
-            onClick: () => dispatch(clearUnsavedCurrentEditedObject())
+            linkURL: "/objects/list"
         }
     ]);
 
@@ -95,8 +94,7 @@ export const EditObject = () => {
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingObject(state),
-            linkURL: "/objects/edit/new",
-            onClick: () => dispatch(clearUnsavedCurrentEditedObject())
+            linkURL: "/objects/edit/new"
         },
 
         {
@@ -105,8 +103,7 @@ export const EditObject = () => {
             icon: "eye",
             iconColor: "black",
             isActiveSelector: state => !isFetchingObject(state),
-            linkURL: `/objects/view/${id}`,
-            onClick: () => dispatch(clearUnsavedCurrentEditedObject())
+            linkURL: `/objects/view/${id}`
         },
 
         {
@@ -185,8 +182,7 @@ export const EditObject = () => {
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingObject(state),
-            linkURL: "/objects/list",
-            onClick: () => dispatch(clearUnsavedCurrentEditedObject())
+            linkURL: "/objects/list"
         }
     ], [id]);
 
@@ -206,8 +202,6 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
         dispatch(onLoad);
     }, [objectID]);
 
-    const navigationBarItemOnClickcallback = useMemo(() => () => dispatch(clearUnsavedCurrentEditedObject()));
-
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
     const pageBody = loadIndicatorAndError || (
         <>
@@ -220,7 +214,7 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     // Custom layout classname for composite objects (to allow multicolumn subobjects)
     const className = objectType === "composite" && selectedTab === 1 ? "composite-object-page" : undefined;
 
-    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} navigationBarItemOnClickcallback={navigationBarItemOnClickcallback} />;
+    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} />;
 };
 
 

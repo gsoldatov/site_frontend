@@ -146,7 +146,7 @@ function removeEditedObjects(state, action) {
     const { objectIDs, removeSubobjects } = action;
 
     // Remove edited objects and their non-composite children
-    return getStateWithRemovedEditedObjects(state, objectIDs, removeSubobjects);
+    return getStateWithRemovedEditedObjects(state, objectIDs, { deleteAllSubobjects: removeSubobjects });
 }
 
 
@@ -234,7 +234,8 @@ function setEditedObject(state, action) {
 
 
 function clearUnsavedCurrentEditedObject(state, action) {
-    return getStateAfterObjectPageLeave(state, action.deleteNewObject);
+    const { deleteNewObject, editedObjectID, excludedObjectID } = action;
+    return getStateAfterObjectPageLeave(state, { deleteNewObject, editedObjectID, excludedObjectID });
 }
 
 

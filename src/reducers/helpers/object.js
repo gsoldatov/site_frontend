@@ -1,6 +1,7 @@
 import { deepCopy } from "../../util/copy";
 import { defaultEditedObjectState } from "../../store/state-templates/edited-object";
 import { getObjectDataFromStore, objectHasNoChanges } from "../../store/state-util/objects";
+import { getEditedObjectAndSubobjectIDs } from "../../store/state-util/ui-objects-edit";
 
 
 /**
@@ -82,32 +83,43 @@ export const getStateWithResetEditedObjects = (state, objectIDs, { allowResetToD
  * 
  * If `deleteAllSubobjects` is true, deletes all non-composite subobjects.
  * 
+ * If `excludedObjectIDs` contains an array of object IDs, those objects and their subobjects will not be deleted.
+ * 
  * Returns the state after delete(-s).
  */
-export const getStateWithRemovedEditedObjects = (state, objectIDs, deleteAllSubobjects) => {
+export const getStateWithRemovedEditedObjects = (state, objectIDs, { deleteAllSubobjects, excludedObjectIDs } = {}) => {
     if (objectIDs.length === 0) return state;
 
+    deleteAllSubobjects = deleteAllSubobjects === undefined ? false : deleteAllSubobjects;
+    excludedObjectIDs = excludedObjectIDs === undefined ? [] : excludedObjectIDs;
     let newEditedObjects = { ...state.editedObjects };
 
+    // Exclude subobjects of excluded objects
+    const _excludedIDs = getEditedObjectAndSubobjectIDs(state, excludedObjectIDs);
+
+    // Remove objects and their subobjects, if they're not excluded
     objectIDs.forEach(objectID => {
         if (!(objectID in newEditedObjects)) return;
+        objectID = parseInt(objectID);
 
         if (newEditedObjects[objectID].object_type === "composite") {
             Object.keys(newEditedObjects[objectID].composite.subobjects).forEach(subobjectID => {
                 subobjectID = parseInt(subobjectID);
                 const objectType = newEditedObjects[subobjectID] ? newEditedObjects[subobjectID].object_type : null;
-                // Delete subobject if it's not composite AND 
-                // (all subobjects are set to be deleted OR subobject is new or unmodified existing)
+                // Delete subobject if it's not composite
+                // AND (all subobjects are set to be deleted OR subobject is new or unmodified existing)
+                // AND subobjects is NOT excluded from deletion
                 if (objectType !== "composite" &&
                     (
                         deleteAllSubobjects ||
                         subobjectID < 0 || (subobjectID > 0 && objectHasNoChanges(state, subobjectID))
-                    ))
+                    )
+                    && !_excludedIDs.has(subobjectID))
                     delete newEditedObjects[subobjectID];
             });
         }
     
-        delete newEditedObjects[objectID];
+        if (!_excludedIDs.has(objectID)) delete newEditedObjects[objectID];
     });
 
     let newState = { ...state, editedObjects: newEditedObjects };
@@ -184,14 +196,21 @@ export const getStateWithResetEditedExistingSubobjects = (state, objectIDs) => {
 /**
  * Returns state after all unchanged existing subobjects of an object `objectID` were removed.
  * 
+ * If `excludedObjectIDs` is provided, object IDs contained inside it are excluded from deletion
+ * 
  * Does nothing if object is not present in state.editedObjects or is not composite.
  */
-const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID) => {
+const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID, { excludedObjectIDs } = {}) => {
     if (state.editedObjects[objectID] === undefined || state.editedObjects[objectID].object_type !== "composite") return state;
     let newEditedObjects = { ...state.editedObjects };
+    excludedObjectIDs = excludedObjectIDs === undefined ? [] : excludedObjectIDs;
+
+    // Exclude subobjects of excluded objects
+    const _excludedIDs = getEditedObjectAndSubobjectIDs(state, excludedObjectIDs);
 
     for (let subobjectID of Object.keys(state.editedObjects[objectID].composite.subobjects)) {
-        if (parseInt(subobjectID) > 0 && objectHasNoChanges(state, subobjectID, false)) delete newEditedObjects[subobjectID];
+        subobjectID = parseInt(subobjectID);
+        if (subobjectID > 0 && !_excludedIDs.has(subobjectID) && objectHasNoChanges(state, subobjectID, false)) delete newEditedObjects[subobjectID];
     }
     
     return { ...state, editedObjects: newEditedObjects }; 
@@ -200,23 +219,29 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID) => {
 
 /**
  * Returns the state with unchanged editedObjects being removed from it.
+ * 
+ * Expects either `deleteNewObject` = true or `editedObjectID` to be provided.
+ * 
  *  - If `deleteNewObject` is true, removes new object and, its new and unchanged existing subobjects, if it's composite;
  *  - if `deleteNewObject` is false:
- *      - if current edited object is unchanged:
+ *      - if `excludedObjectID` is provided, corresponding object and its subobjects are not removed;
+ *      - if object with `editedObjectID` is unchanged:
  *          - removes it;
  *          - removes all subobjects for composite objects;
- *      - if current edited object is changed:
+ *      - if object with `editedObjectID` is changed:
  *          - removes all unchanged subobjects for composite objects.
  */
- export const getStateAfterObjectPageLeave = (state, deleteNewObject) => {
-    const currentObjectID = state.objectUI.currentObjectID;
+ export const getStateAfterObjectPageLeave = (state, { deleteNewObject, editedObjectID, excludedObjectID } = {}) => {
     let newState = state;
 
     // Force delete of new object
     if (deleteNewObject) newState = getStateWithRemovedEditedObjects(newState, [0]);
-    else {
-        if (objectHasNoChanges(state, currentObjectID, false)) newState = getStateWithRemovedEditedObjects(newState, [currentObjectID]);
-        else newState = getStateWithRemovedUnchangedEditedSubobjects(newState, currentObjectID);
+
+    // Delete unchanged edited object & subobject data for `editedObjectID`
+    else if (editedObjectID !== undefined) {
+        const excludedObjectIDs = excludedObjectID !== undefined ? [excludedObjectID] : undefined;
+        if (objectHasNoChanges(state, editedObjectID, false)) newState = getStateWithRemovedEditedObjects(newState, [editedObjectID], { excludedObjectIDs });
+        else newState = getStateWithRemovedUnchangedEditedSubobjects(newState, editedObjectID), { excludedObjectIDs };
     }
 
     return newState;
