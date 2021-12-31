@@ -2,14 +2,23 @@
     Field pagination styles. 
 *******************************/
 
-/* Navigation bar */
+/* Navigation bar and its flow placeholder */
 div.ui.menu.navigation-bar {
+    /* Fix navbar to always take the full top of the screen */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+
+    /* Additional styles */
+    margin-top: 0;
     border-radius: 0;
 }
 
-
+div.navigation-bar-placeholder,
 div.ui.menu.navigation-bar:not(.is-stacked) {
     min-height: 52px;   /* Same for when with & without secondary menu */
+    width: 100%;        /* Required for placeholder to properly calculate `isStacked` state */
 }
 
 /* Menu items */

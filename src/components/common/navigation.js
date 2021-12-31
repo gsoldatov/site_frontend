@@ -69,16 +69,20 @@ export default memo(() => {
 
     const mainMenuClassname = "navigation-bar" + (isStacked ? " is-stacked" : "");
     
+    // Menu position is fixed to take 100% of screen width, `navigation-bar-placeholder` takes menu's positon in the flow
+
     // `vertical` <Menu> prop is used instead of `stackable` prop of <Menu> to avoid inconsistency when when displaying composite object page
     // (small viewport width forces navbar to be stackable even body width is > 768px)
     return (
         <OnResizeWrapper callback={onResizeCallback}>
-            <Menu inverted fluid vertical={isStacked} size="large" className={mainMenuClassname}
-                activeIndex={location.pathname}
-            >
-                {expandToggle}
-                {menuItems}
-            </Menu>
+            <>
+            <div className="navigation-bar-placeholder" />
+                <Menu inverted fluid vertical={isStacked} size="large" className={mainMenuClassname}
+                    activeIndex={location.pathname}>
+                    {expandToggle}
+                    {menuItems}
+                </Menu>
+            </>
         </OnResizeWrapper>
     );
 });
