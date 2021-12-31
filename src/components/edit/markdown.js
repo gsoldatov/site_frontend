@@ -153,8 +153,8 @@ const MarkdownViewEdit = ({ objectID }) => {
     const containerClassName = isFullscreenStyle ? "markdown-view-edit-container" : "markdown-view-edit-container small";
     const columnClassName = isFullscreenStyle ? "markdown-view-edit-item" : "markdown-view-edit-item small";
 
-    const onResizeCallback = useMemo(() => computedStyle => {
-        const width = parseInt(computedStyle.width.replace("px", ""));
+    const onResizeCallback = useMemo(() => containerRef => {
+        const width = parseInt(getComputedStyle(containerRef).width.replace("px", ""));
         setIsFullscreenStyle(width >= 500);
     });
 

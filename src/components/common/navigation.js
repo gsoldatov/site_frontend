@@ -39,8 +39,8 @@ export default memo(() => {
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);    // SUIR @media threshold
     const [isExpanded, setIsExpanded] = useState(false);
 
-    const onResizeCallback = useMemo(() => computedStyle => {
-        const width = parseInt(computedStyle.width.replace("px", ""));
+    const onResizeCallback = useMemo(() => navbarRef => {
+        const width = parseInt(getComputedStyle(navbarRef).width.replace("px", ""));
         setIsStacked(width < 768);     // SUIR @media threshold
     });
 
@@ -74,16 +74,16 @@ export default memo(() => {
     // `vertical` <Menu> prop is used instead of `stackable` prop of <Menu> to avoid inconsistency when when displaying composite object page
     // (small viewport width forces navbar to be stackable even body width is > 768px)
     return (
-        <OnResizeWrapper callback={onResizeCallback}>
-            <>
+        <>
             <div className="navigation-bar-placeholder" />
+            <OnResizeWrapper callback={onResizeCallback}>
                 <Menu inverted fluid vertical={isStacked} size="large" className={mainMenuClassname}
                     activeIndex={location.pathname}>
                     {expandToggle}
                     {menuItems}
                 </Menu>
-            </>
-        </OnResizeWrapper>
+            </OnResizeWrapper>
+        </>
     );
 });
 

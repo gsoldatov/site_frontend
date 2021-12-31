@@ -16,7 +16,7 @@ const menuIsFullscreenThreshold = 768;
 export default memo(({ items, className = "field-menu", compact, size }) => {
     const [isFullscreenStyle, setIsFullscreenStyle] = useState(window.innerWidth >= menuIsFullscreenThreshold);
 
-    const onResizeCallback = useMemo(() => computedStyle => {
+    const onResizeCallback = useMemo(() => menuRef => {
         setIsFullscreenStyle(window.innerWidth >= menuIsFullscreenThreshold);
     });
 

@@ -14,7 +14,7 @@ export const OnResizeWrapper = ({ callback, children }) => {
     
     const onResize = useRef(intervalWrapper(() => {
         if (innerRef.current) {
-            callback(getComputedStyle(innerRef.current));
+            callback(innerRef.current);
         }
     }, 200, false)).current;
 

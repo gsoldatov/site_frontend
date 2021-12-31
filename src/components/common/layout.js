@@ -12,8 +12,8 @@ import SideMenu from "./side-menu";
 export default ({ sideMenuItems, body, className }) => {
     // Side menu column (hide if it's stacked & no `sideMenuItems` are provided)
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);
-    const onResizeCallback = useMemo(() => computedStyle => {
-        const width = parseInt(computedStyle.width.replace("px", ""));
+    const onResizeCallback = useMemo(() => gridRef => {
+        const width = parseInt(getComputedStyle(gridRef).width.replace("px", ""));
         setIsStacked(width < 768);     // 768 = SUIR @media threshold
     });
     const showSideMenuColumn = !isStacked || sideMenuItems;

@@ -18,8 +18,8 @@ export default ({ items }) => {
     const [sideMenuIsStacked, setSideMenuIsStacked] = useState(window.innerWidth < 768);    // Toggles side menu mobile styling
     const [itemFullscreenStyle, setItemFullscreenStyle] = useState(false);                  // Toggles icon only side menu items on small widths
     const [dialogButtonsFullscreenStyle, setDialogButtonsFullscreenStyle] = useState(false);    // Toggles icon only confirmation dialog on small widths
-    const onResizeCallback = useMemo(() => computedStyle => {
-        const width = parseInt(computedStyle.width.replace("px", ""));
+    const onResizeCallback = useMemo(() => sideMenuRef => {
+        const width = parseInt(getComputedStyle(sideMenuRef).width.replace("px", ""));
         setSideMenuIsStacked(window.innerWidth < 768);       // 768 = SUIR @media threshold
         setItemFullscreenStyle(width >= 100);
         setDialogButtonsFullscreenStyle(width >= 221);

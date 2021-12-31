@@ -31,8 +31,8 @@ export const ObjectsFeedPagination = ({ paginationInfo }) => {
 
     // Change pagination parameters based on viewport width
     const [isFullscreenStyle, setIsFullscreenStyle] = useState(window.innerWidth >= 500);
-    const onResizeCallback = useMemo(() => computedStyle => {
-        const width = parseInt(computedStyle.width.replace("px", ""));
+    const onResizeCallback = useMemo(() => paginationContainerRef => {
+        const width = parseInt(getComputedStyle(paginationContainerRef).width.replace("px", ""));
         setIsFullscreenStyle(width >= 500);
     });
     const siblingRange = isFullscreenStyle ? 2 : 0;
