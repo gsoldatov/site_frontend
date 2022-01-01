@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState, useEffect } from "react";
+import React, { memo, useMemo, useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Icon, Label, Menu } from "semantic-ui-react";
 import { Link, NavLink, useHistory, useLocation } from "react-router-dom";
@@ -33,15 +33,36 @@ const navigationItems = [
  * Navigation bar.
  */
 export default memo(() => {
+    const placeholderRef = useRef();
     const location = useLocation();
 
     // Stacked menu expand/collapse control display
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);    // SUIR @media threshold
     const [isExpanded, setIsExpanded] = useState(false);
+    const [placeholderHeight, setPlaceholderHeight] = useState(undefined);
 
-    const onResizeCallback = useMemo(() => navbarRef => {
-        const width = parseInt(getComputedStyle(navbarRef).width.replace("px", ""));
-        setIsStacked(width < 768);     // SUIR @media threshold
+    // Resize callback
+    const onResizeCallback = useMemo(() => navbar => {
+        if (navbar) {
+            // Update `isStacked` prop
+            const computedStyle = getComputedStyle(navbar);
+            const width = parseInt(computedStyle.width.replace("px", ""));
+            const newIsStacked = width < 768;   // SUIR @media threshold
+            setIsStacked(newIsStacked);
+
+            // Update placeholder height
+            const height = parseInt(computedStyle.height.replace("px", ""));
+            setPlaceholderHeight(newIsStacked ? height : undefined);
+        }
+    }, [isStacked]);
+
+    // Update placeholder height after first render
+    useEffect(() => {
+        if (isStacked && placeholderRef.current) {
+            const navbar = placeholderRef.current.parentNode.querySelector(".navigation-bar");
+            const height = parseInt(getComputedStyle(navbar).height.replace("px", ""));
+            setPlaceholderHeight(height);
+        }
     });
 
     const expandToggle = useMemo(() => {
@@ -67,15 +88,19 @@ export default memo(() => {
         menuItems.push(<NavbarSecondaryMenu key={-1} containerClassName={rightMenuClassName} />);
     }
 
+    const placeholderClassName = "navigation-bar-placeholder" + (isStacked ? " is-stacked" : "");
+    const placeholerStyle = { height: placeholderHeight };
     const mainMenuClassname = "navigation-bar" + (isStacked ? " is-stacked" : "");
     
-    // Menu position is fixed to take 100% of screen width, `navigation-bar-placeholder` takes menu's positon in the flow
+    /* 
+        Menu position is fixed to take 100% of screen width, `navigation-bar-placeholder` takes menu's positon in the flow
 
-    // `vertical` <Menu> prop is used instead of `stackable` prop of <Menu> to avoid inconsistency when when displaying composite object page
-    // (small viewport width forces navbar to be stackable even body width is > 768px)
+        `vertical` <Menu> prop is used instead of `stackable` prop of <Menu> to avoid inconsistency when when displaying composite object page
+        (small viewport width forces navbar to be stackable even body width is > 768px) 
+    */
     return (
         <>
-            <div className="navigation-bar-placeholder" />
+            <div ref={placeholderRef} className={placeholderClassName} style={placeholerStyle} />
             <OnResizeWrapper callback={onResizeCallback}>
                 <Menu inverted fluid vertical={isStacked} size="large" className={mainMenuClassname}
                     activeIndex={location.pathname}>

@@ -15,10 +15,16 @@ div.ui.menu.navigation-bar {
     border-radius: 0;
 }
 
-div.navigation-bar-placeholder,
+div.navigation-bar-placeholder:not(.is-stacked),
 div.ui.menu.navigation-bar:not(.is-stacked) {
-    min-height: 52px;   /* Same for when with & without secondary menu */
+    min-height: 52px;   /* Same for when with & without secondary menu;
+                           If stacked, navbar height is calculated automatically on whether it's stack, and placeholder's height is updated in component to match it
+                        */
     width: 100%;        /* Required for placeholder to properly calculate `isStacked` state */
+}
+
+div.navigation-bar-placeholder.is-stacked {
+    width: 100%;
 }
 
 /* Menu items */
