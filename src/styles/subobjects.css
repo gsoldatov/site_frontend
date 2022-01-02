@@ -20,20 +20,23 @@
 
 
 /* Layout grid & main content column */
-div.ui.celled.grid.composite-object-page, div.twelve.wide.column.composite-object-page {
+.layout-grid.composite-object-page, .layout-grid-main-content-column.composite-object-page {
     /* Override min-width to fit multicolumn composite subobject grids */
     min-width: max-content;
 }
 
-div.two.wide.column.composite-object-page {
+.layout-grid-side-menu-column.composite-object-page:not(.stacked) {
     /* Limit max width of side menu to default value for 1920x1080 screen (when multicolumn subobjects overflow main column) */
     max-width: 240px;
 }
 
-div.two.column.row.composite-object-page {
-    /* Force placing both columns in main row on a single line */
+
+
+
+/* .layout-grid-main-row.composite-object-page {
+    /* Force placing both columns in main row on a single line * /
     flex-wrap: nowrap;
-}
+} */
 
 
 /* Subobjects grid */
