@@ -18,7 +18,7 @@ export default memo(({ items, className = "field-menu", compact, size }) => {
 
     const onResizeCallback = useMemo(() => menuRef => {
         setIsFullscreenStyle(window.innerWidth >= menuIsFullscreenThreshold);
-    });
+    }, []);
 
     const menuItems = items.map((item, k) => <FieldMenuElement key={k} {...item} size={size} isFullscreenStyle={isFullscreenStyle} />);
 

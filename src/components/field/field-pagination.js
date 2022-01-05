@@ -25,7 +25,7 @@ export default ({ paginationInfoSelector, setCurrentPage }) => {
     const onResizeCallback = useMemo(() => paginationContainerRef => {
         const width = parseInt(getComputedStyle(paginationContainerRef).width.replace("px", ""));
         setIsFullscreenStyle(width >= 500);
-    });
+    }, []);
     const siblingRange = isFullscreenStyle ? 2 : 0;
 
     return paginationInfo && totalPages > 1 && (

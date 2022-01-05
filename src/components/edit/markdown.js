@@ -156,7 +156,7 @@ const MarkdownViewEdit = ({ objectID }) => {
     const onResizeCallback = useMemo(() => containerRef => {
         const width = parseInt(getComputedStyle(containerRef).width.replace("px", ""));
         setIsFullscreenStyle(width >= 500);
-    });
+    }, []);
 
     return (
         <OnResizeWrapper callback={onResizeCallback}>

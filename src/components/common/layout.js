@@ -17,7 +17,7 @@ export default ({ sideMenuItems, body, className }) => {
         // setIsStacked(width < 768);     // 768 = SUIR @media threshold
 
         setIsStacked(window.innerWidth < 768);   // 768 = SUIR @media threshold
-    });
+    }, []);
     const showSideMenuColumn = !isStacked || sideMenuItems;
 
     // Grid classnames

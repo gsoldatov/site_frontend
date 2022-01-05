@@ -23,7 +23,7 @@ export default ({ items }) => {
         setSideMenuIsStacked(window.innerWidth < 768);       // 768 = SUIR @media threshold
         setItemFullscreenStyle(width >= 100);
         setDialogButtonsFullscreenStyle(width >= 221);
-    });
+    }, []);
 
     // Stacked menu expand/collaps control display
     const [sideMenuIsExpanded, setSideMenuIsExpanded] = useState(false);
