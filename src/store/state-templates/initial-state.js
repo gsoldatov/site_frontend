@@ -9,6 +9,11 @@ import { getDefaultAuthState } from "./auth";
 const initialState = {
     redirectOnRender: "",
 
+    // Calculated CSS state
+    CSS: {
+        navbarHeight: 0
+    },
+
     // auth
     auth: getDefaultAuthState(),
 

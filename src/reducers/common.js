@@ -1,6 +1,7 @@
-import { SET_REDIRECT_ON_RENDER, RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS } from "../actions/common";
+import { SET_REDIRECT_ON_RENDER, RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS, SET_CSS_STATE } from "../actions/common";
 import { getStateAfterObjectPageLeave } from "./helpers/object";
 import getInitialState from "../store/state-templates/initial-state";
+import { CSSPropNames } from "../store/state-templates/css";
 
 
 function setRedirectOnRender(state, action) {
@@ -35,9 +36,20 @@ function resetStateExceptForEditedObjects(state, action) {
     return newState;
 }
 
+
+function setCSSState(state, action) {
+    const newCSS = { ...state.CSS };
+    CSSPropNames.forEach(prop => {
+        if (prop in action.CSSState) newCSS[prop] = action.CSSState[prop];
+    });
+    return { ...state, CSS: newCSS };
+}
+
+
 const root = {
     SET_REDIRECT_ON_RENDER: setRedirectOnRender,
-    RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS: resetStateExceptForEditedObjects
+    RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS: resetStateExceptForEditedObjects,
+    SET_CSS_STATE: setCSSState
 };
 
 export default root;
