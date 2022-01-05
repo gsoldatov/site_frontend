@@ -5,6 +5,7 @@ import { Link, NavLink, useHistory, useLocation } from "react-router-dom";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
 
+import { setCSSState } from "../../actions/common";
 import { registrationStatusFetch, logoutFetch, getCurrentUserData } from "../../fetches/auth";
 
 import { enumUserLevels } from "../../util/enum-user-levels";
@@ -35,35 +36,50 @@ const navigationItems = [
 export default memo(() => {
     const placeholderRef = useRef();
     const location = useLocation();
+    const dispatch = useDispatch();
 
     // Stacked menu expand/collapse control display
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);    // SUIR @media threshold
     const [isExpanded, setIsExpanded] = useState(false);
-    const [placeholderHeight, setPlaceholderHeight] = useState(undefined);
+
+    // Navbar height
+    const navbarHeight = useSelector(state => state.CSS.navbarHeight);
+    console.log("IN NAVBAR RENDER, navbarHeight =", navbarHeight)
+    // const [placeholderHeight, setPlaceholderHeight] = useState(undefined);
 
     // Resize callback
-    const onResizeCallback = useMemo(() => navbar => {
-        if (navbar) {
-            // Update `isStacked` prop
-            const computedStyle = getComputedStyle(navbar);
-            const width = parseInt(computedStyle.width.replace("px", ""));
-            const newIsStacked = width < 768;   // SUIR @media threshold
-            setIsStacked(newIsStacked);
+    const onResizeCallback = useMemo(() => {
+        console.log("IN USE MEMO UPDATE")
+        return (navbarHeight => navbar => {
+            console.log("IN NAVBAR ON RESIZE CALLBACK, newNavbarHeight =", parseInt(getComputedStyle(navbar).height.replace("px", "")), ", navbarHeight =", navbarHeight)
+            if (navbar) {
+                // Update `isStacked` prop
+                const computedStyle = getComputedStyle(navbar);
+                const width = parseInt(computedStyle.width.replace("px", ""));
+                const newIsStacked = width < 768;   // SUIR @media threshold
+                setIsStacked(newIsStacked);
 
-            // Update placeholder height
-            const height = parseInt(computedStyle.height.replace("px", ""));
-            setPlaceholderHeight(newIsStacked ? height : undefined);
-        }
-    }, [isStacked]);
+                // Update placeholder height
+                const newNavbarHeight = parseInt(computedStyle.height.replace("px", ""));
+                if (navbarHeight !== newNavbarHeight) {
+                    console.log("UPDATING NAVBAR HEIGHT")
+                    dispatch(setCSSState({ navbarHeight: newNavbarHeight }));
+                }
+                // setPlaceholderHeight(newIsStacked ? height : undefined);
+            }
+        })(navbarHeight);
+    }, [isStacked, navbarHeight]);
 
     // Update placeholder height after first render
     useEffect(() => {
         if (isStacked && placeholderRef.current) {
             const navbar = placeholderRef.current.parentNode.querySelector(".navigation-bar");
-            const height = parseInt(getComputedStyle(navbar).height.replace("px", ""));
-            setPlaceholderHeight(height);
+            const newNavbarHeight = parseInt(getComputedStyle(navbar).height.replace("px", ""));
+            if (navbarHeight !== newNavbarHeight) dispatch(setCSSState({ navbarHeight: newNavbarHeight }));
+            // dispatch(setCSSState({ navbarHeight }));
+            // setPlaceholderHeight(height);
         }
-    });
+    }, []);
 
     const expandToggle = useMemo(() => {
         const icon = isExpanded ? "close" : "bars";
@@ -89,7 +105,8 @@ export default memo(() => {
     }
 
     const placeholderClassName = "navigation-bar-placeholder" + (isStacked ? " is-stacked" : "");
-    const placeholerStyle = { height: placeholderHeight };
+    const placeholerStyle = { height: navbarHeight };
+    // const placeholerStyle = { height: placeholderHeight };
     const mainMenuClassname = "navigation-bar" + (isStacked ? " is-stacked" : "");
     
     /* 
