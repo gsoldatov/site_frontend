@@ -5,7 +5,6 @@ import { Link, NavLink, useHistory, useLocation } from "react-router-dom";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
 
-import { setCSSState } from "../../actions/common";
 import { registrationStatusFetch, logoutFetch, getCurrentUserData } from "../../fetches/auth";
 
 import { enumUserLevels } from "../../util/enum-user-levels";
@@ -36,14 +35,13 @@ const navigationItems = [
 export default memo(() => {
     const placeholderRef = useRef();
     const location = useLocation();
-    const dispatch = useDispatch();
 
     // Stacked menu expand/collapse control display
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);    // SUIR @media threshold
     const [isExpanded, setIsExpanded] = useState(false);
 
-    // Navbar height
-    const navbarHeight = useSelector(state => state.CSS.navbarHeight);
+    // Navbar placeholder height
+    const [placeholderHeight, setPlaceholderHeight] = useState(0);
 
     // Resize callback
     const onResizeCallback = useMemo(() => navbar => {
@@ -56,16 +54,16 @@ export default memo(() => {
 
             // Update placeholder height
             const newNavbarHeight = parseInt(computedStyle.height.replace("px", ""));
-            if (navbarHeight !== newNavbarHeight) dispatch(setCSSState({ navbarHeight: newNavbarHeight }));
+            if (placeholderHeight !== newNavbarHeight) setPlaceholderHeight(newNavbarHeight);
         }
-    }, [isStacked, navbarHeight]);
+    }, [isStacked, placeholderHeight]);
 
     // Update placeholder height after first render
     useEffect(() => {
         if (isStacked && placeholderRef.current) {
             const navbar = placeholderRef.current.parentNode.querySelector(".navigation-bar");
             const newNavbarHeight = parseInt(getComputedStyle(navbar).height.replace("px", ""));
-            if (navbarHeight !== newNavbarHeight) dispatch(setCSSState({ navbarHeight: newNavbarHeight }));
+            if (placeholderHeight !== newNavbarHeight) setPlaceholderHeight(newNavbarHeight);
         }
     }, []);
 
@@ -93,7 +91,7 @@ export default memo(() => {
     }
 
     const placeholderClassName = "navigation-bar-placeholder" + (isStacked ? " is-stacked" : "");
-    const placeholerStyle = { height: navbarHeight };
+    const placeholerStyle = { height: placeholderHeight };
     const mainMenuClassname = "navigation-bar" + (isStacked ? " is-stacked" : "");
     
     /* 
