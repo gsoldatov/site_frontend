@@ -20,14 +20,12 @@ export const OnResizeWrapper = ({ callback, children }) => {
     // Run `callback` when it's changed and initialize a ResizeObserver object (if it's supported), which will trigger onResize function
     // `useLayoutEffect` is used instead of `useEffect` in order to run callback synchronously
     useLayoutEffect(() => {
-        console.log("IN <OnResizeWrapper> useLayoutEffect")
-        onResize();
+        // onResize();
         if (window.ResizeObserver) {
             resizeObserver.current = new ResizeObserver(onResize);
             resizeObserver.current.observe(innerRef.current);
         }
         return () => { 
-            console.log("IN <OnResizeWrapper>, useLayoutEffect CANCEL")
             // Clear ResizeObserver
             if (resizeObserver.current) resizeObserver.current.disconnect(); 
 

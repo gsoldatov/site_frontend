@@ -44,30 +44,20 @@ export default memo(() => {
 
     // Navbar height
     const navbarHeight = useSelector(state => state.CSS.navbarHeight);
-    console.log("IN NAVBAR RENDER, navbarHeight =", navbarHeight)
-    // const [placeholderHeight, setPlaceholderHeight] = useState(undefined);
 
     // Resize callback
-    const onResizeCallback = useMemo(() => {
-        console.log("IN USE MEMO UPDATE")
-        return (navbarHeight => navbar => {
-            console.log("IN NAVBAR ON RESIZE CALLBACK, newNavbarHeight =", parseInt(getComputedStyle(navbar).height.replace("px", "")), ", navbarHeight =", navbarHeight)
-            if (navbar) {
-                // Update `isStacked` prop
-                const computedStyle = getComputedStyle(navbar);
-                const width = parseInt(computedStyle.width.replace("px", ""));
-                const newIsStacked = width < 768;   // SUIR @media threshold
-                setIsStacked(newIsStacked);
+    const onResizeCallback = useMemo(() => navbar => {
+        if (navbar) {
+            // Update `isStacked` prop
+            const computedStyle = getComputedStyle(navbar);
+            const width = parseInt(computedStyle.width.replace("px", ""));
+            const newIsStacked = width < 768;   // SUIR @media threshold
+            setIsStacked(newIsStacked);
 
-                // Update placeholder height
-                const newNavbarHeight = parseInt(computedStyle.height.replace("px", ""));
-                if (navbarHeight !== newNavbarHeight) {
-                    console.log("UPDATING NAVBAR HEIGHT")
-                    dispatch(setCSSState({ navbarHeight: newNavbarHeight }));
-                }
-                // setPlaceholderHeight(newIsStacked ? height : undefined);
-            }
-        })(navbarHeight);
+            // Update placeholder height
+            const newNavbarHeight = parseInt(computedStyle.height.replace("px", ""));
+            if (navbarHeight !== newNavbarHeight) dispatch(setCSSState({ navbarHeight: newNavbarHeight }));
+        }
     }, [isStacked, navbarHeight]);
 
     // Update placeholder height after first render
@@ -76,8 +66,6 @@ export default memo(() => {
             const navbar = placeholderRef.current.parentNode.querySelector(".navigation-bar");
             const newNavbarHeight = parseInt(getComputedStyle(navbar).height.replace("px", ""));
             if (navbarHeight !== newNavbarHeight) dispatch(setCSSState({ navbarHeight: newNavbarHeight }));
-            // dispatch(setCSSState({ navbarHeight }));
-            // setPlaceholderHeight(height);
         }
     }, []);
 
@@ -106,7 +94,6 @@ export default memo(() => {
 
     const placeholderClassName = "navigation-bar-placeholder" + (isStacked ? " is-stacked" : "");
     const placeholerStyle = { height: navbarHeight };
-    // const placeholerStyle = { height: placeholderHeight };
     const mainMenuClassname = "navigation-bar" + (isStacked ? " is-stacked" : "");
     
     /* 
