@@ -9,6 +9,7 @@
 /* Stacked menu */
 .ui.menu.side-menu.is-stacked {
     border-width: 0;
+    border-radius: 0;
 }
 
 /* Container */

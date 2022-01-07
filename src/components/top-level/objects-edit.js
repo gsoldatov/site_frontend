@@ -212,9 +212,10 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     );
 
     // Custom layout classname for composite objects (to allow multicolumn subobjects)
-    const className = objectType === "composite" && selectedTab === 1 ? "composite-object-page" : undefined;
+    const isCompositeObjectDataDisplayed = objectType === "composite" && selectedTab === 1;
+    const className = isCompositeObjectDataDisplayed ? "composite-object-page" : undefined;
 
-    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} />;
+    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} useSideMenuPlaceholderWhenStacked={isCompositeObjectDataDisplayed} />;
 };
 
 

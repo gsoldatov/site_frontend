@@ -9,7 +9,7 @@ import SideMenu from "./side-menu";
 /**
  * Page layout with navigation, side menu and main content (body).
  */
-export default ({ sideMenuItems, body, className }) => {
+export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStacked = false }) => {
     // Side menu column (hide if it's stacked & no `sideMenuItems` are provided)
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);
     const onResizeCallback = useMemo(() => gridRef => {
@@ -21,21 +21,17 @@ export default ({ sideMenuItems, body, className }) => {
     const showSideMenuColumn = !isStacked || sideMenuItems;
 
     // Grid classnames
-    const customClassNamePostfix = (className ? ` ${className}` : "");
+    const customClassNamePostfix = className ? ` ${className}` : "";
+    const stackedClassNamePostfix = isStacked ? " stacked" : "";
     const gridClassName = "layout-grid" + customClassNamePostfix;
     const navigationRowClassName = "layout-grid-navigation-row" + customClassNamePostfix;
-    const mainRowClassName = "layout-grid-main-row" + customClassNamePostfix;
-    const sideMenuColumnClassName = "layout-grid-side-menu-column" + customClassNamePostfix;
-    const mainContentColumnClassName = "layout-grid-main-content-column" + customClassNamePostfix;
+    const mainRowClassName = "layout-grid-main-row" + customClassNamePostfix + stackedClassNamePostfix;
+    const sideMenuColumnClassName = "layout-grid-side-menu-column" + customClassNamePostfix + stackedClassNamePostfix;
+    const mainContentColumnClassName = "layout-grid-main-content-column" + customClassNamePostfix + stackedClassNamePostfix;
     
-    // // Side menu column classname (add an additional classname if side menu is stacked)
-    // let sideMenuColumnClassName = isStacked ? "stacked-side-menu-column" : "";
-    // sideMenuColumnClassName += className 
-    //     ? (sideMenuColumnClassName.length > 0 ? " " : "") + className
-    //     : "";
     const sideMenuColumn = showSideMenuColumn && (
         <Grid.Column width={2} className={sideMenuColumnClassName}>
-            <SideMenu items={sideMenuItems} />
+            <SideMenu items={sideMenuItems} usePlaceholderWhenStacked={useSideMenuPlaceholderWhenStacked} />
         </Grid.Column>
     );
     const mainRowColumns = showSideMenuColumn ? 2 : 1;

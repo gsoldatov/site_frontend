@@ -26,18 +26,23 @@
 }
 
 .layout-grid-side-menu-column.composite-object-page:not(.stacked) {
-    /* Limit max width of side menu to default value for 1920x1080 screen (when multicolumn subobjects overflow main column) */
-    max-width: 240px;
+    max-width: 240px;   /* Limit max width of side menu to default value for 1920x1080 screen (when multicolumn subobjects overflow main column) */
+    min-width: 100px;   /* Limit min width */
 }
 
-
-
-
-/* .layout-grid-main-row.composite-object-page {
-    /* Force placing both columns in main row on a single line * /
+.layout-grid-main-row.composite-object-page:not(.stacked) {
+    /* Force placing both columns in main row on a single line when grid is not stacked */
     flex-wrap: nowrap;
-} */
+}
 
+/* Stacked side menu when displaying composite object data */
+.layout-grid-side-menu-column.composite-object-page.stacked > .ui.menu.side-menu {
+    /* Set fixed position, so that menu is always stretched to the size of the window (top position should be calculated automatically based on navbar height) */
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    right: 0;
+}
 
 /* Subobjects grid */
 div.composite-subobject-grid {

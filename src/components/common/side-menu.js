@@ -11,19 +11,29 @@ import StyleSideMenu from "../../styles/side-menu.css";
 /**
  * Side menu component with customizable items. 
  */
-export default ({ items }) => {
+export default ({ items, usePlaceholderWhenStacked = false }) => {
     if (!items) return null;
 
-    // Fullscreen style & on resize update
-    const [sideMenuIsStacked, setSideMenuIsStacked] = useState(window.innerWidth < 768);    // Toggles side menu mobile styling
+    // Fullscreen style state & on resize update
+    const [isStacked, setIsStacked] = useState(window.innerWidth < 768);    // Toggles side menu mobile styling
+    const [placeholderHeight, setPlaceholderHeight] = useState(0);
     const [itemFullscreenStyle, setItemFullscreenStyle] = useState(false);                  // Toggles icon only side menu items on small widths
     const [dialogButtonsFullscreenStyle, setDialogButtonsFullscreenStyle] = useState(false);    // Toggles icon only confirmation dialog on small widths
     const onResizeCallback = useMemo(() => sideMenuRef => {
         const width = parseInt(getComputedStyle(sideMenuRef).width.replace("px", ""));
-        setSideMenuIsStacked(window.innerWidth < 768);       // 768 = SUIR @media threshold
+        const height = parseInt(getComputedStyle(sideMenuRef).height.replace("px", ""));
+        
+        setIsStacked(window.innerWidth < 768);       // 768 = SUIR @media threshold
+        setPlaceholderHeight(height);
         setItemFullscreenStyle(width >= 100);
         setDialogButtonsFullscreenStyle(width >= 221);
     }, []);
+
+    // Stacked side menu placeholder
+    const placeholderStyle = { height: placeholderHeight };
+    const placeholder = usePlaceholderWhenStacked && isStacked && (
+        <div className="side-menu-placeholder" style={placeholderStyle} />
+    );
 
     // Stacked menu expand/collaps control display
     const [sideMenuIsExpanded, setSideMenuIsExpanded] = useState(false);
@@ -31,30 +41,33 @@ export default ({ items }) => {
     const expandToggle = useMemo(() => {
         const icon = sideMenuIsExpanded ? "close" : "options";
         return (
-            !sideMenuIsStacked ? null : (
+            !isStacked ? null : (
                 <Menu.Item className="side-menu-expand-container">
                     <Icon className="side-menu-expand-toggle" name={icon} onClick={() => setSideMenuIsExpanded(!sideMenuIsExpanded)}/>
                 </Menu.Item>
             )
         );
-    }, [sideMenuIsExpanded, sideMenuIsStacked]);
+    }, [sideMenuIsExpanded, isStacked]);
 
     // Items
     let itemComponents;
-    if (!sideMenuIsStacked || sideMenuIsExpanded) {
+    if (!isStacked || sideMenuIsExpanded) {
         itemComponents = items.map((item, k) => <SideMenuElement key={k} {...item} 
             itemFullscreenStyle={itemFullscreenStyle} dialogButtonsFullscreenStyle={dialogButtonsFullscreenStyle} />);
     }
 
-    const sideMenuClassName = "side-menu" + (sideMenuIsStacked ? " is-stacked" : "");
+    const sideMenuClassName = "side-menu" + (isStacked ? " is-stacked" : "");
 
     return (
-        <OnResizeWrapper callback={onResizeCallback}>
-            <Menu vertical fluid className={sideMenuClassName}>
-                {expandToggle}
-                {itemComponents}
-            </Menu>
-        </OnResizeWrapper>
+        <>
+            <OnResizeWrapper callback={onResizeCallback}>
+                <Menu vertical fluid className={sideMenuClassName}>
+                    {expandToggle}
+                    {itemComponents}
+                </Menu>
+            </OnResizeWrapper>
+            {placeholder}
+        </>
     );
 }
 
