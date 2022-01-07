@@ -10,9 +10,7 @@ const initialState = {
     redirectOnRender: "",
 
     // Calculated CSS state
-    CSS: {
-        navbarHeight: 0
-    },
+    CSS: {},
 
     // auth
     auth: getDefaultAuthState(),
