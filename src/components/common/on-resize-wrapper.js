@@ -15,7 +15,7 @@ export const OnResizeWrapper = ({ callback, children }) => {
 
     const onResize = useMemo(() => intervalWrapper(() => {
         if (innerRef.current) abortResizeCallbackRef.current = callback(innerRef.current);
-    }, 200, false), [callback]);
+    }, 100, false), [callback]);
 
     // Run `callback` when it's changed and initialize a ResizeObserver object (if it's supported), which will trigger onResize function
     // `useLayoutEffect` is used instead of `useEffect` in order to run callback synchronously
