@@ -34,11 +34,6 @@ export const SubobjectsContainer = ({ objectID }) => {
     const existingObjectInputColumn = useSelector(state => state.objectUI.addCompositeSubobjectMenu.column);
     
     let subobjectGrid = [];
-    
-    // Set max width of the column without dropzones (75% screen / numOfColumns, but >= 300px); 300px = card min width, 75% screen = default main area width
-    const columnStyle = useMemo(() =>
-        ({ maxWidth: `max(300px, calc(75vw / ${subobjectOrder.length}))`})
-    , [subobjectOrder.length]);
 
     // Subobject grid
     for (let i = 0; i < subobjectOrder.length; i++) {
@@ -66,12 +61,14 @@ export const SubobjectsContainer = ({ objectID }) => {
         // Add column
         const displayRightNewColumn = i === subobjectOrder.length - 1;
         subobjectGrid.push(
-            <SubobjectGridColumn key={i} column={i} items={columnItems} displayRightNewColumn={displayRightNewColumn} columnStyle={columnStyle} />
+            <SubobjectGridColumn key={i} column={i} items={columnItems} displayRightNewColumn={displayRightNewColumn} />
         );
     }
+
+    const subobjectGridClassName = "composite-subobject-grid" + (subobjectOrder.length > 1 ? " multicolumn" : "");
     
     return (
-        <div className="composite-subobject-grid">
+        <div className={subobjectGridClassName}>
             {subobjectGrid}
         </div>
     );
@@ -81,10 +78,9 @@ export const SubobjectsContainer = ({ objectID }) => {
 /**
  * Subobject grid column component with new column dropzones to the left and right.
  */
-const SubobjectGridColumn = ({ column, items, displayRightNewColumn, columnStyle }) => {
+const SubobjectGridColumn = ({ column, items, displayRightNewColumn }) => {
     // Column container classname
-    let columnContainerClassName = "composite-subobject-grid-column-container";
-    if (displayRightNewColumn) columnContainerClassName += " two-dropzones";
+    const columnContainerClassName = "composite-subobject-grid-column-container" + (displayRightNewColumn ? " two-dropzones" : "");
 
     // New column dropzones to the left & right
     const newColumnDropzoneLeft = (
@@ -98,7 +94,7 @@ const SubobjectGridColumn = ({ column, items, displayRightNewColumn, columnStyle
     return (
         <div className={columnContainerClassName}>
             {newColumnDropzoneLeft}
-            <div className="composite-subobject-grid-column" style={columnStyle}>
+            <div className="composite-subobject-grid-column">
                 {items}
             </div>
             {newColumnDropzoneRight}

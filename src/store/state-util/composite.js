@@ -98,3 +98,28 @@ export const getNonCompositeSubobjectValidationError = editedObject => {
  * Returns a boolean indicating if composite object's drag and drop functionality is enabled.
  */
  export const isCompositeDragAndDropEnabledSelector = state => !isFetchingObject(state);
+
+
+/**
+ * Accepts current `state` and, optionally, `objectID` (if the latter is not provided, uses state.objectUI.currentObjectID instead).
+ * 
+ * Returns true if:
+ * - data tab is being displayed on the /objects/edit/:id page;
+ * - current edited object is composite;
+ * - edited object's subobjects are placed on more than one column.
+ */
+export const isMultiColumnCompositeDataDisplayed = (state, objectID) => {
+    // Check if data tab is displayed
+    if (state.objectUI.selectedTab !== 1) return false;
+
+    // Check if current edited object is composite (and, therefore, loaded)
+    objectID = objectID !== undefined ? objectID : state.objectUI.currentObjectID;
+    const editedObject = state.editedObjects[objectID];
+    if (editedObject.object_type !== "composite") return false;
+
+    // Check if subobjects are placed on more than one column
+    for (let subobject of Object.values(editedObject.composite.subobjects))
+        if (subobject.column > 0) return true;
+    
+    return false;
+};

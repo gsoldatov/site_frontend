@@ -18,6 +18,8 @@ import { resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTa
          setShowResetDialogObject, setShowDeleteDialogObject } from "../../actions/objects-edit";
 import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../../fetches/ui-objects-edit";
 
+import { isMultiColumnCompositeDataDisplayed } from "../../store/state-util/composite";
+
 
 /*
     /objects/edit/:id page components.
@@ -193,9 +195,8 @@ export const EditObject = () => {
 // Basic add/edit object page
 const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     const dispatch = useDispatch();
-
-    const objectType = useSelector(state => getCurrentObject(state).object_type);
-    const selectedTab = useSelector(state => state.objectUI.selectedTab);
+    
+    const enableStylesForMulticolumnCompositeObjectData = useSelector(isMultiColumnCompositeDataDisplayed);
 
     // On load action (also triggers when object ids change)
     useEffect(() => {
@@ -212,32 +213,14 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
     );
 
     // Custom layout classname for composite objects (to allow multicolumn subobjects)
-    const isCompositeObjectDataDisplayed = objectType === "composite" && selectedTab === 1;
-    const className = isCompositeObjectDataDisplayed ? "composite-object-page" : undefined;
+    const className = enableStylesForMulticolumnCompositeObjectData ? "multicolumn-composite-data" : undefined;
 
-    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} useSideMenuPlaceholderWhenStacked={isCompositeObjectDataDisplayed} />;
+    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} useSideMenuPlaceholderWhenStacked={enableStylesForMulticolumnCompositeObjectData} />;
 };
 
 
 const selectedTabSelector = state => state.objectUI.selectedTab;
 const ObjectTabPanes = ({ objectID }) => {
-    // Object attribute & data tabs
-    // const tabPanes = useMemo(() => [
-    //     { menuItem: "General", render: () => 
-    //         <Tab.Pane>
-    //             <ObjectTypeSelector objectID={objectID} />
-    //             <ObjectTimeStamps />
-    //             <ObjectInput />
-    //             <ObjectTags />
-    //         </Tab.Pane> 
-    //     },
-    //     { menuItem: "Data", render: () =>
-    //         <Tab.Pane>
-    //             <ObjectViewEditSwitch objectID={objectID} />
-    //         </Tab.Pane>
-    //     }
-    // ], [objectID]);
-
     const tabPanes = useMemo(() => {
         return [
             { menuItem: "General", render: () => 
