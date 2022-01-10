@@ -82,3 +82,23 @@ h6, h6.ui.header {
 ul:last-child {
     margin-bottom: 0;
 }
+
+/* React-Datetime calendar */
+.rdt input {
+    /* Apply styles from SUIR .ui.selection.dropdown */
+    line-height: 1em;
+    min-width: 14em;
+    min-height: 2.71428571em;
+    background: #FFFFFF;
+    padding: 0.78571429em 2.1em 0.78571429em 1em;
+    color: rgba(0, 0, 0, 0.87);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    border-radius: 0.28571429rem;
+}
+
+.rdtPicker {
+    border-radius: 0.28571429rem;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+}
