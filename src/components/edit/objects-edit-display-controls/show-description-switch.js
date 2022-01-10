@@ -38,11 +38,13 @@ export const SubobjectShowDescriptionSwitch = ({ objectID, subobjectID }) => {
         (e, data) => dispatch(setEditedObject({ compositeUpdate: { command: "updateSubobject", subobjectID, show_description_composite: data.value }}, objectID))
     , [objectID, subobjectID]);
 
+    const labelText = "Show Description in Parent Object";
+
     return (
         <div className="objects-edit-display-control-container">
             <div className="objects-edit-display-dropdown-container">
-                <div className="objects-edit-display-label">
-                    Show Description in Parent Object
+                <div className="objects-edit-display-label" title={labelText}>
+                    {labelText}
                 </div>
                 <Dropdown className="objects-edit-display-dropdown"
                     selection

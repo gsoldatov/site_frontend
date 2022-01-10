@@ -24,11 +24,13 @@ export const CompositeDisplayModeSwitch = ({ objectID }) => {
         dispatch(setEditedObject({ composite: { display_mode: data.value }}, objectID));
     }, [objectID]);
 
+    const labelText = "Composite Object Display Mode";
+
     return isComposite && (
         <div className="objects-edit-display-control-container">
             <div className="objects-edit-display-dropdown-container">
-                <div className="objects-edit-display-label">
-                    Composite Object Display Mode
+                <div className="objects-edit-display-label" title={labelText}>
+                    {labelText}
                 </div>
                 <Dropdown className="objects-edit-display-dropdown"
                     selection

@@ -28,11 +28,13 @@ export const FeedTimestampSelector = ({ objectID }) => {
     // Custom render input (required to correct display)
     const renderInput = props => <input {...props} value={(feedTimestamp) ? props.value : ""} />;
 
+    const labelText = "Feed Timestamp";
+
     return (
         <div className="objects-edit-display-control-container">
             <div className="objects-edit-timestamp-container">
-                <div className="objects-edit-display-label">
-                    Feed Timestamp
+                <div className="objects-edit-display-label" title={labelText}>
+                    {labelText}
                 </div>
                 <Datetime value={feedTimestamp} onChange={onChange}
                     renderInput={renderInput} />

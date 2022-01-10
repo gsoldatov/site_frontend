@@ -40,11 +40,13 @@ export const SubobjectShowDescriptionAsLinkSwitch = ({ objectID, subobjectID }) 
         (e, data) => dispatch(setEditedObject({ compositeUpdate: { command: "updateSubobject", subobjectID, show_description_as_link_composite: data.value }}, objectID))
     , [objectID, subobjectID]);
 
+    const labelText = "Show Description as Link in Parent Object";
+
     return isLink && (
         <div className="objects-edit-display-control-container">
             <div className="objects-edit-display-dropdown-container">
-                <div className="objects-edit-display-label">
-                    Show Description as Link in Parent Object
+                <div className="objects-edit-display-label" title={labelText}>
+                    {labelText}
                 </div>
                 <Dropdown className="objects-edit-display-dropdown"
                     selection
