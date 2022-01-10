@@ -112,10 +112,10 @@ export const isMultiColumnCompositeDataDisplayed = (state, objectID) => {
     // Check if data tab is displayed
     if (state.objectUI.selectedTab !== 1) return false;
 
-    // Check if current edited object is composite (and, therefore, loaded)
+    // Check if current edited object is loaded and has `composite` object_type
     objectID = objectID !== undefined ? objectID : state.objectUI.currentObjectID;
     const editedObject = state.editedObjects[objectID];
-    if (editedObject.object_type !== "composite") return false;
+    if (editedObject === undefined || editedObject.object_type !== "composite") return false;
 
     // Check if subobjects are placed on more than one column
     for (let subobject of Object.values(editedObject.composite.subobjects))
