@@ -47,6 +47,15 @@ div.ui.checkbox.objects-edit-display-checkbox-container {
 
 .objects-edit-display-label {
     margin-right: 0.5em;
+    
+    /* Display text in a single line don't overflow */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    /* Disable text selection */
+    cursor: default;
+    user-select: none;
 }
 
 /* Display tab controls, timestamp */
