@@ -14,7 +14,7 @@ import StyleObjectsViewCard from "../../styles/objects-view-card.css";
 /**
  * Container for object/subobject attributes, tags and data.
  */
-export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false }) => {
+export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false, isMulticolumnComposite = false }) => {
     const dispatch = useDispatch();
     const _id = isSubobject ? subobjectID : objectID;
 
@@ -36,10 +36,12 @@ export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false }) 
         else setError("Object not found.");
     }, [_id]);
 
-    // Error message
+    // Container classname
     const containerClassName = "objects-view-card-container"
-        .concat(isSubobject ? " subobject" : "");
-    
+        .concat(isSubobject ? " subobject" : "")
+        .concat(isMulticolumnComposite ? " multicolumn": "");
+
+    // Error message
     if (error.length > 0) return (
         <div className={containerClassName}>
             <Message error content={error} />

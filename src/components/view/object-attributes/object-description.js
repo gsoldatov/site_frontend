@@ -55,9 +55,10 @@ export const ObjectDescription = ({ objectID, subobjectID, isSubobject = false }
 
     return !hideDescription && (
         <div className="objects-view-description">
-            <pre>
+            {/* <pre>
                 {text}
-            </pre>
+            </pre> */}
+            {text}
         </div>
     );
 };

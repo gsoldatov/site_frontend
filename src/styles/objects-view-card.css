@@ -4,13 +4,26 @@
 
 /* Main objects-view-card */
 @media(min-width: 768px) {
-    .objects-view-card-container:not(.subobject) {
+    /* Add borders for main object's card (except for multicolumn composite) */
+    .objects-view-card-container:not(.subobject):not(.multicolumn:not(.subobject)) {
         box-shadow: 0 0 4px rgba(0,0,0,0.5);
         padding-top: 1rem;
         padding-bottom: 1rem;
         padding-left: 2rem;
         padding-right: 2rem;
     }
+}
+
+/* Object attributes, general */
+.objects-view-attributes,
+.objects-view-timestamp,
+.object-view-header-container,
+.objects-view-description {
+    /* Limit max-width (for multicolumn composite objects; screen width - margins - scrollbar) */
+    max-width: calc(100vw - 2rem - 15px);
+
+    /* Set word break */
+    word-break: normal;
 }
 
 /* Object id */
@@ -64,11 +77,11 @@
     margin-bottom: 0.5rem;
 }
 
-.objects-view-description pre {
+/* .objects-view-description pre {
     font-family: inherit;
     margin-top: 0;
     margin-bottom: 0;
-}
+} */
 
 /* Object data */
 .objects-view-data:not(:last-child) {
@@ -91,4 +104,47 @@
     /* Grouped links table styles */
     margin-top: 0;
     margin-bottom: 0;
+}
+
+
+/* Composite object multicolumn data display */
+.layout-grid.objects-view-page-multicolumn-composite, 
+.layout-grid.objects-view-page-multicolumn-composite > .column,
+.layout-grid.objects-view-page-multicolumn-composite > .column > [class*="sixteen wide"].layout-grid-main-content-column.objects-view-page-multicolumn-composite,
+.objects-view-data.composite-multicolumn {
+    /* Override width to fit multicolumn composite subobject grids */
+    width: max-content !important;
+}
+
+.objects-view-card-container.subobject.multicolumn {
+    /* Always display borders in subobject cards */
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.objects-view-data.composite-multicolumn {
+    /* Set columns display */
+    display: flex;
+    flex-direction: row;
+}
+
+.objectda-view-data-composite-multicolumn-column {
+    /* Fix column width in multicolumn display */
+    width: 500px;
+}
+
+.objectda-view-data-composite-multicolumn-column:not(:last-child) {
+    /* Fix column width in multicolumn display */
+    margin-right: 2rem;
+}
+
+.objects-view-data.composite-multicolumn .objects-view-card-container.subobject:not(:last-child) {
+    /* Add separation between subobjects */
+    margin-bottom: 2rem;
+
+    /* Fix column width in multicolumn display */
+    width: 500px;
 }

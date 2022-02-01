@@ -9,7 +9,7 @@ import SideMenu from "./side-menu";
 /**
  * Page layout with navigation, side menu and main content (body).
  */
-export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStacked = false }) => {
+export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStacked = false, fullWidthMainContent = false }) => {
     // Side menu column (hide if it's stacked & no `sideMenuItems` are provided)
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);
     const onResizeCallback = useMemo(() => gridRef => {
@@ -29,13 +29,13 @@ export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStac
     const sideMenuColumnClassName = "layout-grid-side-menu-column" + customClassNamePostfix + stackedClassNamePostfix;
     const mainContentColumnClassName = "layout-grid-main-content-column" + customClassNamePostfix + stackedClassNamePostfix;
     
-    const sideMenuColumn = showSideMenuColumn && (
+    const sideMenuColumn = showSideMenuColumn && !fullWidthMainContent && (
         <Grid.Column width={2} className={sideMenuColumnClassName}>
             <SideMenu items={sideMenuItems} usePlaceholderWhenStacked={useSideMenuPlaceholderWhenStacked} />
         </Grid.Column>
     );
-    const mainRowColumns = showSideMenuColumn ? 2 : 1;
-    const mainColumnWidth = isStacked ? 16 : 12;
+    const mainRowColumns = showSideMenuColumn && !fullWidthMainContent ? 2 : 1;
+    const mainColumnWidth = fullWidthMainContent || isStacked ? 16 : 12;
 
     return (
         <OnResizeWrapper callback={onResizeCallback}>
