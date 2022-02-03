@@ -287,6 +287,7 @@ export const getCompositeByObjectID = (objectID, overrideValues) => {
         case "3906": return compositeWithFourColumns;
         case "3907": return compositeWithGroupedLinksDisplayMode;
         case "3908": return compositeWithGroupedLinksDisplayModeAndNoLinkSubobjects;
+        case "3909": return compositeMulticolumnDisplayMode;
         default: return generateCompositeObjectData(objectID, overrideValues);     // a single link subobject
     }
 };
@@ -405,4 +406,21 @@ export const compositeWithGroupedLinksDisplayModeAndNoLinkSubobjects = generateC
         generateCompositeSubobject(3001, 1, 0)
     ],
     display_mode: "grouped_links"
+});
+
+
+export const compositeMulticolumnDisplayMode = generateCompositeObjectData(undefined, {
+    subobjects: [
+        generateCompositeSubobject(101, 0, 0),
+        generateCompositeSubobject(1101, 0, 1),
+        generateCompositeSubobject(2101, 0, 2),
+        generateCompositeSubobject(3101, 0, 3),
+        generateCompositeSubobject(102, 1, 0),
+        generateCompositeSubobject(1102, 1, 1),
+        generateCompositeSubobject(2102, 1, 2),
+        generateCompositeSubobject(103, 2, 0),
+        generateCompositeSubobject(1103, 2, 1),
+        generateCompositeSubobject(104, 3, 0)
+    ],
+    display_mode: "multicolumn"
 });

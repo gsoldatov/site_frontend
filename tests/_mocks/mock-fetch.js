@@ -101,7 +101,7 @@ const getCustomRouteResponse = (URL, method, body) => {
             if (r.generator !== undefined) {
                 if (typeof(r.generator) !== "function") throw Error("Generator must be a function.");
 
-                // Return a valid response object, if it was return by the generator.
+                // Return a valid response object, if it was returned by the generator.
                 const result = r.generator(body);
                 if (typeof(result) === "object" && result !== null && "status" in result) return result;
             }

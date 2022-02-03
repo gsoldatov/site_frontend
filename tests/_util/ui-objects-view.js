@@ -43,6 +43,8 @@ export const getObjectsViewCardElements = ({ container, card }) => {
                 }
             },
 
+            compositeMulticolumn: { subobjectCards: [] },
+
             compositeSubobjectBasic: { linkToViewPage: null }
         },
         tags: {
@@ -127,6 +129,16 @@ export const getObjectsViewCardElements = ({ container, card }) => {
                         result.data.compositeGroupedLinks.linksCard.linkRows.push(cellData);
                     }
                 }
+            }
+
+            // Composite, multicolumn display mode
+            if (dataContainer.classList.contains("composite-multicolumn")) {
+                const columns = dataContainer.querySelectorAll(".objectda-view-data-composite-multicolumn-column");
+
+                columns.forEach(column => {
+                    const columnSubobjectCards = [...column.childNodes].filter(n => n.classList.contains("objects-view-card-container"));
+                    result.data.compositeMulticolumn.subobjectCards.push(columnSubobjectCards);
+                });
             }
                 
             // Composite subobject in basic display mode
