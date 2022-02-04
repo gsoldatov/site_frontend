@@ -18,7 +18,7 @@ export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStac
 
         setIsStacked(window.innerWidth < 768);   // 768 = SUIR @media threshold
     }, []);
-    const showSideMenuColumn = !isStacked || sideMenuItems;
+    const showSideMenuColumn = (!isStacked || sideMenuItems) && !fullWidthMainContent;
 
     // Grid classnames
     const customClassNamePostfix = className ? ` ${className}` : "";
@@ -29,12 +29,12 @@ export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStac
     const sideMenuColumnClassName = "layout-grid-side-menu-column" + customClassNamePostfix + stackedClassNamePostfix;
     const mainContentColumnClassName = "layout-grid-main-content-column" + customClassNamePostfix + stackedClassNamePostfix;
     
-    const sideMenuColumn = showSideMenuColumn && !fullWidthMainContent && (
+    const sideMenuColumn = showSideMenuColumn && (
         <Grid.Column width={2} className={sideMenuColumnClassName}>
             <SideMenu items={sideMenuItems} usePlaceholderWhenStacked={useSideMenuPlaceholderWhenStacked} />
         </Grid.Column>
     );
-    const mainRowColumns = showSideMenuColumn && !fullWidthMainContent ? 2 : 1;
+    const mainRowColumns = showSideMenuColumn ? 2 : 1;
     const mainColumnWidth = fullWidthMainContent || isStacked ? 16 : 12;
 
     return (
