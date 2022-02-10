@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { Link } from "react-router-dom";
+
 import { Loader, Message, Header, Table } from "semantic-ui-react";
 
 import { groupedLinksOnLoad } from "../../../fetches/ui-objects-view";
+import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/composite";
 
 import { ObjectsViewCard } from "../objects-view-card";
 
@@ -62,25 +63,18 @@ export const ObjectDataCompositeGroupedLinks = ({ objectID }) => {
  * Non-link subobjects for <ObjectDataCompositeGroupedLinks> component.
  */
 const GroupedLinksOther = ({ objectID }) => {
-    const subobjects = useSelector(state => state.composite[objectID].subobjects);
-    const nonLinkSubobjectIDsSelector = createSelector(
-        state => state.composite[objectID].subobjects,
+    const nonLinkSubobjectIDsSelector = useMemo(() => createSelector(
+        state => state.composite[objectID],
         state => state.objects,
-        (subobjects, objects) => Object.keys(subobjects).filter(subobjectID => objects[subobjectID] !== undefined && objects[subobjectID].object_type !== "link")
-    );
+        (composite, objects) => getSingleColumnSubobjectDisplayOrder(composite)
+                                .filter(subobjectID => objects[subobjectID] !== undefined && objects[subobjectID].object_type !== "link")
+    ), [objectID]);
     const nonLinkSubobjectIDs = useSelector(nonLinkSubobjectIDsSelector);
 
     // Exit if there is no non-link subobjects
     if (nonLinkSubobjectIDs.length === 0) return null;
 
-    // Sort subobjects by column -> row asc
-    const subobjectIDOrder = nonLinkSubobjectIDs.slice().sort((a, b) => {
-        if (subobjects[a].column < subobjects[b].column) return -1;
-        if (subobjects[a].column === subobjects[b].column && subobjects[a].row < subobjects[b].row) return -1;
-        return 1;
-    });
-
-    const subobjectCards = subobjectIDOrder.map((subobjectID, key) => <ObjectsViewCard key={key} objectID={objectID} subobjectID={subobjectID} isSubobject />);
+    const subobjectCards = nonLinkSubobjectIDs.map((subobjectID, key) => <ObjectsViewCard key={key} objectID={objectID} subobjectID={subobjectID} isSubobject />);
 
     return <>{subobjectCards}</>;
 };
@@ -90,11 +84,11 @@ const GroupedLinksOther = ({ objectID }) => {
  * Link subobjects for <ObjectDataCompositeGroupedLinks> component.
  */
 const GroupedLinksCard = ({ objectID }) => {
-    const subobjects = useSelector(state => state.composite[objectID].subobjects);
     const linkSubobjectIDsSelector = createSelector(
-        state => state.composite[objectID].subobjects,
+        state => state.composite[objectID],
         state => state.objects,
-        (subobjects, objects) => Object.keys(subobjects).filter(subobjectID => (objects[subobjectID] || {}).object_type === "link")
+        (composite, objects) => getSingleColumnSubobjectDisplayOrder(composite)
+                                .filter(subobjectID => (objects[subobjectID] || {}).object_type === "link")
     );
     const linkSubobjectIDs = useSelector(linkSubobjectIDsSelector);
 
@@ -109,14 +103,7 @@ const GroupedLinksCard = ({ objectID }) => {
     );
 
     // Links table
-    // Sort subobjects by column -> row asc
-    const subobjectIDOrder = linkSubobjectIDs.slice().sort((a, b) => {
-        if (subobjects[a].column < subobjects[b].column) return -1;
-        if (subobjects[a].column === subobjects[b].column && subobjects[a].row < subobjects[b].row) return -1;
-        return 1;
-    });
-
-    const rows = subobjectIDOrder.map((subobjectID, k) => <GroupedLinksTableRow key={k} subobjectID={subobjectID} />);
+    const rows = linkSubobjectIDs.map((subobjectID, k) => <GroupedLinksTableRow key={k} subobjectID={subobjectID} />);
 
     const linksTable = (
         <Table className="grouped-links-table" striped>

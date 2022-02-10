@@ -23,6 +23,17 @@ export const getNewSubobjectID = state => {
 
 
 /**
+ * Returns a list of subobject IDs sorted by their column and rows in the ascending order.
+ */
+ export const getSingleColumnSubobjectDisplayOrder = composite => Object.keys(composite.subobjects).sort((a, b) => {
+    const { subobjects } = composite;
+    if (subobjects[a].column < subobjects[b].column) return -1;
+    if (subobjects[a].column === subobjects[b].column && subobjects[a].row < subobjects[b].row) return -1;
+    return 1;
+});
+
+
+/**
  *  Returns the ordered by column/row subobject positions of `composite` object. Result is a list with each item being a list for a specific column.
  * If `collapseEmptyRows` is set to true, removes empty rows inside each column
  */
