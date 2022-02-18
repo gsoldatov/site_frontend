@@ -148,3 +148,29 @@
     /* Fix column width in multicolumn display */
     width: 500px;
 }
+
+/* Composite object "chapter" display mode */
+
+.composite-chapters-hierarchy-navigation-left-right-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.composite-chapters-hierarchy-navigation-container > *:not(:last-child) {
+    margin-bottom: 0.5rem;
+}
+
+.ui.breadcrumb.composite-chapters-hierarchy-navigation-breadcrumb {
+    line-height: 1.5rem;
+}
+
+.composite-chapters-hierarchy-navigation-container {
+    margin-bottom: 1rem;
+}
+
+.composite-chapters-hierarchy-navigation-left-right-item {
+    line-height: 1.5rem;
+    max-height: 3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

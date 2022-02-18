@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Loader, Message } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
 
-import { objectsViewOnLoadFetch } from "../../fetches/ui-objects-view";
+import { objectsViewCardOnLoadFetch } from "../../fetches/ui-objects-view";
 
 import { ObjectAttributes } from "./object-attributes/object-attributes";
 import { ObjectsViewTagList } from "./object-tags";
@@ -14,7 +14,7 @@ import StyleObjectsViewCard from "../../styles/objects-view-card.css";
 /**
  * Container for object/subobject attributes, tags and data.
  */
-export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false, isMulticolumnComposite = false }) => {
+export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false, isMulticolumnComposite = false, displayTimestamp = true }) => {
     const dispatch = useDispatch();
     const _id = isSubobject ? subobjectID : objectID;
 
@@ -26,13 +26,13 @@ export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false, is
     useEffect(() => {
         const fetchData = async () => {
             setIsFetching(true);
-            const result = await dispatch(objectsViewOnLoadFetch(_id));
+            const result = await dispatch(objectsViewCardOnLoadFetch(_id));
 
             if ("error" in result) setError(result.error);
             setIsFetching(false);
         };
         
-        if (parseInt(objectID) > 0) fetchData();
+        if (parseInt(_id) > 0) fetchData();
         else setError("Object not found.");
     }, [_id]);
 
@@ -61,7 +61,7 @@ export const ObjectsViewCard = ({ objectID, subobjectID, isSubobject = false, is
     return (
         <div className = {containerClassName}>
             <div className="objects-view-card-object-id">{_id}</div>
-            <ObjectAttributes objectID={objectID} subobjectID={subobjectID} isSubobject={isSubobject} />
+            <ObjectAttributes objectID={objectID} subobjectID={subobjectID} isSubobject={isSubobject} displayTimestamp={displayTimestamp} />
             <ObjectDataSwitch objectID={objectID} subobjectID={subobjectID} isSubobject={isSubobject} />
             {tagList}
         </div>

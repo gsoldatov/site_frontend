@@ -1,7 +1,7 @@
 import config from "../config";
 
 import { getResponseErrorType } from "./common";
-import { updateObjectFetch, viewObjectsFetch } from "./data-objects";
+import { updateObjectFetch, viewCompositeHierarchyElementsFetch, viewObjectsFetch } from "./data-objects";
 import { getNonCachedTags } from "./data-tags";
 
 import { objectDataIsInState } from "../store/state-util/objects";
@@ -15,7 +15,7 @@ const backendURL = config.backendURL;
 /**
  * Fetches attributes, tags and data of an existing object with the provided `objectID`.
  */
- export const objectsViewOnLoadFetch = objectID => {
+ export const objectsViewCardOnLoadFetch = objectID => {
     return async (dispatch, getState) => {
         // Exit if objectID is not valid
         objectID = parseInt(objectID);
@@ -88,6 +88,46 @@ export const groupedLinksOnLoad = objectID => {
                 const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
                 return { error: errorMessage };
             }            
+        }
+
+        // End fetch
+        return {};
+    };
+};
+
+
+/**
+ * Fetches objects in the composite hierarchy with root object ID `rootObjectID`, then fetches missing attributes, tags & data for objects in the hierarchy.
+ */
+export const compositeChaptersOnLoadFetch = rootObjectID => {
+    return async (dispatch, getState) => {
+        // Exit if rootObjectID is not valid
+        rootObjectID = parseInt(rootObjectID);
+        if (!(rootObjectID > 0)) return { error: "Object not found." };
+
+        // Get composite & non-composite objects in the hierarchy
+        let result = await dispatch(viewCompositeHierarchyElementsFetch(rootObjectID));
+
+        // Handle fetch errors
+        let responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            return { error: errorMessage };
+        }
+
+        // Get missing object attributes, tags & data
+        // Also, get missing data of the current object
+        const state = getState();
+        const objectIDs = result.non_composite.concat(result.composite).filter(objectID => !(objectID in state.objects && objectID in state.objectsTags));
+        const objectDataIDs = result.composite.filter(objectID => !objectDataIsInState(state, objectID));
+
+        result = await dispatch(viewObjectsFetch(objectIDs, objectDataIDs));
+
+        // Handle fetch errors
+        responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            return { error: errorMessage };
         }
 
         // End fetch

@@ -10,11 +10,22 @@ import { ObjectIsEdited } from "./object-is-edited-warning";
 /**
  * Container for object/subobject attributes.
  */
-export const ObjectAttributes = ({ objectID, subobjectID, isSubobject = false }) => {
-    // Don't render if object attributes are not present in the local state (to avoid errors after logout)
-    const canRender = useSelector(state => state.objects[objectID] !== undefined);
+export const ObjectAttributes = ({ objectID, subobjectID, isSubobject = false, disableCompositeDisplayModeCheck = false, displayTimestamp = true }) => {
+    // Check if attributes should be rendered
+    const _id = isSubobject ? subobjectID : objectID;
+    const canRender = useSelector(state => 
+        // Object data is present in state (can be false after logout)
+        state.objects[_id] !== undefined
 
-    const timeStamp = !isSubobject && <ObjectTimeStamp objectID={objectID} />;
+        // Rendering for root composite object with `chapters` display mode
+        && (disableCompositeDisplayModeCheck 
+            || isSubobject
+            || state.objects[_id].object_type !== "composite" 
+            || (state.composite[_id] || {}).display_mode !== "chapters"
+        )
+    );
+
+    const timeStamp = !isSubobject && displayTimestamp && <ObjectTimeStamp objectID={_id} />;
 
     return canRender && (
         <div className="objects-view-attributes">

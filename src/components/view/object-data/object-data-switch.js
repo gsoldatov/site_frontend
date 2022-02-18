@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+
 import { ObjectDataLink } from "./object-data-link";
 import { ObjectDataMarkdown } from "./object-data-markdown";
 import { ObjectDataToDoList } from "./object-data-to-do-list";
@@ -9,6 +10,8 @@ import { ObjectDataCompositeGroupedLinks } from "./object-data-composite-grouped
 import { ObjectDataCompositeMulticolumn } from "./object-data-composite-multicolumn";
 
 import { enumCompositeObjectDisplayModes } from "../../../util/enum-composite-object-display-modes";
+import { ObjectDataCompositeChapters } from "./object-data-composite-chapters/object-data-composite-chapters";
+import { objectDataIsInState } from "../../../store/state-util/objects";
 
 
 /**
@@ -16,7 +19,7 @@ import { enumCompositeObjectDisplayModes } from "../../../util/enum-composite-ob
  */
 export const ObjectDataSwitch = ({ objectID, subobjectID, isSubobject = false }) => {
     const _id = isSubobject ? subobjectID : objectID;
-    const canRender = useSelector(state => state.objects[_id] !== undefined);
+    const canRender = useSelector(state => objectDataIsInState(state, _id));
     const objectType = useSelector(state => (state.objects[_id] || {}).object_type);
     const compositeDisplayMode = useSelector(state => (state.composite[_id] || {}).display_mode);
 
@@ -40,6 +43,8 @@ export const ObjectDataSwitch = ({ objectID, subobjectID, isSubobject = false })
                     return <ObjectDataCompositeGroupedLinks objectID={_id} />;
                 case enumCompositeObjectDisplayModes.multicolumn.value:
                     return <ObjectDataCompositeMulticolumn objectID={_id} />;
+                case enumCompositeObjectDisplayModes.chapters.value:
+                    return <ObjectDataCompositeChapters objectID={_id} />;
                 default:
                     throw Error(`Received unknown displayMode '${compositeDisplayMode}' for composite object '${_id}'`)
             }
