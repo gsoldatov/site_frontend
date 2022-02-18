@@ -29,7 +29,7 @@ const Column = ({ objectID, subobjectIDs }) => {
     const subobjectCards = subobjectIDs.map((subobjectID, key) => <ObjectsViewCard key={key} objectID={objectID} subobjectID={subobjectID} isSubobject isMulticolumnComposite />);
 
     return (
-        <div className="objectda-view-data-composite-multicolumn-column">
+        <div className="objects-view-data-composite-multicolumn-column">
             {subobjectCards}
         </div>
     );

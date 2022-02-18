@@ -133,7 +133,7 @@ export const getObjectsViewCardElements = ({ container, card }) => {
 
             // Composite, multicolumn display mode
             if (dataContainer.classList.contains("composite-multicolumn")) {
-                const columns = dataContainer.querySelectorAll(".objectda-view-data-composite-multicolumn-column");
+                const columns = dataContainer.querySelectorAll(".objects-view-data-composite-multicolumn-column");
 
                 columns.forEach(column => {
                     const columnSubobjectCards = [...column.childNodes].filter(n => n.classList.contains("objects-view-card-container"));
