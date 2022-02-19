@@ -7,15 +7,14 @@ import { Loader, Message, Header, Table } from "semantic-ui-react";
 import { groupedLinksOnLoad } from "../../../fetches/ui-objects-view";
 import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/composite";
 
-import { ObjectsViewCard } from "../objects-view-card";
-
+import { SubobjectObjectsViewCard } from "../objects-view-card";
 
 
 /**
- * Signle-column representation of a composite object's object data display component on the /objects/view/:id page.
+ * Signle-column representation of a composite object's object data display component in <ObjectsViewCard>.
  * All non-link objects are displayed first, followed by a table with all link subobjects.
  */
-export const ObjectDataCompositeGroupedLinks = ({ objectID }) => {
+export const CompositeGroupedLinks = ({ objectID }) => {
     const dispatch = useDispatch();
 
     // Fetch & error state
@@ -74,7 +73,7 @@ const GroupedLinksOther = ({ objectID }) => {
     // Exit if there is no non-link subobjects
     if (nonLinkSubobjectIDs.length === 0) return null;
 
-    const subobjectCards = nonLinkSubobjectIDs.map((subobjectID, key) => <ObjectsViewCard key={key} objectID={objectID} subobjectID={subobjectID} isSubobject />);
+    const subobjectCards = nonLinkSubobjectIDs.map((subobjectID, key) => <SubobjectObjectsViewCard key={key} objectID={objectID} subobjectID={subobjectID} />);
 
     return <>{subobjectCards}</>;
 };
@@ -97,7 +96,7 @@ const GroupedLinksCard = ({ objectID }) => {
 
     // Header
     const header = (
-        <div className="object-view-header-container">
+        <div className="objects-view-header-container">
             <Header as="h2">Links</Header>
         </div>
     );

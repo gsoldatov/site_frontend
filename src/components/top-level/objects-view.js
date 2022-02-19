@@ -8,7 +8,6 @@ import Layout from "../common/layout";
 import { ObjectsViewCard } from "../view/objects-view-card";
 
 
-
 /**
     /objects/view/:id page component.
 */
@@ -20,9 +19,33 @@ export const ObjectsView = () => {
 
     const body = (
         <div className="objects-view-container">
-            <ObjectsViewCard objectID={id} isMulticolumnComposite={multicolumnLayout} />
+            <RootObjectsViewCard objectID={id} />
         </div>
     );
 
     return <Layout body={body} fullWidthMainContent={multicolumnLayout} className={layoutClassName} />;
+};
+
+
+/**
+ * Wrapper component for <ObjectsViewCard> with specific settings for root object card.
+ */
+const RootObjectsViewCard = ({ objectID }) => {
+    const compositeDisplayMode = useSelector(state => (state.composite[objectID] || {}).display_mode);
+
+    // Add card borders if object is not a multicolumn composite
+    const classNames = [];
+    if (compositeDisplayMode !== enumCompositeObjectDisplayModes.multicolumn.value) classNames.push("bordered");
+
+    const attributeProps = {
+        // Don't display attributes for composite with "chapters" display mode
+        displayAttributes: compositeDisplayMode !== enumCompositeObjectDisplayModes.multicolumn.value,
+
+        // Don't display "View Object" button
+        headerProps: {
+            viewButtonEnabled: false
+        }
+    };
+
+    return <ObjectsViewCard objectID={objectID} classNames={classNames} attributeProps={attributeProps} />;
 };

@@ -10,10 +10,10 @@ import { ChapterObject } from "./chapter-object";
 
 
 /**
- * Main content component for displaying composite in "chapters" mode on the /objects/view/:id page.
+ * Main content component for displaying composite object's data in "chapters" mode in <ObjectsViewCard>.
  * Fetches hierarchy data, builds hierarchy and displays appropriate component for the current hierarchy element.
  */
-export const ObjectDataCompositeChapters = ({ objectID }) => {
+export const CompositeChapters = ({ objectID }) => {
     const dispatch = useDispatch();
 
     // Fetch & error state

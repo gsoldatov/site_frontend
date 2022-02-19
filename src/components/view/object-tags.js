@@ -10,11 +10,12 @@ import { InlineItemListBlock, InlineItemListWrapper } from "../inline/inline-ite
 /**
  * Object view page tag list.
  */
-export const ObjectsViewTagList = ({ objectID }) => {
+export const ObjectsViewTagList = ({ objectID, tagProps = {} }) => {
     const tagsSelector = useMemo(() => state => state.objectsTags[objectID], [objectID]);
-    const showTagList = useSelector(state => (state.objectsTags[objectID] || []).length > 0);
+    const displayTags = tagProps.displayTags !== undefined ? tagProps.displayTags : true;
+    const isRendered = useSelector(state => displayTags && (state.objectsTags[objectID] || []).length > 0);
 
-    return showTagList && (
+    return isRendered && (
         <div className="objects-view-tag-list-container">
             <InlineItemListBlock borderless>
                 <InlineItemListWrapper>

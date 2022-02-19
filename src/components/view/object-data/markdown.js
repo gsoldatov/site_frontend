@@ -5,9 +5,9 @@ import ParseMarkdownWorker from "../../../util/parse-markdown.worker";
 
 
 /**
- * Markdown object data display component on the /objects/view/:id page.
+ * Displays markdown object data in a <ObjectsViewCard> for the provided `objectID`.
  */
-export const ObjectDataMarkdown = ({ objectID }) => {
+export const Markdown = ({ objectID }) => {
     const rawMarkdown = useSelector(state => state.markdown[objectID].raw_text);
     const [parsedMarkdown, setParsedMarkdown] = useState("");
     

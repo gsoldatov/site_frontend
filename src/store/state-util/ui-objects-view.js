@@ -3,6 +3,7 @@ import { createSelector } from "reselect";
 import config from "../../config";
 
 import { enumCompositeObjectDisplayModes } from "../../util/enum-composite-object-display-modes";
+import { enumShowDescriptionComposite } from "../state-templates/composite-subobjects";
 import { getSingleColumnSubobjectDisplayOrder } from "./composite";
 
 
@@ -84,3 +85,75 @@ import { getSingleColumnSubobjectDisplayOrder } from "./composite";
         current: currentElement, parent, root: hierarchy, previous, next
     };
 };
+
+
+/**
+ * Returns a selector, which checks if the description of an object with provided `objectID` must be displayed.
+ */
+export const getDefaultShowDescriptionSelector = objectID => state => {
+    const objectType = (state.objects[objectID] || {}).object_type;
+    const showDescription = (state.objects[objectID] || {}).show_description;
+    const showDescriptionAsLink = (state.links[objectID] || {}).show_description_as_link;
+    
+    return (
+        // show_description = false
+        showDescription
+        // AND NOT (object type = link AND show_description_as_link = true)
+        && !(objectType === "link" && showDescriptionAsLink)
+    );
+};
+
+
+/**
+ * Returns a selector, which checks if the description of a subobject with the provided `subobjectID` of the parent object with `objectID` must be displayed.
+ */
+export const getSubobjectShowDescriptionSelector = (objectID, subobjectID) => state => {
+    const _subobjectAttributes = state.objects[subobjectID] || {};
+    const _subobjectCompositeProps = state.composite[objectID] || { subobjects: { [subobjectID]: {} }};
+    const _subobjectLinkDataProps = (state.links[subobjectID] || {});
+
+    // Settings of the subobject
+    const objectType = _subobjectAttributes.object_type;
+    const showDescription = _subobjectAttributes.show_description;
+    const showDescriptionComposite = _subobjectCompositeProps.show_description_composite;
+    const showDescriptionAsLink = _subobjectLinkDataProps.show_description_as_link;
+    const showDescriptionAsLinkComposite = _subobjectCompositeProps.show_description_as_link_composite;
+
+    return (
+        // show_description_composite = yes
+        showDescriptionComposite === enumShowDescriptionComposite.yes.value
+        // OR (show_description_composite = inherit AND show_description = true)
+        || (showDescriptionComposite === enumShowDescriptionComposite.inherit.value && showDescription)
+        || !(
+            // OR NOT a link AND (      // not a link which is merged with description
+                objectType === "link" && (
+                    // show_description_as_link_composite = yes OR
+                    showDescriptionAsLinkComposite === enumShowDescriptionComposite.yes.value
+                    // (show_description_as_link_composite = inherit AND show_description_as_link = true)
+                    || (showDescriptionAsLinkComposite === enumShowDescriptionComposite.inherit.value && showDescriptionAsLink)
+            // )
+            )            
+        )
+    );
+};
+
+
+/**
+ * Returns a selector, which checks if link data of an object with provided `objectID` must be displyed merged with description.
+ */
+export const getDefaultShowDescriptionAsLinkSelector = objectID => state => (state.links[objectID] || {}).show_description_as_link;
+
+
+/**
+ * Returns a selector, which checks if link data of a subobject with the provided `subobjectID` of the parent object with `objectID` must be displyed merged with description.
+ */
+ export const getSubobjectShowDescriptionAsLinkSelector = (objectID, subobjectID) => state => {
+    const showDescriptionAsLink = (state.links[subobjectID] || {}).show_description_as_link;
+    const showDescriptionAsLinkComposite = (state.composite[objectID] || { subobjects: { [subobjectID]: {} }}).subobjects[subobjectID].show_description_as_link_composite;
+    return (
+        // show_description_as_link_composite = yes
+        showDescriptionAsLinkComposite === enumShowDescriptionComposite.yes.value
+        // OR (show_description_as_link_composite = inherit AND show_description_as_link = true)
+        || (showDescriptionAsLinkComposite === enumShowDescriptionComposite.inherit.value && showDescriptionAsLink)
+    );
+ };

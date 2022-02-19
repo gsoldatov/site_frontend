@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 
 /**
- * Composite subobject's object data display component on the /objects/view/:id page.
+ * Displays a placeholder for composite object data in a <ObjectsViewCard> for the provided `objectID`.
  */
-export const ObjectDataCompositeSubobject = ({ objectID }) => {
+export const CompositePlaceholder = ({ objectID }) => {
     const msg = "Click here to view the object";
 
     return (

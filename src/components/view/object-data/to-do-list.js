@@ -13,13 +13,13 @@ import { enumUserLevels } from "../../../util/enum-user-levels";
 
 
 /**
- * To-do list object data display component on the /objects/view/:id page.
+ * Displays to-do list object data in a <ObjectsViewCard> for the provided `objectID`.
  */
-export const ObjectDataToDoList = ({ objectID }) => {
+export const ToDoList = ({ objectID }) => {
     const dispatch = useDispatch();
 
     // Readonly state
-    const isReadonly = useSelector(state => state.auth.numeric_user_level !== enumUserLevels.admin && state.auth.user_id !== state.objects[objectID].owner_id);
+    const isReadonly = useSelector(state => state.auth.numeric_user_level !== enumUserLevels.admin && state.auth.user_id !== (state.objects[objectID] || {}).owner_id);
 
     // Error state
     const [error, setError] = useState("");

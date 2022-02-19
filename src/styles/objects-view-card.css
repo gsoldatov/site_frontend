@@ -5,7 +5,7 @@
 /* Main objects-view-card */
 @media(min-width: 768px) {
     /* Add borders for main object's card (except for multicolumn composite) */
-    .objects-view-card-container:not(.subobject):not(.multicolumn:not(.subobject)) {
+    .objects-view-card-container:not(.subobject):not(.multicolumn:not(.subobject)) {    /* TODO use "bordered" class for adding borders */
         box-shadow: 0 0 4px rgba(0,0,0,0.5);
         padding-top: 1rem;
         padding-bottom: 1rem;
@@ -17,7 +17,7 @@
 /* Object attributes, general */
 .objects-view-attributes,
 .objects-view-timestamp,
-.object-view-header-container,
+.objects-view-header-container,
 .objects-view-description {
     /* Limit max-width (for multicolumn composite objects; screen width - margins - scrollbar) */
     max-width: calc(100vw - 2rem - 15px);
@@ -39,12 +39,12 @@
 }
 
 /* Object header */
-.object-view-header-container {
+.objects-view-header-container {
     display: flex;
     align-items: center;
 }
 
-.object-view-header-container .ui.header {
+.objects-view-header-container .ui.header {
     margin-bottom: 0.5rem;
 }
 
