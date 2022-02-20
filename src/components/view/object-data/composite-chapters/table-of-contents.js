@@ -17,8 +17,12 @@ export const TableOfContents = ({ hierarchyElements }) => {
     if (!rootObjectID) return null;
     
     // Current object attributes
-    const displayTimestamp = parseInt(rootObjectID) === parseInt(objectID);
-    const attributes = <ObjectAttributes objectID={objectID} disableCompositeDisplayModeCheck displayTimestamp={displayTimestamp} />;
+    const attributeProps = {
+        timestampProps: { displayTimestamp: parseInt(rootObjectID) === parseInt(objectID) },
+        headerProps: { displayViewButton: false }
+    };
+
+    const attributes = <ObjectAttributes objectID={objectID} attributeProps={attributeProps} />;
 
     const tableOfContents = (
         <ul>

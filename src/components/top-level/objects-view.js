@@ -39,7 +39,7 @@ const RootObjectsViewCard = ({ objectID }) => {
 
     const attributeProps = {
         // Don't display attributes for composite with "chapters" display mode
-        displayAttributes: compositeDisplayMode !== enumCompositeObjectDisplayModes.multicolumn.value,
+        displayAttributes: compositeDisplayMode !== enumCompositeObjectDisplayModes.chapters.value,
 
         // Don't display "View Object" button
         headerProps: {
