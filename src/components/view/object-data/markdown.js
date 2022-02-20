@@ -24,7 +24,7 @@ export const Markdown = ({ objectID }) => {
 
     return parsedMarkdown.length > 0 && (
         <div className="objects-view-data markdown">
-            <div dangerouslySetInnerHTML={{ __html: parsedMarkdown }} />
+            <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedMarkdown }} />
         </div>
     );
 };

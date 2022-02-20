@@ -400,7 +400,7 @@ describe("Subobject card tabs", () => {
         expect(store.getState().editedObjects[cards[0][0].id].object_type).toEqual("markdown");
         expect(store.getState().editedObjects[cards[0][1].id].object_type).toEqual("link");
         clickSubobjectCardDataTabButton(card);
-        expect(card.querySelector(".markdown-container")).toBeTruthy();
+        expect(card.querySelector(".objects-edit-markdown-container")).toBeTruthy();
 
         // Select to-do object type and check if to-do list container is rendered on the data tab
         clickSubobjectCardAttributeTabButton(card);
@@ -458,7 +458,7 @@ describe("Subobject card tabs", () => {
 
         // Check if markdown data is displayed
         clickSubobjectCardDataTabButton(card);
-        const markdownContainer = card.querySelector(".markdown-container");
+        const markdownContainer = card.querySelector(".objects-edit-markdown-container");
         expect(markdownContainer).toBeTruthy();
         const markdownInput = markdownContainer.querySelector(".edit-page-textarea");
         expect(markdownInput).toBeTruthy();
@@ -533,7 +533,7 @@ describe("Subobject card menu buttons", () => {
             clickSubobjectCardDataTabButton(secondCard);
 
             const secondMarkdown = "some markdown text";
-            const markdownContainer = secondCard.querySelector(".markdown-container");
+            const markdownContainer = secondCard.querySelector(".objects-edit-markdown-container");
             expect(markdownContainer).toBeTruthy();
             const markdownInput = markdownContainer.querySelector(".edit-page-textarea");
             expect(markdownInput).toBeTruthy();
@@ -545,8 +545,8 @@ describe("Subobject card menu buttons", () => {
             let resetDialogContainer = secondCard.querySelector(".subobject-card-dialog-container");
             expect(resetDialogContainer).toBeTruthy();
             fireEvent.click(getByText(resetDialogContainer, "No"));
-            expect(secondCard.querySelector(".markdown-container")).toBeTruthy();
-            expect(secondCard.querySelector(".markdown-container").querySelector(".edit-page-textarea").value).toEqual(secondMarkdown);
+            expect(secondCard.querySelector(".objects-edit-markdown-container")).toBeTruthy();
+            expect(secondCard.querySelector(".objects-edit-markdown-container").querySelector(".edit-page-textarea").value).toEqual(secondMarkdown);
 
             // Reset second subobject
             fireEvent.click(resetButton);

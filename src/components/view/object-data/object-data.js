@@ -37,7 +37,7 @@ const DefaultObjectDataSwitch = ({ objectID }) => {
 
     switch (objectType) {
         case "link":
-            return <Link_ objectID={objectID} dataProps={dataProps} />;
+            return <Link_ objectID={objectID} />;
         case "markdown":
             return <Markdown objectID={objectID} />;
         case "to_do_list":

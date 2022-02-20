@@ -10,7 +10,7 @@ import { ObjectData, SubobjectDataSwitch } from "./object-data/object-data";
 
 import { getSubobjectShowDescriptionAsLinkSelector, getSubobjectShowDescriptionSelector } from "../../store/state-util/ui-objects-view";
 
-import StyleObjectsViewCard from "../../styles/objects-view-card.css";
+import StyleObjectsViewCommon from "../../styles/objects-view/common.css";
 
 
 /**

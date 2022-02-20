@@ -28,10 +28,10 @@ export const MarkdownContainer = memo(({ objectID }) => {
         displayMode === "edit" ? "(Edit)" : "(View & Edit)");
     
     return (
-        <div className="markdown-container">
-            <div className="markdown-container-header">{headerText}</div>
+        <div className="objects-edit-markdown-container">
+            <div className="objects-edit-markdown-container-header">{headerText}</div>
             <MarkdownDisplaySwitch objectID={objectID} />
-            <div className="markdown-display-container">
+            <div className="objects-edit-markdown-display-container">
                 {viewEditBlock}
             </div>
         </div>
@@ -67,7 +67,7 @@ const MarkdownDisplaySwitch = memo(({ objectID }) => {
         }
     ], [objectID]);
 
-    return <FieldMenu size="mini" compact className="markdown-display-switch-menu" items={fieldMenuItems} />;
+    return <FieldMenu size="mini" compact className="objects-edit-markdown-display-switch-menu" items={fieldMenuItems} />;
 });
 
 
@@ -102,7 +102,11 @@ const MarkdownView = ({ objectID }) => {
             parseMarkdown(rawText);
     }, []);
 
-    return text && <div className="markdown-parsed-container" dangerouslySetInnerHTML={{ __html: text }} />;
+    return text && (
+        <div className="objects-edit-markdown-view-container">
+            <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: text }} />
+        </div>
+    );
 };
 
 
