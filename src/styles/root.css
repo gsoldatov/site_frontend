@@ -53,21 +53,21 @@ div.layout-grid.ui.grid > .layout-grid-navigation-row.row {
 
 /* Headers */
 h1, h1.ui.header {
-    font-size: 20px;
+    font-size: 24px;
 }
 
 h2, h2.ui.header {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 h3, h3.ui.header {
-    font-size: 16px;
+    font-size: 18px;
 }
 
 h4, h4.ui.header,
 h5, h5.ui.header,
 h6, h6.ui.header {
-    font-size: 14px;
+    font-size: 16px;
 }
 
 h5, h5.ui.header {
