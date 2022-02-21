@@ -12,7 +12,7 @@ export const Description = ({ objectID, descriptionProps = {} }) => {
 
     const defaultShowDescriptionSelector = useMemo(() => getDefaultShowDescriptionSelector(objectID), [objectID]);
     const showDescriptionSelector = descriptionProps.showDescriptionSelector || defaultShowDescriptionSelector;
-    const renderDescription = useSelector(showDescriptionSelector);
+    const renderDescription = useSelector(showDescriptionSelector) && text.length > 0;
 
     return renderDescription && (
         <div className="objects-view-description">

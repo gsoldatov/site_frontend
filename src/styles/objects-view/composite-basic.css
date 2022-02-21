@@ -1,0 +1,19 @@
+/************************************************************************************
+  /objects/view/:id page's object card styles, composite with "basic" display mode.
+************************************************************************************/
+
+
+/* Subobject card margins & separation */
+.objects-view-data.composite-basic > .objects-view-card-container:first-child {
+    /* Before first child */
+    padding-top: 1rem;
+    margin-top: 1rem;
+    border-top: solid 1px var(--objects-view-separation-line-color);
+}
+
+.objects-view-data.composite-basic > .objects-view-card-container:not(:last-child) {
+    /* After non-last children */
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: solid 1px var(--objects-view-separation-line-color);
+}

@@ -109,7 +109,7 @@ export const getDefaultShowDescriptionSelector = objectID => state => {
  */
 export const getSubobjectShowDescriptionSelector = (objectID, subobjectID) => state => {
     const _subobjectAttributes = state.objects[subobjectID] || {};
-    const _subobjectCompositeProps = state.composite[objectID] || { subobjects: { [subobjectID]: {} }};
+    const _subobjectCompositeProps = (state.composite[objectID] || { subobjects: { [subobjectID]: {} }}).subobjects[subobjectID];
     const _subobjectLinkDataProps = (state.links[subobjectID] || {});
 
     // Settings of the subobject
@@ -119,21 +119,15 @@ export const getSubobjectShowDescriptionSelector = (objectID, subobjectID) => st
     const showDescriptionAsLink = _subobjectLinkDataProps.show_description_as_link;
     const showDescriptionAsLinkComposite = _subobjectCompositeProps.show_description_as_link_composite;
 
+    // Return false if `show_description_as_link` is true
+    const showDescriptionAsLinkSelector = getSubobjectShowDescriptionAsLinkSelector(objectID, subobjectID);
+    
+    if (showDescriptionAsLinkSelector(state)) return false;
+
+    // Return true if `show_description_composite` is true or `show_description` = true is inherited
     return (
-        // show_description_composite = yes
         showDescriptionComposite === enumShowDescriptionComposite.yes.value
-        // OR (show_description_composite = inherit AND show_description = true)
         || (showDescriptionComposite === enumShowDescriptionComposite.inherit.value && showDescription)
-        || !(
-            // OR NOT a link AND (      // not a link which is merged with description
-                objectType === "link" && (
-                    // show_description_as_link_composite = yes OR
-                    showDescriptionAsLinkComposite === enumShowDescriptionComposite.yes.value
-                    // (show_description_as_link_composite = inherit AND show_description_as_link = true)
-                    || (showDescriptionAsLinkComposite === enumShowDescriptionComposite.inherit.value && showDescriptionAsLink)
-            // )
-            )            
-        )
     );
 };
 

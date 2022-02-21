@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { ObjectAttributes } from "../../object-attributes/object-attributes";
 import { HierarchyNavigation } from "./hierarchy-navigation";
 
+import StyleCompositeChapters from "../../../../styles/objects-view/composite-chapters.css";
+
 
 /**
  * Renders a table of contents for the elemenets below the `hierarchyElements.current`.
@@ -25,11 +27,13 @@ export const TableOfContents = ({ hierarchyElements }) => {
     const attributes = <ObjectAttributes objectID={objectID} attributeProps={attributeProps} />;
 
     const tableOfContents = (
-        <ul>
-            {hierarchyElements.current.childElements.map((child, i) => 
-                <TableOfContentsElement key={i} currentElement={child} />)}
-            
-        </ul>
+        <div className="composite-chapters-table-of-contents">
+            <ul>
+                {hierarchyElements.current.childElements.map((child, i) => 
+                    <TableOfContentsElement key={i} currentElement={child} />)}
+                
+            </ul>
+        </div>
     );
 
     return (

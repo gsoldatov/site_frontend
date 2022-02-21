@@ -1,0 +1,87 @@
+/*******************************************************
+  /objects/view/:id page's object card styles, common.
+*******************************************************/
+:root {
+    --objects-view-separation-line-color: rgba(34, 36, 38, 0.25);
+    --objects-view-card-border-color:  rgba(0,0,0,0.5);
+
+    --max-not-overlown-width: calc(100vw - 2rem - 15px); /* Screen width without - left & right margins around main content column - scrollbar width */
+} 
+
+/* Object id */
+.objects-view-card-object-id {
+    display: none;
+}
+
+
+/** Margins & separation **/
+/* Card children margins */
+.objects-view-card-container > *:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+.objects-view-tag-list-container {
+    padding-top: 1rem;
+    border-top: solid 1px var(--objects-view-separation-line-color);
+}
+
+
+/* Attribute children margins */
+.objects-view-attributes > *:not(:last-child):not(.objects-view-timestamp) {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+
+/** Attributes **/
+/* Timestamp */
+.objects-view-timestamp {
+    font-family: Arial, Helvetica, sans-serif;
+    color: gray;
+}
+
+/* Object header */
+.objects-view-header-container {
+    display: flex;
+    align-items: center;
+
+    /* Limit max-width (for multicolumn composite objects; screen width - margins - scrollbar) */
+    max-width: var(--max-not-overlown-width);
+}
+
+.objects-view-header-container > .ui.header {
+    margin-bottom: 0;
+
+    /* Enable word break for long words */
+    word-break: break-word;
+}
+
+.objects-view-header-button-container {
+    margin-left: 0.5rem;
+}
+
+.ui.basic.black.button.objects-view-header-button {
+    /* Button positioning */
+    padding: 0px;
+    margin-right: 0;
+
+    /* Disable borders */
+    border: 0px !important;
+    box-shadow: none !important;
+    border-radius: 0;
+}
+
+/* Object is edited warning */
+.objects-view-object-is-edited-container {
+    /* Limit max-width (for multicolumn composite objects; screen width - margins - scrollbar) */
+    max-width: var(--max-not-overlown-width);
+}
+
+/* Description */
+.objects-view-description {
+    /* Limit max-width (for multicolumn composite objects; screen width - margins - scrollbar) */
+    max-width: var(--max-not-overlown-width);
+
+    /* Enable word break for long words */
+    word-break: break-word;
+}

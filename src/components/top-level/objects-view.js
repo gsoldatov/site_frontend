@@ -7,6 +7,7 @@ import { enumCompositeObjectDisplayModes } from "../../util/enum-composite-objec
 import Layout from "../common/layout";
 import { ObjectsViewCard } from "../view/objects-view-card";
 
+import StyleRootObjectsViewCard from "../../styles/objects-view/root-card.css";
 
 /**
     /objects/view/:id page component.
@@ -34,7 +35,7 @@ const RootObjectsViewCard = ({ objectID }) => {
     const compositeDisplayMode = useSelector(state => (state.composite[objectID] || {}).display_mode);
 
     // Add card borders if object is not a multicolumn composite
-    const classNames = [];
+    const classNames = ["root"];
     if (compositeDisplayMode !== enumCompositeObjectDisplayModes.multicolumn.value) classNames.push("bordered");
 
     const attributeProps = {
@@ -43,7 +44,7 @@ const RootObjectsViewCard = ({ objectID }) => {
 
         // Don't display "View Object" button
         headerProps: {
-            viewButtonEnabled: false
+            displayViewButton: false
         }
     };
 

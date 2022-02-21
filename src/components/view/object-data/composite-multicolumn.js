@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { getSubobjectDisplayOrder } from "../../../store/state-util/composite";
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
+import StyleCompositeMulticolumn from "../../../styles/objects-view/composite-multicolumn.css";
+
 
 /**
  * Multicolumn composite object's object data display component in <ObjectsViewCard>.
@@ -26,7 +28,7 @@ export const CompositeMulticolumn = ({ objectID }) => {
  * A single column in multicolumn object.
  */
 const Column = ({ objectID, subobjectIDs }) => {
-    const subobjectCards = subobjectIDs.map((subobjectID, key) => <SubobjectObjectsViewCard key={key} objectID={objectID} subobjectID={subobjectID} />);
+    const subobjectCards = subobjectIDs.map((subobjectID, key) => <SubobjectObjectsViewCard key={key} objectID={objectID} subobjectID={subobjectID} classNames={["multicolumn-subobject"]} />);
 
     return (
         <div className="objects-view-data-composite-multicolumn-column">

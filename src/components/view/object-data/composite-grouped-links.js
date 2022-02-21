@@ -9,6 +9,8 @@ import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/
 
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
+import StyleCompositeGroupedLinks from "../../../styles/objects-view/composite-grouped-links.css";
+
 
 /**
  * Signle-column representation of a composite object's object data display component in <ObjectsViewCard>.
@@ -113,7 +115,7 @@ const GroupedLinksCard = ({ objectID }) => {
     );
 
     return (
-        <div className="objects-view-card-container subobject link-card">
+        <div className="objects-view-card-container link-card">
             {header}
             {linksTable}
         </div>

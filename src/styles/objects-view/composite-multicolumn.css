@@ -1,0 +1,45 @@
+/*******************************************************************************************
+  /objects/view/:id page's object card styles, composite with "multicolumn" display mode.
+*******************************************************************************************/
+
+
+/* Override width of containers to fit multicolumn composite subobject grids */
+.layout-grid.objects-view-page-multicolumn-composite, 
+.layout-grid.objects-view-page-multicolumn-composite > .column,
+.layout-grid.objects-view-page-multicolumn-composite > .column > [class*="sixteen wide"].layout-grid-main-content-column.objects-view-page-multicolumn-composite,
+.objects-view-data.composite-multicolumn {    
+    width: max-content !important;
+}
+
+.objects-view-card-container.multicolumn-subobject {
+    /* Always display borders in subobject cards */
+    box-shadow: 0 0 4px var(--objects-view-card-border-color);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.objects-view-data.composite-multicolumn {
+    /* Set columns display */
+    display: flex;
+    flex-direction: row;
+}
+
+.objects-view-data-composite-multicolumn-column {
+    /* Fix column width in multicolumn display */
+    width: 500px;
+}
+
+.objects-view-data-composite-multicolumn-column:not(:last-child) {
+    /* Fix column width in multicolumn display */
+    margin-right: 2rem;
+}
+
+.objects-view-data.composite-multicolumn .objects-view-card-container.multicolumn-subobject:not(:last-child) {
+    /* Add separation between subobjects */
+    margin-bottom: 2rem;
+
+    /* Fix column width in multicolumn display */
+    width: 500px;
+}

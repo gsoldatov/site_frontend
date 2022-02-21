@@ -5,6 +5,8 @@ import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/
 
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
+import StyleCompositeBasic from "../../../styles/objects-view/composite-basic.css";
+
 
 /**
  * Basic signle-column representation of a composite object's object data display component on the /objects/view/:id page.
