@@ -8,6 +8,7 @@ import { OnResizeWrapper } from "./on-resize-wrapper";
 import { registrationStatusFetch, logoutFetch, getCurrentUserData } from "../../fetches/auth";
 
 import { enumUserLevels } from "../../util/enum-user-levels";
+import { useMountedState } from "../../util/use-mounted-state";
 
 import StyleNavigation from "../../styles/navigation.css";
 
@@ -163,6 +164,7 @@ const LoggedOutSecondaryMenu = () => {
     const history = useHistory();
     const location = useLocation();
     const dispatch = useDispatch();
+    const isMounted = useMountedState();
 
     // Login button
     const loginOnClick = useMemo(() => () => {
@@ -175,15 +177,11 @@ const LoggedOutSecondaryMenu = () => {
     // If yes, registration button becomes available.
     const [isSignUpEnabled, setIsSignUpEnabled] = useState(false);
     useEffect(() => {
-        let isComponentMounted = true;  // workaround to avoid setting state if component was unmounted     https://www.benmvp.com/blog/handling-async-react-component-effects-after-unmount/
-
         const updateSignUpEnabled = async () => {
             const result = await dispatch(registrationStatusFetch());
-            if (isComponentMounted) setIsSignUpEnabled(result);
+            if (isMounted()) setIsSignUpEnabled(result);
         };
         updateSignUpEnabled();
-
-        return () => { isComponentMounted = false; };
     }, []);
 
     const signUpOnClick = useMemo(() => {

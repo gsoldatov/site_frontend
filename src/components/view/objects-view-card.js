@@ -9,6 +9,7 @@ import { ObjectsViewTagList } from "./object-tags";
 import { ObjectData, SubobjectDataSwitch } from "./object-data/object-data";
 
 import { getSubobjectShowDescriptionAsLinkSelector, getSubobjectShowDescriptionSelector } from "../../store/state-util/ui-objects-view";
+import { useMountedState } from "../../util/use-mounted-state";
 
 import StyleObjectsViewCommon from "../../styles/objects-view/common.css";
 
@@ -18,6 +19,7 @@ import StyleObjectsViewCommon from "../../styles/objects-view/common.css";
  */
 export const ObjectsViewCard = ({ objectID, classNames, attributeProps, dataProps, tagProps }) => {
     const dispatch = useDispatch();
+    const isMounted = useMountedState();
 
     // Fetch & error state
     const [isFetching, setIsFetching] = useState(true);
@@ -30,7 +32,7 @@ export const ObjectsViewCard = ({ objectID, classNames, attributeProps, dataProp
             const result = await dispatch(objectsViewCardOnLoadFetch(objectID));
 
             if ("error" in result) setError(result.error);
-            setIsFetching(false);
+            if (isMounted()) setIsFetching(false);
         };
         
         if (parseInt(objectID) > 0) fetchData();

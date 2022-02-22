@@ -6,6 +6,7 @@ import { Loader, Message, Header, Table } from "semantic-ui-react";
 
 import { groupedLinksOnLoad } from "../../../fetches/ui-objects-view";
 import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/composite";
+import { useMountedState } from "../../../util/use-mounted-state";
 
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
@@ -18,6 +19,7 @@ import StyleCompositeGroupedLinks from "../../../styles/objects-view/composite-g
  */
 export const CompositeGroupedLinks = ({ objectID }) => {
     const dispatch = useDispatch();
+    const isMounted = useMountedState();
 
     // Fetch & error state
     const [isFetching, setIsFetching] = useState(true);
@@ -30,7 +32,7 @@ export const CompositeGroupedLinks = ({ objectID }) => {
             const result = await dispatch(groupedLinksOnLoad(objectID));
 
             if ("error" in result) setError(result.error);
-            setIsFetching(false);
+            if (isMounted()) setIsFetching(false);
         };
         
         if (parseInt(objectID) > 0) fetchData();
