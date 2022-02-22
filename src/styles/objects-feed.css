@@ -39,9 +39,17 @@
 .ui.header.object-preview-header {
     margin-top: 0;
     margin-bottom: 0.5rem;
+
+    /* Enable word break for long words */
+    word-break: break-word;
 }
 
 /* Object preview description */
+.object-preview-description {
+    /* Enable word break for long words */
+    word-break: break-word;
+}
+
 .object-preview-description:not(:last-child) {
     margin-bottom: 1rem;
 }
