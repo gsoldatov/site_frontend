@@ -3,9 +3,10 @@ import React, { memo } from "react";
 import { IsPublishedSwitch, SubobjectsIsPublishedSwitch } from "./is-publishied-switch";
 import { ShowDescriptionSwitch, SubobjectShowDescriptionSwitch } from "./show-description-switch";
 import { ShowDescriptionAsLinkSwitch, SubobjectShowDescriptionAsLinkSwitch } from "./show-description-as-link-switch";
-import { CompositeDisplayModeSwitch } from "./composite-display-mode-switch";
 import { DisplayInFeedSwitch } from "./display-in-feed-switch";
 import { FeedTimestampSelector } from "./feed-timestamp-selector";
+import { CompositeDisplayModeSwitch } from "./composite-display-mode-switch";
+import { NumerateChaptersSwitch } from "./numerate-chapters";
 
 
 /**
@@ -24,6 +25,8 @@ export const DisplayTab = memo(({ objectID, subobjectID, isSubobject = false }) 
     
     const compositeDisplayModeSwitch = !isSubobject && <CompositeDisplayModeSwitch objectID={objectID} />;
 
+    const numerateChaptersSwitch = !isSubobject && <NumerateChaptersSwitch objectID={objectID} />;
+
     return (
         <div className="objects-edit-display-tab-container">
             <IsPublishedSwitch objectID={_id} isSubobject={isSubobject} />
@@ -33,6 +36,7 @@ export const DisplayTab = memo(({ objectID, subobjectID, isSubobject = false }) 
             {showDescription}
             {showDescriptionAsLink}
             {compositeDisplayModeSwitch}
+            {numerateChaptersSwitch}
         </div>
     );
 });
