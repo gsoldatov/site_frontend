@@ -29,9 +29,10 @@ import { getSingleColumnSubobjectDisplayOrder } from "./composite";
             // End recursion if object is not composite with "chapters" display mode or maximum hierarchy depth is exceeded
             const objectType = (objectsStorage[elementObjectID] || {}).object_type;
             const displayMode = (compositeDataStorage[elementObjectID] || {}).display_mode;
+            const numerateChapters = (compositeDataStorage[elementObjectID] || {}).numerate_chapters;
             const isLeaf = objectType !== "composite" || displayMode !== enumCompositeObjectDisplayModes.chapters.value || currentDepth > config.compositeChapters.maxHierarchyDepth;
 
-            const element = { objectID: elementObjectID, parentElement, chapter, chapterSuffix, URL: elementURL };
+            const element = { objectID: elementObjectID, parentElement, chapter, chapterSuffix, URL: elementURL, numerateChapters };
             element.childElements = isLeaf ? null 
                 : getSingleColumnSubobjectDisplayOrder(compositeDataStorage[elementObjectID])
                     .map((subobjectID, i) => getHierarchy(currentDepth + 1, subobjectID, element, chapter, i + 1));

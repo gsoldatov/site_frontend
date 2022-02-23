@@ -56,6 +56,11 @@
     word-break: break-word;
 }
 
+.ui.header.objects-view-header > span:not(:last-child) {
+    /* Separation between header prefix & text */
+    margin-right: 0.25em;
+}
+
 .objects-view-header-button-container {
     margin-left: 0.5rem;
 }

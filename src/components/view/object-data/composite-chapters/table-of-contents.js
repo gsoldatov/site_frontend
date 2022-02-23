@@ -13,7 +13,8 @@ import StyleCompositeChapters from "../../../../styles/objects-view/composite-ch
  */
 export const TableOfContents = ({ hierarchyElements }) => {
     const rootObjectID = (hierarchyElements.root || {}).objectID;
-    const { objectID } = hierarchyElements.current;
+    const numerateChapters = (hierarchyElements.root || {}).numerateChapters;
+    const { objectID, chapter } = hierarchyElements.current;
 
     // Exit if hierarchy was not build
     if (!rootObjectID) return null;
@@ -21,18 +22,20 @@ export const TableOfContents = ({ hierarchyElements }) => {
     // Current object attributes
     const attributeProps = {
         timestampProps: { displayTimestamp: parseInt(rootObjectID) === parseInt(objectID) },
-        headerProps: { displayViewButton: false }
+        headerProps: { displayViewButton: false, prefixText: numerateChapters && chapter.length > 0 ? chapter + "." : null }
     };
 
     const attributes = <ObjectAttributes objectID={objectID} attributeProps={attributeProps} />;
 
+    // Table of contents
+    // const listStyle = numerateChapters ? { }
     const tableOfContents = (
         <div className="composite-chapters-table-of-contents">
-            <ul>
+            <ListTag numerateChapters={numerateChapters} >
                 {hierarchyElements.current.childElements.map((child, i) => 
-                    <TableOfContentsElement key={i} currentElement={child} />)}
+                    <TableOfContentsElement key={i} currentElement={child} numerateChapters={numerateChapters} />)}
                 
-            </ul>
+            </ListTag>
         </div>
     );
 
@@ -46,7 +49,7 @@ export const TableOfContents = ({ hierarchyElements }) => {
 };
 
 
-const TableOfContentsElement = ({ currentElement }) => {
+const TableOfContentsElement = ({ currentElement, numerateChapters }) => {
     const objectNames = useSelector(state => {
         const getElementObjectNames = element => {
             const { objectID } = element;
@@ -67,9 +70,9 @@ const TableOfContentsElement = ({ currentElement }) => {
     let nestedList = null;
     if (currentElement.childElements) {
         nestedList = (
-            <ul>
-                {currentElement.childElements.map((child, i) => <TableOfContentsElement key={i} currentElement={child} />)}
-            </ul>
+            <ListTag numerateChapters={numerateChapters}>
+                {currentElement.childElements.map((child, i) => <TableOfContentsElement key={i} currentElement={child} numerateChapters={numerateChapters} />)}
+            </ListTag>
         );
     }
 
@@ -81,4 +84,10 @@ const TableOfContentsElement = ({ currentElement }) => {
     );
 };
 
+
+const ListTag = ({ numerateChapters, style, children }) => {
+    return numerateChapters
+        ? <ol style={style}>{children}</ol>
+        : <ul>{children}</ul>;
+};
 

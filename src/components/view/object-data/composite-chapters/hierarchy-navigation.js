@@ -22,34 +22,40 @@ export const HierarchyNavigation = ({ hierarchyElements }) => {
  * Breadcrumb with links to elements above the hierarchy & current element name
  */
 const HierarchyBreadcrumb = ({ hierarchyElements }) => {
+    const { numerateChapters } = hierarchyElements.root;
+    
     // Get object IDs in the Breadcrumb
     let { current } = hierarchyElements;
-    const objectIDs = [current.objectID];
-    const elementURLs = [null];
+    const elements = [current];
 
     while (current.parentElement) {
         current = current.parentElement;
-        objectIDs.unshift(current.objectID);
-        elementURLs.unshift(current.URL);
+        elements.unshift(current);
+        // objectIDs.unshift(current.objectID);
+        // elementURLs.unshift(current.URL);
     }
 
     // Get object names
     const objectNames = useSelector(state => 
-        objectIDs.map(objectID => (state.objects[objectID] || {}).object_name || "<Object is unavailable>"
+        elements.map(element => (state.objects[element.objectID] || {}).object_name || "<Object is unavailable>"
     ));
 
     // Don't render for the root component
-    if (objectIDs.length < 2) return null;
+    if (elements.length < 2) return null;
 
     // Render Breadcrumb
     const sectionsAndDividers = [];
-    objectIDs.forEach((objectID, i) => {
-        const isActive = i === objectIDs.length - 1;
+    elements.forEach((element, i) => {
+        const isActive = i === elements.length - 1;
+
+        // Full section text
+        const sectionText = <ObjectNameWithChapter element={element} objectName={objectNames[i]} numerateChapters={numerateChapters} />;
+
         const sectionContent = isActive
-            ? objectNames[i]
+            ? sectionText
             : (
-                <Link to={elementURLs[i]}>
-                    {objectNames[i]}
+                <Link to={element.URL}>
+                    {sectionText}
                 </Link>
             );
         
@@ -76,6 +82,8 @@ const HierarchyBreadcrumb = ({ hierarchyElements }) => {
  * Links to previous & next hierarchy elements
  */
 const PreviousNext = ({ hierarchyElements }) => {
+    const { numerateChapters } = hierarchyElements.root;
+    
     // Parent, previous & next controls
     const elementControls = {};
     for (let [elementName, iconName, iconPosition] of [
@@ -85,7 +93,15 @@ const PreviousNext = ({ hierarchyElements }) => {
     ) {
         const element = hierarchyElements[elementName];
         const objectName = useSelector(state => element ? state.objects[element.objectID].object_name : undefined);
-        if (element) elementControls[elementName] = { URL: element.URL, text: objectName, iconName, iconPosition };
+        
+        if (element) {
+            // Get full text of the control and 
+            const controlText = <ObjectNameWithChapter element={element} objectName={objectName} numerateChapters={numerateChapters} />;
+            const title = numerateChapters ? `${element.chapter}. ${objectName}` : objectName;
+
+            // Add control to the list
+            elementControls[elementName] = { URL: element.URL, controlText, title, iconName, iconPosition };
+        }
         else elementControls[elementName] = null;
     }
 
@@ -95,13 +111,13 @@ const PreviousNext = ({ hierarchyElements }) => {
                 Object.keys(elementControls).map((k, i) => {
                     if (!elementControls[k]) return <div key={i} className="composite-chapters-hierarchy-navigation-left-right-item" />
 
-                    const { URL, text, iconName, iconPosition } = elementControls[k];
+                    const { URL, controlText, title, iconName, iconPosition } = elementControls[k];
                     const icon = <Icon name={iconName} />;
                     return (
                         <div key={i} className="composite-chapters-hierarchy-navigation-left-right-item">
                             {iconPosition === "left" && icon}
-                            <Link to={URL} title={text}>
-                                {text}
+                            <Link to={URL} title={title}>
+                                {controlText}
                             </Link>
                             {iconPosition === "right" && icon}
                         </div>
@@ -109,5 +125,27 @@ const PreviousNext = ({ hierarchyElements }) => {
                 })
             }
         </div>
+    );
+};
+
+
+/**
+ * Returns `objectName` with the chapter prefix, if `numerateChapter` is true.
+ */
+const ObjectNameWithChapter = ({ element, objectName, numerateChapters }) => {
+    // Chapter prefix
+    const prefix = numerateChapters && element.chapter.length > 0 && (
+        <span>{element.chapter + "."}</span>
+    );
+
+    // Object name
+    const name = <span>{objectName}</span>;
+
+    // Full text
+    return (
+        <span className="composite-chapters-hierarchy-navigation-object-name-with-chapter">
+            {prefix}
+            {name}
+        </span>
     );
 };

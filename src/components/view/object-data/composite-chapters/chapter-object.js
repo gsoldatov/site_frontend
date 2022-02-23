@@ -12,7 +12,7 @@ export const ChapterObject = ({ hierarchyElements }) => {
     return (
         <>
             <HierarchyNavigation hierarchyElements={hierarchyElements} />
-            <ChapterObjectsViewCard objectID={hierarchyElements.current.objectID} />
+            <ChapterObjectsViewCard hierarchyElements={hierarchyElements} />
         </>
     );
 };
@@ -20,10 +20,13 @@ export const ChapterObject = ({ hierarchyElements }) => {
 /**
  * <ObjectsViewCard> wrapper with configuration for a chapter object display.
  */
-const ChapterObjectsViewCard = ({ objectID }) => {
+const ChapterObjectsViewCard = ({ hierarchyElements }) => {
+    const { objectID, chapter } = (hierarchyElements.current || {});
+    const { numerateChapters } = (hierarchyElements.root || {});
+
     const attributeProps = {
         timestampProps: { displayTimestamp: false },
-        headerProps: { displayViewButton: false }
+        headerProps: { displayViewButton: false, prefixText: numerateChapters && chapter.length > 0 ? chapter + "." : null }
     };
 
     const dataProps = {

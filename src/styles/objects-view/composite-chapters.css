@@ -54,6 +54,13 @@
     text-overflow: ellipsis;
 }
 
+/* Navigation controls, object name text */
+.composite-chapters-hierarchy-navigation-object-name-with-chapter > span:not(:last-child) {
+    /* Add separation between chapter prefix & object name in navigation elements */
+    margin-right: 0.25em;
+}
+
+
 /* Table of contents */
 .composite-chapters-table-of-contents li {
     /* Enable word break for long words */
