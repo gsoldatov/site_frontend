@@ -28,13 +28,11 @@ export const TableOfContents = ({ hierarchyElements }) => {
     const attributes = <ObjectAttributes objectID={objectID} attributeProps={attributeProps} />;
 
     // Table of contents
-    // const listStyle = numerateChapters ? { }
     const tableOfContents = (
         <div className="composite-chapters-table-of-contents">
-            <ListTag numerateChapters={numerateChapters} >
+            <ListTag numerateChapters={numerateChapters}>
                 {hierarchyElements.current.childElements.map((child, i) => 
                     <TableOfContentsElement key={i} currentElement={child} numerateChapters={numerateChapters} />)}
-                
             </ListTag>
         </div>
     );
@@ -49,24 +47,21 @@ export const TableOfContents = ({ hierarchyElements }) => {
 };
 
 
+/**
+ * Recursively generates list item `currentElement` and a nested list for its `childElements`.
+ * `numerateChapters` toggles the use of ordered lists.
+ */
 const TableOfContentsElement = ({ currentElement, numerateChapters }) => {
-    const objectNames = useSelector(state => {
-        const getElementObjectNames = element => {
-            const { objectID } = element;
-            result[objectID] = (state.objects[objectID] || {}).object_name;
-            if (element.childElements) element.childElements.forEach(child => getElementObjectNames(child));
-        };
+    const { objectID, chapter } = currentElement;
 
-        const result = {};
-        getElementObjectNames(currentElement);
-        return result;
-    });
-
-    const currentElementText = objectNames[currentElement.objectID];
+    // Get element text (object name)
+    const currentElementText = useSelector(state => (state.objects[objectID] || {}).object_name);
     const currentElementLink = currentElementText 
         ? <Link to={currentElement.URL}>{currentElementText}</Link>
         : "<Object is unavailable>";
     
+    // Generate nested list
+
     let nestedList = null;
     if (currentElement.childElements) {
         nestedList = (
@@ -76,8 +71,12 @@ const TableOfContentsElement = ({ currentElement, numerateChapters }) => {
         );
     }
 
+    // List item style (values are stored in data attributes of the tag to be accessed in the CSS rules for :before pseudoclass)
+    let dataContent = numerateChapters ? chapter + "." : "";
+
+    // Return current and nested elements
     return (
-        <li>
+        <li data-content={dataContent}>
             {currentElementLink}
             {nestedList}
         </li>
@@ -85,9 +84,11 @@ const TableOfContentsElement = ({ currentElement, numerateChapters }) => {
 };
 
 
-const ListTag = ({ numerateChapters, style, children }) => {
+/**
+ * Wraps its children with an appropriate HTML tag (<ol> or <ul>).
+ */
+const ListTag = ({ numerateChapters, children }) => {
     return numerateChapters
-        ? <ol style={style}>{children}</ol>
+        ? <ol>{children}</ol>
         : <ul>{children}</ul>;
 };
-

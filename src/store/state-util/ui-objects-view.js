@@ -32,7 +32,7 @@ import { getSingleColumnSubobjectDisplayOrder } from "./composite";
             const numerateChapters = (compositeDataStorage[elementObjectID] || {}).numerate_chapters;
             const isLeaf = objectType !== "composite" || displayMode !== enumCompositeObjectDisplayModes.chapters.value || currentDepth > config.compositeChapters.maxHierarchyDepth;
 
-            const element = { objectID: elementObjectID, parentElement, chapter, chapterSuffix, URL: elementURL, numerateChapters };
+            const element = { objectID: elementObjectID, parentElement, depthLevel: currentDepth, chapter, chapterSuffix, URL: elementURL, numerateChapters };
             element.childElements = isLeaf ? null 
                 : getSingleColumnSubobjectDisplayOrder(compositeDataStorage[elementObjectID])
                     .map((subobjectID, i) => getHierarchy(currentDepth + 1, subobjectID, element, chapter, i + 1));
@@ -40,7 +40,7 @@ import { getSingleColumnSubobjectDisplayOrder } from "./composite";
         };
 
         // return { objectID, elements: getHierarchy(2, objectID) };
-        return getHierarchy(2, objectID, null, "", "");
+        return getHierarchy(1, objectID, null, "", "");
     }
 );
 

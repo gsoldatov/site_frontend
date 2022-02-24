@@ -66,3 +66,14 @@
     /* Enable word break for long words */
     word-break: break-word;
 }
+
+.composite-chapters-table-of-contents ol {
+    list-style-type: none;
+}
+
+.composite-chapters-table-of-contents ol > li:before {
+    margin-right: 0.25em;
+
+    /* Display dot-separated values of current and above level counters */
+    content: attr(data-content);
+}
