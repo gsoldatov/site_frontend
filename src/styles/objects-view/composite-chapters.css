@@ -44,12 +44,16 @@
     justify-content: space-between;
 }
 
+.composite-chapters-hierarchy-navigation-left-right-container > *:not(:last-child) {
+    margin-right: 1rem;
+}
+
 .composite-chapters-hierarchy-navigation-left-right-item {
     /* Add space between lines */
     line-height: var(--composite-chapters-navigation-element-line-height);
 
     /* Limit height of left and right items */
-    max-height: calc(2 * var(--composite-chapters-navigation-element-line-height));
+    /* max-height: calc(2 * var(--composite-chapters-navigation-element-line-height)); */
     overflow: hidden;
     text-overflow: ellipsis;
 }
