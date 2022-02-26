@@ -17,11 +17,11 @@ export const Header_ = ({ objectID, headerProps = {} }) => {
     const displayViewButton = headerProps.displayViewButton !== undefined ? headerProps.displayViewButton : true;
 
     // Header prefix text <span>
-    const headerPrefix = headerProps.prefixText && <span>{headerProps.prefixText}</span>;
+    const headerPrefix = headerProps.prefixText && <span className="objects-view-header-prefix">{headerProps.prefixText}</span>;
 
     // Header text <span>
     const text = useSelector(state => (state.objects[objectID] || {}).object_name);
-    const headerText = <span>{text}</span>;
+    const headerText = <span className="objects-view-header-text">{text}</span>;
 
     // Edit button
     const renderEditButton = useSelector(state => displayEditButton && (state.auth.numeric_user_level === enumUserLevels.admin || state.auth.user_id === (state.objects[objectID] || {}).owner_id));

@@ -14,7 +14,7 @@ export const getObjectsViewCardElements = ({ container, card }) => {
         },
         attributes: {
             timestamp: { element: null, },
-            header: { header: null, editButton: null, viewButton: null },
+            header: { headerPrefix: null, headerText: null, editButton: null, viewButton: null },
             objectIsEdited: { element: null },
             description: {element: null }
         },
@@ -72,9 +72,10 @@ export const getObjectsViewCardElements = ({ container, card }) => {
             result.attributes.timestamp.element = attributesContainer.querySelector(".objects-view-timestamp")
 
             // Header element and text, view & edit buttons
-            const headerContainer = attributesContainer.querySelector(".object-view-header-container");
+            const headerContainer = attributesContainer.querySelector(".objects-view-header-container");
             if (headerContainer) {
-                result.attributes.header.header = headerContainer.querySelector(".header");
+                result.attributes.header.headerPrefix = headerContainer.querySelector(".header > .objects-view-header-prefix");
+                result.attributes.header.headerText = headerContainer.querySelector(".header > .objects-view-header-text");
                 result.attributes.header.editButton = queryByTitle(headerContainer, "Edit object");
                 result.attributes.header.viewButton = queryByTitle(headerContainer, "View object");
             }
@@ -107,16 +108,16 @@ export const getObjectsViewCardElements = ({ container, card }) => {
 
             // Composite, basic display mode
             if (dataContainer.classList.contains("composite-basic"))
-                result.data.compositeBasic.subobjectCards = dataContainer.querySelectorAll(".objects-view-card-container.subobject");
+                result.data.compositeBasic.subobjectCards = dataContainer.querySelectorAll(".objects-view-card-container");
             
             // Composite, grouped_links display mode
             if (dataContainer.classList.contains("composite-grouped-links")) {
                 result.data.compositeGroupedLinks.placeholders.loading = [...dataContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("loader"))[0];
                 result.data.compositeGroupedLinks.placeholders.fetchError =  [...dataContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("message") && n.classList.contains("error"))[0];
 
-                result.data.compositeGroupedLinks.subobjectCards = [...dataContainer.querySelectorAll(".objects-view-card-container.subobject:not(.link-card)")];
+                result.data.compositeGroupedLinks.subobjectCards = [...dataContainer.querySelectorAll(".objects-view-card-container:not(.link-card)")];
 
-                const linkCard = dataContainer.querySelector(".objects-view-card-container.subobject.link-card");
+                const linkCard = dataContainer.querySelector(".objects-view-card-container.link-card");
                 if (linkCard) {
                     result.data.compositeGroupedLinks.linksCard.header = linkCard.querySelector("h2");
 

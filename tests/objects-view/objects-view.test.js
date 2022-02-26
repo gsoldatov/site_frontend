@@ -82,7 +82,7 @@ describe("Main object attributes & tags", () => {
 
         // Check if header is displayed
         const cardElements = getObjectsViewCardElements({ container });
-        expect(cardElements.attributes.header.header.textContent).toEqual(store.getState().objects[1].object_name);
+        expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[1].object_name);
 
         // Check if view button is not displayed
         expect(cardElements.attributes.header.viewButton).toBeFalsy();
@@ -103,7 +103,7 @@ describe("Main object attributes & tags", () => {
 
         // Check if header is displayed
         const cardElements = getObjectsViewCardElements({ container });
-        expect(cardElements.attributes.header.header.textContent).toEqual(store.getState().objects[1].object_name);
+        expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[1].object_name);
 
         // Check if view and edit buttons are not displayed
         expect(cardElements.attributes.header.viewButton).toBeFalsy();
@@ -353,7 +353,7 @@ describe("Composite object data, basic display mode", () => {
             const cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
 
             // Check if header is displayed
-            expect(cardElements.attributes.header.header.textContent).toEqual(store.getState().objects[cardElements.objectID].object_name);
+            expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[cardElements.objectID].object_name);
 
             // Check if edit button is displayed and working
             fireEvent.click(cardElements.attributes.header.editButton);
@@ -374,7 +374,7 @@ describe("Composite object data, basic display mode", () => {
             const cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
 
             // Check if header is displayed
-            expect(cardElements.attributes.header.header.textContent).toEqual(store.getState().objects[cardElements.objectID].object_name);
+            expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[cardElements.objectID].object_name);
 
             // Check if view button is displayed and working
             fireEvent.click(cardElements.attributes.header.viewButton);
@@ -402,7 +402,7 @@ describe("Composite object data, basic display mode", () => {
             cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
 
             // Check if header is displayed
-            expect(cardElements.attributes.header.header.textContent).toEqual(store.getState().objects[cardElements.objectID].object_name);
+            expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[cardElements.objectID].object_name);
 
             // Check if edit buttons is not displayed
             expect(cardElements.attributes.header.editButton).toBeFalsy();
@@ -894,7 +894,7 @@ describe("Composite object data, multicolumn display mode", () => {
             const cardElements = getObjectsViewCardElements({ card: subobjectCard });
             expect(cardElements.placeholders.loading).toBeFalsy();
             const subobjectID = cardElements.objectID;
-            expect(cardElements.attributes.header.header.textContent).toEqual(store.getState().objects[subobjectID].object_name);
+            expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[subobjectID].object_name);
         });
     });
 
@@ -913,7 +913,7 @@ describe("Composite object data, multicolumn display mode", () => {
                     const cardElements = getObjectsViewCardElements({ card });
                     expect(cardElements.placeholders.loading).toBeFalsy();
                     const subobjectID = cardElements.objectID;
-                    expect(cardElements.attributes.header.header.textContent).toEqual(store.getState().objects[subobjectID].object_name);
+                    expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[subobjectID].object_name);
                 });
             });
 
