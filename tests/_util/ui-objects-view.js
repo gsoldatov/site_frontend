@@ -45,6 +45,22 @@ export const getObjectsViewCardElements = ({ container, card }) => {
 
             compositeMulticolumn: { subobjectCards: [] },
 
+            compositeChapters: {
+                hierarchyNavigationContainer: null,
+                tableOfContents: {
+                    attributes: {
+                        timestamp: { element: null, },
+                        header: { headerPrefix: null, headerText: null, editButton: null, viewButton: null },
+                        objectIsEdited: { element: null },
+                        description: {element: null }
+                    },
+                    contents: null
+                },
+                chapterObject: {
+                    objectCard: null
+                }
+            },
+
             compositeSubobjectBasic: { linkToViewPage: null }
         },
         tags: {
@@ -65,27 +81,7 @@ export const getObjectsViewCardElements = ({ container, card }) => {
         result.placeholders.fetchError =  [...card.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("message") && n.classList.contains("error"))[0];
 
         /* Object attributes */
-        const attributesContainer = [...card.childNodes].filter(n => n.classList.contains("objects-view-attributes"))[0];
-
-        if (attributesContainer) {
-            // Timestamp elements and value
-            result.attributes.timestamp.element = attributesContainer.querySelector(".objects-view-timestamp")
-
-            // Header element and text, view & edit buttons
-            const headerContainer = attributesContainer.querySelector(".objects-view-header-container");
-            if (headerContainer) {
-                result.attributes.header.headerPrefix = headerContainer.querySelector(".header > .objects-view-header-prefix");
-                result.attributes.header.headerText = headerContainer.querySelector(".header > .objects-view-header-text");
-                result.attributes.header.editButton = queryByTitle(headerContainer, "Edit object");
-                result.attributes.header.viewButton = queryByTitle(headerContainer, "View object");
-            }
-
-            // Object is edited message
-            result.attributes.objectIsEdited.element = attributesContainer.querySelector(".objects-view-object-is-edited-container");
-
-            // Description
-            result.attributes.description.element = attributesContainer.querySelector(".objects-view-description");        
-        }
+        result.attributes = getAttributes(card);
         
         /* Object data */
         const dataContainer = [...card.childNodes].filter(n => n.classList.contains("objects-view-data"))[0];
@@ -141,6 +137,19 @@ export const getObjectsViewCardElements = ({ container, card }) => {
                     result.data.compositeMulticolumn.subobjectCards.push(columnSubobjectCards);
                 });
             }
+
+            // Composite, chapters display mode
+            if (dataContainer.classList.contains("composite-chapters")) {
+                // Hierarchy navigation
+                result.data.compositeChapters.hierarchyNavigationContainer = dataContainer.querySelector(".composite-chapters-hierarchy-navigation-container");
+
+                // Table of contents
+                result.data.compositeChapters.tableOfContents.attributes = getAttributes(dataContainer);
+                result.data.compositeChapters.tableOfContents.contents = null; // TODO get hierarchy in a separate function
+
+                // Chapter object
+                result.data.compositeChapters.chapterObject.objectCard = [...dataContainer.childNodes].filter(n => n.classList.contains("objects-view-card-container"))[0];
+            }
                 
             // Composite subobject in basic display mode
             if (dataContainer.classList.contains("composite-subobject"))
@@ -160,4 +169,49 @@ export const getObjectsViewCardElements = ({ container, card }) => {
     }    
 
     return result;
+};
+
+
+/**
+ * Returns object attributes inside the provided `card`.
+ */
+const getAttributes = card => {
+    const result = {
+        timestamp: { element: null, },
+        header: { headerPrefix: null, headerText: null, editButton: null, viewButton: null },
+        objectIsEdited: { element: null },
+        description: {element: null }
+    };
+
+    const attributesContainer = [...card.childNodes].filter(n => n.classList.contains("objects-view-attributes"))[0];
+
+    if (attributesContainer) {
+        // Timestamp elements and value
+        result.timestamp.element = attributesContainer.querySelector(".objects-view-timestamp")
+
+        // Header element and text, view & edit buttons
+        const headerContainer = attributesContainer.querySelector(".objects-view-header-container");
+        if (headerContainer) {
+            result.header.headerPrefix = headerContainer.querySelector(".header > .objects-view-header-prefix");
+            result.header.headerText = headerContainer.querySelector(".header > .objects-view-header-text");
+            result.header.editButton = queryByTitle(headerContainer, "Edit object");
+            result.header.viewButton = queryByTitle(headerContainer, "View object");
+        }
+
+        // Object is edited message
+        result.objectIsEdited.element = attributesContainer.querySelector(".objects-view-object-is-edited-container");
+
+        // Description
+        result.description.element = attributesContainer.querySelector(".objects-view-description");        
+    }
+
+    return result;
+};
+
+
+/**
+ * Returns the table of contents list hierarchy inside the provided `dataContainer`.
+ */
+const getTableOfContents = dataContainer => {
+    // TODO
 };

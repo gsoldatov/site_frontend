@@ -1,0 +1,130 @@
+import React from "react";
+
+import { fireEvent } from "@testing-library/react";
+import { getByPlaceholderText, waitFor } from "@testing-library/dom";
+
+import { createTestStore } from "../../_util/create-test-store";
+import { renderWithWrappers } from "../../_util/render";
+import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
+
+import { addObjectData } from "../../../src/actions/data-objects";
+
+import { App } from "../../../src/components/top-level/app";
+
+
+/*
+    /objects/view/:id page tests, non-composite object data.
+*/
+beforeEach(() => {
+    // isolate fetch mock to avoid tests state collision because of cached data in fetch
+    jest.isolateModules(() => {
+        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../../_mocks/mock-fetch");
+        // reset fetch mocks
+        jest.resetAllMocks();
+        global.fetch = jest.fn(mockFetch);
+        global.setFetchFail = jest.fn(setFetchFail);
+        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
+    });
+});
+
+
+test("Link", async () => {
+    let { container, store } = renderWithWrappers(<App />, {
+        route: "/objects/view/1"
+    });
+
+    // Wait for the page to load
+    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
+
+    // !show_description_as_link
+    expect(store.getState().links[1].show_description_as_link).toBeFalsy();
+    
+    const linkURL = store.getState().links[1].link;
+    let linkElement = getObjectsViewCardElements({ container }).data.link.element;
+    expect(linkElement.textContent).toEqual(linkURL);
+    expect(linkElement.href).toEqual(linkURL + (linkURL.endsWith("/") ? "" : "/"));        // href prop adds a slash at the end
+
+    // !show_description && show_description_as_link
+    let linkData = { ...store.getState().links[1], show_description_as_link: true };
+    store.dispatch(addObjectData([{ object_id: 1, object_type: "link", object_data: linkData }]));
+
+    expect(linkElement.textContent).toEqual(store.getState().objects[1].object_description);
+    expect(linkElement.href).toEqual(linkURL + (linkURL.endsWith("/") ? "" : "/"));        // href prop adds a slash at the end
+});
+
+
+test("Markdown", async () => {
+    let { container, store } = renderWithWrappers(<App />, {
+        route: "/objects/view/1001"
+    });
+
+    // Wait for the page to load
+    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
+
+    // Change markdown raw_text
+    store.dispatch(addObjectData([{ object_id: 1001, object_type: "markdown", object_data: { raw_text: "# Some text" }}]));
+
+    // Check if updated markdown is rendered
+    await waitFor(() => {
+        const markdownContainer = getObjectsViewCardElements({ container }).data.markdown.container;
+        expect(markdownContainer).toBeTruthy();
+
+        const renrederedHeader = markdownContainer.querySelector("h3");
+        expect(renrederedHeader).toBeTruthy();
+        expect(renrederedHeader.textContent).toEqual("Some text");
+    });
+});
+
+
+test("To-do list (logged as admin)", async () => {
+    let { container, store } = renderWithWrappers(<App />, {
+        route: "/objects/view/2001"
+    });
+
+    // Wait for the page to load
+    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
+
+    // Check if "readonly" message is not displayed
+    expect(getObjectsViewCardElements({ container }).data.toDoList.isReadOnlyMessage).toBeFalsy();
+
+    // Add a new item and check if it was saved
+    const TDLContainer = getObjectsViewCardElements({ container }).data.toDoList.container;
+    expect(Object.keys(store.getState().toDoLists[2001].items).length).toEqual(8);      // 8 items are returned by default
+    const newItemInput = getByPlaceholderText(TDLContainer, "New item");
+    fireEvent.input(newItemInput, { target: { innerHTML: "added item" }});
+    
+    await waitFor(() => expect(Object.keys(store.getState().toDoLists[2001].items).length).toEqual(9));
+    expect(store.getState().toDoLists[2001].items[8].item_text).toEqual("added item");
+
+    // Add a new item with fetch error and check if an error message is displayed
+    setFetchFail(true);
+    fireEvent.input(newItemInput, { target: { innerHTML: "second added item" }});
+    await waitFor(() => expect(getObjectsViewCardElements({ container }).data.toDoList.fetchError).toBeTruthy());
+    expect(Object.keys(store.getState().toDoLists[2001].items).length).toEqual(9);
+});
+
+
+test("To-do list (anonymous)", async () => {
+    const store = createTestStore({ addAdminToken: false });
+    let { container } = renderWithWrappers(<App />, {
+        route: "/objects/view/2001", store
+    });
+
+    // Wait for the page to load
+    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
+
+    // Check if "readonly" message is displayed
+    expect(getObjectsViewCardElements({ container }).data.toDoList.isReadOnlyMessage).toBeTruthy();
+
+    // Add a new item and check if it was not saved
+    const TDLContainer = getObjectsViewCardElements({ container }).data.toDoList.container;
+    expect(Object.keys(store.getState().toDoLists[2001].items).length).toEqual(8);      // 8 items are returned by default
+    const newItemInput = getByPlaceholderText(TDLContainer, "New item");
+    fireEvent.input(newItemInput, { target: { innerHTML: "added item" }});
+
+    try {
+        await waitFor(() => expect(Object.keys(store.getState().toDoLists[2001].items).length).toEqual(9));
+        throw Error("To-do list was updated in anonymous mode");
+    } catch (e) {}
+    expect(Object.keys(store.getState().toDoLists[2001].items).length).toEqual(8);
+});

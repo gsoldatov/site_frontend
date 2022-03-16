@@ -148,11 +148,16 @@ export const getObjectDisplayControls = container => {
             selected: switchContainer.querySelector("div.divider"),
             options: {
                 basic: (queryByText(switchContainer.querySelector(".menu.transition"), "Basic") || {}).parentNode,
-                grouped_links: (queryByText(switchContainer.querySelector(".menu.transition"), "Grouped Links") || {}).parentNode
+                grouped_links: (queryByText(switchContainer.querySelector(".menu.transition"), "Grouped Links") || {}).parentNode,
+                multicolumn: (queryByText(switchContainer.querySelector(".menu.transition"), "Multicolumn") || {}).parentNode,
+                chapters: (queryByText(switchContainer.querySelector(".menu.transition"), "Chapters") || {}).parentNode
             }
         };
     }
     else result.displayMode = { selected: undefined, options: {}};
+
+    const numerateChaptersTooltip = queryByText(displayTabContainer, "Numerate Chapters");
+    if (numerateChaptersTooltip) result.numerateChapters = numerateChaptersTooltip.parentNode.querySelector("input");
 
     // Subobject card only
     const showDescriptionCompositeTooltip = queryByText(displayTabContainer, "Show Description in Parent Object");
@@ -240,6 +245,14 @@ export const clickShowDescriptionAsLinkCheckbox = container => {
     fireEvent.click(checkbox);
 };
 
+
+/**
+ * Clicks on 'Numerate Chapters' checkbox
+ */
+ export const clickNumerateChaptersCheckbox = container => {
+    const checkbox = getObjectDisplayControls(container).numerateChapters;
+    fireEvent.click(checkbox);
+};
 
 /**
  * Sets attributes and object data on the /objects/edit/:id page (and, optionally sets provided `objectType`) required for adding/updating object data.

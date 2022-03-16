@@ -288,6 +288,9 @@ export const getCompositeByObjectID = (objectID, overrideValues) => {
         case "3907": return compositeWithGroupedLinksDisplayMode;
         case "3908": return compositeWithGroupedLinksDisplayModeAndNoLinkSubobjects;
         case "3909": return compositeMulticolumnDisplayMode;
+        case "3910": return compositeChaptersRoot;
+        case "3911": return compositeChaptersLevelOneSubroot;
+        case "3912": return compositeChaptersLevelTwoSubroot;
         default: return generateCompositeObjectData(objectID, overrideValues);     // a single link subobject
     }
 };
@@ -387,13 +390,13 @@ const compositeWithFourColumns = generateCompositeObjectData(undefined, {
 
 export const compositeWithGroupedLinksDisplayMode = generateCompositeObjectData(undefined, {
     subobjects: [
-        generateCompositeSubobject(1, 0, 0),
-        generateCompositeSubobject(1001, 0, 1),
-        generateCompositeSubobject(2001, 0, 2),
-        generateCompositeSubobject(3001, 1, 0),
-        generateCompositeSubobject(2, 1, 1),
-        generateCompositeSubobject(1002, 1, 2),
-        generateCompositeSubobject(3, 2, 0)
+        generateCompositeSubobject(201, 0, 0),
+        generateCompositeSubobject(1201, 0, 1),
+        generateCompositeSubobject(2201, 0, 2),
+        generateCompositeSubobject(3201, 1, 0),
+        generateCompositeSubobject(202, 1, 1),
+        generateCompositeSubobject(1202, 1, 2),
+        generateCompositeSubobject(203, 2, 0)
     ],
     display_mode: "grouped_links"
 });
@@ -401,9 +404,9 @@ export const compositeWithGroupedLinksDisplayMode = generateCompositeObjectData(
 
 export const compositeWithGroupedLinksDisplayModeAndNoLinkSubobjects = generateCompositeObjectData(undefined, {
     subobjects: [
-        generateCompositeSubobject(1001, 0, 1),
-        generateCompositeSubobject(2001, 0, 2),
-        generateCompositeSubobject(3001, 1, 0)
+        generateCompositeSubobject(1201, 0, 1),
+        generateCompositeSubobject(2201, 0, 2),
+        generateCompositeSubobject(3201, 1, 0)
     ],
     display_mode: "grouped_links"
 });
@@ -411,16 +414,65 @@ export const compositeWithGroupedLinksDisplayModeAndNoLinkSubobjects = generateC
 
 export const compositeMulticolumnDisplayMode = generateCompositeObjectData(undefined, {
     subobjects: [
-        generateCompositeSubobject(101, 0, 0),
-        generateCompositeSubobject(1101, 0, 1),
-        generateCompositeSubobject(2101, 0, 2),
-        generateCompositeSubobject(3101, 0, 3),
-        generateCompositeSubobject(102, 1, 0),
-        generateCompositeSubobject(1102, 1, 1),
-        generateCompositeSubobject(2102, 1, 2),
-        generateCompositeSubobject(103, 2, 0),
-        generateCompositeSubobject(1103, 2, 1),
-        generateCompositeSubobject(104, 3, 0)
+        generateCompositeSubobject(301, 0, 0),
+        generateCompositeSubobject(1301, 0, 1),
+        generateCompositeSubobject(2301, 0, 2),
+
+        generateCompositeSubobject(3301, 0, 3),
+        generateCompositeSubobject(302, 1, 0),
+        generateCompositeSubobject(1302, 1, 1),
+        generateCompositeSubobject(2302, 1, 2),
+        generateCompositeSubobject(303, 2, 0),
+        generateCompositeSubobject(1303, 2, 1),
+        generateCompositeSubobject(304, 3, 0)
     ],
     display_mode: "multicolumn"
+});
+
+
+/**
+ * - composite chapters root:
+ *     - link, markdown, to-do list;
+ *     - composite basic:
+ *          - link, markdown, to-do list;
+ *          - composite basic:
+ *              - link;
+ *     - composite grouped links;
+ *     - composite multicolumn;
+ *     - composite chapters:
+ *          - link;
+ *          - composite chapters:
+ *              - link;
+ */
+export const compositeChaptersRoot = generateCompositeObjectData(undefined, {
+    subobjects: [
+        generateCompositeSubobject(401, 0, 0),      // non-composite
+        generateCompositeSubobject(1401, 0, 1),
+        generateCompositeSubobject(2401, 0, 2),
+        
+        generateCompositeSubobject(3901, 0, 3),     // composite basic with link, markdown, to-do list & composite basic subobjects
+
+        generateCompositeSubobject(3907, 0, 4),     // composite grouped_links
+
+        generateCompositeSubobject(3909, 1, 1),     // composite multicolumn
+        generateCompositeSubobject(3911, 1, 2)      // composite chapters
+    ],
+    display_mode: "chapters"
+});
+
+
+export const compositeChaptersLevelOneSubroot = generateCompositeObjectData(undefined, {
+    subobjects: [
+        generateCompositeSubobject(411, 0, 0),  // link
+        generateCompositeSubobject(3912, 0, 1)  // 2nd level subroot
+    ],
+    display_mode: "chapters"
+});
+
+
+export const compositeChaptersLevelTwoSubroot = generateCompositeObjectData(undefined, {
+    subobjects: [
+        generateCompositeSubobject(421, 0, 0)  // link
+    ],
+    display_mode: "chapters"
 });
