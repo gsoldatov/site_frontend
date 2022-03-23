@@ -39,16 +39,16 @@
 }
 
 /* Navigation controls, left & right */
-.composite-chapters-hierarchy-navigation-left-right-container {
+.composite-chapters-hierarchy-navigation-prev-next-container {
     display: flex;
     justify-content: space-between;
 }
 
-.composite-chapters-hierarchy-navigation-left-right-container > *:not(:last-child) {
+.composite-chapters-hierarchy-navigation-prev-next-container > *:not(:last-child) {
     margin-right: 1rem;
 }
 
-.composite-chapters-hierarchy-navigation-left-right-item {
+.composite-chapters-hierarchy-navigation-prev-next-item {
     /* Add space between lines */
     line-height: var(--composite-chapters-navigation-element-line-height);
 

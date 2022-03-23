@@ -76,7 +76,7 @@ const TableOfContentsElement = ({ currentElement, numerateChapters }) => {
 
     // Return current and nested elements
     return (
-        <li data-content={dataContent}>
+        <li data-content={dataContent} data-object-id={objectID}>
             {currentElementLink}
             {nestedList}
         </li>

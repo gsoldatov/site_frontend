@@ -1,4 +1,4 @@
-import config from "../config";
+import { config } from "../config";
 
 import { getResponseErrorType } from "./common";
 import { updateObjectFetch, viewCompositeHierarchyElementsFetch, viewObjectsFetch } from "./data-objects";

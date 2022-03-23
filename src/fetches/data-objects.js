@@ -1,4 +1,4 @@
-import config from "../config";
+import { config } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { enumResponseErrorType } from "../util/enum-response-error-type";

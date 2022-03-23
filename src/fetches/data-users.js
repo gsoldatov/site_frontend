@@ -1,4 +1,4 @@
-import config from "../config";
+import { config } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { addUsers, updateUser } from "../actions/data-users";

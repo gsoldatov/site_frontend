@@ -1,4 +1,4 @@
-import config from "../../src/config";
+import { config } from "../../src/config";
 import { resetTagsCache, tagsHandlersList } from "./mock-fetch-handlers-tags";
 import { resetObjectsCaches, objectsHandlersList } from "./mock-fetch-handlers-objects";
 import { authHandlersList } from "./mock-fetch-handlers-auth";
@@ -71,7 +71,7 @@ export const setFetchFail = (iff = false) => {
  * If multiple responses are added for the same `URL` & `method`, the last one will be used first.
  * 
  * Expects one of the following argument sets:
- * 1) `generator` - a function which accepts request body and returns an object with `status` and, optionally, `body` properties;
+ * 1) `generator` - a function which accepts request `body` and default mock route `handler` and returns an object with `status` and, optionally, `body` properties;
  *     if `generator` response does not contain `status` or is not an object, next or default response is used instead;
  * 2) `status` and, optionally `body` arguments to be returned by the mock.
  */
@@ -102,7 +102,8 @@ const getCustomRouteResponse = (URL, method, body) => {
                 if (typeof(r.generator) !== "function") throw Error("Generator must be a function.");
 
                 // Return a valid response object, if it was returned by the generator.
-                const result = r.generator(body);
+                const handler = getHandler(URL, method);
+                const result = r.generator(body, handler);
                 if (typeof(result) === "object" && result !== null && "status" in result) return result;
             }
             else {

@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import config from "../../config";
+import { config } from "../../config";
 
 import { enumCompositeObjectDisplayModes } from "../../util/enum-composite-object-display-modes";
 import { enumShowDescriptionComposite } from "../state-templates/composite-subobjects";

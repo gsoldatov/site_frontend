@@ -273,8 +273,35 @@ export const getMappedSubobjectID = (subobjectID, subobjectType) => {
 
 
 /**
+ * Returns composite & non composite object IDs in the composite hierarchy for the provided `objectID`.
+ */
+export const getMockCompositeHierarchyElements = objectID => {
+    const strObjectID = objectID.toString();
+    switch (strObjectID) {
+        // return {"composite": list(all_composite), "non_composite": list(all_non_composite)}
+        case "3910": return { 
+            composite: [/* 3910 */ 3910, 3901, 3907, 3909, 3911, 3912,
+            /* 3901 */ 3101,
+            /* 3907 */ 3201,
+            /* 3909 */ 3301
+        ], non_composite: [
+                /* 3910, 3911, 3912 */ 401, 1401, 2401,
+                /* 3901, 3101 */ 101, 1101, 2101, 3101,
+                /* 3907 */ 201, 1201, 2201, 202, 1202, 203,
+                /* 3909 */ 301, 1301, 2301, 302, 1302, 2302, 303, 1303, 304,
+                /* 3911 */ 411, 
+                /* 3912 */ 421
+        ]};
+        default: throw(`getMockCompositeHierarchyElements received an unexpected objectID: ${objectID}`);
+    }
+};
+
+
+/**
  * Returns a mock to-do list object data based on the provided `objectID`.
  * If `overrideValues` is passed and default object data is returned, the returned attribute value are overriden with provided via this param.
+ * 
+ * NOTE: `getMockCompositeHierarchyElements` should be updated when custom composite objects are updated.
 */
 export const getCompositeByObjectID = (objectID, overrideValues) => {
     const strID = objectID.toString();
@@ -454,8 +481,8 @@ export const compositeChaptersRoot = generateCompositeObjectData(undefined, {
 
         generateCompositeSubobject(3907, 0, 4),     // composite grouped_links
 
-        generateCompositeSubobject(3909, 1, 1),     // composite multicolumn
-        generateCompositeSubobject(3911, 1, 2)      // composite chapters
+        generateCompositeSubobject(3909, 1, 0),     // composite multicolumn
+        generateCompositeSubobject(3911, 1, 1)      // composite chapters
     ],
     display_mode: "chapters"
 });

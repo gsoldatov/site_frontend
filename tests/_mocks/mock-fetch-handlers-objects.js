@@ -1,6 +1,6 @@
 import { autoGenerateTag } from "./mock-fetch-handlers-tags";
 import { getObjectTypeFromID, generateObjectData, generateObjectAttributes } from "./data-objects";
-import { mapAndCacheNewSubobjects } from "./data-composite";
+import { getMockCompositeHierarchyElements, mapAndCacheNewSubobjects } from "./data-composite";
 
 export let _cachedObjects = {};      // object & object data caches, which are used to pass object data from add/update to view handler
 export let _cachedObjectData = {};
@@ -299,6 +299,12 @@ function handleObjectsSearch(body) {
 }
 
 
+function handlerViewCompositeHierarchyElements(body) {
+    const { object_id } = JSON.parse(body);
+    return { status: 200, body: getMockCompositeHierarchyElements(object_id) };
+}
+
+
 export const objectsHandlersList = new Map([
     ["/objects/add", {"POST": handleAdd}],
     ["/objects/view", {"POST": handleView}],
@@ -306,5 +312,6 @@ export const objectsHandlersList = new Map([
     ["/objects/update", {"PUT": handleUpdate}],
     ["/objects/get_page_object_ids", {"POST": handleGetPageObjectIDs}],
     ["/objects/update_tags", {"PUT": handleUpdateTags}],
-    ["/objects/search", {"POST": handleObjectsSearch}]
+    ["/objects/search", {"POST": handleObjectsSearch}],
+    ["/objects/view_composite_hierarchy_elements", {"POST": handlerViewCompositeHierarchyElements}]
 ]);

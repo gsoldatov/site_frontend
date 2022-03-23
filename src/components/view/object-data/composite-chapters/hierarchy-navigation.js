@@ -87,9 +87,9 @@ const PreviousNext = ({ hierarchyElements }) => {
     // Parent, previous & next controls
     const elementControls = {};
     for (let [elementName, iconName, iconPosition] of [
-        ["previous", "long arrow alternate left", "left"], 
+        ["previous", "long arrow alternate left", "prev"], 
         // ["parent", "long arrow alternate up", "left"], 
-        ["next", "long arrow alternate right", "right"]]
+        ["next", "long arrow alternate right", "next"]]
     ) {
         const element = hierarchyElements[elementName];
         const objectName = useSelector(state => element ? state.objects[element.objectID].object_name : undefined);
@@ -106,20 +106,22 @@ const PreviousNext = ({ hierarchyElements }) => {
     }
 
     return (
-        <div className="composite-chapters-hierarchy-navigation-left-right-container">
+        <div className="composite-chapters-hierarchy-navigation-prev-next-container">
             {
                 Object.keys(elementControls).map((k, i) => {
-                    if (!elementControls[k]) return <div key={i} className="composite-chapters-hierarchy-navigation-left-right-item" />
+                    let className = "composite-chapters-hierarchy-navigation-prev-next-item";
+                    if (!elementControls[k]) return <div key={i} className={className} />;
 
                     const { URL, controlText, title, iconName, iconPosition } = elementControls[k];
                     const icon = <Icon name={iconName} />;
+                    className += " " + iconPosition;
                     return (
-                        <div key={i} className="composite-chapters-hierarchy-navigation-left-right-item">
-                            {iconPosition === "left" && icon}
+                        <div key={i} className={className}>
+                            {iconPosition === "prev" && icon}
                             <Link to={URL} title={title}>
                                 {controlText}
                             </Link>
-                            {iconPosition === "right" && icon}
+                            {iconPosition === "next" && icon}
                         </div>
                     );
                 })
@@ -135,11 +137,11 @@ const PreviousNext = ({ hierarchyElements }) => {
 const ObjectNameWithChapter = ({ element, objectName, numerateChapters }) => {
     // Chapter prefix
     const prefix = numerateChapters && element.chapter.length > 0 && (
-        <span>{element.chapter + "."}</span>
+        <span className="composite-chapters-hierarchy-navigation-chapter-number">{element.chapter + "."}</span>
     );
 
     // Object name
-    const name = <span>{objectName}</span>;
+    const name = <span className="composite-chapters-hierarchy-navigation-chapter-name">{objectName}</span>;
 
     // Full text
     return (

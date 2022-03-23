@@ -1,4 +1,10 @@
-import { queryByTitle } from "@testing-library/dom";
+import React from "react";
+
+import { waitFor, fireEvent, queryByTitle } from "@testing-library/dom";
+
+import { renderWithWrappers } from "./render";
+
+import { App } from "../../src/components/top-level/app";
 
 
 /**
@@ -46,7 +52,17 @@ export const getObjectsViewCardElements = ({ container, card }) => {
             compositeMulticolumn: { subobjectCards: [] },
 
             compositeChapters: {
-                hierarchyNavigationContainer: null,
+                placeholders: {
+                    loading: null,
+                    fetchError: null
+                },
+                
+                hierarchyNavigation: {
+                    breadcrumbSections: null,
+                    prev: { link: null, chapterNumber: null, chapterName: null },
+                    next: { link: null, chapterNumber: null, chapterName: null }
+                },
+
                 tableOfContents: {
                     attributes: {
                         timestamp: { element: null, },
@@ -54,7 +70,7 @@ export const getObjectsViewCardElements = ({ container, card }) => {
                         objectIsEdited: { element: null },
                         description: {element: null }
                     },
-                    contents: null
+                    container: null
                 },
                 chapterObject: {
                     objectCard: null
@@ -140,12 +156,42 @@ export const getObjectsViewCardElements = ({ container, card }) => {
 
             // Composite, chapters display mode
             if (dataContainer.classList.contains("composite-chapters")) {
+                // Placeholders
+                result.data.compositeChapters.placeholders.loading = [...dataContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("loader"))[0];
+                result.data.compositeChapters.placeholders.fetchError =  [...dataContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("message") && n.classList.contains("error"))[0];
+
                 // Hierarchy navigation
-                result.data.compositeChapters.hierarchyNavigationContainer = dataContainer.querySelector(".composite-chapters-hierarchy-navigation-container");
+                const hierarchyNavigationContainer = dataContainer.querySelector(".composite-chapters-hierarchy-navigation-container");
+                if (hierarchyNavigationContainer) {
+                    const breadcrumb = hierarchyNavigationContainer.querySelector(".composite-chapters-hierarchy-navigation-breadcrumb");
+                    if (breadcrumb) {
+                        const sections = [...breadcrumb.querySelectorAll("div.section")];
+                        result.data.compositeChapters.hierarchyNavigation.breadcrumbSections = sections.map(s => {
+                            const link = s.querySelector("a");
+                            const chapterNumber = s.querySelector(".composite-chapters-hierarchy-navigation-chapter-number");
+                            const chapterName = s.querySelector(".composite-chapters-hierarchy-navigation-chapter-name");
+                            return { link, chapterNumber, chapterName };
+                        });
+
+                        const prev = hierarchyNavigationContainer.querySelector(".composite-chapters-hierarchy-navigation-prev-next-item.prev");
+                        if (prev) {
+                            result.data.compositeChapters.hierarchyNavigation.prev.link = prev.querySelector("a");
+                            result.data.compositeChapters.hierarchyNavigation.prev.chapterNumber = prev.querySelector(".composite-chapters-hierarchy-navigation-chapter-number");
+                            result.data.compositeChapters.hierarchyNavigation.prev.chapterName = prev.querySelector(".composite-chapters-hierarchy-navigation-chapter-name");
+                        }
+
+                        const next = hierarchyNavigationContainer.querySelector(".composite-chapters-hierarchy-navigation-prev-next-item.next");
+                        if (next) {
+                            result.data.compositeChapters.hierarchyNavigation.next.link = next.querySelector("a");
+                            result.data.compositeChapters.hierarchyNavigation.next.chapterNumber = next.querySelector(".composite-chapters-hierarchy-navigation-chapter-number");
+                            result.data.compositeChapters.hierarchyNavigation.next.chapterName = next.querySelector(".composite-chapters-hierarchy-navigation-chapter-name");
+                        }
+                    }
+                }
 
                 // Table of contents
                 result.data.compositeChapters.tableOfContents.attributes = getAttributes(dataContainer);
-                result.data.compositeChapters.tableOfContents.contents = null; // TODO get hierarchy in a separate function
+                result.data.compositeChapters.tableOfContents.container = getCompositeChaptersTableOfContents(dataContainer);
 
                 // Chapter object
                 result.data.compositeChapters.chapterObject.objectCard = [...dataContainer.childNodes].filter(n => n.classList.contains("objects-view-card-container"))[0];
@@ -212,6 +258,72 @@ const getAttributes = card => {
 /**
  * Returns the table of contents list hierarchy inside the provided `dataContainer`.
  */
-const getTableOfContents = dataContainer => {
-    // TODO
+const getCompositeChaptersTableOfContents = dataContainer => {
+    const getElement = (element, parentElement) => {
+        const result = { element, parentElement };
+        result.objectID = element.getAttribute("data-object-id");
+        result.displayedChapter = element.getAttribute("data-content");
+
+        const a = [...element.childNodes].filter(n => n.tagName === "A")[0];
+        if (a) {
+            result.text = a.textContent;
+            result.link = a;
+            result.URL = a.getAttribute("href");    //`a.href` prop returns absolute path instead of relative
+            
+            const params = a.href.split("?")[1];
+            if (params) result.chapter = (new URLSearchParams(params)).get("ch");
+        } else {
+            result.text = element.textContent;
+            result.link = null;
+            result.URL = null;
+            result.chapter = null;
+        }
+
+        let list = [...element.childNodes].filter(n => n.tagName === "UL")[0];
+        if (!list) list = [...element.childNodes].filter(n => n.tagName === "OL")[0];
+
+        result.childElements = list ? [...list.childNodes].map(c => getElement(c, element)) : null;
+        
+        return result;
+    }
+
+    const container = dataContainer.querySelector(".composite-chapters-table-of-contents");
+    if (!container) return null;
+
+    let list = [...container.childNodes].filter(n => n.tagName === "UL")[0];
+    if (!list) list = [...container.childNodes].filter(n => n.tagName === "OL")[0];
+
+    return getElement(container, null);
+};
+
+
+/**
+ * Renders /objects/view/:objectID page for the provided `objectID`, then opens the chapter with the specified `chapterNumber` (1-based).
+ * 
+ * NOTE: only top-level chapters can currently be opened.
+ */
+export const loadObjectsViewPageAndSelectChapter = async (objectID, chapterNumber) => {
+    // Render page and wait for data to load
+    let { container, store, history } = renderWithWrappers(<App />, {
+        route: `/objects/view/${objectID}`
+    });
+
+    // Wait for error placeholder to be displayed
+    await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.placeholders.loading).toBeFalsy());
+    let compositeChaptersElements = getObjectsViewCardElements({ container }).data.compositeChapters;
+    expect(compositeChaptersElements.placeholders.fetchError).toBeFalsy();
+
+    // Open a chapter with `link` object_type
+    fireEvent.click(compositeChaptersElements.tableOfContents.container.childElements[chapterNumber - 1].link);
+    await waitFor(() => expect(history.location.pathname + history.location.search).toEqual(compositeChaptersElements.tableOfContents.container.childElements[chapterNumber - 1].URL));
+    await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.chapterObject.objectCard).toBeTruthy());
+
+    const card = getObjectsViewCardElements({ container }).data.compositeChapters.chapterObject.objectCard;
+
+    // Wait for object card's load to end
+    await waitFor(() => expect(getObjectsViewCardElements({ card }).placeholders.loading).toBeFalsy());
+
+    const chapterObjectID = compositeChaptersElements.tableOfContents.container.childElements[chapterNumber - 1].objectID;
+
+    return { container, store, history, chapterObjectID };
 };
