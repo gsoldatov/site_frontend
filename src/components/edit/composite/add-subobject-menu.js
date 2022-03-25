@@ -87,10 +87,15 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
     const options = inputState.matchingIDs.map(id => ({ key: id, text: objectsStore[id].object_name, value: id }));
     
     // Existing subobject IDs
-    const existingIDs = useSelector(
-        state => Object.keys(state.editedObjects[objectID].composite.subobjects)
-        .map(subobjectID => parseInt(subobjectID)).filter(subobjectID => subobjectID > 0)
-    );
+    const existingIDs = useSelector(state => {
+        // Existing subobjects
+        const result = Object.keys(state.editedObjects[objectID].composite.subobjects).map(subobjectID => parseInt(subobjectID)).filter(subobjectID => subobjectID > 0);
+        
+        // Composite object itself
+        result.push(objectID);
+
+        return result;
+    });
 
     // Close & reset input function
     const closeAndResetInput = () => { setAddMenuCallback({ row: -1, column: -1, inputText: "", matchingIDs: [] }) };
