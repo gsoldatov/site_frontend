@@ -98,6 +98,7 @@ export default () => {
 const fieldMenuItems = [
     {
         type: "group",
+        isButtonGroup: true,
         items: [
             {
                 type: "item",
@@ -115,9 +116,6 @@ const fieldMenuItems = [
                 isDisabledSelector: state => isFetchingTags(state)
             },
 
-            {
-                type: "separator"
-            },
             {
                 type: "item",
                 icon: "sort content descending",
@@ -138,9 +136,6 @@ const fieldMenuItems = [
             },
             
             {
-                type: "separator"
-            },
-            {
                 type: "item",
                 icon: "font",
                 title: "Sort by tag name",
@@ -157,11 +152,6 @@ const fieldMenuItems = [
                 onClickParams: { sortField: "modified_at" },
                 isDisabledSelector: state => isFetchingTags(state),
                 isActiveSelector: state => state.tagsUI.paginationInfo.sortField === "modified_at"
-            },
-
-            {
-                type: "separator",
-                hideWhenNotFullscreen: true
             }
         ]
     },

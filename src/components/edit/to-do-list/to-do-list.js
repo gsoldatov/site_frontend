@@ -28,22 +28,28 @@ export const TDLContainer = ({ objectID, toDoList, updateCallback, canDrag, dont
 const TDLMenu = memo(({ sortType, updateCallback, dontDispatchOnClickHandlers }) => {
     const fieldMenuItems = [
         {
-            type: "item",
-            icon: "ordered list",
-            title: "Default sort",
-            onClick: updateCallback,
-            onClickParams: { toDoList: { sort_type: "default" }},
-            isActiveSelector: () => sortType === "default",
-            dontDispatchOnClickHandler: dontDispatchOnClickHandlers
-        },
-        {
-            type: "item",
-            icon: "tasks",
-            title: "Sort by state",
-            onClick: updateCallback,
-            onClickParams: { toDoList: { sort_type: "state", newItemInputIndent: 0 }},     // also reset new item input indent when sorting by state
-            isActiveSelector: () => sortType === "state",
-            dontDispatchOnClickHandler: dontDispatchOnClickHandlers
+            type: "group",
+            isButtonGroup: true,
+            items: [
+                {
+                    type: "item",
+                    icon: "ordered list",
+                    title: "Default sort",
+                    onClick: updateCallback,
+                    onClickParams: { toDoList: { sort_type: "default" }},
+                    isActiveSelector: () => sortType === "default",
+                    dontDispatchOnClickHandler: dontDispatchOnClickHandlers
+                },
+                {
+                    type: "item",
+                    icon: "tasks",
+                    title: "Sort by state",
+                    onClick: updateCallback,
+                    onClickParams: { toDoList: { sort_type: "state", newItemInputIndent: 0 }},     // also reset new item input indent when sorting by state
+                    isActiveSelector: () => sortType === "state",
+                    dontDispatchOnClickHandler: dontDispatchOnClickHandlers
+                }
+            ]
         }
     ];
 

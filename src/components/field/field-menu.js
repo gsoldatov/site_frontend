@@ -21,6 +21,8 @@ export default memo(({ items, className = "field-menu", compact, size }) => {
     }, []);
 
     const menuItems = items.map((item, k) => <FieldMenuElement key={k} {...item} size={size} isFullscreenStyle={isFullscreenStyle} />);
+    
+    if (!isFullscreenStyle) className += " small";
 
     return (
         <OnResizeWrapper callback={onResizeCallback}>
@@ -58,33 +60,44 @@ const FieldMenuElement = props => {
 /**
  * Groupping container for holding other elements.
  */
-const FieldMenuGroup = ({ items, size, isFullscreenStyle }) => {
+const FieldMenuGroup = ({ items, size, isFullscreenStyle, isButtonGroup }) => {
     const groupClassName = "field-menu-group" + (isFullscreenStyle ? "" : " small");
     const groupItems = items.map((item, k) => <FieldMenuElement key={k} {...item} size={size} isFullscreenStyle={isFullscreenStyle} />);
-    return (
-        <div className={groupClassName}>
-            {groupItems}
-        </div>
-    );
+
+    if (isButtonGroup) {
+        return (
+            <Button.Group size={size} className={groupClassName}>
+                {groupItems}
+            </Button.Group>
+        ); 
+    } else {
+        return (
+            <div className={groupClassName}>
+                {groupItems}
+            </div>
+        );
+    }
 };
 
 
 /**
  * Field menu button.
  */
-const FieldMenuItem = ({ icon, title, size = "medium", isDisabledSelector, isActiveSelector, onClick, onClickParamsSelector, onClickParams, dontDispatchOnClickHandler = false }) => {
+const FieldMenuItem = ({ icon, title, size = "medium", isDisabledSelector, isActiveSelector, onClick, onClickParamsSelector, onClickParams, dontDispatchOnClickHandler = false, isBorderless = false }) => {
     const dispatch = useDispatch();
     const isDisabled = typeof(isDisabledSelector) === "function" ? useSelector(isDisabledSelector) : false;
     const isActiveTemp = typeof(isActiveSelector) === "function" ? useSelector(isActiveSelector) : false;     // temp variable is used to avoid placing the hook in a condition block
     const isActive = isDisabled ? false : isActiveTemp;
     const _onClickParams = useSelector(typeof(onClickParamsSelector) === "function" ? onClickParamsSelector : state => null) || onClickParams;
+    const className = "field-menu-button"
+        .concat(isBorderless ? " borderless" : "");
     const handleClick = () => {
         if (isDisabled) return;
         if (dontDispatchOnClickHandler) onClick(_onClickParams);
         else dispatch(typeof(onClick) === "function" ? onClick(_onClickParams) : onClick);
     };
 
-    return <Button basic className="field-menu-button" size={size} icon={icon} title={title} active={isActive} disabled={isDisabled} onClick={handleClick} />;
+    return <Button basic className={className} size={size} icon={icon} title={title} active={isActive} disabled={isDisabled} onClick={handleClick} />;
 };
 
 

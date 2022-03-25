@@ -134,6 +134,7 @@ export default () => {
 const fieldMenuItems = [
     {
         type: "group",
+        isButtonGroup: true,
         items: [
             {
                 type: "item",
@@ -152,9 +153,6 @@ const fieldMenuItems = [
             },
             
             {
-                type: "separator"
-            },
-            {
                 type: "item",
                 icon: "sort content descending",
                 title: "Sort in ascending order",
@@ -172,10 +170,7 @@ const fieldMenuItems = [
                 isDisabledSelector: state => isFetchingObjects(state),
                 isActiveSelector: state => state.objectsUI.paginationInfo.sortOrder === "desc"
             },
-        
-            {
-                type: "separator"
-            },
+            
             {
                 type: "item",
                 icon: "font",
@@ -193,12 +188,7 @@ const fieldMenuItems = [
                 onClickParams: { sortField: "modified_at" },
                 isDisabledSelector: state => isFetchingObjects(state),
                 isActiveSelector: state => state.objectsUI.paginationInfo.sortField === "modified_at"
-            },
-        
-            {
-                type: "separator",
-                hideWhenNotFullscreen: true
-            },
+            }            
         ]
     },
     
@@ -213,11 +203,6 @@ const fieldMenuItems = [
                 onChange: params => setObjectsPaginationInfo(params),    // action for updating input input text (which is kept in state)
                 onChangeDelayed: params => setObjectsPaginationInfoAndFetchPage(params),     // action for performing a fetch with a delay from the last onChange event
                 getOnChangeParams: text => ({ filterText: text })
-            },
-
-            {
-                type: "separator",
-                hideWhenNotFullscreen: true
             }
         ]
     },
@@ -232,11 +217,6 @@ const fieldMenuItems = [
                 defaultValueSelector: state => state.objectsUI.paginationInfo.objectTypes,
                 options: Object.values(enumObjectTypes).map((t, k) => ({ key: k, text: t.multipleName, value: t.type })),
                 getOnChangeAction: (e, data) => setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })
-            },
-
-            {
-                type: "separator",
-                hideWhenNotFullscreen: true
             }
         ]
     },
@@ -258,6 +238,7 @@ const fieldMenuItems = [
             {
                 type: "item",
                 icon: "remove",
+                isBorderless: true,
                 title: "Clear tags filter",
                 onClick: params => setTagsFilterAndFetchPage(),
                 isDisabledSelector: state => isFetchingObjects(state) || state.objectsUI.paginationInfo.tagsFilter.length == 0

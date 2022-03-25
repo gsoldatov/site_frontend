@@ -42,28 +42,34 @@ export const MarkdownContainer = memo(({ objectID }) => {
 const MarkdownDisplaySwitch = memo(({ objectID }) => {
     const fieldMenuItems = useMemo(() => [
         {
-            type: "item",
-            icon: "square outline",
-            title: "Display parsed markdown",
-            onClick: setMarkdownDisplayMode,
-            onClickParams: { objectID, markdownDisplayMode: "view" },
-            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "view"
-        },
-        {
-            type: "item",
-            icon: "pencil",
-            title: "Display edit window",
-            onClick: setMarkdownDisplayMode,
-            onClickParams: { objectID, markdownDisplayMode: "edit" },
-            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "edit"
-        },
-        {
-            type: "item",
-            icon: "clone outline",
-            title: "Display edit window and parsed markdown",
-            onClick: setMarkdownDisplayMode,
-            onClickParams: { objectID, markdownDisplayMode: "both" },
-            isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "both"
+            type: "group",
+            isButtonGroup: true,
+            items: [
+                {
+                    type: "item",
+                    icon: "square outline",
+                    title: "Display parsed markdown",
+                    onClick: setMarkdownDisplayMode,
+                    onClickParams: { objectID, markdownDisplayMode: "view" },
+                    isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "view"
+                },
+                {
+                    type: "item",
+                    icon: "pencil",
+                    title: "Display edit window",
+                    onClick: setMarkdownDisplayMode,
+                    onClickParams: { objectID, markdownDisplayMode: "edit" },
+                    isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "edit"
+                },
+                {
+                    type: "item",
+                    icon: "clone outline",
+                    title: "Display edit window and parsed markdown",
+                    onClick: setMarkdownDisplayMode,
+                    onClickParams: { objectID, markdownDisplayMode: "both" },
+                    isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "both"
+                }
+            ]
         }
     ], [objectID]);
 
