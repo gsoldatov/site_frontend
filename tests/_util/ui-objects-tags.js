@@ -30,7 +30,7 @@ export const getDropdownOptionsContainer = ({ container, currentQueryText }) => 
 export const getTagInlineItem = ({ container, text }) => {
     let tag;
     queryAllByText(container, text).forEach(node => {
-        if (node.className.indexOf("inline-item-text") > -1) tag = node;
+        if (node.className.indexOf("inline-text") > -1) tag = node;
     });
     return tag;
 };
