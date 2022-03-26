@@ -19,7 +19,7 @@ div.to-do-list-container-header {
 .ui.menu.to-do-list-menu {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 0.3em;
+    /* margin-top: 0.3em; */
     margin-bottom: 0.3em;
 }
 

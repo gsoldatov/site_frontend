@@ -17,7 +17,7 @@ export const TDLContainer = ({ objectID, toDoList, updateCallback, canDrag, dont
 
     return (
         <div className="to-do-list-container">
-            <div className="to-do-list-container-header">To-Do List</div>
+            {/* <div className="to-do-list-container-header">To-Do List</div> */}
             <TDLMenu updateCallback={updateCallback} sortType={toDoList.sort_type} dontDispatchOnClickHandlers={dontDispatchOnClickHandlers} />
             <TDLItems updateCallback={updateCallback} objectID={objectID} toDoList={toDoList} canDrag={canDrag} />    
         </div>
