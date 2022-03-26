@@ -17,8 +17,8 @@
 @media(max-width: 767px) {
     .object-preview-container {
         box-shadow: 0 0 4px rgba(0,0,0,0.5);
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
         padding-left: 1rem;
         padding-right: 1rem;
     }
