@@ -22,7 +22,7 @@ export default memo(({ items, className = "field-menu", compact, size }) => {
 
     const menuItems = items.map((item, k) => <FieldMenuElement key={k} {...item} size={size} isFullscreenStyle={isFullscreenStyle} />);
     
-    if (!isFullscreenStyle) className += " small";
+    if (!isFullscreenStyle) className += " smallscreen";
 
     return (
         <OnResizeWrapper callback={onResizeCallback}>
@@ -60,8 +60,9 @@ const FieldMenuElement = props => {
 /**
  * Groupping container for holding other elements.
  */
-const FieldMenuGroup = ({ items, size, isFullscreenStyle, isButtonGroup }) => {
-    const groupClassName = "field-menu-group" + (isFullscreenStyle ? "" : " small");
+const FieldMenuGroup = ({ items, size, isFullscreenStyle, isButtonGroup, useSmallScreenStyle = true }) => {
+    let groupClassName = "field-menu-group";
+    if (useSmallScreenStyle && !isFullscreenStyle) groupClassName += " smallscreen";
     const groupItems = items.map((item, k) => <FieldMenuElement key={k} {...item} size={size} isFullscreenStyle={isFullscreenStyle} />);
 
     if (isButtonGroup) {
@@ -117,7 +118,7 @@ const FieldMenuFilter = ({ placeholder, isDisabledSelector, valueSelector, onCha
         _onChangeDelayed(onChangeParams);                           // onChangeDelayed is called after a delay since last input value change (and dispatches a fetch)
     };
 
-    const inputClassName = "field-menu-filter" + isFullscreenStyle ? "" : " small";
+    const inputClassName = "field-menu-filter" + isFullscreenStyle ? "" : " smallscreen";
 
     return <Input icon="search" disabled={isDisabled} className={inputClassName}  fluid={!isFullscreenStyle} placeholder={_placeholder} value={value} onChange={handleChange} />;
 };
@@ -131,7 +132,7 @@ const FieldMenuDropdown = ({ placeholder, isDisabledSelector, defaultValueSelect
     const isDisabled = useSelector(isDisabledSelector);
     const defaultValue = useSelector(defaultValueSelector);
 
-    const dropdownClassName = "field-menu-dropdown" + isFullscreenStyle ? "" : " small";
+    const dropdownClassName = "field-menu-dropdown" + isFullscreenStyle ? "" : " smallscreen";
     
     return <Dropdown multiple selection className={dropdownClassName}
         placeholder={placeholder}
@@ -188,7 +189,7 @@ const FieldMenuUpdatableDropdown = ({ placeholder, isDisabledSelector, inputStat
     const options = inputState.matchingIDs.map(id => ({ key: id, text: getDropdownItemTextSelectors.itemTextSelector(itemStore, id), value: id }));
 
     // Styling
-    const dropdownClassName = "field-menu-updatable-dropdown" + isFullscreenStyle ? "" : " small";
+    const dropdownClassName = "field-menu-updatable-dropdown" + isFullscreenStyle ? "" : " smallscreen";
 
     return <Dropdown search selectOnNavigation={false} selection selectOnBlur={false} className={dropdownClassName}
         placeholder={placeholder}

@@ -30,6 +30,7 @@ const TDLMenu = memo(({ sortType, updateCallback, dontDispatchOnClickHandlers })
         {
             type: "group",
             isButtonGroup: true,
+            useSmallScreenStyle: false,
             items: [
                 {
                     type: "item",
