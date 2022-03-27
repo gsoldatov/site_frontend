@@ -67,4 +67,5 @@
 .field-item-link {
     color: black;
     text-decoration: none;
+    word-break: break-word;
 }
