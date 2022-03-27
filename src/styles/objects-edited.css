@@ -10,8 +10,8 @@
 
 
 /* Table cells */
-td.edited-objects-item-cell {
-    /* Allow breaking words in body cells */
+td.edited-objects-item-cell.object-name {
+    /* Allow breaking words in cells with object name & link */
     word-break: break-word;
 }
 

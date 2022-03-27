@@ -206,7 +206,7 @@ const EditedObjectItem = memo(({ objectID, parentObjects = [], parentNames = [],
             </Table.Cell>
 
             {/* Object name and link */}
-            <Table.Cell className="edited-objects-item-cell">
+            <Table.Cell className="edited-objects-item-cell object-name">
                 {objectName}
             </Table.Cell>
 
