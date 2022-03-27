@@ -18,7 +18,7 @@ export const InlineItem = ({ text, itemClassName, onClick, itemLink }) => {
 
     return (
         <span className={_itemClassName} onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-            <span className="inline-text" onClick={onClick}>{text}</span>
+            <span className="inline-text" onClick={onClick} title={text}>{text}</span>
             {onHoverLink}
         </span>
     );
