@@ -33,7 +33,7 @@ export const pageFetch = currentPage => {
         const state = getState();
         if (isFetchingTags(state)) return;
 
-        dispatch(setTagsPaginationInfo({ currentPage: currentPage }));
+        dispatch(setTagsPaginationInfo({ currentPage }));
         dispatch(setTagsFetch(true, ""));
 
         // Fetch IDs of tags to display on the page
@@ -60,6 +60,10 @@ export const pageFetch = currentPage => {
 const getPageTagIDs = () => {
     return async (dispatch, getState) => {
         const pI = getState().tagsUI.paginationInfo;
+
+        // Exit with error if filter text is too long
+        if (pI.filterText.length > 255) return { error: "Tag name filter text is too long."};
+
         let response = await dispatch(runFetch(`${backendURL}/tags/get_page_tag_ids`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
