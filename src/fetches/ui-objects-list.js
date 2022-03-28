@@ -55,15 +55,15 @@ export const pageFetch = currentPage => {
         const state = getState();
         if (isFetchingObjects(state)) return;
 
-        // Exit with error if filter text is too long
+        dispatch(setObjectsPaginationInfo({ currentPage }));
+        dispatch(setObjectsFetch(true, ""));
         const pI = getState().objectsUI.paginationInfo;
+
+        // Exit with error if filter text is too long
         if (pI.filterText.length > 255) {
             dispatch(setObjectsFetch(false, "Object name filter text is too long."));
             return;
         }
-
-        dispatch(setObjectsPaginationInfo({ currentPage }));
-        dispatch(setObjectsFetch(true, ""));
 
         // Fetch IDs of objects to display on the page
         let result = await dispatch(getPageObjectIDs({

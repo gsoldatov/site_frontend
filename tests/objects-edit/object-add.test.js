@@ -84,7 +84,6 @@ describe("UI checks", () => {
         const TDLContainer = container.querySelector(".to-do-list-container");
         expect(TDLContainer).toBeTruthy();
         expect(getCurrentObject(store.getState()).object_type).toEqual("to_do_list");
-        getByText(container, "To-Do List", { exact: false });
 
         // Composite subobject selection is tested in composite.test.js
 
