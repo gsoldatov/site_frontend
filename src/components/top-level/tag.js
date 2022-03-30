@@ -3,7 +3,7 @@ import { Header } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "../edit/common";
+import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "../edit/common/edit-page";
 import Layout from "../common/layout";
 
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../store/state-util/ui-tag";

@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { ObjectTypeSelector } from "../../../edit/objects-edit";
-import { TimeStamps, NameDescriptionInput } from "../../../edit/common";
+import { TimeStamps, NameDescriptionInput } from "../../../edit/common/edit-page";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 
