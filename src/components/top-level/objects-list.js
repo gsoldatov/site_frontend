@@ -4,7 +4,7 @@ import { Loader } from "semantic-ui-react";
 
 import Layout from "../common/layout";
 import Error from "../common/error";
-import FieldMenu from "../field/field-menu";
+import { FieldMenu, FieldMenuGroup, FieldMenuButton, FieldMenuFilter, FieldMenuDropdown, FieldMenuUpdatableDropdown } from "../field/field-menu";
 import { FieldItemList, FieldItem } from "../field/field-item-list";
 import FieldPagination from "../field/field-pagination";
 import { InlineItemListBlock, InlineItemListWrapper } from "../inline/inline-item-list-containers";
@@ -20,6 +20,7 @@ import { objectsOnLoadFetch, pageFetch, setObjectsPaginationInfoAndFetchPage, on
 import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive,
     commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector } from "../../store/state-util/ui-objects-list";
 import { enumObjectTypes } from "../../util/enum-object-types";
+import { createSelector } from "reselect";
 
 
 /**
@@ -118,11 +119,12 @@ export default () => {
         <FieldPagination paginationInfoSelector={paginationInfoSelector} setCurrentPage={pageFetch} />
         </>
     );
+    
     const pageBodyWithMenu = (
         <>
-        <FieldMenu items={fieldMenuItems} />
-        <TagsFilter />
-        {pageBody}
+            <ObjectsListFieldMenu />
+            <TagsFilter />
+            {pageBody}
         </>
     );
 
@@ -130,122 +132,101 @@ export default () => {
 };
 
 
-// Field menu items
-const fieldMenuItems = [
-    {
-        type: "group",
-        isButtonGroup: true,
-        items: [
-            {
-                type: "item",
-                icon: "check",
-                title: "Select all objects on page",
-                onClick: objectIDs => selectObjects(objectIDs),
-                onClickParamsSelector: state => state.objectsUI.paginationInfo.currentPageObjectIDs,
-                isDisabledSelector: state => isFetchingObjects(state)
-            },
-            {
-                type: "item",
-                icon: "cancel",
-                title: "Deselect all objects",
-                onClick: clearSelectedObjects(),
-                isDisabledSelector: state => isFetchingObjects(state)
-            },
-            
-            {
-                type: "item",
-                icon: "sort content descending",
-                title: "Sort in ascending order",
-                onClick: params => setObjectsPaginationInfoAndFetchPage(params),
-                onClickParams: { sortOrder: "asc" },
-                isDisabledSelector: state => isFetchingObjects(state),
-                isActiveSelector: state => state.objectsUI.paginationInfo.sortOrder === "asc"
-            },
-            {
-                type: "item",
-                icon: "sort content ascending",
-                title: "Sort in descending order",
-                onClick: params => setObjectsPaginationInfoAndFetchPage(params),
-                onClickParams: { sortOrder: "desc" },
-                isDisabledSelector: state => isFetchingObjects(state),
-                isActiveSelector: state => state.objectsUI.paginationInfo.sortOrder === "desc"
-            },
-            
-            {
-                type: "item",
-                icon: "font",
-                title: "Sort by object name",
-                onClick: params => setObjectsPaginationInfoAndFetchPage(params),
-                onClickParams: { sortField: "object_name" },
-                isDisabledSelector: state => isFetchingObjects(state),
-                isActiveSelector: state => state.objectsUI.paginationInfo.sortField === "object_name"
-            },
-            {
-                type: "item",
-                icon: "clock outline",
-                title: "Sort by modify time",
-                onClick: params => setObjectsPaginationInfoAndFetchPage(params),
-                onClickParams: { sortField: "modified_at" },
-                isDisabledSelector: state => isFetchingObjects(state),
-                isActiveSelector: state => state.objectsUI.paginationInfo.sortField === "modified_at"
-            }            
-        ]
-    },
+const ObjectsListFieldMenu = () => {
+    const dispatch = useDispatch();
+
+    // Common props
+    const isDisabled = useSelector(state => isFetchingObjects(state));
     
-    {
-        type: "group",
-        items: [
-            {
-                type: "filter",
-                isDisabledSelector: state => isFetchingObjects(state),
-                placeholder: "Filter objects",
-                valueSelector: state => state.objectsUI.paginationInfo.filterText,
-                onChange: params => setObjectsPaginationInfo(params),    // action for updating input input text (which is kept in state)
-                onChangeDelayed: params => setObjectsPaginationInfoAndFetchPage(params),     // action for performing a fetch with a delay from the last onChange event
-                getOnChangeParams: text => ({ filterText: text })
-            }
-        ]
-    },
+    // Select all objects button
+    const currentPageObjectIDs = useSelector(state => state.objectsUI.paginationInfo.currentPageObjectIDs);
+    const selectAllOnClick = useMemo(() => () => dispatch(selectObjects(currentPageObjectIDs)), [currentPageObjectIDs]);
 
-    {
-        type: "group",
-        items: [
-            {
-                type: "dropdown",
-                placeholder: "Filter by object type",
-                isDisabledSelector: state => isFetchingObjects(state),
-                defaultValueSelector: state => state.objectsUI.paginationInfo.objectTypes,
-                options: Object.values(enumObjectTypes).map((t, k) => ({ key: k, text: t.multipleName, value: t.type })),
-                getOnChangeAction: (e, data) => setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })
-            }
-        ]
-    },
+    // Deselect all objects button
+    const deselectAllOnClick = useMemo(() => () => dispatch(clearSelectedObjects()), []);
 
-    {
-        type: "group",
-        items: [
-            {
-                type: "updatableDropdown",
-                placeholder: "Filter objects by tags", 
-                isDisabledSelector: state => isFetchingObjects(state), 
-                inputStateSelector: state => state.objectsUI.tagsFilterInput, 
-                existingIDsSelector: state => state.objectsUI.paginationInfo.tagsFilter,
-                onSearchChange: setTagsFilterInput,
-                onSearchChangeDelayed: tagsFilterDropdownFetch,
-                onChange: setTagsFilterAndFetchPage,
-                getDropdownItemTextSelectors: { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name }
-            },
-            {
-                type: "item",
-                icon: "remove",
-                isBorderless: true,
-                title: "Clear tags filter",
-                onClick: params => setTagsFilterAndFetchPage(),
-                isDisabledSelector: state => isFetchingObjects(state) || state.objectsUI.paginationInfo.tagsFilter.length == 0
-            }
-        ]
-    }
-];
+    // Sort asc button
+    const sortAscOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortOrder: "asc" })), []);
+    const sortAscIsActive = useSelector(state => state.objectsUI.paginationInfo.sortOrder === "asc");
+
+    // Sort desc button
+    const sortDescOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortOrder: "desc" })), []);
+    const sortDescIsActive = useSelector(state => state.objectsUI.paginationInfo.sortOrder === "desc");
+
+    // Sort by name button
+    const sortByNameOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortField: "object_name" })), []);
+    const sortByNameIsActive = useSelector(state => state.objectsUI.paginationInfo.sortField === "object_name");
+
+    // Sort by modify time button
+    const sortByModifyTimeOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortField: "modified_at" })), []);
+    const sortByModifyTimeIsActive = useSelector(state => state.objectsUI.paginationInfo.sortField === "modified_at");
+
+    // Object name filter
+    const objectNameFilterValue = useSelector(state => state.objectsUI.paginationInfo.filterText);
+    const objectNameFilterOnChange = useMemo(() => value => dispatch(setObjectsPaginationInfo({ filterText: value })), []);
+    const objectNameFilterOnChangeDelayed = useMemo(() => value => dispatch(setObjectsPaginationInfoAndFetchPage({ filterText: value })), []);
+
+    // Object type dropdown
+    const objectTypesDefaultValue = useSelector(state => state.objectsUI.paginationInfo.objectTypes);
+    const objectTypesOptions = useMemo(() => Object.values(enumObjectTypes).map((t, k) => ({ key: k, text: t.multipleName, value: t.type })), []);
+    const objectTypesOnChange = useMemo(() => (e, data) => dispatch(setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })), []);
+
+    // Tags filter dropdown
+    const tagsFilterInputState = useSelector(state => state.objectsUI.tagsFilterInput);
+    const tagsFilterExistingIDs = useSelector(state => state.objectsUI.paginationInfo.tagsFilter);
+    const tagsFilterOptionsSelector = useMemo(() => createSelector(
+        state => state.tags,
+        state => state.objectsUI.tagsFilterInput,
+        (tags, inputState) => {
+            return inputState.matchingIDs.map(tagID => {
+                return { key: tagID, text: tags[tagID].tag_name, value: tagID };
+            });
+        }
+    ), []);
+    const tagsFilterOptions = useSelector(tagsFilterOptionsSelector);
+    
+    const tagsFilterOnSearchChange = useMemo(() => inputParams => dispatch(setTagsFilterInput(inputParams)), []);
+    const tagsFilterOnSearchChangeDelayed = useMemo(() => inputParams => dispatch(tagsFilterDropdownFetch(inputParams)), []);
+    const tagsFilterOnChange = useMemo(() => values => dispatch(setTagsFilterAndFetchPage(values)), []);
+
+    // Tags filter clear button
+    const tagsFilterClearOnClick = useMemo(() => () => dispatch(setTagsFilterAndFetchPage()), []);
+    const tagsFilterClearIsDisabled = useSelector(state => isFetchingObjects(state) || state.objectsUI.paginationInfo.tagsFilter.length == 0);
+
+    return (
+        <FieldMenu>
+            <FieldMenuGroup isButtonGroup>
+                <FieldMenuButton icon="check" title="Select all objects on page" onClick={selectAllOnClick} isDisabled={isDisabled} />
+                <FieldMenuButton icon="cancel" title="Deselect all objects" onClick={deselectAllOnClick} isDisabled={isDisabled} />
+                <FieldMenuButton icon="sort content descending" title="Sort in ascending order" onClick={sortAscOnClick} 
+                    isDisabled={isDisabled} isActive={sortAscIsActive} />
+                <FieldMenuButton icon="sort content ascending" title="Sort in descending order" onClick={sortDescOnClick} 
+                    isDisabled={isDisabled} isActive={sortDescIsActive} />
+                <FieldMenuButton icon="font" title="Sort by object name" onClick={sortByNameOnClick} 
+                    isDisabled={isDisabled} isActive={sortByNameIsActive} />
+                <FieldMenuButton icon="clock outline" title="Sort by modify time" onClick={sortByModifyTimeOnClick} 
+                    isDisabled={isDisabled} isActive={sortByModifyTimeIsActive} />
+            </FieldMenuGroup>
+            
+            <FieldMenuGroup>
+                <FieldMenuFilter value={objectNameFilterValue} placeholder="Filter objects" isDisabled={isDisabled}
+                    onChange={objectNameFilterOnChange} onChangeDelayed={objectNameFilterOnChangeDelayed} />
+            </FieldMenuGroup>
+
+            <FieldMenuGroup>
+                <FieldMenuDropdown defaultValue={objectTypesDefaultValue} options={objectTypesOptions} onChange={objectTypesOnChange}
+                    placeholder="Filter by object type" isDisabled={isDisabled} />
+            </FieldMenuGroup>
+
+            <FieldMenuGroup>
+                <FieldMenuUpdatableDropdown placeholder="Filter objects by tags" isDisabled={isDisabled}
+                    inputState={tagsFilterInputState} existingIDs={tagsFilterExistingIDs} options={tagsFilterOptions} 
+                    onSearchChange={tagsFilterOnSearchChange} onSearchChangeDelayed={tagsFilterOnSearchChangeDelayed} onChange={tagsFilterOnChange} />
+                <FieldMenuButton icon="remove" title="Clear tags filter" className="borderless" onClick={tagsFilterClearOnClick} isDisabled={tagsFilterClearIsDisabled} />
+            </FieldMenuGroup>
+        </FieldMenu>
+    );
+};
 
 
 // Immutable selectors

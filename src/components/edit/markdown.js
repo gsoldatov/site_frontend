@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form } from "semantic-ui-react";
 
-import FieldMenu from "../field/field-menu";
+import { FieldMenu, FieldMenuButton, FieldMenuGroup } from "../field/field-menu";
 import { OnResizeWrapper } from "../common/on-resize-wrapper";
 
 import { setEditedObject, setMarkdownDisplayMode } from "../../actions/objects-edit";
@@ -40,40 +40,29 @@ export const MarkdownContainer = memo(({ objectID }) => {
 
 
 const MarkdownDisplaySwitch = memo(({ objectID }) => {
-    const fieldMenuItems = useMemo(() => [
-        {
-            type: "group",
-            isButtonGroup: true,
-            items: [
-                {
-                    type: "item",
-                    icon: "square outline",
-                    title: "Display parsed markdown",
-                    onClick: setMarkdownDisplayMode,
-                    onClickParams: { objectID, markdownDisplayMode: "view" },
-                    isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "view"
-                },
-                {
-                    type: "item",
-                    icon: "pencil",
-                    title: "Display edit window",
-                    onClick: setMarkdownDisplayMode,
-                    onClickParams: { objectID, markdownDisplayMode: "edit" },
-                    isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "edit"
-                },
-                {
-                    type: "item",
-                    icon: "clone outline",
-                    title: "Display edit window and parsed markdown",
-                    onClick: setMarkdownDisplayMode,
-                    onClickParams: { objectID, markdownDisplayMode: "both" },
-                    isActiveSelector: state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "both"
-                }
-            ]
-        }
-    ], [objectID]);
+    const dispatch = useDispatch();
 
-    return <FieldMenu size="mini" compact className="objects-edit-markdown-display-switch-menu" items={fieldMenuItems} />;
+    // `View` button props
+    const viewOnClick = useMemo(() => () => dispatch(setMarkdownDisplayMode({ markdownDisplayMode: "view", objectID })), [objectID]);
+    const viewIsActive = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "view");
+
+    // `Edit` button props
+    const editOnClick = useMemo(() => () => dispatch(setMarkdownDisplayMode({ markdownDisplayMode: "edit", objectID })), [objectID]);
+    const editIsActive = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "edit");
+
+    // `Both` button props
+    const bothOnClick = useMemo(() => () => dispatch(setMarkdownDisplayMode({ markdownDisplayMode: "both", objectID })), [objectID]);
+    const bothIsActive = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "both");
+    
+    return (
+        <FieldMenu className="objects-edit-markdown-display-switch-menu" size="mini" compact>
+            <FieldMenuGroup isButtonGroup>
+                <FieldMenuButton icon="square outline" title="Display parsed markdown" onClick={viewOnClick} isActive={viewIsActive} />
+                <FieldMenuButton icon="pencil" title="Display edit window" onClick={editOnClick} isActive={editIsActive} />
+                <FieldMenuButton icon="clone outline" title="Display edit window and parsed markdown" onClick={bothOnClick} isActive={bothIsActive} />
+            </FieldMenuGroup>
+        </FieldMenu>
+    );
 });
 
 

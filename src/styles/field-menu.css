@@ -2,6 +2,10 @@
     Field menu styles. 
 *************************/
 
+:root {
+    --dropdown-and-input-min-width: 180px;
+}
+
 /* Menu */
 .ui.menu.field-menu {
     display: flex;
@@ -37,7 +41,7 @@ div.field-menu-group {
     display: flex;
 }
 
-div.field-menu-group.smallscreen {
+.ui.menu.field-menu.smallscreen div.field-menu-group:not(.smallscreen-disabled) {
     /* Expand to take full line in menu on small screens */
     width: 100%
 }
@@ -64,6 +68,7 @@ div.field-menu-group.smallscreen {
     /* Borderless button */
     border-width: 0 !important;
     border-image-width: 0 !important;
+    box-shadow: none !important;
 }
 
 
@@ -80,7 +85,7 @@ div.field-menu-group.smallscreen {
 
 
 /* Filter */
-div.field-menu-group.smallscreen div.ui.input {
+.ui.menu.field-menu.smallscreen div.field-menu-group:not(.smallscreen-disabled) div.ui.input {
     /* Allow input to take available width when not in fullscreen */
     flex: 1 1 auto;
 }
@@ -90,6 +95,9 @@ div.field-menu-group div.ui.input {
     height: 2.25rem;
     margin-top: auto;
     margin-bottom: auto;
+    
+    /* Set min-width (required for fullscreen mode) */
+    min-width: var(--dropdown-and-input-min-width);
 }
 
 div.field-menu .ui.input > input {
@@ -111,6 +119,9 @@ div.field-menu .ui.dropdown {
     margin-top: auto;
     margin-bottom: auto;
     min-height: 0;
+
+    /* Set min-width (required for fullscreen mode) */
+    min-width: var(--dropdown-and-input-min-width);
 }
 
 

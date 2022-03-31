@@ -79,7 +79,7 @@ export const ToDoList = ({ objectID }) => {
         <div className="objects-view-data to-do-list">
             {readonlyMessage}
             {errorMessage}
-            <TDLContainer objectID={objectID} toDoList={toDoListRef.current} canDrag={canDrag} updateCallback={updateCallback} dontDispatchOnClickHandlers />
+            <TDLContainer objectID={objectID} toDoList={toDoListRef.current} canDrag={canDrag} updateCallback={updateCallback} />
         </div>
     );
 };

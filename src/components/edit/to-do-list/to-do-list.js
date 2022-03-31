@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, memo } from "react";
+import React, { useState, useEffect, useRef, memo, useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import FieldMenu from "../../field/field-menu";
+import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../field/field-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 
@@ -13,48 +13,35 @@ import StyleTDL from "../../../styles/to-do-lists.css";
 /**
  * To-do list data container component.
  */
-export const TDLContainer = ({ objectID, toDoList, updateCallback, canDrag, dontDispatchOnClickHandlers = false }) => {
+export const TDLContainer = ({ objectID, toDoList, updateCallback, canDrag }) => {
 
     return (
         <div className="to-do-list-container">
             {/* <div className="to-do-list-container-header">To-Do List</div> */}
-            <TDLMenu updateCallback={updateCallback} sortType={toDoList.sort_type} dontDispatchOnClickHandlers={dontDispatchOnClickHandlers} />
+            <TDLMenu updateCallback={updateCallback} sortType={toDoList.sort_type} />
             <TDLItems updateCallback={updateCallback} objectID={objectID} toDoList={toDoList} canDrag={canDrag} />    
         </div>
     );
 };
 
 
-const TDLMenu = memo(({ sortType, updateCallback, dontDispatchOnClickHandlers }) => {
-    const fieldMenuItems = [
-        {
-            type: "group",
-            isButtonGroup: true,
-            useSmallScreenStyle: false,
-            items: [
-                {
-                    type: "item",
-                    icon: "ordered list",
-                    title: "Default sort",
-                    onClick: updateCallback,
-                    onClickParams: { toDoList: { sort_type: "default" }},
-                    isActiveSelector: () => sortType === "default",
-                    dontDispatchOnClickHandler: dontDispatchOnClickHandlers
-                },
-                {
-                    type: "item",
-                    icon: "tasks",
-                    title: "Sort by state",
-                    onClick: updateCallback,
-                    onClickParams: { toDoList: { sort_type: "state", newItemInputIndent: 0 }},     // also reset new item input indent when sorting by state
-                    isActiveSelector: () => sortType === "state",
-                    dontDispatchOnClickHandler: dontDispatchOnClickHandlers
-                }
-            ]
-        }
-    ];
+const TDLMenu = memo(({ sortType, updateCallback }) => {
+    // Default sort button
+    const defaultSortOnClick = useMemo(() => () => updateCallback({ toDoList: { sort_type: "default" }}), [updateCallback]);
+    const defaultSortIsActive = sortType === "default";
 
-    return <FieldMenu size="mini" className="to-do-list-menu" items={fieldMenuItems} />;
+    // Sort by state button
+    const sortByStateOnClick = useMemo(() => () => updateCallback({ toDoList: { sort_type: "state", newItemInputIndent: 0 }}), [updateCallback]);   // also reset new item input indent when sorting by state
+    const sortByStateIsActive = sortType === "state";
+
+    return (
+        <FieldMenu size="mini" className="to-do-list-menu">
+            <FieldMenuGroup isButtonGroup disableSmallScreenStyling>
+                <FieldMenuButton icon="ordered list" title="Default sort" onClick={defaultSortOnClick} isActive={defaultSortIsActive} />
+                <FieldMenuButton icon="tasks" title="Sort by state" onClick={sortByStateOnClick} isActive={sortByStateIsActive} />
+            </FieldMenuGroup>
+        </FieldMenu>
+    );
 });
 
 
