@@ -1,6 +1,6 @@
 import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
     SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_OBJECT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
-    SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_MARKDOWN_DISPLAY_MODE, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
+    SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
     SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/objects-edit";
 import { deepCopy } from "../util/copy";
@@ -389,21 +389,6 @@ function setShowDeleteDialogObject(state, action) {
 }
 
 
-function setMarkdownDisplayMode(state, action) {
-    const { markdownDisplayMode, objectID } = action;
-    return {
-        ...state,
-        editedObjects: {
-            ...state.editedObjects,
-            [objectID]: {
-                ...state.editedObjects[objectID],
-                markdownDisplayMode
-            }
-        }
-    };
-}
-
-
 function setAddCompositeSubobjectMenu(state, action) {
     const oldAddCompositeSubobjectMenu = state.objectUI.addCompositeSubobjectMenu;
     const newAddCompositeSubobjectMenu = {};
@@ -464,7 +449,6 @@ const root = {
     SET_SELECTED_TAB: setSelectedTab,
     SET_SHOW_RESET_DIALOG_OBJECT: setShowResetDialogObject,
     SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject,
-    SET_MARKDOWN_DISPLAY_MODE: setMarkdownDisplayMode,
     SET_ADD_COMPOSITE_SUBOBJECT_MENU: setAddCompositeSubobjectMenu,
     SET_OBJECT_ON_LOAD_FETCH_STATE: setObjectOnLoadFetchState,
     SET_OBJECT_ON_SAVE_FETCH_STATE: setObjectOnSaveFetchState

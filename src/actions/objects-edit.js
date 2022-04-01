@@ -10,7 +10,6 @@ export const RESET_EDITED_OBJECTS_TAGS = "RESET_EDITED_OBJECTS_TAGS";
 export const SET_SELECTED_TAB = "SET_SELECTED_TAB";
 export const SET_SHOW_RESET_DIALOG_OBJECT = "SET_SHOW_RESET_DIALOG_OBJECT";
 export const SET_SHOW_DELETE_DIALOG_OBJECT = "SET_SHOW_DELETE_DIALOG_OBJECT";
-export const SET_MARKDOWN_DISPLAY_MODE = "SET_MARKDOWN_DISPLAY_MODE";
 export const SET_ADD_COMPOSITE_SUBOBJECT_MENU = "SET_ADD_COMPOSITE_SUBOBJECT_MENU";
 export const SET_OBJECT_ON_LOAD_FETCH_STATE = "SET_OBJECT_ON_LOAD_FETCH_STATE";
 export const SET_OBJECT_ON_SAVE_FETCH_STATE = "SET_OBJECT_ON_SAVE_FETCH_STATE";
@@ -28,7 +27,6 @@ export const resetEditedObjectsTags          = (objectIDs, modified_at) => ({ ty
 export const setSelectedTab                  = selectedTab => ({ type: SET_SELECTED_TAB, selectedTab });
 export const setShowResetDialogObject        = (showResetDialog = false) => ({ type: SET_SHOW_RESET_DIALOG_OBJECT, showResetDialog });
 export const setShowDeleteDialogObject       = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECT, showDeleteDialog });
-export const setMarkdownDisplayMode          = ({ objectID, markdownDisplayMode }) => ({ type: SET_MARKDOWN_DISPLAY_MODE, objectID, markdownDisplayMode });
 export const setAddCompositeSubobjectMenu    = addCompositeSubobjectMenu => ({ type: SET_ADD_COMPOSITE_SUBOBJECT_MENU, addCompositeSubobjectMenu });
 
 export const setObjectOnLoadFetchState = (isFetching = false, fetchError = "") => {
