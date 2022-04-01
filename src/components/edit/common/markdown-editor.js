@@ -4,9 +4,7 @@ import { Form } from "semantic-ui-react";
 import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../field/field-menu";
 import { OnResizeWrapper } from "../../common/on-resize-wrapper";
 
-import intervalWrapper from "../../../util/interval-wrapper";
-
-import ParseMarkdownWorker from "../../../util/parse-markdown.worker";
+import { useMarkdownParseWorker } from "../../../util/use-markdown-parse-worker";
 
 import StyleMarkdownEditor from "../../../styles/markdown-editor.css";
 import StyleRenderedMarkdown from "../../../styles/rendered-markdown.css";
@@ -60,21 +58,6 @@ const MarkdownEditorDisplayModeMenu = memo(({ displayMode, setDisplayMode }) => 
 });
 
 
-const useMarkdownParseWorker = onPostParse => {
-    // Delayed function, which parses markdown in a separate thread
-    return useRef(intervalWrapper(rawMarkdown => {
-        const w = new ParseMarkdownWorker();
-        w.onmessage = e => {
-            // Run `onPostParse` function & terminate worker after parsing is complete
-            onPostParse(e.data);
-            w.terminate();
-        };
-
-        w.postMessage(rawMarkdown); // Start parsing
-    }, 250, true)).current;
-};
-
-
 const MarkdownEditorViewEdit = ({ displayMode, rawMarkdown, rawMarkdownOnChange, parsedMarkdown, onPostParse }) => {
     // Fullscreen style state & on resize callback
     const [isFullscreenStyle, setIsFullscreenStyle] = useState(true);
@@ -87,9 +70,7 @@ const MarkdownEditorViewEdit = ({ displayMode, rawMarkdown, rawMarkdownOnChange,
     // Trigger markdown parse after first render or when raw
     const parseMarkdown = useMarkdownParseWorker(onPostParse);
     
-    useEffect(() => {
-        parseMarkdown(rawMarkdown);
-    }, [rawMarkdown]);
+    useEffect(() => { parseMarkdown(rawMarkdown); }, [rawMarkdown]);
 
     // View & edit containers
     const containerClassName = "markdown-editor-view-edit-container".concat(isFullscreenStyle ? "" : " smallscreen");
