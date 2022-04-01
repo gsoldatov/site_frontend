@@ -70,7 +70,7 @@ describe("UI checks", () => {
         fireEvent.click(switchContainer);
         fireEvent.click(markdownOption);
         clickDataTabButton(container);
-        const markdownContainer = document.querySelector(".objects-edit-markdown-container");
+        const markdownContainer = document.querySelector(".markdown-editor-container");
         expect(markdownContainer).toBeTruthy();
         expect(getCurrentObject(store.getState()).object_type).toEqual("markdown");
         getByText(container, "Markdown", { exact: false });
@@ -109,7 +109,7 @@ describe("UI checks", () => {
     
         // Select data tab
         clickDataTabButton(container);
-        const markdownContainer = document.querySelector(".objects-edit-markdown-container");
+        const markdownContainer = document.querySelector(".markdown-editor-container");
         expect(markdownContainer).toBeTruthy();
     
         // Click on edit mode
@@ -126,14 +126,14 @@ describe("UI checks", () => {
         let viewModeButton = getByTitle(markdownContainer, "Display parsed markdown");
         fireEvent.click(viewModeButton);
         await waitFor(() => expect(getCurrentObject(store.getState()).markdown.parsed.indexOf("Test text")).toBeGreaterThan(-1));  // wait until there is rendered text to display
-        let viewContainer = markdownContainer.querySelector(".objects-edit-markdown-view-container");
+        let viewContainer = markdownContainer.querySelector(".markdown-editor-view-container");
         getByText(viewContainer, "Test text");
     
         // Click on both mode
         let bothModeButton = getByTitle(markdownContainer, "Display edit window and parsed markdown");
         fireEvent.click(bothModeButton);
         inputForm = getByPlaceholderText(markdownContainer, "Enter text here...");
-        viewContainer = markdownContainer.querySelector(".objects-edit-markdown-view-container");
+        viewContainer = markdownContainer.querySelector(".markdown-editor-view-container");
         
         // Update markdown & wait for it to appear
         fireEvent.change(inputForm, { target: { value: "**Test text 2**" } });

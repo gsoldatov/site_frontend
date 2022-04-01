@@ -1,183 +1,25 @@
-import React, { useState, useEffect, useRef, useMemo, memo } from "react";
+import React, { useMemo, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Form } from "semantic-ui-react";
 
-import { FieldMenu, FieldMenuButton, FieldMenuGroup } from "../field/field-menu";
-import { OnResizeWrapper } from "../common/on-resize-wrapper";
-
-import { setEditedObject, setMarkdownDisplayMode } from "../../actions/objects-edit";
+import { setEditedObject } from "../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-objects-edit";
-import intervalWrapper from "../../util/interval-wrapper";
 
-import ParseMarkdownWorker from "../../util/parse-markdown.worker";
-
-import StyleMarkdown from "../../styles/markdown.css";
-import StyleHighlight from "highlight.js/styles/a11y-dark.css";
+import { MarkdownEditor } from "./common/markdown-editor";
 
 
 /**
- * Markdown data edit & view component.
+ * Markdown object data editor component.
  */
-export const MarkdownContainer = memo(({ objectID }) => {
+export const MarkdownDataEditor = memo(({ objectID }) => {
+    const dispatch = useDispatch();
+
     const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
-    const displayModeSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).markdownDisplayMode, [objectID]);
-    const displayMode = useSelector(displayModeSelector);
-    const viewEditBlock = displayMode === "view" ? <MarkdownView objectID={objectID} /> :
-        displayMode === "edit" ? <MarkdownEdit objectID={objectID} /> : <MarkdownViewEdit objectID={objectID} />;
-    const headerText = "Markdown " + (displayMode === "view" ? "(View)" :
-        displayMode === "edit" ? "(Edit)" : "(View & Edit)");
-    
-    return (
-        <div className="objects-edit-markdown-container">
-            <div className="objects-edit-markdown-container-header">{headerText}</div>
-            <MarkdownDisplaySwitch objectID={objectID} />
-            <div className="objects-edit-markdown-display-container">
-                {viewEditBlock}
-            </div>
-        </div>
-    )
+    const rawMarkdown = useSelector(state => editedOrDefaultObjectSelector(state).markdown.raw_text);
+    const parsedMarkdown = useSelector(state => editedOrDefaultObjectSelector(state).markdown.parsed);
+
+    const rawMarkdownOnChange = useMemo(() => raw_text => dispatch(setEditedObject({ markdown: { raw_text }}, objectID)), [objectID]);
+    const onPostParse = useMemo(() => parsed => dispatch(setEditedObject({ markdown: { parsed }}, objectID)), [objectID]);
+
+    return <MarkdownEditor headerText="Markdown" rawMarkdown={rawMarkdown} rawMarkdownOnChange={rawMarkdownOnChange}
+        parsedMarkdown={parsedMarkdown} onPostParse={onPostParse} />
 });
-
-
-const MarkdownDisplaySwitch = memo(({ objectID }) => {
-    const dispatch = useDispatch();
-
-    // `View` button props
-    const viewOnClick = useMemo(() => () => dispatch(setMarkdownDisplayMode({ markdownDisplayMode: "view", objectID })), [objectID]);
-    const viewIsActive = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "view");
-
-    // `Edit` button props
-    const editOnClick = useMemo(() => () => dispatch(setMarkdownDisplayMode({ markdownDisplayMode: "edit", objectID })), [objectID]);
-    const editIsActive = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "edit");
-
-    // `Both` button props
-    const bothOnClick = useMemo(() => () => dispatch(setMarkdownDisplayMode({ markdownDisplayMode: "both", objectID })), [objectID]);
-    const bothIsActive = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).markdownDisplayMode === "both");
-    
-    return (
-        <FieldMenu className="objects-edit-markdown-display-switch-menu" size="mini" compact>
-            <FieldMenuGroup isButtonGroup>
-                <FieldMenuButton icon="square outline" title="Display parsed markdown" onClick={viewOnClick} isActive={viewIsActive} />
-                <FieldMenuButton icon="pencil" title="Display edit window" onClick={editOnClick} isActive={editIsActive} />
-                <FieldMenuButton icon="clone outline" title="Display edit window and parsed markdown" onClick={bothOnClick} isActive={bothIsActive} />
-            </FieldMenuGroup>
-        </FieldMenu>
-    );
-});
-
-
-const useMarkdownParseWorker = (objectID) => {
-    const dispatch = useDispatch();
-
-    // Delayed function, which parses markdown in a separate thread
-    return useRef(intervalWrapper(raw => {
-        const w = new ParseMarkdownWorker();
-        w.onmessage = e => {    // Dispatch parsed text change & terminate worker after parsing is complete
-            dispatch(setEditedObject({ markdown: { parsed: e.data }}, objectID));
-            w.terminate();
-        };
-
-        w.postMessage(raw); // Start parsing
-    }, 250, true)).current;
-}
-
-
-const MarkdownView = ({ objectID }) => {
-    const parseMarkdown = useMarkdownParseWorker(objectID);
-
-    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
-    const rawTextSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).markdown.raw_text, [objectID]);
-    const textSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).markdown.parsed, [objectID]);
-
-    const rawText = useSelector(rawTextSelector);
-    const text = useSelector(textSelector);
-
-    useEffect(() => {   // Parse after first render
-        if (text === undefined || text === "")
-            parseMarkdown(rawText);
-    }, []);
-
-    return text && (
-        <div className="objects-edit-markdown-view-container">
-            <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: text }} />
-        </div>
-    );
-};
-
-
-const MarkdownEdit = ({ objectID }) => {
-    const dispatch = useDispatch();
-
-    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
-    const rawTextSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).markdown.raw_text, [objectID]);
-    const rawText = useSelector(rawTextSelector);
-
-    const parseMarkdown = useMarkdownParseWorker(objectID);
-
-    // Resize
-    const resize = useRef(() => {
-        if (rawTextRef.current) {
-            rawTextRef.current.style.height = "inherit";  // Reset
-            rawTextRef.current.style.height = rawTextRef.current.scrollHeight + "px";   // Set to text height
-        }
-    }).current;
-
-    // Resize after first render
-    useEffect(() => { resize(); }, []);
-
-
-    // On text change
-    const handleChange = useRef(e => {
-        dispatch(setEditedObject({ markdown: { raw_text: e.target.value }}, objectID));
-        resize();
-        parseMarkdown(e.target.value);  // Trigger markdown parsing
-    }).current;
-
-    const rawTextRef = useRef(null);
-    
-    return (
-        <Form className="markdown-edit-form">
-            <Form.Field>
-                {/* <label>Raw Markdown</label> */}
-                <textarea className="edit-page-textarea" placeholder="Enter text here..." ref={rawTextRef} value={rawText} onChange={handleChange} />
-            </Form.Field>
-        </Form>
-    );
-};
-
-
-const MarkdownViewEdit = ({ objectID }) => {
-    // Fullscreen style state
-    const [isFullscreenStyle, setIsFullscreenStyle] = useState(true);
-    const containerClassName = isFullscreenStyle ? "markdown-view-edit-container" : "markdown-view-edit-container small";
-    const columnClassName = isFullscreenStyle ? "markdown-view-edit-item" : "markdown-view-edit-item small";
-
-    const onResizeCallback = useMemo(() => containerRef => {
-        const width = parseInt(getComputedStyle(containerRef).width.replace("px", ""));
-        setIsFullscreenStyle(width >= 500);
-    }, []);
-
-    return (
-        <OnResizeWrapper callback={onResizeCallback}>
-            <div className={containerClassName}>
-                <div className={columnClassName}>
-                    <MarkdownEdit objectID={objectID} />
-                </div>
-                <div className={columnClassName}>
-                    <MarkdownView objectID={objectID} />
-                </div>
-            </div>
-        </OnResizeWrapper>
-    );
-
-    // return (
-    //     <Grid>
-    //         <Grid.Column width={8}>
-    //             <MarkdownEdit objectID={objectID} />
-    //         </Grid.Column>
-    //         <Grid.Column width={8}>
-    //             <MarkdownView objectID={objectID} />
-    //         </Grid.Column>
-    //     </Grid>
-    // );
-};

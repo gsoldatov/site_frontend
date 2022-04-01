@@ -1,0 +1,58 @@
+/*******************************
+    Rendered markdown styles    
+*******************************/
+
+.rendered-markdown * {
+    margin-top: 0;
+    word-break: break-word;
+}
+
+.rendered-markdown > *:not(:last-child) {
+    margin-bottom: 0.5rem;
+}
+
+.rendered-markdown > h3:not(:first-child),
+.rendered-markdown > h4:not(:first-child),
+.rendered-markdown > h5:not(:first-child),
+.rendered-markdown > h6:not(:first-child) {
+    margin-top: 0.5rem;
+}
+
+.rendered-markdown blockquote {
+    padding: 0.5em;
+    border: solid 1px rgb(150, 150, 150);
+    background-color: rgba(150, 150, 150, 0.15);
+}
+
+.rendered-markdown hr {
+    border-top: solid 1px rgb(150, 150, 150);
+    border-bottom: none;
+}
+
+.rendered-markdown table {
+    /* Center table */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rendered-markdown table, 
+.rendered-markdown th, 
+.rendered-markdown td {
+    border: solid 1px rgb(150, 150, 150);
+    border-collapse: collapse;
+}
+
+.rendered-markdown th, 
+.rendered-markdown td {
+    padding: 0.25em;
+}
+
+/* Code highlighting */
+.rendered-markdown pre code.hljs {
+    display: block;
+}
+  
+.rendered-markdown code.hljs {
+    display: inline;
+    padding: 0.1em;
+}

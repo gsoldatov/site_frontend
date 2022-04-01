@@ -223,21 +223,21 @@ describe("Load object from state", () => {
     
         // Check if markdown data is displayed in "both" mode
         clickDataTabButton(container);
-        const markdownContainer = document.querySelector(".objects-edit-markdown-container");
+        const markdownContainer = document.querySelector(".markdown-editor-container");
         expect(markdownContainer).toBeTruthy();
         let bothModeButton = getByTitle(markdownContainer, "Display edit window and parsed markdown");
         fireEvent.click(bothModeButton);
         let inputForm = getByPlaceholderText(markdownContainer, "Enter text here...");
         expect(inputForm.textContent).toEqual("**Test text**");
         await waitFor(() => {   // viewContainer is rendered when there is parsed text
-            let viewContainer = markdownContainer.querySelector(".objects-edit-markdown-view-container");
+            let viewContainer = markdownContainer.querySelector(".markdown-editor-view-container");
             getByText(viewContainer, "Test text");
         });
     
         // Check if parsed markdown is displayed in "view" mode
         let viewModeButton = getByTitle(markdownContainer, "Display parsed markdown");
         fireEvent.click(viewModeButton);
-        let viewContainer = markdownContainer.querySelector(".objects-edit-markdown-view-container");
+        let viewContainer = markdownContainer.querySelector(".markdown-editor-view-container");
         getByText(viewContainer, "Test text");
     });
 
@@ -319,7 +319,7 @@ describe("Load object from state", () => {
         expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectDescriptionInput.value).toEqual(state.editedObjects[3].object_description);
         clickSubobjectCardDataTabButton(cards[0][1]);
 
-        const markdownContainer = cards[0][1].querySelector(".objects-edit-markdown-container");
+        const markdownContainer = cards[0][1].querySelector(".markdown-editor-container");
         expect(markdownContainer).toBeTruthy();
         const markdownInput = markdownContainer.querySelector(".edit-page-textarea");
         expect(markdownInput).toBeTruthy();
@@ -420,10 +420,10 @@ describe("Load object from backend", () => {
         clickDataTabButton(container);
         let objectData = store.getState().markdown[1001];
         expect(objectData).toHaveProperty("raw_text");
-        const markdownContainer = document.querySelector(".objects-edit-markdown-container");
+        const markdownContainer = document.querySelector(".markdown-editor-container");
         expect(markdownContainer).toBeTruthy();
         await waitFor(() => {
-            let viewContainer = markdownContainer.querySelector(".objects-edit-markdown-view-container");
+            let viewContainer = markdownContainer.querySelector(".markdown-editor-view-container");
             getByText(viewContainer, "Markdown Object #1001");
         });
     });
@@ -530,7 +530,7 @@ describe("Load object from backend", () => {
         expect(getSubobjectCardAttributeElements(cards[0][1]).subobjectDescriptionInput.value).toEqual(state.editedObjects[secondID].object_description);
         clickSubobjectCardDataTabButton(cards[0][1]);
 
-        const markdownContainer = cards[0][1].querySelector(".objects-edit-markdown-container");
+        const markdownContainer = cards[0][1].querySelector(".markdown-editor-container");
         expect(markdownContainer).toBeTruthy();
         const markdownInput = markdownContainer.querySelector(".edit-page-textarea");
         expect(markdownInput).toBeTruthy();
@@ -1254,7 +1254,7 @@ describe("Update object errors", () => {
     
         // Clear raw text
         clickDataTabButton(container);
-        const markdownContainer = document.querySelector(".objects-edit-markdown-container");
+        const markdownContainer = document.querySelector(".markdown-editor-container");
         expect(markdownContainer).toBeTruthy();
         let bothModeButton = getByTitle(markdownContainer, "Display edit window and parsed markdown");
         fireEvent.click(bothModeButton);
@@ -1427,7 +1427,7 @@ describe("Update object", () => {
         
         // Modify data
         clickDataTabButton(container);
-        const markdownContainer = document.querySelector(".objects-edit-markdown-container");
+        const markdownContainer = document.querySelector(".markdown-editor-container");
         expect(markdownContainer).toBeTruthy();
         let bothModeButton = getByTitle(markdownContainer, "Display edit window and parsed markdown");
         fireEvent.click(bothModeButton);

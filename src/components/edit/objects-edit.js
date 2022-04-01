@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { DefaultObjectData } from "./default-object-data";
 import { LinkInput } from "./link";
-import { MarkdownContainer } from "./markdown";
+import { MarkdownDataEditor } from "./markdown";
 import { TDLContainer } from "./to-do-list/to-do-list";
 import { SubobjectsContainer } from "./composite/subobjects";
 
@@ -89,7 +89,7 @@ export const ObjectViewEditSwitch = ({ objectID, subobjectCard = false }) => {
         case "link":
             return <LinkInput objectID={objectID} />;
         case "markdown":
-            return <MarkdownContainer objectID={objectID} />;
+            return <MarkdownDataEditor objectID={objectID} />;
         case "to_do_list":
             return <TDLContainer objectID={objectID} toDoList={toDoList} canDrag={canDragToDoList} updateCallback={toDoListUpdateCallback} />;
         case "composite":
