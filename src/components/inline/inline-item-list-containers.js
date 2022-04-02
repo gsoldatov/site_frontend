@@ -10,19 +10,20 @@ import StyleInline from "../../styles/inline.css";
  */
 export const InlineItemListBlock = ({ header, children, borderless = false }) => {
     const headerClassName = "inline-item-list-block-header" + (borderless ? " borderless" : "");
-    const blockclassName = "inline-item-list-block" + (borderless ? " borderless" : "");
+    const contentclassName = "inline-item-list-block-content" + (borderless ? " borderless" : "");
 
     const _header = header && <div className={headerClassName}>{header}</div>;
 
     return (
-        <>
+        <div className="inline-item-list-block">
             {_header}
-            <div className={blockclassName}>
+            <div className={contentclassName}>
                 {children}
             </div>
-        </>
+        </div>
     );
 };
+
 
 /**
  * Component for groupping inline item lists and input controls.
@@ -34,12 +35,12 @@ export const InlineItemListWrapper = ({header, children, isDisplayedSelector}) =
     const _header = header && <div className="inline-item-list-wrapper-header">{header}</div>;
 
     return (
-        <>
+        <div className="inline-item-list-wrapper">
             {_header}
-            <div className="inline-item-list-wrapper">
+            <div className="inline-item-list-wrapper-content">
                 {children}
             </div>
-        </>
+        </div>
     );
 };
     

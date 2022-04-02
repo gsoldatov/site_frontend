@@ -6,61 +6,53 @@
     /* Left & right padding width; top & bottom padding height is increased by 1.5 */
     --inline-left-right-padding: 0.4rem;
     --inline-top-bottom-padding: calc(1.5 * var(--inline-left-right-padding));
+    --max-inline-input-height: 1.8rem;
 }
 
-/* Containers */
-div.inline-item-list-block:not(:last-child) {
-    margin-bottom: 1em;
-}
 
+/* Container headers */
 div.inline-item-list-block-header, div.inline-item-list-wrapper-header {
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 0.25em;
 }
 
-div.inline-item-list-wrapper-header {
-    padding-left: var(--inline-left-right-padding);
-    padding-right: var(--inline-left-right-padding);
-    /* padding-top: 0.3em; */
+
+/* Containers */
+div.inline-item-list-block:not(:last-child) {
+    margin-bottom: 1em;
 }
 
-div.inline-item-list-block {
+div.inline-item-list-block-content {
     border: solid 1px rgba(34, 36, 38, 0.15);
     border-radius: 4px;
+
+    /* Add padding between visible borders of `.inline-item-list-block-content` and its content */
+    padding-left: var(--inline-left-right-padding);
+    padding-right: var(--inline-left-right-padding);
+
+    padding-top: var(--inline-top-bottom-padding);
+    padding-bottom: var(--inline-top-bottom-padding);
 }
 
-div.inline-item-list-block.borderless {
+div.inline-item-list-block-content.borderless {
     border: 0;
     border-radius: 0;
-
-    /* Reverse paddings & margins of child elements */
-    /* margin-left: calc(-1 * var(--inline-left-right-padding));
-    margin-right: calc(-1 * var(--inline-left-right-padding)); */
-    /* margin-top: -0.3em;
-    margin-bottom: -0.3em; */
 }
 
-div.inline-item-list-wrapper {
+div.inline-item-list-wrapper:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+div.inline-item-list-wrapper-content {
     display: flex;
     flex-wrap: wrap; 
     column-gap: var(--inline-left-right-padding);   /* separation between inline items (instead of padding) */
     row-gap: var(--inline-top-bottom-padding);   /* separation between inline items (instead of padding) */
 
     vertical-align: middle;
-    /* border: solid 1px rgba(34, 36, 38, 0.15);
-    border-radius: 4px; */
 
     line-height: 1.8em;
-}
-
-div.inline-item-list-block:not(.borderless) div.inline-item-list-wrapper {
-    /* Add padding between visible borders of `.inline-item-list-block` and items inside `.inline-item-list-wrapper` */
-    padding-left: var(--inline-left-right-padding);
-    padding-right: var(--inline-left-right-padding);
-
-    padding-top: var(--inline-top-bottom-padding);
-    padding-bottom: var(--inline-top-bottom-padding);
 }
 
 
@@ -81,6 +73,9 @@ span.inline-input-span .ui.search.selection.dropdown.inline-input {    /* SUIR c
 
     /* Limit max-width to the size of its containter */
     max-width: 100%;
+
+    /* Limit input height to 1 line + top/down borders */
+    max-height: calc(var(--max-inline-input-height) + 2px);
 }
 
 span.inline-input-span .ui.search.selection.dropdown.inline-input>input.search,
@@ -89,7 +84,7 @@ span.inline-input-span .ui.search.selection.dropdown.inline-input>.divider.text 
     padding-bottom: 0;
     padding-left: var(--inline-left-right-padding);
     padding-right: var(--inline-left-right-padding);
-    line-height: 1.8em;
+    line-height: var(--max-inline-input-height);
 
     /* Limit max-width to the size of its containter */
     max-width: 100%;
