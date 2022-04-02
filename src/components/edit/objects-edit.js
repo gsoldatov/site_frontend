@@ -52,7 +52,7 @@ export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
     ), [objectType]);
 
     return (
-        <>
+        <div className="object-type-menu-container">
             <div className={headerClassName}>Object Type</div>
             {/* <Dropdown selection className="object-type-dropdown-switch" */}
             <Dropdown className="selection object-type-dropdown-switch"     // Add SUIR classname for styling (`selection` prop is not compatible with `trigger`)
@@ -62,7 +62,7 @@ export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
                 options={options}
                 onChange={onChange}
             />
-        </>
+        </div>
     );
 });
 
