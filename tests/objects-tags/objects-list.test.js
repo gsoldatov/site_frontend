@@ -80,7 +80,7 @@ test("Check tags appearance for one selected object", async () => {
 
     // Check if object's tags are rendered
     store.getState().objectsTags[1].forEach(tagID => getByText(commonTagsWrapper, `tag #${tagID}`));
-    expect(commonTagsWrapper.childNodes.length).toEqual(store.getState().objectsTags[1].length + 1);   // tags + input toggle
+    expect(commonTagsWrapper.querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(store.getState().objectsTags[1].length + 1);   // tags + input toggle
 });
 
 
@@ -106,8 +106,8 @@ test("Check tags appearance for two selected objects", async () => {
     [1, 2].forEach(tagID => getByText(wrappers[0], `tag #${tagID}`));
     [3, 4, 5, 6].forEach(tagID => getByText(wrappers[1], `tag #${tagID}`));
 
-    expect(wrappers[0].childNodes.length).toEqual(3);   // 2 tags + input toggle
-    expect(wrappers[1].childNodes.length).toEqual(4);   // 4 tags
+    expect(wrappers[0].querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(3);   // 2 tags + input toggle
+    expect(wrappers[1].querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(4);   // 4 tags
 });
 
 
@@ -396,8 +396,8 @@ test("Check tags update + editedObjects reset", async () => {
     getByText(wrappers[0], "new tag");
     [5, 6].forEach(tagID => getByText(wrappers[1], `tag #${tagID}`));
 
-    expect(wrappers[0].childNodes.length).toEqual(5);   // 4 tags + input toggle
-    expect(wrappers[1].childNodes.length).toEqual(2);   // 2 tags
+    expect(wrappers[0].querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(5);   // 4 tags + input toggle
+    expect(wrappers[1].querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(2);   // 2 tags
 
     // Check if object with id = 1 was reset in state.editedObjects (tags and modified_at)
     const objectOneTags = store.getState().objectsTags[1].slice(), objectOneEditedTags = store.getState().editedObjects[1].currentTagIDs.slice();

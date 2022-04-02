@@ -210,7 +210,7 @@ describe("Add object page", () => {
         // Wait for redirect and tag fetch
         await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
         clickGeneralTabButton(container);
-        await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toEqual(3)); // 2 tags + input
+        await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(3)); // 2 tags + input
     });
 });
 
@@ -235,7 +235,7 @@ describe("Edit object page", () => {
         });
     
         // Check if tags are rendered on the page
-        await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toBeGreaterThan(1));
+        await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper-content").childNodes.length).toBeGreaterThan(1));
         for(let i = 1; i <= 5; i++)
             getByText(container, `tag #${i}`);
     });
@@ -247,7 +247,7 @@ describe("Edit object page", () => {
         });
     
         // Check if tags are rendered on the page
-        await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper").childNodes.length).toBeGreaterThan(1));
+        await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper-content").childNodes.length).toBeGreaterThan(1));
         for(let i = 1; i <= 5; i++) getByText(container, `tag #${i}`);
         
         // Check tag removal

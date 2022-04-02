@@ -210,7 +210,7 @@ export const getObjectsViewCardElements = ({ container, card }) => {
             result.tags.isRendered = true;
 
             // List of tag elements
-            result.tags.tagElements = tagListContainer.querySelectorAll(".inline-item-list-wrapper > .inline-item");
+            result.tags.tagElements = tagListContainer.querySelectorAll(".inline-item-list-wrapper-content > .inline-item");
         }
     }    
 
