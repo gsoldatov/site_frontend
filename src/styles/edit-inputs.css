@@ -16,11 +16,18 @@ div.created-modified-timestamps-item {
     flex: 1 0 50%;
     text-align: left;
     white-space: nowrap;
-    padding-top: 0em;
-    padding-bottom: 0em;
+
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
 }
 
-span.created-modified-timestamps-value {
+div.created-modified-item-header {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+div.created-modified-item-value {
     font-family: Arial, Helvetica, sans-serif;
     color: gray;
     margin-left: 0.25em;
