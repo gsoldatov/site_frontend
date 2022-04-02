@@ -224,7 +224,7 @@ const ObjectTabPanes = ({ objectID }) => {
     const tabPanes = useMemo(() => {
         return [
             { menuItem: "General", render: () => 
-                <Tab.Pane>
+                <Tab.Pane className="objects-edit-general-tab">
                     <ObjectTypeSelector objectID={objectID} />
                     <ObjectTimeStamps />
                     <ObjectInput />

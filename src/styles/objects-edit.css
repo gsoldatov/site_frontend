@@ -2,19 +2,19 @@
   /objects/edit/:id page styles.
 ********************************/
 
-/* Object type switch header */
+/** `General` tab **/
+.objects-edit-general-tab > *:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+
+/** Object type menu **/
 div.object-type-menu-header {
-    margin-top: 1em;
     font-weight: bold;
     font-size: 13px;
     margin-bottom: 0.25em;
 }
 
-div.object-type-menu-header.subobject {
-    margin-top: 0;
-}
-
-/* Object type dropdown switch */
 div.ui.selection.dropdown.object-type-dropdown-switch {
     width: 100%;
 }
@@ -30,7 +30,7 @@ div.ui.selection.dropdown.object-type-dropdown-switch > .visible.menu.transition
 }
 
 
-/* Display tab controls */
+/** Display tab controls **/
 .objects-edit-display-control-container:not(:last-child) {
     margin-bottom: 1em;
 }

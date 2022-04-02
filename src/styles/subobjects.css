@@ -388,6 +388,12 @@ button.ui.button.subobject-card-dialog-button {
 }
 
 
+/* Card tabs */
+.composite-subobject-card-tab > *:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+
 /* Add menu */
 div.composite-subobject-card.add-menu {
     /* Override default `composite-subobject-card` params */

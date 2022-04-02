@@ -2,15 +2,11 @@
     Edit tag/object element and form styles.
 ******************************************************/
 
-/* Timestamps */
+/** Timestamps **/
 div.created-modified-timestamps-container {
-    margin-top: 1em;
-    margin-bottom: 0em;
-    
     display: flex;
     flex-wrap: wrap;
 }
-
 
 div.created-modified-timestamps-item {
     flex: 1 0 50%;
@@ -33,19 +29,11 @@ div.created-modified-item-value {
     margin-left: 0.25em;
 }
 
-/* Name + description form */
-.ui.form.name-description-form {
-    margin-top: 1em;
-}
 
-/* Textarea */
+/** Textarea **/
 textarea.edit-page-textarea:not([rows]):not([cols]) {   /* sets default textarea size to the value it takes when it's empty and hides the scrollbar; */
     height: auto;                                       /* two "not" pseudoclasses are required to override Semantic UI styles for textarea          */
     overflow-y: hidden;
     max-height: none;
     resize: none;
-}
-
-form.ui.form > div.field:last-child:not([override]) {
-    margin-bottom: 1em;
 }
