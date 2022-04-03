@@ -20,6 +20,6 @@ export const MarkdownDataEditor = memo(({ objectID }) => {
     const rawMarkdownOnChange = useMemo(() => raw_text => dispatch(setEditedObject({ markdown: { raw_text }}, objectID)), [objectID]);
     const onPostParse = useMemo(() => parsed => dispatch(setEditedObject({ markdown: { parsed }}, objectID)), [objectID]);
 
-    return <MarkdownEditor headerText="Markdown" rawMarkdown={rawMarkdown} rawMarkdownOnChange={rawMarkdownOnChange}
+    return <MarkdownEditor header="Markdown" rawMarkdown={rawMarkdown} rawMarkdownOnChange={rawMarkdownOnChange}
         parsedMarkdown={parsedMarkdown} onPostParse={onPostParse} />
 });

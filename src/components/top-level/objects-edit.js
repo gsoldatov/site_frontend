@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { createSelector } from "reselect";
 
-import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "../edit/common/edit-page";
+import { LoadIndicatorAndError, SaveError, TimeStamps, NameInput, DescriptionEditor } from "../edit/common/edit-page";
 import { ObjectTypeSelector, ObjectViewEditSwitch } from "../edit/objects-edit";
 import { DisplayTab } from "../edit/objects-edit-display-controls/display-tab";
 import Layout from "../common/layout";
@@ -285,8 +285,10 @@ const ObjectInput = () => {
     }).current;
 
     return (
-        <NameDescriptionInput nameLabel="Object Name" namePlaceholder="Object name" name={name} nameOnChange={nameOnChange}
-            descriptionLabel="Object Description" descriptionPlaceholder="Object description" description={description} descriptionOnChange={descriptionOnChange} />
+        <>
+            <NameInput label="Object Name" placeholder="Object name" value={name} onChange={nameOnChange} />
+            <DescriptionEditor label="Object Description" placeholder="Object description" value={description} onChange={descriptionOnChange} />
+        </>
     );
 };
 

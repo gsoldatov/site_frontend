@@ -3,7 +3,7 @@ import { Header } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import { LoadIndicatorAndError, SaveError, TimeStamps, NameDescriptionInput } from "../edit/common/edit-page";
+import { LoadIndicatorAndError, SaveError, TimeStamps, NameInput, DescriptionEditor } from "../edit/common/edit-page";
 import Layout from "../common/layout";
 
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../store/state-util/ui-tag";
@@ -163,15 +163,9 @@ const TagInput = () => {
     }).current;
 
     return (
-        <NameDescriptionInput nameLabel="Tag Name" namePlaceholder="Tag name" name={name} nameOnChange={nameOnChange}
-            descriptionLabel="Tag Description" descriptionPlaceholder="Tag description" description={description} descriptionOnChange={descriptionOnChange} />
+        <>
+            <NameInput label="Tag Name" placeholder="Tag name" value={name} onChange={nameOnChange} />
+            <DescriptionEditor label="Tag Description" placeholder="Tag description" value={description} onChange={descriptionOnChange} />
+        </>
     );
 };
-
-// // Tag input form
-// const nameSelector = state => state.tagUI.currentTag.tag_name;
-// const getNameOnChangeParams = value => ({tag_name: value });
-// const descriptionSelector = state => state.tagUI.currentTag.tag_description;
-// const getDescriptionOnChangeParams = value => ({tag_description: value });
-// const TagInput = () => <NameDescriptionInput nameLabel="Tag Name" namePlaceholder="Tag name" nameSelector={nameSelector} nameOnChange={setCurrentTag} getNameOnChangeParams={getNameOnChangeParams}
-//     descriptionLabel="Tag Description" descriptionPlaceholder="Tag description" descriptionSelector={descriptionSelector} descriptionOnChange={setCurrentTag} getDescriptionOnChangeParams={getDescriptionOnChangeParams} />;

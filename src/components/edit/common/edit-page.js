@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Form, Loader } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import moment from "moment";
 
 import Error from "../../common/error";
+import { MarkdownEditor } from "./markdown-editor";
 
 import StyleEditInputs from "../../../styles/edit-inputs.css";
 
@@ -58,40 +59,26 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedS
 
 
 /**
- * Name and description input form.
+ * Name input control.
  */
-export const NameDescriptionInput = ({ nameLabel, namePlaceholder, name, nameOnChange,
-    descriptionLabel, descriptionPlaceholder, description, descriptionOnChange }) => {
-    
-    const descriptionRef = useRef(null);
-    const resizeDescriptionInput = useRef(() => {
-        if (descriptionRef.current) {
-            descriptionRef.current.style.height = "inherit";  // reset
-            descriptionRef.current.style.height = descriptionRef.current.scrollHeight + "px";   // set to text height
-        }
-    }).current;
-
-    const handleNameChange = useRef(e => {
-        nameOnChange(e.target.value);
-    }).current;
-
-    const handleDescriptionChange = useRef(e => {
-        descriptionOnChange(e.target.value);
-        resizeDescriptionInput();
-    }).current;
-
-    // Resize description input on start
-    useEffect(() => {
-        resizeDescriptionInput();
-    }, []);
+export const NameInput = ({ label, placeholder, value, onChange }) => {
+    const handleNameChange = useMemo(() => e => { onChange(e.target.value); }, []);
 
     return (
-        <Form className="name-description-form">
-            <Form.Input label={nameLabel} placeholder={namePlaceholder} value={name} onChange={handleNameChange} />
-            <Form.Field>
-                <label>{descriptionLabel}</label>
-                <textarea className="edit-page-textarea" placeholder={descriptionPlaceholder} ref={descriptionRef} value={description} onChange={handleDescriptionChange} />
-            </Form.Field>
+        <Form className="name-form">
+            <Form.Input label={label} placeholder={placeholder} value={value} onChange={handleNameChange} />
         </Form>
     );
+};
+
+
+/**
+ * Customized markdown editor component for editing & viewing tag/object description.
+ */
+export const DescriptionEditor = ({ label, placeholder, value, onChange }) => {
+    const [parsedDescription, setParsedDescrtiption] = useState("");
+    const onPostParse = useMemo(() => parsed => setParsedDescrtiption(parsed), []);
+
+    return <MarkdownEditor header={label} editPlaceholder={placeholder} rawMarkdown={value} rawMarkdownOnChange={onChange}
+        parsedMarkdown={parsedDescription} onPostParse={onPostParse} />;
 };

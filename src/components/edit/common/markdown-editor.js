@@ -5,6 +5,7 @@ import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../field/field-me
 import { OnResizeWrapper } from "../../common/on-resize-wrapper";
 
 import { useMarkdownParseWorker } from "../../../util/use-markdown-parse-worker";
+import { useMountedState } from "../../../util/use-mounted-state";
 
 import StyleMarkdownEditor from "../../../styles/markdown-editor.css";
 import StyleRenderedMarkdown from "../../../styles/rendered-markdown.css";
@@ -15,18 +16,18 @@ import StyleHighlight from "highlight.js/styles/a11y-dark.css";
  * Customizable markdown editor component.
  * Displays markdown edit form and rendered markdown.
  */
-export const MarkdownEditor = memo(({ headerText, rawMarkdown, rawMarkdownOnChange, parsedMarkdown, onPostParse }) => {
+export const MarkdownEditor = memo(({ header, editPlaceholder, rawMarkdown, rawMarkdownOnChange, parsedMarkdown, onPostParse }) => {
     const [displayMode, setDisplayMode] = useState("both");
 
-    const header = headerText && (
-        <div className="markdown-editor-header">{headerText}</div>
+    const _header = header && (
+        <div className="markdown-editor-header">{header}</div>
     );
     
     return (
         <div className="markdown-editor-container">
-            {header}
+            {_header}
             <MarkdownEditorDisplayModeMenu displayMode={displayMode} setDisplayMode={setDisplayMode} />
-            <MarkdownEditorViewEdit displayMode={displayMode} rawMarkdown={rawMarkdown} rawMarkdownOnChange={rawMarkdownOnChange} 
+            <MarkdownEditorViewEdit displayMode={displayMode} editPlaceholder={editPlaceholder} rawMarkdown={rawMarkdown} rawMarkdownOnChange={rawMarkdownOnChange} 
                 parsedMarkdown={parsedMarkdown} onPostParse={onPostParse} />
         </div>
     );
@@ -58,7 +59,10 @@ const MarkdownEditorDisplayModeMenu = memo(({ displayMode, setDisplayMode }) => 
 });
 
 
-const MarkdownEditorViewEdit = ({ displayMode, rawMarkdown, rawMarkdownOnChange, parsedMarkdown, onPostParse }) => {
+const MarkdownEditorViewEdit = ({ displayMode, editPlaceholder, rawMarkdown, rawMarkdownOnChange, parsedMarkdown, onPostParse }) => {
+    // isMounted state of the component
+    const isMounted = useMountedState();
+
     // Fullscreen style state & on resize callback
     const [isFullscreenStyle, setIsFullscreenStyle] = useState(true);
 
@@ -68,7 +72,10 @@ const MarkdownEditorViewEdit = ({ displayMode, rawMarkdown, rawMarkdownOnChange,
     }, []);
 
     // Trigger markdown parse after first render or when raw
-    const parseMarkdown = useMarkdownParseWorker(onPostParse);
+    // Also check if current component is mounted to avoid updating state of unmounted components
+    const parseMarkdown = useMarkdownParseWorker(parsed => {
+        if (isMounted()) onPostParse(parsed)
+    });
     
     useEffect(() => { parseMarkdown(rawMarkdown); }, [rawMarkdown]);
 
@@ -78,7 +85,7 @@ const MarkdownEditorViewEdit = ({ displayMode, rawMarkdown, rawMarkdownOnChange,
 
     const editContainer = displayMode !== "view" && (
         <div className={columnClassName}>
-            <MarkdownEdit rawMarkdown={rawMarkdown} rawMarkdownOnChange={rawMarkdownOnChange} />
+            <MarkdownEdit placeholder={editPlaceholder} rawMarkdown={rawMarkdown} rawMarkdownOnChange={rawMarkdownOnChange} />
         </div>
     );
     
@@ -108,7 +115,7 @@ const MarkdownView = memo(({ parsedMarkdown }) => {
 });
 
 
-const MarkdownEdit = ({ rawMarkdown, rawMarkdownOnChange }) => {
+const MarkdownEdit = ({ placeholder = "Enter text here...", rawMarkdown, rawMarkdownOnChange }) => {
     // Resize function
     const resize = useRef(() => {
         if (rawMarkdownRef.current) {
@@ -131,7 +138,7 @@ const MarkdownEdit = ({ rawMarkdown, rawMarkdownOnChange }) => {
     return (
         <Form className="markdown-editor-edit-container">
             <Form.Field>
-                <textarea className="edit-page-textarea" placeholder="Enter text here..." ref={rawMarkdownRef} value={rawMarkdown} onChange={handleChange} />
+                <textarea className="edit-page-textarea" placeholder={placeholder} ref={rawMarkdownRef} value={rawMarkdown} onChange={handleChange} />
             </Form.Field>
         </Form>
     );
