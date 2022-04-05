@@ -12,6 +12,7 @@ import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElem
     clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons, 
     getSubobjectCardIndicators, getSubobjectExpandToggleButton, startSubobjectCardDrag, getSubobjectGridColumnContainers, getNewColumnDropzones } from "../_util/ui-composite";
 import { getDropdownOptionsContainer, getInlineInputField } from "../_util/ui-objects-tags";
+import { getMarkdownEditorElements, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
 
 import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
 import { enumDeleteModes } from "../../src/store/state-templates/composite-subobjects";
@@ -323,11 +324,16 @@ describe("Subobject card tabs", () => {
 
         // Edit name & description and check if they're updated
         const subobjectID = cards[0][0].id;
-        const objectName = "some name", objectDescription = "some description";
+        const objectName = "some name", objectDescription = "# some description";
         fireEvent.change(subobjectNameInput, { target: { value: objectName } });
         await waitFor(() => expect(store.getState().editedObjects[subobjectID].object_name).toEqual(objectName));
         fireEvent.change(subobjectDescriptionInput, { target: { value: objectDescription } });
         await waitFor(() => expect(store.getState().editedObjects[subobjectID].object_description).toEqual(objectDescription));
+        
+        // Check if markdown is rendered
+        const { editorContainer } = getMarkdownEditorElements({ container: cards[0][0] });
+        await waitForMarkdownHeaderRender(editorContainer, "some description");
+
     });
 
 
@@ -368,11 +374,15 @@ describe("Subobject card tabs", () => {
         expect(firstCardAttributeElements.dropdownOptionsContainer.classList.contains("visible")).toBeFalsy();  // classname is required to display dropdown options
 
         // Edit name & description and check if they're changed
-        const objectName = "some name", objectDescription = "some description";
+        const objectName = "some name", objectDescription = "# some description";
         fireEvent.change(firstCardAttributeElements.subobjectNameInput, { target: { value: objectName } });
         await waitFor(() => expect(store.getState().editedObjects[subobjectID].object_name).toEqual(objectName));
         fireEvent.change(firstCardAttributeElements.subobjectDescriptionInput, { target: { value: objectDescription } });
         await waitFor(() => expect(store.getState().editedObjects[subobjectID].object_description).toEqual(objectDescription));
+
+        // Check if markdown is rendered
+        const { editorContainer } = getMarkdownEditorElements({ container: cards[0][0] });
+        await waitForMarkdownHeaderRender(editorContainer, "some description");
     });
 
 

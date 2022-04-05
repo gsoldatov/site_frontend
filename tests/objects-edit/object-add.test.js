@@ -9,6 +9,7 @@ import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElement
     clickDisplayTabButton, clickPublishObjectCheckbox, resetObject } from "../_util/ui-objects-edit";
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
     getSubobjectCards, getSubobjectExpandToggleButton } from "../_util/ui-composite";
+import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
 
 import { App } from "../../src/components/top-level/app";
 import { getMappedSubobjectID } from "../_mocks/data-composite";
@@ -95,6 +96,43 @@ describe("UI checks", () => {
         clickDataTabButton(container);
         expect(getCurrentObject(store.getState()).object_type).toEqual("link");
         getByPlaceholderText(container, "Link", { exact: false });
+    });
+
+
+    test("Object description editor", async () => {
+        let { container, store } = renderWithWrappers(<App />, 
+            { route: "/objects/edit/new" }
+        );
+    
+        // Check if `both` mode is selected
+        let markdownEditorElements = getMarkdownEditorElements({ container });
+        expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+        
+        // Set description and check if it was rendered
+        setMarkdownRawText(markdownEditorElements.editMarkdownInput, "# Some text");
+        await waitForMarkdownHeaderRender(markdownEditorElements.editorContainer, "Some text");
+        expect(store.getState().editedObjects[0].object_description).toBe("# Some text");
+    
+        // Click and check `view` mode
+        fireEvent.click(markdownEditorElements.displayModeMenu.viewModeButton);
+        markdownEditorElements = getMarkdownEditorElements({ container });
+        expect(markdownEditorElements.displayModeMenu.viewModeButton.classList.contains("active")).toBeTruthy();
+        expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
+        expect(markdownEditorElements.editMarkdownInput).toBeFalsy();
+    
+        // Click and check `edit` mode
+        fireEvent.click(markdownEditorElements.displayModeMenu.editModeButton);
+        markdownEditorElements = getMarkdownEditorElements({ container });
+        expect(markdownEditorElements.displayModeMenu.editModeButton.classList.contains("active")).toBeTruthy();
+        expect(markdownEditorElements.renderedMarkdown).toBeFalsy();
+        expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
+    
+        // Click and check `both` mode
+        fireEvent.click(markdownEditorElements.displayModeMenu.bothModeButton);
+        markdownEditorElements = getMarkdownEditorElements({ container });
+        expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+        expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
+        expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
     });
 
 

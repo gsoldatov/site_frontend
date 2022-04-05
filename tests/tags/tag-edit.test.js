@@ -7,6 +7,7 @@ import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { renderWithWrappers } from "../_util/render";
 import { createTestStore } from "../_util/create-test-store";
+import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
 
 import { App } from "../../src/components/top-level/app";
 import { addTags, deleteTags } from "../../src/actions/data-tags";
@@ -47,7 +48,7 @@ test("Load a non-existing tag + check buttons", async () => {
 
 test("Load tags with invalid IDs", async () => {
     for (let tagID of ["0", "str"]) {
-        // Route component is required for matching (getting :id part of the URL in the EditObject component)
+        // Route component is required for matching (getting :id part of the URL in the component)
         let { container } = renderWithWrappers(<App />, {
             route: `/tags/${tagID}`
         });
@@ -118,11 +119,51 @@ test("Check 'Add Tag' button", async () => {
         { route: "/tags/1" }
     );
 
-    // Check if object information is displayed on the page
+    // Check if tag information is displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
     let addTagButton = getSideMenuItem(container, "Add a New Tag");
     fireEvent.click(addTagButton);
     expect(history.entries[history.length - 1].pathname).toBe("/tags/new");
+});
+
+
+test("Tag description editor", async () => {
+    let { container, store } = renderWithWrappers(<App />, 
+        { route: "/tags/1" }
+    );
+
+    // Check if tag information is displayed on the page
+    await waitFor(() => getByText(container, "Tag Information"));
+
+    // Check if `both` mode is selected
+    let markdownEditorElements = getMarkdownEditorElements({ container });
+    expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+    
+    // Set description and check if it was rendered
+    setMarkdownRawText(markdownEditorElements.editMarkdownInput, "# Some text");
+    await waitForMarkdownHeaderRender(markdownEditorElements.editorContainer, "Some text");
+    expect(store.getState().tagUI.currentTag.tag_description).toBe("# Some text");
+
+    // Click and check `view` mode
+    fireEvent.click(markdownEditorElements.displayModeMenu.viewModeButton);
+    markdownEditorElements = getMarkdownEditorElements({ container });
+    expect(markdownEditorElements.displayModeMenu.viewModeButton.classList.contains("active")).toBeTruthy();
+    expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
+    expect(markdownEditorElements.editMarkdownInput).toBeFalsy();
+
+    // Click and check `edit` mode
+    fireEvent.click(markdownEditorElements.displayModeMenu.editModeButton);
+    markdownEditorElements = getMarkdownEditorElements({ container });
+    expect(markdownEditorElements.displayModeMenu.editModeButton.classList.contains("active")).toBeTruthy();
+    expect(markdownEditorElements.renderedMarkdown).toBeFalsy();
+    expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
+
+    // Click and check `both` mode
+    fireEvent.click(markdownEditorElements.displayModeMenu.bothModeButton);
+    markdownEditorElements = getMarkdownEditorElements({ container });
+    expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+    expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
+    expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
 });
 
 

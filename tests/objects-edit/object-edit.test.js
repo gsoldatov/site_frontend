@@ -13,6 +13,7 @@ import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickG
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, 
     getSubobjectCards, getSubobjectExpandToggleButton } from "../_util/ui-composite";
 import { getObjectsViewCardElements } from "../_util/ui-objects-view";
+import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
 
 import { getTDLByObjectID } from "../_mocks/data-to-do-lists";
 import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject, getMappedSubobjectID } from "../_mocks/data-composite";
@@ -148,6 +149,46 @@ describe("Load object errors & UI checks", () => {
 
         fireEvent.click(getByText(cards[0][0], "Restore"));
         expect(store.getState().editedObjects[1].composite.subobjects[2].deleteMode).toEqual(enumDeleteModes.none);
+    });
+
+
+    test("Object description editor", async () => {
+        let { container, store } = renderWithWrappers(<App />, 
+            { route: "/objects/edit/1" }
+        );
+        
+        // Load page
+        await waitFor(() => getByText(container, "Object Information"));
+    
+        // Check if `both` mode is selected
+        let markdownEditorElements = getMarkdownEditorElements({ container });
+        expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+        
+        // Set description and check if it was rendered
+        setMarkdownRawText(markdownEditorElements.editMarkdownInput, "# Some text");
+        await waitForMarkdownHeaderRender(markdownEditorElements.editorContainer, "Some text");
+        expect(store.getState().editedObjects[1].object_description).toBe("# Some text");
+    
+        // Click and check `view` mode
+        fireEvent.click(markdownEditorElements.displayModeMenu.viewModeButton);
+        markdownEditorElements = getMarkdownEditorElements({ container });
+        expect(markdownEditorElements.displayModeMenu.viewModeButton.classList.contains("active")).toBeTruthy();
+        expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
+        expect(markdownEditorElements.editMarkdownInput).toBeFalsy();
+    
+        // Click and check `edit` mode
+        fireEvent.click(markdownEditorElements.displayModeMenu.editModeButton);
+        markdownEditorElements = getMarkdownEditorElements({ container });
+        expect(markdownEditorElements.displayModeMenu.editModeButton.classList.contains("active")).toBeTruthy();
+        expect(markdownEditorElements.renderedMarkdown).toBeFalsy();
+        expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
+    
+        // Click and check `both` mode
+        fireEvent.click(markdownEditorElements.displayModeMenu.bothModeButton);
+        markdownEditorElements = getMarkdownEditorElements({ container });
+        expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+        expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
+        expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
     });
 });
 

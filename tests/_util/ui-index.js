@@ -1,5 +1,3 @@
-import { screen } from "@testing-library/dom";
-
 /**
  * Returns elements of an object feed inside `container`.
  */

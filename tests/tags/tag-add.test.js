@@ -1,10 +1,11 @@
 import React from "react";
 
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { renderWithWrappers } from "../_util/render";
 import { getSideMenuItem } from "../_util/ui-common";
+import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
 
 import { App } from "../../src/components/top-level/app";
 import { addTags } from "../../src/actions/data-tags";
@@ -41,8 +42,7 @@ test("Render and click cancel button", async () => {
     let saveButton = getSideMenuItem(container, "Save");
     let cancelButton = getSideMenuItem(container, "Cancel");
     expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
-    // expect(saveButton.onclick).toBeNull();   
-    
+    // expect(saveButton.onclick).toBeNull();
 
     // Check if cancel button redirects to /tags page
     fireEvent.click(cancelButton);
@@ -69,6 +69,43 @@ test("Modify tag name and try saving an existing (in local state) tag name", asy
     saveButton = getSideMenuItem(container, "Save");
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "already exists", { exact: false }));
+});
+
+
+test("Tag description editor", async () => {
+    let { container, store } = renderWithWrappers(<App />, {
+        route: "/tags/new"
+    });
+
+    // Check if `both` mode is selected
+    let markdownEditorElements = getMarkdownEditorElements({ container });
+    expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+    
+    // Set description and check if it was rendered
+    setMarkdownRawText(markdownEditorElements.editMarkdownInput, "# Some text");
+    await waitForMarkdownHeaderRender(markdownEditorElements.editorContainer, "Some text");
+    expect(store.getState().tagUI.currentTag.tag_description).toBe("# Some text");
+
+    // Click and check `view` mode
+    fireEvent.click(markdownEditorElements.displayModeMenu.viewModeButton);
+    markdownEditorElements = getMarkdownEditorElements({ container });
+    expect(markdownEditorElements.displayModeMenu.viewModeButton.classList.contains("active")).toBeTruthy();
+    expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
+    expect(markdownEditorElements.editMarkdownInput).toBeFalsy();
+
+    // Click and check `edit` mode
+    fireEvent.click(markdownEditorElements.displayModeMenu.editModeButton);
+    markdownEditorElements = getMarkdownEditorElements({ container });
+    expect(markdownEditorElements.displayModeMenu.editModeButton.classList.contains("active")).toBeTruthy();
+    expect(markdownEditorElements.renderedMarkdown).toBeFalsy();
+    expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
+
+    // Click and check `both` mode
+    fireEvent.click(markdownEditorElements.displayModeMenu.bothModeButton);
+    markdownEditorElements = getMarkdownEditorElements({ container });
+    expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+    expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
+    expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
 });
 
 
