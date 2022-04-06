@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Header } from "semantic-ui-react";
 
 import { ObjectPreviewTagList } from "./object-preview-tags";
+import { useParsedMarkdownState } from "../../util/use-parsed-markdown-state";
 
 
 /**
@@ -20,7 +21,8 @@ export const ObjectPreview = ({ objectID }) => {
     
     const objectName = useSelector(state => (state.objects[objectID] || {}).object_name);
     let objectDescription = useSelector(state => (state.objects[objectID] || {}).object_description);
-    if (objectDescription === "") objectDescription = "<No description available>";
+    let parsedDescription = useParsedMarkdownState(objectDescription);
+    if (parsedDescription === "") parsedDescription = "&ltNo description available&gt";
     
     // Exit if object is not found (after logout case)
     if (!objectName) return null;
@@ -35,8 +37,10 @@ export const ObjectPreview = ({ objectID }) => {
         </Header>
     );
 
-    const description = (
-        <div className="object-preview-description">{objectDescription}</div>
+    const description = parsedDescription && (
+        <div className="object-preview-description">
+            <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedDescription }} />
+        </div>
     );
 
     return (

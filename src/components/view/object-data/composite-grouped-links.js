@@ -7,6 +7,7 @@ import { Loader, Message, Header, Table } from "semantic-ui-react";
 import { groupedLinksOnLoad } from "../../../fetches/ui-objects-view";
 import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/composite";
 import { useMountedState } from "../../../util/use-mounted-state";
+import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
@@ -148,8 +149,21 @@ const GroupedLinksTableRow = ({ subobjectID }) => {
             </Table.Cell>
 
             <Table.Cell>
-                {object.object_description}
+                <GroupedLinksTableObjectDescription objectDescription={object.object_description} />
             </Table.Cell>
         </Table.Row>
+    );
+};
+
+
+/**
+ * Component for rendering subobject description as markdown inside a table row.
+ */
+const GroupedLinksTableObjectDescription = ({ objectDescription }) => {
+    const parsedDescription = useParsedMarkdownState(objectDescription);
+
+    // Result
+    return parsedDescription.length > 0 && (
+        <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedDescription }} />
     );
 };
