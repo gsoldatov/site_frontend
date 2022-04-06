@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, memo } from "react";
 import { Form, Loader } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import moment from "moment";
@@ -61,7 +61,7 @@ export const TimeStamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedS
 /**
  * Name input control.
  */
-export const NameInput = ({ label, placeholder, value, onChange }) => {
+export const NameInput = memo(({ label, placeholder, value, onChange }) => {
     const handleNameChange = useMemo(() => e => { onChange(e.target.value); }, []);
 
     return (
@@ -69,16 +69,16 @@ export const NameInput = ({ label, placeholder, value, onChange }) => {
             <Form.Input label={label} placeholder={placeholder} value={value} onChange={handleNameChange} />
         </Form>
     );
-};
+});
 
 
 /**
  * Customized markdown editor component for editing & viewing tag/object description.
  */
-export const DescriptionEditor = ({ label, placeholder, value, onChange }) => {
+export const DescriptionEditor = memo(({ label, placeholder, value, onChange }) => {
     const [parsedDescription, setParsedDescrtiption] = useState("");
     const onPostParse = useMemo(() => parsed => setParsedDescrtiption(parsed), []);
 
     return <MarkdownEditor header={label} editPlaceholder={placeholder} rawMarkdown={value} rawMarkdownOnChange={onChange}
         parsedMarkdown={parsedDescription} onPostParse={onPostParse} />;
-};
+});

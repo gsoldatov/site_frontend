@@ -30,7 +30,8 @@ export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
     const dispatch = useDispatch();
 
     const isDisabled = objectID > 0;
-    const objectType = useSelector(getEditedOrDefaultObjectSelector(objectID)).object_type;
+    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
+    const objectType = useSelector(state => editedOrDefaultObjectSelector(state).object_type);
 
     // Header style
     const headerClassName = "object-type-menu-header" + (isSubobject ? " subobject": "");
