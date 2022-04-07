@@ -25,7 +25,7 @@ export const getObjectsViewCardElements = ({ container, card }) => {
             description: {element: null }
         },
         data: {
-            link: { element: null },
+            link: { link: null, renderedMarkdown: null },
             
             markdown: { container: null },
             
@@ -105,7 +105,8 @@ export const getObjectsViewCardElements = ({ container, card }) => {
         if (dataContainer) {
             // Link
             if (dataContainer.classList.contains("link"))
-                result.data.link.element = dataContainer.querySelector("a");
+                result.data.link.link = dataContainer.querySelector("a");
+                if (result.data.link.link) result.data.link.renderedMarkdown = result.data.link.link.querySelector(".rendered-markdown");
             
             // Markdown
             if (dataContainer.classList.contains("markdown"))
@@ -248,7 +249,8 @@ const getAttributes = card => {
         result.objectIsEdited.element = attributesContainer.querySelector(".objects-view-object-is-edited-container");
 
         // Description
-        result.description.element = attributesContainer.querySelector(".objects-view-description");        
+        const descriptionContainer = attributesContainer.querySelector(".objects-view-description");
+        if (descriptionContainer) result.description.element = descriptionContainer.querySelector(".rendered-markdown");
     }
 
     return result;

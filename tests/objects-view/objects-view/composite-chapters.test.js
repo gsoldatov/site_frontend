@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { waitFor, screen, fireEvent } from "@testing-library/dom";
+import { waitFor, fireEvent } from "@testing-library/dom";
 
 import { renderWithWrappers } from "../../_util/render";
 import { getObjectsViewCardElements, loadObjectsViewPageAndSelectChapter } from "../../_util/ui-objects-view";
@@ -140,7 +140,7 @@ describe("Table of contents", () => {
             let objectAttributes = { ...store.getState().objects[3910], show_description: true };
             store.dispatch(addObjects([ objectAttributes ]));
             compositeChaptersElements = getObjectsViewCardElements({ container }).data.compositeChapters;
-            expect(compositeChaptersElements.tableOfContents.attributes.description.element).toBeTruthy();
+            await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeTruthy());
 
             // Check if tags are rendered
             const cardElements = getObjectsViewCardElements({ container });
@@ -284,7 +284,7 @@ describe("Table of contents", () => {
             let objectAttributes = { ...store.getState().objects[objectID], show_description: true };
             store.dispatch(addObjects([ objectAttributes ]));
             compositeChaptersElements = getObjectsViewCardElements({ container }).data.compositeChapters;
-            expect(compositeChaptersElements.tableOfContents.attributes.description.element).toBeTruthy();
+            await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeTruthy());
 
             // Check if tags are rendered
             let cardElements = getObjectsViewCardElements({ container });
@@ -392,7 +392,7 @@ describe("Chapter object", () => {
         expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[chapterObjectID].object_name);
 
         // Check if link is displayed
-        expect(cardElements.data.link.element.getAttribute("href")).toEqual(store.getState().links[chapterObjectID].link);
+        await waitFor(() => expect(cardElements.data.link.link.getAttribute("href")).toEqual(store.getState().links[chapterObjectID].link));
     });
 
 

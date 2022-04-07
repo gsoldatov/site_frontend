@@ -166,7 +166,7 @@ describe("Load object errors & UI checks", () => {
         
         // Set description and check if it was rendered
         setMarkdownRawText(markdownEditorElements.editMarkdownInput, "# Some text");
-        await waitForMarkdownHeaderRender(markdownEditorElements.editorContainer, "Some text");
+        await waitForMarkdownHeaderRender({ editorContainer: markdownEditorElements.editorContainer, text: "Some text" });
         expect(store.getState().editedObjects[1].object_description).toBe("# Some text");
     
         // Click and check `view` mode

@@ -83,7 +83,7 @@ test("Tag description editor", async () => {
     
     // Set description and check if it was rendered
     setMarkdownRawText(markdownEditorElements.editMarkdownInput, "# Some text");
-    await waitForMarkdownHeaderRender(markdownEditorElements.editorContainer, "Some text");
+    await waitForMarkdownHeaderRender({ editorContainer: markdownEditorElements.editorContainer, text: "Some text" });
     expect(store.getState().tagUI.currentTag.tag_description).toBe("# Some text");
 
     // Click and check `view` mode

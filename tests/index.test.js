@@ -243,9 +243,14 @@ describe("Object preview", () => {
 
         // Check if correct object description is displayed
         const preview = getObjectsFeedElements(container).previews.previews[0];
-        let previewElements = getObjectPreviewElements(preview);
-        const { objectID } = previewElements;
-        expect(previewElements.description.textContent).toEqual(store.getState().objects[objectID].object_description);
+
+        await waitFor(() => {
+            let previewElements = getObjectPreviewElements(preview);
+            const { objectID } = previewElements;
+            const paragraph = previewElements.description.querySelector("p");
+            expect(paragraph).toBeTruthy();
+            expect(paragraph.textContent).toEqual(store.getState().objects[objectID].object_description);
+        });
     });
 
 

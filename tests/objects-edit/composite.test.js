@@ -332,7 +332,7 @@ describe("Subobject card tabs", () => {
         
         // Check if markdown is rendered
         const { editorContainer } = getMarkdownEditorElements({ container: cards[0][0] });
-        await waitForMarkdownHeaderRender(editorContainer, "some description");
+        await waitForMarkdownHeaderRender({ editorContainer, text: "some description" });
 
     });
 
@@ -382,7 +382,7 @@ describe("Subobject card tabs", () => {
 
         // Check if markdown is rendered
         const { editorContainer } = getMarkdownEditorElements({ container: cards[0][0] });
-        await waitForMarkdownHeaderRender(editorContainer, "some description");
+        await waitForMarkdownHeaderRender({ editorContainer, text: "some description" });
     });
 
 

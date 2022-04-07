@@ -133,7 +133,7 @@ test("Object description (link)", async () => {
     // show_description && !show_description_as_link
     linkData = { ...store.getState().links[1], show_description_as_link: false };
     store.dispatch(addObjectData([{ object_id: 1, object_type: "link", object_data: linkData }]));
-    expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy();
+    await waitFor(() => expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy());
 });
 
 
@@ -152,7 +152,7 @@ test("Object description (non-link)", async () => {
     // show_description
     let objectAttributes = { ...store.getState().objects[1001], show_description: true };
     store.dispatch(addObjects([ objectAttributes ]));
-    expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy();
+    await waitFor(() => expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy());
 });
 
 

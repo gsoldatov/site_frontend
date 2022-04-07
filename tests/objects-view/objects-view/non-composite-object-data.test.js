@@ -40,16 +40,23 @@ test("Link", async () => {
     expect(store.getState().links[1].show_description_as_link).toBeFalsy();
     
     const linkURL = store.getState().links[1].link;
-    let linkElement = getObjectsViewCardElements({ container }).data.link.element;
-    expect(linkElement.textContent).toEqual(linkURL);
-    expect(linkElement.href).toEqual(linkURL + (linkURL.endsWith("/") ? "" : "/"));        // href prop adds a slash at the end
+    await waitFor(() => {
+        let { link, renderedMarkdown } = getObjectsViewCardElements({ container }).data.link;
+        expect(link.getAttribute("href")).toEqual(linkURL);
+        expect(renderedMarkdown.textContent).toEqual(linkURL);
+    });
 
     // !show_description && show_description_as_link
     let linkData = { ...store.getState().links[1], show_description_as_link: true };
     store.dispatch(addObjectData([{ object_id: 1, object_type: "link", object_data: linkData }]));
 
-    expect(linkElement.textContent).toEqual(store.getState().objects[1].object_description);
-    expect(linkElement.href).toEqual(linkURL + (linkURL.endsWith("/") ? "" : "/"));        // href prop adds a slash at the end
+    await waitFor(() => {
+        let { link, renderedMarkdown } = getObjectsViewCardElements({ container }).data.link;
+        expect(link.getAttribute("href")).toEqual(linkURL);
+        const paragraph = renderedMarkdown.querySelector("p");
+        expect(paragraph).toBeTruthy();
+        expect(paragraph.textContent).toEqual(store.getState().objects[1].object_description); 
+    });
 });
 
 

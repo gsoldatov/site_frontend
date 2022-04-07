@@ -41,12 +41,14 @@ export const setMarkdownRawText = (editMarkdownInput, value) => {
 
 
 /**
- * Waits for an <h3> tag with specified `text` to appear inside `editorContainer`.
+ * Waits for an <h3> tag with specified `text` to appear inside `editorContainer` or `renderedMarkdown`.
  */
-export const waitForMarkdownHeaderRender = async (editorContainer, text) => {
+export const waitForMarkdownHeaderRender = async ({ editorContainer, renderedMarkdown, text }) => {
     await waitFor(() => {
-        const markdownEditorElements = getMarkdownEditorElements({ editorContainer });
-        const { renderedMarkdown } = markdownEditorElements;
+        if (!renderedMarkdown) {
+            const markdownEditorElements = getMarkdownEditorElements({ editorContainer });
+            renderedMarkdown = markdownEditorElements.renderedMarkdown;
+        }
         expect(renderedMarkdown).toBeTruthy();
         const header = renderedMarkdown.querySelector("h3");
         expect(header).toBeTruthy();

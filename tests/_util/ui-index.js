@@ -70,7 +70,8 @@ export const getObjectPreviewElements = previewContainer => {
     if (result.headerLink)
         result.objectID = parseInt(result.headerLink.href.match(/\/objects\/view\/(?<id>\d+)$/).groups["id"]);
 
-    result.description = previewContainer.querySelector(".object-preview-description");
+    const descriptionContainer = previewContainer.querySelector(".object-preview-description");
+    if (descriptionContainer) result.description = descriptionContainer.querySelector(".rendered-markdown");
     result.tags.container = previewContainer.querySelector(".object-preview-tag-list-container");
     if (result.tags.container) result.tags.tags = [...result.tags.container.querySelectorAll(".inline-item")];
 

@@ -6,6 +6,7 @@ import { getByPlaceholderText, waitFor } from "@testing-library/dom";
 import { createTestStore } from "../../_util/create-test-store";
 import { renderWithWrappers } from "../../_util/render";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
+import { waitForMarkdownHeaderRender } from "../../_util/ui-markdown-editor";
 
 import { resetEditedObjects } from "../../../src/actions/objects-edit";
 import { addObjectData, addObjects } from "../../../src/actions/data-objects";
@@ -187,7 +188,12 @@ describe("Subobject attributes & tags", () => {
         compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
         store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
 
-        expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy();
+        await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
+
+        // Description Markdown is rendered
+        let objectAttributes = { ...store.getState().objects[cardElements.objectID], object_description: "# Some text" };
+        store.dispatch(addObjects([ objectAttributes ]));
+        await waitForMarkdownHeaderRender({ renderedMarkdown: getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element, text: "Some text" });
     });
 
 
@@ -213,7 +219,7 @@ describe("Subobject attributes & tags", () => {
         let objectAttributes = { ...store.getState().objects[cardElements.objectID], show_description: false };
         store.dispatch(addObjects([ objectAttributes ]));
 
-        expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy();
+        await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
         // show_description_composite = inherit & !show_description;
         compositeData = deepCopy(store.getState().composite[3901]);
@@ -221,13 +227,13 @@ describe("Subobject attributes & tags", () => {
         compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
         store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
 
-        expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy();
+        await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy());
 
         // show_description_composite = inherit & show_description;
         objectAttributes = { ...store.getState().objects[cardElements.objectID], show_description: true };
         store.dispatch(addObjects([ objectAttributes ]));
 
-        expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy();
+        await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
         // show_description_composite = no & show_description;
         compositeData = deepCopy(store.getState().composite[3901]);
@@ -235,7 +241,7 @@ describe("Subobject attributes & tags", () => {
         compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
         store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
 
-        expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy();
+        await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy());
     });
 
 
@@ -272,7 +278,7 @@ describe("Subobject object data", () => {
         expect(store.getState().objects[cardElements.objectID].object_type).toEqual("link");
 
         const linkURL = store.getState().links[cardElements.objectID].link;
-        let linkElement = cardElements.data.link.element;
+        let { link, renderedMarkdown } = cardElements.data.link;
 
         // show_description_as_link_composite = yes & !show_description_as_link
         let compositeData = deepCopy(store.getState().composite[3901]);
@@ -283,8 +289,13 @@ describe("Subobject object data", () => {
         let linkData = { ...store.getState().links[cardElements.objectID], show_description_as_link: false };
         store.dispatch(addObjectData([{ object_id: cardElements.objectID, object_type: "link", object_data: linkData }]));
 
-        expect(linkElement.textContent).toEqual(store.getState().objects[cardElements.objectID].object_description);
-        expect(linkElement.href).toEqual(linkURL + (linkURL.endsWith("/") ? "" : "/"));        // href prop adds a slash at the end
+        expect(link.getAttribute("href")).toEqual(linkURL);
+        await waitFor(() => {
+            const renderedMarkdown = getObjectsViewCardElements({ card: subobjectCards[0] }).data.link.renderedMarkdown;
+            const paragraph = renderedMarkdown.querySelector("p");
+            expect(paragraph).toBeTruthy();
+            expect(paragraph.textContent).toEqual(store.getState().objects[cardElements.objectID].object_description); 
+        });
 
         // show_description_as_link_composite = inherit & !show_description_as_link
         compositeData = deepCopy(store.getState().composite[3901]);
@@ -292,13 +303,18 @@ describe("Subobject object data", () => {
         compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
         store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
 
-        expect(linkElement.textContent).toEqual(linkURL);
+        await waitFor(() => { expect(renderedMarkdown.textContent).toEqual(linkURL); });
 
         // show_description_as_link_composite = inherit & show_description_as_link
         linkData = { ...store.getState().links[cardElements.objectID], show_description_as_link: true };
         store.dispatch(addObjectData([{ object_id: cardElements.objectID, object_type: "link", object_data: linkData }]));
 
-        expect(linkElement.textContent).toEqual(store.getState().objects[cardElements.objectID].object_description);
+        await waitFor(() => {
+            const renderedMarkdown = getObjectsViewCardElements({ card: subobjectCards[0] }).data.link.renderedMarkdown;
+            const paragraph = renderedMarkdown.querySelector("p");
+            expect(paragraph).toBeTruthy();
+            expect(paragraph.textContent).toEqual(store.getState().objects[cardElements.objectID].object_description); 
+        });
 
         // show_description_as_link_composite = no & show_description_as_link
         compositeData = deepCopy(store.getState().composite[3901]);
@@ -306,7 +322,7 @@ describe("Subobject object data", () => {
         compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
         store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
 
-        expect(linkElement.textContent).toEqual(linkURL);
+        await waitFor(() => { expect(renderedMarkdown.textContent).toEqual(linkURL); });
     });
 
 
