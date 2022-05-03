@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Grid, GridColumn } from "semantic-ui-react";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
-import Navigation from "./navigation";
+import { Navbar } from "./navigation/navbar";
 import SideMenu from "./side-menu";
 
 
@@ -41,7 +41,7 @@ export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStac
         <OnResizeWrapper callback={onResizeCallback}>
             <Grid stackable className={gridClassName}>
                 <Grid.Row className={navigationRowClassName}>
-                    <Navigation />
+                    <Navbar />
                 </Grid.Row>
                 <Grid.Row columns={mainRowColumns} className={mainRowClassName}>
                     {sideMenuColumn}
