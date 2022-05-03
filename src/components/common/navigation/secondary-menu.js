@@ -12,13 +12,17 @@ import { useMountedState } from "../../../util/use-mounted-state";
 /**
  * Navigation bar's secondary menu component with auth controls.
  */
-export const NavbarSecondaryMenu = ({ containerClassName }) => {
+export const NavbarSecondaryMenu = ({ isStacked, isExpanded }) => {
     const isUserLoggedIn = useSelector(state => state.auth.numeric_user_level > enumUserLevels.anonymous);
 
     const location = useLocation();
-    const isMenuDisplayed = location.pathname.startsWith("/auth/") === false;
+    const isMenuDisplayed = (!isStacked || isExpanded) && location.pathname.startsWith("/auth/") === false;
 
     if (!isMenuDisplayed) return null;
+
+    const containerClassName = "navigation-right-menu" + (
+        isStacked ? " is-stacked" : ""  // add a top-border when menu is vertical (instead of pseudo-elements displayed before other menu items)
+    );
     
     const content = isUserLoggedIn ? <LoggedInSecondaryMenu /> : <LoggedOutSecondaryMenu />;
     

@@ -1,6 +1,7 @@
 import React, { memo, useMemo, useState, useEffect, useRef } from "react";
 import { Icon, Menu } from "semantic-ui-react";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import { OnResizeWrapper } from "../on-resize-wrapper";
 import { NavbarSecondaryMenu } from "./secondary-menu";
@@ -12,24 +13,7 @@ import StyleNavigation from "../../../styles/navigation.css";
 
 
 /**
- * Navigation bar item description
- */
-const navigationItems = [
-    { to: "/", text: "Index" },
-    { to: "/objects/list", text: "Objects", 
-        isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous },
-    { to: "/objects/edited", text: "Edited Objects", 
-        labelTextSelector: state => Object.keys(state.editedObjects).length || undefined, 
-        labelColorSelector: state => Object.keys(state.editedObjects).length > 0 ? "green" : "grey",
-        isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous },
-    { to: "/tags", text: "Tags",
-        isDisplayedSelector: state => state.auth.numeric_user_level > enumUserLevels.anonymous },
-    { to: "/admin", text: "Admin Page",
-        isDisplayedSelector: state => state.auth.numeric_user_level === enumUserLevels.admin }
-]
-
-/**
- * Navigation menu.
+ * Navigation bar top-level component.
  */
 export const Navbar = memo(() => {
     const placeholderRef = useRef();
@@ -66,32 +50,19 @@ export const Navbar = memo(() => {
         }
     }, []);
 
-    const expandToggle = useMemo(() => {
-        const icon = isExpanded ? "close" : "bars";
-        return (
-            !isStacked ? null : (
-                <Menu.Item className="navigation-bar-expand-container">
-                    <Icon className="navigation-bar-expand-toggle" name={icon} onClick={() => setIsExpanded(!isExpanded)}/>
-                </Menu.Item>
-            )
-        );
-    }, [isExpanded, isStacked]);
-
-    // Menu items
-    const rightMenuClassName = "navigation-right-menu" + (
-        isStacked ? " is-stacked" : ""  // add a top-border when menu is vertical (instead of pseudo-elements displayed before other menu items)
-    );
-
-    let menuItems;
-    if (!isStacked || isExpanded) {
-        menuItems = navigationItems.map((item, k) => <NavbarItem key={k} item={item} />);
-
-        menuItems.push(<NavbarSecondaryMenu key={-1} containerClassName={rightMenuClassName} />);
-    }
-
+    // CSS classnames
     const placeholderClassName = "navigation-bar-placeholder" + (isStacked ? " is-stacked" : "");
     const placeholerStyle = { height: placeholderHeight };
     const mainMenuClassname = "navigation-bar" + (isStacked ? " is-stacked" : "");
+
+    // Menu items props
+    const isLoggedIn = useSelector(state => state.auth.numeric_user_level > enumUserLevels.anonymous);
+    const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === enumUserLevels.admin);
+    const menuItemsAreVisible = !isStacked || isExpanded;
+    const loggedInAndVisible = menuItemsAreVisible && isLoggedIn;
+    const loggedInAsAdminAndVisible = menuItemsAreVisible && isLoggedInAsAdmin;
+
+    const editedObjectsLabelText = useSelector(state => Object.keys(state.editedObjects).length || null);
     
     /* 
         Menu position is fixed to take 100% of screen width, `navigation-bar-placeholder` takes menu's positon in the flow
@@ -100,15 +71,41 @@ export const Navbar = memo(() => {
         (small viewport width forces navbar to be stackable even body width is > 768px) 
     */
     return (
-        <>
+        <div className="navigation-bar-container">
             <div ref={placeholderRef} className={placeholderClassName} style={placeholerStyle} />
             <OnResizeWrapper callback={onResizeCallback}>
                 <Menu inverted fluid vertical={isStacked} size="large" className={mainMenuClassname}
                     activeIndex={location.pathname}>
-                    {expandToggle}
-                    {menuItems}
+                    
+                    <ExpandToggle isStacked={isStacked} isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
+                    
+                    <NavbarItem isDisplayed={menuItemsAreVisible} text="Index" url="/" />
+                    <NavbarItem isDisplayed={loggedInAndVisible} text="Objects" url="/objects/list" />
+                    <NavbarItem isDisplayed={loggedInAndVisible} text="Edited Objects" url="/objects/edited" 
+                        labelText={editedObjectsLabelText} labelColor="green" />
+                    <NavbarItem isDisplayed={loggedInAndVisible} text="Tags" url="/tags" />
+                    <NavbarItem isDisplayed={loggedInAsAdminAndVisible} text="Admin Page" url="/admin" />
+
+                    
+                    <NavbarSecondaryMenu key={-1} isStacked={isStacked} isExpanded={isExpanded} />
                 </Menu>
             </OnResizeWrapper>
-        </>
+        </div>
+    );
+});
+
+
+/**
+ * Expand control for stacked navbar
+ */
+const ExpandToggle = memo(({ isStacked, isExpanded, setIsExpanded }) => {
+    if (!isStacked) return null;
+
+    const icon = isExpanded ? "close" : "bars";
+
+    return (
+        <Menu.Item className="navigation-bar-expand-container">
+            <Icon className="navigation-bar-expand-toggle" name={icon} onClick={() => setIsExpanded(!isExpanded)}/>
+        </Menu.Item>
     );
 });
