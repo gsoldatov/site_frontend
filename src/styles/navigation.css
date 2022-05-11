@@ -88,4 +88,9 @@ a.navigation-bar-username {
     font-weight: bold;
     margin-left: 0.5em;
     margin-right: 0.5em;
+
+    /* Max width and long text display */
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }

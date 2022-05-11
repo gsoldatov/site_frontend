@@ -8,6 +8,11 @@
     align-items: center;
 }
 
+/* View mode header */
+.user-page-view-username {
+    word-break: break-word;
+}
+
 /* View mode to edit mode button */
 .user-page-view-edit-mode-button-container {
     margin-left: 1em;
@@ -41,6 +46,8 @@
 .user-page-edit-header {
     width: 100%;
     text-align: center;
+
+    word-break: break-word;
 }
 
 /* Edit mode */
