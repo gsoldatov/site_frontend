@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { OnResizeWrapper } from "../on-resize-wrapper";
 import { NavbarSecondaryMenu } from "./secondary-menu";
 import { NavbarItem } from "./menu-item";
+import { NavbarSubmenu, NavbarSubmenuItem } from "./submenu";
 
 import { enumUserLevels } from "../../../util/enum-user-levels";
 
@@ -74,15 +75,18 @@ export const Navbar = memo(() => {
         <div className="navigation-bar-container">
             <div ref={placeholderRef} className={placeholderClassName} style={placeholerStyle} />
             <OnResizeWrapper callback={onResizeCallback}>
-                <Menu inverted fluid vertical={isStacked} size="large" className={mainMenuClassname}
+                <Menu fluid vertical={isStacked} size="large" className={mainMenuClassname}
                     activeIndex={location.pathname}>
                     
                     <ExpandToggle isStacked={isStacked} isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
                     
                     <NavbarItem isDisplayed={menuItemsAreVisible} text="Index" url="/" />
-                    <NavbarItem isDisplayed={loggedInAndVisible} text="Objects" url="/objects/list" />
-                    <NavbarItem isDisplayed={loggedInAndVisible} text="Edited Objects" url="/objects/edited" 
-                        labelText={editedObjectsLabelText} labelColor="green" />
+
+                    <NavbarSubmenu isDisplayed={loggedInAndVisible} isStacked={isStacked} text="Objects">
+                        <NavbarSubmenuItem text="List" url="/objects/list" />
+                        <NavbarSubmenuItem text="Edited Objects" url="/objects/edited" labelText={editedObjectsLabelText} labelColor="green" />
+                    </NavbarSubmenu>
+                    
                     <NavbarItem isDisplayed={loggedInAndVisible} text="Tags" url="/tags" />
                     <NavbarItem isDisplayed={loggedInAsAdminAndVisible} text="Admin Page" url="/admin" />
 

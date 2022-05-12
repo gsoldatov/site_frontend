@@ -5,16 +5,20 @@ import { NavLink } from "react-router-dom";
 
 /**
  * Basic navbar item with a link to another page.
+ * 
+ * `renderAs` prop can be used to override the container component (defaults to <Menu.Item>).
  */
-export const NavbarItem = memo(({ isDisplayed, text, url, labelText, labelColor }) => {
+export const NavbarItem = memo(({ isDisplayed = true, text, url, labelText, labelColor, renderAs }) => {
     if (!isDisplayed) return null;
+
+    const Container = renderAs || Menu.Item;
 
     const label = labelText && <Label size="tiny" circular color={labelColor}>{labelText}</Label>;
 
     return (
-        <Menu.Item as={NavLink} exact to={url}>
+        <Container as={NavLink} exact to={url}>
             {text}
             {label}
-        </Menu.Item>
+        </Container>
     );
 });

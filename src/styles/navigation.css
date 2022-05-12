@@ -2,7 +2,15 @@
     Field pagination styles. 
 *******************************/
 
-/* Navigation bar and its flow placeholder */
+:root {
+    --navbar-background-color: rgba(24, 24, 24, 1);
+    --navbar-background-active-color: rgba(40, 40, 40, 1);
+    --navbar-text-color: rgba(255, 255, 255, 0.9);
+    --navbar-separation-color: rgba(255, 255, 255, 0.12);
+}
+
+
+/** Navigation bar and its flow placeholder **/
 div.ui.menu.navigation-bar {
     /* Fix navbar to always take the full top of the screen */
     position: fixed;
@@ -27,15 +35,88 @@ div.navigation-bar-placeholder.is-stacked {
     width: 100%;
 }
 
-/* Menu items */
+
+/** Background & text colors and borders **/
+div.ui.menu.navigation-bar,
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item {
+    /* Background color */
+    background-color: var(--navbar-background-color) !important;
+}
+
+div.ui.menu.navigation-bar > .item.active:not(.dropdown),   /* Active menu items */
+div.ui.menu.navigation-bar > .item:hover:not(.navigation-bar-expand-container):not(.navbar-submenu-container.is-expanded), /* Menu item hovering (except for expand/collapse button and submenu in stacked mode) */
+
+.navbar-submenu > .item:hover,      /* Stacked submenu item hovering */
+.navbar-submenu > .item.active,     /* Stacked submenu, active item */
+
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item:hover, /* Dropdown submenu hovering */
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item.active {   /* Dropdown submenu, active item */
+    /* Background color for active & hovered elements */
+    background-color: var(--navbar-background-active-color) !important;
+}
+
+div.ui.menu.navigation-bar .item,
+div.ui.menu.navigation-bar .item:hover,
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item,
+.navigation-bar-username {
+    /* Text color */
+    color: var(--navbar-text-color) !important;
+    text-decoration-color: var(--navbar-text-color) !important;
+}
+
+.ui.dropdown .menu.navbar-submenu-dropdown {
+    /* Remove borders between dropdown and navbar */
+    border: 0px;
+}
+
+
+/** Top-level items **/
 div.ui.menu.navigation-bar > .item {
     display: flex;
     justify-content: center;
     border-radius: 0;
 }
 
+div.ui.menu.navigation-bar > .item:before {
+    /* Set separation color for navbar & submenu dropdown items  */
+    background: var(--navbar-separation-color);
+}
 
-/* Menu expand toggle */
+
+/** Submenu dropdown (fullscreen) **/
+.ui.dropdown .menu.navbar-submenu-dropdown > a,
+.ui.dropdown .menu.navbar-submenu-dropdown > a:first-child {
+    /* Submenu dropdown item separation */
+    border: solid 1px var(--navbar-separation-color);
+}
+
+.ui.dropdown .menu.navbar-submenu-dropdown > a .ui.label {
+    /* Space between text and label */
+    margin-left: 0.5rem;
+}
+
+/** Submenu menu (stacked) **/
+.navbar-submenu-container {
+    flex-flow: column;
+}
+
+.navbar-submenu-header {
+    cursor: pointer;
+    
+    /* Positioning */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar-submenu-container > .menu.navbar-submenu > a.item {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/** Menu expand toggle **/
 div.ui.menu.navigation-bar > div.item.navigation-bar-expand-container {
     justify-content: end;
 }
@@ -45,7 +126,12 @@ i.navigation-bar-expand-toggle:hover {
 }
 
 
-/* Right menu buttons */
+/** Right menu **/
+.navigation-right-menu:not(.is-stacked) > .nagivation-bar-button-container {
+    /* Left border */
+    border-left: solid 1px var(--navbar-separation-color);
+}
+
 div.ui.menu.navigation-bar div.nagivation-bar-button-container {
     display: flex;
     justify-content: center;
@@ -55,17 +141,7 @@ div.ui.menu.navigation-bar div.nagivation-bar-button-container {
 }
 
 div.navigation-right-menu.is-stacked {
-    border-top: solid 1px rgba(255, 255, 255, 0.08);
-    /* rgba(255,255,255,.08); */
-    /* background-color: rgba(255, 255, 255, 0.08); */
-    /* background-position-x: 0%;
-    background-position-y: 0%;
-    background-repeat: repeat;
-    background-attachment: scroll;
-    background-image: none;
-    background-size: auto;
-    background-origin: padding-box;
-    background-clip: border-box; */
+    border-top: solid 1px var(--navbar-separation-color);
 }
 
 div.ui.menu.navigation-bar .item > button.navigation-bar-button {    /* override SUIR styling */
@@ -82,7 +158,7 @@ div.ui.menu.navigation-bar .item > button.navigation-bar-button.is-disabled:hove
 }
 
 
-/* Right menu user page link */
+/** Right menu user page link **/
 a.navigation-bar-username {
     text-decoration: underline;
     font-weight: bold;
@@ -92,5 +168,5 @@ a.navigation-bar-username {
     /* Max width and long text display */
     max-width: 200px;
     overflow: hidden;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
 }
