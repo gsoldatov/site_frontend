@@ -116,6 +116,7 @@ div.ui.menu.navigation-bar > .item:before {
 .ui.dropdown .menu.navbar-submenu-dropdown > a .ui.label {
     /* Space between text and label */
     margin-left: 0.5rem;
+    margin-right: 0;
 }
 
 /** Submenu menu (stacked) **/
@@ -137,6 +138,11 @@ div.ui.menu.navigation-bar > .item:before {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.navbar-menu-label-offset {
+    width: 20px;
+    margin-right: 1em;
 }
 
 /** Menu expand toggle **/

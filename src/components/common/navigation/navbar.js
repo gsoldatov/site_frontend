@@ -84,8 +84,8 @@ export const Navbar = memo(() => {
                     <NavbarItem isDisplayed={menuItemsAreVisible} text="Index" url="/" />
 
                     <NavbarSubmenu isDisplayed={loggedInAndVisible} isStacked={isStacked} text="Objects">
-                        <NavbarSubmenuItem text="List" url="/objects/list" />
-                        <NavbarSubmenuItem text="Edited Objects" url="/objects/edited" labelText={editedObjectsLabelText} labelColor="green" />
+                        <NavbarSubmenuItem text="List" url="/objects/list" isStacked={isStacked} />
+                        <NavbarSubmenuItem text="Edited Objects" url="/objects/edited" labelText={editedObjectsLabelText} labelColor="green" isStacked={isStacked} />
                     </NavbarSubmenu>
                     
                     <NavbarItem isDisplayed={loggedInAndVisible} text="Tags" url="/tags" />

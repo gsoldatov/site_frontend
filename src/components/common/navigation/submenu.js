@@ -55,51 +55,5 @@ export const NavbarSubmenu = memo(({ isDisplayed, isStacked, text, children }) =
 export const NavbarSubmenuItem = ({ isStacked, ...props }) => {
     const renderAs = isStacked ? null : Dropdown.Item;
 
-    return <NavbarItem renderAs={renderAs} {...props} />;
+    return <NavbarItem renderAs={renderAs} renderLabelOffset={isStacked} {...props} />;
 };
-
-
-// - <NavbarSubmenuItem>:
-//             - renders a single submenu item:
-//             - accepts `isStacked` prop:
-//                 - if not stacked, renders <NavbarItem> and passes remaining props into it;
-//                 - if stacked, renders:
-//                     ? <NavbarItem> as <Dropdown.Item>:
-//                         - as NavLink works;
-//                         - isDisplayed;
-//                         - text is displayed correctly;
-//                         - label & label text are displayed correctly;
-//                     ? another component, acting like <NavbarItem>, but rendering a <Dropdown.Item>;
-
-// - <NavbarSubmenu>:
-//             - renders children on condition;
-//             - different components based on `isStacked` prop:
-//                 - if not stacked:
-//                     - renders:
-//                         - <Dropdown> with provided header text;
-//                         - provided <NavbarSubmenuItem> children;
-//                 - if stacked:
-//                     - renders:
-//                         - <Menu.Item>:
-//                             - clickable text, which toggles item display on click;
-//                             - if toggled:
-//                                 - a <Menu.Menu>:
-//                                     - list of provided <NavbarSubmenuItem> children;
-
-
-
-// /**
-//  * Basic navbar item with a link to another page.
-//  */
-// export const NavbarItem = memo(({ isDisplayed, text, url, labelText, labelColor }) => {
-//     if (!isDisplayed) return null;
-
-//     const label = labelText && <Label size="tiny" circular color={labelColor}>{labelText}</Label>;
-
-//     return (
-//         <Menu.Item as={NavLink} exact to={url}>
-//             {text}
-//             {label}
-//         </Menu.Item>
-//     );
-// });
