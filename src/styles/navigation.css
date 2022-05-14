@@ -3,10 +3,15 @@
 *******************************/
 
 :root {
-    --navbar-background-color: rgba(24, 24, 24, 1);
-    --navbar-background-active-color: rgba(40, 40, 40, 1);
-    --navbar-text-color: rgba(255, 255, 255, 0.9);
-    --navbar-separation-color: rgba(255, 255, 255, 0.12);
+    --navbar-background-color: rgb(24, 24, 24);
+    --navbar-background-active-color: rgba(40, 40, 40);
+    --navbar-text-color: rgb(230,230,230);
+    --navbar-separation-color: rgb(48,48,48);
+    --navbar-search-button-color: rgb(200, 200, 200);
+    --navbar-search-button-active-color: var(--navbar-background-active-color);
+    --navbar-disabled-button-color: rgb(128, 128, 128);
+
+    
 }
 
 
@@ -36,6 +41,23 @@ div.navigation-bar-placeholder.is-stacked {
 }
 
 
+/** Fullscreen navigation bar and its children width **/
+div.ui.menu.navigation-bar:not(.is-stacked) {
+    display: flex;
+}
+
+div.ui.menu.navigation-bar:not(.is-stacked) > .navbar-search-container {
+    /* Allow width change for search container */
+    flex: 1 1 300px;
+    max-width: 300px;
+}
+
+div.ui.menu.navigation-bar:not(.is-stacked) > *:not(.navbar-search-container) {
+    /* Disable width change for other navbar items */
+    flex: 0 0 auto;
+}
+
+
 /** Background & text colors and borders **/
 div.ui.menu.navigation-bar,
 .ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item {
@@ -44,7 +66,8 @@ div.ui.menu.navigation-bar,
 }
 
 div.ui.menu.navigation-bar > .item.active:not(.dropdown),   /* Active menu items */
-div.ui.menu.navigation-bar > .item:hover:not(.navigation-bar-expand-container):not(.navbar-submenu-container.is-expanded), /* Menu item hovering (except for expand/collapse button and submenu in stacked mode) */
+/* Menu item hovering (except for expand/collapse button, submenu in stacked mode and right side) */
+div.ui.menu.navigation-bar > .item:hover:not(.navigation-bar-expand-container):not(.navbar-submenu-container.is-expanded):not(.right),
 
 .navbar-submenu > .item:hover,      /* Stacked submenu item hovering */
 .navbar-submenu > .item.active,     /* Stacked submenu, active item */
@@ -126,7 +149,54 @@ i.navigation-bar-expand-toggle:hover {
 }
 
 
+/** Search input & button **/
+.navbar-search-container {
+    display: flex;
+    /* column-gap: 0.5rem; */
+
+    /* Enable shrinking below default value */
+    min-width: 0;
+}
+
+.navbar-search-container:not(.is-stacked) > .ui.input {
+    /* Enable shrinking below default value */
+    flex: 1 1 auto;
+    min-width: 0 !important;
+}
+
+.navbar-search-container > .ui.input > input {
+    /* Input styling */
+    border-radius: 0px;
+}
+
+.navbar-search-container > button.ui.button.field-menu-button {
+    border: solid 1px var(--navbar-search-button-color) !important;
+
+    /* Set button height & width equal to input with "mini" prop */
+    width: 30px;
+    height: 30px;
+
+    /* Align icon inside button */
+    padding: 0 !important;
+}
+
+.navbar-search-container > button.ui.button.field-menu-button > i {
+    color: var(--navbar-search-button-color);
+}
+
+.navbar-search-container > button.ui.button.field-menu-button:active,
+.navbar-search-container > button.ui.button.field-menu-button:focus,
+.navbar-search-container > button.ui.button.field-menu-button:hover {
+    background-color: var(--navbar-search-button-active-color) !important;
+}
+
+
 /** Right menu **/
+.ui.menu:not(.vertical) .right.menu.navigation-right-menu {
+    /* Remove separation between search input and right menu */
+    margin-left: 0 !important;
+}
+
 .navigation-right-menu:not(.is-stacked) > .nagivation-bar-button-container {
     /* Left border */
     border-left: solid 1px var(--navbar-separation-color);
@@ -148,6 +218,8 @@ div.ui.menu.navigation-bar .item > button.navigation-bar-button {    /* override
     margin-left: 0.5em;
     margin-right: 0.5em;
     width: 105px;
+
+    border-radius: 0;
 }
 
 div.ui.menu.navigation-bar .item > button.navigation-bar-button.is-disabled,    /* Disabled button */

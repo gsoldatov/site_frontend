@@ -7,6 +7,7 @@ import { OnResizeWrapper } from "../on-resize-wrapper";
 import { NavbarSecondaryMenu } from "./secondary-menu";
 import { NavbarItem } from "./menu-item";
 import { NavbarSubmenu, NavbarSubmenuItem } from "./submenu";
+import { NavbarSearch } from "./search";
 
 import { enumUserLevels } from "../../../util/enum-user-levels";
 
@@ -90,8 +91,8 @@ export const Navbar = memo(() => {
                     <NavbarItem isDisplayed={loggedInAndVisible} text="Tags" url="/tags" />
                     <NavbarItem isDisplayed={loggedInAsAdminAndVisible} text="Admin Page" url="/admin" />
 
-                    
-                    <NavbarSecondaryMenu key={-1} isStacked={isStacked} isExpanded={isExpanded} />
+                    <NavbarSearch isStacked={isStacked} />
+                    <NavbarSecondaryMenu isStacked={isStacked} isExpanded={isExpanded} />
                 </Menu>
             </OnResizeWrapper>
         </div>
