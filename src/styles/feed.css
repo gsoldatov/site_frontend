@@ -1,11 +1,11 @@
 /***********************************************
-    Objects feed and object preview styles.
+                Feed styles
 ***********************************************/
 
 
-/* Object preview container */
+/** Feed card container **/
 @media(min-width: 768px) {
-    .object-preview-container {
+    .feed-card {
         box-shadow: 0 0 4px rgba(0,0,0,0.5);
         padding-top: 1rem;
         padding-bottom: 1rem;
@@ -15,7 +15,7 @@
 }
 
 @media(max-width: 767px) {
-    .object-preview-container {
+    .feed-card {
         box-shadow: 0 0 4px rgba(0,0,0,0.5);
         padding-top: 1rem;
         padding-bottom: 1rem;
@@ -24,19 +24,24 @@
     }
 }
 
-.object-preview-container:not(:last-child) {
+.feed-card:not(:last-child) {
     margin-bottom: 2rem;
 }
 
-/* Object preview timestamp */
-.object-preview-timestamp {
+
+/** Feed card timestamp **/
+.feed-card-timestamp {
     font-family: Arial, Helvetica, sans-serif;
     color: gray;
     /* margin-bottom: 0.5em; */
 }
 
-/* Object preview header */
-.ui.header.object-preview-header {
+/** Feed card header **/
+.feed-card-header-container > a {
+    display: flex;
+}
+
+.ui.header.feed-card-header {
     margin-top: 0;
     margin-bottom: 0.5rem;
 
@@ -44,18 +49,34 @@
     word-break: break-word;
 }
 
-/* Object preview description */
-.object-preview-description {
+i.icon.feed-card-header-icon {
+    margin-right: 0.25rem;
+    
+    /* Icon size and vertical positioning fix */
+    font-size: 16px;
+    margin-top: 0.25rem;
+}
+
+
+/** Feed card description **/
+.feed-card-description {
     /* Enable word break for long words */
     word-break: break-word;
 }
 
-.object-preview-description:not(:last-child) {
+.feed-card-description:not(:last-child) {
     margin-bottom: 1rem;
 }
 
-/* Objects feed pagination */
-.objects-feed-pagination-container {
+
+/** Object tag list **/
+.object-feed-card-tag-list-container {
+    border-top: solid 1px rgb(192, 192, 192);
+}
+
+
+/** Feed pagination **/
+.feed-pagination-container {
     margin-top: 2rem;
     width: 100%;
     display: flex;

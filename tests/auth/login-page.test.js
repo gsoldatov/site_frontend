@@ -1,9 +1,9 @@
 import React from "react";
-import { fireEvent, waitFor, screen } from "@testing-library/dom";
+import { fireEvent, waitFor } from "@testing-library/dom";
 
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
-import { getLoginFormElements, waitForFormErrorMessage, enterValidFormData, checkValidInputErrorDisplay, waitForLoginFormSuccessMessage } from "../_util/ui-auth";
+import { getLoginFormElements, waitForFormErrorMessage, enterValidFormData, checkValidInputErrorDisplay } from "../_util/ui-auth";
 import { getMockLoginResponse } from "../_mocks/data-auth";
 
 import { App } from "../../src/components/top-level/app";
@@ -128,7 +128,7 @@ test("Correct login", async () => {
 
     // Wait for redirect to index page and index page fetches to end
     await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/`));
-    await waitFor(() => expect(container.querySelector(".object-preview-container")).toBeTruthy());
+    await waitFor(() => expect(container.querySelector(".feed-card")).toBeTruthy());
 });
 
 

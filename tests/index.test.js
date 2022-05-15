@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { fireEvent, waitFor, getByText, screen } from "@testing-library/dom";
+import { fireEvent, waitFor, getByText } from "@testing-library/dom";
 
 import { getMockedPageObjectIDs } from "./_mocks/mock-fetch-handlers-objects";
 import { getObjectsViewCardElements } from "./_util/ui-objects-view";
 import { renderWithWrappers } from "./_util/render";
-import { checkDisplayedObjectPreviewIDs, getObjectPreviewElements, getObjectsFeedElements } from "./_util/ui-index";
+import { checkDisplayedObjectFeedCardIDs, getFeedCardElements, getFeedElements } from "./_util/ui-index";
 
 import { addObjects } from "../src/actions/data-objects";
 
@@ -51,9 +51,9 @@ describe("Page load & placeholders", () => {
             });
 
             // Check if an error message is displayed once loading fetch has ended
-            expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
-            await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
-            expect(getObjectsFeedElements(container).placeholders.fetchError).toBeTruthy();
+            expect(getFeedElements(container).placeholders.loading).toBeTruthy();
+            await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
+            expect(getFeedElements(container).placeholders.fetchError).toBeTruthy();
 
             ReactDOM.unmountComponentAtNode(container);
         }
@@ -67,9 +67,9 @@ describe("Page load & placeholders", () => {
             });
 
             // Check if index page is rendered instead
-            await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+            await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
             expect(history.entries[history.entries.length - 1].pathname).toEqual("/");
-            checkDisplayedObjectPreviewIDs(container, getMockedPageObjectIDs(_mockPaginationInfo));
+            checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs(_mockPaginationInfo));
 
             ReactDOM.unmountComponentAtNode(container);
         }
@@ -82,8 +82,8 @@ describe("Page load & placeholders", () => {
         });
 
         // Check if "No objects found" error is displayed
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
-        const fetchError = getObjectsFeedElements(container).placeholders.fetchError;
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
+        const fetchError = getFeedElements(container).placeholders.fetchError;
         expect(fetchError).toBeTruthy();
         getByText(fetchError, "No objects found", { exact: false });
     });
@@ -96,13 +96,13 @@ describe("Page load & placeholders", () => {
             });
 
             // Wait for the page to load
-            expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
-            await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
-            expect(getObjectsFeedElements(container).previews.container).toBeTruthy();
+            expect(getFeedElements(container).placeholders.loading).toBeTruthy();
+            await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
+            expect(getFeedElements(container).feedCards.container).toBeTruthy();
 
-            // Check if expected object previews are rendered
+            // Check if expected object feed cards are rendered
             const expectedIDs = getMockedPageObjectIDs({ ..._mockPaginationInfo, page });
-            checkDisplayedObjectPreviewIDs(container, expectedIDs);
+            checkDisplayedObjectFeedCardIDs(container, expectedIDs);
 
             ReactDOM.unmountComponentAtNode(container);
         }
@@ -121,13 +121,13 @@ describe("Feed pagination", () => {
         });
 
         // Wait for the page to load
-        expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
-        expect(getObjectsFeedElements(container).previews.container).toBeTruthy();
+        expect(getFeedElements(container).placeholders.loading).toBeTruthy();
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
+        expect(getFeedElements(container).feedCards.container).toBeTruthy();
 
         // Check if correct objects are rendered and pagination is not displayed
-        checkDisplayedObjectPreviewIDs(container, pageObjectIDs);
-        expect(getObjectsFeedElements(container).pagination.container).toBeFalsy();
+        checkDisplayedObjectFeedCardIDs(container, pageObjectIDs);
+        expect(getFeedElements(container).pagination.container).toBeFalsy();
     });
 
 
@@ -138,76 +138,76 @@ describe("Feed pagination", () => {
         });
 
         // First page: wait for the page to load and check IDs of displayed objects
-        expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
-        expect(getObjectsFeedElements(container).previews.container).toBeTruthy();
-        checkDisplayedObjectPreviewIDs(container, getMockedPageObjectIDs(_mockPaginationInfo));
+        expect(getFeedElements(container).placeholders.loading).toBeTruthy();
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
+        expect(getFeedElements(container).feedCards.container).toBeTruthy();
+        checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs(_mockPaginationInfo));
 
         // Get pagination and open next page
-        let pagination = getObjectsFeedElements(container).pagination;
+        let pagination = getFeedElements(container).pagination;
         fireEvent.click(pagination.buttons["next"]);
         
         // Second page: wait for load to end and check URL & displayed objects
-        expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+        expect(getFeedElements(container).placeholders.loading).toBeTruthy();
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
         expect(history.entries[history.entries.length - 1].pathname).toEqual("/feed/2");
-        checkDisplayedObjectPreviewIDs(container, getMockedPageObjectIDs({ ..._mockPaginationInfo, page: 2 }));
+        checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs({ ..._mockPaginationInfo, page: 2 }));
 
         // Get last page button and open the page
-        pagination = getObjectsFeedElements(container).pagination;
+        pagination = getFeedElements(container).pagination;
         expect(pagination.buttons[11]).toBeUndefined;   // test mock route handler returns a fixed total_items number of 100
         fireEvent.click(pagination.buttons[10]);
 
         // Last page: wait for load to end and check URL & displayed objects
-        expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+        expect(getFeedElements(container).placeholders.loading).toBeTruthy();
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
         expect(history.entries[history.entries.length - 1].pathname).toEqual("/feed/10");
-        checkDisplayedObjectPreviewIDs(container, getMockedPageObjectIDs({ ..._mockPaginationInfo, page: 10 }));
+        checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs({ ..._mockPaginationInfo, page: 10 }));
 
         // Get previous page button and open the page
-        pagination = getObjectsFeedElements(container).pagination;
+        pagination = getFeedElements(container).pagination;
         fireEvent.click(pagination.buttons["previous"]);
 
         // Previous to last page: wait for load to end and check URL & displayed objects
-        expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+        expect(getFeedElements(container).placeholders.loading).toBeTruthy();
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
         expect(history.entries[history.entries.length - 1].pathname).toEqual("/feed/9");
-        checkDisplayedObjectPreviewIDs(container, getMockedPageObjectIDs({ ..._mockPaginationInfo, page: 9 }));
+        checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs({ ..._mockPaginationInfo, page: 9 }));
 
         // Get first page button and open the page
-        pagination = getObjectsFeedElements(container).pagination;
+        pagination = getFeedElements(container).pagination;
         fireEvent.click(pagination.buttons[1]);
 
         // First page: wait for load to end and check URL & displayed objects
-        expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+        expect(getFeedElements(container).placeholders.loading).toBeTruthy();
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
         expect(history.entries[history.entries.length - 1].pathname).toEqual("/");
-        checkDisplayedObjectPreviewIDs(container, getMockedPageObjectIDs(_mockPaginationInfo));
+        checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs(_mockPaginationInfo));
     });
 });
 
 
-describe("Object preview", () => {
+describe("Object feed card", () => {
     test("Timestamp", async () => {
         let { container, store } = renderWithWrappers(<App />, {
             route: "/"
         });
 
         // Wait for the page to load
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Check if displayed timestamp equals to feed timestamp
-        const preview = getObjectsFeedElements(container).previews.previews[0];
-        let previewElements = getObjectPreviewElements(preview);
-        const { objectID } = previewElements;
+        const feedCard = getFeedElements(container).feedCards.feedCards[0];
+        let feedCardElements = getFeedCardElements(feedCard);
+        const { objectID } = feedCardElements;
 
-        let ed = new Date(store.getState().objects[objectID].feed_timestamp), dd = new Date(previewElements.timestamp.textContent);
+        let ed = new Date(store.getState().objects[objectID].feed_timestamp), dd = new Date(feedCardElements.timestamp.textContent);
         expect(ed.getFullYear() === dd.getFullYear() && ed.getMonth() === dd.getMonth() && ed.getDate() === dd.getDate()).toBeTruthy();
 
         // Check if modified at is used as a fallback for missing feed timestamp
         store.dispatch(addObjects([{ ...store.getState().objects[objectID], feed_timestamp: "" }]));
-        previewElements = getObjectPreviewElements(preview);
-        ed = new Date(store.getState().objects[objectID].modified_at), dd = new Date(previewElements.timestamp.textContent);
+        feedCardElements = getFeedCardElements(feedCard);
+        ed = new Date(store.getState().objects[objectID].modified_at), dd = new Date(feedCardElements.timestamp.textContent);
         expect(ed.getFullYear() === dd.getFullYear() && ed.getMonth() === dd.getMonth() && ed.getDate() === dd.getDate()).toBeTruthy();
     });
 
@@ -218,16 +218,16 @@ describe("Object preview", () => {
         });
 
         // Wait for the page to load
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Check if correct header is displayed
-        const preview = getObjectsFeedElements(container).previews.previews[0];
-        let previewElements = getObjectPreviewElements(preview);
-        const { objectID } = previewElements;
-        expect(previewElements.headerLink.text).toEqual(store.getState().objects[objectID].object_name);
+        const feedCard = getFeedElements(container).feedCards.feedCards[0];
+        let feedCardElements = getFeedCardElements(feedCard);
+        const { objectID } = feedCardElements;
+        expect(feedCardElements.header.text).toEqual(store.getState().objects[objectID].object_name);
 
         // Check if header links to object view page
-        fireEvent.click(previewElements.headerLink);
+        fireEvent.click(feedCardElements.header.link);
         expect(history.entries[history.entries.length - 1].pathname).toEqual(`/objects/view/${objectID}`);
         await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
     });
@@ -239,15 +239,15 @@ describe("Object preview", () => {
         });
 
         // Wait for the page to load
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Check if correct object description is displayed
-        const preview = getObjectsFeedElements(container).previews.previews[0];
+        const feedCard = getFeedElements(container).feedCards.feedCards[0];
 
         await waitFor(() => {
-            let previewElements = getObjectPreviewElements(preview);
-            const { objectID } = previewElements;
-            const paragraph = previewElements.description.querySelector("p");
+            let feedCardElements = getFeedCardElements(feedCard);
+            const { objectID } = feedCardElements;
+            const paragraph = feedCardElements.description.querySelector("p");
             expect(paragraph).toBeTruthy();
             expect(paragraph.textContent).toEqual(store.getState().objects[objectID].object_description);
         });
@@ -260,17 +260,17 @@ describe("Object preview", () => {
         });
 
         // Wait for the page to load
-        await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Check if expected tag names are displayed
-        const preview = getObjectsFeedElements(container).previews.previews[0];
-        let previewElements = getObjectPreviewElements(preview);
-        const { objectID } = previewElements;
+        const feedCard = getFeedElements(container).feedCards.feedCards[0];
+        let feedCardElements = getFeedCardElements(feedCard);
+        const { objectID } = feedCardElements;
 
         const state = store.getState();
         expect(state.objectsTags[objectID].length).toEqual(5);
 
-        const renderedTagNames = [...previewElements.tags.tags].map(e => e.querySelector("span").textContent);
+        const renderedTagNames = [...feedCardElements.tags.tags].map(e => e.querySelector("span").textContent);
         expect(renderedTagNames.length).toEqual(5);
         
         state.objectsTags[objectID].forEach(tagID => expect(renderedTagNames.indexOf(state.tags[tagID].tag_name)).toBeGreaterThan(-1));

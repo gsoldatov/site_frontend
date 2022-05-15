@@ -1,8 +1,8 @@
 import React from "react";
 import { Redirect, useParams } from "react-router";
 
-import Layout from "../common/layout";
-import { ObjectsFeed } from "../feed/objects-feed";
+import Layout from "../../common/layout";
+import { ObjectsFeed } from "./objects-feed";
 
 
 /**
@@ -17,9 +17,7 @@ export const IndexPage = () => {
         if (isNaN(page) || page < 1) return <Redirect to="/" />;
     } else page = 1;
 
-    const body = (
-        <ObjectsFeed page={page} />
-    );
+    const body = <ObjectsFeed page={page} />;
 
     return <Layout body={body} />;
 };

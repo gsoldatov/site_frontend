@@ -1,5 +1,5 @@
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, queryByText, waitFor, screen } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, queryByText, waitFor } from "@testing-library/dom";
 
 import { getSideMenuItem, getSideMenuDialogControls } from "./ui-common";
 import { selectDate } from "./ui-react-datetime";

@@ -6,7 +6,7 @@ import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
 import { getNavigationBarElements } from "../_util/ui-navbar";
 import { getUserPageViewModeElements } from "../_util/ui-user";
-import { getObjectsFeedElements } from "../_util/ui-index";
+import { getFeedElements } from "../_util/ui-index";
 
 import { App } from "../../src/components/top-level/app";
 
@@ -220,8 +220,8 @@ describe("Secondary menu logged in state", () => {
     test("Logout button", async () => {
         // Route load awaiting functions
         const loadWaiters = {
-            "/": async container => await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy()),
-            "/feed/2": async container => await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy()),
+            "/": async container => await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy()),
+            "/feed/2": async container => await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy()),
 
             "/admin": async container => await waitFor(() => expect(getAdminPageElements(container).settingsTab.settingControls).toBeTruthy()),
             
@@ -275,11 +275,11 @@ describe("Secondary menu logged in state", () => {
             await waitFor(() => {
                 expect(store.getState().auth).toEqual(getDefaultAuthState());
                 expect(history.entries[history.length - 1].pathname).toBe("/")
-                expect(getObjectsFeedElements(container).placeholders.loading).toBeTruthy();
+                expect(getFeedElements(container).placeholders.loading).toBeTruthy();
             });
 
             // Check if index on load fetch is ended
-            await waitFor(() => expect(getObjectsFeedElements(container).placeholders.loading).toBeFalsy());
+            await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
             ReactDOM.unmountComponentAtNode(container);
         }

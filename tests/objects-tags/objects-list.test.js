@@ -2,7 +2,7 @@ import React from "react";
 import { Switch, Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText, screen } from "@testing-library/dom";
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from "@testing-library/dom";
 
 import { getStoreWithTwoSelectedObjects } from "../_mocks/data-objects-tags";
 import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";

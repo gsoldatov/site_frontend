@@ -1,16 +1,16 @@
 /**
- * Returns elements of an object feed inside `container`.
+ * Returns elements of a feed inside `container`.
  */
-export const getObjectsFeedElements = container => {
+ export const getFeedElements = container => {
     let result = {
         placeholders: {
             loading: null,
             fetchError: null
         },
 
-        previews: {
+        feedCards: {
             container: null,
-            previews: []
+            feedCards: []
         },
 
         pagination: {
@@ -19,22 +19,22 @@ export const getObjectsFeedElements = container => {
         }
     };
 
-    const feedContainer = container.querySelector(".objects-feed-container");
+    const feedContainer = container.querySelector(".feed-container");
 
     if (feedContainer) {
         /* Placeholders */
         result.placeholders.loading = [...feedContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("loader"))[0];
         result.placeholders.fetchError =  [...feedContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("message") && n.classList.contains("error"))[0];
 
-        /* Previews */
-        result.previews.container = feedContainer.querySelector(".objects-feed-previews-container");
+        /* Feed cards */
+        result.feedCards.container = feedContainer.querySelector(".feed-cards-container");
 
-        if (result.previews.container) {
-            result.previews.previews = [...result.previews.container.querySelectorAll(".object-preview-container")];
+        if (result.feedCards.container) {
+            result.feedCards.feedCards = [...result.feedCards.container.querySelectorAll(".feed-card")];
         }
 
         /* Pagination */
-        result.pagination.container = feedContainer.querySelector(".objects-feed-pagination-container");
+        result.pagination.container = feedContainer.querySelector(".feed-pagination-container");
         if (result.pagination.container) {
             const buttons = result.pagination.container.querySelectorAll("a.item");
             for (let b of buttons) {
@@ -50,13 +50,16 @@ export const getObjectsFeedElements = container => {
 
 
 /**
- * Returns elements of an object preview inside `previewContainer`.
+ * Returns elements of feed card inside `cardContainer`.
  */
-export const getObjectPreviewElements = previewContainer => {
+ export const getFeedCardElements = cardContainer => {
     const result = {
         objectID: null,
         timestamp: null,
-        headerLink: null,
+        header: {
+            text: null,
+            link: null
+        },
         description: null,
         tags: {
             container: null,
@@ -64,15 +67,17 @@ export const getObjectPreviewElements = previewContainer => {
         }
     };
 
-    result.timestamp = previewContainer.querySelector(".object-preview-timestamp");
+    result.timestamp = cardContainer.querySelector(".feed-card-timestamp");
 
-    result.headerLink = previewContainer.querySelector(".object-preview-header a");
-    if (result.headerLink)
-        result.objectID = parseInt(result.headerLink.href.match(/\/objects\/view\/(?<id>\d+)$/).groups["id"]);
+    const headerContainer = cardContainer.querySelector(".feed-card-header-container");
+    if (headerContainer)
+        result.header.link = headerContainer.querySelector("a");
+        result.header.text = result.header.link.querySelector("h2").textContent;
+        result.objectID = parseInt(result.header.link.href.match(/\/objects\/view\/(?<id>\d+)$/).groups["id"]);
 
-    const descriptionContainer = previewContainer.querySelector(".object-preview-description");
+    const descriptionContainer = cardContainer.querySelector(".feed-card-description");
     if (descriptionContainer) result.description = descriptionContainer.querySelector(".rendered-markdown");
-    result.tags.container = previewContainer.querySelector(".object-preview-tag-list-container");
+    result.tags.container = cardContainer.querySelector(".object-feed-card-tag-list-container");
     if (result.tags.container) result.tags.tags = [...result.tags.container.querySelectorAll(".inline-item")];
 
     return result;
@@ -80,11 +85,11 @@ export const getObjectPreviewElements = previewContainer => {
 
 
 /**
- * Compares IDs of displayed in `container` object previews with expected object IDs.
+ * Compares IDs of displayed in `container` object feed cards with expected object IDs.
  */
-export const checkDisplayedObjectPreviewIDs = (container, expectedIDs) => {
-    const objectsFeedElements = getObjectsFeedElements(container);
-    const displayedIDs = objectsFeedElements.previews.previews.map(p => getObjectPreviewElements(p).objectID);
+export const checkDisplayedObjectFeedCardIDs = (container, expectedIDs) => {
+    const objectsFeedElements = getFeedElements(container);
+    const displayedIDs = objectsFeedElements.feedCards.feedCards.map(p => getFeedCardElements(p).objectID);
     
-    if (displayedIDs.length !== expectedIDs.length) throw Error(`Expected and displayed object preview IDs do not match:\n${expectedIDs}\n${displayedIDs}`);
+    if (displayedIDs.length !== expectedIDs.length) throw Error(`Expected and displayed object feed card IDs do not match:\n${expectedIDs}\n${displayedIDs}`);
 };

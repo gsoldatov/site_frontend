@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, screen } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText } from "@testing-library/dom";
 
 import { createTestStore } from "../_util/create-test-store";
 import { compareArrays } from "../_util/data-checks";

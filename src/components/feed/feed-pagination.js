@@ -8,11 +8,9 @@ import StyleFieldPagination from "../../styles/field-pagination.css";
 
 
 /**
- * Objects feed pagination component.
+ * Feed pagination component.
  */
-export const ObjectsFeedPagination = ({ paginationInfo }) => {
-    const currentPage = paginationInfo ? paginationInfo.page : null;
-    const totalPages = paginationInfo ? Math.ceil(paginationInfo.totalItems / paginationInfo.items_per_page) : null;
+export const FeedPagination = ({ currentPage, totalPages, getURL }) => {
 
     // Redirect URL state
     const [redirectURL, setRedirectURL] = useState("");
@@ -25,9 +23,9 @@ export const ObjectsFeedPagination = ({ paginationInfo }) => {
     // Pagination buttons click handler
     const onChange = useMemo(() => (e, props) => {
         const newPage = props.activePage;
-        const newRedirectURL = newPage > 1 ? `/feed/${newPage}` : "/";
+        const newRedirectURL = getURL(newPage);
         setRedirectURL(newRedirectURL);
-    });
+    }, [getURL]);
 
     // Change pagination parameters based on viewport width
     const [isFullscreenStyle, setIsFullscreenStyle] = useState(window.innerWidth >= 500);
@@ -41,10 +39,10 @@ export const ObjectsFeedPagination = ({ paginationInfo }) => {
     if (redirectURL.length > 0) return <Redirect to={redirectURL} />;
 
     // Render pagination
-    return paginationInfo && totalPages > 1 && (
+    return currentPage && totalPages > 1 && (
         <OnResizeWrapper callback={onResizeCallback}>
-            <div className="objects-feed-pagination-container">
-                <Pagination className="objects-feed-pagination" activePage={currentPage} totalPages={totalPages} siblingRange={siblingRange} firstItem={null} lastItem={null} onPageChange={onChange}/>
+            <div className="feed-pagination-container">
+                <Pagination className="feed-pagination" activePage={currentPage} totalPages={totalPages} siblingRange={siblingRange} firstItem={null} lastItem={null} onPageChange={onChange}/>
             </div>
         </OnResizeWrapper>
     );
