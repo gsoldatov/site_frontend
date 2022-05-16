@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { FeedContainer, FeedCardsContainer } from "../../feed/feed-container";
-import { ObjectFeedCard } from "./objects-feed-card";
+import { ObjectFeedCard } from "../../feed/feed-card/object-feed-card";
 import { FeedPagination } from "../../feed/feed-pagination";
 
 import { loadIndexPageObjects } from "../../../fetches/ui-index";

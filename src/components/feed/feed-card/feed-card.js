@@ -1,11 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import moment from "moment";
 
 import { Link } from "react-router-dom";
 import { Header, Icon } from "semantic-ui-react";
 
-import { useParsedMarkdownState } from "../../util/use-parsed-markdown-state";
+import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
 
 /**
