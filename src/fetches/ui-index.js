@@ -1,16 +1,11 @@
 import { getResponseErrorType } from "./common";
 import { viewObjectsFetch, getPageObjectIDs } from "./data-objects";
 
-import { setObjectsFetch, setObjectsPaginationInfo, setObjectsTagsInput, setCurrentObjectsTags, 
-        setShowDeleteDialogObjects, setTagsFilterInput, setTagsFilter } from "../actions/objects-list";
-
-import { isFetchingObjects } from "../store/state-util/ui-objects-list";
-
 import { enumResponseErrorType } from "../util/enum-response-error-type";
 
 
 /**
- * Fetches IDs of of objects, which should be rendered on the object page, then fetches missing object data.
+ * Fetches IDs of objects, which should be rendered on the /feed page, then fetches missing object data.
  */
 export const loadIndexPageObjects = paginationInfo => {
     return async (dispatch, getState) => {

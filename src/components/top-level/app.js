@@ -13,6 +13,7 @@ import { LocationManagerWrapper } from "../common/location-manager-wrapper";
 import { ProtectedRoute } from "../common/protected-route";
 
 import { IndexPage } from "./index/index";
+import { SearchPage } from "./search/search";
 import { LoginPage } from "./login";
 import { RegisterPage } from "./register";
 import { AdminPage } from "./admin";
@@ -40,6 +41,11 @@ export const App = () => {
                 {/* Index */}
                 <Route exact path={["/", "/feed/:page"]}>
                     <IndexPage />
+                </Route>
+
+                {/* Search */}
+                <Route exact path="/search">
+                    <SearchPage />
                 </Route>
 
                 {/* Admin */}

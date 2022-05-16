@@ -9,8 +9,7 @@ import { addObjects, addObjectData, deleteObjects } from "../actions/data-object
 import { setEditedObject, setObjectOnSaveFetchState } from "../actions/objects-edit";
 
 import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeObjectAttributesAndTagsForUpdateFetch,
-    serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
-import { addedObjectAttributes, updatedObjectAttributes } from "../store/state-templates/edited-object";
+    serializeObjectData, modifyObjectDataPostSave, objectDataIsInState } from "../store/state-util/objects";
 
 
 const backendURL = config.backendURL;
@@ -241,12 +240,8 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
                 let objectIDs = (await response.json()).object_ids;
 
                 // Fetch non-cached objects
-                let state = getState();
-                let nonCachedObjectIDs = objectIDs.filter(objectID => !(objectID in state.objects && objectID in state.objectsTags))
-                if (nonCachedObjectIDs.length > 0) {
-                    response = await dispatch(viewObjectsFetch(nonCachedObjectIDs, undefined));
-                    if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
-                }
+                response = await dispatch(getNonCachedObjects(objectIDs, { attributes: true, tags: true }));
+                if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
 
                 return objectIDs;
             case 404:
@@ -254,6 +249,32 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
             default:
                 return await getErrorFromResponse(response);
         }
+    };
+};
+
+
+/**
+ * Fetches missing information for a list of provided `objectIDs`.
+ * 
+ * Types of missing information (attributes, tags, data) are specified in the `storages` argument.
+ */
+ export const getNonCachedObjects = (objectIDs, storages = {}) => {
+    return async (dispatch, getState) => {
+        // Set checked storages
+        const { attributes, tags, data } = storages;
+
+        // Get objects with missing attributes or tags
+        const state = getState();
+        let objectIDsWithNonCachedAttributesOrTags = [];
+        if (attributes) objectIDsWithNonCachedAttributesOrTags = objectIDs.filter(objectID => !(objectID in state.objects));
+        if (tags) objectIDsWithNonCachedAttributesOrTags.concat(objectIDs.filter(objectID => !(objectID in state.objectsTags)));
+
+        // Get objects with missing data
+        let objectIDsWithNonCachedData = [];
+        if (data) objectIDsWithNonCachedData = objectIDs.filter(objectID => !objectDataIsInState(state, objectID));
+
+        // Fetch missing information
+        return await dispatch(viewObjectsFetch(objectIDsWithNonCachedAttributesOrTags, objectIDsWithNonCachedData));
     };
 };
 

@@ -1,0 +1,37 @@
+/*******************************
+       Seach page styles. 
+*******************************/
+
+:root {
+    --search-input-border-color: rgb(222, 222, 222);
+    --search-input-border-active-color: rgb(128, 128, 128);
+}
+
+
+/** Search input **/
+.search-input-container {
+    display: flex;
+    margin-bottom: 2rem;    
+}
+
+.search-input-container > .ui.input {
+    /* Take available width */
+    flex: 1 1 auto;
+}
+
+.search-input-container > .ui.input > input {
+    border: solid 1px var(--search-input-border-color);
+    border-radius: 0px;
+}
+
+.search-input-container > .ui.input > input:active,
+.search-input-container > .ui.input > input:focus {
+    border: solid 1px var(--search-input-border-active-color);
+}
+
+button.ui.button.field-menu-button.search-input-button {
+    /* margin-left: 5rem; */
+    /* background-color: black !important; */
+    border: solid 1px var(--search-input-border-color) !important;
+    border-left-width: 0px !important;
+}

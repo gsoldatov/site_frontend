@@ -74,6 +74,10 @@ i.icon.feed-card-header-icon {
     border-top: solid 1px rgb(192, 192, 192);
 }
 
+.object-feed-card-tag-list-container:last-child .inline-item-list-block-content {
+    padding-bottom: 0;
+}
+
 
 /** Feed pagination **/
 .feed-pagination-container {

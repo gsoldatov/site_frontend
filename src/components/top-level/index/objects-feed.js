@@ -16,9 +16,6 @@ import { loadIndexPageObjects } from "../../../fetches/ui-index";
 export const ObjectsFeed = ({ page, items_per_page = 10 }) => {
     const dispatch = useDispatch();
 
-    // Logged user state
-    const userID = useSelector(state => state.auth.user_id);
-
     // Pagination info
     const [paginationInfo, setPaginationInfo] = useState({
             page,
@@ -48,7 +45,7 @@ export const ObjectsFeed = ({ page, items_per_page = 10 }) => {
         
         return result;
     
-    }, [page, items_per_page, userID]);
+    }, [page, items_per_page]);
 
     // Feed pagination params
     const totalPages = paginationInfo ? Math.ceil(paginationInfo.totalItems / paginationInfo.items_per_page) : null;
