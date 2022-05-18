@@ -3,17 +3,9 @@
 *******************************************************************************************/
 
 
-/* Override width of containers to fit multicolumn composite subobject grids */
-.layout-grid.objects-view-page-multicolumn-composite, 
-.layout-grid.objects-view-page-multicolumn-composite > .column,
-.layout-grid.objects-view-page-multicolumn-composite > .column > [class*="sixteen wide"].layout-grid-main-content-column.objects-view-page-multicolumn-composite,
-.objects-view-data.composite-multicolumn {    
+.objects-view-data.composite-multicolumn {
+    /* Override width of containers to fit multicolumn composite subobject grids */
     width: max-content !important;
-}
-
-.layout-grid.objects-view-page-multicolumn-composite > .column > [class*="sixteen wide"].layout-grid-main-content-column.objects-view-page-multicolumn-composite {
-    padding-left: 1rem;
-    padding-right: 1rem;
 }
 
 .objects-view-card-container.multicolumn-subobject {

@@ -22,43 +22,6 @@
 }
 
 
-/** Layout grid & main content column **/
-.layout-grid.multicolumn-composite-data, .layout-grid-main-content-column.multicolumn-composite-data {
-    /* Override min-width to fit multicolumn composite subobject grids */
-    min-width: max-content;
-}
-
-/* .layout-grid-side-menu-column.multicolumn-composite-data:not(.stacked) {
-    /* max-width: 240px;   /* Limit max width of side menu to default value for 1920x1080 screen (when multicolumn subobjects overflow main column) * /
-    min-width: 100px;   /* Limit min width * /
-} */
-
-.ui.grid > .column.row > [class*="two wide"].column.layout-grid-side-menu-column.multicolumn-composite-data:not(.stacked) {
-    width: 240px !important; /* Set fixed side menu width when displaying multicolumn composite data */
-}
-
-
-.layout-grid-main-row.multicolumn-composite-data:not(.stacked) {
-    /* Force placing both columns in main row on a single line when grid is not stacked */
-    flex-wrap: nowrap;
-}
-
-.ui.grid > .row > .layout-grid-main-content-column.column.layout-grid-main-content-column.multicolumn-composite-data {
-    /* Add padding to main content column */
-    padding-right: 1rem;
-}
-
-
-/** Stacked side menu when displaying composite object data **/
-.layout-grid-side-menu-column.multicolumn-composite-data.stacked > .ui.menu.side-menu {
-    /* Set fixed position, so that menu is always stretched to the size of the window (top position should be calculated automatically based on navbar height) */
-    position: fixed;
-    z-index: 999;
-    left: 0;
-    right: 0;
-}
-
-
 /** Subobjects grid, columns & dropzones, common **/
 div.composite-subobject-grid {
     display: flex;

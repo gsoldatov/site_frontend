@@ -5,6 +5,8 @@ import Layout from "../../common/layout";
 import { SearchFeed } from "./search-feed";
 import { SearchInput } from "./search-input";
 
+import { enumLayoutTypes } from "../../../util/enum-layout-types";
+
 import StyleSearch from "../../../styles/search.css";
 
 
@@ -25,5 +27,5 @@ export const SearchPage = () => {
         </div>
     );
     
-    return <Layout body={body} />;
+    return <Layout body={body} layoutType={enumLayoutTypes.shortWidth} />;
 };

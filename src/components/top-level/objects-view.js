@@ -7,6 +7,8 @@ import { enumCompositeObjectDisplayModes } from "../../util/enum-composite-objec
 import Layout from "../common/layout";
 import { ObjectsViewCard } from "../view/objects-view-card";
 
+import { enumLayoutTypes } from "../../util/enum-layout-types";
+
 import StyleRootObjectsViewCard from "../../styles/objects-view/root-card.css";
 
 /**
@@ -16,7 +18,6 @@ export const ObjectsView = () => {
     const { id } = useParams();
 
     const multicolumnLayout = useSelector(state => (state.composite[id] || {}).display_mode === enumCompositeObjectDisplayModes.multicolumn.value);
-    const layoutClassName = multicolumnLayout ? "objects-view-page-multicolumn-composite" : "";
 
     const body = (
         <div className="objects-view-container">
@@ -24,7 +25,10 @@ export const ObjectsView = () => {
         </div>
     );
 
-    return <Layout body={body} fullWidthMainContent={multicolumnLayout} className={layoutClassName} />;
+    // Set unlimited width for layout when displaying multicolumn composite objects
+    const layoutType = multicolumnLayout ? enumLayoutTypes.unlimitedWidth : enumLayoutTypes.shortWidth;
+
+    return <Layout body={body} layoutType={layoutType} />;
 };
 
 

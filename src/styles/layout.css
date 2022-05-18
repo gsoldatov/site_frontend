@@ -3,46 +3,100 @@
 ************************************/
 
 
-/** Basic layout **/
+/** Common **/
 div.layout-grid.ui.grid {
-    margin-left: 0;  /* fix height to remove browser scrollbar */
+    /* fix height to remove browser scrollbar */
+    margin-left: 0;
     margin-right: 0;
 }
 
 div.layout-grid.ui.grid > .layout-grid-navigation-row.row {
-    padding-bottom: 0; /* Remove padding of the navbar row */
+    /* Remove padding of the navbar row */
+    padding-bottom: 0;
 }
 
 @media(max-width:767px) {
     div.layout-grid.ui.grid {
-        margin-top: 0; /* Stop stacked navbar from moving above screen  */
+        /* Stop stacked navbar from moving above screen  */
+        margin-top: 0; 
         margin-bottom: 0;
     }
 
     div.layout-grid.ui.grid > div.layout-grid-main-row.row > div.layout-grid-side-menu-column.column {
-        padding: 0 !important; /* Remove padding for stacked side menu */
+        /* Remove padding for stacked side menu */
+        padding: 0 !important;
     }
 }
 
 @media(min-width:768px) {
-    .ui.grid > .layout-grid-main-row:not(.multicolumn-composite-data) {
-        /* Limit width of main row */
-        max-width: 1200px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .ui.grid > .row > .layout-grid-main-content-column.column {
-        /* Remove padding around main content column */
+    .ui.grid > .row > .layout-grid-main-content-column.column.twelve.wide {
+        /* Remove padding around main content column, if side menu is displayed */
         padding-left: 0;
         padding-right: 0;
     }
+
+    .ui.grid > .row > .layout-grid-main-content-column.column.sixteen.wide {
+        /* Increase padding around main content column, if side menu is not displayed */
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    .ui.grid > .row.layout-grid-main-row {
+        /* Increase padding for main row in fullscreen mode */
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
 }
 
 
-/** Limited width for main content **/
+/** Default **/
 @media(min-width:768px) {
-    .ui.grid > .layout-grid-main-row.limited-width {
-        max-width: 1200px;
+    .ui.grid > .layout-grid-main-row.default {
+        /* Limit width of main row */
+        max-width: 1920px;
+        margin-left: auto;
+        margin-right: auto;
     }
+}
+
+
+/** Short width **/
+@media(min-width:768px) {
+    .ui.grid > .layout-grid-main-row.short-width {
+        /* Limit width of main row */
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+
+/** Unlimited width **/
+.layout-grid.unlimited-width, 
+.layout-grid-main-content-column.unlimited-width {
+    /* Override min-width to fit multicolumn composite subobject grids */
+    min-width: max-content;
+}
+
+.ui.grid > .column.row > [class*="two wide"].column.layout-grid-side-menu-column.unlimited-width:not(.stacked) {
+    /* Set fixed side menu width when displaying multicolumn composite data */
+    width: 240px !important;
+}
+
+.layout-grid-main-row.unlimited-width:not(.stacked) {
+    /* Force placing both columns in main row on a single line when grid is not stacked */
+    flex-wrap: nowrap;
+}
+
+.ui.grid > .row > .layout-grid-main-content-column.column.unlimited-width {
+    /* Add padding to main content column */
+    padding-right: 1rem;
+}
+
+.layout-grid-side-menu-column.unlimited-width.stacked > .ui.menu.side-menu {
+    /* Set fixed position, so that menu is always stretched to the size of the window (top position should be calculated automatically based on navbar height) */
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    right: 0;
 }

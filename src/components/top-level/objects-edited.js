@@ -8,6 +8,7 @@ import Layout from "../common/layout";
 import { removeEditedObjects } from "../../actions/objects-edit";
 import { loadObjectsEditedPage, toggleEditedObjectSelection, toggleAllObjectsSelection } from "../../actions/objects-edited";
 import { enumObjectTypes } from "../../util/enum-object-types";
+import { enumLayoutTypes } from "../../util/enum-layout-types";
 
 import StyleObjectsEdited from "../../styles/objects-edited.css";
 
@@ -86,7 +87,7 @@ export const ObjectsEdited = () => {
 
     }
 
-    return <Layout body={body} />;
+    return <Layout body={body} layoutType={enumLayoutTypes.shortWidth} />;
 };
 
 

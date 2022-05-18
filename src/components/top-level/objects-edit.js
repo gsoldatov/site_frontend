@@ -19,6 +19,7 @@ import { resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTa
 import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../../fetches/ui-objects-edit";
 
 import { isMultiColumnCompositeDataDisplayed } from "../../store/state-util/composite";
+import { enumLayoutTypes } from "../../util/enum-layout-types";
 
 
 /*
@@ -212,10 +213,10 @@ const _Object = ({ header, sideMenuItems, onLoad, objectID }) => {
         </>
     );
 
-    // Custom layout classname for composite objects (to allow multicolumn subobjects)
-    const className = enableStylesForMulticolumnCompositeObjectData ? "multicolumn-composite-data" : undefined;
+    // Layout type (unlimited width for multicolumn object data)
+    const layoutType = enableStylesForMulticolumnCompositeObjectData ? enumLayoutTypes.unlimitedWidth : enumLayoutTypes.default;
 
-    return <Layout sideMenuItems={sideMenuItems} body={pageBody} className={className} useSideMenuPlaceholderWhenStacked={enableStylesForMulticolumnCompositeObjectData} />;
+    return <Layout sideMenuItems={sideMenuItems} body={pageBody} layoutType={layoutType} />;;
 };
 
 

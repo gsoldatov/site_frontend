@@ -7,6 +7,7 @@ import Layout from "../common/layout";
 
 import { getNonCachedUsers, updateUsersFetch } from "../../fetches/data-users";
 import { enumUserLevels, userLevelInfo } from "../../util/enum-user-levels";
+import { enumLayoutTypes } from "../../util/enum-layout-types";
 
 import StyleUser from "../../styles/user.css";
 
@@ -26,7 +27,7 @@ export const UserPage = () => {
         : <ViewUser setIsEditMode={setIsEditMode} />
     ;
 
-    return <Layout body={body} />;
+    return <Layout body={body} layoutType={enumLayoutTypes.shortWidth} />;
 };
 
 

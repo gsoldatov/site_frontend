@@ -6,6 +6,8 @@ import Layout from "../common/layout";
 
 import { viewSettingsFetch, updateSettingsFetch } from "../../fetches/data-settings";
 
+import { enumLayoutTypes } from "../../util/enum-layout-types";
+
 
 /**
  * Admin page component.
@@ -26,7 +28,7 @@ export const AdminPage = () => {
             {tabPanes}
         </Tab>
     );
-    return <Layout body={body} />;
+    return <Layout body={body} layoutType={enumLayoutTypes.shortWidth} />;
 };
 
 

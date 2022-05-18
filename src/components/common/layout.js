@@ -5,13 +5,16 @@ import { OnResizeWrapper } from "./on-resize-wrapper";
 import { Navbar } from "./navigation/navbar";
 import SideMenu from "./side-menu";
 
+import { enumLayoutTypes } from "../../util/enum-layout-types";
+
 import StyleLayout from "./../../styles/layout.css";
 
 
 /**
  * Page layout with navigation, side menu and main content (body).
  */
-export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStacked = false, fullWidthMainContent = false }) => {
+// export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStacked = false }) => {
+export default ({ sideMenuItems, body, layoutType = enumLayoutTypes.default }) => {
     // Side menu column (hide if it's stacked & no `sideMenuItems` are provided)
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);
     const onResizeCallback = useMemo(() => gridRef => {
@@ -20,27 +23,29 @@ export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStac
 
         setIsStacked(window.innerWidth < 768);   // 768 = SUIR @media threshold
     }, []);
-    const showSideMenuColumn = (!isStacked || sideMenuItems) && !fullWidthMainContent;
 
     // Grid classnames
-    const customClassNamePostfix = className ? ` ${className}` : "";
+    const layoutTypePostfix = ` ${layoutType}`;
     const stackedClassNamePostfix = isStacked ? " stacked" : "";
-    const gridClassName = "layout-grid" + customClassNamePostfix;
-    const navigationRowClassName = "layout-grid-navigation-row" + customClassNamePostfix;
-    const mainRowClassName = "layout-grid-main-row" + customClassNamePostfix + stackedClassNamePostfix;
-    const sideMenuColumnClassName = "layout-grid-side-menu-column" + customClassNamePostfix + stackedClassNamePostfix;
-    const mainContentColumnClassName = "layout-grid-main-content-column" + customClassNamePostfix + stackedClassNamePostfix;
+
+    const gridClassName = "layout-grid" + layoutTypePostfix;
+    const navigationRowClassName = "layout-grid-navigation-row" + layoutTypePostfix;
+    const mainRowClassName = "layout-grid-main-row" + layoutTypePostfix + stackedClassNamePostfix;
+    const sideMenuColumnClassName = "layout-grid-side-menu-column" + layoutTypePostfix + stackedClassNamePostfix;
+    const mainContentColumnClassName = "layout-grid-main-content-column" + layoutTypePostfix + stackedClassNamePostfix;
     
     // Side menu
-    const sideMenuColumn = showSideMenuColumn && (
+    const usePlaceholderWhenStacked = layoutType === enumLayoutTypes.unlimitedWidth && isStacked;   // Stacked side menu with unlimited width layout uses 'fixed` postion and requires a placeholder to not overflow main content
+
+    const sideMenuColumn = sideMenuItems && (
         <Grid.Column width={2} className={sideMenuColumnClassName}>
-            <SideMenu items={sideMenuItems} usePlaceholderWhenStacked={useSideMenuPlaceholderWhenStacked} />
+            <SideMenu items={sideMenuItems} usePlaceholderWhenStacked={usePlaceholderWhenStacked} />
         </Grid.Column>
     );
 
     // Grid column numbers & widths
-    const mainRowColumns = showSideMenuColumn ? 2 : 1;
-    const mainColumnWidth = fullWidthMainContent || isStacked ? 16 : 12;
+    const mainRowColumns = sideMenuColumn ? 2 : 1;
+    const mainColumnWidth = sideMenuColumn ? 12 : 16;
 
     return (
         <OnResizeWrapper callback={onResizeCallback}>
