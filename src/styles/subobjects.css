@@ -43,6 +43,11 @@
     flex-wrap: nowrap;
 }
 
+.ui.grid > .row > .layout-grid-main-content-column.column.layout-grid-main-content-column.multicolumn-composite-data {
+    /* Add padding to main content column */
+    padding-right: 1rem;
+}
+
 
 /** Stacked side menu when displaying composite object data **/
 .layout-grid-side-menu-column.multicolumn-composite-data.stacked > .ui.menu.side-menu {
