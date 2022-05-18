@@ -11,6 +11,11 @@
     width: max-content !important;
 }
 
+.layout-grid.objects-view-page-multicolumn-composite > .column > [class*="sixteen wide"].layout-grid-main-content-column.objects-view-page-multicolumn-composite {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
 .objects-view-card-container.multicolumn-subobject {
     /* Always display borders in subobject cards */
     box-shadow: 0 0 4px var(--objects-view-card-border-color);
