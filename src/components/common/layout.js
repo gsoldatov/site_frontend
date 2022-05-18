@@ -5,6 +5,8 @@ import { OnResizeWrapper } from "./on-resize-wrapper";
 import { Navbar } from "./navigation/navbar";
 import SideMenu from "./side-menu";
 
+import StyleLayout from "./../../styles/layout.css";
+
 
 /**
  * Page layout with navigation, side menu and main content (body).
@@ -29,11 +31,14 @@ export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStac
     const sideMenuColumnClassName = "layout-grid-side-menu-column" + customClassNamePostfix + stackedClassNamePostfix;
     const mainContentColumnClassName = "layout-grid-main-content-column" + customClassNamePostfix + stackedClassNamePostfix;
     
+    // Side menu
     const sideMenuColumn = showSideMenuColumn && (
         <Grid.Column width={2} className={sideMenuColumnClassName}>
             <SideMenu items={sideMenuItems} usePlaceholderWhenStacked={useSideMenuPlaceholderWhenStacked} />
         </Grid.Column>
     );
+
+    // Grid column numbers & widths
     const mainRowColumns = showSideMenuColumn ? 2 : 1;
     const mainColumnWidth = fullWidthMainContent || isStacked ? 16 : 12;
 

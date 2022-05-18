@@ -23,34 +23,6 @@ body {
     overflow-x: auto;   /* enable horizontal scrollbar when required */
 }
 
-div.layout-grid.ui.grid {
-    margin-left: 0;  /* fix height to remove browser scrollbar */
-    margin-right: 0;
-}
-
-div.layout-grid.ui.grid > .layout-grid-navigation-row.row {
-    padding-bottom: 0; /* Remove padding of the navbar row */
-}
-
-@media(max-width:767px) {
-    div.layout-grid.ui.grid {
-        margin-top: 0; /* Stop stacked navbar from moving above screen  */
-        margin-bottom: 0;
-    }
-
-    div.layout-grid.ui.grid > div.layout-grid-main-row.row > div.layout-grid-side-menu-column.column {
-        padding: 0 !important; /* Remove padding for stacked side menu */
-    }
-}
-
-@media(min-width:768px) {
-    .ui.grid > .row > .layout-grid-side-menu-column.column {
-        /* Reduce side menu column padding */
-        padding-left: 0.5em;
-        padding-right: 0.5em;
-    }
-}
-
 /* Headers */
 h1, h1.ui.header {
     font-size: 24px;

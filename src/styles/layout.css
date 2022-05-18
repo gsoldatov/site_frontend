@@ -1,0 +1,48 @@
+/************************************
+            Layout styles. 
+************************************/
+
+
+/** Basic layout **/
+div.layout-grid.ui.grid {
+    margin-left: 0;  /* fix height to remove browser scrollbar */
+    margin-right: 0;
+}
+
+div.layout-grid.ui.grid > .layout-grid-navigation-row.row {
+    padding-bottom: 0; /* Remove padding of the navbar row */
+}
+
+@media(max-width:767px) {
+    div.layout-grid.ui.grid {
+        margin-top: 0; /* Stop stacked navbar from moving above screen  */
+        margin-bottom: 0;
+    }
+
+    div.layout-grid.ui.grid > div.layout-grid-main-row.row > div.layout-grid-side-menu-column.column {
+        padding: 0 !important; /* Remove padding for stacked side menu */
+    }
+}
+
+@media(min-width:768px) {
+    .ui.grid > .layout-grid-main-row:not(.multicolumn-composite-data) {
+        /* Limit width of main row */
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .ui.grid > .row > .layout-grid-main-content-column.column {
+        /* Remove padding around main content column */
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+
+/** Limited width for main content **/
+@media(min-width:768px) {
+    .ui.grid > .layout-grid-main-row.limited-width {
+        max-width: 1200px;
+    }
+}

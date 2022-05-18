@@ -22,7 +22,7 @@
 }
 
 
-/* Layout grid & main content column */
+/** Layout grid & main content column **/
 .layout-grid.multicolumn-composite-data, .layout-grid-main-content-column.multicolumn-composite-data {
     /* Override min-width to fit multicolumn composite subobject grids */
     min-width: max-content;
@@ -43,7 +43,8 @@
     flex-wrap: nowrap;
 }
 
-/* Stacked side menu when displaying composite object data */
+
+/** Stacked side menu when displaying composite object data **/
 .layout-grid-side-menu-column.multicolumn-composite-data.stacked > .ui.menu.side-menu {
     /* Set fixed position, so that menu is always stretched to the size of the window (top position should be calculated automatically based on navbar height) */
     position: fixed;
@@ -52,7 +53,8 @@
     right: 0;
 }
 
-/* Subobjects grid, columns & dropzones, common */
+
+/** Subobjects grid, columns & dropzones, common **/
 div.composite-subobject-grid {
     display: flex;
     margin: -0.5em; /* reduce padding of SUIR div.tab (1em) by half */
@@ -85,7 +87,8 @@ div.composite-subobject-grid-column {
     min-width: 0;   /* shrink flex container when `composite-subobject-card-heading-text` content overflows available space */
 }
 
-/* Subobjects grid, columns & dropzones, single column */
+
+/** Subobjects grid, columns & dropzones, single column **/
 div.composite-subobject-grid {
     justify-content: center;
 }
@@ -109,7 +112,7 @@ div.composite-subobject-grid:not(.multicolumn) div.composite-subobject-grid-new-
 }
 
 
-/* Subobjects grid, columns & dropzones, multicolumn */
+/** Subobjects grid, columns & dropzones, multicolumn **/
 div.composite-subobject-grid.multicolumn div.composite-subobject-grid-column-container:not(.two-dropzones) {
     /* Set fixed size (all columns except last) */
     flex: 0 0 calc(var(--subobject-grid-column-multicolumn-width) + var(--subobject-new-column-dropzone-width));
@@ -174,7 +177,7 @@ div.composite-subobject-grid-new-column-dropzone.is-dragged-over {
 } */
 
 
-/* Card */
+/** Card **/
 div.composite-subobject-card {
     /* Borders and margin */
     box-shadow: 0 0 4px rgba(0,0,0,0.5);
@@ -211,7 +214,8 @@ div.composite-subobject-card.is-dragged-over {
     box-shadow: 0 0 0 6px var(--subobject-dropzone-background-color);
 }
 
-/* Full card placeholders (loader, error) */
+
+/** Full card placeholders (loader, error) **/
 div.composite-subobject-card.no-padding {
     padding: 0;
     min-height: var(--subobject-card-min-height);
@@ -241,7 +245,7 @@ div.subobject-error-button-container {
 }
 
 
-/* Card heading */
+/** Card heading **/
 div.composite-subobjct-card-heading-container {
     background-color: rgba(0, 0, 0, 0.04);
     /* Remove the padding of `div.composite-subobject-card` to make a correct line */
@@ -308,7 +312,7 @@ div.composite-subobject-card-heading-text.is-hovered-over {
 }
 
 
-/* Expand/collapse button */
+/** Expand/collapse button **/
 button.ui.button.subobject-card-expand-toggle {
     flex-shrink: 0;
     margin-left: 0.25rem;
@@ -333,7 +337,7 @@ button.ui.button.subobject-card-expand-toggle.expanded {
 } 
 
 
-/* Card menu */
+/** Card menu **/
 div.menu.composite-subobject-card-menu {
     /* Allow multiline display of children */
     display: flex;
@@ -359,7 +363,7 @@ div.menu.composite-subobject-card-menu {
 }
 
 
-/* Deleted subobject message */
+/** Deleted subobject message **/
 div.ui.message.deleted-subobject-message {
     margin: 0;
 }
@@ -388,13 +392,13 @@ button.ui.button.subobject-card-dialog-button {
 }
 
 
-/* Card tabs */
+/** Card tabs **/
 .composite-subobject-card-tab > *:not(:last-child) {
     margin-bottom: 1rem;
 }
 
 
-/* Add menu */
+/** Add menu **/
 div.composite-subobject-card.add-menu {
     /* Override default `composite-subobject-card` params */
     min-height: min-content;
