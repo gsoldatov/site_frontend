@@ -4,30 +4,24 @@ import { Input } from "semantic-ui-react";
 
 import { FieldMenuButton } from "../../field/field-menu";
 
-import { useMountedState } from "../../../util/use-mounted-state";
-
 
 /**
  * Search page input & button.
  */
-export const SearchInput = ({ }) => {
+export const SearchInput = ({ query }) => {
     const history = useHistory();
-    const isMounted = useMountedState();
-    const [query, setQuery] = useState("");
+    const [inputQuery, setInputQuery] = useState("");
 
-    // Set initial input text whenever URL param changes
-    const URLParams = new URLSearchParams(history.location.search);
-    const URLQuery = URLParams.get("q");
-
+    // Set `inputQuery` wheneven URL param `query` changes
     useEffect(() => {
-        setQuery(URLQuery);
-    }, [URLQuery]);
+        if (query) setInputQuery(query);
+    }, [query]);
 
     // Submit handler
     const onSubmit = () => {
-        if (query.length > 0) {
+        if (inputQuery.length > 0) {
             const params = new URLSearchParams();
-            params.append("q", query);
+            params.append("q", inputQuery);
             history.push(`/search?${params.toString()}`);
         }
     };
@@ -43,11 +37,11 @@ export const SearchInput = ({ }) => {
         }
     };
 
-    const handleChange = useMemo(() => e => { setQuery(e.target.value); }, []);
+    const handleChange = useMemo(() => e => { setInputQuery(e.target.value); }, []);
     
     return (
         <div className="search-input-container">
-            <Input placeholder="Search" value={query} onChange={handleChange} onKeyDown={handleKeyDown} />
+            <Input placeholder="Search" value={inputQuery} onChange={handleChange} onKeyDown={handleKeyDown} />
             <FieldMenuButton icon="search" title="Search" onClick={onSubmit} className="search-input-button" />
         </div>
     );

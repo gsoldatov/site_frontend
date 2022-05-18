@@ -5,22 +5,50 @@ import { queryByText } from "@testing-library/dom";
  * Returns elements of navigation bar inside the `container`.
  */
 export const getNavigationBarElements = container => {
-    let navbarContainer = document.querySelector("div.navigation-bar.menu");
-    if (!navbarContainer) return {};
+    const result = {
+        navbarContainer: null,
+        indexLink: null,
+        objectsLink: null,          // NOTE: objects & editedObjects are now in submenu (updates may be required to properly emulate submenu clicking logic)
+        editedObjectsLink: null,
+        tagsLink: null,
 
-    let indexLink = queryByText(navbarContainer, "Index");
-    let objectsLink = queryByText(navbarContainer, "Objects");
-    let editedObjectsLink = queryByText(navbarContainer, "Edited Objects");
-    let tagsLink = queryByText(navbarContainer, "Tags");
+        search: {
+            input: null,
+            button: null
+        },
 
-    let secondaryMenu = navbarContainer.querySelector("div.navigation-right-menu");
-    if (!secondaryMenu) return { navbarContainer, indexLink, objectsLink, editedObjectsLink, tagsLink };
+        secondaryMenu: {
+            container: null,
+            profileLink: null,
+            logoutButton: null,
+            loginButton: null,
+            registerButton: null
+        }
+    }
 
-    let profileLink = secondaryMenu.querySelector(".navigation-bar-username");
-    let logoutButton = queryByText(secondaryMenu, "Logout");
-    let loginButton = queryByText(secondaryMenu, "Login");
-    let registerButton = queryByText(secondaryMenu, "Sign Up");
+    const navbarContainer = container.querySelector("div.navigation-bar.menu");
+    if (navbarContainer) {
+        result.navbarContainer = navbarContainer;
+        result.indexLink = queryByText(navbarContainer, "Index");
+        result.objectsLink = queryByText(navbarContainer, "Objects");
+        result.editedObjectsLink = queryByText(navbarContainer, "Edited Objects");
+        result.tagsLink = queryByText(navbarContainer, "Tags");
 
-    return { navbarContainer, indexLink, objectsLink, editedObjectsLink, tagsLink,
-        secondaryMenu: { profileLink, logoutButton, loginButton, registerButton }};
+        const searchContainer = navbarContainer.querySelector(".navbar-search-container");
+        if (searchContainer) {
+            result.search.input = searchContainer.querySelector("input");
+            result.search.button = searchContainer.querySelector("button");
+        }
+
+        const secondaryMenu = navbarContainer.querySelector("div.navigation-right-menu");
+        if (secondaryMenu) {
+            result.secondaryMenu.container = secondaryMenu;
+            result.secondaryMenu.profileLink = secondaryMenu.querySelector(".navigation-bar-username");
+            result.secondaryMenu.logoutButton = queryByText(secondaryMenu, "Logout");
+            result.secondaryMenu.loginButton = queryByText(secondaryMenu, "Login");
+            result.secondaryMenu.registerButton = queryByText(secondaryMenu, "Sign Up");
+        }
+    }
+    
+    return result;
 };

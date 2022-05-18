@@ -4,15 +4,16 @@ import { fireEvent, waitFor, getByText } from "@testing-library/dom";
 
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
-import { getNavigationBarElements } from "../_util/ui-navbar";
-import { getUserPageViewModeElements } from "../_util/ui-user";
-import { getFeedElements } from "../_util/ui-index";
 
 import { App } from "../../src/components/top-level/app";
 
 import { getDefaultAuthState } from "../../src/store/state-templates/auth";
 import { getAdminPageElements } from "../_util/ui-admin";
 import { getObjectsViewCardElements } from "../_util/ui-objects-view";
+import { getSearchPageElements } from "../_util/ui-search";
+import { getNavigationBarElements } from "../_util/ui-navbar";
+import { getUserPageViewModeElements } from "../_util/ui-user";
+import { getFeedElements } from "../_util/ui-index";
 
 
 /*
@@ -48,7 +49,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
         expect(objectsLink).toBeFalsy();
         expect(editedObjectsLink).toBeFalsy();
         expect(tagsLink).toBeFalsy();
-        expect(secondaryMenu).toBeTruthy();
+        expect(secondaryMenu.container).toBeTruthy();
     });
 
 
@@ -79,7 +80,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
             expect(objectsLink).toBeFalsy();
             expect(editedObjectsLink).toBeFalsy();
             expect(tagsLink).toBeFalsy();
-            expect(secondaryMenu).toBeFalsy();
+            expect(secondaryMenu.container).toBeFalsy();
             
             ReactDOM.unmountComponentAtNode(container);
         }
@@ -100,7 +101,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
         expect(objectsLink).toBeTruthy();
         expect(editedObjectsLink).toBeTruthy();
         expect(tagsLink).toBeTruthy();
-        expect(secondaryMenu).toBeTruthy();
+        expect(secondaryMenu.container).toBeTruthy();
     });
 });
 
@@ -120,7 +121,6 @@ describe("Secondary menu logged out state", () => {
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
         const { secondaryMenu } = getNavigationBarElements(container);
-        expect(secondaryMenu).toBeTruthy();
         expect(secondaryMenu.profileLink).toBeFalsy();
         expect(secondaryMenu.logoutButton).toBeFalsy();
         expect(secondaryMenu.loginButton).toBeTruthy();
@@ -142,7 +142,6 @@ describe("Secondary menu logged out state", () => {
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
         const { secondaryMenu } = getNavigationBarElements(container);
-        expect(secondaryMenu).toBeTruthy();
         expect(secondaryMenu.profileLink).toBeFalsy();
         expect(secondaryMenu.logoutButton).toBeFalsy();
         expect(secondaryMenu.loginButton).toBeTruthy();
@@ -167,7 +166,6 @@ describe("Secondary menu logged out state", () => {
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
         const { secondaryMenu } = getNavigationBarElements(container);
-        expect(secondaryMenu).toBeTruthy();
         expect(secondaryMenu.loginButton).toBeTruthy();
         
         fireEvent.click(secondaryMenu.loginButton);
@@ -187,7 +185,6 @@ describe("Secondary menu logged in state", () => {
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
         const { secondaryMenu } = getNavigationBarElements(container);
-        expect(secondaryMenu).toBeTruthy();
         expect(secondaryMenu.profileLink).toBeTruthy();
         expect(secondaryMenu.logoutButton).toBeTruthy();
         expect(secondaryMenu.loginButton).toBeFalsy();
@@ -223,6 +220,8 @@ describe("Secondary menu logged in state", () => {
             "/": async container => await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy()),
             "/feed/2": async container => await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy()),
 
+            "/search": async container => await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy()),
+
             "/admin": async container => await waitFor(() => expect(getAdminPageElements(container).settingsTab.settingControls).toBeTruthy()),
             
             "/objects/edit/new": null,
@@ -236,7 +235,7 @@ describe("Secondary menu logged in state", () => {
             "/tags/2": async container => await waitFor(() => getByText(container, "Tag Information")),
 
             "/users/2": async container => await waitFor(() => expect(getUserPageViewModeElements(container).header).toBeTruthy())
-        }
+        } 
         
         // Get all non-auth routes
         const replaceRouteParams = route => route.replace(":id", 2).replace(":page", 2);
@@ -248,7 +247,7 @@ describe("Secondary menu logged in state", () => {
                 for (let route of child.props.path)
                     if (!route.startsWith("/auth/")) routes.push(replaceRouteParams(route));
         
-        expect(routes.length).toEqual(12);
+        expect(routes.length).toEqual(13);
 
         // Render each route and logout
         for (let route of routes) {
