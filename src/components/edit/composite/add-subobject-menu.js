@@ -92,7 +92,7 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
         const result = Object.keys(state.editedObjects[objectID].composite.subobjects).map(subobjectID => parseInt(subobjectID)).filter(subobjectID => subobjectID > 0);
         
         // Composite object itself
-        result.push(objectID);
+        if (objectID > 0) result.push(objectID);
 
         return result;
     });
