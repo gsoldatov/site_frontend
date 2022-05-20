@@ -73,10 +73,15 @@ export const commonTagIDsSelector = createSelector(commonAndPartiallyAppliedTags
 export const existingIDsSelector = createSelector(
     state => state.objectsUI.addedTags,
     commonAndPartiallyAppliedTagsSelector,
-    (addedTags, commonAndPartiallyAppliedTags) => commonAndPartiallyAppliedTags.commonTagIDs.concat(
-        commonAndPartiallyAppliedTags.partiallyAppliedTagIDs.concat(
-            addedTags.filter(tag => typeof(tag) === "number")
-    ))
+    (addedTags, commonAndPartiallyAppliedTags) => {
+        const result = commonAndPartiallyAppliedTags.commonTagIDs.concat(
+            commonAndPartiallyAppliedTags.partiallyAppliedTagIDs.concat(
+                addedTags.filter(tag => typeof(tag) === "number")
+        ));
+
+        // Deduplicate IDs (partially selected tags can also be in the added ones)
+        return [...new Set(result)];
+    }
 );
 
 
