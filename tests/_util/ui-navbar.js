@@ -44,8 +44,8 @@ export const getNavigationBarElements = container => {
         if (secondaryMenu) {
             result.secondaryMenu.container = secondaryMenu;
             result.secondaryMenu.profileLink = secondaryMenu.querySelector(".navigation-bar-username");
-            result.secondaryMenu.logoutButton = queryByText(secondaryMenu, "Logout");
-            result.secondaryMenu.loginButton = queryByText(secondaryMenu, "Login");
+            result.secondaryMenu.logoutButton = queryByText(secondaryMenu, "Log Out");
+            result.secondaryMenu.loginButton = queryByText(secondaryMenu, "Log In");
             result.secondaryMenu.registerButton = queryByText(secondaryMenu, "Sign Up");
         }
     }

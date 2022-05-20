@@ -70,7 +70,7 @@ const LoggedOutSecondaryMenu = () => {
 
     return (
         <Menu.Item className="nagivation-bar-button-container">
-            <Button className="navigation-bar-button" color="blue" onClick={loginOnClick}>Login</Button>
+            <Button className="navigation-bar-button" color="blue" onClick={loginOnClick}>Log In</Button>
             <Button className={signUpClassName} color={signUpColor} onClick={signUpOnClick} title={signUpTitle}>
                 Sign Up
             </Button>
@@ -103,7 +103,7 @@ const LoggedInSecondaryMenu = () => {
         <Menu.Item className="nagivation-bar-button-container">
             <Link className="navigation-bar-username" to={userPageLink}>{username}</Link>
             <Button className="navigation-bar-button" color="teal" onClick={logoutOnClick}>
-                Logout
+                Log Out
             </Button>
         </Menu.Item>
     );
