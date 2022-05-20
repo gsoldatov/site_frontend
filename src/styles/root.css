@@ -5,26 +5,6 @@
 
 /** Colors **/
 :root {
-    /* 
-        TODO
-        - background color;
-
-        - primary content:
-            - background;
-            - color;
-            - border color;
-            - focused border color; // blue, as in SUIR
-            - placeholder text color:
-                - regular;
-                - active;
-            ???
-
-
-        - input placeholder text color;
-        - button colors;
-        -
-     */
-
     /* General */
     --background-color: rgb(255, 255, 255);
     --background-color-emphasis: rgb(245, 245, 245);
@@ -72,25 +52,22 @@
     --inline-item-background-color: rgb(255, 255, 255);
     --inline-item-border-color: rgb(222, 222, 222);
     --inline-item-font-color: rgb(33, 33, 33);
-    /* --inline-item-background-color: rgb(255, 255, 255); TODO del old version
-    --inline-item-border-color: rgb(128, 128, 128);
-    --inline-item-font-color: rgb(64, 64, 64); */
 
-    --inline-item-deleted-background-color: rgb(200, 45, 45);
-    --inline-item-deleted-border-color: rgb(200, 45, 45);
-    --inline-item-deleted-font-color: rgb(255, 255, 255);
+    --inline-item-deleted-background-color: rgb(230, 57, 70);
+    --inline-item-deleted-border-color: rgb(230, 57, 70);
+    --inline-item-deleted-font-color: rgb(241, 250, 238);
 
-    --inline-item-existing-background-color: rgb(64, 145, 145);
-    --inline-item-existing-border-color: rgb(64, 145, 145);
+    --inline-item-existing-background-color: rgb(32, 107, 165);
+    --inline-item-existing-border-color: rgb(32, 107, 165);
     --inline-item-existing-font-color: rgb(255, 255, 255);
 
-    --inline-item-new-background-color: rgb(32, 107, 165);
-    --inline-item-new-border-color: rgb(32, 107, 165);
+    --inline-item-new-background-color: rgb(64, 145, 108);
+    --inline-item-new-border-color: rgb(64, 145, 108);
     --inline-item-new-font-color: rgb(255, 255, 255);
 
-    --inline-item-filter-background-color: rgb(253, 225, 144);
-    --inline-item-filter-border-color: rgb(0, 0, 0);
-    --inline-item-filter-font-color: rgb(0, 0, 0);
+    --inline-item-filter-background-color: rgb(255, 214, 10);
+    --inline-item-filter-border-color: rgb(255, 214, 10);
+    --inline-item-filter-font-color: rgb(0, 8, 20);
 
     /* To-do lists */
     --to-do-list-commentary-button-color-disabled: rgb(192, 192, 192);  /* ? use disabled & active button colors */

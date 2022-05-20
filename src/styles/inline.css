@@ -10,7 +10,7 @@
 }
 
 
-/* Container headers */
+/** Container headers **/
 div.inline-item-list-block-header, div.inline-item-list-wrapper-header {
     font-size: 13px;
     font-weight: bold;
@@ -18,7 +18,7 @@ div.inline-item-list-block-header, div.inline-item-list-wrapper-header {
 }
 
 
-/* Containers */
+/** Containers **/
 div.inline-item-list-block:not(:last-child) {
     margin-bottom: 1em;
 }
@@ -56,7 +56,7 @@ div.inline-item-list-wrapper-content {
 }
 
 
-/* Inline input */
+/** Inline input **/
 span.inline-input-span {
     /* Reduce max width (container - left & right padding) */
     max-width: calc(100% - 2 * var(--inline-left-right-padding));
@@ -106,7 +106,7 @@ span.inline-input-span div.visible.menu.transition>div.item:not([non-existing]) 
 }
 
 
-/* Inline item & inline text item */
+/** Inline item & inline text item **/
 span.inline-item, span.inline-text-item {
     /* Sets inline item text height to 100% of the container's */
     display: flex;      
@@ -145,19 +145,17 @@ i.inline-item-link-icon {
 }
 
 
-/* Specific item styles */
+/** Specific item styles **/
 span.inline-item {
     background-color: var(--inline-item-background-color);
     border-color: var(--inline-item-border-color);
     color: var(--inline-item-font-color);
-    font-weight: normal;
 }
 
 span.inline-item.deleted {
     background-color: var(--inline-item-deleted-background-color);
     border-color: var(--inline-item-deleted-border-color);
     color: var(--inline-item-deleted-font-color);
-    font-weight: bold;
     text-decoration: line-through;
 }
 
@@ -165,19 +163,16 @@ span.inline-item.existing {
     background-color: var(--inline-item-existing-background-color);
     border-color: var(--inline-item-existing-border-color);
     color: var(--inline-item-existing-font-color);
-    font-weight: bold;
 }
 
 span.inline-item.new {
     background-color: var(--inline-item-new-background-color);
     border-color: var(--inline-item-new-border-color);
     color: var(--inline-item-new-font-color);
-    font-weight: bold;
 }
 
 span.inline-item.filter {
     background-color: var(--inline-item-filter-background-color);
     border-color: var(--inline-item-filter-border-color);
     color: var(--inline-item-filter-font-color);
-    font-weight: bold;
 }

@@ -12,7 +12,7 @@ export const InlineItem = ({ text, itemClassName, onClick, itemLink }) => {
     const [isHovered, setIsHovered] = useState(false);
     const onHoverLink = isHovered && itemLink && (
         <Link to={itemLink}>
-            <Icon circular size="small" className="inline-item-link-icon" name="chain" color="black" />
+            <Icon size="small" className="inline-item-link-icon" name="chain" color="black" />
         </Link>
     );
 
