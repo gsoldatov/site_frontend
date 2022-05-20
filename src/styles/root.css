@@ -200,19 +200,6 @@ div.ui.checkbox > label::before,     /* Checkboxes */
 }
 
 
-/* .ui.selection.dropdown .menu { TODO fix dropdown list width
-    /* Adjust width for dropdown lists (by default it's wider by 2 px to compensate for non-zero border-radius) * /
-    width: 100% !important;
-    /* margin-left: 0;
-    margin-right: 0;
-    left: -1px; * /
-    margin-right: 1px !important;
-}
-
-.ui.menu .item::before {
-    display: hidden;
-} */
-
 /** React-Datetime calendar **/
 .rdt input {
     /* Apply styles from SUIR .ui.selection.dropdown */

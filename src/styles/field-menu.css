@@ -118,7 +118,6 @@ div.field-menu .ui.dropdown {
     min-width: var(--dropdown-and-input-min-width);
 }
 
-
 div.field-menu .ui.dropdown > input {
     /* Adjust height of input inside dropdown */
     padding-top: 0.5rem !important;
@@ -137,4 +136,14 @@ div.field-menu .ui.dropdown > i.dropdown.icon {
     top: 50%;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
+}
+
+div.field-menu div.ui.dropdown > .visible.menu.transition {   
+    /* 
+        Fix dropdown list right border being rendered 1px off
+        (workaround for the specific widths of field menu dropdowns;
+        offset randomly appears if dropdown width is changed)
+     */
+    min-width: 100% !important;
+    width: calc(100% + 1.5px) !important;
 }
