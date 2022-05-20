@@ -24,10 +24,3 @@
 .search-input-container > .ui.input > input:focus {
     border: solid 1px var(--border-color-input-active);
 }
-
-button.ui.button.field-menu-button.search-input-button {
-    /* margin-left: 5rem; */
-    /* background-color: black !important; */
-    border: solid 0px var(--border-color-input) !important;
-    border-left-width: 0px !important;
-}

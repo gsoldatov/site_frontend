@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router";
-import { Input } from "semantic-ui-react";
-
-import { FieldMenuButton } from "../../field/field-menu";
+import { Button, Input } from "semantic-ui-react";
 
 
 /**
@@ -42,7 +40,7 @@ export const SearchInput = ({ query }) => {
     return (
         <div className="search-input-container">
             <Input placeholder="Search" value={inputQuery} onChange={handleChange} onKeyDown={handleKeyDown} />
-            <FieldMenuButton icon="search" title="Search" onClick={onSubmit} className="search-input-button" />
+            <Button color="blue" icon="search" title="Search" onClick={onSubmit} className="search-input-button" />
         </div>
     );
 };

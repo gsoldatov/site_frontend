@@ -33,14 +33,24 @@
     --rendered-markdown-blockquote-background-color: rgba(126, 192, 162, 0.15);
 
     /* Navigation */
-    --navbar-background-color: rgb(24, 24, 24);
+    --navbar-background-color: rgb(255, 255, 255);
+    --navbar-background-active-color: rgb(222, 222, 222);
+    --navbar-separation-color: var(--border-color-input);
+
+    --navbar-text-color: rgb(2, 62, 138); /* var(--secondary-text-color) */
+    --navbar-text-color-username: var(--text-color); /* var(--secondary-text-color) */
+
+    --navbar-disabled-button-color: rgb(118, 118, 118);
+    --navbar-disabled-text-color: rgb(255, 255, 255);
+
+    /* --navbar-background-color: rgb(24, 24, 24);
     --navbar-background-active-color: rgba(40, 40, 40);
     --navbar-text-color: rgb(230, 230, 230);
     --navbar-separation-color: rgb(48,48,48);
     --navbar-search-button-color: rgb(230, 230, 230);
     --navbar-search-button-active-color: var(--navbar-background-active-color);
     --navbar-disabled-button-color: rgb(58, 58, 58);
-    --navbar-disabled-text-color: rgb(115, 115, 115);
+    --navbar-disabled-text-color: rgb(115, 115, 115); */
 
     /* Field item list expand toggle */
     --expand-toggle-background-color: rgb(233, 250, 255);

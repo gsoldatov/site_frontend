@@ -14,6 +14,8 @@ div.ui.menu.navigation-bar {
     /* Additional styles */
     margin-top: 0;
     border-radius: 0;
+    /* box-shadow: none; */
+    border-top-width: 0;
 }
 
 div.navigation-bar-placeholder:not(.is-stacked),
@@ -40,6 +42,10 @@ div.ui.menu.navigation-bar:not(.is-stacked) > .navbar-search-container {
     max-width: 300px;
 }
 
+div.ui.menu.navigation-bar:not(.is-stacked) > .navbar-search-container::before {
+    width: 0;
+}
+
 div.ui.menu.navigation-bar:not(.is-stacked) > *:not(.navbar-search-container) {
     /* Disable width change for other navbar items */
     flex: 0 0 auto;
@@ -51,6 +57,11 @@ div.ui.menu.navigation-bar,
 .ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item {
     /* Background color */
     background-color: var(--navbar-background-color) !important;
+}
+
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item:not(:last-child) {
+    /* Remove double borders */
+    border-bottom-width: 0;
 }
 
 div.ui.menu.navigation-bar > .item.active:not(.dropdown),   /* Active menu items */
@@ -68,11 +79,14 @@ div.ui.menu.navigation-bar > .item:hover:not(.navigation-bar-expand-container):n
 
 div.ui.menu.navigation-bar .item,
 div.ui.menu.navigation-bar .item:hover,
-.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item,
-.navigation-bar-username {
-    /* Text color */
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item {
     color: var(--navbar-text-color) !important;
     text-decoration-color: var(--navbar-text-color) !important;
+}
+.navigation-bar-username {
+    /* Text color */
+    color: var(--navbar-text-color-username) !important;
+    text-decoration-color: var(--navbar-text-color-username) !important;
 }
 
 .ui.dropdown .menu.navbar-submenu-dropdown {
@@ -91,6 +105,13 @@ div.ui.menu.navigation-bar > .item {
 div.ui.menu.navigation-bar > .item:before {
     /* Set separation color for navbar & submenu dropdown items  */
     background: var(--navbar-separation-color);
+}
+
+
+/** Item font-weight **/
+.ui.menu.navigation-bar > .item,
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > .item {
+    font-weight: bold !important;
 }
 
 
@@ -161,27 +182,18 @@ i.navigation-bar-expand-toggle:hover {
 .navbar-search-container > .ui.input > input {
     /* Input styling */
     border-radius: 0px;
+    border-right-width: 0;
 }
 
-.navbar-search-container > button.ui.button.field-menu-button {
-    border: solid 1px var(--navbar-search-button-color) !important;
+.navbar-search-container > button.ui.button.navbar-search-button {
+    border: solid 0px var(--border-color-input) !important;
 
     /* Set button height & width equal to input with "mini" prop */
-    width: 30px;
+    width: 40px;
     height: 30px;
 
     /* Align icon inside button */
     padding: 0 !important;
-}
-
-.navbar-search-container > button.ui.button.field-menu-button > i {
-    color: var(--navbar-search-button-color);
-}
-
-.navbar-search-container > button.ui.button.field-menu-button:active,
-.navbar-search-container > button.ui.button.field-menu-button:focus,
-.navbar-search-container > button.ui.button.field-menu-button:hover {
-    background-color: var(--navbar-search-button-active-color) !important;
 }
 
 
@@ -202,6 +214,7 @@ div.ui.menu.navigation-bar div.nagivation-bar-button-container {
     align-items: center;
     padding-left: 0.5em;
     padding-right: 0.5em;
+    border-left-width: 0;
 }
 
 div.navigation-right-menu.is-stacked {

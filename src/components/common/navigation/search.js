@@ -1,8 +1,6 @@
 import React, { memo, useMemo, useState } from "react";
 import { useHistory } from "react-router";
-import { Input, Menu } from "semantic-ui-react";
-
-import { FieldMenuButton } from "../../field/field-menu";
+import { Button, Input, Menu } from "semantic-ui-react";
 
 import { useMountedState } from "../../../util/use-mounted-state";
 
@@ -48,8 +46,7 @@ export const NavbarSearch = memo(({ isStacked }) => {
     return (
         <Menu.Item position="right" className={containerClassName}>
             <Input placeholder="Search" size="mini" value={query} onChange={handleChange} onKeyDown={handleKeyDown} />
-            <FieldMenuButton size="mini" icon="search" title="Search" onClick={onSubmit} className="navbar-search-button" />
-            
+            <Button color="blue" icon="search" title="Search" onClick={onSubmit} className="navbar-search-button" />
         </Menu.Item>
     );
 });
