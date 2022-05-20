@@ -6,11 +6,13 @@
     --dropdown-and-input-min-width: 180px;
 }
 
-/* Menu */
+/** Menu **/
 .ui.menu.field-menu {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 1em;
+
+    box-shadow: none;
 }
 
 .ui.menu.field-menu:not(.smallscreen) {
@@ -36,7 +38,7 @@
 }
 
 
-/* Group */
+/** Group **/
 div.field-menu-group {
     display: flex;
 }
@@ -47,21 +49,25 @@ div.field-menu-group {
 }
 
 
-/* Button */
+/** Button **/
 .ui.button.field-menu-button {
     /* Separation & border styling */
     margin-right: 0px;
     border-radius: 0 !important;
     border-top: 0 !important;
 
-    border-top: solid 1px rgba(192, 192, 192, 0.5) !important;
-    border-bottom: solid 1px rgba(192, 192, 192, 0.5) !important;
-    border-right: solid 1px rgba(192, 192, 192, 0.5) !important;
+    border-top: solid 1px var(--border-color-input) !important;
+    border-bottom: solid 1px var(--border-color-input) !important;
+    border-right: solid 1px var(--border-color-input) !important;
+}
+
+.ui.basic.button.field-menu-button:hover {
+    background-color: var(--background-hover-color) !important;
 }
 
 .ui.menu.field-menu .ui.button.field-menu-button:not(.borderless):first-child {
     /* Additional left border for first child button */
-    border-left: solid 1px rgba(192, 192, 192, 0.5) !important;
+    border-left: solid 1px var(--border-color-input) !important;
 }
 
 .ui.button.field-menu-button.borderless {
@@ -72,19 +78,7 @@ div.field-menu-group {
 }
 
 
-/* Separator */
-.field-menu-separator {
-    margin: 0px;
-    padding: 0px;
-    border-left: solid 0.6em rgba(255, 255, 255, 1);
-}
-
-.field-menu-separator.hidden {
-    display: none;
-}
-
-
-/* Filter */
+/** Filter **/
 .ui.menu.field-menu.smallscreen div.field-menu-group:not(.smallscreen-disabled) div.ui.input {
     /* Allow input to take available width when not in fullscreen */
     flex: 1 1 auto;
@@ -106,7 +100,7 @@ div.field-menu .ui.input > input {
 }
 
 
-/* Dropdown */
+/** Dropdown **/
 div.field-menu .ui.dropdown {
     /* Disable border radius */
     border-radius: 0;

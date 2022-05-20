@@ -6,31 +6,45 @@
     --side-menu-dialog-button-bottom-margin: 0.25em;
 }
 
-/* Stacked menu */
+
+/** Menu **/
+.ui.vertical.menu.side-menu:not(.is-stacked) {
+    /* Remove box shadow */
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+
+/** Stacked menu **/
 .ui.menu.side-menu.is-stacked {
     border-width: 0;
     border-radius: 0;
 }
 
-/* Container */
+
+/** Container **/
 .ui.menu.side-menu div.side-menu-item-container {
     padding: 0;
 }
 
-/* Stacked menu expand/collapse toggle */
+
+/** Stacked menu expand/collapse toggle **/
 .side-menu-expand-container {
     min-height: 3em;
+    /* border-bottom-color: var(--border-color-input); */
 }
 
 .side-menu-expand-container i:hover {
     cursor: pointer;
 }
 
-/* Item & link item */
+/** Item & link item **/
 div.side-menu-item-container button.ui.button.side-menu-item {
-    background-color: white;
-    color: black;
-    font-weight: normal;
+    background-color: var(--background-color);
+    
+    color: var(--secondary-text-color);
+    font-size: 13px;
+    font-weight: bold;
 
     width: 100%;
     min-height: 3em;
@@ -42,11 +56,11 @@ div.side-menu-item-container button.ui.button.side-menu-item {
 }
 
 div.side-menu-item-container button.ui.button.side-menu-item:not(.disabled):hover {
-    background-color: rgb(230, 230, 230);
+    background-color: var(--background-hover-color);
 }
 
 
-/* Dialog container */
+/** Dialog container **/
 .ui.menu.side-menu .item.side-menu-dialog {
     padding-left: 0.25em;
     padding-right: 0.25em;
@@ -57,7 +71,7 @@ div.side-menu-item-container button.ui.button.side-menu-item:not(.disabled):hove
 }
 
 
-/* Dialog header */
+/** Dialog header **/
 .item.side-menu-dialog .side-menu-dialog-header {
     margin-bottom: 0.75em;
 }
@@ -69,7 +83,7 @@ div.side-menu-item-container button.ui.button.side-menu-item:not(.disabled):hove
 }
 
 
-/* Dialog checkbox */
+/** Dialog checkbox **/
 div.side-menu-dialog-checkbox-container {
     margin-bottom: 0.75em;
     width: 100%;
@@ -84,7 +98,7 @@ div.side-menu-dialog-checkbox-container i {
 }
 
 
-/* Dialog buttons */
+/** Dialog buttons **/
 div.ui.container.side-menu-dialog-buttons {
     display: flex;
     flex-flow: row wrap;

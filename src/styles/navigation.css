@@ -2,16 +2,6 @@
     Field pagination styles. 
 *******************************/
 
-:root {
-    --navbar-background-color: rgb(24, 24, 24);
-    --navbar-background-active-color: rgba(40, 40, 40);
-    --navbar-text-color: rgb(230,230,230);
-    --navbar-separation-color: rgb(48,48,48);
-    --navbar-search-button-color: rgb(200, 200, 200);
-    --navbar-search-button-active-color: var(--navbar-background-active-color);
-    --navbar-disabled-button-color: rgb(128, 128, 128);
-}
-
 
 /** Navigation bar and its flow placeholder **/
 div.ui.menu.navigation-bar {
@@ -228,9 +218,10 @@ div.ui.menu.navigation-bar .item > button.navigation-bar-button {    /* override
 
 div.ui.menu.navigation-bar .item > button.navigation-bar-button.is-disabled,    /* Disabled button */
 div.ui.menu.navigation-bar .item > button.navigation-bar-button.is-disabled:hover {
-    background-color: grey;     /* Overrides button color set in the component code; also set for :hover pseudoclass to disable color change on hover */
+    /* Overrides button color set in the component code; also set for :hover pseudoclass to disable color change on hover */
+    background-color: var(--navbar-disabled-button-color);
+    color: var(--navbar-disabled-text-color);
     cursor: default;
-    opacity: 0.45;  /* SUIR opacity for disabled buttons */
 }
 
 

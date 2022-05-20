@@ -17,8 +17,6 @@
 
     --subobject-card-expand-collapse-time: 0.20s;
     --subobject-card-expand-toggle-rotation: 90deg;
-
-    --subobject-dropzone-background-color: rgba(100, 200, 100, 0.25);
 }
 
 
@@ -48,7 +46,7 @@ div.composite-subobject-grid-new-column-dropzone {
 }
 
 div.composite-subobject-grid-new-column-dropzone.is-dragged-over {
-    background-color: var(--subobject-dropzone-background-color);
+    background-color: var(--background-color-dropzone);
 }
 
 div.composite-subobject-grid-column {
@@ -141,14 +139,14 @@ div.composite-subobject-grid-new-column-dropzone {
 }
 
 div.composite-subobject-grid-new-column-dropzone.is-dragged-over {
-    background-color: var(--subobject-dropzone-background-color);
+    background-color: var(--background-color-dropzone);
 } */
 
 
 /** Card **/
 div.composite-subobject-card {
     /* Borders and margin */
-    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    border: solid 1px var(--border-color-input);
     margin: 0.5em;
 }
 
@@ -179,7 +177,7 @@ div.composite-subobject-card.expanded {
 }
 
 div.composite-subobject-card.is-dragged-over {
-    box-shadow: 0 0 0 6px var(--subobject-dropzone-background-color);
+    box-shadow: 0 0 0 6px var(--background-color-dropzone);
 }
 
 
@@ -215,7 +213,7 @@ div.subobject-error-button-container {
 
 /** Card heading **/
 div.composite-subobjct-card-heading-container {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--background-color-emphasis);
     /* Remove the padding of `div.composite-subobject-card` to make a correct line */
     margin-top: calc(-1 * var(--subobject-card-padding-top-bottom));
     margin-left: calc(-1 * var(--subobject-card-padding-left-right));
@@ -223,7 +221,7 @@ div.composite-subobjct-card-heading-container {
 }
 
 div.composite-subobjct-card-heading-container.is-hovered-over {
-    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    box-shadow: 0 0 4px var(--border-color-main);
     cursor: grab;
 }
 
@@ -272,7 +270,7 @@ div.composite-subobject-card-heading-text {
 
 div.composite-subobject-card-heading-text.unnamed {
     font-weight: normal;
-    color: gray;
+    color: var(--faded-text-color);
 }
 
 div.composite-subobject-card-heading-text.is-hovered-over {
@@ -339,7 +337,7 @@ div.ui.message.deleted-subobject-message {
 
 /* Subobject dialog */
 div.subobject-card-dialog-container {
-    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    border: solid 1px var(--border-color-input);
     padding: 1rem;
 }
 

@@ -2,10 +2,11 @@
   /objects/view/:id page's object card styles, root object's card.
 *******************************************************************/
 
+
 @media(min-width: 768px) {
     /* Add borders for main object's card (except for multicolumn composite) */
     .objects-view-card-container.root.bordered {
-        box-shadow: 0 0 4px var(--objects-view-card-border-color);
+        box-shadow: var(--card-box-shadow);
         padding-top: 1rem;
         padding-bottom: 1rem;
         padding-left: 2rem;

@@ -19,13 +19,14 @@
 }
 
 .rendered-markdown blockquote {
-    padding: 0.5em;
-    border: solid 1px rgb(150, 150, 150);
-    background-color: rgba(150, 150, 150, 0.15);
+    padding: 0.5rem;
+    font-style: italic;
+    border-left: solid 2px var(--rendered-markdown-blockquote-border-color);
+    background-color: var(--rendered-markdown-blockquote-background-color);
 }
 
 .rendered-markdown hr {
-    border-top: solid 1px rgb(150, 150, 150);
+    border-top: solid 1px var(--border-color-light);
     border-bottom: none;
 }
 
@@ -38,7 +39,7 @@
 .rendered-markdown table, 
 .rendered-markdown th, 
 .rendered-markdown td {
-    border: solid 1px rgb(150, 150, 150);
+    border: solid 1px var(--border-color-main);
     border-collapse: collapse;
 }
 

@@ -2,12 +2,9 @@
     Field item list styles.
 ******************************/
 
-/****** Field item list & wrapper ******/
+/** Field item list & wrapper **/
 .field-item-list-wrapper {
-    background-color: white;
-    border-color: rgba(34, 36, 38, 0.15);
-    border-radius: 4px;
-    box-shadow: rgba(34, 36, 38, 0.15) 1px 1px 1px 1px;
+    border: solid 1px var(--border-color-input);
     margin-bottom: 1em;
 }
 
@@ -34,23 +31,33 @@
     padding-top: 0.25em;
 }
 
-/****** Expand/collapse ******/
+
+/** Expand/collapse **/
 .field-item-list-expand-div {
     text-align: center;
-    color: lightskyblue;
     margin-top: 0.25em;
     padding-top: 0.25em;
     padding-bottom: 0.25em;
-    border-top: solid 1px lightskyblue;
-    border-bottom: solid 1px lightskyblue;
-    background-color: rgba(135, 206, 250, 0.1) ; /* lightskyblue, but with opacity */
+
+    color: var(--expand-toggle-text-color);
+    /* border-top: solid 1px var(--expand-toggle-text-color);
+    border-bottom: solid 1px var(--expand-toggle-text-color); */
+    background-color: var(--expand-toggle-background-color);
+}
+
+.field-item-list-expand-div:hover {
+    color: var(--expand-toggle-text-color-hover);
+    /* border-top: solid 1px var(--expand-toggle-text-color-hover);
+    border-bottom: solid 1px var(--expand-toggle-text-color-hover); */
+    background-color: var(--expand-toggle-background-color-hover);
 }
 
 .field-item-list-expand-div:hover {
     cursor: pointer;
 }
 
-/****** Field item ******/
+
+/** Field item **/
 .field-item {
     display: flex;
     align-items: center;
@@ -65,7 +72,7 @@
 }
 
 .field-item-link {
-    color: black;
+    color: var(--text-color);
     text-decoration: none;
     word-break: break-word;
 }

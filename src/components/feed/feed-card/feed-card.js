@@ -27,7 +27,7 @@ export const FeedCardTimestamp = ({ timestamp }) => {
     const formattedTimestamp = moment(timestamp).format("lll");
 
     return (
-        <div className="feed-card-timestamp">
+        <div className="feed-card-timestamp timestamp-text">
             {formattedTimestamp}
         </div>
     );

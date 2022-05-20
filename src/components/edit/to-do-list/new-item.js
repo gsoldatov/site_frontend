@@ -69,7 +69,7 @@ class NewTDLItem extends React.PureComponent {
         return connectDropTarget(
             <div className="to-do-list-item-container">
                 {dropZones}
-                <div className="to-do-list-item">
+                <div className="to-do-list-item new">
                     {indentSpace}
                     {leftMenu}
                     {input}

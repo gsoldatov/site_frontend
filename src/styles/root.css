@@ -2,75 +2,243 @@
     Global styles and variables. 
 ************************************/
 
-/* :root {
-    --selected-color: rgba(160, 160, 160, 0.5);
-    --hover-color: rgba(30, 105, 55, 0.7);
-    --border-color: var(--hover-color);
-    
-    --pressed-button-color: rgba(80, 80, 80);
-    --field-menu-button-overlay-color: rgba(0, 0, 0, 0.3);
 
-    --error-text-color: red;
+/** Colors **/
+:root {
+    /* 
+        TODO
+        - background color;
+
+        - primary content:
+            - background;
+            - color;
+            - border color;
+            - focused border color; // blue, as in SUIR
+            - placeholder text color:
+                - regular;
+                - active;
+            ???
+
+
+        - input placeholder text color;
+        - button colors;
+        -
+     */
+
+    /* General */
+    --background-color: rgb(255, 255, 255);
+    --background-color-emphasis: rgb(245, 245, 245);
+    --background-hover-color: rgb(202, 233, 255);
+    --background-color-dropzone: rgb(216, 241, 216);
+
+    --card-box-shadow: 0 0 2px rgb(64, 64, 64);
+    --border-color-main: rgb(128, 128, 128);
+    --border-color-light: rgb(192, 192, 192);
+    --border-color-input: rgb(222, 222, 222);
+    --border-color-input-active: rgb(90, 169, 230);
+    
+    --header-color: rgb(0, 0, 0);
+    --header-5-text-color: rgb(60, 120, 200);
+    --header-6-text-color:rgb(128, 128, 128);
+
+    --text-color: rgb(33, 33, 33);
+    --secondary-text-color: rgb(48, 48, 48);
+    --timestamp-text-color: rgb(128, 128, 128);
+    --faded-text-color: rgb(128, 128, 128);
+    --placeholder-text-color: rgb(200, 200, 200);
+    --placeholder-text-color-hovered: rgb(160, 160, 160);
+
+    /* Rendered markdown */
+    --rendered-markdown-blockquote-border-color: rgb(25, 133, 161);
+    --rendered-markdown-blockquote-background-color: rgba(126, 192, 162, 0.15);
+
+    /* Navigation */
+    --navbar-background-color: rgb(24, 24, 24);
+    --navbar-background-active-color: rgba(40, 40, 40);
+    --navbar-text-color: rgb(230, 230, 230);
+    --navbar-separation-color: rgb(48,48,48);
+    --navbar-search-button-color: rgb(230, 230, 230);
+    --navbar-search-button-active-color: var(--navbar-background-active-color);
+    --navbar-disabled-button-color: rgb(58, 58, 58);
+    --navbar-disabled-text-color: rgb(115, 115, 115);
+
+    /* Field item list expand toggle */
+    --expand-toggle-background-color: rgb(233, 250, 255);
+    --expand-toggle-text-color: rgb(0, 119, 182);
+    --expand-toggle-background-color-hover: rgb(202, 233, 255);
+    --expand-toggle-text-color-hover: rgb(3, 4, 94);
+
+    /* Inline item list */
+    --inline-item-background-color: rgb(255, 255, 255);
+    --inline-item-border-color: rgb(222, 222, 222);
+    --inline-item-font-color: rgb(33, 33, 33);
+    /* --inline-item-background-color: rgb(255, 255, 255); TODO del old version
+    --inline-item-border-color: rgb(128, 128, 128);
+    --inline-item-font-color: rgb(64, 64, 64); */
+
+    --inline-item-deleted-background-color: rgb(200, 45, 45);
+    --inline-item-deleted-border-color: rgb(200, 45, 45);
+    --inline-item-deleted-font-color: rgb(255, 255, 255);
+
+    --inline-item-existing-background-color: rgb(64, 145, 145);
+    --inline-item-existing-border-color: rgb(64, 145, 145);
+    --inline-item-existing-font-color: rgb(255, 255, 255);
+
+    --inline-item-new-background-color: rgb(32, 107, 165);
+    --inline-item-new-border-color: rgb(32, 107, 165);
+    --inline-item-new-font-color: rgb(255, 255, 255);
+
+    --inline-item-filter-background-color: rgb(253, 225, 144);
+    --inline-item-filter-border-color: rgb(0, 0, 0);
+    --inline-item-filter-font-color: rgb(0, 0, 0);
+
+    /* To-do lists */
+    --to-do-list-commentary-button-color-disabled: rgb(192, 192, 192);  /* ? use disabled & active button colors */
+    --to-do-list-commentary-button-color-active: rgb(128, 192, 128);
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    border: 0;
-} */
 
+/** Common styles, body **/
 body {
     overflow-x: auto;   /* enable horizontal scrollbar when required */
+    
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
 
-/* Headers */
+
+/** Common styles, headers **/
 h1, h1.ui.header {
+    color: var(--header-color);
     font-size: 24px;
 }
 
 h2, h2.ui.header {
+    color: var(--header-color);
     font-size: 20px;
 }
 
 h3, h3.ui.header {
+    color: var(--header-color);
     font-size: 18px;
 }
 
 h4, h4.ui.header,
 h5, h5.ui.header,
 h6, h6.ui.header {
+    color: var(--header-color);
     font-size: 16px;
 }
 
 h5, h5.ui.header {
-    color: rgb(60, 120, 200)
+    color: var(--header-5-text-color);
 }
 
 h6, h6.ui.header {
-    color: gray;
+    color: var(--header-6-text-color);
 }
 
-/* Lists */
+
+/** Common styles, timestamp text **/
+.timestamp-text {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--timestamp-text-color);
+}
+
+
+/** Common styles, colors **/
+.ui.tabular.menu > .item,
+.ui.tabular.menu > .active.item,
+
+.ui.secondary.menu  > .item,
+.ui.secondary.menu  > .active.item,
+
+.ui.form .field > label,
+.ui.checkbox label
+{
+    color: var(--header-color);
+}
+
+
+/** Common styles, lists **/
 ul:last-child {
     margin-bottom: 0;
 }
 
-/* React-Datetime calendar */
+
+/** Common styles, tables **/
+.ui.table {
+    color: var(--text-color);
+}
+
+
+/** Common styles, border-radius **/
+.ui.table,  /* Containers */
+.ui.menu,
+
+.ui.button:not(.circular), /* Buttons, except for circular (like subobject card expand toggle) */
+
+div.ui.message, /* Messages */
+
+.ui.form input[type="text"], .ui.form input[type="text"]:focus, /* Form inputs */
+.ui.form input[type="password"], .ui.form input[type="password"]:focus,
+.ui.form textarea, .ui.form textarea:focus,
+
+div.ui.checkbox > label::before,     /* Checkboxes */
+
+.ui.selection.dropdown,         /* Dropdown */
+.ui.selection.dropdown .menu,   /* Dropdown list */
+
+.ui.attached.tabular.menu > .item, /* Edit page tabs */
+.ui.attached.segment.tab
+{
+    border-radius: 0 !important;
+}
+
+
+/** Common styles, input placeholder text **/
+.ui.input > input::placeholder,     /* Input */
+
+.ui.dropdown > div.divider.default.text {   /* Dropdowns */
+    color: var(--placeholder-text-color) !important;
+    opacity: 1;
+}
+
+.ui.input > input:hover::placeholder,   /* Input */
+.ui.input > input:focus::placeholder,
+
+.ui.dropdown > div.divider.default.text:hover, /* Dropdowns */
+.ui.dropdown:focus-within > div.divider.default.text {
+    color: var(--placeholder-text-color-hovered) !important;
+}
+
+
+/* .ui.selection.dropdown .menu { TODO fix dropdown list width
+    /* Adjust width for dropdown lists (by default it's wider by 2 px to compensate for non-zero border-radius) * /
+    width: 100% !important;
+    /* margin-left: 0;
+    margin-right: 0;
+    left: -1px; * /
+    margin-right: 1px !important;
+}
+
+.ui.menu .item::before {
+    display: hidden;
+} */
+
+/** React-Datetime calendar **/
 .rdt input {
     /* Apply styles from SUIR .ui.selection.dropdown */
     line-height: 1em;
     min-width: 14em;
     min-height: 2.71428571em;
-    background: #FFFFFF;
+    
     padding: 0.78571429em 2.1em 0.78571429em 1em;
-    color: rgba(0, 0, 0, 0.87);
     -webkit-box-shadow: none;
     box-shadow: none;
-    border: 1px solid rgba(34, 36, 38, 0.15);
-    border-radius: 0.28571429rem;
+    border: 1px solid var(--border-color-input);
 }
 
 .rdtPicker {
-    border-radius: 0.28571429rem;
-    border: 1px solid rgba(34, 36, 38, 0.15);
+    border: 1px solid var(--border-color-input);
 }

@@ -2,9 +2,6 @@
   /objects/view/:id page's object card styles, common.
 *******************************************************/
 :root {
-    --objects-view-separation-line-color: rgba(34, 36, 38, 0.25);
-    --objects-view-card-border-color:  rgba(0,0,0,0.5);
-
     --max-not-overlown-width: calc(100vw - 2rem - 15px); /* Screen width without - left & right margins around main content column - scrollbar width */
 } 
 
@@ -22,7 +19,7 @@
 
 .objects-view-tag-list-container {
     /* padding-top: 1rem; */
-    border-top: solid 1px var(--objects-view-separation-line-color);
+    border-top: solid 1px var(--border-color-light);
 }
 
 
@@ -34,12 +31,6 @@
 
 
 /** Attributes **/
-/* Timestamp */
-.objects-view-timestamp {
-    font-family: Arial, Helvetica, sans-serif;
-    color: gray;
-}
-
 /* Object header */
 .objects-view-header-container {
     display: flex;

@@ -15,7 +15,7 @@ export const Timestamp = ({ objectID, timestampProps = {} }) => {
     })).format("lll");
 
     return displayTimestamp && (
-        <div className="objects-view-timestamp">
+        <div className="objects-view-timestamp timestamp-text">
             {timestampValue}
         </div>
     );

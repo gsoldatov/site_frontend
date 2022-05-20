@@ -10,7 +10,7 @@
 
 .objects-view-card-container.multicolumn-subobject {
     /* Always display borders in subobject cards */
-    box-shadow: 0 0 4px var(--objects-view-card-border-color);
+    box-shadow: var(--card-box-shadow);
     padding-top: 1rem;
     padding-bottom: 1rem;
     padding-left: 2rem;

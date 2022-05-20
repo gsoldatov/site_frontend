@@ -3,27 +3,38 @@
 **************************************************/
 
 
-/* Container */
+/** Container **/
 .to-do-list-container {
     width: 100%;
 }
 
-/* Header */
+
+/** Header **/
 div.to-do-list-container-header {
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 0.25em;
 }
 
-/* Menu */
+
+/** Menu **/
 .ui.menu.to-do-list-menu {
     display: flex;
     flex-wrap: wrap;
-    /* margin-top: 0.3em; */
     margin-bottom: 0.3em;
+    
+    box-shadow: none;
+    border-right: none;
 }
 
-/* Item container & item */
+.ui.menu.to-do-list-menu button {
+    /* Don't display button borders (they overlap with menu borders) */
+    border-top-width: 0 !important;
+    border-bottom-width: 0 !important;
+}
+
+
+/** Item container & item **/
 .to-do-list-item-container {
     position: relative;
 }
@@ -32,11 +43,11 @@ div.to-do-list-container-header {
     display: flex;
     align-items: center;
     width: 100%;
-    border-bottom: solid 1px rgba(34, 36, 38, 0.15);
+    border-bottom: solid 1px var(--border-color-input);
 }
 
-/* Item dropzones & indent indicators */
 
+/** Item dropzones & indent indicators **/
 .to-do-list-item-drop-zone-container {
     position: absolute;
     top: 0;
@@ -72,15 +83,17 @@ div.to-do-list-container-header {
 }
 
 .to-do-list-item-indent-indicator.active {
-    background-color: rgba(100, 200, 100, 0.25);
+    background-color: var(--background-color-dropzone);
 }
 
-/* Item ID store */
+
+/** Item ID store **/
 .to-do-list-item-id {
     display: none;
 }
 
-/* Indent */
+
+/** Indent **/
 .to-do-list-item-indent {
     flex-shrink: 0;
 }
@@ -105,7 +118,8 @@ div.to-do-list-container-header {
     width: calc(5 * min(3em, 5%));
 }
 
-/* Item input */
+
+/** Item input **/
 .to-do-list-item-input {
     outline: none;  /* don't display border on edit */
     padding: 0.3em;
@@ -119,12 +133,23 @@ div.to-do-list-container-header {
 }
 
 .to-do-list-item-input.optional {
-    color: rgba(110, 110, 110, 1);
+    color: var(--faded-text-color);
 }
 
 .to-do-list-item-input.cancelled {
-    color: rgba(110, 110, 110, 1);
+    color: var(--faded-text-color);
     text-decoration: line-through;
+}
+
+
+/** New item input **/
+.to-do-list-item.new {
+    color: var(--placeholder-text-color);
+}
+
+.to-do-list-item.new:hover,
+.to-do-list-item.new:focus-within {
+    color: var(--placeholder-text-color-hovered);
 }
 
 .to-do-list-item-input.new {
@@ -137,10 +162,10 @@ div.to-do-list-container-header {
     content: attr(placeholder);
     pointer-events: none;
     display: block; /* For Firefox */
-    color: rgba(191, 191, 191, 0.87);
 }
 
-/* Item left and right menus */
+
+/** Item left and right menus **/
 .to-do-list-left-menu, .to-do-list-right-menu {
     height: calc(20em/14);  /* 1 line height */
     flex-shrink: 0;     /* menus don't shrink when item input takes more space than available => only input height is adjusted to contain all item text */
@@ -164,12 +189,11 @@ div.to-do-list-container-header {
 
 .icon.to-do-list-item-button.new {
     cursor: default;
-    color:rgba(191, 191, 191, 0.87);
 }
 
 .icon.to-do-list-item-button.comment {
     margin-right: 0.5em;
-    color:rgba(128, 128, 128, 0.5);
+    color: var(--to-do-list-commentary-button-color-disabled);
 }
 
 

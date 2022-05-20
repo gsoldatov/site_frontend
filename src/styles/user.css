@@ -2,18 +2,21 @@
          User page styles. 
 **************************************/
 
-/* View mode */
+
+/** View mode **/
 .user-page-view-header-container {
     display: flex;
     align-items: center;
 }
 
-/* View mode header */
+
+/** View mode header **/
 .user-page-view-username {
     word-break: break-word;
 }
 
-/* View mode to edit mode button */
+
+/** View mode to edit mode button **/
 .user-page-view-edit-mode-button-container {
     margin-left: 1em;
     margin-top: -0.25em;
@@ -30,19 +33,14 @@
     border-radius: 0;
 }
 
-/* View mode item title */
+
+/** View mode item title **/
 .user-page-view-item-title {
     font-weight: bold;
 }
 
-/* View mode timestamp value */
-.user-page-view-item-value.timestamp {
-    font-family: Arial, Helvetica, sans-serif;
-    color: gray;
-}
 
-
-/* Edit mode header */
+/** Edit mode header **/
 .user-page-edit-header {
     width: 100%;
     text-align: center;
@@ -50,7 +48,8 @@
     word-break: break-word;
 }
 
-/* Edit mode */
+
+/** Edit mode **/
 div.user-page-form-container,
 div.user-page-edit-message-container {
     width: 100%;

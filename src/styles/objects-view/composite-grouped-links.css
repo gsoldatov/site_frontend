@@ -8,12 +8,12 @@
     /* Before first child */
     padding-top: 1rem;
     margin-top: 1rem;
-    border-top: solid 1px var(--objects-view-separation-line-color);
+    border-top: solid 1px var(--border-color-light);
 }
 
 .objects-view-data.composite-grouped-links > .objects-view-card-container:not(:last-child) {
     /* After non-last children */
     padding-bottom: 1rem;
     margin-bottom: 1rem;
-    border-bottom: solid 1px var(--objects-view-separation-line-color);
+    border-bottom: solid 1px var(--border-color-light);
 }
