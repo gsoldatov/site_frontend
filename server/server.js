@@ -3,6 +3,11 @@
 */
 const path = require("path");
 const express = require("express");
+
+// Get config
+const config = require("../src/config.json");
+
+// Create server object
 const app = express();
 
 // Add middleware to serve static files from frontend/dist folder.
@@ -14,7 +19,7 @@ app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
 });
 
-// Start express server on port 5000
-app.listen(5000, () => {
-  console.log("server started on port 5000");
+// Start express server
+app.listen(config.server.port, () => {
+  console.log(`server started on port ${config.server.port}`);
 });
