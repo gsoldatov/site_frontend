@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByPlaceholderText, waitFor } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { renderWithWrappers } from "./_util/render";
 import { getEditedObjectLocalStorageKey, waitForAuthInfoToBeSavedIntoLocalStorage } from "./_util/local-storage";
@@ -46,6 +46,9 @@ describe("Edited objects > New object page", () => {
             store: storeOne
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         const objectNameValue = "new object";
         let objectNameInput = getByPlaceholderText(container, "Object name");
         fireEvent.change(objectNameInput, { target: { value: objectNameValue } });
@@ -76,6 +79,9 @@ describe("Edited objects > New object page", () => {
             store: storeTwo
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Check if object name persisted
         objectNameInput = getByPlaceholderText(container, "Object name");
         expect(objectNameInput.value).toEqual(objectNameValue);
@@ -89,6 +95,9 @@ describe("Edited objects > New object page", () => {
         let { container, history } = renderWithWrappers(<App />, 
             { route: "/objects/edit/new", store }
         );
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Set object name and type
         const objectNameValue = "new object";

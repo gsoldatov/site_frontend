@@ -1,7 +1,15 @@
-import { SET_REDIRECT_ON_RENDER, RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS, SET_CSS_STATE } from "../actions/common";
+import { SET_NEW_STATE, SET_REDIRECT_ON_RENDER, RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS, SET_CSS_STATE } from "../actions/common";
 import { getStateAfterObjectPageLeave } from "./helpers/object";
 import getInitialState from "../store/state-templates/initial-state";
 import { CSSPropNames } from "../store/state-templates/css";
+
+
+/**
+ * Sets the store to whatever `action.newStore` was provided.
+ */
+function setNewState(state, action) {
+    return action.newStore;
+}
 
 
 function setRedirectOnRender(state, action) {
@@ -47,6 +55,7 @@ function setCSSState(state, action) {
 
 
 const root = {
+    SET_NEW_STATE: setNewState,
     SET_REDIRECT_ON_RENDER: setRedirectOnRender,
     RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS: resetStateExceptForEditedObjects,
     SET_CSS_STATE: setCSSState

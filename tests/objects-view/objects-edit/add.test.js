@@ -40,6 +40,9 @@ describe("Object display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             for (let objectType of ["link", "markdown", "to_do_list", "composite"]) {
                 // Set object type
                 setObjectType(container, objectType);
@@ -65,6 +68,9 @@ describe("Object display properties", () => {
             let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Fill required attributes & data
             await fillRequiredAttributesAndData(container, store, { objectType: "link" });
@@ -92,6 +98,9 @@ describe("Object display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             for (let objectType of ["link", "markdown", "to_do_list"]) {
                 // Set object type
                 setObjectType(container, objectType);
@@ -107,6 +116,9 @@ describe("Object display properties", () => {
             let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Fill required attributes & data
             await fillRequiredAttributesAndData(container, store, { objectType: "composite" });
@@ -133,6 +145,9 @@ describe("Object display properties", () => {
             let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Fill required attributes & data
             await fillRequiredAttributesAndData(container, store, { objectType: "composite" });
@@ -185,6 +200,9 @@ describe("Object display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             for (let objectType of ["link", "markdown", "to_do_list", "composite"]) {
                 // Set object type
                 setObjectType(container, objectType);
@@ -210,6 +228,9 @@ describe("Object display properties", () => {
             let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Fill required attributes & data
             await fillRequiredAttributesAndData(container, store, { objectType: "link" });
@@ -237,6 +258,9 @@ describe("Object display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             for (let objectType of ["markdown", "to_do_list", "composite"]) {
                 // Set object type
                 setObjectType(container, objectType);
@@ -252,6 +276,9 @@ describe("Object display properties", () => {
             let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Show description as link: click checkbox 3 times
             clickDisplayTabButton(container);
@@ -271,6 +298,9 @@ describe("Object display properties", () => {
             let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Fill required attributes & data
             await fillRequiredAttributesAndData(container, store, { objectType: "link" });
@@ -298,6 +328,9 @@ describe("Object display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             for (let objectType of ["link", "markdown", "to_do_list", "composite"]) {
                 // Set object type
                 setObjectType(container, objectType);
@@ -324,6 +357,9 @@ describe("Object display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             // Fill required attributes & data
             await fillRequiredAttributesAndData(container, store, { objectType: "link" });
 
@@ -349,6 +385,9 @@ describe("Object display properties", () => {
             let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             for (let objectType of ["link", "markdown", "to_do_list", "composite"]) {
                 // Set object type
@@ -380,6 +419,9 @@ describe("Object display properties", () => {
             let { store, container, history } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Fill required attributes & data
             await fillRequiredAttributesAndData(container, store, { objectType: "link" });
@@ -414,6 +456,9 @@ describe("Object display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             for (let objectType of ["link", "markdown", "to_do_list"]) {
                 // Set object type
                 setObjectType(container, objectType);
@@ -429,6 +474,9 @@ describe("Object display properties", () => {
             let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Set object type
             setObjectType(container, "composite");
@@ -462,6 +510,9 @@ describe("Object display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             for (let objectType of ["link", "markdown", "to_do_list"]) {
                 // Set object type
                 setObjectType(container, objectType);
@@ -477,6 +528,9 @@ describe("Object display properties", () => {
             let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Set object type
             setObjectType(container, "composite");
@@ -502,6 +556,9 @@ describe("Object display properties", () => {
             let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Set object type and display mode
             setObjectType(container, "composite");
@@ -531,6 +588,9 @@ describe("Object display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             for (let objectType of ["link", "markdown", "to_do_list", "composite"]) {
                 // Set object type
                 setObjectType(container, objectType);
@@ -548,6 +608,9 @@ describe("Object display properties", () => {
             let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             for (let objectType of ["link", "markdown", "to_do_list", "composite"]) {
                 // Set object type
@@ -568,6 +631,10 @@ describe("Composite subobject display properties", () => {
             let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             expect(store.getState().editedObjects[0].is_published).toBeFalsy();
         
             // Select composite object type
@@ -635,6 +702,9 @@ describe("Composite subobject display properties", () => {
                 store
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
             let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
@@ -671,6 +741,9 @@ describe("Composite subobject display properties", () => {
                 route: "/objects/edit/new",
                 store
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
@@ -710,6 +783,9 @@ describe("Composite subobject display properties", () => {
                 route: "/objects/edit/new",
                 store
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
@@ -760,6 +836,9 @@ describe("Composite subobject display properties", () => {
                 store
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
             let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
@@ -804,6 +883,9 @@ describe("Composite subobject display properties", () => {
                 store
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
             let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
@@ -830,6 +912,9 @@ describe("Composite subobject display properties", () => {
                 route: "/objects/edit/new",
                 store
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
@@ -877,6 +962,9 @@ describe("Composite subobject display properties", () => {
                 store
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
             let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
@@ -919,6 +1007,9 @@ describe("Composite subobject display properties", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             // Set object type
             setObjectType(container, "composite");
 
@@ -937,6 +1028,9 @@ describe("Composite subobject display properties", () => {
                 route: "/objects/edit/new",
                 store
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
@@ -974,6 +1068,9 @@ describe("Composite subobject display properties", () => {
                 route: "/objects/edit/new",
                 store
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
@@ -1014,6 +1111,9 @@ describe("Composite subobject display properties", () => {
                 store
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
             let cards = getSubobjectCards(container, { expectedNumbersOfCards: [4] });
@@ -1052,6 +1152,9 @@ describe("Composite subobject display properties", () => {
                 route: "/objects/edit/new",
                 store
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Check data and get subobject ids and cards
             clickDataTabButton(container);
@@ -1096,6 +1199,9 @@ describe("Composite subobject display properties", () => {
                 route: "/objects/edit/new",
                 store
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
 
             // Check data and get subobject ids and cards
             clickDataTabButton(container);

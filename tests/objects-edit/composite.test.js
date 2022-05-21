@@ -43,6 +43,9 @@ describe("Basic load and UI checks", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Select composite object type and go to data tab
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -77,6 +80,9 @@ describe("Basic load and UI checks", () => {
         let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
             route: "/objects/edit/new", store
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Select composite object type and go to data tab
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -132,6 +138,9 @@ describe("Basic load and UI checks", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Select composite object type and go to data tab
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -173,6 +182,9 @@ describe("Heading (without indicators)", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Select composite object type and go to data tab
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -199,6 +211,9 @@ describe("Heading (without indicators)", () => {
         let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Select composite object type and go to data tab
         const switchElements = getObjectTypeSwitchElements(container);
@@ -244,6 +259,9 @@ describe("Heading (without indicators)", () => {
         let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Select composite object type and go to data tab
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -300,6 +318,9 @@ describe("Subobject card tabs", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Select composite object type and go to data tab
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -341,6 +362,9 @@ describe("Subobject card tabs", () => {
         let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Select composite object type and go to data tab
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -391,6 +415,9 @@ describe("Subobject card tabs", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Select composite object type and go to data tab
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -439,6 +466,9 @@ describe("Subobject card tabs", () => {
         let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Select composite object type and go to data tab
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -512,11 +542,14 @@ describe("Subobject card menu buttons", () => {
             let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
     
             // Select composite object type and go to data tab
-        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
-        fireEvent.click(switchContainer);
-        fireEvent.click(compositeOption);
+            const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+            fireEvent.click(switchContainer);
+            fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add two new subobjects
@@ -579,11 +612,14 @@ describe("Subobject card menu buttons", () => {
             let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
     
             // Select composite object type and go to data tab
-        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
-        fireEvent.click(switchContainer);
-        fireEvent.click(compositeOption);
+            const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+            fireEvent.click(switchContainer);
+            fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add two new subobjects
@@ -629,6 +665,9 @@ describe("Subobject card menu buttons", () => {
             let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
     
             // Select composite object type and go to data tab
             const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -660,6 +699,9 @@ describe("Subobject card menu buttons", () => {
             let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
     
             // Select composite object type and go to data tab
             const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -712,6 +754,9 @@ describe("Subobject card menu buttons", () => {
                 route: "/objects/edit/new"
             });
 
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
+
             // Select composite object type and go to data tab
             const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
             fireEvent.click(switchContainer);
@@ -750,11 +795,14 @@ describe("Subobject card menu buttons", () => {
             let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
     
             // Select composite object type and go to data tab
-        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
-        fireEvent.click(switchContainer);
-        fireEvent.click(compositeOption);
+            const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+            fireEvent.click(switchContainer);
+            fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject
@@ -775,11 +823,14 @@ describe("Subobject card menu buttons", () => {
             let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
                 route: "/objects/edit/new"
             });
+
+            // Wait for the page to load
+            await waitFor(() => getByText(container, "Add a New Object"));
     
             // Select composite object type and go to data tab
-        const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
-        fireEvent.click(switchContainer);
-        fireEvent.click(compositeOption);
+            const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
+            fireEvent.click(switchContainer);
+            fireEvent.click(compositeOption);
             clickDataTabButton(container);
     
             // Add an existing subobject

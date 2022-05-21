@@ -17,8 +17,29 @@ import { enumResponseErrorType } from "../util/enum-response-error-type";
  * Loads default state of /objects/edit/new page & loads composite object's subobject data.
  */
 export const addObjectOnLoad = () => {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
+        // Load initial page state and start loading composite subobjects
         dispatch(loadNewObjectPage());
+
+        // Fetch tag data of added tags, if it's missing
+        // Update fetch status
+        dispatch(setObjectOnLoadFetchState(true, ""));
+
+        // Fetch missing tags if object attributes, tags & data are present in the state
+        let result = await dispatch(getNonCachedTags(getState().editedObjects[0].addedTags));
+
+        // Handle fetch errors
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            dispatch(setObjectOnLoadFetchState(false, errorMessage));
+            return;
+        }
+
+        // Update fetch status
+        dispatch(setObjectOnLoadFetchState(false, ""));
+
+        // Start loading composite objects
         dispatch(loadCompositeSubobjectsFetch(0));
     };
 };

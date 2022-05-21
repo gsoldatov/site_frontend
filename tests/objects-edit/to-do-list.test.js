@@ -33,6 +33,9 @@ test("Load a new to-do list", async () => {
         route: "/objects/edit/new"
     });
 
+    // Wait for the page to load
+    await waitFor(() => getByText(container, "Add a New Object"));
+
     // Select to-do list object type
     const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
     fireEvent.click(switchContainer);
@@ -120,6 +123,9 @@ test("Add, edit & delete items", async () => {
     let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
         route: "/objects/edit/new"
     });
+
+    // Wait for the page to load
+    await waitFor(() => getByText(container, "Add a New Object"));
 
     // Select to-do list object type
     const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
@@ -301,6 +307,9 @@ test("New item input indenation", async () => {
     let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
         route: "/objects/edit/new"
     });
+
+    // Wait for the page to load
+    await waitFor(() => getByText(container, "Add a New Object"));
 
     // Select to-do list object type
     const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);

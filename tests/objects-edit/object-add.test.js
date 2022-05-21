@@ -4,6 +4,7 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
 import { renderWithWrappers } from "../_util/render";
+import { createTestStore } from "../_util/create-test-store";
 import { getSideMenuItem, getSideMenuDialogControls } from "../_util/ui-common";
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickGeneralTabButton, clickDataTabButton, 
     clickDisplayTabButton, clickPublishObjectCheckbox, resetObject } from "../_util/ui-objects-edit";
@@ -11,9 +12,11 @@ import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButt
     getSubobjectCards, getSubobjectExpandToggleButton } from "../_util/ui-composite";
 import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
 
+import { setNewState } from "../../src/actions/common";
+import { resetEditedObjects } from "../../src/actions/objects-edit";
+
 import { App } from "../../src/components/top-level/app";
 import { getMappedSubobjectID } from "../_mocks/data-composite";
-
 
 /*
     /objects/edit/:id page tests for new objects.
@@ -27,20 +30,52 @@ import { getMappedSubobjectID } from "../_mocks/data-composite";
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
+        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../_mocks/mock-fetch");
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
         global.setFetchFail = jest.fn(setFetchFail);
+        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
     });
 });
 
 
 describe("UI checks", () => {
+    test("Load page with a fetch error", async () => {
+        // Add an error when loading tag data
+        addCustomRouteResponse("/tags/view", "POST", { generator: body => {
+            throw TypeError("NetworkError");
+        }});
+
+        // Create a store with an edited new object, which contains an existing tag (which data will be fetched on load)
+        const store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        store.dispatch(resetEditedObjects({ objectIDs: [0], allowResetToDefaults: true }));    // add an edited new object
+        const state = store.getState();
+        store.dispatch(setNewState({    // add an existing tag ID as new object added tag
+            ...state,
+            editedObjects: {
+                [0]: { ...state.editedObjects[0], addedTags: [100] }
+            }
+        }));
+
+        // Render page
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new",
+            store
+        });
+
+        // Wait for the error message to be displayed
+        await waitFor(() => getByText(container, "Failed to fetch data."));
+    });
+
+    
     test("Render page and click cancel button", async () => {
         let { container, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
         
         // Check if add object page was loaded with empty input fields
         let addObjectHeader = getByText(container, "Add a New Object");
@@ -65,6 +100,9 @@ describe("UI checks", () => {
         let { store, container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Select markdown object type and check if markdown inputs are rendered
         let { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
@@ -103,6 +141,9 @@ describe("UI checks", () => {
         let { container, store } = renderWithWrappers(<App />, 
             { route: "/objects/edit/new" }
         );
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         // Check if `both` mode is selected
         let markdownEditorElements = getMarkdownEditorElements({ container });
@@ -140,6 +181,10 @@ describe("UI checks", () => {
         let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Change object type
         let { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -185,6 +230,9 @@ describe("Reset new object state", () => {
         let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         // Edit attributes & link
         let objectNameInput = getByPlaceholderText(container, "Object name");
@@ -226,6 +274,9 @@ describe("Reset new object state", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         const { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
         fireEvent.click(markdownOption);
@@ -249,6 +300,9 @@ describe("Reset new object state", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
         fireEvent.click(toDoListOption);
@@ -268,6 +322,9 @@ describe("Reset new object state", () => {
         let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -303,6 +360,9 @@ describe("Reset new object state", () => {
         let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -341,6 +401,9 @@ describe("Persist new object state", () => {
             route: "/objects/edit/new", store
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         let objectNameInput = getByPlaceholderText(container, "Object name");
         const objectNameValue = "new object";
         fireEvent.change(objectNameInput, { target: { value: objectNameValue } });
@@ -374,6 +437,9 @@ describe("Persist new object state", () => {
             route: "/objects/edit/new", store
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         const { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
         fireEvent.click(markdownOption);
@@ -402,6 +468,9 @@ describe("Persist new object state", () => {
             route: "/objects/edit/new", store
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
         fireEvent.click(toDoListOption);
@@ -428,6 +497,9 @@ describe("Persist new object state", () => {
         let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -466,6 +538,9 @@ describe("Persist new object state", () => {
             route: "/objects/edit/new", store
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
         fireEvent.click(compositeOption);
@@ -495,6 +570,10 @@ describe("Persist new object state", () => {
         let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         expect(Object.keys(store.getState().editedObjects).includes("0")).toBeTruthy();
 
         // Update object name
@@ -519,6 +598,9 @@ describe("Save new object errors", () => {
         let { container, history, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         // Check if an error message is displayed and object is not added to the state
         let objectNameInput = getByPlaceholderText(container, "Object name");
@@ -545,6 +627,9 @@ describe("Save new object errors", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         const objectNameInput = getByPlaceholderText(container, "Object name");
         const saveButton = getSideMenuItem(container, "Save");
     
@@ -566,6 +651,9 @@ describe("Save new object errors", () => {
         let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         const objectNameInput = getByPlaceholderText(container, "Object name");
         const saveButton = getSideMenuItem(container, "Save");
@@ -589,6 +677,9 @@ describe("Save new object errors", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         const objectNameInput = getByPlaceholderText(container, "Object name");
         const saveButton = getSideMenuItem(container, "Save");
     
@@ -611,6 +702,9 @@ describe("Save new object errors", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Modify object name and type, then click save button
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -631,6 +725,9 @@ describe("Save new object errors", () => {
         let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Modify object type and name
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -661,6 +758,9 @@ describe("Save new object errors", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Modify object type and name
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
         fireEvent.click(switchContainer);
@@ -690,6 +790,9 @@ describe("Save new object errors", () => {
         let { container, store, history } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Modify object type and name
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);
@@ -723,6 +826,9 @@ describe("Save new object", () => {
             <App />, 
             { route: "/objects/edit/new" }
         );
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         let objectNameInput = getByPlaceholderText(container, "Object name");
         let objectDescriptionInput = getByPlaceholderText(container, "Object description");
@@ -775,6 +881,9 @@ describe("Save new object", () => {
             <App />, 
             { route: "/objects/edit/new" }
         );
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         // Change object type
         const { switchContainer, markdownOption } = getObjectTypeSwitchElements(container);
@@ -821,6 +930,9 @@ describe("Save new object", () => {
             <App />, 
             { route: "/objects/edit/new" }
         );
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         // Change object type
         const { switchContainer, toDoListOption } = getObjectTypeSwitchElements(container);
@@ -865,6 +977,9 @@ describe("Save new object", () => {
             <App />, 
             { route: "/objects/edit/new" }
         );
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Modify object type and name
         const { switchContainer, compositeOption } = getObjectTypeSwitchElements(container);

@@ -1,5 +1,4 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
@@ -11,7 +10,6 @@ import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } fr
 import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "../_util/ui-objects-edit";
 
 import { App } from "../../src/components/top-level/app";
-import ObjectsList from "../../src/components/top-level/objects-list";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 import { addObjects, addObjectData } from "../../src/actions/data-objects";
@@ -39,6 +37,9 @@ describe("Add object page", () => {
         let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         // Input is not rendered by default
         expect(getInlineInputField({ container })).toBeFalsy();
@@ -65,6 +66,9 @@ describe("Add object page", () => {
         let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         // Change input text
         let inputToggle = getByTitle(container, "Click to add tags");
@@ -86,6 +90,9 @@ describe("Add object page", () => {
         let { store, container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         let inputToggle = getByTitle(container, "Click to add tags");
         expect(inputToggle).toBeTruthy();
@@ -119,6 +126,9 @@ describe("Add object page", () => {
             route: "/objects/edit/new"
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Add an "existing" tag
         const inputToggle = getByTitle(container, "Click to add tags");
         expect(inputToggle).toBeTruthy();
@@ -140,8 +150,12 @@ describe("Add object page", () => {
 
     test("Persist added tags", async () => {
         // Render switch with /objects/edit/:id and /objects page at /objects/edit/new
-        let { container, store } = renderWithWrappers(<App />
-        , { route: "/objects/edit/new" });
+        let { container, store } = renderWithWrappers(<App />, 
+            { route: "/objects/edit/new" }
+        );
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
 
         // Add a tag
         const inputToggle = getByTitle(container, "Click to add tags");
@@ -162,6 +176,9 @@ describe("Add object page", () => {
         const addObjectButton = getSideMenuItem(container, "Add a New Object");
         fireEvent.click(addObjectButton);
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Check if added tag is displayed
         expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
         expect(getCurrentObject(store.getState()).addedTags.length).toEqual(1);
@@ -172,6 +189,9 @@ describe("Add object page", () => {
         let { container, history, store } = renderWithWrappers(<App />, 
             { route: "/objects/edit/new" }
         );
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
     
         let inputToggle = getByTitle(container, "Click to add tags");
         expect(inputToggle).toBeTruthy();
@@ -369,12 +389,9 @@ describe("Edit object page", () => {
 
     test("Persist added and removed tags", async () => {
         // Render switch with /objects/edit/:id and /objects page at /objects/edit/new
-        let { container, store, history } = renderWithWrappers(
-            <Switch>
-                <Route exact path="/objects/list"><ObjectsList /></Route>
-                <App />
-            </Switch>
-        , { route: "/objects/edit/1" });
+        let { container, store, history } = renderWithWrappers(<App />, { 
+            route: "/objects/edit/1" 
+        });
 
         // Wait for the page to load
         await waitFor(() => getByText(container, "Object Information"));

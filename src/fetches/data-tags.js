@@ -78,10 +78,11 @@ export const viewTagsFetch = tagIDs => {
 
 /**
  * Fetches missing data for a list of provided `tagIDs`.
+ * Filters out non-numerice IDs (new tag case).
  */
 export const getNonCachedTags = tagIDs => {
     return async (dispatch, getState) => {
-        let nonCachedTags = tagIDs.filter(id => !(id in getState().tags));
+        let nonCachedTags = tagIDs.filter(id => !(id in getState().tags) && !isNaN(id));
         if (nonCachedTags.length !== 0) {   // Fetch non-cached tags' data
             return await dispatch(viewTagsFetch(nonCachedTags));
         }

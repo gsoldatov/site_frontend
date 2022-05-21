@@ -198,6 +198,9 @@ describe("Secondary menu logged in state", () => {
             route: "/objects/edit/new", store
         });
 
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
         // Wait for user information to be loaded into state
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
@@ -224,7 +227,7 @@ describe("Secondary menu logged in state", () => {
 
             "/admin": async container => await waitFor(() => expect(getAdminPageElements(container).settingsTab.settingControls).toBeTruthy()),
             
-            "/objects/edit/new": null,
+            "/objects/edit/new": async container => await waitFor(() => getByText(container, "Add a New Object")),
             "/objects/edit/2": async container => await waitFor(() => getByText(container, "Object Information")),
             "/objects/edited": null,
             "/objects/list": async container => await waitFor(() => getByText(container, "object #1")),
