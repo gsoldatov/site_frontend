@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const TerserWebpackPlugin = require("terser-webpack-plugin");
 
 let isDevEnv = (process.env.NODE_ENV === "development");
 
@@ -8,8 +9,10 @@ module.exports = {
     // Specify default mode in which Webpack will work
     mode: isDevEnv ? "development" : "production",
 
+
     // Entry point
     entry: "./src/index.js",
+
 
     // Output configuration
     output: {
@@ -21,8 +24,8 @@ module.exports = {
         publicPath: "/"
     },
 
-    optimization: {
 
+    optimization: {
         // SplitChunksPlugin (deduplicates repeatedly imported modules by putting them in separate chunks)
         // By default, it implicitly uses 2 cache groups (sets of rules) for app & vendor code.
         splitChunks: {
@@ -31,8 +34,21 @@ module.exports = {
             // - `async` - imported chunks;
             // - `all` = `initial` + `async`.
             chunks: "all"
-        }
+        },
+
+        minimizer: isDevEnv ? undefined : [
+            // Clear comments from JS code
+            new TerserWebpackPlugin({
+                terserOptions: {
+                    output: {
+                        comments: false
+                    }                    
+                },
+                extractComments: false
+            })
+        ]
     },
+
 
     plugins: [
         // Plugin for automatic pre-build output folder clearing
@@ -45,6 +61,7 @@ module.exports = {
         })
     ],
 
+
     // webpack-dev-server configuration
     devServer: {
         contentBase: path.resolve(__dirname, "dist"),
@@ -56,8 +73,10 @@ module.exports = {
         writeToDisk: true
     },
 
+
     // Source mapping tool (maps bundled code to original files and names)
     devtool: isDevEnv ? "inline-source-map" : undefined,
+
 
     // Settings for module processing
     module: {
