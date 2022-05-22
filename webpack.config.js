@@ -1,9 +1,14 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+
 const TerserWebpackPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+
 
 let isDevEnv = (process.env.NODE_ENV === "development");
+
 
 module.exports = {
     // Specify default mode in which Webpack will work
@@ -37,6 +42,16 @@ module.exports = {
         },
 
         minimizer: isDevEnv ? undefined : [
+            // Minimize CSS & clear comments
+            new CssMinimizerPlugin({
+                minimizerOptions: {
+                    preset: [
+                        "default",
+                        { discardComments: { removeAll: true }}
+                    ]
+                },
+            }),
+
             // Clear comments from JS code
             new TerserWebpackPlugin({
                 terserOptions: {
@@ -51,6 +66,9 @@ module.exports = {
 
 
     plugins: [
+        // Extract CSS into separate files (required for CssMinimizerPlugin)
+        new MiniCssExtractPlugin(),
+
         // Plugin for automatic pre-build output folder clearing
         new CleanWebpackPlugin({ cleanStaleWebpackAssets: true }),
 
@@ -95,8 +113,9 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    "style-loader",
-                    "css-loader"
+                    MiniCssExtractPlugin.loader,    // extracets CSS into separate files (must be placed BEFORE css-loader)
+                    // "style-loader",      // injects CSS into js files (not compatible with MiniCssExtractPlugin)
+                    "css-loader"            // resolves CSS imports in js files
                 ]
             },
             {
