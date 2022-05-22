@@ -1,6 +1,8 @@
 const webpack = require("webpack");
 const path = require("path");
 
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
@@ -68,6 +70,9 @@ module.exports = {
 
 
     plugins: [
+        new BundleAnalyzerPlugin(),
+
+        // Shake off unused moment.js locales
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|ru/),
 
         // Extract CSS into separate files (required for CssMinimizerPlugin)
