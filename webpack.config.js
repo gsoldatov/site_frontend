@@ -1,4 +1,6 @@
+const webpack = require("webpack");
 const path = require("path");
+
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
@@ -66,6 +68,8 @@ module.exports = {
 
 
     plugins: [
+        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|ru/),
+
         // Extract CSS into separate files (required for CssMinimizerPlugin)
         new MiniCssExtractPlugin(),
 
