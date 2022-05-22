@@ -134,9 +134,9 @@ module.exports = {
                 test: /\.worker\.js$/,
                 // use: [{ loader: "worker-loader", options: { publicPath: "/workers/" } }]
                 exclude: /(node_modules)/,
-                loader: 'worker-loader',
+                loader: "worker-loader",
                 options: {
-                    publicPath: '/scripts/workers/'
+                    filename: "[name].[contenthash].js"
                 }
             }
         ]
