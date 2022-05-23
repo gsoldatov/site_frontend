@@ -129,7 +129,11 @@ module.exports = {
                 exclude: /(node_modules)/,
                 loader: "babel-loader",
                 options: {
+                    // preset = a set of plugins used for transforming code
+                    // @babel/preset-env controls target environments of the transpile code and which syntax transforms and polyfills are required to work in them (environments can be configured here as well)
+                    // @babel/preset-react transpiles JSX into javascript code
                     presets: ["@babel/preset-env", "@babel/preset-react"],
+
                     // transform-runtime fixes "regeneratorRuntime is not defined" error,
                     plugins: ["@babel/plugin-transform-runtime"]
                 }
