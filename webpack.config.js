@@ -13,7 +13,12 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HLJSUsedLanguages = require("./src/util/hljs-used-languages.json");
 
 
+// Get settings from environment variables
+//
+// NOTE: to set a variable in Powershell, use `$Env:<variable> = <string-value>`;
+// to clear an existing variable, use `$Env:<variable> = ""`.
 let isDevEnv = (process.env.NODE_ENV === "development");
+let bundleAnalyze = (process.env.BUNDLE_ANALYZE);
 
 
 module.exports = {
@@ -72,8 +77,10 @@ module.exports = {
 
 
     plugins: [
-        // // Generate a treemap chart on build
-        // new BundleAnalyzerPlugin(),
+        // Generate a treemap chart on build
+        new BundleAnalyzerPlugin({
+            analyzerMode: bundleAnalyze ? "static" : "disabled"
+        }),
 
         // Shake off unused highlight.js languages
         new webpack.ContextReplacementPlugin(
