@@ -10,6 +10,8 @@ const TerserWebpackPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
+const HLJSUsedLanguages = require("./src/util/hljs-used-languages.json");
+
 
 let isDevEnv = (process.env.NODE_ENV === "development");
 
@@ -70,7 +72,14 @@ module.exports = {
 
 
     plugins: [
-        new BundleAnalyzerPlugin(),
+        // // Generate a treemap chart on build
+        // new BundleAnalyzerPlugin(),
+
+        // Shake off unused highlight.js languages
+        new webpack.ContextReplacementPlugin(
+            /highlight\.js\/lib\/languages$/,
+            new RegExp(`^./(${HLJSUsedLanguages.join('|')})$`)
+        ),
 
         // Shake off unused moment.js locales
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|ru/),

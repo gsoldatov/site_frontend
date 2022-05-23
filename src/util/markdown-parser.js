@@ -1,6 +1,10 @@
 import marked from "marked";
 import { escape } from "marked/src/helpers";
-import hljs from "highlight.js";
+
+// Import core library and white-listed languages to manually register them
+import hljs from "highlight.js/lib/core";
+import HLJSUsedLanguages from "./hljs-used-languages.json";
+
 import katex from "katex";
 
 import rules from "./markdown-rules";
@@ -165,6 +169,17 @@ const renderer = {
 };
 
 
+// Register white-listed languages in HLJS
+// NOTE: to add highlighting of a language, add it and its dependencies to `hljs-used-languages.json` => rebuild the app.
+HLJSUsedLanguages.forEach(lang => {
+    // use eager mode for dynamic import to add imported modules into the current (worker) bundle
+    import(/* webpackChunkName: 'hljs-language', webpackMode: 'eager' */ `highlight.js/lib/languages/${lang}`)
+    .then(m => {
+        hljs.registerLanguage(lang, m.default);
+    });
+});
+
+
 /**
  * Add a code highlighting with Highlight.js
  * (an additional "hljs" classname must be added separately to \<code\> tags in order to apply styles them).
@@ -174,7 +189,6 @@ const highlight = (code, language) => {
     const validLanguage = hljs.getLanguage(language) ? language : "plaintext";
     return hljs.highlight(validLanguage, code).value;
 };
-
 
 marked.use({ tokenizer, renderer, highlight });
 export default text => marked(text);
