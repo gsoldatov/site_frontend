@@ -21,12 +21,12 @@ class NewTDLItem extends React.PureComponent {
 
     setDropIndent(newIndent) { this.props.updateCallback({ toDoList: { draggedOver: "newItem", dropIndent: newIndent }}); }
 
-    handleInputChange = e => {
+    handleInputChange(e) {
         this.props.updateCallback({ toDoListItemUpdate: { command: "add", position: this.props.position, item_text: e.currentTarget.textContent, indent: this.props.indent }})
         e.currentTarget.textContent = "";
     };
 
-    handleKeyDown = e => {
+    handleKeyDown(e) {
         // On `Enter` keypress, don't add a new line into <div>
         if (e.keyCode == 10 || e.keyCode == 13) e.preventDefault();
 

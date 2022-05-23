@@ -55,9 +55,9 @@ class TDLItem extends React.PureComponent {
     handleInputMouseLeave() { this.setState({ ...this.state, isInputHovered: false }); }
     handleInputFocus() { this.setState({ ...this.state, isInputFocused: true }); }
     handleInputBlur() { this.setState({ ...this.state, isInputFocused: false }); }
-    handleInputChange = e => { this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_text: e.currentTarget.textContent }}); };
+    handleInputChange(e) { this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_text: e.currentTarget.textContent }}); };
 
-    handleKeyDown = e => {
+    handleKeyDown(e) {
         // On `Enter` split current item into two and focus the second (or add a new empty item and focus it if previous failed)
         if (e.key === "Enter") {
             e.preventDefault(); // disable adding new lines
