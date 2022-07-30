@@ -187,7 +187,7 @@ HLJSUsedLanguages.forEach(lang => {
 // const highlight = (code) => hljs.highlightAuto(code).value;  // very slow
 const highlight = (code, language) => {
     const validLanguage = hljs.getLanguage(language) ? language : "plaintext";
-    return hljs.highlight(validLanguage, code).value;
+    return hljs.highlight(code, { language: validLanguage }).value;
 };
 
 marked.use({ tokenizer, renderer, highlight });
