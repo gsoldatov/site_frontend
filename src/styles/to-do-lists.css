@@ -11,7 +11,7 @@
 
 /** Header **/
 div.to-do-list-container-header {
-    font-size: 13px;
+    font-size: var(--input-header-font-size);
     font-weight: bold;
     margin-bottom: 0.25em;
 }

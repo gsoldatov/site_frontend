@@ -6,7 +6,7 @@
 /* Editor header */
 div.markdown-editor-header {
     /* Style header as form labels */
-    font-size: 13px;
+    font-size: var(--input-header-font-size);
     font-weight: bold;
     margin-bottom: 0.25em;
 }

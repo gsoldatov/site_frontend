@@ -189,8 +189,8 @@ i.navigation-bar-expand-toggle:hover {
     border: solid 0px var(--border-color-input) !important;
 
     /* Set button height & width equal to input with "mini" prop */
-    width: 40px;
-    height: 30px;
+    width: 60px;
+    height: 40px;
 
     /* Align icon inside button */
     padding: 0 !important;
@@ -227,6 +227,13 @@ div.ui.menu.navigation-bar .item > button.navigation-bar-button {    /* override
     width: 105px;
 
     border-radius: 0;
+
+    font-size: var(--button-font-size);
+
+    /* Don't wrap text & hide overflown text */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 div.ui.menu.navigation-bar .item > button.navigation-bar-button.is-disabled,    /* Disabled button */

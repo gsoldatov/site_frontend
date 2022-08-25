@@ -10,7 +10,7 @@
 
 .ui.header.field-item-list-header {
     margin: 0.5em;
-    font-size: 13px;
+    font-size: var(--input-header-font-size);
     /* text-decoration: underline; */
 }
 

@@ -45,7 +45,7 @@ export const NavbarSearch = memo(({ isStacked }) => {
     
     return (
         <Menu.Item position="right" className={containerClassName}>
-            <Input placeholder="Search" size="mini" value={query} onChange={handleChange} onKeyDown={handleKeyDown} />
+            <Input placeholder="Search" size="small" value={query} onChange={handleChange} onKeyDown={handleKeyDown} />
             <Button color="blue" icon="search" title="Search" onClick={onSubmit} className="navbar-search-button" />
         </Menu.Item>
     );

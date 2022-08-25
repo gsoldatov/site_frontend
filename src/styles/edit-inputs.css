@@ -20,7 +20,7 @@ div.created-modified-timestamps-item {
 
 div.created-modified-item-header {
     font-weight: bold;
-    font-size: 13px;
+    font-size: var(--input-header-font-size);
 }
 
 div.created-modified-item-value {

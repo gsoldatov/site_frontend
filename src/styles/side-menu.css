@@ -43,7 +43,7 @@ div.side-menu-item-container button.ui.button.side-menu-item {
     background-color: var(--background-color);
     
     color: var(--secondary-text-color);
-    font-size: 13px;
+    font-size: var(--input-header-font-size);
     font-weight: bold;
 
     width: 100%;
@@ -74,6 +74,7 @@ div.side-menu-item-container button.ui.button.side-menu-item:not(.disabled):hove
 /** Dialog header **/
 .item.side-menu-dialog .side-menu-dialog-header {
     margin-bottom: 0.75em;
+    font-size: var(--main-font-size);
 }
 
 .ui.vertical.menu .item.side-menu-dialog > i.icon {

@@ -384,6 +384,13 @@ button.ui.composite-subobject-add-menu-button {
     padding-left: 1em;
     padding-right: 1em;
     width: 120px;   /* min size which fits the text of each button */
+
+    font-size: var(--button-font-size);
+
+    /* Don't wrap text & hide overflown text */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 div.ui.search.selection.dropdown.composite-object-add-menu-dropdown {

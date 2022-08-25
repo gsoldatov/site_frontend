@@ -11,7 +11,7 @@
 /** Object type menu **/
 div.object-type-menu-header {
     font-weight: bold;
-    font-size: 13px;
+    font-size: var(--input-header-font-size);
     margin-bottom: 0.25em;
 }
 

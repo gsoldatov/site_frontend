@@ -37,7 +37,7 @@
     --navbar-background-active-color: rgb(222, 222, 222);
     --navbar-separation-color: var(--border-color-input);
 
-    --navbar-text-color: rgb(2, 62, 138); /* var(--secondary-text-color) */
+    --navbar-text-color: var(--text-color); /* rgb(2, 62, 138);*/ /* var(--secondary-text-color) */
     --navbar-text-color-username: var(--text-color); /* var(--secondary-text-color) */
 
     --navbar-disabled-button-color: rgb(118, 118, 118);
@@ -85,36 +85,49 @@
 }
 
 
+/** Variables **/
+:root {
+    --main-font-size: 16px;
+    --input-header-font-size: 15px;
+    --button-font-size: 15px;
+}
+
+
+
 /** Common styles, body **/
-body {
-    overflow-x: auto;   /* enable horizontal scrollbar when required */
-    
+:root {
     background-color: var(--background-color);
     color: var(--text-color);
+    font-size: var(--main-font-size);
+}
+
+body {
+    overflow-x: auto;   /* enable horizontal scrollbar when required */
+    font-size: var(--main-font-size);
 }
 
 
 /** Common styles, headers **/
 h1, h1.ui.header {
     color: var(--header-color);
-    font-size: 24px;
+    font-size: 32px;
 }
 
 h2, h2.ui.header {
     color: var(--header-color);
-    font-size: 20px;
+    font-size: 28px;
 }
 
 h3, h3.ui.header {
     color: var(--header-color);
-    font-size: 18px;
+    font-size: 24px;
 }
 
 h4, h4.ui.header,
 h5, h5.ui.header,
 h6, h6.ui.header {
     color: var(--header-color);
-    font-size: 16px;
+    font-size: 20px;
 }
 
 h5, h5.ui.header {

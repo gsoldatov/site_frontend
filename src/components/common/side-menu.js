@@ -26,7 +26,7 @@ export default ({ items, usePlaceholderWhenStacked = false }) => {
         setIsStacked(window.innerWidth < 768);       // 768 = SUIR @media threshold
         setPlaceholderHeight(height);
         setItemFullscreenStyle(width >= 100);
-        setDialogButtonsFullscreenStyle(width >= 221);
+        setDialogButtonsFullscreenStyle(width >= 170);
     }, []);
 
     // Stacked side menu placeholder
