@@ -92,7 +92,10 @@ module.exports = {
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|ru/),
 
         // Extract CSS into separate files (required for CssMinimizerPlugin)
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: "[name].[contenthash].css",
+            chunkFilename: "[name].[contenthash].css"
+        }),
 
         // Plugin for automatic pre-build output folder clearing
         new CleanWebpackPlugin({ cleanStaleWebpackAssets: true }),
@@ -141,7 +144,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    MiniCssExtractPlugin.loader,    // extracets CSS into separate files (must be placed BEFORE css-loader)
+                    MiniCssExtractPlugin.loader,    // extracts CSS into separate files (must be placed BEFORE css-loader)
                     // "style-loader",      // injects CSS into js files (not compatible with MiniCssExtractPlugin)
                     "css-loader"            // resolves CSS imports in js files
                 ]
