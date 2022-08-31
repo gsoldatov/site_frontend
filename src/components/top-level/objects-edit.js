@@ -301,7 +301,7 @@ const AddedTagItem = memo(({ id }) => {
     const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
     const itemClassName = typeof(id) === "number" ? "inline-item existing" : "inline-item new";
     const onClick = useMemo(() => () => dispatch(setEditedObjectTags({ added: [id] })));
-    const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
+    const itemLink = typeof(id) === "number" ? `/tags/edit/${id}` : undefined;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 });
 const currentTagsSelector = state => getCurrentObject(state).currentTagIDs;
@@ -312,7 +312,7 @@ const CurrentTagItem = memo(({ id }) => {
     const isRemoved = useSelector(state => getCurrentObject(state).removedTagIDs.includes(id));
     const itemClassName = isRemoved ? "inline-item deleted" : "inline-item";
     const onClick = useMemo(() => () => dispatch(setEditedObjectTags({ removed: [id] })));
-    const itemLink = `/tags/${id}`;
+    const itemLink = `/tags/edit/${id}`;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 });
 

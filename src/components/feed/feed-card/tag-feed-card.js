@@ -11,7 +11,7 @@ export const TagFeedCard = ({ tagID }) => {
     const timestamp = useSelector(state => (state.tags[tagID] || {}).modified_at);
 
     const tagName = useSelector(state => (state.tags[tagID] || {}).tag_name);
-    const URL = `/tags/${tagID}`;
+    const URL = `/tags/edit/${tagID}`;
     const tagDescription = useSelector(state => (state.tags[tagID] || {}).tag_description);
 
     return (

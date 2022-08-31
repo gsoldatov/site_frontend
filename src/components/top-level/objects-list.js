@@ -253,7 +253,7 @@ const TagsFilterItem = memo(({ id }) => {
     // const itemClassName = isRemoved ? "inline-item deleted" : "inline-item";
     const itemClassName = "inline-item filter";
     const onClick = useMemo(() => () => dispatch(setTagsFilterAndFetchPage(id)), [id]);
-    const itemLink = `/tags/${id}`;
+    const itemLink = `/tags/edit/${id}`;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 });
 const tagsFilterIsDisplayedSelector = state => state.objectsUI.paginationInfo.tagsFilter.length > 0;
@@ -277,7 +277,7 @@ const CommonCurrentTagItem = memo(({ id }) => {
     const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
     const itemClassName = isRemoved ? "inline-item deleted" : "inline-item";
     const onClick = useMemo(() => () => dispatch(setCurrentObjectsTags({ removed: [id] })), [id]);
-    const itemLink = `/tags/${id}`;
+    const itemLink = `/tags/edit/${id}`;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 });
 const AddedTagItem = memo(({ id }) => {
@@ -285,7 +285,7 @@ const AddedTagItem = memo(({ id }) => {
     const text = useSelector(state => typeof(id) === "string" ? id : (state.tags[id] ? state.tags[id].tag_name : id));
     const itemClassName = typeof(id) === "number" ? "inline-item existing" : "inline-item new";
     const onClick = useMemo(() => () => dispatch(setCurrentObjectsTags({ added: [id] })), [id]);
-    const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
+    const itemLink = typeof(id) === "number" ? `/tags/edit/${id}` : undefined;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 });
 const PartiallyAppliedTagItem = memo(({ id }) => {
@@ -299,7 +299,7 @@ const PartiallyAppliedTagItem = memo(({ id }) => {
         isRemoved ? () => dispatch(setCurrentObjectsTags({ removed: [id] })) : 
         () => dispatch(setCurrentObjectsTags({ added: [id] }))
     , [isAdded, isRemoved, id]);
-    const itemLink = typeof(id) === "number" ? `/tags/${id}` : undefined;
+    const itemLink = typeof(id) === "number" ? `/tags/edit/${id}` : undefined;
     return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
 });
 

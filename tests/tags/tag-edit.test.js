@@ -14,7 +14,7 @@ import { addTags, deleteTags } from "../../src/actions/data-tags";
 
 
 /*
-    /tags/edit page tests.
+    /tags/edit/:id page tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
@@ -30,7 +30,7 @@ beforeEach(() => {
 
 test("Load a non-existing tag + check buttons", async () => {
     let { container } = renderWithWrappers(<App />, {
-        route: "/tags/9999"
+        route: "/tags/edit/9999"
     });
 
     // Check if error message if displayed
@@ -50,7 +50,7 @@ test("Load tags with invalid IDs", async () => {
     for (let tagID of ["0", "str"]) {
         // Route component is required for matching (getting :id part of the URL in the component)
         let { container } = renderWithWrappers(<App />, {
-            route: `/tags/${tagID}`
+            route: `/tags/edit/${tagID}`
         });
     
         // Check if error message if displayed
@@ -65,7 +65,7 @@ test("Load a tag with fetch error", async () => {
     setFetchFail(true);
 
     let { container } = renderWithWrappers(<App />, {
-        route: "/tags/1"
+        route: "/tags/edit/1"
     });
 
     // Check if error message if displayed
@@ -78,7 +78,7 @@ test("Load a tag from state", async () => {
     let tag = { tag_id: 1, tag_name: "tag name", tag_description: "tag description", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
     store.dispatch(addTags([tag]));
     let { container } = renderWithWrappers(<App />, {
-        route: "/tags/1",
+        route: "/tags/edit/1",
         store: store
     });
 
@@ -97,7 +97,7 @@ test("Load a tag from state", async () => {
 
 test("Load a tag from backend", async () => {
     let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/1"
+        route: "/tags/edit/1"
     });
 
     // Check if tag information is displayed on the page
@@ -116,20 +116,20 @@ test("Load a tag from backend", async () => {
 
 test("Check 'Add Tag' button", async () => {
     let { container, history } = renderWithWrappers(<App />, 
-        { route: "/tags/1" }
+        { route: "/tags/edit/1" }
     );
 
     // Check if tag information is displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
     let addTagButton = getSideMenuItem(container, "Add a New Tag");
     fireEvent.click(addTagButton);
-    expect(history.entries[history.length - 1].pathname).toBe("/tags/new");
+    expect(history.entries[history.length - 1].pathname).toBe("/tags/edit/new");
 });
 
 
 test("Tag description editor", async () => {
     let { container, store } = renderWithWrappers(<App />, 
-        { route: "/tags/1" }
+        { route: "/tags/edit/1" }
     );
 
     // Check if tag information is displayed on the page
@@ -172,7 +172,7 @@ test("Modify a tag and click cancel", async () => {
     let tag = { tag_id: 1, tag_name: "tag name", tag_description: "tag description", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
     store.dispatch(addTags([tag]));
     let { container, history } = renderWithWrappers(<App />, {
-        route: "/tags/1",
+        route: "/tags/edit/1",
         store: store
     });
 
@@ -199,7 +199,7 @@ test("Modify a tag and click cancel", async () => {
 
 test("Delete a tag", async () => {
     let { container, store, history } = renderWithWrappers(<App />, {
-        route: "/tags/1"
+        route: "/tags/edit/1"
     });
 
     // Wait for tag information to be displayed on the page
@@ -224,7 +224,7 @@ test("Delete a tag", async () => {
 
 test("Delete a tag with fetch error", async () => {
     let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/1"
+        route: "/tags/edit/1"
     });
 
     // Wait for tag information to be displayed on the page and try to delete the tag
@@ -242,7 +242,7 @@ test("Delete a tag with fetch error", async () => {
 
 test("Save an existing tag", async () => {
     let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/1"
+        route: "/tags/edit/1"
     });
 
     // Wait for tag information to be displayed on the page
@@ -276,7 +276,7 @@ test("Save an existing tag", async () => {
 
 test("Update a tag", async () => {
     let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/1"
+        route: "/tags/edit/1"
     });
 
     // Wait for tag information to be displayed on the page
@@ -298,7 +298,7 @@ test("Update a tag", async () => {
 
 test("Update a tag with fetch error", async () => {
     let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/1"
+        route: "/tags/edit/1"
     });
 
     // Wait for tag information to be displayed on the page and try modifying the tag

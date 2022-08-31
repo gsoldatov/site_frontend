@@ -2,7 +2,7 @@
  * Path creators return a string based on the current Redux state. If no redirect is required, they must return an empty string.
  */
 export const REDIRECT_ON_RENDER_PATH_CREATORS = {
-    tagsEdit: state => state.tagsUI.selectedTagIDs.length == 1 ? `/tags/${state.tagsUI.selectedTagIDs[0]}` : "",
+    tagsEdit: state => state.tagsUI.selectedTagIDs.length == 1 ? `/tags/edit/${state.tagsUI.selectedTagIDs[0]}` : "",
     objectsEdit: state => state.objectsUI.selectedObjectIDs.length == 1 ? `/objects/edit/${state.objectsUI.selectedObjectIDs[0]}` : ""
 };
 

@@ -78,11 +78,11 @@ export const App = () => {
                     <Tags />
                 </ProtectedRoute>
                 
-                <ProtectedRoute exact path="/tags/new"
+                <ProtectedRoute exact path="/tags/edit/new"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
                     <NewTag />
                 </ProtectedRoute>
-                <ProtectedRoute exact path="/tags/:id"
+                <ProtectedRoute exact path="/tags/edit/:id"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
                     <EditTag />
                 </ProtectedRoute>

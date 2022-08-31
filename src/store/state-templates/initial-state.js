@@ -21,7 +21,7 @@ const initialState = {
     // tags storage
     tags: {},
 
-    // /tags/:id page UI controllers
+    // /tags/edit/:id page UI controllers
     tagUI: {
         currentTag: {       // current state of the tag being added/edited
             tag_id: 0,

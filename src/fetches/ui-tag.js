@@ -33,7 +33,7 @@ export const addTagOnSaveFetch = () => {
 
         // Handle successful fetch end
         dispatch(setTagOnSaveFetchState(false, ""));
-        dispatch(setRedirectOnRender(`/tags/${result.tag_id}`));
+        dispatch(setRedirectOnRender(`/tags/edit/${result.tag_id}`));
     };
 };
 

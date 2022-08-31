@@ -445,7 +445,7 @@ describe("Search page", () => {
         
                 // Check if header links to tag page
                 fireEvent.click(feedCardElements.header.link);
-                expect(history.entries[history.entries.length - 1].pathname).toEqual(`/tags/${tagID}`);
+                expect(history.entries[history.entries.length - 1].pathname).toEqual(`/tags/edit/${tagID}`);
                 await waitFor(() => getByText(container, "Tag Information"));
             });
         

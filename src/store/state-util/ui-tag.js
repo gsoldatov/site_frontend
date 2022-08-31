@@ -1,5 +1,5 @@
 /*
-    Functions for checking/getting data from a /tags/:id page UI state.
+    Functions for checking/getting data from a /tags/edit/:id page UI state.
 */
 
 

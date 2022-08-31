@@ -56,7 +56,7 @@ export const EditTag = () => {
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchingTag(state),
-            linkURL: "/tags/new"
+            linkURL: "/tags/edit/new"
         },
         {
             type: "item",

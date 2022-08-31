@@ -30,7 +30,7 @@ export default () => {
             icon: "add",
             iconColor: "green",
             isActiveSelector: state => !isFetchinOrShowingDialogTags(state),
-            linkURL: "/tags/new"
+            linkURL: "/tags/edit/new"
         },
         {
             type: "linkItem",
@@ -163,7 +163,7 @@ const paginationInfoSelector = state => state.tagsUI.paginationInfo;
 const TagsFieldItem = memo(({ id }) => {
     const textSelector = useMemo(() => state => state.tags[id] ? state.tags[id].tag_name : "?", [id]);
     const isCheckedSelector = useMemo(() => state => state.tagsUI.selectedTagIDs.includes(id), [id]);
-    const link = useMemo(() => `/tags/${id}`, [id]);
+    const link = useMemo(() => `/tags/edit/${id}`, [id]);
     return <FieldItem id={id} textSelector={textSelector} link={link} 
     isCheckedSelector={isCheckedSelector} onChange={toggleTagSelection} />;
 });

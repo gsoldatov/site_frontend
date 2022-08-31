@@ -18,7 +18,7 @@ import { generateObjectAttributes } from "../_mocks/data-objects";
 
 
 /*
-    Object tagging tests for /tags/:id page.
+    Object tagging tests for /tags/edit/:id page.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
@@ -54,7 +54,7 @@ test("Edit tag => delete a tag and check objects' tags", async () => {
     store.dispatch(setObjectsTags(objects));
     
     let { container, history } = renderWithWrappers(<App />, {
-        route: "/tags/1",
+        route: "/tags/edit/1",
         store: store
     });
 

@@ -234,8 +234,8 @@ describe("Secondary menu logged in state", () => {
             "/objects/view/2": async container => await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy()),
 
             "/tags": async container => await waitFor(() => getByText(container, "tag #1")),
-            "/tags/new": null,
-            "/tags/2": async container => await waitFor(() => getByText(container, "Tag Information")),
+            "/tags/edit/new": null,
+            "/tags/edit/2": async container => await waitFor(() => getByText(container, "Tag Information")),
 
             "/users/2": async container => await waitFor(() => expect(getUserPageViewModeElements(container).header).toBeTruthy())
         } 

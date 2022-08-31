@@ -78,7 +78,7 @@
         const objectIDMatch = result.header.link.href.match(/\/objects\/view\/(?<id>\d+)$/);
         if (objectIDMatch) result.objectID = parseInt(objectIDMatch.groups["id"]);
 
-        const tagIDMatch = result.header.link.href.match(/\/tags\/(?<id>\d+)$/);
+        const tagIDMatch = result.header.link.href.match(/\/tags\/edit\/(?<id>\d+)$/);
         if (tagIDMatch) result.tagID = parseInt(tagIDMatch.groups["id"]);
 
     const descriptionContainer = cardContainer.querySelector(".feed-card-description");

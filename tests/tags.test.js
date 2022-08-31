@@ -252,7 +252,7 @@ test("Side menu add tag button", async () => {
     // Check if add button click redirects to add tag page
     let addTagButton = getSideMenuItem(container, "Add a New Tag");
     fireEvent.click(addTagButton);
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/new"));
+    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/edit/new"));
 });
 
 
@@ -286,12 +286,12 @@ test("Side menu edit tag button", async () => {
     fireEvent.click(editTagButton);     // editTagButton.onclick is not null after handler is added, although the button is not clickable, so checking onclick prop on being null is not viable
     expect(history.entries[history.length - 1].pathname).toBe("/tags");
 
-    // Deselect a tag, click edit tag button and check if it redirected to /tags/:id
+    // Deselect a tag, click edit tag button and check if it redirected to /tags/edit/:id
     fireEvent.click(secondTagCheckbox);
     await waitFor(() => expect(store.getState().tagsUI.selectedTagIDs).toEqual(expect.arrayContaining([1])));
     editTagButton = getSideMenuItem(container, "Edit Tag");   // get the element again to properly click it
     fireEvent.click(editTagButton);
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/1"));
+    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/edit/1"));
 });
 
 

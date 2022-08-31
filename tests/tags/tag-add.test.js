@@ -12,7 +12,7 @@ import { addTags } from "../../src/actions/data-tags";
 
 
 /*
-    /tags/new page tests.
+    /tags/edit/new page tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
@@ -28,7 +28,7 @@ beforeEach(() => {
 
 test("Render and click cancel button", async () => {
     let { container, history } = renderWithWrappers(<App />, {
-        route: "/tags/new"
+        route: "/tags/edit/new"
     });
     
     // Check if add tag page was loaded with empty input fields
@@ -52,7 +52,7 @@ test("Render and click cancel button", async () => {
 
 test("Modify tag name and try saving an existing (in local state) tag name", async () => {
     let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/new"
+        route: "/tags/edit/new"
     });
 
     // Check if input is updating the state
@@ -74,7 +74,7 @@ test("Modify tag name and try saving an existing (in local state) tag name", asy
 
 test("Tag description editor", async () => {
     let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/new"
+        route: "/tags/edit/new"
     });
 
     // Check if `both` mode is selected
@@ -111,7 +111,7 @@ test("Tag description editor", async () => {
 
 test("Try saving an existing (on backend) tag name", async () => {
     let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/new"
+        route: "/tags/edit/new"
     });
 
     // Check if existing tag_name (on backend) is not added
@@ -126,7 +126,7 @@ test("Try saving an existing (on backend) tag name", async () => {
 
 test("Handle fetch error", async () => {
     let { container, history, store } = renderWithWrappers(<App />, {
-        route: "/tags/new"
+        route: "/tags/edit/new"
     });
 
     // Check if an error message is displayed and tag is not added to the state
@@ -137,14 +137,14 @@ test("Handle fetch error", async () => {
     setFetchFail(true);
     fireEvent.click(saveButton);
     await waitFor(() => getByText(container, "Failed to fetch data."));
-    expect(history.entries[history.length - 1].pathname).toBe("/tags/new");
+    expect(history.entries[history.length - 1].pathname).toBe("/tags/edit/new");
     expect(store.getState().tags[1000]).toBeUndefined();
 });
 
 
 test("Save a new tag", async () => {
     let { container, history, store } = renderWithWrappers(<App />, 
-        { route: "/tags/new" }
+        { route: "/tags/edit/new" }
     );
 
     let tagNameInput = getByPlaceholderText(container, "Tag name");
@@ -159,7 +159,7 @@ test("Save a new tag", async () => {
     fireEvent.click(saveButton);
     await waitFor(() => expect(store.getState().tagUI.currentTag.tag_id).toBeGreaterThan(0));
     let tag_id = store.getState().tagUI.currentTag.tag_id;
-    expect(history.entries[history.length - 1].pathname).toBe(`/tags/${tag_id}`);
+    expect(history.entries[history.length - 1].pathname).toBe(`/tags/edit/${tag_id}`);
     let tag = store.getState().tags[tag_id];
     expect(getByPlaceholderText(container, "Tag name").value).toEqual(tag["tag_name"]);
     expect(getByPlaceholderText(container, "Tag description").value).toEqual(tag["tag_description"]);
