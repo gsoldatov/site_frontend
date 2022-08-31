@@ -135,6 +135,6 @@ export const editTagOnDeleteFetch = () => {
         }
 
         // Handle successful fetch end
-        dispatch(setRedirectOnRender("/tags"));
+        dispatch(setRedirectOnRender("/tags/list"));
     };
 };

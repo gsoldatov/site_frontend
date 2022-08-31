@@ -1,5 +1,5 @@
 /*
-    Functions for checking/getting data from a /tags page UI state.
+    Functions for checking/getting data from a /tags/list page UI state.
 */
 
 

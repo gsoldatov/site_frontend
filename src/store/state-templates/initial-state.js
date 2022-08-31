@@ -44,7 +44,7 @@ const initialState = {
         showDeleteDialog: false
     },
 
-    // /tags page UI controllers
+    // /tags/list page UI controllers
     tagsUI: {
         paginationInfo: {
             currentPage: 1,

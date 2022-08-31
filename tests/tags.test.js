@@ -14,7 +14,7 @@ import { setTagsPaginationInfo } from "../src/actions/tags";
 
 
 /*
-    /tags page tests.
+    /tags/list page tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
@@ -35,8 +35,8 @@ test("Load page with a fetch error", async () => {
     setFetchFail(true);
 
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags"
+    let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list"
     });
 
     // Check if error message if displayed
@@ -61,8 +61,8 @@ test("Load a page without pagination", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 
@@ -79,8 +79,8 @@ test("Load page 1 of 5 and click on page 5", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 20}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 
@@ -119,8 +119,8 @@ test("Load page 1 of 10 and check pagination gaps", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 
@@ -214,8 +214,8 @@ test("Side menu buttons during fetch", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 
@@ -241,8 +241,8 @@ test("Side menu add tag button", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container, history } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 
@@ -261,8 +261,8 @@ test("Side menu edit tag button", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container, history } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container, history } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 
@@ -284,7 +284,7 @@ test("Side menu edit tag button", async () => {
     fireEvent.click(secondTagCheckbox);
     await waitFor(() => expect(store.getState().tagsUI.selectedTagIDs).toEqual(expect.arrayContaining([1, 2])));
     fireEvent.click(editTagButton);     // editTagButton.onclick is not null after handler is added, although the button is not clickable, so checking onclick prop on being null is not viable
-    expect(history.entries[history.length - 1].pathname).toBe("/tags");
+    expect(history.entries[history.length - 1].pathname).toBe("/tags/list");
 
     // Deselect a tag, click edit tag button and check if it redirected to /tags/edit/:id
     fireEvent.click(secondTagCheckbox);
@@ -300,8 +300,8 @@ test("Side menu delete button", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 
@@ -348,8 +348,8 @@ test("Field menu, select + deselect", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 
@@ -378,8 +378,8 @@ test("Field menu, sort buttons", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: tagsPerPage}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 
@@ -417,8 +417,8 @@ test("Field menu, tag filter", async () => {
     store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
     
     // Route component is required for matching (getting :id part of the URL in the Tag component)
-    let { container } = renderWithWrappers(<Route exact path="/tags"><Tags /></Route>, {
-        route: "/tags",
+    let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        route: "/tags/list",
         store: store
     });
 

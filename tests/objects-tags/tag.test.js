@@ -65,7 +65,7 @@ test("Edit tag => delete a tag and check objects' tags", async () => {
     fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
     // Wait for deletion to complete => check objects' tags
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags"));
+    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/list"));
     expect(compareArrays(Object.keys(store.getState().objectsTags), ["1", "3"])).toBeTruthy(); // 2 is removed, since it has no tags
     expect(compareArrays(store.getState().objectsTags[1], [2, 3])).toBeTruthy();        // 1 is updated
     expect(compareArrays(store.getState().objectsTags[3], [3, 4, 5])).toBeTruthy();     // 3 has the same tags
@@ -94,7 +94,7 @@ test("Tags => delete tags and check objects' tags", async () => {
 
     // Route component is required for matching (getting :id part of the URL in the Tag component)
     let { container } = renderWithWrappers(<App />, {
-        route: "/tags",
+        route: "/tags/list",
         store: store
     });
 

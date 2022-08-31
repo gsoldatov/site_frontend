@@ -46,7 +46,7 @@ test("Render and click cancel button", async () => {
 
     // Check if cancel button redirects to /tags page
     fireEvent.click(cancelButton);
-    expect(history.entries[history.length - 1].pathname).toBe("/tags");
+    expect(history.entries[history.length - 1].pathname).toBe("/tags/list");
 });
 
 

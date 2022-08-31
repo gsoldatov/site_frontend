@@ -15,7 +15,7 @@ import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../store/state-
 
 
 /**
- * /tags page component.
+ * /tags/list page component.
  */
 export default () => {
     const dispatch = useDispatch();
@@ -159,7 +159,7 @@ const pageTagIDsSelector = state => state.tagsUI.paginationInfo.currentPageTagID
 const paginationInfoSelector = state => state.tagsUI.paginationInfo;
 
 
-// FieldItem creating component for /tags page
+// FieldItem creating component for /tags/list page
 const TagsFieldItem = memo(({ id }) => {
     const textSelector = useMemo(() => state => state.tags[id] ? state.tags[id].tag_name : "?", [id]);
     const isCheckedSelector = useMemo(() => state => state.tagsUI.selectedTagIDs.includes(id), [id]);

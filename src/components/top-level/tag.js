@@ -36,7 +36,7 @@ export const NewTag = () => {
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingTag(state),
-            linkURL: "/tags"
+            linkURL: "/tags/list"
         }
     ]);
 
@@ -100,7 +100,7 @@ export const EditTag = () => {
             icon: "sign-out",
             iconFlipped: "horizontally",
             isActiveSelector: state => !isFetchingTag(state),
-            linkURL: "/tags"
+            linkURL: "/tags/list"
         }
     ], [id]);
 

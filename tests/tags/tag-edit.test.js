@@ -190,7 +190,7 @@ test("Modify a tag and click cancel", async () => {
     // Check if cancel button redirects to /tags page and does not modify tag values
     let cancelButton = getSideMenuItem(container, "Cancel");
     fireEvent.click(cancelButton);
-    expect(history.entries[history.length - 1].pathname).toBe("/tags");
+    expect(history.entries[history.length - 1].pathname).toBe("/tags/list");
     for (let attr of ["tag_id", "tag_name", "tag_description", "created_at", "modified_at"]) {
         expect(store.getState().tags[tag["tag_id"]][attr]).toEqual(tag[attr]);
     }
@@ -218,7 +218,7 @@ test("Delete a tag", async () => {
     fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
     await waitFor(() => expect(store.getState().tags[1]).toBeUndefined());
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags"));
+    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/list"));
 });
 
 
