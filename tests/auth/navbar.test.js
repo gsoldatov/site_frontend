@@ -48,7 +48,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
         expect(indexLink).toBeTruthy();
         expect(objectsLink).toBeFalsy();
         expect(editedObjectsLink).toBeFalsy();
-        expect(tagsLink).toBeFalsy();
+        expect(tagsLink).toBeTruthy();
         expect(secondaryMenu.container).toBeTruthy();
     });
 
@@ -79,7 +79,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
             expect(indexLink).toBeTruthy();
             expect(objectsLink).toBeFalsy();
             expect(editedObjectsLink).toBeFalsy();
-            expect(tagsLink).toBeFalsy();
+            expect(tagsLink).toBeTruthy();
             expect(secondaryMenu.container).toBeFalsy();
             
             ReactDOM.unmountComponentAtNode(container);

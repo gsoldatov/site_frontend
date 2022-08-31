@@ -49,7 +49,7 @@ test("Render authenticated-only routes without a token", async () => {
         children = newChildren;
     }
 
-    expect(routes.length).toEqual(8);
+    expect(routes.length).toEqual(7);
 
     // Render each protected route without a token in store & check if it's redirected to login page
     for (let route of routes) {

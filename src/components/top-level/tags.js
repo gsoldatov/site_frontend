@@ -13,6 +13,9 @@ import { selectTags, clearSelectedTags, setTagsPaginationInfo, setShowDeleteDial
 import { setTagsPaginationInfoAndFetchPage, pageFetch, onDeleteFetch } from "../../fetches/ui-tags";
 import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../store/state-util/ui-tags";
 
+import { enumUserLevels } from "../../util/enum-user-levels";
+import { enumLayoutTypes } from "../../util/enum-layout-types";
+
 
 /**
  * /tags/list page component.
@@ -21,9 +24,10 @@ export default () => {
     const dispatch = useDispatch();
     const currentPage = useSelector(state => state.tagsUI.paginationInfo.currentPage);
     const fetch = useSelector(state => state.tagsUI.fetch);
+    const isLoggedIn = useSelector(state => state.auth.numeric_user_level > enumUserLevels.anonymous);
 
     // Side menu items
-    const sideMenuItems = useMemo(() => [
+    const sideMenuItems = useMemo(() => isLoggedIn ? [
         {
             type: "linkItem",
             text: "Add a New Tag",
@@ -67,7 +71,8 @@ export default () => {
                 }
             ]
         }
-    ]);
+    ] : []
+    , [isLoggedIn]);
 
     // On load action
     useEffect(() => {
@@ -91,6 +96,7 @@ export default () => {
         </>
     );
 
+    // return <Layout sideMenuItems={sideMenuItems} body={pageBodyWithMenu} layoutType={enumLayoutTypes.shortWidth} />;
     return <Layout sideMenuItems={sideMenuItems} body={pageBodyWithMenu} />;
 };
 

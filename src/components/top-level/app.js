@@ -73,10 +73,9 @@ export const App = () => {
                 </Route>
 
                 {/* Tags */}
-                <ProtectedRoute exact path="/tags/list"
-                    childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
+                <Route exact path="/tags/list">
                     <Tags />
-                </ProtectedRoute>
+                </Route>
                 
                 <ProtectedRoute exact path="/tags/edit/new"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>

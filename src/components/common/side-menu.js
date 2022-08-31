@@ -12,7 +12,7 @@ import StyleSideMenu from "../../styles/side-menu.css";
  * Side menu component with customizable items. 
  */
 export default ({ items, usePlaceholderWhenStacked = false }) => {
-    if (!items) return null;
+    if (!items || items.length === 0) return null;
 
     // Fullscreen style state & on resize update
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);    // Toggles side menu mobile styling
