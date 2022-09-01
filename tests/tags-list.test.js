@@ -9,7 +9,7 @@ import { getSideMenuItem, getSideMenuDialogControls } from "./_util/ui-common";
 import { renderWithWrappers } from "./_util/render";
 import { createTestStore } from "./_util/create-test-store";
 
-import Tags from "../src/components/top-level/tags";
+import TagsList from "../src/components/top-level/tags-list";
 import { setTagsPaginationInfo } from "../src/actions/tags-list";
 
 
@@ -36,7 +36,7 @@ describe("Page load and pagination", () => {
         setFetchFail(true);
 
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list"
         });
 
@@ -62,7 +62,7 @@ describe("Page load and pagination", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });
@@ -80,7 +80,7 @@ describe("Page load and pagination", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 20}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });
@@ -120,7 +120,7 @@ describe("Page load and pagination", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });
@@ -216,7 +216,7 @@ describe("Side menu", () => {
         let store = createTestStore({ addAdminToken: false, useLocalStorage: false, enableDebugLogging: false });
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store
         });
@@ -234,7 +234,7 @@ describe("Side menu", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });
@@ -261,7 +261,7 @@ describe("Side menu", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container, history } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container, history } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });
@@ -281,7 +281,7 @@ describe("Side menu", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container, history } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container, history } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });
@@ -320,7 +320,7 @@ describe("Side menu", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });
@@ -370,7 +370,7 @@ describe("Field menu", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });
@@ -400,7 +400,7 @@ describe("Field menu", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: tagsPerPage}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });
@@ -439,7 +439,7 @@ describe("Field menu", () => {
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><Tags /></Route>, {
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
             route: "/tags/list",
             store: store
         });

@@ -1,5 +1,4 @@
 import React from "react";
-import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, waitFor } from "@testing-library/dom";
@@ -10,8 +9,6 @@ import { renderWithWrappers } from "../_util/render";
 import { createTestStore } from "../_util/create-test-store";
 
 import { App } from "../../src/components/top-level/app";
-import { EditTag } from "../../src/components/top-level/tag";
-import Tags from "../../src/components/top-level/tags";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { addObjects } from "../../src/actions/data-objects";
 import { generateObjectAttributes } from "../_mocks/data-objects";
