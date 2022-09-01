@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "set NODE_ENV=development&& webpack-dev-server --open",
+    "start": "export NODE_ENV=development && webpack-dev-server --open",
+    "startWindows": "set NODE_ENV=development&& webpack-dev-server --open",
     "build": "webpack",
     "test": "node_modules/.bin/jest",
     "preversion": "npm test --runInBand",
