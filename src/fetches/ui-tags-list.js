@@ -3,9 +3,9 @@ import { config } from "../config";
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { deleteTagsFetch, getNonCachedTags } from "./data-tags";
 
-import { setTagsFetch, setShowDeleteDialogTags, setTagsPaginationInfo } from "../actions/tags";
+import { setTagsFetch, setShowDeleteDialogTags, setTagsPaginationInfo } from "../actions/tags-list";
 
-import { isFetchingTags } from "../store/state-util/ui-tags";
+import { isFetchingTags } from "../store/state-util/ui-tags-list";
 
 import { enumResponseErrorType } from "../util/enum-response-error-type";
 

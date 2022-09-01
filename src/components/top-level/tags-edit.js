@@ -6,11 +6,11 @@ import { useParams } from "react-router-dom";
 import { LoadIndicatorAndError, SaveError, TimeStamps, NameInput, DescriptionEditor } from "../edit/common/edit-page";
 import Layout from "../common/layout";
 
-import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../store/state-util/ui-tag";
-import { loadNewTagPage, setCurrentTag, setShowDeleteDialogTag } from "../../actions/tag";
-import { addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../../fetches/ui-tag";
+import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../store/state-util/ui-tags-edit";
+import { loadNewTagPage, setCurrentTag, setShowDeleteDialogTag } from "../../actions/tags-edit";
+import { addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../../fetches/ui-tags-edit";
 
-import StyleTag from "../../styles/tag.css";
+import StyleTag from "../../styles/tags-edit.css";
 
 
 /*

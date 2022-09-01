@@ -6,8 +6,8 @@ import dataUsers from "./data-users";
 
 import auth from "./auth";
 import common from "./common";
-import tag from "./tag";
-import tags from "./tags";
+import tag from "./tags-edit";
+import tags from "./tags-list";
 import objectEdit from "./objects-edit";
 import objectsList from "./objects-list";
 import objectsEdited from "./objects-edited";

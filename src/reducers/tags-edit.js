@@ -1,5 +1,5 @@
 import { LOAD_ADD_TAG_PAGE, LOAD_EDIT_TAG_PAGE, SET_CURRENT_TAG, 
-    SET_TAG_ON_LOAD_FETCH_STATE, SET_TAG_ON_SAVE_FETCH_STATE, SET_SHOW_DELETE_DIALOG } from "../actions/tag";
+    SET_TAG_ON_LOAD_FETCH_STATE, SET_TAG_ON_SAVE_FETCH_STATE, SET_SHOW_DELETE_DIALOG } from "../actions/tags-edit";
 
 
 function loadNewTagPage(state, action) {

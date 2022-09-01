@@ -4,7 +4,7 @@ import { enumResponseErrorType } from "../util/enum-response-error-type";
 
 import { addTags, deleteTags, setObjectsTags } from "../actions/data-tags";
 import { addObjects } from "../actions/data-objects";
-import { deselectTags } from "../actions/tags";
+import { deselectTags } from "../actions/tags-list";
 import { resetEditedObjectsTags } from "../actions/objects-edit";
 
 import { checkIfTagNameExists } from "../store/state-util/tags";

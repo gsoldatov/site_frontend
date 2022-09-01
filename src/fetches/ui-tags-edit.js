@@ -2,9 +2,9 @@ import { getResponseErrorType } from "./common";
 import { addTagFetch, viewTagsFetch, updateTagFetch, deleteTagsFetch } from "./data-tags";
 
 import { setRedirectOnRender } from "../actions/common";
-import { loadEditTagPage, setTagOnLoadFetchState, setTagOnSaveFetchState, setShowDeleteDialogTag, setCurrentTag } from "../actions/tag";
+import { loadEditTagPage, setTagOnLoadFetchState, setTagOnSaveFetchState, setShowDeleteDialogTag, setCurrentTag } from "../actions/tags-edit";
 
-import { isFetchingTag } from "../store/state-util/ui-tag";
+import { isFetchingTag } from "../store/state-util/ui-tags-edit";
 
 import { enumResponseErrorType } from "../util/enum-response-error-type";
 

@@ -9,9 +9,9 @@ import { FieldItemList, FieldItem } from "../field/field-item-list";
 import FieldPagination from "../field/field-pagination";
 
 import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../../actions/common";
-import { selectTags, clearSelectedTags, setTagsPaginationInfo, setShowDeleteDialogTags, toggleTagSelection } from "../../actions/tags";
-import { setTagsPaginationInfoAndFetchPage, pageFetch, onDeleteFetch } from "../../fetches/ui-tags";
-import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../store/state-util/ui-tags";
+import { selectTags, clearSelectedTags, setTagsPaginationInfo, setShowDeleteDialogTags, toggleTagSelection } from "../../actions/tags-list";
+import { setTagsPaginationInfoAndFetchPage, pageFetch, onDeleteFetch } from "../../fetches/ui-tags-list";
+import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../store/state-util/ui-tags-list";
 
 import { enumUserLevels } from "../../util/enum-user-levels";
 import { enumLayoutTypes } from "../../util/enum-layout-types";

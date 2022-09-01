@@ -10,7 +10,7 @@ import { renderWithWrappers } from "./_util/render";
 import { createTestStore } from "./_util/create-test-store";
 
 import Tags from "../src/components/top-level/tags";
-import { setTagsPaginationInfo } from "../src/actions/tags";
+import { setTagsPaginationInfo } from "../src/actions/tags-list";
 
 
 /*

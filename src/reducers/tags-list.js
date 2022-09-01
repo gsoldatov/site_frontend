@@ -1,5 +1,5 @@
 import { SELECT_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, SET_TAGS_PAGINATION_INFO,
-    SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_FETCH } from "../actions/tags";
+    SET_SHOW_DELETE_DIALOG_TAGS, SET_TAGS_FETCH } from "../actions/tags-list";
 
 
 function selectTags(state, action) {
