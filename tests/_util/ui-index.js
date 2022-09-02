@@ -1,7 +1,7 @@
 /**
  * Returns elements of a feed inside `container`.
  */
- export const getFeedElements = container => {
+export const getFeedElements = container => {
     let result = {
         placeholders: {
             loading: null,

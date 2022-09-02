@@ -13,6 +13,7 @@ import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElem
     getSubobjectCardIndicators, getSubobjectExpandToggleButton, startSubobjectCardDrag, getSubobjectGridColumnContainers, getNewColumnDropzones } from "../_util/ui-composite";
 import { getDropdownOptionsContainer, getInlineInputField } from "../_util/ui-objects-tags";
 import { getMarkdownEditorElements, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
+import { getInlineItem } from "../_util/ui-inline";
 
 import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
 import { enumDeleteModes } from "../../src/store/state-templates/composite-subobjects";
@@ -993,8 +994,9 @@ describe("Indicators", () => {
         await waitFor(() => getByText(container, "Object Information"));
         clickGeneralTabButton(container);
 
-        let tag = getByText(container, "tag #1");
-        fireEvent.click(tag);
+        const tagItemElements = getInlineItem({ container });
+        expect(tagItemElements.linkTagID).toEqual(1);
+        fireEvent.click(tagItemElements.icons[0]);
         expect(getCurrentObject(store.getState()).removedTagIDs.includes(1)).toBeTruthy();
 
         // Go to composite object page and check if indicators appeared on both subobjects

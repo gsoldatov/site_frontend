@@ -33,8 +33,7 @@ export const ObjectsViewTagList = ({ objectID, tagProps = {} }) => {
  */
 const Tag = ({ id }) => {
     const tagName = useSelector(state => state.tags[id].tag_name);
+    const URL = `/tags/view?tagIDs=${id}`;
 
-    return (
-        <InlineItem text={tagName} itemClassName="inline-item" />
-    );
+    return <InlineItem text={tagName} URL={URL} />;
 };

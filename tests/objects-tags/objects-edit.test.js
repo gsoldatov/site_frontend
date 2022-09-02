@@ -6,15 +6,15 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-l
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
 import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
-import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
+import { getInlineInputField, getDropdownOptionsContainer } from "../_util/ui-objects-tags";
 import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "../_util/ui-objects-edit";
+import { getInlineItem } from "../_util/ui-inline";
 
 import { App } from "../../src/components/top-level/app";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 import { addObjects, addObjectData } from "../../src/actions/data-objects";
 import { generateObjectAttributes, generateObjectData } from "../_mocks/data-objects";
-
 
 /*
     Object tagging tests for /objects/edit/:id page.
@@ -102,11 +102,11 @@ describe("Add object page", () => {
         // Add and remove an "existing" tag
         fireEvent.change(input, { target: { value: "tag #1" } });
         fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
-        let addedTag = getTagInlineItem({ container, text: "tag #1" });
-        expect(addedTag).toBeTruthy();
+        let addedTag = getInlineItem({ container, text: "tag #1" });
+        expect(addedTag.item).toBeTruthy();
         expect(input.value).toEqual("");
-        fireEvent.click(addedTag);
-        expect(getTagInlineItem({ container, text: "tag #1" })).toBeFalsy();
+        fireEvent.click(addedTag.icons[0]);
+        expect(getInlineItem({ container, text: "tag #1" }).item).toBeFalsy();
         
         // Add and remove a new tag
         fireEvent.change(input, { target: { value: "new tag" } });
@@ -114,10 +114,10 @@ describe("Add object page", () => {
         let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
         expect(dropdown).toBeTruthy();
         fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
-        addedTag = getTagInlineItem({ container, text: "new tag" });
-        expect(addedTag).toBeTruthy();
-        fireEvent.click(addedTag);
-        expect(getTagInlineItem({ container, text: "new tag" })).toBeFalsy();
+        addedTag = getInlineItem({ container, text: "new tag" });
+        expect(addedTag.item).toBeTruthy();
+        fireEvent.click(addedTag.icons[0]);
+        expect(getInlineItem({ container, text: "new tag" }).item).toBeFalsy();
     });
 
 
@@ -138,12 +138,12 @@ describe("Add object page", () => {
         const tagText = "new tag";
         fireEvent.change(input, { target: { value: tagText } });
         fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
+        expect(getInlineItem({ container, text: tagText }).item).toBeTruthy();
 
         // Reset a check if added tag was removed
         resetObject(container);
 
-        expect(getTagInlineItem({ container, text: tagText })).toBeFalsy();
+        expect(getInlineItem({ container, text: tagText }).item).toBeFalsy();
         expect(getCurrentObject(store.getState()).addedTags.length).toEqual(0);
     });
 
@@ -166,7 +166,7 @@ describe("Add object page", () => {
         const tagText = "new tag";
         fireEvent.change(input, { target: { value: tagText } });
         fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
+        expect(getInlineItem({ container, text: tagText }).item).toBeTruthy();
 
         // Get to /objects page and back
         const cancelButton = getSideMenuItem(container, "Cancel");
@@ -180,7 +180,7 @@ describe("Add object page", () => {
         await waitFor(() => getByText(container, "Add a New Object"));
 
         // Check if added tag is displayed
-        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
+        expect(getInlineItem({ container, text: tagText }).item).toBeTruthy();
         expect(getCurrentObject(store.getState()).addedTags.length).toEqual(1);
     });
     
@@ -201,12 +201,12 @@ describe("Add object page", () => {
         // // Add an "existing" tag
         fireEvent.change(input, { target: { value: "tag #1" } });
         fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
-        expect(getTagInlineItem({ container, text: "tag #1" })).toBeTruthy();
+        expect(getInlineItem({ container, text: "tag #1" }).item).toBeTruthy();
     
         // // Add a new tag
         fireEvent.change(input, { target: { value: "new tag" } });
         fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
-        expect(getTagInlineItem({ container, text: "new tag" })).toBeTruthy();
+        expect(getInlineItem({ container, text: "new tag" }).item).toBeTruthy();
     
         // Set object attributes
         let objectNameInput = getByPlaceholderText(container, "Object name");
@@ -271,10 +271,10 @@ describe("Edit object page", () => {
         for(let i = 1; i <= 5; i++) getByText(container, `tag #${i}`);
         
         // Check tag removal
-        let tag = getByText(container, "tag #1");
-        fireEvent.click(tag);
+        let tag = getInlineItem({ container, text: "tag #1" });
+        fireEvent.click(tag.icons[0]);
         expect(getCurrentObject(store.getState()).removedTagIDs.includes(1)).toBeTruthy();
-        fireEvent.click(tag);
+        fireEvent.click(tag.icons[0]);
         expect(getCurrentObject(store.getState()).removedTagIDs.includes(1)).toBeFalsy();
     });
     
@@ -299,17 +299,17 @@ describe("Edit object page", () => {
         fireEvent.change(input, { target: { value: "new tag" } });
         fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
     
-        let deletedTag = getTagInlineItem({ container, text: "tag #1" });
-        fireEvent.click(deletedTag);
+        let deletedTag = getInlineItem({ container, text: "tag #1" });
+        fireEvent.click(deletedTag.icons[0]);
     
         // Update the tag and check if tags are updated
         let saveButton = getSideMenuItem(container, "Save");
         fireEvent.click(saveButton);
     
         await waitFor(() => getCurrentObject(store.getState()).currentTagIDs.includes(6));
-        expect(getTagInlineItem({ container, text: "tag #1" })).toBeFalsy();
-        for(let i = 2; i <= 6; i++) expect(getTagInlineItem({ container, text: `tag #${i}` })).toBeTruthy();
-        expect(getTagInlineItem({ container, text: "new tag" })).toBeTruthy();
+        expect(getInlineItem({ container, text: "tag #1" }).item).toBeFalsy();
+        for(let i = 2; i <= 6; i++) expect(getInlineItem({ container, text: `tag #${i}` }).item).toBeTruthy();
+        expect(getInlineItem({ container, text: "new tag" }).item).toBeTruthy();
     });
     
     
@@ -374,14 +374,14 @@ describe("Edit object page", () => {
         expect(getCurrentObject(store.getState()).addedTags.length).toEqual(1);
 
         // Remove a tag
-        const deletedTag = getTagInlineItem({ container, text: "tag #1" });
-        fireEvent.click(deletedTag);
+        const deletedTag = getInlineItem({ container, text: "tag #1" });
+        fireEvent.click(deletedTag.icons[0]);
         expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(1);
 
         // Reset a check if added tag was removed
         resetObject(container);
 
-        expect(getTagInlineItem({ container, text: tagText })).toBeFalsy();
+        expect(getInlineItem({ container, text: tagText }).item).toBeFalsy();
         expect(getCurrentObject(store.getState()).addedTags.length).toEqual(0);
         expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(0);
     });
@@ -404,11 +404,11 @@ describe("Edit object page", () => {
         const tagText = "new tag";
         fireEvent.change(input, { target: { value: tagText } });
         fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
+        expect(getInlineItem({ container, text: tagText }).item).toBeTruthy();
 
         // Remove a tag
-        const deletedTag = getTagInlineItem({ container, text: "tag #1" });
-        fireEvent.click(deletedTag);
+        const deletedTag = getInlineItem({ container, text: "tag #1" });
+        fireEvent.click(deletedTag.icons[0]);
         expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(1);
 
         // Get to /objects/list page and back
@@ -421,7 +421,7 @@ describe("Edit object page", () => {
         await waitFor(() => getByText(container, "Object Information"));
 
         // Check if added and removed tags are displayed
-        expect(getTagInlineItem({ container, text: tagText })).toBeTruthy();
+        expect(getInlineItem({ container, text: tagText }).item).toBeTruthy();
         expect(getCurrentObject(store.getState()).addedTags.length).toEqual(1);
         expect(getCurrentObject(store.getState()).removedTagIDs.length).toEqual(1);
     });

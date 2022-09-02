@@ -64,10 +64,9 @@ const ObjectPreviewTagList = ({ objectID }) => {
  */
 const Tag = ({ id }) => {
     const tagName = useSelector(state => (state.tags[id] || {}).tag_name);
-
     if (tagName === undefined) return null;
 
-    return (
-        <InlineItem text={tagName} itemClassName="inline-item" />
-    );
+    const URL = `/tags/view?tagIDs=${id}`;
+
+    return <InlineItem text={tagName} URL={URL} />;
 };

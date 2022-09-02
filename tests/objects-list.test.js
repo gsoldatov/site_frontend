@@ -6,6 +6,7 @@ import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlace
 
 import { waitForFetch, checkObjectsDisplay, selectObjectTypeInFilter, deselectObjectTypeInFilter, searchTagInFilter, checkIfTagIsAddedToFilter } from "./_util/ui-objects-list";
 import { getSideMenuDialogControls, getSideMenuItem } from "./_util/ui-common";
+import { getInlineItem } from "./_util/ui-inline";
 import { renderWithWrappers } from "./_util/render";
 import { getCurrentObject } from "./_util/ui-objects-edit";
 import { createTestStore } from "./_util/create-test-store";
@@ -659,7 +660,9 @@ describe("Field menu", () => {
         await checkIfTagIsAddedToFilter(5, container, store);
 
         // Remove a tag from filter by clicking on it
-        fireEvent.click(getByText(getByText(container, "Tags Filter").parentNode, `tag #5`));
+        const tagFive = getInlineItem({ container: getByText(container, "Tags Filter").parentNode, text: "tag #5" });
+        fireEvent.click(tagFive.icons[0]);
+        // fireEvent.click(getByText(getByText(container, "Tags Filter").parentNode, `tag #5`));
         await waitForFetch(store);
         let tagsFilterListContainer = getByText(container, "Tags Filter").parentNode;
         getByText(tagsFilterListContainer, "tag #3");

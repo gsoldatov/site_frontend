@@ -2,11 +2,12 @@ import React from "react";
 import { Switch, Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from "@testing-library/dom";
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText, screen } from "@testing-library/dom";
 
 import { getStoreWithTwoSelectedObjects } from "../_mocks/data-objects-tags";
 import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
-import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
+import { getInlineInputField, getDropdownOptionsContainer } from "../_util/ui-objects-tags";
+import { getInlineItem } from "../_util/ui-inline";
 import { addAndRemoveTags } from "../_util/ui-objects-list";
 import { compareArrays } from "../_util/data-checks";
 import { renderWithWrappers } from "../_util/render";
@@ -124,21 +125,21 @@ test("Check common and partially applied tags on click behaviour", async () => {
     await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
     
     // Check common tag on click events
-    const tagOne = getByText(container, "tag #1");
-    fireEvent.click(tagOne);
+    const tagOne = getInlineItem({ container, text: "tag #1" });
+    fireEvent.click(tagOne.icons[0]);
     expect(store.getState().objectsUI.removedTagIDs.includes(1)).toBeTruthy();
-    fireEvent.click(tagOne);
+    fireEvent.click(tagOne.icons[0]);
     expect(store.getState().objectsUI.removedTagIDs.includes(1)).toBeFalsy();
 
     // Check partially applied on click events
-    const tagFive = getByText(container, "tag #5");
-    fireEvent.click(tagFive);
+    const tagFive = getInlineItem({ container, text: "tag #5" });
+    fireEvent.click(tagFive.icons[0]);
     expect(store.getState().objectsUI.addedTags.includes(5)).toBeTruthy();
     expect(store.getState().objectsUI.removedTagIDs.includes(5)).toBeFalsy();
-    fireEvent.click(tagFive);
+    fireEvent.click(tagFive.icons[0]);
     expect(store.getState().objectsUI.addedTags.includes(5)).toBeFalsy();
     expect(store.getState().objectsUI.removedTagIDs.includes(5)).toBeTruthy();
-    fireEvent.click(tagFive);
+    fireEvent.click(tagFive.icons[0]);
     expect(store.getState().objectsUI.addedTags.includes(5)).toBeFalsy();
     expect(store.getState().objectsUI.removedTagIDs.includes(5)).toBeFalsy();
 });
@@ -170,10 +171,10 @@ test("Check tags input & added tags", async () => {
     fireEvent.change(input, { target: { value: "tag #7" } });
     expect(store.getState().objectsUI.tagsInput.inputText).toEqual("tag #7");
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
-    let addedTag = getTagInlineItem({ container, text: "tag #7" });
-    expect(addedTag).toBeTruthy();
-    fireEvent.click(addedTag);
-    expect(getTagInlineItem({ container, text: "tag #7" })).toBeFalsy();
+    let addedTag = getInlineItem({ container, text: "tag #7" });
+    expect(addedTag.textSpan).toBeTruthy();
+    fireEvent.click(addedTag.icons[0]);
+    expect(getInlineItem({ container, text: "tag #7" }).item).toBeFalsy();
 
     // Add & remove a new tag
     fireEvent.change(input, { target: { value: "new tag" } });
@@ -181,8 +182,8 @@ test("Check tags input & added tags", async () => {
     let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
     expect(dropdown).toBeTruthy();
     fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
-    addedTag = getTagInlineItem({ container, text: "new tag" });
-    fireEvent.click(addedTag);
+    addedTag = getInlineItem({ container, text: "new tag" });
+    fireEvent.click(addedTag.icons[0]);
     expect(queryByText(container, "new tag")).toBeFalsy();
 });
 
@@ -282,8 +283,8 @@ test("Check side menu", async () => {
     expect(store.getState().objectsUI.addedTags.length).toEqual(0);
 
     // Remove a common tag
-    let tagOne = getTagInlineItem({ container, text: "tag #1" });
-    fireEvent.click(tagOne);
+    let tagOne = getInlineItem({ container, text: "tag #1" });
+    fireEvent.click(tagOne.icons[0]);
     checkIfUpdateItemsRendered();
 
     // Cancel tag update
@@ -293,13 +294,13 @@ test("Check side menu", async () => {
     expect(store.getState().objectsUI.removedTagIDs.length).toEqual(0);
 
     // Remove & stop removing a common tag
-    fireEvent.click(tagOne);
-    fireEvent.click(tagOne);
+    fireEvent.click(tagOne.icons[0]);
+    fireEvent.click(tagOne.icons[0]);
     checkIfDefaultItemsRendered();
     
     // Add partially applied tag for all
-    let tagFive = getTagInlineItem({ container, text: "tag #5" });
-    fireEvent.click(tagFive);
+    let tagFive = getInlineItem({ container, text: "tag #5" });
+    fireEvent.click(tagFive.icons[0]);
     checkIfUpdateItemsRendered();
 
     // Cancel tag update
@@ -309,7 +310,7 @@ test("Check side menu", async () => {
     expect(store.getState().objectsUI.addedTags.length).toEqual(0);
 
     // Remove partially applied tag for all
-    fireEvent.click(tagFive);
+    fireEvent.click(tagFive.icons[0]);
     checkIfUpdateItemsRendered();
 
     // Cancel tag update
@@ -319,9 +320,9 @@ test("Check side menu", async () => {
     expect(store.getState().objectsUI.removedTagIDs.length).toEqual(0);
 
     // Add => remove => reset partially applied tag
-    fireEvent.click(tagFive);
-    fireEvent.click(tagFive);
-    fireEvent.click(tagFive);
+    fireEvent.click(tagFive.icons[0]);
+    fireEvent.click(tagFive.icons[0]);
+    fireEvent.click(tagFive.icons[0]);
     checkIfDefaultItemsRendered();
 });
 
@@ -361,17 +362,17 @@ test("Check tags update + editedObjects reset", async () => {
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
 
     // Remove an existing common tag
-    let tagOne = getTagInlineItem({ container, text: "tag #1" });
-    fireEvent.click(tagOne);
+    let tagOne = getInlineItem({ container, text: "tag #1" });
+    fireEvent.click(tagOne.icons[0]);
 
     // Add a partially applied tag
-    let tagThree = getTagInlineItem({ container, text: "tag #3" });
-    fireEvent.click(tagThree);
+    let tagThree = getInlineItem({ container, text: "tag #3" });
+    fireEvent.click(tagThree.icons[0]);
 
     // Remove a partially applied tag
-    let tagFour = getTagInlineItem({ container, text: "tag #4" });
-    fireEvent.click(tagFour);
-    fireEvent.click(tagFour);
+    let tagFour = getInlineItem({ container, text: "tag #4" });
+    fireEvent.click(tagFour.icons[0]);
+    fireEvent.click(tagFour.icons[0]);
 
     // Click update tags button
     let updateTagsButton = getSideMenuItem(container, "Update Tags");

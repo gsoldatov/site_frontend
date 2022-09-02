@@ -295,38 +295,53 @@ const ObjectInput = () => {
 
 
 // Object's tags
-const addedTagsSelector = state => getCurrentObject(state).addedTags;
 const AddedTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
+
     const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
-    const itemClassName = typeof(id) === "number" ? "inline-item existing" : "inline-item new";
-    const onClick = useMemo(() => () => dispatch(setEditedObjectTags({ added: [id] })));
-    const itemLink = typeof(id) === "number" ? `/tags/edit/${id}` : undefined;
-    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
-});
-const currentTagsSelector = state => getCurrentObject(state).currentTagIDs;
-const CurrentTagItem = memo(({ id }) => {
-    const dispatch = useDispatch();
-    // const text = useSelector(state => state.tags[id].tag_name);
-    const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
-    const isRemoved = useSelector(state => getCurrentObject(state).removedTagIDs.includes(id));
-    const itemClassName = isRemoved ? "inline-item deleted" : "inline-item";
-    const onClick = useMemo(() => () => dispatch(setEditedObjectTags({ removed: [id] })));
-    const itemLink = `/tags/edit/${id}`;
-    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+    const className = typeof(id) === "number" ? "existing" : "new";
+    const URL = typeof(id) === "number" ? `/tags/view?tagIDs=${id}` : undefined;
+    const icons = useMemo(() => 
+        [{ name: "remove", title: "Remove tag", onClick: () => dispatch(setEditedObjectTags({ added: [id] })) }]
+    , [id]);
+
+    return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
 });
 
-const inputStateSelector = state => state.objectUI.tagsInput;
-const existingIDsSelector = createSelector(
-    state => getCurrentObject(state).currentTagIDs,
-    state => getCurrentObject(state).addedTags,
-    (currentTagIDs, addedTags) => currentTagIDs.concat(
-        addedTags.filter(tag => typeof(tag) === "number")
-    )
-);
-// const getItemTextSelector = id => state => state.tags[id] ? state.tags[id].tag_name : id;
-const inlineInputDropdownItemTextSelectors = { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name };
+const CurrentTagItem = memo(({ id }) => {
+    const dispatch = useDispatch();
+
+    const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
+    const isRemoved = useSelector(state => getCurrentObject(state).removedTagIDs.includes(id));
+    const className = isRemoved ? "deleted" : undefined;
+    const URL = `/tags/view?tagIDs=${id}`;
+    const icons = useMemo(() =>
+        [{ 
+            name: isRemoved ? "undo" : "remove", 
+            title: isRemoved ? "Restore tag" : "Remove tag", 
+            onClick: () => { dispatch(setEditedObjectTags({ removed: [id] })) } 
+        }]
+    , [id, isRemoved]);
+
+    return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
+});
+
 const ObjectTags = () => {
+    const currentTagsSelector = useMemo(() => state => getCurrentObject(state).currentTagIDs, []);
+    const addedTagsSelector = useMemo(() => state => getCurrentObject(state).addedTags, []);
+    const inputStateSelector = useMemo(() => state => state.objectUI.tagsInput, []);
+    
+    const existingIDsSelector = useMemo(() => createSelector(
+        state => getCurrentObject(state).currentTagIDs,
+        state => getCurrentObject(state).addedTags,
+        (currentTagIDs, addedTags) => currentTagIDs.concat(
+            addedTags.filter(tag => typeof(tag) === "number")
+        )
+    ), []);
+
+    // const getItemTextSelector = useMemo(() => id => state => state.tags[id] ? state.tags[id].tag_name : id, []);
+    const inlineInputDropdownItemTextSelectors = useMemo(() => ({ itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name }), []);
+
     return (
         <InlineItemListBlock header="Tags">
             <InlineItemListWrapper>

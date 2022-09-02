@@ -104,6 +104,11 @@ export default () => {
         }
     ]);
 
+    // Selectors
+    const selectedObjectIDsSelector = useMemo(() => state => state.objectsUI.selectedObjectIDs, []);
+    const pageObjectIDsSelector = useMemo(() => state => state.objectsUI.paginationInfo.currentPageObjectIDs, []);
+    const paginationInfoSelector = useMemo(() => state => state.objectsUI.paginationInfo, []);
+
     // On load action
     useEffect(() => {
         dispatch(objectsOnLoadFetch());
@@ -229,12 +234,6 @@ const ObjectsListFieldMenu = () => {
 };
 
 
-// Immutable selectors
-const selectedObjectIDsSelector = state => state.objectsUI.selectedObjectIDs;
-const pageObjectIDsSelector = state => state.objectsUI.paginationInfo.currentPageObjectIDs;
-const paginationInfoSelector = state => state.objectsUI.paginationInfo;
-
-
 // FieldItem creating component for /objects/list page
 const ObjectsFieldItem = memo(({ id }) => {
     const textSelector = useMemo(() => state => state.objects[id] ? state.objects[id].object_name : "?", [id]);
@@ -248,18 +247,19 @@ const ObjectsFieldItem = memo(({ id }) => {
 // Tags filter
 const TagsFilterItem = memo(({ id }) => {
     const dispatch = useDispatch();
+    
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
-    // const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
-    // const itemClassName = isRemoved ? "inline-item deleted" : "inline-item";
-    const itemClassName = "inline-item filter";
-    const onClick = useMemo(() => () => dispatch(setTagsFilterAndFetchPage(id)), [id]);
-    const itemLink = `/tags/edit/${id}`;
-    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+    const className = "filter";
+    const URL = `/tags/view?tagIDs=${id}`;
+    const icons = useMemo(() => [{ name: "remove", title: "Remove tag", onClick: () => { dispatch(setTagsFilterAndFetchPage(id)) }}], [id]);
+
+    return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
 });
-const tagsFilterIsDisplayedSelector = state => state.objectsUI.paginationInfo.tagsFilter.length > 0;
-const tagsFilterItemIDSelector = state => state.objectsUI.paginationInfo.tagsFilter;
+
 const TagsFilter = () => {
-    const shouldRender = useSelector(tagsFilterIsDisplayedSelector);
+    const shouldRender = useSelector(state => state.objectsUI.paginationInfo.tagsFilter.length > 0);
+    const tagsFilterItemIDSelector = useMemo(() => state => state.objectsUI.paginationInfo.tagsFilter, []);
+
     return shouldRender && (
         <InlineItemListBlock>
             <InlineItemListWrapper header="Tags Filter">
@@ -269,48 +269,64 @@ const TagsFilter = () => {
     )
 }
 
-
 // Objects tags
 const CommonCurrentTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
+
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
-    const itemClassName = isRemoved ? "inline-item deleted" : "inline-item";
-    const onClick = useMemo(() => () => dispatch(setCurrentObjectsTags({ removed: [id] })), [id]);
-    const itemLink = `/tags/edit/${id}`;
-    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+    const className = isRemoved ? "deleted" : undefined;
+    const URL = `/tags/view?tagIDs=${id}`;
+    const icons = useMemo(() =>
+        [{ 
+            name: isRemoved ? "undo" : "remove", 
+            title: isRemoved ? "Restore tag" : "Remove tag", 
+            onClick: () => { dispatch(setCurrentObjectsTags({ removed: [id] })) } 
+        }]
+    , [id, isRemoved]);
+
+    return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
 });
+
 const AddedTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
+
     const text = useSelector(state => typeof(id) === "string" ? id : (state.tags[id] ? state.tags[id].tag_name : id));
-    const itemClassName = typeof(id) === "number" ? "inline-item existing" : "inline-item new";
-    const onClick = useMemo(() => () => dispatch(setCurrentObjectsTags({ added: [id] })), [id]);
-    const itemLink = typeof(id) === "number" ? `/tags/edit/${id}` : undefined;
-    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+    const className = typeof(id) === "number" ? "existing" : "new";
+    const URL = typeof(id) === "number" ? `/tags/view?tagIDs=${id}` : undefined;
+    const icons = useMemo(() => 
+        [{ name: "remove", title: "Remove tag", onClick: () => { dispatch(setCurrentObjectsTags({ added: [id] })) }}]
+    , [id]);
+
+    return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
 });
+
 const PartiallyAppliedTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
+
     const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
     const isAdded = useSelector(state => state.objectsUI.addedTags.includes(id));
     const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
-    const itemClassName = isAdded ? "inline-item existing" : isRemoved ? "inline-item deleted" : "inline-item";
-    const onClick = useMemo(
-        () => isAdded ? () => dispatch(setCurrentObjectsTags({ added: [id], removed: [id] })) :   // current => added => removed => current
-        isRemoved ? () => dispatch(setCurrentObjectsTags({ removed: [id] })) : 
-        () => dispatch(setCurrentObjectsTags({ added: [id] }))
-    , [isAdded, isRemoved, id]);
-    const itemLink = typeof(id) === "number" ? `/tags/edit/${id}` : undefined;
-    return <InlineItem text={text} itemClassName={itemClassName} onClick={onClick} itemLink={itemLink} />;
+    const className = isAdded ? "existing" : isRemoved ? "deleted" : undefined;
+    const URL = `/tags/view?tagIDs=${id}`;
+    const icons = useMemo(() =>
+        [{ 
+            name: isAdded ? "remove" : isRemoved ? "undo" : "plus",
+            title: isAdded ? "Remove tag from all objects" : isRemoved ? "Restore tag" : "Tag all objects",
+            onClick: isAdded ? () => dispatch(setCurrentObjectsTags({ added: [id], removed: [id] }))
+                : isRemoved ? () => dispatch(setCurrentObjectsTags({ removed: [id] }))
+                : () => dispatch(setCurrentObjectsTags({ added: [id] }))
+        }]
+    , [id, isAdded, isRemoved]);
+
+    return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
 });
 
-const inputStateSelector = state => state.objectsUI.tagsInput;
-
-const inlineInputDropdownItemTextSelectors = { itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name };
-
-const commonTagsWrapperIsDisplayedSelector = state => state.objectsUI.selectedObjectIDs.length > 0;
-const partiallyAppliedTagsWrapperIsDisplayedSelector = state => partiallyAppliedTagIDsSelector(state).length > 0;
-
 const ObjectsTags = () => {
+    const commonTagsWrapperIsDisplayedSelector = useMemo(() => state => state.objectsUI.selectedObjectIDs.length > 0, []);
+    const partiallyAppliedTagsWrapperIsDisplayedSelector = useMemo(() => state => partiallyAppliedTagIDsSelector(state).length > 0, []);
+    const inputStateSelector = useMemo(() => state => state.objectsUI.tagsInput, []);
+    const inlineInputDropdownItemTextSelectors = useMemo(() => ({ itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name }), []);
     // const renderBlock = useSelector(commonTagsWrapperIsDisplayedSelector) || useSelector(partiallyAppliedTagsWrapperIsDisplayedSelector);
     const shouldRenderCommonTags = useSelector(commonTagsWrapperIsDisplayedSelector);
     const shouldRenderPartiallyAppliedTags = useSelector(partiallyAppliedTagsWrapperIsDisplayedSelector)

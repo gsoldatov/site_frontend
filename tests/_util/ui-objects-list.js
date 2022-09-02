@@ -2,7 +2,8 @@ import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryAllByText } from "@testing-library/dom";
 
 import { getMockedPageObjectIDs } from "../_mocks/mock-fetch-handlers-objects";
-import { getInlineInputField, getDropdownOptionsContainer, getTagInlineItem } from "../_util/ui-objects-tags";
+import { getInlineInputField, getDropdownOptionsContainer } from "../_util/ui-objects-tags";
+import { getInlineItem } from "./ui-inline";
 
 
 /**
@@ -112,12 +113,12 @@ export const checkIfTagIsAddedToFilter = async (tagID, container, store) => {
  */
 export const addAndRemoveTags = async (container, store) => {
     // Remove an "existing" tag
-    const tagOne = getTagInlineItem({ container, text: "tag #1" });
-    fireEvent.click(tagOne);
+    const tagOne = getInlineItem({ container, text: "tag #1" });
+    fireEvent.click(tagOne.icons[0]);
 
     // Add a new tag
     let inputToggle = getByTitle(container, "Click to add tags");
-    fireEvent.click(inputToggle)
+    fireEvent.click(inputToggle);
     let input = getInlineInputField({ container });
 
 
