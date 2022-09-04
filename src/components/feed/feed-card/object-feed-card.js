@@ -48,7 +48,7 @@ const ObjectPreviewTagList = ({ objectID }) => {
 
     return showTagList && (
         <div className="object-feed-card-tag-list-container">
-            <InlineItemListBlock borderless>
+            <InlineItemListBlock className="borderless">
                 <InlineItemListWrapper>
                     <InlineTextItem text="Tags:" />
                     <InlineItemList itemIDSelector={tagsSelector} ItemComponent={Tag} />

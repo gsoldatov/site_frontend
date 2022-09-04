@@ -17,7 +17,7 @@ export const ObjectsViewTagList = ({ objectID, tagProps = {} }) => {
 
     return isRendered && (
         <div className="objects-view-tag-list-container">
-            <InlineItemListBlock borderless>
+            <InlineItemListBlock className="borderless">
                 <InlineItemListWrapper>
                     <InlineTextItem text="Tags:" />
                     <InlineItemList itemIDSelector={tagsSelector} ItemComponent={Tag} />
