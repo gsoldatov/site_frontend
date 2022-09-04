@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Loader, Message } from "semantic-ui-react";
 
+import { useMountedState } from "../../util/use-mounted-state";
+
 import StyleFeed from "../../styles/feed.css";
 
 
@@ -12,6 +14,8 @@ import StyleFeed from "../../styles/feed.css";
  * Renders its children after fetch execution.
  */
 export const FeedContainer = ({ onLoad, children }) => {
+    const isMounted = useMountedState();
+
     // Fetch & error state
     const [isFetching, setIsFetching] = useState(true);
     const [error, setError] = useState("");
@@ -23,6 +27,9 @@ export const FeedContainer = ({ onLoad, children }) => {
             setError("");
 
             const result = await onLoad();
+
+            // Exit if component was unmounted
+            if (!isMounted()) return { error: "Feed was unmounted during on load fetch" };
             
             // Handle fetch errors
             if ("error" in result) setError(result["error"]);
