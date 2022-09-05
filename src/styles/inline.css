@@ -123,7 +123,6 @@ span.inline-item {
     border: 1px solid;
     border-radius: 2px;
 
-    /* cursor: pointer; */
     user-select: none;
 }
 
@@ -131,18 +130,22 @@ span.inline-text-item {
     font-weight: bold;
 }
 
-span.inline-text {
-    padding-left: var(--inline-left-right-padding);
-    padding-right: var(--inline-left-right-padding);
+a.inline-text-link {
+    /* Inherit text color from parent component */
+    color: inherit;
 
     /* Hide overflown text */
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-a.inline-text-link {
-    /* Inherit text color from parent component */
-    color: inherit;
+span.inline-text {
+    padding-left: var(--inline-left-right-padding);
+    padding-right: var(--inline-left-right-padding);
+}
+
+span.inline-item > .inline-text-link {
+    max-width: 100%;
 }
 
 i.inline-item-icon {

@@ -1,0 +1,96 @@
+/*******************************************************
+                /tags/view page styling  
+*******************************************************/
+
+:root {
+    --tags-view-tag-select-width: 2.5rem;
+    --tags-view-tag-select-margin: 0.25rem;
+}
+
+
+/** Main container **/
+.tags-view-container > *:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+
+/** Select a tag prompt **/
+.tags-view-container > .ui.message {
+    margin-top: 0;
+}
+
+
+/** Selected tags **/
+.inline-item-list-block-content.tags-view-inline-itemlist-block {
+    border: 0;
+    padding: 0;
+}
+
+
+/** Tag information, main container **/
+.tags-view-tag-information-container {
+    /* Stretch children to full height */
+    display: flex;
+    align-items: stretch;
+}
+
+
+/** Tag information, header & description **/
+.tags-view-tag-card {
+    /** Take all available width in parent **/
+    flex: 0 0 calc(100% - 2 * var(--tags-view-tag-select-width) - 2 * var(--tags-view-tag-select-margin));
+}
+
+.tags-view-tag-information-header-container {
+    /* Position edit button */
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 1rem;
+}
+
+.ui.header.tags-view-information-header {
+    margin: 0;
+
+    /* Enable word break for long words */
+    word-break: break-word;
+}
+
+i.black.icon.tags-view-tag-information-edit-button {
+    margin-left: 0.5rem;
+
+    /* Don't increase icon with when space is available */
+    max-width: fit-content;
+}
+
+
+/** Tag information, tag selection buttons **/
+.tags-view-tag-information-select-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+
+    min-width: var(--tags-view-tag-select-width);
+
+    background-color: rgb(246, 246, 246);
+}
+
+.tags-view-tag-information-select-button:hover {
+    background-color: rgb(217, 234, 247);
+}
+
+.tags-view-tag-information-select-button > i {
+    /* Don't increase icon width when space is available */
+    padding: 0;
+    max-width: fit-content;
+}
+
+.tags-view-tag-information-select-button:first-child {
+    margin-right: var(--tags-view-tag-select-margin);
+}
+
+.tags-view-tag-information-select-button:last-child {
+    margin-left: var(--tags-view-tag-select-margin);
+}

@@ -1,0 +1,108 @@
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
+import { Link } from "react-router-dom";
+import { Button, Icon, Header } from "semantic-ui-react";
+
+import { enumUserLevels } from "../../../util/enum-user-levels";
+import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
+import { useURLParamIDs } from "../../../util/use-url-param-array";
+
+/**
+ * /tags/view tag information block with header, description and prev/next tag selectors
+ */
+export const TagInformation = () => {
+    const tagIDs = useURLParamIDs("tagIDs");
+
+    // Index of selected tag ID in tagIDs
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    // Index updating function for buttons in the header
+    const changeCurrentIndex = i => {
+    if (Math.abs(i) !== 1) throw Error("Increment must be 1 or -1");
+    const newIndex = currentIndex + i < 0 ? tagIDs.length - 1
+        : currentIndex + i === tagIDs.length ? 0
+        : currentIndex + i;
+    setCurrentIndex(newIndex);        
+    };
+    
+    // Reset index when tag IDs are modified
+    useEffect(() => {
+        setCurrentIndex(0);
+    }, [tagIDs.toString()]);
+
+    // Don't render if no tags are selected
+    if (tagIDs.length === 0) return null;
+
+    // Previous & next tag selectors
+    const prevButton = tagIDs.length > 1 && (
+        <div className="tags-view-tag-information-select-button" onClick={() => changeCurrentIndex(-1)} title="Display information about previous tag" >
+            <Icon size="big" name="angle left" color="blue" />
+        </div>
+    );
+
+    const nextButton = tagIDs.length > 1 && (
+        <div className="tags-view-tag-information-select-button" onClick={() => changeCurrentIndex(1)} title="Display information about next tag" >
+            <Icon size="big" name="angle right" color="blue" />
+        </div>
+    );
+
+    return (
+        <div className="tags-view-tag-information-container">
+            {prevButton}
+            <div className="tags-view-tag-card">
+                <TagInformationHeader tagID={tagIDs[currentIndex]} changeCurrentIndex={changeCurrentIndex} />
+                <TagInformationDescription tagID={tagIDs[currentIndex]} />
+            </div>
+            {nextButton}
+        </div>
+    );
+};
+
+
+/**
+ * Tag header & edit button
+ */
+const TagInformationHeader = ({ tagID }) => {
+    const text = useSelector(state => tagID in state.tags ? state.tags[tagID].tag_name : "");
+    const renderEditButton = useSelector(state => state.auth.numeric_user_level === enumUserLevels.admin);
+
+    const header = text.length > 0 && <Header as="h2" className="tags-view-information-header">{text}</Header>;
+
+    const editButton = text.length > 0 && renderEditButton && (
+        <Link className="tags-view-tag-information-edit-button-container" to={`/tags/edit/${tagID}`} title="Edit tag">
+            {/* <Button className="tags-view-tag-information-edit-button" basic icon="pencil" color="black" size="small" /> */}
+            <Icon className="tags-view-tag-information-edit-button" name="pencil" color="black" />
+        </Link>
+    );
+
+    return (
+        <div className="tags-view-tag-information-header-container">
+            {header}
+            {editButton}
+        </div>
+    );
+};
+
+
+/**
+ * Tag description as rendered Markdown
+ */
+const TagInformationDescription = ({ tagID }) => {
+    const description = useSelector(state => (state.tags[tagID] || {}).tag_description);
+    let parsed = useParsedMarkdownState(description || "");
+
+    if (description === undefined) return null;
+
+    console.log("parsed = ", parsed)
+
+    parsed = parsed || "&lt;No description&gt;";
+
+    console.log("result = ", parsed)
+
+    return (
+        <div className="tags-view-tag-information-description-container">
+            <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsed }} />
+        </div>
+    ); 
+};

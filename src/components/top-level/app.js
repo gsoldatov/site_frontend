@@ -19,6 +19,7 @@ import { RegisterPage } from "./register";
 import { AdminPage } from "./admin";
 import { UserPage } from "./user";
 import { NewTag, EditTag } from "./tags-edit";
+import { TagsView } from "./tags-view/tags-view";
 import TagsList from "./tags-list";
 import { NewObject, EditObject } from "./objects-edit";
 import { ObjectsView } from "./objects-view";
@@ -75,6 +76,10 @@ export const App = () => {
                 {/* Tags */}
                 <Route exact path="/tags/list">
                     <TagsList />
+                </Route>
+
+                <Route exact path="/tags/view">
+                    <TagsView />
                 </Route>
                 
                 <ProtectedRoute exact path="/tags/edit/new"
