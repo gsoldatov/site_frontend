@@ -34,14 +34,18 @@ export const TagInformation = () => {
     // Don't render if no tags are selected
     if (tagIDs.length === 0) return null;
 
+    // Main render options
+    const renderSelectButtons = tagIDs.length > 1;
+    const tagCardClassname = "tags-view-tag-card" + (renderSelectButtons ? " with-select-buttons" : "");
+
     // Previous & next tag selectors
-    const prevButton = tagIDs.length > 1 && (
+    const prevButton = renderSelectButtons && (
         <div className="tags-view-tag-information-select-button" onClick={() => changeCurrentIndex(-1)} title="Display information about previous tag" >
             <Icon size="big" name="angle left" />
         </div>
     );
 
-    const nextButton = tagIDs.length > 1 && (
+    const nextButton = renderSelectButtons && (
         <div className="tags-view-tag-information-select-button" onClick={() => changeCurrentIndex(1)} title="Display information about next tag" >
             <Icon size="big" name="angle right" />
         </div>
@@ -50,7 +54,7 @@ export const TagInformation = () => {
     return (
         <div className="tags-view-tag-information-container">
             {prevButton}
-            <div className="tags-view-tag-card">
+            <div className={tagCardClassname}>
                 <TagInformationHeader tagID={tagIDs[currentIndex]} changeCurrentIndex={changeCurrentIndex} />
                 <TagInformationDescription tagID={tagIDs[currentIndex]} />
             </div>

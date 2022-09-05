@@ -36,8 +36,8 @@
 
 
 /** Tag information, header & description **/
-.tags-view-tag-card {
-    /** Take all available width in parent **/
+.tags-view-tag-card.with-select-buttons {
+    /** Take all available width in parent, except for select buttons' space & margins **/
     flex: 0 0 calc(100% - 2 * var(--tags-view-tag-select-width) - 2 * var(--tags-view-tag-select-margin));
 }
 
