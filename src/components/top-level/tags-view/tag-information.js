@@ -37,13 +37,13 @@ export const TagInformation = () => {
     // Previous & next tag selectors
     const prevButton = tagIDs.length > 1 && (
         <div className="tags-view-tag-information-select-button" onClick={() => changeCurrentIndex(-1)} title="Display information about previous tag" >
-            <Icon size="big" name="angle left" color="blue" />
+            <Icon size="big" name="angle left" />
         </div>
     );
 
     const nextButton = tagIDs.length > 1 && (
         <div className="tags-view-tag-information-select-button" onClick={() => changeCurrentIndex(1)} title="Display information about next tag" >
-            <Icon size="big" name="angle right" color="blue" />
+            <Icon size="big" name="angle right" />
         </div>
     );
 
