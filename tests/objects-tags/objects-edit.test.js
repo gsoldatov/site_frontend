@@ -1,7 +1,7 @@
 import React from "react";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle, screen } from "@testing-library/dom";
 
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
@@ -9,12 +9,14 @@ import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { getInlineInputField, getDropdownOptionsContainer } from "../_util/ui-objects-tags";
 import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObject } from "../_util/ui-objects-edit";
 import { getInlineItem } from "../_util/ui-inline";
+import { getFeedElements } from "../_util/ui-index";
 
 import { App } from "../../src/components/top-level/app";
 import { setObjectsTags } from "../../src/actions/data-tags";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 import { addObjects, addObjectData } from "../../src/actions/data-objects";
 import { generateObjectAttributes, generateObjectData } from "../_mocks/data-objects";
+
 
 /*
     Object tagging tests for /objects/edit/:id page.
@@ -185,6 +187,41 @@ describe("Add object page", () => {
     });
     
     
+    test("Tag item links", async () => {
+        let { container, history, store } = renderWithWrappers(<App />, 
+            { route: "/objects/edit/new" }
+        );
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+    
+        let inputToggle = getByTitle(container, "Click to add tags");
+        expect(inputToggle).toBeTruthy();
+        fireEvent.click(inputToggle);
+        let input = getInlineInputField({ container });
+
+        // Add a new tag
+        fireEvent.change(input, { target: { value: "new tag" } });
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
+        const newTag = getInlineItem({ container, text: "new tag" });
+        expect(newTag.item).toBeTruthy();
+        expect(newTag.link).toBeFalsy();
+    
+        // Add an "existing" tag and click it
+        fireEvent.change(input, { target: { value: "tag #1" } });
+        await waitFor(() => expect(Object.keys(store.getState().tags).length).toBeGreaterThan(0));     // Wait for tag information to load before adding tag to avoid treating tag as new
+        fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
+        const existingTag = getInlineItem({ container, text: "tag #1" });
+        expect(existingTag.item).toBeTruthy();
+        expect(existingTag.link).toBeTruthy();
+        
+        fireEvent.click(existingTag.link);
+        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view")
+        expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
+    });
+
+
     test("Add tags & save object", async () => {
         let { container, history, store } = renderWithWrappers(<App />, 
             { route: "/objects/edit/new" }
@@ -278,6 +315,25 @@ describe("Edit object page", () => {
         expect(getCurrentObject(store.getState()).removedTagIDs.includes(1)).toBeFalsy();
     });
     
+
+    test("Load object tags from backend and check tag link", async () => {
+        let { container, store, history } = renderWithWrappers(<App />, {
+            route: "/objects/edit/1"
+        });
+    
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Object Information"));
+        
+        // Find a tag item and click it
+        const existingTag = getInlineItem({ container });
+        expect(existingTag.item).toBeTruthy();
+
+        fireEvent.click(existingTag.link);
+        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view")
+        expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
+    });
+
     
     test("Load object tags from backend, add tags and update the object", async () => {
         let { container, store } = renderWithWrappers(<App />, {

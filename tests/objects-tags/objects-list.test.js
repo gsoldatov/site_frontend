@@ -11,6 +11,7 @@ import { getInlineItem } from "../_util/ui-inline";
 import { addAndRemoveTags } from "../_util/ui-objects-list";
 import { compareArrays } from "../_util/data-checks";
 import { renderWithWrappers } from "../_util/render";
+import { getFeedElements } from "../_util/ui-index";
 
 import ObjectsList from "../../src/components/top-level/objects-list";
 import { EditObject } from "../../src/components/top-level/objects-edit";
@@ -142,6 +143,45 @@ test("Check common and partially applied tags on click behaviour", async () => {
     fireEvent.click(tagFive.icons[0]);
     expect(store.getState().objectsUI.addedTags.includes(5)).toBeFalsy();
     expect(store.getState().objectsUI.removedTagIDs.includes(5)).toBeFalsy();
+});
+
+
+test("Check tag links", async () => {
+    let store = await getStoreWithTwoSelectedObjects();
+
+    // Route component is required for matching (getting :id part of the URL in the Object component)
+    let { container, history } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        route: "/objects/list", store
+    });
+
+    // Wait for the objects to be loaded and select an object
+    await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
+
+    // Add a new tag & check if it has no link
+    let inputToggle = getByTitle(container, "Click to add tags");
+    fireEvent.click(inputToggle);
+    let input = getInlineInputField({ container });
+    fireEvent.change(input, { target: { value: "new tag" } });
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    expect(getInlineItem({ container, text: "new tag" }).link).toBeFalsy();
+
+    // Check link of an existing common tag
+    const existingCommonTag = getInlineItem({ container, text: "tag #1" });
+    fireEvent.click(existingCommonTag.link);
+    expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
+    expect(history.entries[history.entries.length - 1].search).toEqual("?tagIDs=1");
+    await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
+
+    // Go back to /objects/list page
+    history.push("/objects/list");
+    await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
+
+    // Check link of an existing partially applied tag
+    const existingPartiallyAppliedTag = getInlineItem({ container, text: "tag #5" });
+    fireEvent.click(existingPartiallyAppliedTag.link);
+    expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
+    expect(history.entries[history.entries.length - 1].search).toEqual("?tagIDs=5");
+    await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 });
 
 

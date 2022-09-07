@@ -3,6 +3,7 @@ import React from "react";
 import { waitFor, fireEvent, queryByTitle } from "@testing-library/dom";
 
 import { renderWithWrappers } from "./render";
+import { getInlineItem } from "./ui-inline";
 
 import { App } from "../../src/components/top-level/app";
 
@@ -81,7 +82,8 @@ export const getObjectsViewCardElements = ({ container, card }) => {
         },
         tags: {
             isRendered: false,
-            tagElements: []
+            tagElements: [],
+            tagIDs: []
         }
     };
 
@@ -211,7 +213,17 @@ export const getObjectsViewCardElements = ({ container, card }) => {
             result.tags.isRendered = true;
 
             // List of tag elements
-            result.tags.tagElements = tagListContainer.querySelectorAll(".inline-item-list-wrapper-content > .inline-item");
+            result.tags.tagElements = [...tagListContainer.querySelectorAll(".inline-item-list-wrapper-content > .inline-item")];
+
+            // List of tag IDs
+            result.tags.tagIDs = result.tags.tagElements.map(tag => {
+                const tagsViewURLParamsMatch = getInlineItem({ item: tag }).link.href.match(/\/tags\/view\?(?<params>.*)$/);
+                if (tagsViewURLParamsMatch) {
+                    const params = new URLSearchParams(tagsViewURLParamsMatch.groups["params"]);
+                    const tagIDs = params.get("tagIDs");
+                    return isNaN(parseInt(tagIDs)) ? tagIDs : parseInt(tagIDs);
+                } else return null;
+            });
         }
     }    
 

@@ -6,6 +6,7 @@ import { getMockedPageObjectIDs } from "./_mocks/mock-fetch-handlers-objects";
 import { getObjectsViewCardElements } from "./_util/ui-objects-view";
 import { renderWithWrappers } from "./_util/render";
 import { checkDisplayedObjectFeedCardIDs, getFeedCardElements, getFeedElements } from "./_util/ui-index";
+import { getInlineItem } from "./_util/ui-inline";
 
 import { addObjects } from "../src/actions/data-objects";
 
@@ -255,7 +256,7 @@ describe("Object feed card", () => {
 
 
     test("Tags", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
+        let { history, container, store } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -274,5 +275,11 @@ describe("Object feed card", () => {
         expect(renderedTagNames.length).toEqual(5);
         
         state.objectsTags[objectID].forEach(tagID => expect(renderedTagNames.indexOf(state.tags[tagID].tag_name)).toBeGreaterThan(-1));
+
+        // Check redireact to /tags/view page
+        fireEvent.click(getInlineItem({ item: feedCardElements.tags.tags[0] }).link);
+        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
+        expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
     });
 });

@@ -6,6 +6,8 @@ import { waitFor } from "@testing-library/dom";
 import { createTestStore } from "../../_util/create-test-store";
 import { renderWithWrappers } from "../../_util/render";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
+import { getFeedElements } from "../../_util/ui-index";
+import { getInlineItem } from "../../_util/ui-inline";
 
 import { resetEditedObjects } from "../../../src/actions/objects-edit";
 import { addObjectData, addObjects } from "../../../src/actions/data-objects";
@@ -157,7 +159,7 @@ test("Object description (non-link)", async () => {
 
 
 test("Object tags", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
+    let { history, container, store } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
@@ -176,4 +178,10 @@ test("Object tags", async () => {
     expect(renderedTagNames.length).toEqual(5);
     
     state.objectsTags[1].forEach(tagID => expect(renderedTagNames.indexOf(state.tags[tagID].tag_name)).toBeGreaterThan(-1));
+
+    // Check redireact to /tags/view page
+    fireEvent.click(getInlineItem({ item: cardElements.tags.tagElements[0] }).link);
+    expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
+    expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+    await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 });

@@ -5,11 +5,13 @@ import { waitFor, fireEvent } from "@testing-library/dom";
 import { renderWithWrappers } from "../../_util/render";
 import { getObjectsViewCardElements, loadObjectsViewPageAndSelectChapter } from "../../_util/ui-objects-view";
 import { compareArrays } from "../../_util/data-checks";
+import { getFeedElements } from "../../_util/ui-index";
 
 import { addObjectData, addObjects } from "../../../src/actions/data-objects";
 
 import { config, setConfig, resetConfig } from "../../../src/config";
 import { App } from "../../../src/components/top-level/app";
+import { getInlineItem } from "../../_util/ui-inline";
 
 
 /*
@@ -116,7 +118,7 @@ describe("Table of contents", () => {
     describe("Correct load of root object", () => {
         test("Attributes & tags", async () => {
             // Render page and wait for data to load
-            let { container, store } = renderWithWrappers(<App />, {
+            let { history, container, store } = renderWithWrappers(<App />, {
                 route: `/objects/view/3910`
             });
 
@@ -154,6 +156,12 @@ describe("Table of contents", () => {
             expect(renderedTagNames.length).toEqual(5);
             
             state.objectsTags[3910].forEach(tagID => expect(renderedTagNames.indexOf(state.tags[tagID].tag_name)).toBeGreaterThan(-1));
+
+            // Check redireact to /tags/view page
+            fireEvent.click(getInlineItem({ item: cardElements.tags.tagElements[0] }).link);
+            expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
+            expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+            await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
         });
 
 
@@ -298,6 +306,12 @@ describe("Table of contents", () => {
             expect(renderedTagNames.length).toEqual(6);
             
             state.objectsTags[3910].forEach(tagID => expect(renderedTagNames.indexOf(state.tags[tagID].tag_name)).toBeGreaterThan(-1));
+
+            // Check redireact to /tags/view page
+            fireEvent.click(getInlineItem({ item: cardElements.tags.tagElements[0] }).link);
+            expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
+            expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=101`);
+            await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
         });
 
 

@@ -1,3 +1,6 @@
+import { getInlineItem } from "./ui-inline";
+
+
 /**
  * Returns elements of a feed inside `container`.
  */
@@ -64,7 +67,8 @@ export const getFeedElements = container => {
         description: null,
         tags: {
             container: null,
-            tags: []
+            tags: [],
+            tagIDs: []
         }
     };
 
@@ -90,7 +94,17 @@ export const getFeedElements = container => {
     const descriptionContainer = cardContainer.querySelector(".feed-card-description");
     if (descriptionContainer) result.description = descriptionContainer.querySelector(".rendered-markdown");
     result.tags.container = cardContainer.querySelector(".object-feed-card-tag-list-container");
-    if (result.tags.container) result.tags.tags = [...result.tags.container.querySelectorAll(".inline-item")];
+    if (result.tags.container) {
+        result.tags.tags = [...result.tags.container.querySelectorAll(".inline-item")];
+        result.tags.tagIDs = result.tags.tags.map(tag => {
+            const tagsViewURLParamsMatch = getInlineItem({ item: tag }).link.href.match(/\/tags\/view\?(?<params>.*)$/);
+            if (tagsViewURLParamsMatch) {
+                const params = new URLSearchParams(tagsViewURLParamsMatch.groups["params"]);
+                const tagIDs = params.get("tagIDs");
+                return isNaN(parseInt(tagIDs)) ? tagIDs : parseInt(tagIDs);
+            } else return null;
+        });
+    }
 
     return result;
 };

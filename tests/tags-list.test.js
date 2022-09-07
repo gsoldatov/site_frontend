@@ -8,6 +8,7 @@ import { getMockedPageTagIDs } from "./_mocks/mock-fetch-handlers-tags";
 import { getSideMenuItem, getSideMenuDialogControls } from "./_util/ui-common";
 import { renderWithWrappers } from "./_util/render";
 import { createTestStore } from "./_util/create-test-store";
+import { getFeedElements } from "./_util/ui-index";
 
 import TagsList from "../src/components/top-level/tags-list";
 import { setTagsPaginationInfo } from "../src/actions/tags-list";
@@ -31,7 +32,7 @@ beforeEach(() => {
 });
 
 
-describe("Page load and pagination", () => {
+describe("Page load, tag link and pagination", () => {
     test("Load page with a fetch error", async () => {
         setFetchFail(true);
 
@@ -72,6 +73,26 @@ describe("Page load and pagination", () => {
 
         // Check if pagination is not rendered
         expect(container.querySelector(".field-pagination")).toBeNull();
+    });
+
+
+    test("Tag item link", async () => {
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
+        
+        // Route component is required for matching (getting :id part of the URL in the Tag component)
+        let { container, history } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
+            route: "/tags/list", store
+        });
+
+        // Wait for the tags to be loaded
+        await waitFor(() => getByText(container, "tag #1"));
+        
+        // Click a tag item and check if it redirects
+        fireEvent.click(getByText(container, "tag #1"));
+        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
+        expect(history.entries[history.entries.length - 1].search).toEqual("?tagIDs=1");
+        await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
     });
 
 
