@@ -50,7 +50,7 @@ export const TagPageObjectsFeed = ({ page, items_per_page = 1 }) => {
         
         return result;
     
-    }, [page, items_per_page, tagIDs.toString()]);
+    }, [page, items_per_page, tagIDs]);
 
     // Feed pagination params
     const totalPages = paginationInfo ? Math.ceil(paginationInfo.totalItems / paginationInfo.items_per_page) : null;
@@ -59,7 +59,7 @@ export const TagPageObjectsFeed = ({ page, items_per_page = 1 }) => {
         params.append("tagIDs", tagIDs);
         if (newPage > 1) params.append("p", newPage);
         return `/tags/view?${params.toString()}`;
-    }, [tagIDs.toString()]);
+    }, [tagIDs]);
 
     // Don't render if no tags are selected
     if (tagIDs.length === 0) return null;

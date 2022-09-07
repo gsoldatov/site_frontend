@@ -29,7 +29,7 @@ export const TagInformation = () => {
     // Reset index when tag IDs are modified
     useEffect(() => {
         setCurrentIndex(0);
-    }, [tagIDs.toString()]);
+    }, [tagIDs]);
 
     // Don't render if no tags are selected
     if (tagIDs.length === 0) return null;
@@ -98,11 +98,7 @@ const TagInformationDescription = ({ tagID }) => {
 
     if (description === undefined) return null;
 
-    console.log("parsed = ", parsed)
-
     parsed = parsed || "&lt;No description&gt;";
-
-    console.log("result = ", parsed)
 
     return (
         <div className="tags-view-tag-information-description-container">

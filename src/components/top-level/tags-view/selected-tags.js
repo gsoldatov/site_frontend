@@ -21,7 +21,7 @@ export const SelectedTags = () => {
     // Fetch missing tag data when tagIDs change
     useEffect(() => {
         dispatch(tagsViewLoadSelectedTags(tagIDs));
-    }, [tagIDs.toString()]);
+    }, [tagIDs]);
 
     // Remove tag icon onClick callback
     const removeCallback = useMemo(() => id => {
