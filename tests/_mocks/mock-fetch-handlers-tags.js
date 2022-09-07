@@ -1,3 +1,5 @@
+import { getIntegerList } from "../_util/data-generation";
+
 let _cachedTags = {};     // tag cache, which used to pass tag data to the handleView function; passed data is removed from the cache once it's been used by handleView
 let _cachedTagID = -1;
 export const resetTagsCache = () => { _cachedTags = {}; _cachedTagID = -1 };
@@ -108,38 +110,24 @@ function handleGetPageTagIDs(body) {
 
 
 export function getMockedPageTagIDs(pI) {
-    function getList(f, t, s = 1){
-        let a = [];
-        if (f < t) {
-            for (let i = f; i <= t; i += s) {
-                a.push(i);
-            }   
-        } else {
-            for (let i = f; i >= t; i += s) {
-                a.push(i);
-            }
-        }
-        return a;
-    }
-    
     // Single page
     if (pI.items_per_page === 100) {
-        return getList(1, 100);
+        return getIntegerList(1, 100);
     }
 
     // Sort by modified_at asc
     if (pI.order_by === "modified_at" && pI.sort_order === "asc") {
-        return getList(41, 50);
+        return getIntegerList(41, 50);
     }
 
     // Sort by modified_at desc
     if (pI.order_by === "modified_at" && pI.sort_order === "desc") {
-        return getList(50, 41, -1);
+        return getIntegerList(50, 41);
     }
     // {"page":1,"items_per_page":10,"order_by":"tag_name","sort_order":"desc","filter_text":""}
     // Sort by tag_name desc
     if (pI.order_by === "tag_name" && pI.sort_order === "desc") {
-        return getList(99, 9, -10);
+        return getIntegerList(99, 9, 10);
     }
 
     // Filtered text without match
@@ -149,11 +137,11 @@ export function getMockedPageTagIDs(pI) {
 
     // Filtered text
     if (pI.filter_text !== "" && pI.filter_text !== "no match") {
-        return getList(2, 92, 10);
+        return getIntegerList(2, 92, 10);
     }
 
     // Multiple pages
-    return getList(pI.items_per_page * (pI.page - 1) + 1, pI.items_per_page * pI.page);
+    return getIntegerList(pI.items_per_page * (pI.page - 1) + 1, pI.items_per_page * pI.page);
 };
 
 

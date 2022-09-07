@@ -78,8 +78,14 @@ export const getFeedElements = container => {
         const objectIDMatch = result.header.link.href.match(/\/objects\/view\/(?<id>\d+)$/);
         if (objectIDMatch) result.objectID = parseInt(objectIDMatch.groups["id"]);
 
-        const tagIDMatch = result.header.link.href.match(/\/tags\/edit\/(?<id>\d+)$/);
-        if (tagIDMatch) result.tagID = parseInt(tagIDMatch.groups["id"]);
+        // const tagIDMatch = result.header.link.href.match(/\/tags\/edit\/(?<id>\d+)$/);
+        // if (tagIDMatch) result.tagID = parseInt(tagIDMatch.groups["id"]);
+        const tagsViewURLParamsMatch = result.header.link.href.match(/\/tags\/view\?(?<params>.*)$/);
+        if (tagsViewURLParamsMatch) {
+            const params = new URLSearchParams(tagsViewURLParamsMatch.groups["params"]);
+            const tagIDs = params.get("tagIDs");
+            result.tagID = isNaN(parseInt(tagIDs)) ? tagIDs : parseInt(tagIDs);
+        }
 
     const descriptionContainer = cardContainer.querySelector(".feed-card-description");
     if (descriptionContainer) result.description = descriptionContainer.querySelector(".rendered-markdown");

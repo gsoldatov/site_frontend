@@ -64,7 +64,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
                 for (let route of child.props.path)
                     if (route.startsWith("/auth/")) routes.push(replaceRouteParams(route));
         
-        expect(routes.length).toEqual(2);
+        expect(routes.length).toEqual(2);   // NOTE: Increment expected route number if new route is added
 
         // Render auth routes
         for (let route of routes) {
@@ -234,11 +234,17 @@ describe("Secondary menu logged in state", () => {
             "/objects/view/2": async container => await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy()),
 
             "/tags/list": async container => await waitFor(() => getByText(container, "tag #1")),
+            "/tags/view": async container => await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy()),
             "/tags/edit/new": null,
             "/tags/edit/2": async container => await waitFor(() => getByText(container, "Tag Information")),
 
             "/users/2": async container => await waitFor(() => expect(getUserPageViewModeElements(container).header).toBeTruthy())
-        } 
+        };
+        
+        // Optional strings, which are concatenated to the route when rendering a page
+        const routeSuffixes = {
+            "/tags/view": "?tagIDs = 2"
+        };
         
         // Get all non-auth routes
         const replaceRouteParams = route => route.replace(":id", 2).replace(":page", 2);
@@ -250,13 +256,14 @@ describe("Secondary menu logged in state", () => {
                 for (let route of child.props.path)
                     if (!route.startsWith("/auth/")) routes.push(replaceRouteParams(route));
         
-        expect(routes.length).toEqual(13);
+        expect(routes.length).toEqual(14);      // NOTE: add new route to loadWaiters & routeSuffixes, if required, then increment expected route number
 
         // Render each route and logout
         for (let route of routes) {
+            const fullRoute = route + (routeSuffixes[route] || "");
             const store = createTestStore({ addAdminToken: true });
             let { container, history } = renderWithWrappers(<App />, {
-                route, store
+                route: fullRoute, store
             });
 
             // Wait for page to load (throw error if route waiter is not defined or explicitly skipped)

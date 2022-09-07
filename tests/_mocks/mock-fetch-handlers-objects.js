@@ -1,6 +1,7 @@
 import { autoGenerateTag } from "./mock-fetch-handlers-tags";
 import { getObjectTypeFromID, generateObjectData, generateObjectAttributes } from "./data-objects";
 import { getMockCompositeHierarchyElements, mapAndCacheNewSubobjects } from "./data-composite";
+import { getIntegerList } from "../_util/data-generation";
 
 export let _cachedObjects = {};      // object & object data caches, which are used to pass object data from add/update to view handler
 export let _cachedObjectData = {};
@@ -143,6 +144,7 @@ function handleUpdate(body) {
 function handleGetPageObjectIDs(body) {
     const pI = JSON.parse(body).pagination_info;
     const objectIDs = getMockedPageObjectIDs(pI);
+    
     if (objectIDs.length === 0) {
         return { status: 404, body: { _error: "No objects found." }};
     }
@@ -169,20 +171,6 @@ function handleGetPageObjectIDs(body) {
 
 
 export function getMockedPageObjectIDs(pI) {
-    function getList(f, t, s = 1){
-        let a = [];
-        if (f < t) {
-            for (let i = f; i <= t; i += s) {
-                a.push(i);
-            }   
-        } else {
-            for (let i = f; i >= t; i += s) {
-                a.push(i);
-            }
-        }
-        return a;
-    }
-
     // Sort by `feed_timestamp` (feed page)
     if (pI.order_by === "feed_timestamp") {
         if (pI.sort_order === "asc") throw Error("Sort by feed_timestamp asc not implemented")
@@ -197,45 +185,45 @@ export function getMockedPageObjectIDs(pI) {
         if (pI.page > 10) return [];
 
         // Random multiple page
-        return getList(100 + pI.items_per_page * (pI.page - 1), 100 + pI.items_per_page * pI.page - 1);
+        return getIntegerList(100 + pI.items_per_page * (pI.page - 1), 100 + pI.items_per_page * pI.page - 1);
     }
     
     // Tags filter is not empty
     if (pI.tags_filter.length > 0) {
-        if (pI.tags_filter.length === 1) return getList(5, 55, 5);
-        if (pI.tags_filter.length === 2) return getList(15, 35, 5);
+        if (pI.tags_filter.length === 1) return getIntegerList(5, 55, 5);
+        if (pI.tags_filter.length === 2) return getIntegerList(15, 35, 5);
         return [];
     }
 
     // One or more object type is selected
     if (pI.object_types.length > 0) {
         let objectIDs = [];
-        if (pI.object_types.includes("link")) objectIDs = objectIDs.concat(getList(11, 20, 1));
-        if (pI.object_types.includes("markdown")) objectIDs = objectIDs.concat(getList(1011, 1020, 1));
-        if (pI.object_types.includes("to_do_list")) objectIDs = objectIDs.concat(getList(2011, 2020, 1));
-        if (pI.object_types.includes("composite")) objectIDs = objectIDs.concat(getList(3011, 3020, 1));
+        if (pI.object_types.includes("link")) objectIDs = objectIDs.concat(getIntegerList(11, 20));
+        if (pI.object_types.includes("markdown")) objectIDs = objectIDs.concat(getIntegerList(1011, 1020));
+        if (pI.object_types.includes("to_do_list")) objectIDs = objectIDs.concat(getIntegerList(2011, 2020));
+        if (pI.object_types.includes("composite")) objectIDs = objectIDs.concat(getIntegerList(3011, 3020));
         return objectIDs;
     }
     // All object types are displayed
     else if (pI.object_types.length !== 1) {
         // Single page
         if (pI.items_per_page === 100) {
-            return getList(1, 100);
+            return getIntegerList(1, 100);
         }
 
         // Sort by modified_at asc
         if (pI.order_by === "modified_at" && pI.sort_order === "asc") {
-            return getList(41, 50);
+            return getIntegerList(41, 50);
         }
 
         // Sort by modified_at desc
         if (pI.order_by === "modified_at" && pI.sort_order === "desc") {
-            return getList(50, 41, -1);
+            return getIntegerList(50, 41);
         }
         // {"page":1,"items_per_page":10,"order_by":"object_name","sort_order":"desc","filter_text":""}
         // Sort by object_name desc
         if (pI.order_by === "object_name" && pI.sort_order === "desc") {
-            return getList(99, 9, -10);
+            return getIntegerList(99, 9, 10);
         }
 
         // Filtered text without match
@@ -245,11 +233,11 @@ export function getMockedPageObjectIDs(pI) {
 
         // Filtered text
         if (pI.filter_text !== "" && pI.filter_text !== "no match") {
-            return getList(2, 92, 10);
+            return getIntegerList(2, 92, 10);
         }
 
         // Multiple pages
-        return getList(pI.items_per_page * (pI.page - 1) + 1, pI.items_per_page * pI.page);
+        return getIntegerList(pI.items_per_page * (pI.page - 1) + 1, pI.items_per_page * pI.page);
     }
 };
 
