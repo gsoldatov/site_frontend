@@ -6,6 +6,8 @@ import { getInlineItem } from "./ui-inline";
  */
 export const getFeedElements = container => {
     let result = {
+        container: null,
+
         placeholders: {
             loading: null,
             fetchError: null
@@ -25,6 +27,8 @@ export const getFeedElements = container => {
     const feedContainer = container.querySelector(".feed-container");
 
     if (feedContainer) {
+        result.container = feedContainer;
+        
         /* Placeholders */
         result.placeholders.loading = [...feedContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("loader"))[0];
         result.placeholders.fetchError =  [...feedContainer.childNodes].filter(n => n.classList.contains("ui") && n.classList.contains("message") && n.classList.contains("error"))[0];

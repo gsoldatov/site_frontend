@@ -59,7 +59,7 @@ import { getNavigationBarElements } from "./ui-navbar";
  export const checkDisplayedSearchFeedCardIDs = (container, expectedItems) => {
     const objectsFeedElements = getFeedElements(container);
     const displayedItems = objectsFeedElements.feedCards.feedCards.map(p => {
-        const elements = getFeedCardElements(p)
+        const elements = getFeedCardElements(p);
         if (elements.tagID) return { item_id: elements.tagID, item_type: "tag" };
         return { item_id: elements.objectID, item_type: "object" };
     });

@@ -137,3 +137,39 @@ export const generateLinkObjectData = (object_id, overrideValues = {}) => {
 
     return result;
 };
+
+
+/**
+ * Overrides fetch to return fixed responses for /objects/get_page_object_ids and /objects/view backend requests.
+ * Returns modified expected object & tag IDs.
+ * 
+ * Expects `addCustomRouteResponse` to be added to the global scope of Jest.
+ */
+export const addCustomResponsesForSinglePageTagsView = () => {
+    // Set custom object ids for the page
+    const expectedObjectIDs = [5, 10, 15];
+    const firstObjectTagIDs = [1, 11, 22, 33];
+    addCustomRouteResponse("/objects/get_page_object_ids", "POST", { generator: (body, handler) => {
+        const response = handler(body);
+        response.body.pagination_info.object_ids = expectedObjectIDs;
+        response.body.pagination_info.total_items = expectedObjectIDs.length;
+        return response;
+    }});
+
+    // Set custom object data
+    addCustomRouteResponse("/objects/view", "POST", { generator: (body, handler) => {
+        const response = handler(body);
+        response.body.objects.forEach(o => {
+            if (o.object_id === 5) {
+                o.is_published = true;
+                o.current_tag_ids = firstObjectTagIDs;
+            } else if (o.object_id in [10, 15]) {
+                o.is_published = false;
+            }
+        });
+
+        return response;
+    }});
+
+    return { expectedObjectIDs, firstObjectTagIDs };
+};

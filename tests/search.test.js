@@ -516,7 +516,7 @@ describe("Search feed pagination", () => {
 
 
     test("Multiple pages", async () => {
-        // Set custom response for search (10 pages with 2 items on each)
+        // Set custom response for search (10 pages with 10 items on each)
         const getQueryItems = page =>  {
             const result = [];
             for (let i = 1; i <= 10; i++)

@@ -1,7 +1,7 @@
 import React from "react";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor, getByTitle, screen } from "@testing-library/dom";
+import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
