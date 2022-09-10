@@ -59,6 +59,14 @@ export const EditTag = () => {
             linkURL: "/tags/edit/new"
         },
         {
+            type: "linkItem",
+            text: "View Tag",
+            icon: "eye",
+            iconColor: "black",
+            isActiveSelector: state => !isFetchingTag(state),
+            linkURL: `/tags/view?tagIDs=${id}`
+        },
+        {
             type: "item",
             text: "Save",
             icon: "save outline",

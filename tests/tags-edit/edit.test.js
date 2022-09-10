@@ -8,6 +8,7 @@ import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { renderWithWrappers } from "../_util/render";
 import { createTestStore } from "../_util/create-test-store";
 import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
+import { getTagsViewElements } from "../_util/ui-tags-view";
 
 import { App } from "../../src/components/top-level/app";
 import { addTags, deleteTags } from "../../src/actions/data-tags";
@@ -121,9 +122,27 @@ test("Check 'Add Tag' button", async () => {
 
     // Check if tag information is displayed on the page
     await waitFor(() => getByText(container, "Tag Information"));
+
+    // Click add tag button
     let addTagButton = getSideMenuItem(container, "Add a New Tag");
     fireEvent.click(addTagButton);
     expect(history.entries[history.length - 1].pathname).toBe("/tags/edit/new");
+});
+
+
+test("Check 'View Tag' button", async () => {
+    let { container, history } = renderWithWrappers(<App />, 
+        { route: "/tags/edit/1" }
+    );
+
+    // Check if tag information is displayed on the page
+    await waitFor(() => getByText(container, "Tag Information"));
+
+    // Click view tag button
+    fireEvent.click(getSideMenuItem(container, "View Tag"));
+    expect(history.entries[history.length - 1].pathname).toBe("/tags/view");
+    expect(history.entries[history.length - 1].search).toBe("?tagIDs=1");
+    await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
 });
 
 
