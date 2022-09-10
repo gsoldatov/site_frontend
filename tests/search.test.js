@@ -349,6 +349,17 @@ describe("Search feed > object card", () => {
 
 
     test("Description", async () => {
+        // Show description for a particular object & hide for other
+        addCustomRouteResponse("/objects/view", "POST", { generator: (body, handler) => {
+            const response = handler(body);
+            response.body.objects.forEach(o => {
+                if (o.object_id === 10) o.show_description = true;
+                else o.show_description = false;
+            });
+    
+            return response;
+        }});
+
         // Render index page
         let { container, history, store } = renderWithWrappers(<App />, {
             route: "/"
@@ -360,8 +371,8 @@ describe("Search feed > object card", () => {
         // Enter and submit query
         await submitSearchQueryWithNavbar(container, history, "some text");
 
-        // Check if correct object description is displayed
-        const feedCard = getSearchPageElements(container).feed.feedCards.feedCards[2];
+        // Check if correct object description is displayed, if show_description = true
+        let feedCard = getSearchPageElements(container).feed.feedCards.feedCards[2];      // objectID = 10
 
         await waitFor(() => {
             let feedCardElements = getFeedCardElements(feedCard);
@@ -370,6 +381,10 @@ describe("Search feed > object card", () => {
             expect(paragraph).toBeTruthy();
             expect(paragraph.textContent).toEqual(store.getState().objects[objectID].object_description);
         });
+
+        // Check if object description is not displayed, if show_description = false
+        feedCard = getSearchPageElements(container).feed.feedCards.feedCards[3];      // objectID = 20
+        expect(getFeedCardElements(feedCard).description).toBeFalsy();
     });
 
 

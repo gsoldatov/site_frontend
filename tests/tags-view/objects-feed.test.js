@@ -1,5 +1,5 @@
 import React from "react";
-import { waitFor, fireEvent } from "@testing-library/react";
+import { waitFor, fireEvent, screen } from "@testing-library/react";
 
 import { renderWithWrappers } from "../_util/render";
 import { getTagsViewElements, checkDisplayedTagsViewFeedCardIDs } from "../_util/ui-tags-view";
@@ -148,11 +148,11 @@ describe("Single page", () => {
             expect(paragraph.textContent).toEqual(store.getState().objects[objectID].object_description);
         });
 
-        // // Check if description is not displayed if not set to       // TODO uncomment after implement conditional decsription render
-        // for (let i = 1; i < expectedObjectIDs.length; i++) {
-        //     const feedCard = getTagsViewElements(container).feed.feedCards.feedCards[i];
-        //     expect(getFeedCardElements(feedCard).description).toBeFalsy();
-        // }
+        // Check if description is not displayed if not set to
+        for (let i = 1; i < expectedObjectIDs.length; i++) {
+            const feedCard = getTagsViewElements(container).feed.feedCards.feedCards[i];
+            expect(getFeedCardElements(feedCard).description).toBeFalsy();
+        }
     });
 
 

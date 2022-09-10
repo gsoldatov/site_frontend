@@ -47,7 +47,7 @@ test("Valid selected tags", async () => {
         route: "/tags/view?tagIDs=0,-1,1,2"
     });
 
-    await waitFor(() => expect(getTagsViewElements(container).objectsFeed.placeholders.loading).toBeFalsy());
+    await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
 
     const elements = getTagsViewElements(container);
     expect(elements.selectPrompt).toBeFalsy();

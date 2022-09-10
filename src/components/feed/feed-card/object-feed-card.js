@@ -22,7 +22,10 @@ export const ObjectFeedCard = ({ objectID }) => {
 
     const objectName = useSelector(state => (state.objects[objectID] || {}).object_name);
     const URL = `/objects/view/${objectID}`;
-    const objectDescription = useSelector(state => (state.objects[objectID] || {}).object_description);
+    const objectDescription = useSelector(state => {
+        if (!state.objects[objectID] || !state.objects[objectID].show_description) return undefined;
+        return state.objects[objectID].object_description;
+    });
     
     const objectType = useSelector(state => (state.objects[objectID] || {}).object_type);
     const headerIcon = (enumObjectTypes[objectType] || {}).icon;

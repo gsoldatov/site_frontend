@@ -161,10 +161,10 @@ export const addCustomResponsesForSinglePageTagsView = () => {
         const response = handler(body);
         response.body.objects.forEach(o => {
             if (o.object_id === 5) {
-                o.is_published = true;
+                o.show_description = true;
                 o.current_tag_ids = firstObjectTagIDs;
             } else if (o.object_id in [10, 15]) {
-                o.is_published = false;
+                o.show_description = false;
             }
         });
 

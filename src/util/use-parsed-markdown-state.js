@@ -36,7 +36,7 @@ export const useParsedMarkdownState = (rawMarkdown, renderParams = {}) => {
     
     useEffect(() => {
         // Run Markdown parse if `rawMarkdown` contains text
-        if (rawMarkdown.length > 0) parseMarkdown(rawMarkdown);
+        if (rawMarkdown) parseMarkdown(rawMarkdown);
         // Otherwise skip parsing and call `wrappedOnPostParse` directly
         else wrappedOnPostParse("");
     }, [rawMarkdown]);

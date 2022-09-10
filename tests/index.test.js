@@ -235,23 +235,47 @@ describe("Object feed card", () => {
 
 
     test("Description", async () => {
+        // Display specific object ids on the page
+        addCustomRouteResponse("/objects/get_page_object_ids", "POST", { generator: (body, handler) => {
+            const response = handler(body);
+            response.body.pagination_info.object_ids = [10, 20];
+            response.body.pagination_info.total_items = 2;
+            return response;
+        }});
+
+        // Show description for a particular object & hide for other
+        addCustomRouteResponse("/objects/view", "POST", { generator: (body, handler) => {
+            const response = handler(body);
+            response.body.objects.forEach(o => {
+                if (o.object_id === 10) o.show_description = true;
+                else o.show_description = false;
+            });
+    
+            return response;
+        }});
+
+        // Render page and wait for it to load
         let { container, store } = renderWithWrappers(<App />, {
             route: "/"
         });
 
-        // Wait for the page to load
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
-        // Check if correct object description is displayed
-        const feedCard = getFeedElements(container).feedCards.feedCards[0];
+        // Check if correct object description is displayed, if show_descripiton = true
+        let feedCard = getFeedElements(container).feedCards.feedCards[0];
 
         await waitFor(() => {
             let feedCardElements = getFeedCardElements(feedCard);
             const { objectID } = feedCardElements;
+            expect(objectID).toEqual(10);
             const paragraph = feedCardElements.description.querySelector("p");
             expect(paragraph).toBeTruthy();
             expect(paragraph.textContent).toEqual(store.getState().objects[objectID].object_description);
         });
+
+        // Check if object description is not rendered, if show_description = false
+        feedCard = getFeedElements(container).feedCards.feedCards[1];
+        expect(getFeedCardElements(feedCard).description).toBeFalsy();
     });
 
 
