@@ -8,6 +8,7 @@ import { renderWithWrappers } from "../../_util/render";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
 import { getFeedElements } from "../../_util/ui-index";
 import { getInlineItem } from "../../_util/ui-inline";
+import { compareDates } from "../../_util/data-checks";
 
 import { resetEditedObjects } from "../../../src/actions/objects-edit";
 import { addObjectData, addObjects } from "../../../src/actions/data-objects";
@@ -42,13 +43,13 @@ test("Timestamp", async () => {
     // Check if feed timestamp is displayed
     let cardElements = getObjectsViewCardElements({ container });
     let ed = new Date(store.getState().objects[1].feed_timestamp), dd = new Date(cardElements.attributes.timestamp.element.textContent);
-    expect(ed.getFullYear() === dd.getFullYear() && ed.getMonth() === dd.getMonth() && ed.getDate() === dd.getDate()).toBeTruthy();
+    compareDates(ed, dd);
 
     // Check if modified at is used as a fallback for missing feed timestamp
     store.dispatch(addObjects([{ ...store.getState().objects[1], feed_timestamp: "" }]));
     cardElements = getObjectsViewCardElements({ container });
     ed = new Date(store.getState().objects[1].modified_at), dd = new Date(cardElements.attributes.timestamp.element.textContent);
-    expect(ed.getFullYear() === dd.getFullYear() && ed.getMonth() === dd.getMonth() && ed.getDate() === dd.getDate()).toBeTruthy();
+    compareDates(ed, dd);
 });
 
 

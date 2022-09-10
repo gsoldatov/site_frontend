@@ -7,7 +7,7 @@ import { getObjectsViewCardElements } from "./_util/ui-objects-view";
 import { renderWithWrappers } from "./_util/render";
 import { getFeedCardElements, getFeedElements } from "./_util/ui-index";
 import { getInlineItem } from "./_util/ui-inline";
-
+import { compareDates } from "./_util/data-checks";
 import { addObjects } from "../src/actions/data-objects";
 
 import { App } from "../src/components/top-level/app";
@@ -313,13 +313,13 @@ describe("Search feed > object card", () => {
         const { objectID } = feedCardElements;
 
         let ed = new Date(store.getState().objects[objectID].feed_timestamp), dd = new Date(feedCardElements.timestamp.textContent);
-        expect(ed.getFullYear() === dd.getFullYear() && ed.getMonth() === dd.getMonth() && ed.getDate() === dd.getDate()).toBeTruthy();
+        compareDates(ed, dd);
 
         // Check if modified at is used as a fallback for missing feed timestamp
         store.dispatch(addObjects([{ ...store.getState().objects[objectID], feed_timestamp: "" }]));
         feedCardElements = getFeedCardElements(feedCard);
         ed = new Date(store.getState().objects[objectID].modified_at), dd = new Date(feedCardElements.timestamp.textContent);
-        expect(ed.getFullYear() === dd.getFullYear() && ed.getMonth() === dd.getMonth() && ed.getDate() === dd.getDate()).toBeTruthy();
+        compareDates(ed, dd);
     });
 
 
@@ -441,7 +441,7 @@ describe("Search feed > tag card", () => {
         const { tagID } = feedCardElements;
 
         let ed = new Date(store.getState().tags[tagID].modified_at), dd = new Date(feedCardElements.timestamp.textContent);
-        expect(ed.getFullYear() === dd.getFullYear() && ed.getMonth() === dd.getMonth() && ed.getDate() === dd.getDate()).toBeTruthy();
+        compareDates(ed, dd);
     });
 
 
