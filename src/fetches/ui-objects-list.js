@@ -135,17 +135,19 @@ export const onDeleteFetch = deleteSubobjects => {
 const dropdownFetchThunkCreatorCreator = (actionCreator, inputTextSelector) => {
     return ({queryText, existingIDs}) => {
         return async (dispatch, getState) => {
-            // Check params
+            // Input text at the start of the query
             const inputText = inputTextSelector(getState());
-            if (inputText.length === 0) {   // exit fetch if an item was added before the start of the fetch
-                dispatch(actionCreator({ matchingIDs: [] }));
-                return;
-            }
 
             // Run fetch & update matching tags
             const result = await dispatch(tagsSearchFetch({queryText, existingIDs}));
 
             if (getResponseErrorType(result) === enumResponseErrorType.none) {
+                // Reset matching IDs if an item was added before the fetch start
+                if (inputText.length === 0) {
+                    dispatch(actionCreator({ matchingIDs: [] }));
+                    return;
+                }
+
                 // Update matching tags if input text didn't change during fetch
                 if (inputText === inputTextSelector(getState())) dispatch(actionCreator({ matchingIDs: result }));
             }
