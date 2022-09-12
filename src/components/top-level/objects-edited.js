@@ -100,7 +100,7 @@ const ObjectsEditedTableHeader = ({ setConfirmState }) => {
     // Toggle all selection checkbox
     const isChecked = useSelector(state => state.editedObjectsUI.selectedObjectIDs.size === Object.keys(state.editedObjects).length);
     const isIndeterminate = useSelector(state => state.editedObjectsUI.selectedObjectIDs.size < Object.keys(state.editedObjects).length && state.editedObjectsUI.selectedObjectIDs.size > 0);
-    const checkBoxOnClick = useMemo(() => () => dispatch(toggleAllObjectsSelection()));
+    const checkBoxOnClick = useMemo(() => () => dispatch(toggleAllObjectsSelection()), []);
     const checkbox = <Checkbox checked={isChecked} indeterminate={isIndeterminate} onClick={checkBoxOnClick} />;
 
     // Selected edited objects controls

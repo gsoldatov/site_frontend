@@ -15,7 +15,7 @@ export const InlineInput = memo(({ placeholder, inputStateSelector, setInputStat
 
     const abortFetch = useRef();    // ref for storing abort fetch function
     const inputRef = useRef();
-    const setIsDisplayed = useMemo(() => isDisplayed => dispatch(setInputState({ isDisplayed })));
+    const setIsDisplayed = useMemo(() => isDisplayed => dispatch(setInputState({ isDisplayed })), []);
     let itemAdded = false;
 
     // Focus the input after it's rendered

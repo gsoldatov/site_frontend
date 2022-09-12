@@ -240,7 +240,7 @@ const ObjectsFieldItem = memo(({ id }) => {
 
     const text = useSelector(state => state.objects[id] ? state.objects[id].object_name : "?");
     const URL = `/objects/view/${id}`;
-    const onChange = () => dispatch(toggleObjectSelection(id));
+    const onChange = useMemo(() => () => dispatch(toggleObjectSelection(id)), [id]);
     const isChecked = useSelector(state => state.objectsUI.selectedObjectIDs.includes(id));
     
     return <FieldItem text={text} URL={URL} onChange={onChange} isChecked={isChecked} />;

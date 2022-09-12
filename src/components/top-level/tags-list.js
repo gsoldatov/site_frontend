@@ -14,7 +14,6 @@ import { setTagsPaginationInfoAndFetchPage, pageFetch, onDeleteFetch } from "../
 import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../store/state-util/ui-tags-list";
 
 import { enumUserLevels } from "../../util/enum-user-levels";
-import { enumLayoutTypes } from "../../util/enum-layout-types";
 
 
 /**
@@ -96,7 +95,6 @@ export default () => {
         </>
     );
 
-    // return <Layout sideMenuItems={sideMenuItems} body={pageBodyWithMenu} layoutType={enumLayoutTypes.shortWidth} />;
     return <Layout sideMenuItems={sideMenuItems} body={pageBodyWithMenu} />;
 };
 
@@ -175,7 +173,7 @@ const TagsFieldItem = memo(({ id }) => {
 
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     const URL = `/tags/view?tagIDs=${id}`;
-    const onChange = isLoggedInAsAdmin ? () => dispatch(toggleTagSelection(id)) : undefined;
+    const onChange = useMemo(() => isLoggedInAsAdmin ? () => dispatch(toggleTagSelection(id)) : undefined, [id, isLoggedInAsAdmin]);
     const isChecked = useSelector(state => state.tagsUI.selectedTagIDs.includes(id));
     
     return <FieldItem text={text} URL={URL} onChange={onChange} isChecked={isChecked} />;
