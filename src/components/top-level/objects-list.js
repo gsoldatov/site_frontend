@@ -236,11 +236,14 @@ const ObjectsListFieldMenu = () => {
 
 // FieldItem creating component for /objects/list page
 const ObjectsFieldItem = memo(({ id }) => {
-    const textSelector = useMemo(() => state => state.objects[id] ? state.objects[id].object_name : "?", [id]);
-    const isCheckedSelector = useMemo(() => state => state.objectsUI.selectedObjectIDs.includes(id), [id]);
-    const link = useMemo(() => `/objects/view/${id}`, [id]);
-    return <FieldItem id={id} textSelector={textSelector} link={link} 
-    isCheckedSelector={isCheckedSelector} onChange={toggleObjectSelection} />;
+    const dispatch = useDispatch();
+
+    const text = useSelector(state => state.objects[id] ? state.objects[id].object_name : "?");
+    const URL = `/objects/view/${id}`;
+    const onChange = () => dispatch(toggleObjectSelection(id));
+    const isChecked = useSelector(state => state.objectsUI.selectedObjectIDs.includes(id));
+    
+    return <FieldItem text={text} URL={URL} onChange={onChange} isChecked={isChecked} />;
 });
 
 
@@ -268,6 +271,7 @@ const TagsFilter = () => {
         </InlineItemListBlock>
     )
 }
+
 
 // Objects tags
 const CommonCurrentTagItem = memo(({ id }) => {

@@ -384,7 +384,7 @@ describe("Side menu", () => {
 
         // Select composite object
         const compositeObjectName = store.getState().editedObjects[1].object_name;
-        fireEvent.click(getByText(container, compositeObjectName).parentNode.querySelector(".field-item-checkbox"));
+        fireEvent.click(getByText(container, compositeObjectName).parentNode.parentNode.querySelector(".field-item-checkbox"));
         await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
 
         // Delete composite object with subobjects
@@ -428,7 +428,7 @@ describe("Side menu", () => {
 
         // Select composite object
         const compositeObjectName = store.getState().editedObjects[1].object_name;
-        fireEvent.click(getByText(container, compositeObjectName).parentNode.querySelector(".field-item-checkbox"));
+        fireEvent.click(getByText(container, compositeObjectName).parentNode.parentNode.querySelector(".field-item-checkbox"));
         await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
 
         // Delete composite object with subobjects

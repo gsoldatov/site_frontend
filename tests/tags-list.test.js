@@ -1,8 +1,9 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from "@testing-library/dom";
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText, queryByTitle } from "@testing-library/dom";
 
 import { getMockedPageTagIDs } from "./_mocks/mock-fetch-handlers-tags";
 import { getSideMenuItem, getSideMenuDialogControls } from "./_util/ui-common";
@@ -32,6 +33,7 @@ beforeEach(() => {
 });
 
 
+
 describe("Page load, tag link and pagination", () => {
     test("Load page with a fetch error", async () => {
         setFetchFail(true);
@@ -59,20 +61,24 @@ describe("Page load, tag link and pagination", () => {
 
 
     test("Load a page without pagination", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
-        store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
-        
-        // Route component is required for matching (getting :id part of the URL in the Tag component)
-        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
-        });
+        for (let addAdminToken of [true, false]) {
+            let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false, addAdminToken });
+            store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
+            
+            // Route component is required for matching (getting :id part of the URL in the Tag component)
+            let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
+                route: "/tags/list",
+                store: store
+            });
 
-        // Wait for the tags to be loaded
-        await waitFor(() => getByText(container, "tag #1"));
+            // Wait for the tags to be loaded
+            await waitFor(() => getByText(container, "tag #1"));
 
-        // Check if pagination is not rendered
-        expect(container.querySelector(".field-pagination")).toBeNull();
+            // Check if pagination is not rendered
+            expect(container.querySelector(".field-pagination")).toBeNull();
+
+            ReactDOM.unmountComponentAtNode(container);
+        }
     });
 
 
@@ -96,14 +102,44 @@ describe("Page load, tag link and pagination", () => {
     });
 
 
+    test("Tag item checkbox", async () => {
+        for (let addAdminToken of [true, false]) {
+            let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false, addAdminToken });
+            store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
+            
+            // Route component is required for matching (getting :id part of the URL in the Tag component)
+            let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
+                route: "/tags/list", store
+            });
+
+            // Wait for the tags to be loaded
+            await waitFor(() => getByText(container, "tag #1"));            
+            const item = getByText(container, "tag #1").parentNode.parentNode;
+
+            // Check if a checkbox is rendered for admin
+            if (addAdminToken) {
+                const checkbox = item.querySelector("input");
+                expect(checkbox).toBeTruthy();
+                fireEvent.click(checkbox);
+
+                const selectedTagsContainer = getByText(container, "Selected Tags").parentNode;
+                getByText(selectedTagsContainer, "tag #1");
+                
+            // Check if a checkbox is not rendered when logged out
+            } else expect(item.querySelector("input")).toBeFalsy();
+
+            ReactDOM.unmountComponentAtNode(container);
+        }
+    });
+
+
     test("Load page 1 of 5 and click on page 5", async () => {
         let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 20}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
+            route: "/tags/list", store
         });
 
         // Check if no pagination is rendered during fetch
@@ -142,8 +178,7 @@ describe("Page load, tag link and pagination", () => {
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
+            route: "/tags/list", store
         });
 
         // Wait for the tags to load
@@ -238,8 +273,7 @@ describe("Side menu", () => {
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store
+            route: "/tags/list", store
         });
 
         // Wait for the tags to be loaded
@@ -256,8 +290,7 @@ describe("Side menu", () => {
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
+            route: "/tags/list", store
         });
 
         let addTagButton = getSideMenuItem(container, "Add a New Tag");
@@ -283,8 +316,7 @@ describe("Side menu", () => {
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container, history } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
+            route: "/tags/list", store
         });
 
         // Wait for the tags to be loaded
@@ -303,8 +335,7 @@ describe("Side menu", () => {
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container, history } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
+            route: "/tags/list", store
         });
 
         // Wait for the tags to be loaded
@@ -342,8 +373,7 @@ describe("Side menu", () => {
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
+            route: "/tags/list", store
         });
 
         // Wait for the tags to be loaded
@@ -392,8 +422,7 @@ describe("Field menu", () => {
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
+            route: "/tags/list", store
         });
 
         // Wait for the tags to be loaded
@@ -422,8 +451,7 @@ describe("Field menu", () => {
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
+            route: "/tags/list", store
         });
 
         // Wait for the tags to be loaded
@@ -461,8 +489,7 @@ describe("Field menu", () => {
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
-            route: "/tags/list",
-            store: store
+            route: "/tags/list", store
         });
 
         // Wait for the tags to be loaded
@@ -471,7 +498,6 @@ describe("Field menu", () => {
         // Filter with matching tags and check if they are correctly displayed
         // let tagFilterInput = container.querySelector(".field-menu-filter").querySelector("input");
         let tagFilterInput = getByPlaceholderText(container, "Filter tags");
-        expect(tagFilterInput).toBeTruthy();
         fireEvent.change(tagFilterInput, { target: { value: "some text" } });
         await waitForFetch(store);
         checkTagsDisplay(store, container);
@@ -480,7 +506,35 @@ describe("Field menu", () => {
         fireEvent.change(tagFilterInput, { target: { value: "no match" } });
         await waitFor(() => getByText(container, "No tags found.", { exact: false }));
     });
+
+
+    test("Field menu elements when not logged in", async () => {
+        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false, addAdminToken: false });
+        store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
+        
+        // Route component is required for matching (getting :id part of the URL in the Tag component)
+        let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
+            route: "/tags/list", store
+        });
+
+        // Wait for the tags to be loaded
+        await waitFor(() => getByText(container, "tag #1"));
+
+        // Select & deselect buttons are not rendered
+        expect(queryByTitle(container, "Select all tags on page")).toBeFalsy();
+        expect(queryByTitle(container, "Deselect all tags")).toBeFalsy();
+
+        // Sort buttons are rendered
+        getByTitle(container, "Sort by tag name");
+        getByTitle(container, "Sort by modify time");
+        getByTitle(container, "Sort in ascending order");
+        getByTitle(container, "Sort in descending order");
+
+        // Tag filter is rendered
+        getByPlaceholderText(container, "Filter tags");
+    });
 });
+
 
 async function waitForFetch(store) {
     // wait to fetch to start and end

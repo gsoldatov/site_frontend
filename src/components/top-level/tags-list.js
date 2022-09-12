@@ -105,14 +105,17 @@ const TagsFieldMenu = () => {
     const dispatch = useDispatch();
 
     // Common props
+    const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === enumUserLevels.admin);
     const isDisabled = useSelector(state => isFetchingTags(state));
     
     // Select all tags button
     const currentPageTagIDs = useSelector(state => state.tagsUI.paginationInfo.currentPageTagIDs);
     const selectAllOnClick = useMemo(() => () => dispatch(selectTags(currentPageTagIDs)), [currentPageTagIDs]);
+    const selectAllButton = isLoggedInAsAdmin && <FieldMenuButton icon="check" title="Select all tags on page" onClick={selectAllOnClick} isDisabled={isDisabled} />;
 
     // Deselect all tags button
     const deselectAllOnClick = useMemo(() => () => dispatch(clearSelectedTags()), []);
+    const deselectAllButton = isLoggedInAsAdmin && <FieldMenuButton icon="cancel" title="Deselect all tags" onClick={deselectAllOnClick} isDisabled={isDisabled} />
 
     // Sort asc button
     const sortAscOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortOrder: "asc" })), []);
@@ -138,8 +141,8 @@ const TagsFieldMenu = () => {
     return (
         <FieldMenu>
             <FieldMenuGroup isButtonGroup>
-                <FieldMenuButton icon="check" title="Select all tags on page" onClick={selectAllOnClick} isDisabled={isDisabled} />
-                <FieldMenuButton icon="cancel" title="Deselect all tags" onClick={deselectAllOnClick} isDisabled={isDisabled} />
+                {selectAllButton}
+                {deselectAllButton}
                 <FieldMenuButton icon="sort content descending" title="Sort in ascending order" onClick={sortAscOnClick} 
                     isDisabled={isDisabled} isActive={sortAscIsActive} />
                 <FieldMenuButton icon="sort content ascending" title="Sort in descending order" onClick={sortDescOnClick} 
@@ -167,9 +170,13 @@ const paginationInfoSelector = state => state.tagsUI.paginationInfo;
 
 // FieldItem creating component for /tags/list page
 const TagsFieldItem = memo(({ id }) => {
-    const textSelector = useMemo(() => state => state.tags[id] ? state.tags[id].tag_name : "?", [id]);
-    const isCheckedSelector = useMemo(() => state => state.tagsUI.selectedTagIDs.includes(id), [id]);
-    const link = useMemo(() => `/tags/view?tagIDs=${id}`, [id]);
-    return <FieldItem id={id} textSelector={textSelector} link={link} 
-    isCheckedSelector={isCheckedSelector} onChange={toggleTagSelection} />;
+    const dispatch = useDispatch();
+    const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === enumUserLevels.admin);
+
+    const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
+    const URL = `/tags/view?tagIDs=${id}`;
+    const onChange = isLoggedInAsAdmin ? () => dispatch(toggleTagSelection(id)) : undefined;
+    const isChecked = useSelector(state => state.tagsUI.selectedTagIDs.includes(id));
+    
+    return <FieldItem text={text} URL={URL} onChange={onChange} isChecked={isChecked} />;
 });

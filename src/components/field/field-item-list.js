@@ -70,18 +70,20 @@ export const FieldItemList = ({ header, ItemComponent, itemIDsSelector, isExpand
 
 
 /**
- * A single field item without specific selectors and parameters, which should be provided by a (if possible, memoized) wrapper component.
+ * A single field item with provided.
+ * Displays provided `text` as a link, if `URL` is provided.
+ * If `onChange` prop is provided, also displays a checkbox and uses and it as a change callback.
+ * If checkbox is rendered, `isChecked` should be provided as well.
  */
-export const FieldItem = ({id, textSelector, link, isCheckedSelector, onChange }) => {
-    const dispatch = useDispatch();
-    const isChecked = useSelector(isCheckedSelector);
-    const text = useSelector(textSelector);
-    const _onChange = useRef(() => dispatch(onChange(id))).current;
+ export const FieldItem = ({ text, URL, onChange, isChecked }) => {
+    const input = onChange && <input type="checkbox" className="field-item-checkbox" checked={isChecked} onChange={onChange} />;
+    let _text = <span className="field-item-text">{text}</span>;
+    if (URL) _text = <Link className="field-item-link" to={URL}>{_text}</Link>;
     
     return (
         <div className="field-item">
-            <input type="checkbox" className="field-item-checkbox" checked={isChecked} onChange={_onChange} />
-            <Link className="field-item-link" to={link}>{text}</Link>
+            {input}
+            {_text}
         </div>
     );
 };
