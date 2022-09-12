@@ -128,6 +128,16 @@ export const editObjectOnLoadFetch = object_id => {
         // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
         if (setEditedObjects) dispatch(resetEditedObjects({}));  // object_id is taken from state.objectUI.currentObjectID (which was set by loadEditObjectPage)
 
+        // Get non-cached added existing tag information
+        const addedExistingTagIDs = getState().editedObjects[object_id].addedTags.filter(tag => typeof(tag) === "number");
+        let result = await dispatch(getNonCachedTags(addedExistingTagIDs));
+        const responseErrorType = getResponseErrorType(result);
+        if (responseErrorType > enumResponseErrorType.none) {
+            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            dispatch(setObjectOnLoadFetchState(false, errorMessage));
+            return;
+        }
+
         // Run composite object's subobject data load without awaiting it
         dispatch(loadCompositeSubobjectsFetch(object_id));
 
