@@ -1,6 +1,7 @@
 import { deepCopy } from "../../util/copy";
 
 import { getDefaultAuthState } from "./auth";
+import { getDefaultCurrentTagState } from "./tags";
 
 
 /**
@@ -23,13 +24,7 @@ const initialState = {
 
     // /tags/edit/:id page UI controllers
     tagUI: {
-        currentTag: {       // current state of the tag being added/edited
-            tag_id: 0,
-            tag_name: "",
-            tag_description: "",
-            created_at: "",
-            modified_at: ""
-        },
+        currentTag: getDefaultCurrentTagState(),       // current state of the tag being added/edited
 
         tagOnLoadFetch: {
             isFetching: false,

@@ -7,6 +7,7 @@ import { loadEditTagPage, setTagOnLoadFetchState, setTagOnSaveFetchState, setSho
 import { isFetchingTag } from "../store/state-util/ui-tags-edit";
 
 import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { addedTagAttributes, updatedTagAttributes } from "../store/state-templates/tags";
 
 
 /**
@@ -20,8 +21,9 @@ export const addTagOnSaveFetch = () => {
 
         // Run fetch & add tag
         dispatch(setTagOnSaveFetchState(true, ""));
-        const tagAttributes = { tag_name: state.tagUI.currentTag.tag_name, tag_description: state.tagUI.currentTag.tag_description };
-        const result = await dispatch(addTagFetch(tagAttributes));
+        const tag = {};
+        addedTagAttributes.forEach(attr => { tag[attr] = state.tagUI.currentTag[attr]; });
+        const result = await dispatch(addTagFetch(tag));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
@@ -91,9 +93,9 @@ export const editTagOnSaveFetch = () => {
         // Run fetch & update tag
         dispatch(setTagOnSaveFetchState(true, ""));
         
-        const { tag_id, tag_name, tag_description } = state.tagUI.currentTag;
-        const tagAttributes = { tag_id, tag_name, tag_description };
-        const result = await dispatch(updateTagFetch(tagAttributes));
+        const tag = {};
+        updatedTagAttributes.forEach(attr => { tag[attr] = state.tagUI.currentTag[attr]; });
+        const result = await dispatch(updateTagFetch(tag));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);

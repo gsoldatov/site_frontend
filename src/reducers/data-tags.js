@@ -1,14 +1,14 @@
 import { ADD_TAGS, DELETE_TAGS, SET_OBJECTS_TAGS } from "../actions/data-tags";
+import { tagAttributes } from "../store/state-templates/tags";
 import { deepCopy } from "../util/copy";
 
 
-const _tagAttributes = ["tag_id", "created_at", "modified_at", "tag_name", "tag_description"];
 function addTags(state, action) {
     let newTags = {}, nameIDMap = {};
     action.tags.forEach(tag => {
         const tag_id = tag.tag_id;
         newTags[tag_id] = {};
-        _tagAttributes.forEach(attr => newTags[tag_id][attr] = tag[attr]);
+        tagAttributes.forEach(attr => newTags[tag_id][attr] = tag[attr]);
         nameIDMap[tag.tag_name.toLowerCase()] = tag.tag_id;
     });
 
