@@ -28,39 +28,3 @@ div.ui.selection.dropdown.object-type-dropdown-switch > .visible.menu.transition
 div.ui.selection.dropdown.object-type-dropdown-switch > .visible.menu.transition > .item > i {
     margin-top: -0.5em; /* fix icon positioning */
 }
-
-
-/** Display tab controls **/
-.objects-edit-display-control-container:not(:last-child) {
-    margin-bottom: 1em;
-}
-
-/* Display tab controls, checkbox */
-div.ui.checkbox.objects-edit-display-checkbox-container {
-    display: block;
-}
-
-/* Display tab controls, dropdown */
-.objects-edit-display-dropdown-container {
-    display: flex;
-    align-items: center;
-}
-
-.objects-edit-display-label {
-    margin-right: 0.5em;
-    
-    /* Display text in a single line don't overflow */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    /* Disable text selection */
-    cursor: default;
-    user-select: none;
-}
-
-/* Display tab controls, timestamp */
-.objects-edit-timestamp-container {
-    display: flex;
-    align-items: center;
-}

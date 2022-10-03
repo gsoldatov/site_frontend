@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Datetime from "react-datetime";
-import "react-datetime/css/react-datetime.css";
+import { DisplayControlTimestampSelector } from "../display-controls/display-control-timestamp";
 
 import { setEditedObject } from "../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-objects-edit";
@@ -14,10 +13,7 @@ import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-o
 export const FeedTimestampSelector = ({ objectID }) => {
     const dispatch = useDispatch()
 
-    // Get current feed_timestamp (ISO-formatted or empty string)
-    const strFeedTimestamp = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).feed_timestamp);
-    let feedTimestamp = new Date(strFeedTimestamp);
-    if (isNaN(feedTimestamp.getTime())) feedTimestamp = undefined;
+    const feedTimestamp = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).feed_timestamp);
 
     // onChange handler
     const onChange = useMemo(() => e => {
@@ -25,20 +21,7 @@ export const FeedTimestampSelector = ({ objectID }) => {
         dispatch(setEditedObject({ feed_timestamp: newFeedTimestamp }, objectID))
     }, [objectID]);
 
-    // Custom render input (required to correct display)
-    const renderInput = props => <input {...props} value={(feedTimestamp) ? props.value : ""} />;
-
-    const labelText = "Feed Timestamp";
-
     return (
-        <div className="objects-edit-display-control-container">
-            <div className="objects-edit-timestamp-container">
-                <div className="objects-edit-display-label" title={labelText}>
-                    {labelText}
-                </div>
-                <Datetime value={feedTimestamp} onChange={onChange}
-                    renderInput={renderInput} />
-            </div>
-        </div>
+        <DisplayControlTimestampSelector stringTimestamp={feedTimestamp} onChange={onChange} label="Feed Timestamp" />
     );
 };

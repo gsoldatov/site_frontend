@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
-import { Checkbox } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
+
+import { DisplayControlCheckbox } from "../display-controls/display-control-checkbox";
 
 import { setEditedObject } from "../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-objects-edit";
@@ -15,8 +16,6 @@ export const DisplayInFeedSwitch = ({ objectID }) => {
     const onClick = useMemo(() => () => dispatch(setEditedObject({ display_in_feed: !displayInFeed }, objectID)), [objectID, displayInFeed]);
 
     return (
-        <div className="objects-edit-display-control-container">
-            <Checkbox className="objects-edit-display-checkbox-container" checked={displayInFeed} onClick={onClick} label="Display in Feed" />
-        </div>
+        <DisplayControlCheckbox checked={displayInFeed} onClick={onClick} label="Display in Feed" />
     );
 };

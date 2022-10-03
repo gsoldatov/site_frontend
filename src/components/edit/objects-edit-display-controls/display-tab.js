@@ -8,6 +8,8 @@ import { FeedTimestampSelector } from "./feed-timestamp-selector";
 import { CompositeDisplayModeSwitch } from "./composite-display-mode-switch";
 import { NumerateChaptersSwitch } from "./numerate-chapters";
 
+import StyleDisplayControls from "../../../styles/display-controls.css"; // TODO delete
+
 
 /**
  * Root display tab component both for objects' and subobjects' display tabs.

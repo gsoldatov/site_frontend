@@ -1,0 +1,38 @@
+/**************************************
+  Object/tag display control styles.
+**************************************/
+
+/* Control container */
+.display-control-container:not(:last-child) {
+    margin-bottom: 1em;
+}
+
+/* Checkbox control */
+div.ui.checkbox.display-control-checkbox-container {
+    display: block;
+}
+
+/* Dropdown control */
+.display-control-dropdown-container {
+    display: flex;
+    align-items: center;
+}
+
+.display-control-label {
+    margin-right: 0.5em;
+    
+    /* Display text in a single line don't overflow */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    /* Disable text selection */
+    cursor: default;
+    user-select: none;
+}
+
+/* Timestamp control */
+.display-control-timestamp-container {
+    display: flex;
+    align-items: center;
+}

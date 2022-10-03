@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
-import { Checkbox, Dropdown } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
+
+import { DisplayControlDropdown } from "../display-controls/display-control-dropdown";
 
 import { setEditedObject } from "../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-objects-edit";
@@ -8,6 +9,7 @@ import { enumCompositeObjectDisplayModes } from "../../../util/enum-composite-ob
 
 
 const showDescriptionDropdownOptions = Object.values(enumCompositeObjectDisplayModes).map((t, k) => ({ key: k, text: t.name, value: t.value }));
+
 
 /**
  * Component for switching `display_mode` setting of a composite object.
@@ -24,21 +26,8 @@ export const CompositeDisplayModeSwitch = ({ objectID }) => {
         dispatch(setEditedObject({ composite: { display_mode: data.value }}, objectID));
     }, [objectID]);
 
-    const labelText = "Composite Object Display Mode";
-
     return isComposite && (
-        <div className="objects-edit-display-control-container">
-            <div className="objects-edit-display-dropdown-container">
-                <div className="objects-edit-display-label" title={labelText}>
-                    {labelText}
-                </div>
-                <Dropdown className="objects-edit-display-dropdown"
-                    selection
-                    value={displayMode}
-                    options={showDescriptionDropdownOptions}
-                    onChange={onChange}
-                />
-            </div>
-        </div>
+        <DisplayControlDropdown options={showDescriptionDropdownOptions} value={displayMode} 
+            onChange={onChange} label="Composite Object Display Mode" />
     );
 };
