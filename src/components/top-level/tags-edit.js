@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 
 import { LoadIndicatorAndError, SaveError, TimeStamps, NameInput, DescriptionEditor } from "../edit/common/edit-page";
 import Layout from "../common/layout";
+import { TagsEditDisplayControls } from "../edit/tags-edit-display-controls/tags-edit-display-controls";
 
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../store/state-util/ui-tags-edit";
 import { loadNewTagPage, setCurrentTag, setShowDeleteDialogTag } from "../../actions/tags-edit";
@@ -133,6 +134,7 @@ const Tag = ({ header, sideMenuItems, onLoad }) => {
             <TagTimeStamps />
             <TagSaveError />
             <TagInput />
+            <TagsEditDisplayControls />
         </div>
     );
 
