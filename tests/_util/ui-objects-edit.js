@@ -143,7 +143,7 @@ export const getObjectDisplayControls = container => {
 
     const displayModeTooltip = queryByText(displayTabContainer, "Composite Object Display Mode");
     if (displayModeTooltip) {
-        const switchContainer = displayModeTooltip.parentNode.querySelector(".ui.dropdown.objects-edit-display-dropdown");
+        const switchContainer = displayModeTooltip.parentNode.querySelector(".ui.dropdown");
         result.displayMode = {
             selected: switchContainer.querySelector("div.divider"),
             options: {
@@ -162,7 +162,7 @@ export const getObjectDisplayControls = container => {
     // Subobject card only
     const showDescriptionCompositeTooltip = queryByText(displayTabContainer, "Show Description in Parent Object");
     if (showDescriptionCompositeTooltip) {
-        const switchContainer = showDescriptionCompositeTooltip.parentNode.querySelector(".ui.dropdown.objects-edit-display-dropdown");
+        const switchContainer = showDescriptionCompositeTooltip.parentNode.querySelector(".ui.dropdown");
         result.showDescriptionComposite = {
             selected: switchContainer.querySelector("div.divider"),
             options: {
@@ -176,7 +176,7 @@ export const getObjectDisplayControls = container => {
 
     const showDescriptionAsLinkCompositeTooltip = queryByText(displayTabContainer, "Show Description as Link in Parent Object");
     if (showDescriptionAsLinkCompositeTooltip) {
-        const switchContainer = showDescriptionAsLinkCompositeTooltip.parentNode.querySelector(".ui.dropdown.objects-edit-display-dropdown");
+        const switchContainer = showDescriptionAsLinkCompositeTooltip.parentNode.querySelector(".ui.dropdown");
         result.showDescriptionAsLinkComposite = {
             selected: switchContainer.querySelector("div.divider"),
             options: {
