@@ -2,16 +2,17 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
+import { getByText, waitFor } from "@testing-library/dom";
 
-import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
+import { getTagsViewElements } from "../_util/ui-tags-view";
 import { renderWithWrappers } from "../_util/render";
 import { createTestStore } from "../_util/create-test-store";
-import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
-import { getTagsViewElements } from "../_util/ui-tags-view";
+import { setMarkdownRawText, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
+import { getTag } from "../_mocks/data-tags";
 
 import { App } from "../../src/components/top-level/app";
-import { addTags, deleteTags } from "../../src/actions/data-tags";
+import { addTags } from "../../src/actions/data-tags";
+import { getTagsEditElements } from "../_util/ui-tags-edit";
 
 
 /*
@@ -29,313 +30,352 @@ beforeEach(() => {
 });
 
 
-test("Load a non-existing tag + check buttons", async () => {
-    let { container } = renderWithWrappers(<App />, {
-        route: "/tags/edit/9999"
-    });
-
-    // Check if error message if displayed
-    await waitFor(() => getByText(container, "not found", { exact: false }));
-
-    // Check if save and delete buttons can't be clicked if tag fetch failed
-    let saveButton = getSideMenuItem(container, "Save");
-    let deleteButton = getSideMenuItem(container, "Delete");
-    expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
-    // expect(saveButton.onclick).toBeNull();  
-    expect(deleteButton.classList.contains("disabled")).toBeTruthy();
-    // expect(deleteButton.onclick).toBeNull();
-});
-
-
-test("Load tags with invalid IDs", async () => {
-    for (let tagID of ["0", "str"]) {
-        // Route component is required for matching (getting :id part of the URL in the component)
+describe("Page load & render", () => {
+    test("Load a non-existing tag + check buttons", async () => {
         let { container } = renderWithWrappers(<App />, {
-            route: `/tags/edit/${tagID}`
+            route: "/tags/edit/9999"
         });
     
         // Check if error message if displayed
-        await waitFor(() => getByText(container, "not found", { exact: false }));
+        await waitFor(() => {
+            const elements = getTagsEditElements(container);
+            expect(elements.placeholders.fetchError).toBeTruthy();
+            getByText(elements.placeholders.fetchError, "not found", { exact: false });
 
-        ReactDOM.unmountComponentAtNode(container);
-    }
-});
-
-
-test("Load a tag with fetch error", async () => {
-    setFetchFail(true);
-
-    let { container } = renderWithWrappers(<App />, {
-        route: "/tags/edit/1"
+            // Check if side menu buttons are disabled
+            expect(elements.sideMenu.saveButton.classList.contains("disabled")).toBeTruthy();
+            expect(elements.sideMenu.deleteButton.classList.contains("disabled")).toBeTruthy();
+        });
     });
-
-    // Check if error message if displayed
-    await waitFor(() => getByText(container, "Failed to fetch data.", { exact: false }));
-});
-
-
-test("Load a tag from state", async () => {
-    let store = createTestStore({ enableDebugLogging: false });
-    let tag = { tag_id: 1, tag_name: "tag name", tag_description: "tag description", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
-    store.dispatch(addTags([tag]));
-    let { container } = renderWithWrappers(<App />, {
-        route: "/tags/edit/1",
-        store: store
-    });
-
-    // Check if tag information is displayed on the page
-    await waitFor(() => getByText(container, "Tag Information"));
-    let tagNameInput = getByPlaceholderText(container, "Tag name");
-    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
-    expect(tagNameInput.value).toEqual("tag name");
-    expect(tagDescriptionInput.value).toEqual("tag description");
-    // getByText(container, tag.created_at);
-    // getByText(container, tag.modified_at);
-    getByText(container, "Created at:");
-    getByText(container, "Modified at:");
-});
-
-
-test("Load a tag from backend", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/edit/1"
-    });
-
-    // Check if tag information is displayed on the page
-    await waitFor(() => getByText(container, "Tag Information"));
-    let tag = store.getState().tags[1];
-    let tagNameInput = getByPlaceholderText(container, "Tag name");
-    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
-    expect(tagNameInput.value).toEqual(tag.tag_name);
-    expect(tagDescriptionInput.value).toEqual(tag.tag_description);
-    // getByText(container, tag.created_at);
-    // getByText(container, tag.modified_at);
-    getByText(container, "Created at:");
-    getByText(container, "Modified at:");
-});
-
-
-test("Check 'Add Tag' button", async () => {
-    let { container, history } = renderWithWrappers(<App />, 
-        { route: "/tags/edit/1" }
-    );
-
-    // Check if tag information is displayed on the page
-    await waitFor(() => getByText(container, "Tag Information"));
-
-    // Click add tag button
-    let addTagButton = getSideMenuItem(container, "Add a New Tag");
-    fireEvent.click(addTagButton);
-    expect(history.entries[history.length - 1].pathname).toBe("/tags/edit/new");
-});
-
-
-test("Check 'View Tag' button", async () => {
-    let { container, history } = renderWithWrappers(<App />, 
-        { route: "/tags/edit/1" }
-    );
-
-    // Check if tag information is displayed on the page
-    await waitFor(() => getByText(container, "Tag Information"));
-
-    // Click view tag button
-    fireEvent.click(getSideMenuItem(container, "View Tag"));
-    expect(history.entries[history.length - 1].pathname).toBe("/tags/view");
-    expect(history.entries[history.length - 1].search).toBe("?tagIDs=1");
-    await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
-});
-
-
-test("Tag description editor", async () => {
-    let { container, store } = renderWithWrappers(<App />, 
-        { route: "/tags/edit/1" }
-    );
-
-    // Check if tag information is displayed on the page
-    await waitFor(() => getByText(container, "Tag Information"));
-
-    // Check if `both` mode is selected
-    let markdownEditorElements = getMarkdownEditorElements({ container });
-    expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
     
-    // Set description and check if it was rendered
-    setMarkdownRawText(markdownEditorElements.editMarkdownInput, "# Some text");
-    await waitForMarkdownHeaderRender({ editorContainer: markdownEditorElements.editorContainer, text: "Some text" });
-    expect(store.getState().tagUI.currentTag.tag_description).toBe("# Some text");
+    
+    test("Load tags with invalid IDs", async () => {
+        for (let tagID of ["0", "str"]) {
+            // Route component is required for matching (getting :id part of the URL in the component)
+            let { container } = renderWithWrappers(<App />, {
+                route: `/tags/edit/${tagID}`
+            });
+        
+            // Check if error message if displayed
+            await waitFor(() => {
+                const elements = getTagsEditElements(container);
+                expect(elements.placeholders.fetchError).toBeTruthy();
+                getByText(elements.placeholders.fetchError, "not found", { exact: false });
+            });
+    
+            ReactDOM.unmountComponentAtNode(container);
+        }
+    });
+    
+    
+    test("Load a tag with fetch error", async () => {
+        setFetchFail(true);
+    
+        let { container } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1"
+        });
+    
+        // Check if error message if displayed
+        await waitFor(() => {
+            const elements = getTagsEditElements(container);
+            expect(elements.placeholders.fetchError).toBeTruthy();
+            getByText(elements.placeholders.fetchError, "Failed to fetch data.", { exact: false });
+        });
+    });
+    
+    
+    test("Load a tag from state", async () => {
+        const store = createTestStore({ enableDebugLogging: false });
+        const tag = getTag({ tag_id: 1, is_published: false });
+        store.dispatch(addTags([tag]));
+        let { container } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1", store
+        });
+    
+        // Check if tag information is displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
 
-    // Click and check `view` mode
-    fireEvent.click(markdownEditorElements.displayModeMenu.viewModeButton);
-    markdownEditorElements = getMarkdownEditorElements({ container });
-    expect(markdownEditorElements.displayModeMenu.viewModeButton.classList.contains("active")).toBeTruthy();
-    expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
-    expect(markdownEditorElements.editMarkdownInput).toBeFalsy();
+        const elements = getTagsEditElements(container);
+        expect(elements.tagNameInput.value).toEqual(tag.tag_name);
+        expect(elements.tagDescription.editMarkdownInput.value).toEqual(tag.tag_description);
+        expect(elements.publishTagCheckbox.checked).toEqual(tag.is_published);
 
-    // Click and check `edit` mode
-    fireEvent.click(markdownEditorElements.displayModeMenu.editModeButton);
-    markdownEditorElements = getMarkdownEditorElements({ container });
-    expect(markdownEditorElements.displayModeMenu.editModeButton.classList.contains("active")).toBeTruthy();
-    expect(markdownEditorElements.renderedMarkdown).toBeFalsy();
-    expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
+        expect(elements.createdAt).toBeTruthy();
+        expect(elements.modifiedAt).toBeTruthy();
+    });
+    
+    
+    test("Load a tag from backend", async () => {
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1"
+        });
+    
+        // Check if tag information is displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
 
-    // Click and check `both` mode
-    fireEvent.click(markdownEditorElements.displayModeMenu.bothModeButton);
-    markdownEditorElements = getMarkdownEditorElements({ container });
-    expect(markdownEditorElements.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
-    expect(markdownEditorElements.renderedMarkdown).toBeTruthy();
-    expect(markdownEditorElements.editMarkdownInput).toBeTruthy();
+        const elements = getTagsEditElements(container);
+        const tag = store.getState().tags[1];
+
+        expect(elements.tagNameInput.value).toEqual(tag.tag_name);
+        expect(elements.tagDescription.editMarkdownInput.value).toEqual(tag.tag_description);
+        expect(elements.publishTagCheckbox.checked).toEqual(tag.is_published);
+
+        expect(elements.createdAt).toBeTruthy();
+        expect(elements.modifiedAt).toBeTruthy();
+    });
 });
 
 
-test("Modify a tag and click cancel", async () => {
-    let store = createTestStore({ enableDebugLogging: false });
-    let tag = { tag_id: 1, tag_name: "tag name", tag_description: "tag description", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() };
-    store.dispatch(addTags([tag]));
-    let { container, history } = renderWithWrappers(<App />, {
-        route: "/tags/edit/1",
-        store: store
+describe("Side menu ", () => {
+    test("'Add Tag' button", async () => {
+        let { container, history } = renderWithWrappers(<App />, 
+            { route: "/tags/edit/1" }
+        );
+
+        // Check if tag information is displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
+
+        // Click button
+        fireEvent.click(getTagsEditElements(container).sideMenu.addNewTagButton);
+        expect(history.entries[history.length - 1].pathname).toBe("/tags/edit/new");
     });
 
-    // Wait for tag information to be displayed on the page
-    await waitFor(() => getByText(container, "Tag Information"));
 
-    // Check if changing tag attributes modifies the currentTag in the state
-    let tagNameInput = getByPlaceholderText(container, "Tag name");
-    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
-    fireEvent.change(tagNameInput, { target: { value: "modified tag name" } });
-    await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("modified tag name"));
-    fireEvent.change(tagDescriptionInput, { target: { value: "modified tag description" } });
-    await waitFor(() => expect(store.getState().tagUI.currentTag.tag_description).toBe("modified tag description"));
+    test("'View Tag' button", async () => {
+        let { container, history } = renderWithWrappers(<App />, 
+            { route: "/tags/edit/1" }
+        );
+    
+        // Check if tag information is displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
+        
+        // Click button
+        fireEvent.click(getTagsEditElements(container).sideMenu.viewTagButton);
+        expect(history.entries[history.length - 1].pathname).toBe("/tags/view");
+        expect(history.entries[history.length - 1].search).toBe("?tagIDs=1");
+        await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
+    });
 
-    // Check if cancel button redirects to /tags page and does not modify tag values
-    let cancelButton = getSideMenuItem(container, "Cancel");
-    fireEvent.click(cancelButton);
-    expect(history.entries[history.length - 1].pathname).toBe("/tags/list");
-    for (let attr of ["tag_id", "tag_name", "tag_description", "created_at", "modified_at"]) {
-        expect(store.getState().tags[tag["tag_id"]][attr]).toEqual(tag[attr]);
-    }
+
+    test("'Cancel' button", async () => {
+        const store = createTestStore({ enableDebugLogging: false });
+        const tag = getTag({ tag_id: 1 });
+        store.dispatch(addTags([tag]));
+        let { container, history } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1", store
+        });
+
+        // Wait for tag information to be displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
+
+        // Modify tag name & description
+        const elements = getTagsEditElements(container);
+        fireEvent.change(elements.tagNameInput, { target: { value: "modified tag name" } });
+        setMarkdownRawText(elements.tagDescription.editMarkdownInput, "modified tag description");
+
+        // Click button and check redirect & state
+        fireEvent.click(elements.sideMenu.cancelButton);
+        expect(history.entries[history.length - 1].pathname).toBe("/tags/list");
+        for (let attr of Object.keys(tag)) expect(store.getState().tags[tag.tag_id][attr]).toEqual(tag[attr]);
+    });
+
+
+    test("Delete a tag", async () => {
+        let { container, store, history } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1"
+        });
+
+        // Wait for tag information to be displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
+
+        // Click delete button & cancel deletion
+        fireEvent.click(getTagsEditElements(container).sideMenu.deleteButton);
+        let elements = getTagsEditElements(container);
+        expect(elements.sideMenu.deleteDialogControls.header.title).toEqual("Delete This Tag?");
+        fireEvent.click(elements.sideMenu.deleteDialogControls.buttons["No"]);
+        elements = getTagsEditElements(container);
+        expect(elements.sideMenu.deleteDialogControls).toBeNull();
+
+        // Click delete button & confirm deletion
+        fireEvent.click(getTagsEditElements(container).sideMenu.deleteButton);
+        fireEvent.click(getTagsEditElements(container).sideMenu.deleteDialogControls.buttons["Yes"]);
+        await waitFor(() => expect(store.getState().tags[1]).toBeUndefined());
+        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/list"));
+    });
+
+
+    test("Delete a tag with fetch error", async () => {
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1"
+        });
+
+        // Wait for tag information to be displayed on the page and try to delete the tag
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
+        setFetchFail(true);
+        fireEvent.click(getTagsEditElements(container).sideMenu.deleteButton);
+        fireEvent.click(getTagsEditElements(container).sideMenu.deleteDialogControls.buttons["Yes"]);
+
+        // Check if error message is displayed and tag is not deleted from state
+        await waitFor(() => {
+            const { tagSaveError } = getTagsEditElements(container);
+            getByText(tagSaveError, "Failed to fetch data.");
+        });
+        expect(store.getState().tags[1]).toBeTruthy();
+    });
 });
 
 
-test("Delete a tag", async () => {
-    let { container, store, history } = renderWithWrappers(<App />, {
-        route: "/tags/edit/1"
+describe("Edit & save ", () => {
+    test("Tag description editor", async () => {
+        let { container, store } = renderWithWrappers(<App />, 
+            { route: "/tags/edit/1" }
+        );
+    
+        // Check if tag information is displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
+    
+        // Check if `both` mode is selected
+        let tagDescription = getTagsEditElements(container).tagDescription;
+        expect(tagDescription.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+        
+        // Set description and check if it was rendered
+        setMarkdownRawText(tagDescription.editMarkdownInput, "# Some text");
+        await waitForMarkdownHeaderRender({ editorContainer: tagDescription.editorContainer, text: "Some text" });
+        expect(store.getState().tagUI.currentTag.tag_description).toBe("# Some text");
+    
+        // Click and check `view` mode
+        fireEvent.click(tagDescription.displayModeMenu.viewModeButton);
+        tagDescription = getTagsEditElements(container).tagDescription;
+        expect(tagDescription.displayModeMenu.viewModeButton.classList.contains("active")).toBeTruthy();
+        expect(tagDescription.renderedMarkdown).toBeTruthy();
+        expect(tagDescription.editMarkdownInput).toBeFalsy();
+    
+        // Click and check `edit` mode
+        fireEvent.click(tagDescription.displayModeMenu.editModeButton);
+        tagDescription = getTagsEditElements(container).tagDescription;
+        expect(tagDescription.displayModeMenu.editModeButton.classList.contains("active")).toBeTruthy();
+        expect(tagDescription.renderedMarkdown).toBeFalsy();
+        expect(tagDescription.editMarkdownInput).toBeTruthy();
+    
+        // Click and check `both` mode
+        fireEvent.click(tagDescription.displayModeMenu.bothModeButton);
+        tagDescription = getTagsEditElements(container).tagDescription;
+        expect(tagDescription.displayModeMenu.bothModeButton.classList.contains("active")).toBeTruthy();
+        expect(tagDescription.renderedMarkdown).toBeTruthy();
+        expect(tagDescription.editMarkdownInput).toBeTruthy();
     });
 
-    // Wait for tag information to be displayed on the page
-    await waitFor(() => getByText(container, "Tag Information"));
-    let deleteButton = getSideMenuItem(container, "Delete");
-    fireEvent.click(deleteButton);
 
-    // Check if confirmation dialog has appeared
-    expect(getSideMenuDialogControls(container).header.title).toEqual("Delete This Tag?");
-    fireEvent.click(getSideMenuDialogControls(container).buttons["No"]);
-    expect(getSideMenuDialogControls(container)).toBeNull();
+    test("Save an existing tag", async () => {
+        const store = createTestStore({ enableDebugLogging: false });
+        const tag = getTag({ tag_id: 2, tag_name: "existing tag name" });
+        store.dispatch(addTags([tag]));
+        let { container } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1", store
+        });
 
-    // Check if delete removes the tag and redirects
-    deleteButton = getSideMenuItem(container, "Delete");
-    fireEvent.click(deleteButton);
-    fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
+        // Wait for tag information to be displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
 
-    await waitFor(() => expect(store.getState().tags[1]).toBeUndefined());
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/list"));
-});
+        // Modify tag name to existing tag and try saving
+        const oldTag = {...store.getState().tags[1]};
+        fireEvent.change(getTagsEditElements(container).tagNameInput, { target: { value: "existing tag name" } });
+        fireEvent.click(getTagsEditElements(container).sideMenu.saveButton);
 
-
-test("Delete a tag with fetch error", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/edit/1"
+        // Wait for error message to appear & check if tag state was not updated
+        await waitFor(() => {
+            const { tagSaveError } = getTagsEditElements(container);
+            getByText(tagSaveError, "already exists", { exact: false });
+        });
+        
+        for (let attr of Object.keys(oldTag)) expect(store.getState().tags[oldTag.tag_id][attr]).toEqual(oldTag[attr]);
     });
 
-    // Wait for tag information to be displayed on the page and try to delete the tag
-    await waitFor(() => getByText(container, "Tag Information"));
-    setFetchFail(true);
-    let deleteButton = getSideMenuItem(container, "Delete");
-    fireEvent.click(deleteButton);
-    fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
-    // Check if error message is displayed and tag is not deleted from state
-    await waitFor(() => getByText(container, "Failed to fetch data."));
-    expect(store.getState().tags[1]).toBeTruthy();
-});
+    test("Update a tag with fetch error", async () => {
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1"
+        });
 
+        // Wait for tag information to be displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
 
-test("Save an existing tag", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/edit/1"
+        // Modify tag name and try saving the tag
+        setFetchFail(true);
+        const oldTag = {...store.getState().tags[1]};
+        fireEvent.change(getTagsEditElements(container).tagNameInput, { target: { value: "modified tag name" } });
+        fireEvent.click(getTagsEditElements(container).sideMenu.saveButton);
+
+        // Wait for error message to appear & check if tag state was not updated
+        await waitFor(() => {
+            const { tagSaveError } = getTagsEditElements(container);
+            getByText(tagSaveError, "Failed to fetch data.", { exact: false });
+        });
+        
+        for (let attr of Object.keys(oldTag)) expect(store.getState().tags[oldTag.tag_id][attr]).toEqual(oldTag[attr]);
     });
 
-    // Wait for tag information to be displayed on the page
-    await waitFor(() => getByText(container, "Tag Information"));
-    let saveButton = getSideMenuItem(container, "Save");
-    let tagNameInput = getByPlaceholderText(container, "Tag name");
-    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
-    let oldTag = {...store.getState().tags[1]};
+    
+    test("Update tag's name", async () => {
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1"
+        });
 
-    // Check if existing tag name (in local state) is not saved
-    store.dispatch(addTags([ { tag_id: 2, tag_name: "existing tag name", tag_description: "", created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() } ]));
-    fireEvent.change(tagNameInput, { target: { value: "existing tag name" } });
-    await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("existing tag name"));
-    fireEvent.change(tagDescriptionInput, { target: { value: "modified tag description" } });
-    await waitFor(() => expect(store.getState().tagUI.currentTag.tag_description).toBe("modified tag description"));
-    fireEvent.click(saveButton);
-    await waitFor(() => getByText(container, "already exists", { exact: false }));
-    for (let attr of ["tag_name", "tag_description", "created_at", "modified_at"]) {
-        expect(store.getState().tags[1][attr]).toEqual(oldTag[attr]);
-    }
+        // Wait for tag information to be displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
 
-    // Check if existing tag name (on backend) is not saved
-    store.dispatch(deleteTags([2]));
-    fireEvent.click(saveButton);
-    await waitFor(() => getByText(container, "already exists", { exact: false }));
-    for (let attr of ["tag_name", "tag_description", "created_at", "modified_at"]) {
-        expect(store.getState().tags[1][attr]).toEqual(oldTag[attr]);
-    }
-});
+        // Modify tag name and save the tag
+        fireEvent.change(getTagsEditElements(container).tagNameInput, { target: { value: "modified tag name" } });
+        fireEvent.click(getTagsEditElements(container).sideMenu.saveButton);
 
-
-test("Update a tag", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/edit/1"
+        // Wait for tag state to be updated
+        await waitFor(() => expect(store.getState().tags[1].tag_name).toEqual("modified tag name"));
+        expect(getTagsEditElements(container).placeholders.loading).toBeFalsy();
     });
 
-    // Wait for tag information to be displayed on the page
-    await waitFor(() => getByText(container, "Tag Information"));
-    let saveButton = getSideMenuItem(container, "Save");
-    let tagNameInput = getByPlaceholderText(container, "Tag name");
-    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
 
-    // Modify tag attributes and save
-    fireEvent.change(tagNameInput, { target: { value: "modified tag name" } });
-    await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("modified tag name"));
-    fireEvent.change(tagDescriptionInput, { target: { value: "modified tag description" } });
-    await waitFor(() => expect(store.getState().tagUI.currentTag.tag_description).toBe("modified tag description"));
-    fireEvent.click(saveButton);
-    await waitFor(() => expect(store.getState().tags[1].tag_name).toEqual("modified tag name"));
-    expect(store.getState().tags[1].tag_description).toEqual("modified tag description");
-});
+    test("Update tag's description", async () => {
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1"
+        });
 
+        // Wait for tag information to be displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
 
-test("Update a tag with fetch error", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
-        route: "/tags/edit/1"
+        // Modify tag description and save the tag
+        const elements = getTagsEditElements(container);
+        setMarkdownRawText(elements.tagDescription.editMarkdownInput, "# Some text");
+        await waitForMarkdownHeaderRender({ editorContainer: elements.tagDescription.editorContainer, text: "Some text" });
+        fireEvent.click(getTagsEditElements(container).sideMenu.saveButton);
+
+        // Wait for tag state to be updated
+        await waitFor(() => expect(store.getState().tags[1].tag_description).toEqual("# Some text"));
+        expect(getTagsEditElements(container).placeholders.loading).toBeFalsy();
     });
 
-    // Wait for tag information to be displayed on the page and try modifying the tag
-    await waitFor(() => getByText(container, "Tag Information"));
-    let tag = {...store.getState().tags[1]};
-    let saveButton = getSideMenuItem(container, "Save");
-    let tagNameInput = getByPlaceholderText(container, "Tag name");
-    let tagDescriptionInput = getByPlaceholderText(container, "Tag description");
-    fireEvent.change(tagNameInput, { target: { value: "error" } });
-    await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("error"));
-    fireEvent.change(tagDescriptionInput, { target: { value: "modified tag description" } });
-    await waitFor(() => expect(store.getState().tagUI.currentTag.tag_description).toBe("modified tag description"));
-    setFetchFail(true);
-    fireEvent.click(saveButton);
 
-    // Check error message is displayed and tag is not modified in the state
-    await waitFor(() => getByText(container, "Failed to fetch data."));
-    for (let attr of ["tag_name", "tag_description", "created_at", "modified_at"]) {
-        expect(store.getState().tags[1][attr]).toEqual(tag[attr]);
-    }
+    test("Update tag's is_published setting", async () => {
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/tags/edit/1"
+        });
+
+        // Wait for tag information to be displayed on the page
+        await waitFor(() => expect(getTagsEditElements(container).header).toBeTruthy());
+
+        // Modify `is_published` and save the tag
+        const elements = getTagsEditElements(container);
+        
+        expect(elements.publishTagCheckbox.checked).toBeTruthy();
+        for (let i = 0; i < 3; i++) {
+            fireEvent.click(elements.publishTagCheckbox);
+            expect(store.getState().tagUI.currentTag.is_published).toEqual(Boolean(i % 2));
+            expect(elements.publishTagCheckbox.checked).toEqual(Boolean(i % 2));
+        }
+
+        fireEvent.click(elements.sideMenu.saveButton);
+
+        // Wait for tag state to be updated
+        await waitFor(() => expect(store.getState().tags[1].is_published).toBeFalsy());
+        expect(getTagsEditElements(container).placeholders.loading).toBeFalsy();
+    });
 });

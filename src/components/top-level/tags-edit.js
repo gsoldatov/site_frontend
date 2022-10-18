@@ -128,17 +128,22 @@ const Tag = ({ header, sideMenuItems, onLoad }) => {
     }, [id]);
 
     const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
-    const pageBody = loadIndicatorAndError || (
-        <div className="tag-edit-page-container">
+    const pageBody = loadIndicatorAndError ? loadIndicatorAndError : (
+        <>
             <Header as="h1" className="add-edit-page-header">{header}</Header>
             <TagTimeStamps />
             <TagSaveError />
             <TagInput />
             <TagsEditDisplayControls />
+        </>
+    );
+    const body = (
+        <div className="tag-edit-page-container">
+            {pageBody}
         </div>
     );
 
-    return <Layout sideMenuItems={sideMenuItems} body={pageBody} />;
+    return <Layout sideMenuItems={sideMenuItems} body={body} />;
 };
 
 
