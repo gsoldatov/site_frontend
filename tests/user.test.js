@@ -154,7 +154,7 @@ describe("Edit mode", () => {
     });
 
 
-    test("Toggle edit mode", async () => {
+    test("Try updating with incorrect data", async () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, full_view_mode: true });
         const store = createTestStore({ addAdminUser: true });
@@ -212,7 +212,7 @@ describe("Edit mode", () => {
     });
 
 
-    test("Toggle edit mode", async () => {
+    test("Handle fetch errors during correct update", async () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, full_view_mode: true });
         const store = createTestStore({ addAdminUser: true });
@@ -260,6 +260,17 @@ describe("Edit mode", () => {
         const userData = getMockUserData({ user_id: 2, user_level: "admin", can_login: true, can_edit_objects: true, full_view_mode: true });
         const store = createTestStore({ addAdminUser: true });
         addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
+        addCustomRouteResponse("/users/update", "PUT", { generator: (body, handler) => {
+            const body_ = JSON.parse(body);
+
+            // Check if password and password repeat are both present or absent
+            if ("password" in body_.user && !("password_repeat" in body_.user)) return { status: 400, body: { _error: "password_repeat missing in user data" }};
+            if (!("password" in body_.user) && "password_repeat" in body_.user) return { status: 400, body: { _error: "password_repeat missing in user data" }};
+            if (body_.user.password !== body_.user.password_repeat) return { status: 400, body: { _error: "password and password_repeat do not match" }};
+
+            return handler(body);
+        }});
+
         let { container } = renderWithWrappers(<App />, {
             route: `/users/2`, store
         });

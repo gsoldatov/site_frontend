@@ -32,7 +32,7 @@ export const getUpdatedUserValues = (state, updates) => {
     for (let attr of ["login", "username"]) if (updates[attr].length > 0) result[attr] = updates[attr];
     if (updates.password.length > 0) {
         result.password = updates.password;
-        result.password_repeat = updates.password_repeat;
+        result.password_repeat = updates.passwordRepeat;
     }
 
     for (let attr of ["user_level", "can_login", "can_edit_objects"]) {
