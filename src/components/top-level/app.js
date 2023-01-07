@@ -128,6 +128,8 @@ export const App = () => {
 
 
 export const WrappedApp = () => {
+    const { useLocalStorage, enableDebugLogging } = config;
+
     return (
         <Provider store={createStore({ useLocalStorage, enableDebugLogging })}>
             <DndProvider backend={HTML5Backend}>
