@@ -3,7 +3,10 @@
         "backendURL": "http://localhost:42002",
         "compositeChapters": {
             "maxHierarchyDepth": 6
-        }
+        },
+
+        "useLocalStorage": true,
+        "enableDebugLogging": true
     },
 
     "server": {

@@ -7,6 +7,8 @@ import { DndProvider } from "react-dnd";
 import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
+import { config } from "../../config";
+
 import createStore from "../../store/create-store";
 
 import { LocationManagerWrapper } from "../common/location-manager-wrapper";
@@ -126,8 +128,11 @@ export const App = () => {
 
 
 export const WrappedApp = () => {
+    const { useLocalStorage, enableDebugLogging } = config;
+    console.log(`useLocalStorage = ${useLocalStorage}, enableDebugLogging = ${enableDebugLogging}`);
+
     return (
-        <Provider store={createStore({ useLocalStorage: true, enableDebugLogging: true })}>
+        <Provider store={createStore({ useLocalStorage, enableDebugLogging })}>
             <DndProvider backend={HTML5Backend}>
                 <BrowserRouter>
                     <App />
