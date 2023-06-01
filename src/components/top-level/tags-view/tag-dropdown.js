@@ -6,7 +6,7 @@ import { Dropdown } from "semantic-ui-react";
 
 import { tagsViewDropdownOptionsSearch } from "../../../fetches/ui-tags-view";
 
-import intervalWrapper from "../../../util/interval-wrapper";
+import debounce from "../../../util/debounce";
 import { useMountedState } from "../../../util/use-mounted-state";
 import { useURLParamIDs } from "../../../util/use-url-param-array";
 
@@ -39,7 +39,7 @@ export const TagDropdown = () => {
     };
     
     // Search text change handlers (updates state, runs a delayed fetch to get dropdown items & updates dropdown items)
-    const onSearchChangeDelayed = useRef(intervalWrapper(async params => {
+    const onSearchChangeDelayed = useRef(debounce(async params => {
         const result = await dispatch(tagsViewDropdownOptionsSearch(params));
 
         // Update state if component is still mounted (no redirect occured)

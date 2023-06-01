@@ -2,7 +2,7 @@ import React, { useRef, useLayoutEffect, useMemo } from "react";
 
 import { Ref } from "semantic-ui-react";
 
-import intervalWrapper from "../../util/interval-wrapper";
+import debounce from "../../util/debounce";
 
 
 /**
@@ -13,7 +13,7 @@ export const OnResizeWrapper = ({ callback, children, timeout = 10 }) => {
     const resizeObserver = useRef();
     const abortResizeCallbackRef = useRef();
 
-    const onResize = useMemo(() => intervalWrapper(() => {
+    const onResize = useMemo(() => debounce(() => {
         if (innerRef.current) abortResizeCallbackRef.current = callback(innerRef.current);
     }, timeout, false), [callback]);
 

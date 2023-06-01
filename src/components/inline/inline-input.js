@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useMemo, memo } from "react";
 import { Dropdown, Icon } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
-import intervalWrapper from "../../util/interval-wrapper";
+import debounce from "../../util/debounce";
 
 
 /**
@@ -78,7 +78,7 @@ export const InlineInput = memo(({ placeholder, inputStateSelector, setInputStat
     }
 
     // Handle input text change event
-    const _onSearchChangeDelayed = useRef(intervalWrapper(params => dispatch(onSearchChangeDelayed(params))
+    const _onSearchChangeDelayed = useRef(debounce(params => dispatch(onSearchChangeDelayed(params))
                                     , 250, true)).current;     // wrap onSearchChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
     const handleSearchChange = (e) => {
         dispatch(setInputState({ inputText: e.target.value }));     // inputText is updated immediately after every change
@@ -154,7 +154,7 @@ export const InlineInput = memo(({ placeholder, inputStateSelector, setInputStat
 //     // const handleOnBlur = () => resetInput();
 
 //     // Handle input text change event
-//     const _onChangeDelayed = useRef(intervalWrapper(params => dispatch(onChangeDelayed(params))
+//     const _onChangeDelayed = useRef(debounce(params => dispatch(onChangeDelayed(params))
 //                                     , 250, true)).current;     // wrap onChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
 //     const handleChange = (e) => {
 //         dispatch(setInputState({ inputText: e.target.value }));     // inputText is updated immediately after every change

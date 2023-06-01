@@ -5,7 +5,7 @@ import { Button, Dropdown } from "semantic-ui-react";
 
 import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../fetches/ui-objects-edit";
 
-import intervalWrapper from "../../../util/interval-wrapper";
+import debounce from "../../../util/debounce";
 
 
 /**
@@ -113,7 +113,7 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
     };
 
     // Search text change handlers (updates state & runs a delayed fetch to get dropdown items)
-    const _onSearchChangeDelayed = useRef(intervalWrapper(params => dispatch(compositeSubobjectDropdownFetch(params))
+    const _onSearchChangeDelayed = useRef(debounce(params => dispatch(compositeSubobjectDropdownFetch(params))
                                     , 250, true)).current;
     const handleSearchChange = (e, data) => {
         setAddMenuCallback({ inputText: data.searchQuery });

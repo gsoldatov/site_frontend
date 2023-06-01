@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import ParseMarkdownWorker from "./parse-markdown.worker";
-import intervalWrapper from "./interval-wrapper";
+import debounce from "./debounce";
 
 
 /**
@@ -14,7 +14,7 @@ import intervalWrapper from "./interval-wrapper";
  */
 export const useMarkdownParseWorker = (onPostParse, interval = 250, alwaysRunAfterFirstInterval = false) => {
     // Delayed function, which parses markdown in a separate thread
-    return useMemo(() => intervalWrapper(rawMarkdown => {
+    return useMemo(() => debounce(rawMarkdown => {
         const w = new ParseMarkdownWorker();
         w.onmessage = e => {
             // Run `onPostParse` function & terminate worker after parsing is complete

@@ -1,5 +1,5 @@
 import getInitialState from "./state-templates/initial-state";
-import intervalWrapper from "../util/interval-wrapper";
+import debounce from "../util/debounce";
 import { defaultEditedObjectState } from "./state-templates/edited-object";
 import { getDefaultAuthState } from "./state-templates/auth";
 
@@ -17,7 +17,7 @@ export class LocalStorageManager {
         this.loadState = this.loadState.bind(this);
         this.save = this.save.bind(this);
 
-        this.saveState = intervalWrapper(this.save, saveTimeout, false);
+        this.saveState = debounce(this.save, saveTimeout, false);
 
         this._authStateKeys = Object.keys(getDefaultAuthState());
     }

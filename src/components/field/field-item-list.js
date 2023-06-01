@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Header, Icon } from "semantic-ui-react";
 
-import intervalWrapper from "../../util/interval-wrapper";
+import debounce from "../../util/debounce";
 
 import StyleFieldItemList from "../../styles/field-item-list.css";
 
@@ -38,7 +38,7 @@ export const FieldItemList = ({ header, ItemComponent, itemIDsSelector, isExpand
 
     // isExpandRequired updates
     const itemListRef = useRef();
-    const onResize = useRef(intervalWrapper(() => {
+    const onResize = useRef(debounce(() => {
         if (itemListRef.current) {
             const itemListLineHeight = parseInt(getComputedStyle(itemListRef.current).lineHeight.replace("px", ""));      // line-height CSS property
             const itemListScrollHeight = itemListRef.current.scrollHeight;            // total height of the ItemList div

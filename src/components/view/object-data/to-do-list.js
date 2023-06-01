@@ -8,7 +8,7 @@ import { toDoListObjectUpdateFetch } from "../../../fetches/ui-objects-view";
 
 import { getUpdatedToDoList } from "../../../reducers/helpers/object-to-do-lists";
 import { deepCopy } from "../../../util/copy";
-import intervalWrapper from "../../../util/interval-wrapper";
+import debounce from "../../../util/debounce";
 import { enumUserLevels } from "../../../util/enum-user-levels";
 
 
@@ -41,7 +41,7 @@ export const ToDoList = ({ objectID }) => {
     const canDrag = toDoListRef.current.sort_type === "default";
 
     // Debounced update fetch
-    const updateFetch = useMemo(() => (intervalWrapper(async (objectID, toDoList) => {
+    const updateFetch = useMemo(() => (debounce(async (objectID, toDoList) => {
         setError("");
 
         if (!isReadonly) {
