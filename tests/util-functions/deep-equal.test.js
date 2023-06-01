@@ -1,0 +1,128 @@
+import { deepEqual } from "../../src/util/equality-checks";
+
+
+const _PRIMITIVES = ["str", 1, BigInt(9007199254740991), true, null, undefined];
+
+
+test("Primitives of ifferent types", () => {
+    for (let i in _PRIMITIVES) {
+        for (let j = i + 1; j < _PRIMITIVES.length; j++) {
+            let a = _PRIMITIVES[i], b = _PRIMITIVES[j];
+            expect(deepEqual(a, b)).toBeFalsy();
+        }
+    }
+});
+
+
+test("Same type privitives", () => {
+    let a = "asd", b = "zxc";
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = 1, b = 0;
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = BigInt(1), b = BigInt(0);
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = true, b = false;
+    expect(deepEqual(a, b)).toBeFalsy();
+    
+    for (let i in _PRIMITIVES) {
+        let a = _PRIMITIVES[i], b = a;
+        expect(deepEqual(a, b)).toBeTruthy();
+    }
+});
+
+
+test("Objects", () => {
+    let a = null, b = null;
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = {}, b = null;
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = {x: 1}, {x: 1, y: 2};
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = {x: 1}, b = {x: 2};
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = {}, b = {};
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = {x: 1}, b = {x: 1};
+    expect(deepEqual(a, b)).toBeTruthy();
+});
+
+
+test("Dates", () => {
+    let a = new Date(2001, 0, 1), b = null;
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Date(2001, 0, 1), b = new Date(a);
+    b.setHours(1);
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Date(2001, 0, 1), b = new Date(a);
+    expect(deepEqual(a, b)).toBeTruthy();
+});
+
+
+test("Arrays", () => {
+    let a = [], b = null;
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = [], b = [1];
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = [1], b = [2]
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = [1, 2], b = [2, 1];
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = [1], b = ["1"];
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = [1, {x: 1}], b = [1, {x: 2}];
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = [1, [1, 2]], b = [1, [1, 2, 3]];
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = [], b = [];
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = [1, 2], b = [1, 2];
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = [{x: 1}], b = [{x: 1}];
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = [1, [1, 2]], b = [1, [1, 2]];
+    expect(deepEqual(a, b)).toBeTruthy();
+});
+
+
+test("Nested objects", () => {
+    let a = {x: 1, y: [1, 2]}, b = {x: 1, y: [2, 1]};
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = {x: 1, y: {}}, b = {x: {}, y: 1};
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = {x: 1, y: {x: 1}}, b = {x: 1, y: {x: 2}};
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = {x: 1, y: {x: [1, 2]}}, b = {x: 1, y: {x: [2, 1]}};
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = {x: 1, y: [1, 2]}, b = {x: 1, y: [1, 2]};
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = {x: 1, y: {x: 1}}, b = {x: 1, y: {x: 1}};
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = {x: 1, y: [{x: 1}]}, b = {x: 1, y: [{x: 1}]};
+    expect(deepEqual(a, b)).toBeTruthy();
+});
