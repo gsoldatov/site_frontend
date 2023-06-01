@@ -8,7 +8,7 @@ import debounce from "../../util/debounce";
 /**
  * Wrapper component, which fires (with debouncing) provided `callback` when resize of its child occures and passes computed style into it.
  */
-export const OnResizeWrapper = ({ callback, children, delay = 10 }) => {
+export const OnResizeWrapper = ({ callback, children, delay = 100 }) => {
     const innerRef = useRef();
     const resizeObserver = useRef();
     const abortResizeCallbackRef = useRef();
