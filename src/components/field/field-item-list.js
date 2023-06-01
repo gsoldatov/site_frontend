@@ -45,7 +45,7 @@ export const FieldItemList = ({ header, ItemComponent, itemIDsSelector, isExpand
             const newIsExpandRequired = itemListScrollHeight >= 2 * itemListLineHeight;
             setIsExpandRequired(newIsExpandRequired);
         }
-    }, 200, false)).current;
+    }, 100, false)).current;
     
     // Add/remove window on resize event listener and run onResize handler when itemIDs are modified 
     // (also, add/remove logic doesn't work when effect is executed once (return function is executed immediately, for some reason))

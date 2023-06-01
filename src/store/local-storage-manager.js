@@ -17,7 +17,7 @@ export class LocalStorageManager {
         this.loadState = this.loadState.bind(this);
         this.save = this.save.bind(this);
 
-        this.saveState = debounce(this.save, saveTimeout, false);
+        this.saveState = debounce(this.save, saveTimeout, true);
 
         this._authStateKeys = Object.keys(getDefaultAuthState());
     }

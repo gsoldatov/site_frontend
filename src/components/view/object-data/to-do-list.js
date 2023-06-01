@@ -48,7 +48,7 @@ export const ToDoList = ({ objectID }) => {
             const result = await dispatch(toDoListObjectUpdateFetch(objectID, toDoList));
             if ("error" in result) setError(result.error);
         }
-    }, 500, true)), [isReadonly]);
+    }, 1000, true)), [isReadonly]);
     
     // Update callback
     const updateCallback = useMemo(() => params => {
