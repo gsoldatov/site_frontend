@@ -7,12 +7,12 @@ import debounce from "./debounce";
 /**
  * Hook for rendering markdown in a worker thread.
  * 
- * Returns a function, which accepts raw markdown, renders it and passes it into `onPostParse`, provided as a hook argument.
- * `interval` - integer, minimal time interval between renders in ms, default is `250`;
- * `alwaysRunAfterInterval` - boolean, if true, first render is started after `interval`, otherwise it's started immediately after `rawMarkdown` is changed 
- *  (another render can be still executed only after `interval` time has passed), default is `false`.
+ * @param {function} onPostParse - callback to be called with parsed markdown as an argument.
+ * @param {number} [delay=250] - delay in milliseconds between parses.
+ * @param {boolean} [refreshDelayOnCall=false] - flag indicating if delay for the next parse is reset when raw markdown changes.
+ * @return {function} debounced function which accepts raw markdown, parses it in a worker and calls `onPostParse` callback after that.
  */
-export const useMarkdownParseWorker = (onPostParse, interval = 250, alwaysRunAfterFirstInterval = false) => {
+export const useMarkdownParseWorker = (onPostParse, delay = 250, refreshDelayOnCall = false) => {
     // Delayed function, which parses markdown in a separate thread
     return useMemo(() => debounce(rawMarkdown => {
         const w = new ParseMarkdownWorker();
@@ -23,5 +23,5 @@ export const useMarkdownParseWorker = (onPostParse, interval = 250, alwaysRunAft
         };
 
         w.postMessage(rawMarkdown); // Start parsing
-    }, interval, alwaysRunAfterFirstInterval), [onPostParse, interval, alwaysRunAfterFirstInterval]);
+    }, delay, refreshDelayOnCall), [onPostParse, delay, refreshDelayOnCall]);
 };

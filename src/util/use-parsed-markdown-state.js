@@ -14,12 +14,12 @@ import { useMountedState } from "./use-mounted-state";
  * - `renderParams` - an object with `onPostParse` execution params:
  *     - `onPostParse` - function, which is run after `rawMarkdown` change;
  *     - `runAfterComponentUnmount` - boolean, if true, `onPostParse` can be executed after component is unmounted, default is `false`;
- *     - `interval` - integer, minimal time interval between renders in ms, default is `250`;
- *     - `alwaysRunAfterInterval` - boolean, if true, first render is started after `interval`, otherwise it's started immediately after `rawMarkdown` is changed 
- *       (another render can be still executed only after `interval` time has passed), default is `false`.
+ *     - `delay` - integer, minimal time delay between renders in ms, see `useMarkdownParseWorker` for default value;
+ *     - `refreshDelayOnCall` - boolean, if true, first render is started after `delay`, otherwise it's started immediately after `rawMarkdown` is changed 
+ *       (another render can be still executed only after `delay` time has passed), see `useMarkdownParseWorker` for default value.
  */
 export const useParsedMarkdownState = (rawMarkdown, renderParams = {}) => {
-    const { onPostParse, interval, alwaysRunAfterInterval } = renderParams;
+    const { onPostParse, delay, refreshDelayOnCall } = renderParams;
     const runAfterComponentUnmount = "runAfterComponentUnmount" in renderParams ? renderParams.runAfterComponentUnmount : false;
     
     // isMounted hook and parsed Markdown state
@@ -32,7 +32,7 @@ export const useParsedMarkdownState = (rawMarkdown, renderParams = {}) => {
         if (isMounted()) setParsedMarkdown(parsed);
     }, [runAfterComponentUnmount, onPostParse]);
 
-    const parseMarkdown = useMarkdownParseWorker(wrappedOnPostParse, interval, alwaysRunAfterInterval);
+    const parseMarkdown = useMarkdownParseWorker(wrappedOnPostParse, delay, refreshDelayOnCall);
     
     useEffect(() => {
         // Run Markdown parse if `rawMarkdown` contains text

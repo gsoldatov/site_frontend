@@ -8,14 +8,14 @@ import debounce from "../../util/debounce";
 /**
  * Wrapper component, which fires (with debouncing) provided `callback` when resize of its child occures and passes computed style into it.
  */
-export const OnResizeWrapper = ({ callback, children, timeout = 10 }) => {
+export const OnResizeWrapper = ({ callback, children, delay = 10 }) => {
     const innerRef = useRef();
     const resizeObserver = useRef();
     const abortResizeCallbackRef = useRef();
 
     const onResize = useMemo(() => debounce(() => {
         if (innerRef.current) abortResizeCallbackRef.current = callback(innerRef.current);
-    }, timeout, false), [callback]);
+    }, delay, false), [callback]);
 
     // Run `callback` when it's changed and initialize a ResizeObserver object (if it's supported), which will trigger onResize function
     // `useLayoutEffect` is used instead of `useEffect` in order to run callback synchronously
