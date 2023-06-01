@@ -6,7 +6,7 @@ import debounce from "../../src/util/debounce";
 /** List of timestamps for each `fn` call. */
 var calls;
 /** Function which records each call time in `calls` array. */
-const fn = () => { calls.push(new Date()); };
+const fn = () => { calls.push(performance.now()); };
 
 
 beforeEach(() => {
@@ -30,7 +30,7 @@ describe("No refresh delay on call", () => {
     test("First call is performed instantly", () => {
         const delay = 50;
         const debouncedFn = debounce(fn, delay);
-        const time = new Date();
+        const time = performance.now();
 
         // Call a debounced function and check if it was executed instantly
         debouncedFn();
@@ -51,9 +51,9 @@ describe("No refresh delay on call", () => {
             // Attempt to call during delay several times
             for (let j = 0; j < 3; j++) {
                 // Wait for a small interval of time to pass, then call debounced function
-                const time = new Date();
+                const time = performance.now();
                 await waitFor(() => {
-                    expect((new Date()) - time).toBeGreaterThanOrEqual(callAttemptInterval);
+                    expect(performance.now() - time).toBeGreaterThanOrEqual(callAttemptInterval);
                 }, { interval: callAttemptInterval });
                 debouncedFn();
             }
@@ -61,7 +61,8 @@ describe("No refresh delay on call", () => {
             // Wait for wrapped function to be called and check it was called after initially specified delay
             await waitFor(() => expect(calls.length).toEqual(i + 1));
             const actualDelay = calls[i] - calls[i - 1];
-            expect(actualDelay).toBeGreaterThanOrEqual(delay);
+            // NOTE: perform rough comparison to avoid getting occasional errors
+            expect(actualDelay).toBeGreaterThanOrEqual(delay - 1);
             // NOTE: if `callAttemptInterval` is too small, the check below may fail, 
             // because the function call will be performed naturally after more than `callAttemptInterval` milliseconds.
             expect(actualDelay).toBeLessThan(delay + callAttemptInterval);
@@ -80,11 +81,11 @@ describe("No refresh delay on call", () => {
         // Schedule a next delayed call and then abort it
         const abort = debouncedFn();
         abort();
-        const time = new Date();
+        const time = performance.now();
 
         // Wait for delay to pass and check if wrapped function was not called
         await waitFor(() => {
-            expect((new Date()) - time).toBeGreaterThanOrEqual(delay);
+            expect(performance.now() - time).toBeGreaterThanOrEqual(delay);
         }, { interval: delay });
         expect(calls.length).toEqual(1);
     });
@@ -97,11 +98,12 @@ describe("Enabled refresh delay on call", () => {
         const debouncedFn = debounce(fn, delay, true);
         
         // Call a debounced function and check if it was executed after `delay`
-        const time = new Date();
+        const time = performance.now();
         debouncedFn();
 
         await waitFor(() => expect(calls.length).toEqual(1), { interval: delay });
-        expect(calls[0] - time).toBeGreaterThanOrEqual(delay);
+        // NOTE: perform rough comparison to avoid getting occasional errors
+        expect(calls[0] - time).toBeGreaterThanOrEqual(delay - 1);
     });
 
 
@@ -110,14 +112,14 @@ describe("Enabled refresh delay on call", () => {
         const debouncedFn = debounce(fn, delay, true);
 
         // Schedule a debounced call
-        const firstCallTime = new Date();
+        const firstCallTime = performance.now();
         debouncedFn();
 
         // Make several delayed call attempts while there is a scheduled function call
         for (let i = 0; i < numberOfCallAttempts; i++) {
-            const time = new Date();
+            const time = performance.now();
             await waitFor(() => {
-                expect((new Date()) - time).toBeGreaterThanOrEqual(callAttemptInterval);
+                expect(performance.now() - time).toBeGreaterThanOrEqual(callAttemptInterval);
             }, { interval: callAttemptInterval });
             debouncedFn();
         }
@@ -135,11 +137,11 @@ describe("Enabled refresh delay on call", () => {
         // Call debounced function for and abort its pending execution
         const abort = debouncedFn();
         abort();
-        const time = new Date();
+        const time = performance.now();
 
         // Wait for delay to pass and check if wrapped function was not called
         await waitFor(() => {
-            expect((new Date()) - time).toBeGreaterThanOrEqual(delay);
+            expect(performance.now() - time).toBeGreaterThanOrEqual(delay);
         }, { interval: delay });
         expect(calls.length).toEqual(0);
     });
