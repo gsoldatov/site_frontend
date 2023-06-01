@@ -265,12 +265,12 @@ const EditedSubobjectsIndicator = ({ objectID }) => {
     const deleteCallback = useMemo(() => () => setConfirmState({
         open: true,
         content: "Delete edited object?",
-        onConfirm: () => dispatch(removeEditedObjects([objectID], false))
+        onConfirm: () => dispatch(removeEditedObjects({ objectIDs: [objectID], removeSubobjects: false }))
     }), [objectID]);
     const deleteWithSubobjectsCallback = useMemo(() => () => setConfirmState({
         open: true,
         content: "Delete edited object and its subobjects?",
-        onConfirm: () => dispatch(removeEditedObjects([objectID], true))
+        onConfirm: () => dispatch(removeEditedObjects({ objectIDs: [objectID], removeSubobjects: true }))
     }), [objectID]);
 
     const deleteControl = (
@@ -300,17 +300,27 @@ const EditedSubobjectsIndicator = ({ objectID }) => {
     const dispatch = useDispatch();
     const selectedEditedObjectIDs = useSelector(state => state.editedObjectsUI.selectedObjectIDs);
 
+    const deleteAllCallback = useMemo(() => () => setConfirmState({
+        open: true,
+        content: "Delete all edited objects?",
+        onConfirm: () => dispatch(removeEditedObjects({ removeAll: true }))
+    }));
     const deleteCallback = useMemo(() => () => setConfirmState({
         open: true,
         content: "Delete selected edited objects?",
-        onConfirm: () => dispatch(removeEditedObjects(selectedEditedObjectIDs, false))
+        onConfirm: () => dispatch(removeEditedObjects({ objectIDs: selectedEditedObjectIDs, removeSubobjects: false }))
     }));
     const deleteWithSubobjectsCallback = useMemo(() => () => setConfirmState({
         open: true,
         content: "Delete selected edited objects and their subobjects?",
-        onConfirm: () => dispatch(removeEditedObjects(selectedEditedObjectIDs, true))
+        onConfirm: () => dispatch(removeEditedObjects({ objectIDs: selectedEditedObjectIDs, removeSubobjects: true }))
     }));
 
+    const deleteAllControl = (
+        <span className="edited-objects-item-control-container" title="Remove all edited objects" onClick={deleteAllCallback}>
+            <Icon name="remove circle" color="black" />
+        </span>
+    );
     const deleteControl = (
         <span className="edited-objects-item-control-container" title="Remove selected edited objects" onClick={deleteCallback}>
             <Icon name="cancel" color="black" />
@@ -324,6 +334,7 @@ const EditedSubobjectsIndicator = ({ objectID }) => {
 
     return (
         <>
+            {deleteAllControl}
             {deleteControl}
             {deleteWithSubobjectsControl}
         </>

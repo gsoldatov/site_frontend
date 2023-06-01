@@ -18,7 +18,7 @@ export const loadNewObjectPage               = () => ({ type: LOAD_ADD_OBJECT_PA
 export const loadEditObjectPage              = currentObjectID => ({ type: LOAD_EDIT_OBJECT_PAGE, currentObjectID });
 export const resetEditedObjects              = ({ objectIDs, hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed }) => ({ 
                                                 type: RESET_EDITED_OBJECTS, objectIDs, hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed });
-export const removeEditedObjects             = (objectIDs, removeSubobjects) => ({ type: REMOVE_EDITED_OBJECTS, objectIDs, removeSubobjects });
+export const removeEditedObjects             = ({ objectIDs, removeSubobjects, removeAll }) => ({ type: REMOVE_EDITED_OBJECTS, objectIDs, removeSubobjects, removeAll });
 export const setEditedObject                 = (object, objectID) => ({ type: SET_EDITED_OBJECT, object, objectID });
 export const clearUnsavedCurrentEditedObject = ({ deleteNewObject, editedObjectID, excludedObjectID }) => ({ type: CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, deleteNewObject, editedObjectID, excludedObjectID });
 export const setObjectTagsInput              = inputState => ({ type: SET_OBJECT_TAGS_INPUT, tagsInput: inputState });
