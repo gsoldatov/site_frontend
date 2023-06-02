@@ -122,7 +122,7 @@ export const FieldMenuDropdown = memo(({ placeholder, isDisabled, defaultValue, 
 export const FieldMenuUpdatableDropdown = ({ placeholder, isDisabled, inputState, existingIDs, onSearchChange, onSearchChangeDelayed, 
         onChange, options }) => {
     // Search text change handlers (updates state & runs a delayed fetch to get dropdown items)
-    const _onSearchChangeDelayed = useRef(debounce(onSearchChangeDelayed , 250, true)).current;
+    const _onSearchChangeDelayed = useRef(debounce(onSearchChangeDelayed , 250, enumDebounceDelayRefreshMode.onCall)).current;
     const handleSearchChange = (e, data) => {
         onSearchChange({ inputText: data.searchQuery });
         _onSearchChangeDelayed({ queryText: data.searchQuery, existingIDs });
