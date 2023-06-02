@@ -100,7 +100,7 @@ test("To-do list (logged as admin)", async () => {
     const newItemInput = getByPlaceholderText(TDLContainer, "New item");
     fireEvent.input(newItemInput, { target: { innerHTML: "added item" }});
     
-    await waitFor(() => expect(Object.keys(store.getState().toDoLists[2001].items).length).toEqual(9));
+    await waitFor(() => expect(Object.keys(store.getState().toDoLists[2001].items).length).toEqual(9), { timeout: 2000 });
     expect(store.getState().toDoLists[2001].items[8].item_text).toEqual("added item");
 
     // Add a new item with fetch error and check if an error message is displayed

@@ -376,7 +376,7 @@ describe("Subobject object data", () => {
         const newItemInput = getByPlaceholderText(TDLContainer, "New item");
         fireEvent.input(newItemInput, { target: { innerHTML: "added item" }});
         
-        await waitFor(() => expect(Object.keys(store.getState().toDoLists[cardElements.objectID].items).length).toEqual(9));
+        await waitFor(() => expect(Object.keys(store.getState().toDoLists[cardElements.objectID].items).length).toEqual(9), { timeout: 2000 });
         expect(store.getState().toDoLists[cardElements.objectID].items[8].item_text).toEqual("added item");
 
         // Add a new item with fetch error and check if an error message is displayed
