@@ -73,9 +73,10 @@ const MarkdownEditorViewEdit = ({ displayMode, editPlaceholder, rawMarkdown, raw
 
     // Trigger markdown parse after first render or when raw
     // Also check if current component is mounted to avoid updating state of unmounted components
-    const parseMarkdown = useMarkdownParseWorker(parsed => {
+    const onPostParse_ = useMemo(() => parsed => {
         if (isMounted()) onPostParse(parsed)
-    });
+    }, [isMounted, onPostParse]);
+    const parseMarkdown = useMarkdownParseWorker(onPostParse_);
     
     useEffect(() => { parseMarkdown(rawMarkdown); }, [rawMarkdown]);
 
