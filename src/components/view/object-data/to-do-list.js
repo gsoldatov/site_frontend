@@ -9,6 +9,7 @@ import { toDoListObjectUpdateFetch } from "../../../fetches/ui-objects-view";
 import { getUpdatedToDoList } from "../../../reducers/helpers/object-to-do-lists";
 import { deepCopy } from "../../../util/copy";
 import debounce from "../../../util/debounce";
+import { enumDebounceDelayRefreshMode } from "../../../util/enum-debounce-delay-refresh-mode";
 import { enumUserLevels } from "../../../util/enum-user-levels";
 
 
@@ -48,7 +49,7 @@ export const ToDoList = ({ objectID }) => {
             const result = await dispatch(toDoListObjectUpdateFetch(objectID, toDoList));
             if ("error" in result) setError(result.error);
         }
-    }, 1000, true)), [isReadonly]);
+    }, 1000, enumDebounceDelayRefreshMode.onCall)), [isReadonly]);
     
     // Update callback
     const updateCallback = useMemo(() => params => {

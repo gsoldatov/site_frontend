@@ -1,5 +1,6 @@
 import getInitialState from "./state-templates/initial-state";
 import debounce from "../util/debounce";
+import { enumDebounceDelayRefreshMode } from "../util/enum-debounce-delay-refresh-mode";
 import { defaultEditedObjectState } from "./state-templates/edited-object";
 import { getDefaultAuthState } from "./state-templates/auth";
 
@@ -17,7 +18,7 @@ export class LocalStorageManager {
         this.loadState = this.loadState.bind(this);
         this.save = this.save.bind(this);
 
-        this.saveState = debounce(this.save, saveTimeout, true);
+        this.saveState = debounce(this.save, saveTimeout, enumDebounceDelayRefreshMode.onCall);
 
         this._authStateKeys = Object.keys(getDefaultAuthState());
     }

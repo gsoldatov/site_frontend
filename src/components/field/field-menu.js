@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
 import debounce from "../../util/debounce";
+import { enumDebounceDelayRefreshMode } from "../../util/enum-debounce-delay-refresh-mode";
 
 import { OnResizeWrapper } from "../common/on-resize-wrapper";
 
@@ -89,7 +90,8 @@ export const FieldMenuButton = memo(({ icon, title, isDisabled = false, isActive
  * Field menu filter.
  */
 export const FieldMenuFilter = memo(({ value, placeholder = "Filter", isDisabled, onChange, onChangeDelayed }) => {
-    const _onChangeDelayed = useRef(debounce(onChangeDelayed, 250, true)).current;     // wrap onChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
+    const _onChangeDelayed = useRef(debounce(onChangeDelayed, 250, 
+        enumDebounceDelayRefreshMode.onCall)).current;     // wrap onChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
     const handleChange = e => {
         const value = e.target.value;
         onChange(value);                         // onChange is called on every change to properly dispatch state updates for input value
