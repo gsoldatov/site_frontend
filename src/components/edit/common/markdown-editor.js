@@ -9,7 +9,7 @@ import { useMountedState } from "../../../util/use-mounted-state";
 
 import StyleMarkdownEditor from "../../../styles/markdown-editor.css";
 import StyleRenderedMarkdown from "../../../styles/rendered-markdown.css";
-import StyleHighlight from "highlight.js/styles/a11y-dark.css";
+import StyleHighlight from "highlight.js/styles/vs2015.css";
 
 
 /**
