@@ -211,15 +211,15 @@ describe("Object display properties", () => {
                 clickDisplayTabButton(container);
             
                 // Click checkbox 3 times
-                expect(store.getState().editedObjects[0].show_description).toBeFalsy();
+                expect(store.getState().editedObjects[0].show_description).toBeTruthy();
                 for (let i = 0; i < 3; i++) {
                     clickShowDescriptionCheckbox(container);
-                    expect(store.getState().editedObjects[0].show_description).toEqual(i % 2 === 0);
+                    expect(store.getState().editedObjects[0].show_description).toEqual(i % 2 !== 0);
                 }
 
                 // Reset object
                 resetObject(container, false);
-                expect(store.getState().editedObjects[0].show_description).toBeFalsy();
+                expect(store.getState().editedObjects[0].show_description).toBeTruthy();
             }
         });
 
@@ -237,7 +237,11 @@ describe("Object display properties", () => {
 
             // Toggle checkbox
             clickDisplayTabButton(container);
-            clickShowDescriptionCheckbox(container);
+
+            for (let i = 0; i < 2; i++) {
+                expect(store.getState().editedObjects[0].show_description).toEqual(i % 2 === 0);
+                clickShowDescriptionCheckbox(container);
+            }
             expect(store.getState().editedObjects[0].show_description).toBeTruthy();
 
             // Save object

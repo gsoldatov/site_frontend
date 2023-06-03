@@ -41,7 +41,7 @@ export const defaultEditedObjectState = {       // `getDefaultEditedObjectState`
     is_published: false,
     display_in_feed: false, 
     feed_timestamp: "",
-    show_description: false,
+    show_description: true,
     owner_id: 0,
 
     // object's tags
