@@ -2,12 +2,12 @@ import React from "react";
 import { waitFor, fireEvent, screen } from "@testing-library/react";
 
 import { renderWithWrappers } from "../_util/render";
+import { updateStoredObjectAttributes } from "../_util/store-updates-objects";
 import { getTagsViewElements, checkDisplayedTagsViewFeedCardIDs } from "../_util/ui-tags-view";
 import { getFeedCardElements } from "../_util/ui-index";
 import { compareArrays, compareDates } from "../_util/data-checks";
 import { getInlineItem } from "../_util/ui-inline";
 import { addCustomResponsesForSinglePageTagsView } from "../_mocks/data-objects";
-import { addObjects } from "../../src/actions/data-objects";
 
 import { App } from "../../src/components/top-level/app";
 
@@ -100,7 +100,7 @@ describe("Single page", () => {
         compareDates(ed, dd);
 
         // Check if modified at is used as a fallback for missing feed timestamp
-        store.dispatch(addObjects([{ ...store.getState().objects[objectID], feed_timestamp: "" }]));
+        updateStoredObjectAttributes(store, objectID, { feed_timestamp: "" });
         feedCardElements = getFeedCardElements(feedCard);
         ed = new Date(store.getState().objects[objectID].modified_at), dd = new Date(feedCardElements.timestamp.textContent);
         compareDates(ed, dd);

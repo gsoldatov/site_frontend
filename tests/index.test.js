@@ -9,7 +9,7 @@ import { checkDisplayedObjectFeedCardIDs, getFeedCardElements, getFeedElements }
 import { getInlineItem } from "./_util/ui-inline";
 import { compareDates } from "./_util/data-checks";
 
-import { addObjects } from "../src/actions/data-objects";
+import { updateStoredObjectAttributes } from "./_util/store-updates-objects";
 
 import { App } from "../src/components/top-level/app";
 
@@ -207,7 +207,7 @@ describe("Object feed card", () => {
         compareDates(ed, dd);
 
         // Check if modified at is used as a fallback for missing feed timestamp
-        store.dispatch(addObjects([{ ...store.getState().objects[objectID], feed_timestamp: "" }]));
+        updateStoredObjectAttributes(store, objectID, { feed_timestamp: "" });
         feedCardElements = getFeedCardElements(feedCard);
         ed = new Date(store.getState().objects[objectID].modified_at), dd = new Date(feedCardElements.timestamp.textContent);
         compareDates(ed, dd);

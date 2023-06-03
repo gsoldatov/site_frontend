@@ -11,7 +11,9 @@ import { getInlineItem } from "../../_util/ui-inline";
 import { compareDates } from "../../_util/data-checks";
 
 import { resetEditedObjects } from "../../../src/actions/objects-edit";
-import { addObjectData, addObjects } from "../../../src/actions/data-objects";
+
+import { updateStoredObjectAttributes } from "../../_util/store-updates-objects";
+import { addObjectData } from "../../../src/actions/data-objects";
 
 import { App } from "../../../src/components/top-level/app";
 
@@ -46,7 +48,7 @@ test("Timestamp", async () => {
     compareDates(ed, dd);
 
     // Check if modified at is used as a fallback for missing feed timestamp
-    store.dispatch(addObjects([{ ...store.getState().objects[1], feed_timestamp: "" }]));
+    updateStoredObjectAttributes(store, 1, { feed_timestamp: "" });
     cardElements = getObjectsViewCardElements({ container });
     ed = new Date(store.getState().objects[1].modified_at), dd = new Date(cardElements.attributes.timestamp.element.textContent);
     compareDates(ed, dd);
@@ -129,8 +131,7 @@ test("Object description (link)", async () => {
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // show_description && show_description_as_link
-    let objectAttributes = { ...store.getState().objects[1], show_description: true };
-    store.dispatch(addObjects([ objectAttributes ]));
+    updateStoredObjectAttributes(store, 1, { show_description: true });
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // show_description && !show_description_as_link
@@ -153,8 +154,7 @@ test("Object description (non-link)", async () => {
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // show_description
-    let objectAttributes = { ...store.getState().objects[1001], show_description: true };
-    store.dispatch(addObjects([ objectAttributes ]));
+    updateStoredObjectAttributes(store, 1001, { show_description: true });
     await waitFor(() => expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy());
 });
 

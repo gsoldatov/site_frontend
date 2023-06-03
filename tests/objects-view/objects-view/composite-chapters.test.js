@@ -3,11 +3,12 @@ import ReactDOM from "react-dom";
 import { waitFor, fireEvent } from "@testing-library/dom";
 
 import { renderWithWrappers } from "../../_util/render";
+import { updateStoredObjectAttributes } from "../../_util/store-updates-objects";
 import { getObjectsViewCardElements, loadObjectsViewPageAndSelectChapter } from "../../_util/ui-objects-view";
 import { compareArrays } from "../../_util/data-checks";
 import { getFeedElements } from "../../_util/ui-index";
 
-import { addObjectData, addObjects } from "../../../src/actions/data-objects";
+import { addObjectData } from "../../../src/actions/data-objects";
 
 import { config, setConfig, resetConfig } from "../../../src/config";
 import { App } from "../../../src/components/top-level/app";
@@ -139,8 +140,7 @@ describe("Table of contents", () => {
             expect(store.getState().objects[3910].show_description).toBeFalsy();
             expect(compositeChaptersElements.tableOfContents.attributes.description.element).toBeFalsy();
 
-            let objectAttributes = { ...store.getState().objects[3910], show_description: true };
-            store.dispatch(addObjects([ objectAttributes ]));
+            updateStoredObjectAttributes(store, 3910, { show_description: true });
             compositeChaptersElements = getObjectsViewCardElements({ container }).data.compositeChapters;
             await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeTruthy());
 
@@ -285,14 +285,28 @@ describe("Table of contents", () => {
             expect(compositeChaptersElements.tableOfContents.attributes.header.editButton).toBeTruthy();
             expect(compositeChaptersElements.tableOfContents.attributes.header.viewButton).toBeFalsy();
 
-            // Check if description is correctly rendered
+            // Check if description is correctly rendered (check combination of settings from parent's object data and current object's display settings)
+            // show_description = false, show_description_composite = inherit
             expect(store.getState().objects[objectID].show_description).toBeFalsy();
             expect(compositeChaptersElements.tableOfContents.attributes.description.element).toBeFalsy();
 
-            let objectAttributes = { ...store.getState().objects[objectID], show_description: true };
-            store.dispatch(addObjects([ objectAttributes ]));
+            // show_description = true, show_description_composite = inherit
+            updateStoredObjectAttributes(store, objectID, { show_description: true });
             compositeChaptersElements = getObjectsViewCardElements({ container }).data.compositeChapters;
             await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeTruthy());
+
+            // // show_description = true, show_description_composite = false
+            // let state = store.getState();
+            // let parentObjectData = { ...state.composite[3910], subobjects: [] };
+            // Object.keys(store.getState().composite[3910].subobjects).forEach(subobjectID => {
+            //     const subobjectData = { ...state.composite[3910].subobjects[subobjectID] };
+            //     if (subobjectID === objectID) subobjectData.show_description_composite = "no";
+            //     parentObjectData.subobjects.push(subobjectData);
+            // });
+            // store.dispatch(addObjectData([{ object_id: 3910, object_type: "composite", object_data: parentObjectData }]));
+            // await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeFalsy());
+
+            // // TODO add reusable functions for updating object attributes & data => replace ad-hoc updates in this files
 
             // Check if tags are rendered
             let cardElements = getObjectsViewCardElements({ container });

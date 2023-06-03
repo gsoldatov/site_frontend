@@ -5,11 +5,12 @@ import { getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { createTestStore } from "../../_util/create-test-store";
 import { renderWithWrappers } from "../../_util/render";
+import { updateStoredObjectAttributes } from "../../_util/store-updates-objects";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
 import { waitForMarkdownHeaderRender } from "../../_util/ui-markdown-editor";
 
 import { resetEditedObjects } from "../../../src/actions/objects-edit";
-import { addObjectData, addObjects } from "../../../src/actions/data-objects";
+import { addObjectData } from "../../../src/actions/data-objects";
 
 import { App } from "../../../src/components/top-level/app";
 import { deepCopy } from "../../../src/util/copy";
@@ -123,8 +124,7 @@ describe("Subobject attributes & tags", () => {
         let cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
 
         // Change is_published value of checked subobject to true to correctly test view button (non-published objects are returned)
-        let objectAttributes = { ...store.getState().objects[cardElements.objectID], is_published: true };
-        store.dispatch(addObjects([ objectAttributes ]));
+        updateStoredObjectAttributes(store, cardElements.objectID, { is_published: true });
         cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
 
         // Check if header is displayed
@@ -191,8 +191,7 @@ describe("Subobject attributes & tags", () => {
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
         // Description Markdown is rendered
-        let objectAttributes = { ...store.getState().objects[cardElements.objectID], object_description: "# Some text" };
-        store.dispatch(addObjects([ objectAttributes ]));
+        updateStoredObjectAttributes(store, cardElements.objectID, { object_description: "# Some text" });
         await waitForMarkdownHeaderRender({ renderedMarkdown: getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element, text: "Some text" });
     });
 
@@ -216,8 +215,7 @@ describe("Subobject attributes & tags", () => {
         compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
         store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
 
-        let objectAttributes = { ...store.getState().objects[cardElements.objectID], show_description: false };
-        store.dispatch(addObjects([ objectAttributes ]));
+        updateStoredObjectAttributes(store, cardElements.objectID, { show_description: false });
 
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
@@ -230,8 +228,7 @@ describe("Subobject attributes & tags", () => {
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy());
 
         // show_description_composite = inherit & show_description;
-        objectAttributes = { ...store.getState().objects[cardElements.objectID], show_description: true };
-        store.dispatch(addObjects([ objectAttributes ]));
+        updateStoredObjectAttributes(store, cardElements.objectID, { show_description: true });
 
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
