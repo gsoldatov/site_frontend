@@ -90,7 +90,7 @@ export const SubobjectDataSwitch = ({ objectID, dataProps = {} }) => {
 /**
  * Data switch component for object chapter. Displays composite objects in `basic` or `grouped_links` modes.
  */
-export const ChaptersDataSwitch = ({ objectID }) => {
+export const ChaptersDataSwitch = ({ objectID, dataProps = {} }) => {
     const isRendered = useSelector(state => objectDataIsInState(state, objectID));
     const objectType = useSelector(state => (state.objects[objectID] || {}).object_type);
     const compositeDisplayMode = useSelector(state => (state.composite[objectID] || {}).display_mode);
@@ -100,7 +100,7 @@ export const ChaptersDataSwitch = ({ objectID }) => {
 
     switch (objectType) {
         case "link":
-            return <Link_ objectID={objectID} />;
+            return <Link_ objectID={objectID} dataProps={dataProps} />;
         case "markdown":
             return <Markdown objectID={objectID} />;
         case "to_do_list":

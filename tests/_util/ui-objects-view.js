@@ -1,6 +1,6 @@
 import React from "react";
 
-import { waitFor, fireEvent, queryByTitle } from "@testing-library/dom";
+import { waitFor, fireEvent, queryByTitle, queryByText } from "@testing-library/dom";
 
 import { renderWithWrappers } from "./render";
 import { getInlineItem } from "./ui-inline";
@@ -340,4 +340,29 @@ export const loadObjectsViewPageAndSelectChapter = async (objectID, chapterNumbe
     const chapterObjectID = compositeChaptersElements.tableOfContents.container.childElements[chapterNumber - 1].objectID;
 
     return { container, store, history, chapterObjectID };
+};
+
+
+/**
+ * Awaits for description inside chapter's object card to appear or disappear, based `visible` argument's value
+ */
+export const waitForCompositeChapterDescription = async (container, visible) => {
+    await waitFor(() => {
+        const card = getObjectsViewCardElements({ container }).data.compositeChapters.chapterObject.objectCard;
+        if (visible) expect(getObjectsViewCardElements({ card }).attributes.description.element).toBeTruthy();
+        else expect(getObjectsViewCardElements({ card }).attributes.description.element).toBeFalsy();
+    });
+};
+
+
+/**
+ * Awaits for description as link inside chapter's object card to appear or disappear, based `visible` argument's value
+ */
+export const waitForCompositeChapterDescriptionAsLink = async (container, descriptionText, visible) => {
+    await waitFor(() => {
+        const card = getObjectsViewCardElements({ container }).data.compositeChapters.chapterObject.objectCard;
+        const link = getObjectsViewCardElements({ card }).data.link.link;
+        if (visible) expect(queryByText(link, descriptionText)).toBeTruthy();
+        else expect(queryByText(link, descriptionText)).toBeFalsy();
+    });
 };

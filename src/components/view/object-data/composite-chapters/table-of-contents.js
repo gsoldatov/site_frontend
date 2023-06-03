@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { ObjectAttributes } from "../../object-attributes/object-attributes";
 import { HierarchyNavigation } from "./hierarchy-navigation";
 
+import { getSubobjectShowDescriptionSelector } from "../../../../store/state-util/ui-objects-view";
+
 import StyleCompositeChapters from "../../../../styles/objects-view/composite-chapters.css";
 
 
@@ -20,9 +22,15 @@ export const TableOfContents = ({ hierarchyElements }) => {
     if (!rootObjectID) return null;
     
     // Current object attributes
+    const parentID = (hierarchyElements.parent || {}).objectID;
+    const showDescriptionSelector = isNaN(parentID) ? undefined : getSubobjectShowDescriptionSelector(parentID, objectID);
+
     const attributeProps = {
         timestampProps: { displayTimestamp: parseInt(rootObjectID) === parseInt(objectID) },
-        headerProps: { displayViewButton: false, prefixText: numerateChapters && chapter.length > 0 ? chapter + "." : null }
+        headerProps: { displayViewButton: false, prefixText: numerateChapters && chapter.length > 0 ? chapter + "." : null },
+
+        // Custom selector for subobject description display condition
+        descriptionProps: { showDescriptionSelector }
     };
 
     const attributes = <ObjectAttributes objectID={objectID} attributeProps={attributeProps} />;

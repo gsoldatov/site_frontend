@@ -3,6 +3,7 @@ import React from "react";
 import { HierarchyNavigation } from "./hierarchy-navigation";
 import { ObjectsViewCard } from "../../objects-view-card";
 import { ChaptersDataSwitch } from "../object-data";
+import { getSubobjectShowDescriptionSelector, getSubobjectShowDescriptionAsLinkSelector } from "../../../../store/state-util/ui-objects-view";
 
 
 /**
@@ -24,13 +25,24 @@ const ChapterObjectsViewCard = ({ hierarchyElements }) => {
     const { objectID, chapter } = (hierarchyElements.current || {});
     const { numerateChapters } = (hierarchyElements.root || {});
 
+    // Get subobject's show description selector for current object
+    const parentID = (hierarchyElements.parent || {}).objectID;
+    const showDescriptionSelector = isNaN(parentID) ? undefined : getSubobjectShowDescriptionSelector(parentID, objectID);
+    const showDescriptionAsLinkSelector = isNaN(parentID) ? undefined : getSubobjectShowDescriptionAsLinkSelector(parentID, objectID);
+
     const attributeProps = {
         timestampProps: { displayTimestamp: false },
-        headerProps: { displayViewButton: false, prefixText: numerateChapters && chapter.length > 0 ? chapter + "." : null }
+        headerProps: { displayViewButton: false, prefixText: numerateChapters && chapter.length > 0 ? chapter + "." : null },
+
+        // Custom selector for subobject description display condition
+        descriptionProps: { showDescriptionSelector }
     };
 
     const dataProps = {
-        DataSwitchComponent: ChaptersDataSwitch
+        DataSwitchComponent: ChaptersDataSwitch,
+
+        // Custom selector for link data and description merge
+        showDescriptionAsLinkSelector
     };
 
     const tagProps = { displayTags: false };

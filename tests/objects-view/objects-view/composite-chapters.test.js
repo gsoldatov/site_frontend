@@ -3,8 +3,8 @@ import ReactDOM from "react-dom";
 import { waitFor, fireEvent } from "@testing-library/dom";
 
 import { renderWithWrappers } from "../../_util/render";
-import { updateStoredObjectAttributes, updateStoredMarkdownData } from "../../_util/store-updates-objects";
-import { getObjectsViewCardElements, loadObjectsViewPageAndSelectChapter } from "../../_util/ui-objects-view";
+import { updateStoredObjectAttributes, updateStoredMarkdownData, updateStoredCompositeSubobjectData, updateStoredLinkData } from "../../_util/store-updates-objects";
+import { getObjectsViewCardElements, loadObjectsViewPageAndSelectChapter, waitForCompositeChapterDescription, waitForCompositeChapterDescriptionAsLink } from "../../_util/ui-objects-view";
 import { compareArrays } from "../../_util/data-checks";
 import { getFeedElements } from "../../_util/ui-index";
 
@@ -284,27 +284,23 @@ describe("Table of contents", () => {
             expect(compositeChaptersElements.tableOfContents.attributes.header.viewButton).toBeFalsy();
 
             // Check if description is correctly rendered (check combination of settings from parent's object data and current object's display settings)
-            // show_description = false, show_description_composite = inherit
+            // show_description = no, show_description_composite = inherit
             expect(store.getState().objects[objectID].show_description).toBeFalsy();
             expect(compositeChaptersElements.tableOfContents.attributes.description.element).toBeFalsy();
 
-            // show_description = true, show_description_composite = inherit
+            // show_description = yes, show_description_composite = inherit
             updateStoredObjectAttributes(store, objectID, { show_description: true });
             compositeChaptersElements = getObjectsViewCardElements({ container }).data.compositeChapters;
             await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeTruthy());
 
-            // // show_description = true, show_description_composite = false
-            // let state = store.getState();
-            // let parentObjectData = { ...state.composite[3910], subobjects: [] };
-            // Object.keys(store.getState().composite[3910].subobjects).forEach(subobjectID => {
-            //     const subobjectData = { ...state.composite[3910].subobjects[subobjectID] };
-            //     if (subobjectID === objectID) subobjectData.show_description_composite = "no";
-            //     parentObjectData.subobjects.push(subobjectData);
-            // });
-            // store.dispatch(addObjectData([{ object_id: 3910, object_type: "composite", object_data: parentObjectData }]));
-            // await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeFalsy());
+            // show_description = yes, show_description_composite = no
+            updateStoredCompositeSubobjectData(store, 3910, objectID, { show_description_composite: "no" });
+            await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeFalsy());
 
-            // // TODO add reusable functions for updating object attributes & data => replace ad-hoc updates in this files
+            // show_description = no, show_description_composite = yes
+            updateStoredObjectAttributes(store, objectID, { show_description: false });
+            updateStoredCompositeSubobjectData(store, 3910, objectID, { show_description_composite: "yes" });
+            await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeTruthy());
 
             // Check if tags are rendered
             let cardElements = getObjectsViewCardElements({ container });
@@ -404,6 +400,70 @@ describe("Chapter object", () => {
         // Check if fetch error message is displayed
         const card = getObjectsViewCardElements({ container }).data.compositeChapters.chapterObject.objectCard;
         expect(getObjectsViewCardElements({ card }).placeholders.fetchError).toBeTruthy();
+    });
+
+
+    test("Chapter object description", async () => {
+        // Render page and open a chapter
+        const parentID = 3910;
+        let { container, store, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(parentID, 1);
+
+        // object = no & subobject = inherit => not displayed
+        updateStoredObjectAttributes(store, chapterObjectID, { show_description: false });
+        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, 
+            { show_description_composite: "inherit", show_description_as_link_composite: "no" });
+        await waitForCompositeChapterDescription(container, false);
+
+        // object = yes & subobject = inherit => displayed
+        updateStoredObjectAttributes(store, chapterObjectID, { show_description: true });
+        await waitForCompositeChapterDescription(container, true);
+
+        // object = yes & subobject = no => not displayed
+        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, { show_description_composite: "no" });
+        await waitForCompositeChapterDescription(container, false);
+
+        // object = no & subobject = yes => displayed
+        updateStoredObjectAttributes(store, chapterObjectID, { show_description: false });
+        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, { show_description_composite: "yes" });
+        await waitForCompositeChapterDescription(container, true);
+
+        // object = yes & subobject = inherit & subobject show description as link = yes => not displayed, link is displayed
+        updateStoredObjectAttributes(store, chapterObjectID, { show_description: true });
+        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, 
+            { show_description_composite: "inherit", show_description_as_link_composite: "yes" });
+        await waitForCompositeChapterDescription(container, false);
+
+        // object = no & subobject = yes & subobject show description as link = yes => not displayed, link is displayed
+        updateStoredObjectAttributes(store, chapterObjectID, { show_description: false });
+        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, 
+            { show_description_composite: "yes", show_description_as_link_composite: "yes" });
+        await waitForCompositeChapterDescription(container, false);
+    });
+
+
+    test("Chapter object description as link", async () => {
+        // Render page and open a chapter
+        const parentID = 3910;
+        let { container, store, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(parentID, 1);
+        const descriptionText = store.getState().objects[chapterObjectID].object_description;
+
+        // parent = no & subobject = inherit => not displayed
+        updateStoredLinkData(store, chapterObjectID, { show_description_as_link: false });
+        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, {show_description_as_link_composite: "inherit" });
+        await waitForCompositeChapterDescriptionAsLink(container, descriptionText, false);
+
+        // parent = yes & subobject = inherit = displayed
+        updateStoredLinkData(store, chapterObjectID, { show_description_as_link: true });
+        await waitForCompositeChapterDescriptionAsLink(container, descriptionText, true);
+
+        // parent = yes & subobject = no => not displayed
+        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, {show_description_as_link_composite: "no" });
+        await waitForCompositeChapterDescriptionAsLink(container, descriptionText, false);
+
+        // parent = no & subobject = yes => displayed
+        updateStoredLinkData(store, chapterObjectID, { show_description_as_link: false });
+        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, {show_description_as_link_composite: "yes" });
+        await waitForCompositeChapterDescriptionAsLink(container, descriptionText, true);
     });
 
 
