@@ -5,9 +5,8 @@ import { getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { createTestStore } from "../../_util/create-test-store";
 import { renderWithWrappers } from "../../_util/render";
+import { updateStoredLinkData, updateStoredMarkdownData } from "../../_util/store-updates-objects";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
-
-import { addObjectData } from "../../../src/actions/data-objects";
 
 import { App } from "../../../src/components/top-level/app";
 
@@ -47,8 +46,7 @@ test("Link", async () => {
     });
 
     // !show_description && show_description_as_link
-    let linkData = { ...store.getState().links[1], show_description_as_link: true };
-    store.dispatch(addObjectData([{ object_id: 1, object_type: "link", object_data: linkData }]));
+    updateStoredLinkData(store, 1, { show_description_as_link: true });
 
     await waitFor(() => {
         let { link, renderedMarkdown } = getObjectsViewCardElements({ container }).data.link;
@@ -69,7 +67,7 @@ test("Markdown", async () => {
     await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
 
     // Change markdown raw_text
-    store.dispatch(addObjectData([{ object_id: 1001, object_type: "markdown", object_data: { raw_text: "# Some text" }}]));
+    updateStoredMarkdownData(store, 1001, { raw_text: "# Some text" });
 
     // Check if updated markdown is rendered
     await waitFor(() => {

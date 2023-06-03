@@ -5,15 +5,14 @@ import { getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { createTestStore } from "../../_util/create-test-store";
 import { renderWithWrappers } from "../../_util/render";
-import { updateStoredObjectAttributes } from "../../_util/store-updates-objects";
+import { updateStoredObjectAttributes, updateStoredLinkData, updateStoredMarkdownData,
+    updateStoredCompositeSubobjectData } from "../../_util/store-updates-objects";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
 import { waitForMarkdownHeaderRender } from "../../_util/ui-markdown-editor";
 
 import { resetEditedObjects } from "../../../src/actions/objects-edit";
-import { addObjectData } from "../../../src/actions/data-objects";
 
 import { App } from "../../../src/components/top-level/app";
-import { deepCopy } from "../../../src/util/copy";
 
 
 /*
@@ -174,20 +173,11 @@ describe("Subobject attributes & tags", () => {
         let cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
 
         // show_description_composite = yes & show_description_as_link_composite = yes
-        let compositeData = deepCopy(store.getState().composite[3901]);
-        compositeData.subobjects[cardElements.objectID].show_description_composite = "yes";
-        compositeData.subobjects[cardElements.objectID].show_description_as_link_composite = "yes";
-        compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
-        store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
-        
+        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_composite: "yes", show_description_as_link_composite: "yes" });
         expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy();
 
         // show_description_composite = yes & show_description_as_link_composite = no
-        compositeData = deepCopy(store.getState().composite[3901]);
-        compositeData.subobjects[cardElements.objectID].show_description_as_link_composite = "no";
-        compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
-        store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
-
+        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_as_link_composite: "no" });
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
         // Description Markdown is rendered
@@ -210,34 +200,21 @@ describe("Subobject attributes & tags", () => {
 
 
         // show_description_composite = yes & !show_description
-        let compositeData = deepCopy(store.getState().composite[3901]);
-        compositeData.subobjects[cardElements.objectID].show_description_composite = "yes";
-        compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
-        store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
-
+        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_composite: "yes" });
         updateStoredObjectAttributes(store, cardElements.objectID, { show_description: false });
 
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
         // show_description_composite = inherit & !show_description;
-        compositeData = deepCopy(store.getState().composite[3901]);
-        compositeData.subobjects[cardElements.objectID].show_description_composite = "inherit";
-        compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
-        store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
-
+        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_composite: "inherit" });
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy());
 
         // show_description_composite = inherit & show_description;
         updateStoredObjectAttributes(store, cardElements.objectID, { show_description: true });
-
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
         // show_description_composite = no & show_description;
-        compositeData = deepCopy(store.getState().composite[3901]);
-        compositeData.subobjects[cardElements.objectID].show_description_composite = "no";
-        compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
-        store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
-
+        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_composite: "no" });
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy());
     });
 
@@ -278,13 +255,9 @@ describe("Subobject object data", () => {
         let { link, renderedMarkdown } = cardElements.data.link;
 
         // show_description_as_link_composite = yes & !show_description_as_link
-        let compositeData = deepCopy(store.getState().composite[3901]);
-        compositeData.subobjects[cardElements.objectID].show_description_as_link_composite = "yes";
-        compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
-        store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
+        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_as_link_composite: "yes" });
 
-        let linkData = { ...store.getState().links[cardElements.objectID], show_description_as_link: false };
-        store.dispatch(addObjectData([{ object_id: cardElements.objectID, object_type: "link", object_data: linkData }]));
+        updateStoredLinkData(store, cardElements.objectID, { show_description_as_link: false });
 
         expect(link.getAttribute("href")).toEqual(linkURL);
         await waitFor(() => {
@@ -295,16 +268,11 @@ describe("Subobject object data", () => {
         });
 
         // show_description_as_link_composite = inherit & !show_description_as_link
-        compositeData = deepCopy(store.getState().composite[3901]);
-        compositeData.subobjects[cardElements.objectID].show_description_as_link_composite = "inherit";
-        compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
-        store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
-
+        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_as_link_composite: "inherit" });
         await waitFor(() => { expect(renderedMarkdown.textContent).toEqual(linkURL); });
 
         // show_description_as_link_composite = inherit & show_description_as_link
-        linkData = { ...store.getState().links[cardElements.objectID], show_description_as_link: true };
-        store.dispatch(addObjectData([{ object_id: cardElements.objectID, object_type: "link", object_data: linkData }]));
+        updateStoredLinkData(store, cardElements.objectID, { show_description_as_link: true });
 
         await waitFor(() => {
             const renderedMarkdown = getObjectsViewCardElements({ card: subobjectCards[0] }).data.link.renderedMarkdown;
@@ -314,11 +282,7 @@ describe("Subobject object data", () => {
         });
 
         // show_description_as_link_composite = no & show_description_as_link
-        compositeData = deepCopy(store.getState().composite[3901]);
-        compositeData.subobjects[cardElements.objectID].show_description_as_link_composite = "no";
-        compositeData.subobjects = Object.keys(compositeData.subobjects).map(subobjectID => ({ ...compositeData.subobjects[subobjectID], object_id: subobjectID }));
-        store.dispatch(addObjectData([{ object_id: 3901, object_type: "composite", object_data: compositeData }]));
-
+        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_as_link_composite: "no" });
         await waitFor(() => { expect(renderedMarkdown.textContent).toEqual(linkURL); });
     });
 
@@ -337,7 +301,7 @@ describe("Subobject object data", () => {
         expect(store.getState().objects[cardElements.objectID].object_type).toEqual("markdown");
 
         // Change markdown raw_text
-        store.dispatch(addObjectData([{ object_id: cardElements.objectID, object_type: "markdown", object_data: { raw_text: "# Some text" }}]));
+        updateStoredMarkdownData(store, cardElements.objectID, { raw_text: "# Some text" });
 
         // Check if updated markdown is rendered
         await waitFor(() => {

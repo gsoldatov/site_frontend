@@ -12,8 +12,7 @@ import { compareDates } from "../../_util/data-checks";
 
 import { resetEditedObjects } from "../../../src/actions/objects-edit";
 
-import { updateStoredObjectAttributes } from "../../_util/store-updates-objects";
-import { addObjectData } from "../../../src/actions/data-objects";
+import { updateStoredObjectAttributes, updateStoredLinkData } from "../../_util/store-updates-objects";
 
 import { App } from "../../../src/components/top-level/app";
 
@@ -126,8 +125,7 @@ test("Object description (link)", async () => {
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // !show_description && show_description_as_link
-    let linkData = { ...store.getState().links[1], show_description_as_link: true };
-    store.dispatch(addObjectData([{ object_id: 1, object_type: "link", object_data: linkData }]));
+    updateStoredLinkData(store, 1, { show_description_as_link: true });
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // show_description && show_description_as_link
@@ -135,8 +133,7 @@ test("Object description (link)", async () => {
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // show_description && !show_description_as_link
-    linkData = { ...store.getState().links[1], show_description_as_link: false };
-    store.dispatch(addObjectData([{ object_id: 1, object_type: "link", object_data: linkData }]));
+    updateStoredLinkData(store, 1, { show_description_as_link: false });
     await waitFor(() => expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy());
 });
 

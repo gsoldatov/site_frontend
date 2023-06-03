@@ -3,12 +3,10 @@ import ReactDOM from "react-dom";
 import { waitFor, fireEvent } from "@testing-library/dom";
 
 import { renderWithWrappers } from "../../_util/render";
-import { updateStoredObjectAttributes } from "../../_util/store-updates-objects";
+import { updateStoredObjectAttributes, updateStoredMarkdownData } from "../../_util/store-updates-objects";
 import { getObjectsViewCardElements, loadObjectsViewPageAndSelectChapter } from "../../_util/ui-objects-view";
 import { compareArrays } from "../../_util/data-checks";
 import { getFeedElements } from "../../_util/ui-index";
-
-import { addObjectData } from "../../../src/actions/data-objects";
 
 import { config, setConfig, resetConfig } from "../../../src/config";
 import { App } from "../../../src/components/top-level/app";
@@ -435,7 +433,7 @@ describe("Chapter object", () => {
         expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[chapterObjectID].object_name);
         
         // Change markdown raw_text
-        store.dispatch(addObjectData([{ object_id: chapterObjectID, object_type: "markdown", object_data: { raw_text: "# Some text" }}]));
+        updateStoredMarkdownData(store, chapterObjectID, { raw_text: "# Some text" });
 
         // Check if updated markdown is rendered
         await waitFor(() => {
