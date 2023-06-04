@@ -30,8 +30,8 @@
     border-bottom: none;
 }
 
-.rendered-markdown table {
-    /* Center table */
+/*.rendered-markdown table {
+    /* Center table * /
     margin-left: auto;
     margin-right: auto;
 }
@@ -46,7 +46,7 @@
 .rendered-markdown th, 
 .rendered-markdown td {
     padding: 0.25em;
-}
+} */
 
 /* Code highlighting */
 .rendered-markdown pre code.hljs {

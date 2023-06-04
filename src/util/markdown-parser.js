@@ -100,7 +100,7 @@ const renderer = {
     table(header, body) {
         if (body) body = '<tbody>' + body + '</tbody>';
 
-        return '<table class="markdown-table">\n'
+        return '<table class="ui striped table">\n'
             + '<thead>\n'
             + header
             + '</thead>\n'
@@ -111,10 +111,10 @@ const renderer = {
     // Default renderer with a custom classname
     tablecell(content, flags) {
         const type = flags.header ? 'th' : 'td';
-        const className = ' class="markdown-' + type + '"';
+        // const className = ' class="markdown-' + type + '"';
         const tag = flags.align
-            ? '<' + type + className + ' align="' + flags.align + '">'
-            : '<' + type + className + '>';
+            ? '<' + type /*+ className*/ + ' align="' + flags.align + '">'
+            : '<' + type /*+ className*/ + '>';
     return tag + content + '</' + type + '>\n';
     },
     
