@@ -35,6 +35,8 @@
     --clickable-area-text-color: rgb(0, 119, 182);
     --clickable-area-text-color-hover: rgb(3, 4, 94);
 
+    /* Tables */
+    --table-odd-row-background-color: rgb(244, 244, 244);
 
     /* Rendered markdown */
     --rendered-markdown-blockquote-border-color: rgb(25, 133, 161);
@@ -173,6 +175,12 @@ ul:last-child {
 /** Common styles, tables **/
 .ui.table {
     color: var(--text-color);
+}
+
+.ui.table thead th,
+.ui.table.striped tbody tr:nth-child(2n)
+{
+    background-color: var(--table-odd-row-background-color);
 }
 
 
