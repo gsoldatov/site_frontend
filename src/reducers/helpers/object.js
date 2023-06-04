@@ -241,7 +241,7 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID, { exclude
     else if (editedObjectID !== undefined) {
         const excludedObjectIDs = excludedObjectID !== undefined ? [excludedObjectID] : undefined;
         if (objectHasNoChanges(state, editedObjectID, false)) newState = getStateWithRemovedEditedObjects(newState, [editedObjectID], { excludedObjectIDs });
-        else newState = getStateWithRemovedUnchangedEditedSubobjects(newState, editedObjectID), { excludedObjectIDs };
+        else newState = getStateWithRemovedUnchangedEditedSubobjects(newState, editedObjectID, { excludedObjectIDs });
     }
 
     return newState;
