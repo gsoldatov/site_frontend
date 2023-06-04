@@ -32,11 +32,12 @@ div.markdown-editor-view-edit-container {
     flex-basis: 100%;   /* take full width of container */
 
     /* Separation between view & edit columns */
-    gap: 1rem;
+    gap: var(--markdown-editor-column-gap);
 }
 
 div.markdown-editor-column {
-    flex: 1 1 50%;
+    flex: 1 0 calc(50% - var(--markdown-editor-column-gap));
+    overflow: hidden;
 }
 
 div.markdown-editor-view-edit-container.smallscreen {
@@ -60,6 +61,3 @@ div.markdown-editor-view-container {
 .markdown-editor-edit-container {
     width: 100%;
 }
-
-
-/** Rendered markdown **/
