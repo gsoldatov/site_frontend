@@ -20,9 +20,17 @@
 
 .rendered-markdown blockquote {
     padding: 0.5rem;
-    font-style: italic;
-    border-left: solid 2px var(--rendered-markdown-blockquote-border-color);
+    /* font-style: italic; */
+    /* font-weight: bold; */
+    /* border-left: solid 2px var(--rendered-markdown-blockquote-border-color); */
+    box-shadow: var(--rendered-markdown-blockquote-border-color) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0) 0px 0px 0px 0px;
+    color: var(--rendered-markdown-blockquote-color);
     background-color: var(--rendered-markdown-blockquote-background-color);
+}
+
+.rendered-markdown blockquote blockquote {
+    box-shadow: none;
+    border-left: solid 2px var(--rendered-markdown-blockquote-color);
 }
 
 .rendered-markdown hr {
