@@ -42,14 +42,23 @@ test("Horizontal rule", () => {
 
 
 test("Table & tablecells", () => {
-    // Check if custom classes are added to table, th & td tags
+    // Check if SUIR classes are added to table, th & td tags
     const parsed = parse("| Col1 | Col2 |\n| --- | --- |\n| Cell1 | Cell2 |");
-    ["table", "th", "td"].forEach(tag => {
-        const re = new RegExp(`<${tag}[\\s\\S]+?class="(?<classNames>[^"]+)"[\\s\\S]*?>`);
-        const match = parsed.match(re);
-        expect(match).toBeTruthy();
-        expect(match.groups.classNames.indexOf(`markdown-${tag}`)).toBeGreaterThan(-1);
+    const re = new RegExp(`<table[\\s\\S]+?class="(?<classNames>[^"]+)"[\\s\\S]*?>`);
+    const match = parsed.match(re);
+    expect(match).toBeTruthy();
+    ["ui", "table", "striped"].forEach(className => {
+        expect(match.groups.classNames.indexOf(className)).toBeGreaterThan(-1);
     });
+
+    // // Check if custom classes are added to table, th & td tags      (old check for non-SUIR classname)
+    // const parsed = parse("| Col1 | Col2 |\n| --- | --- |\n| Cell1 | Cell2 |");
+    // ["table", "th", "td"].forEach(tag => {
+    //     const re = new RegExp(`<${tag}[\\s\\S]+?class="(?<classNames>[^"]+)"[\\s\\S]*?>`);
+    //     const match = parsed.match(re);
+    //     expect(match).toBeTruthy();
+    //     expect(match.groups.classNames.indexOf(`markdown-${tag}`)).toBeGreaterThan(-1);
+    // });
 });
 
 
