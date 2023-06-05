@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import { config } from "../../config";
+import { getConfig } from "../../config";
 
 import { enumCompositeObjectDisplayModes } from "../../util/enum-composite-object-display-modes";
 import { enumShowDescriptionComposite } from "../state-templates/composite-subobjects";
@@ -30,7 +30,7 @@ import { getSingleColumnSubobjectDisplayOrder } from "./composite";
             const objectType = (objectsStorage[elementObjectID] || {}).object_type;
             const displayMode = (compositeDataStorage[elementObjectID] || {}).display_mode;
             const numerateChapters = (compositeDataStorage[elementObjectID] || {}).numerate_chapters;
-            const isLeaf = objectType !== "composite" || displayMode !== enumCompositeObjectDisplayModes.chapters.value || currentDepth > config.compositeChapters.maxHierarchyDepth;
+            const isLeaf = objectType !== "composite" || displayMode !== enumCompositeObjectDisplayModes.chapters.value || currentDepth > getConfig().compositeChapters.maxHierarchyDepth;
 
             const element = { objectID: elementObjectID, parentElement, depthLevel: currentDepth, chapter, chapterSuffix, URL: elementURL, numerateChapters };
             element.childElements = isLeaf ? null 

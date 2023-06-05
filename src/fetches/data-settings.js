@@ -1,9 +1,9 @@
-import { config } from "../config";
+import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse } from "./common";
 
 
-const backendURL = config.backendURL;
+const backendURL = getConfig().backendURL;
 
 
 /**

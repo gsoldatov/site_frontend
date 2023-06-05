@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { addUsers, updateUser } from "../actions/data-users";
@@ -6,7 +6,7 @@ import { basicViewModeUserAttributes, fullviewModeUserAttributes } from "../stor
 import { validateUserUpdates, getUpdatedUserValues } from "../store/state-util/users";
 
 
-const backendURL = config.backendURL;
+const backendURL = getConfig().backendURL;
 
 
 /**

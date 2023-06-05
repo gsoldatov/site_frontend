@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { getConfig } from "../config";
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { enumResponseErrorType } from "../util/enum-response-error-type";
 
@@ -11,7 +11,7 @@ import { checkIfTagNameExists } from "../store/state-util/tags";
 
 
 
-const backendURL = config.backendURL;
+const backendURL = getConfig().backendURL;
 
 
 /**

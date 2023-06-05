@@ -1,4 +1,4 @@
-import { config } from "../../src/config";
+import { getConfig } from "../../src/config";
 import { resetTagsCache, tagsHandlersList } from "./mock-fetch-handlers-tags";
 import { resetObjectsCaches, objectsHandlersList } from "./mock-fetch-handlers-objects";
 import { authHandlersList } from "./mock-fetch-handlers-auth";
@@ -20,7 +20,7 @@ export function mockFetch(URL, {
     if (isFailingFetch) {
         throw TypeError("NetworkError");   // Network errors are instances of TypeError
     }
-    const URLPath = URL.replace(config["backendURL"], "");
+    const URLPath = URL.replace(getConfig()["backendURL"], "");
 
     // Lookup the fixed response
     let response = getCustomRouteResponse(URLPath, method, body);

@@ -8,7 +8,7 @@ import { getObjectsViewCardElements, loadObjectsViewPageAndSelectChapter, waitFo
 import { compareArrays } from "../../_util/data-checks";
 import { getFeedElements } from "../../_util/ui-index";
 
-import { config, setConfig, resetConfig } from "../../../src/config";
+import { getConfig, setConfig, resetConfig } from "../../../src/config";
 import { App } from "../../../src/components/top-level/app";
 import { getInlineItem } from "../../_util/ui-inline";
 
@@ -223,6 +223,7 @@ describe("Table of contents", () => {
 
         test("Composite with `chapters` display mode with maximum hierarchy depth exceeded", async () => {
             // Reduce the maximum hierarchy depth
+            const config = getConfig();
             setConfig({ ...config, compositeChapters: { ...config.compositeChapters, maxHierarchyDepth: 1 }});
 
             // Render page and wait for data to load
@@ -591,6 +592,7 @@ describe("Chapter object", () => {
 
     test("Composite, chapters with exceeded max depth", async () => {
         // Reduce the maximum hierarchy depth
+        const config = getConfig();
         setConfig({ ...config, compositeChapters: { ...config.compositeChapters, maxHierarchyDepth: 1 }});
 
         // Render page and open a chapter

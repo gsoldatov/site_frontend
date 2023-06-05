@@ -7,7 +7,7 @@ import { DndProvider } from "react-dnd";
 import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import { config } from "../../config";
+import { getConfig } from "../../config";
 
 import createStore from "../../store/create-store";
 
@@ -128,7 +128,7 @@ export const App = () => {
 
 
 export const WrappedApp = () => {
-    const { useLocalStorage, enableDebugLogging } = config;
+    const { useLocalStorage, enableDebugLogging } = getConfig();
 
     return (
         <Provider store={createStore({ useLocalStorage, enableDebugLogging })}>

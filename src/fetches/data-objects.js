@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { enumResponseErrorType } from "../util/enum-response-error-type";
@@ -12,7 +12,7 @@ import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeO
     serializeObjectData, modifyObjectDataPostSave, objectDataIsInState } from "../store/state-util/objects";
 
 
-const backendURL = config.backendURL;
+const backendURL = getConfig().backendURL;
 
 
 /**

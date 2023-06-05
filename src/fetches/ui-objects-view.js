@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { getConfig } from "../config";
 
 import { getResponseErrorType } from "./common";
 import { updateObjectFetch, viewCompositeHierarchyElementsFetch, viewObjectsFetch } from "./data-objects";
@@ -9,7 +9,7 @@ import { getToDoListUpdateFetchBody } from "../store/state-util/to-do-lists";
 import { enumResponseErrorType } from "../util/enum-response-error-type";
 
 
-const backendURL = config.backendURL;
+const backendURL = getConfig().backendURL;
 
 
 /**

@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { getNonCachedUsers } from "./data-users";
@@ -11,7 +11,7 @@ import { enumUserLevels } from "../util/enum-user-levels";
 import { enumResponseErrorType } from "../util/enum-response-error-type";
 
 
-const backendURL = config.backendURL;
+const backendURL = getConfig().backendURL;
 
 
 /**
