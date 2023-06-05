@@ -19,7 +19,7 @@ import { generateObjectAttributes, generateObjectData } from "./data-objects";
  * - 23: existing to-do list;
  */
 export const getStoreWithEditedObjects = () => {
-    let store = createTestStore({ enableDebugLogging: false });
+    let store = createTestStore();
 
     store.dispatch(resetEditedObjects({ objectIDs: [0, 1, -1, /*10, 11,*/ /*12,*/ 21, 22, 23], allowResetToDefaults: true }));
 

@@ -6,7 +6,8 @@
         },
 
         "useLocalStorage": true,
-        "enableDebugLogging": true
+        "enableDebugLogging": true,
+        "localStorageSaveTimeout": 1000
     },
 
     "server": {

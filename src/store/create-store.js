@@ -5,19 +5,21 @@ import { LocalStorageManager } from "./local-storage-manager";
 import getRootReducer from "../reducers/root";
 
 
-const createStoreFunc = ({ useLocalStorage = false, enableDebugLogging = false, saveTimeout = 1000 } = {}) => {
-    const manager = new LocalStorageManager({ useLocalStorage, enableDebugLogging, saveTimeout });
+/**
+ * Accepts an optional `config` object with configuration override.
+ * If omitted, uses configuration from the `config.json` file.
+ */
+const createStoreFunc = config => {
+    const manager = new LocalStorageManager(config);
     const store = createStore(
-        getRootReducer(enableDebugLogging),
+        getRootReducer(config),
         manager.loadState(),
         applyMiddleware(
             thunkMiddleware
         )
     );
 
-    if (useLocalStorage) {
-        store.subscribe(() => manager.saveState(store));
-    }
+    store.subscribe(() => manager.saveState(store));
 
     return store;
 }

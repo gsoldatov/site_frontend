@@ -62,7 +62,7 @@ describe("Page load and pagination", () => {
     
     
     test("Load a page without pagination", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 100}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -80,7 +80,7 @@ describe("Page load and pagination", () => {
     
     
     test("Load page 1 of 5 and click on page 5", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 20}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -120,7 +120,7 @@ describe("Page load and pagination", () => {
     
     
     test("Load page 1 of 10 and check pagination gaps", async () => {
-        let store = createTestStore({ useLocalStorage: false });
+        let store = createTestStore();
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -217,7 +217,7 @@ describe("Page load and pagination", () => {
 
 describe("Side menu", () => {
     test("Buttons during fetch", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -244,7 +244,7 @@ describe("Side menu", () => {
 
 
     test("Add object button", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -264,7 +264,7 @@ describe("Side menu", () => {
 
 
     test("Edit object button", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -303,7 +303,7 @@ describe("Side menu", () => {
 
 
     test("Delete button + edited objects removal", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
 
         const render = route => renderWithWrappers(
@@ -460,7 +460,7 @@ describe("Side menu", () => {
 
 describe("Field menu", () => {
     test("Select + deselect", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
@@ -489,7 +489,7 @@ describe("Field menu", () => {
 
 
     test("Sort buttons", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         const objectsPerPage = 10;
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: objectsPerPage}));
         
@@ -529,7 +529,7 @@ describe("Field menu", () => {
 
 
     test("Object filter", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)

@@ -1,26 +1,43 @@
 import getInitialState from "./state-templates/initial-state";
-import debounce from "../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../util/enum-debounce-delay-refresh-mode";
 import { defaultEditedObjectState } from "./state-templates/edited-object";
 import { getDefaultAuthState } from "./state-templates/auth";
+
+import debounce from "../util/debounce";
+import { enumDebounceDelayRefreshMode } from "../util/enum-debounce-delay-refresh-mode";
+
+import { getConfig } from "../config";
 
 
 /**
  * Manages state loads and saves to the browser's local storage.
+ * 
+ * Accepts an optional `config` object with configuration override.
+ * If omitted, uses configuration from the `config.json` file.
+ * 
+ * NOTE: `localStorageSaveTimeout` modification in config during runtime does not change the behaviour of existing instance.
+ * To implement this, a new debounced function should be created on change, replacing the old one in the store subscriptions.
  */
 export class LocalStorageManager {
-    constructor({ useLocalStorage, enableDebugLogging, saveTimeout }) {
-        this.useLocalStorage = useLocalStorage;
-        this.enableDebugLogging = enableDebugLogging;
+    constructor(config) {
+        this._config = config;
 
         this.previousState = getInitialState();
 
         this.loadState = this.loadState.bind(this);
         this.save = this.save.bind(this);
 
-        this.saveState = debounce(this.save, saveTimeout, enumDebounceDelayRefreshMode.onCall);
-
         this._authStateKeys = Object.keys(getDefaultAuthState());
+
+        const { localStorageSaveTimeout } = this.getConfig();
+        this.saveState = debounce(this.save, localStorageSaveTimeout, enumDebounceDelayRefreshMode.onCall);
+    }
+
+    /**
+     * Returns a config object used by this instance
+     * (passed as an argument or default app config)
+     */
+    getConfig() {
+        return this._config || getConfig();
     }
 
     /**
@@ -30,7 +47,7 @@ export class LocalStorageManager {
     loadState() {
         let state = getInitialState();
         // Exit if localStorage usage is disabled
-        if (!this.useLocalStorage) {
+        if (!this.getConfig().useLocalStorage) {
             this.log("useLocalStorage is set to false, returning default state");
             return state;
         }
@@ -113,7 +130,7 @@ export class LocalStorageManager {
      */
     save(store) {
         // Exit if localStorage usage is disabled
-        if (!this.useLocalStorage) {
+        if (!this.getConfig().useLocalStorage) {
             this.log("useLocalStorage is set to false, skipping state save");
             return;
         }
@@ -197,7 +214,7 @@ export class LocalStorageManager {
     }
 
     log(msg) {
-        if (this.enableDebugLogging) console.log(msg);
+        if (this.getConfig().enableDebugLogging) console.log(msg);
     }
 };
 

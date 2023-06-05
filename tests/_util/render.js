@@ -31,8 +31,9 @@ export function renderWithWrappers(ui, params) {
     };
 }
 
+
 const getRenderParams = (params = {}) => {
-    const store = params.store || createTestStore({ useLocalStorage: false, enableDebugLogging: false }),
+    const store = params.store || createTestStore(),
           route = params.route || "/";
     const history = createMemoryHistory({ initialEntries: [route] });
     return { store, history };

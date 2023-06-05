@@ -12,6 +12,9 @@ import objectEdit from "./objects-edit";
 import objectsList from "./objects-list";
 import objectsEdited from "./objects-edited";
 
+import { getConfig } from "../config";
+
+
 function getActionHandlers(rootObjects) {
     let actionHandlers = {};
 
@@ -31,15 +34,19 @@ function getActionHandlers(rootObjects) {
     return actionHandlers;
 }
 
+
 const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, dataUsers, auth, common, tag, tags, objectEdit, objectsList, objectsEdited });
 
-export default function getRootReducer (enableDebugLogging) {
+
+export default function getRootReducer (config) {
+    config = config || getConfig();
+
     return (state, action) => {
         let handler = typeof(action) === "object" 
             ? ACTION_HANDLERS[action.type] : 
             ACTION_HANDLERS[action];
         let newState = handler ? handler(state, action) : state;
-        if (enableDebugLogging) {
+        if (config.enableDebugLogging) {
             logState(newState, `Finished dispatching action ${action.type}, new state:`);
         }
         return newState;

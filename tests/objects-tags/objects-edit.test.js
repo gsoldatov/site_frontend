@@ -274,7 +274,7 @@ describe("Add object page", () => {
 
 describe("Edit object page", () => {
     test("Load object tags from state", async () => {
-        let store = createTestStore({ enableDebugLogging: false });
+        let store = createTestStore();
         let object = generateObjectAttributes(1, {
             object_type: "link", object_name: "object name", object_description: "object description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 

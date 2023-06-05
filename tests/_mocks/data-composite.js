@@ -140,7 +140,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
  * Returns a Redux store with a composite object `1` (but not its subobjects) present in attribute, tag and data storages.
  */
  export const getStoreWithCompositeObject = () => {
-    let store = createTestStore({ enableDebugLogging: false });
+    let store = createTestStore();
     let objects = [
         generateObjectAttributes(1, {
             object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
@@ -171,7 +171,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
   * Returns a Redux store with a composite object `1` and its subobjects (`2`, `-1`) present in storages and editedObjects.
   */
 export const getStoreWithModifiedCompositeObject = () => {
-    let store = createTestStore({ enableDebugLogging: false });
+    let store = createTestStore();
 
     let objects = [
         generateObjectAttributes(1, {
@@ -213,7 +213,7 @@ export const getStoreWithModifiedCompositeObject = () => {
  * If `subobjectsAreNew` is set to true, main object's subobjects are generated with negative object IDs (except for composite subobject).
  */
 export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsNew, subobjectsAreNew) => {
-    let store = createTestStore({ enableDebugLogging: false });
+    let store = createTestStore();
 
     const mainObjectID = mainObjectIsNew ? 0 : 3201;
     const linkSubobjectID = subobjectsAreNew ? -2 : 2;

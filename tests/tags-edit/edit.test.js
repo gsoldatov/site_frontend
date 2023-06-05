@@ -85,7 +85,7 @@ describe("Page load & render", () => {
     
     
     test("Load a tag from state", async () => {
-        const store = createTestStore({ enableDebugLogging: false });
+        const store = createTestStore();
         const tag = getTag({ tag_id: 1, is_published: false });
         store.dispatch(addTags([tag]));
         let { container } = renderWithWrappers(<App />, {
@@ -158,7 +158,7 @@ describe("Side menu ", () => {
 
 
     test("'Cancel' button", async () => {
-        const store = createTestStore({ enableDebugLogging: false });
+        const store = createTestStore();
         const tag = getTag({ tag_id: 1 });
         store.dispatch(addTags([tag]));
         let { container, history } = renderWithWrappers(<App />, {
@@ -267,7 +267,7 @@ describe("Edit & save ", () => {
 
 
     test("Save an existing tag", async () => {
-        const store = createTestStore({ enableDebugLogging: false });
+        const store = createTestStore();
         const tag = getTag({ tag_id: 2, tag_name: "existing tag name" });
         store.dispatch(addTags([tag]));
         let { container } = renderWithWrappers(<App />, {

@@ -62,7 +62,7 @@ describe("Page load, tag link and pagination", () => {
 
     test("Load a page without pagination", async () => {
         for (let addAdminToken of [true, false]) {
-            let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false, addAdminToken });
+            let store = createTestStore({ addAdminToken });
             store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
             
             // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -83,7 +83,7 @@ describe("Page load, tag link and pagination", () => {
 
 
     test("Tag item link", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -104,7 +104,7 @@ describe("Page load, tag link and pagination", () => {
 
     test("Tag item checkbox", async () => {
         for (let addAdminToken of [true, false]) {
-            let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false, addAdminToken });
+            let store = createTestStore({ addAdminToken });
             store.dispatch(setTagsPaginationInfo({itemsPerPage: 100}))
             
             // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -134,7 +134,7 @@ describe("Page load, tag link and pagination", () => {
 
 
     test("Load page 1 of 5 and click on page 5", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 20}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -173,7 +173,7 @@ describe("Page load, tag link and pagination", () => {
 
 
     test("Load page 1 of 10 and check pagination gaps", async () => {
-        let store = createTestStore({ useLocalStorage: false });
+        let store = createTestStore();
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -269,7 +269,7 @@ describe("Page load, tag link and pagination", () => {
 
 describe("Side menu", () => {
     test("Not rendered if not logged in", async () => {
-        let store = createTestStore({ addAdminToken: false, useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore({ addAdminToken: false });
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<Route exact path="/tags/list"><TagsList /></Route>, {
@@ -285,7 +285,7 @@ describe("Side menu", () => {
 
 
     test("Side menu buttons during fetch", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -311,7 +311,7 @@ describe("Side menu", () => {
 
 
     test("Add tag button", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -330,7 +330,7 @@ describe("Side menu", () => {
 
 
     test("Edit tag button", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -368,7 +368,7 @@ describe("Side menu", () => {
 
 
     test("Delete button", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -417,7 +417,7 @@ describe("Side menu", () => {
 
 describe("Field menu", () => {
     test("Select + deselect", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -445,7 +445,7 @@ describe("Field menu", () => {
 
 
     test("Sort buttons", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         const tagsPerPage = 10;
         store.dispatch(setTagsPaginationInfo({itemsPerPage: tagsPerPage}))
         
@@ -484,7 +484,7 @@ describe("Field menu", () => {
 
 
     test("Tag filter", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false });
+        let store = createTestStore();
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
@@ -509,7 +509,7 @@ describe("Field menu", () => {
 
 
     test("Field menu elements when not logged in", async () => {
-        let store = createTestStore({ useLocalStorage: false, enableDebugLogging: false, addAdminToken: false });
+        let store = createTestStore({ addAdminToken: false });
         store.dispatch(setTagsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Tag component)
