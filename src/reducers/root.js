@@ -46,7 +46,7 @@ export default function getRootReducer (config) {
             ? ACTION_HANDLERS[action.type] : 
             ACTION_HANDLERS[action];
         let newState = handler ? handler(state, action) : state;
-        if (config.enableDebugLogging) {
+        if (config.debugLogging) {
             logState(newState, `Finished dispatching action ${action.type}, new state:`);
         }
         return newState;

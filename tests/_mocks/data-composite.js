@@ -98,7 +98,7 @@ export const generateCompositeSubobject = (object_id, column, row, overrideValue
  * Returns a Redux store with a composite object `1` and its subobjects (`2`, `3`) present in attribute, tag and data storages.
  */
 export const getStoreWithCompositeObjectAndSubobjects = () => {
-    let store = createTestStore({ enableDebugLogging: false });
+    let store = createTestStore();
 
     let objects = [
         generateObjectAttributes(1, { 

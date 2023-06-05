@@ -214,7 +214,7 @@ export class LocalStorageManager {
     }
 
     log(msg) {
-        if (this.getConfig().enableDebugLogging) console.log(msg);
+        if (this.getConfig().debugLogging) console.log(msg);
     }
 };
 
