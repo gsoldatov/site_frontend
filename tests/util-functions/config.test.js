@@ -2,7 +2,7 @@ import { deepCopy } from "../../src/util/copy";
 import { hasEqualAttributes } from "../../src/util/equality-checks";
 
 import appConfig from "../../src/config.json";
-import testConfig from "../_mocks/config.json";
+import testConfig from "../_mocks/config_.json";
 
 const fs = require("fs");
 const path = require("path");

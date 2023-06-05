@@ -1,6 +1,6 @@
 import createStore from "../../src/store/create-store";
 import { deepCopy } from "../../src/util/copy";
-import testConfig from "../_mocks/config.json";
+import testConfig from "../_mocks/config_.json";
 
 import { getMockLoginResponse } from "../_mocks/data-auth";
 import { getMockUserData } from "../_mocks/data-users";
