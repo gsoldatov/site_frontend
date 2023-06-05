@@ -39,3 +39,43 @@ export const deepEqual = (a, b) => {
         if (!deepEqual(a[k], b[k])) return false;
     return true;
 };
+
+
+/**
+ * Returns true if `a` contains the props as `b`, including nested subobjects.
+ * Cyclic references are not checked.
+ * 
+ * Same non-object types and nulls are considered to have equal attributes.
+ * Diffrent types and objects with different constructors are consiredered to have different attributes.
+ * 
+ */
+export const hasEqualAttributes = (a, b) => {
+    // Different types are considered to always have different attributes.
+    if (typeof(a) !== typeof(b)) return false;
+
+    // Non-object types are considered to always have the same attributes.
+    if (typeof(a) !== "object") return true;
+
+    // Handle nulls as a separate case (they can't be passed to Object.keys)
+    if (a === null && b === null) return true;
+    if (a === null && b !== null) return false;
+    if (a !== null && b === null) return false;
+
+    // Objects with different constructors are considered 
+    if (a.constructor !== b.constructor) return false;
+
+    // Consider arrays to always have the same keys (they may have different keys de-facto, if their lengths are not equal)
+    if (a instanceof Array) return true;
+
+    // Check attributes keys
+    const keysA = Object.keys(a).sort();
+    const keysB = Object.keys(b).sort();
+
+    if (!deepEqual(keysA, keysB)) return false;
+
+    // Recursively check each attribute
+    for (let i = 0; i < keysA.length; i++)
+        if (!hasEqualAttributes(a[keysA[i]], b[keysB[i]])) return false;
+    
+    return true;
+};

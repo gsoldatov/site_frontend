@@ -4,7 +4,7 @@ import { deepEqual } from "../../src/util/equality-checks";
 const _PRIMITIVES = ["str", 1, BigInt(9007199254740991), true, null, undefined];
 
 
-test("Primitives of ifferent types", () => {
+test("Primitives of different types", () => {
     for (let i in _PRIMITIVES) {
         for (let j = i + 1; j < _PRIMITIVES.length; j++) {
             let a = _PRIMITIVES[i], b = _PRIMITIVES[j];
