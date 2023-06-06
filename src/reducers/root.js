@@ -6,6 +6,7 @@ import dataUsers from "./data-users";
 
 import auth from "./auth";
 import common from "./common";
+import navigation from "./navigation";
 import tag from "./tags-edit";
 import tags from "./tags-list";
 import objectEdit from "./objects-edit";
@@ -35,7 +36,7 @@ function getActionHandlers(rootObjects) {
 }
 
 
-const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, dataUsers, auth, common, tag, tags, objectEdit, objectsList, objectsEdited });
+const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, dataUsers, auth, common, navigation, tag, tags, objectEdit, objectsList, objectsEdited });
 
 
 export default function getRootReducer (config) {

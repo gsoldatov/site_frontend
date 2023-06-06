@@ -19,6 +19,11 @@ const initialState = {
     // users storage
     users: {},
 
+    // navbar UI
+    navigationUI: {
+        isFetching: false
+    },
+
     // tags storage
     tags: {},
 

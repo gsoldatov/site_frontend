@@ -175,6 +175,24 @@ describe("Secondary menu logged out state", () => {
 
 
 describe("Secondary menu logged in state", () => {
+    test("Current user fetch error", async () => {
+        // Simulate fetch failure for user data
+        addCustomRouteResponse("/users/view", "POST", { status: 404, body: {} });
+        
+        const store = createTestStore({ addAdminToken: true });
+        let { container, history } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new", store
+        });
+
+        // Wait for user information fetch to end
+        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+
+        // Check if fallback username text is displayed
+        const { secondaryMenu } = getNavigationBarElements(container);
+        expect(secondaryMenu.profileLink.textContent).toEqual("<Unknown user>");
+    });
+    
+    
     test("Elements rendering", async () => {
         const store = createTestStore({ addAdminToken: true });
         let { container, history } = renderWithWrappers(<App />, {

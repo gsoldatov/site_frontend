@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Menu } from "semantic-ui-react";
+import { Button, Loader, Menu } from "semantic-ui-react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 
 import { registrationStatusFetch, logoutFetch, getCurrentUserData } from "../../../fetches/auth";
@@ -80,7 +80,7 @@ const LoggedOutSecondaryMenu = () => {
 
 
 /**
- * Navbar's secondary menu content for anonymous users.
+ * Navbar's secondary menu content for logged in users.
  */
 const LoggedInSecondaryMenu = () => {
     const dispatch = useDispatch();
@@ -92,7 +92,14 @@ const LoggedInSecondaryMenu = () => {
 
     // User params
     const userPageLink = "/users/" + useSelector(state => state.auth.user_id);
-    const username = useSelector(state => state.auth.user_id in state.users ? state.users[state.auth.user_id].username : "");
+    const username = useSelector(state => state.auth.user_id in state.users ? state.users[state.auth.user_id].username : "<Unknown user>");
+
+    // User link or loader
+    const isFetching = useSelector(state => state.navigationUI.isFetching);
+    const userLink = isFetching
+        ? <Loader active inline size="tiny" />
+        : <Link className="navigation-bar-username" to={userPageLink}>{username}</Link>
+    ;
 
     // Logout button
     const logoutOnClick = useMemo(() => () => {
@@ -101,7 +108,7 @@ const LoggedInSecondaryMenu = () => {
     
     return (
         <Menu.Item className="nagivation-bar-button-container">
-            <Link className="navigation-bar-username" to={userPageLink}>{username}</Link>
+            {userLink}
             <Button className="navigation-bar-button" color="blue" onClick={logoutOnClick}>
                 Log Out
             </Button>

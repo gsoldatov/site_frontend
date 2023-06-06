@@ -9,6 +9,7 @@ import { resetStateExceptForEditedObjects, setRedirectOnRender } from "../action
 import { validateLoginCredentials, validateRegisterCredentials } from "../store/state-util/auth";
 import { enumUserLevels } from "../util/enum-user-levels";
 import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { setNavigationUI } from "../actions/navigation";
 
 
 const backendURL = getConfig().backendURL;
@@ -164,7 +165,9 @@ export const logoutFetch = () => {
         const user_id = getState().auth.user_id;
         const fullViewMode = getState().auth.numeric_user_level === enumUserLevels.admin;
 
+        dispatch(setNavigationUI({ isFetching: true }));
         let result = await dispatch(getNonCachedUsers([user_id], fullViewMode));
+        dispatch(setNavigationUI({ isFetching: false }));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
