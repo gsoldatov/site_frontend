@@ -1,4 +1,5 @@
 import createStore from "../../src/store/create-store";
+import { getConfig, setConfig } from "../../src/config";
 import { deepCopy } from "../../src/util/copy";
 import testConfig from "../_mocks/config_.json";
 
@@ -14,13 +15,26 @@ import { addUsers } from "../../src/actions/data-users";
  * Adds an admin token by default, unless `addAdminToken` = false is set.
  * Adds user information for admin token owner in state.users, if `addAdminUser` = true.
  * 
- * Created store uses default values from `_mocks/config.json` file, which can be overriden by passing additional `...configProps` arguments.
+ * If `useAppConfig` is true, uses default config of the app.
+ * Otherwise, creates an object based on the ``_mocks/config_.json` file.
+ * In both cases, initial settings can be overriden by passing additional `...configProps` arguments.
+ * 
  */
-export const createTestStore = ({ addAdminToken, addAdminUser, ...configProps } = {}) => {
+export const createTestStore = ({ addAdminToken, addAdminUser, useAppConfig, ...configProps } = {}) => {
     addAdminToken = addAdminToken === undefined ? true : addAdminToken;
 
-    const config = { ...deepCopy(testConfig).app, ...configProps };
-    const store = createStore(config);
+    var store;
+
+    // If app config is used
+    if (useAppConfig) {
+        setConfig({ ...getConfig(), ...configProps });
+        store = createStore();
+    }
+    // If a custom config object is used
+    else {
+        const config = { ...deepCopy(testConfig).app, ...configProps };
+        store = createStore(config);
+    }
 
     if (addAdminToken) {
         const { auth } = getMockLoginResponse();

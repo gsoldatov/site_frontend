@@ -16,7 +16,10 @@ import { App } from "../src/components/top-level/app";
 
 import { getDefaultAuthState } from "../src/store/state-templates/auth";
 
+import { getConfig, setConfig } from "../src/config";
+
 import { setAuthInformation } from "../src/actions/auth";
+
 
 
 /*
@@ -37,7 +40,7 @@ beforeEach(() => {
 
 
 describe("Edited objects > New object page", () => {
-    test("Unsaved object persistance", async () => {
+    test("Unsaved object persistence", async () => {
         // Render new object page and modify object name
         let storeOne = createTestStore({ useLocalStorage: true });
         
@@ -164,7 +167,7 @@ describe("Edited objects > New object page", () => {
 
 
 describe("Edited objects > Existing object page", () => {
-    test("Unsaved object persistance", async () => {
+    test("Unsaved object persistence", async () => {
         // Render existing object page and modify object name
         let storeOne = createTestStore({ useLocalStorage: true });
 
@@ -366,5 +369,57 @@ describe("Auth information", () => {
         store = createTestStore({ useLocalStorage: true, localStorageSaveTimeout: 25, addAdminToken: false });
         expect(store.getState().auth).toMatchObject(authInfo);
         expect(authInfo).toMatchObject(store.getState().auth);
+    });
+});
+
+
+describe("Local storage configuration", () => {
+    test("`useLocalStorage` toggling in runtime", async () => {
+        // Render new object page and modify object name
+        const localStorageSaveTimeout = 50;
+        let store = createTestStore({ useAppConfig: true, useLocalStorage: true, debugLogging: false, localStorageSaveTimeout });
+        
+        var { container } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new", store
+        });
+
+        // Wait for the page to load
+        await waitFor(() => getByText(container, "Add a New Object"));
+
+        // Change edited object's name with local storage enabled and wait for changes to ba saved
+        let objectNameValue = "first";
+        const objectNameInput = getByPlaceholderText(container, "Object name");
+        fireEvent.change(objectNameInput, { target: { value: objectNameValue } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe(objectNameValue));
+
+        await waitFor(() => {
+            const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(0));
+            const editedObject = JSON.parse(savedEditedObject);
+            expect(editedObject.object_name).toEqual(objectNameValue);
+        });
+
+        // Disable local storage use and check that edited object's modifications are not saved
+        setConfig({ ...getConfig(), useLocalStorage: false });
+        
+        fireEvent.change(objectNameInput, { target: { value: "second" } });
+        const time = performance.now();
+        await waitFor(() => expect(performance.now() - time).toBeGreaterThan(localStorageSaveTimeout + 1), { interval: 10 });
+
+        const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(0));
+        const editedObject = JSON.parse(savedEditedObject);
+        expect(editedObject.object_name).toEqual(objectNameValue);
+
+        // Enable local storage use and check that changes are saved into local storage again
+        setConfig({ ...getConfig(), useLocalStorage: true });
+
+        objectNameValue = "third";
+        fireEvent.change(objectNameInput, { target: { value: objectNameValue } });
+        await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe(objectNameValue));
+
+        await waitFor(() => {
+            const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(0));
+            const editedObject = JSON.parse(savedEditedObject);
+            expect(editedObject.object_name).toEqual(objectNameValue);
+        });
     });
 });
