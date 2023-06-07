@@ -1,4 +1,19 @@
 /**
+ * List of possible item states in the order of their update.
+ */
+export const TDLItemStates = ["active", "optional", "completed", "cancelled"];
+
+
+/**
+ * Returns next to-do list item's state, based on its current value
+ */
+export const getNewTDLItemState = state => {
+    const pos = TDLItemStates.indexOf(state);
+    if (pos === -1) return null;
+    return TDLItemStates[(pos + 1) % TDLItemStates.length];
+}
+
+/**
  * Returns to-do list object data (without object id or type).
  * 
  * Accepts `object_id` and, optionally, other object attributes inside `overrideValues` object.

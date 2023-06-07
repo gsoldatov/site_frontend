@@ -7,7 +7,7 @@ import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholde
 import { compareItemData, getDefaultSortOrder, getRenderedItemIndent, checkRenderedItemsOrder } from "../_util/to-do-lists";
 import { renderWithWrappers } from "../_util/render";
 import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../_util/ui-objects-edit";
-import { defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "../_mocks/data-to-do-lists";
+import { TDLItemStates, getNewTDLItemState, defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "../_mocks/data-to-do-lists";
 
 import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
 import * as caret from "../../src/util/caret";
@@ -86,7 +86,7 @@ test("Load an existing to-do list", async () => {
             // text & state
             getByText(item, itemData.item_text);
             const leftMenu = item.querySelector(".to-do-list-left-menu");
-            getByTitle(leftMenu, itemData.item_state, { exact: false });
+            getByTitle(leftMenu, getNewTDLItemState(itemData.item_state), { exact: false });
 
             // delete & delete all buttons
             const rightMenu = item.querySelector(".to-do-list-right-menu");
@@ -201,17 +201,18 @@ test("Change item states", async () => {
     const TDLContainer = container.querySelector(".to-do-list-container");
     expect(TDLContainer).toBeTruthy();
 
-    const item = getByText(TDLContainer, "item 1").parentNode;
-    ["active", "optional", "completed", "cancelled"].forEach(state => {
-        const stateControl = item.querySelector(".to-do-list-item-state-menu");
-        fireEvent.mouseEnter(stateControl);     // select state
-        const stateButton = getByTitle(stateControl, `Set item as ${state}`);
+    const item = getByText(TDLContainer, "item 0").parentNode;
+
+    for (let i = 0; i < TDLItemStates.length; i++) {
+        const currentState = getCurrentObject(store.getState()).toDoList.items[0].item_state;
+        const nextState = getNewTDLItemState(currentState);
+        
+        expect(currentState).toEqual(TDLItemStates[i]);
+        const stateButton = getByTitle(item, `Set item as ${nextState}`);
+        
         fireEvent.click(stateButton);
-        expect(getCurrentObject(store.getState()).toDoList.items[1].item_state).toEqual(state);
-        fireEvent.mouseLeave(stateControl);     // check if correct state icon is displayed after state control stopped being hovered
-        expect(stateControl.querySelectorAll(".to-do-list-item-button").length).toEqual(1);
-        getByTitle(stateControl, `Set item as ${state}`);
-    });
+        expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual(nextState);
+    }
 });
 
 
