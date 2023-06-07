@@ -834,7 +834,7 @@ describe("Keybinds (default sort)", () => {
     });
 
 
-    test("Shift + Space", async () => {
+    test("F1", async () => {
         let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
             route: "/objects/edit/2001"
         });
@@ -850,21 +850,21 @@ describe("Keybinds (default sort)", () => {
         const itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[0].item_text);
         fireEvent.focus(itemInput);
 
-        fireEvent.keyDown(itemInput, { key: " ", code: "Space", shiftKey: true });
+        fireEvent.keyDown(itemInput, { key: "F1", code: "F1" });
         expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual("optional");
 
-        fireEvent.keyDown(itemInput, { key: " ", code: "Space", shiftKey: true });
+        fireEvent.keyDown(itemInput, { key: "F1", code: "F1" });
         expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual("completed");
 
-        fireEvent.keyDown(itemInput, { key: " ", code: "Space", shiftKey: true });
+        fireEvent.keyDown(itemInput, { key: "F1", code: "F1" });
         expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual("cancelled");
 
-        fireEvent.keyDown(itemInput, { key: " ", code: "Space", shiftKey: true });
+        fireEvent.keyDown(itemInput, { key: "F1", code: "F1" });
         expect(getCurrentObject(store.getState()).toDoList.items[0].item_state).toEqual("active");
     });
 
 
-    test("Ctrl + Space", async () => {
+    test("F2", async () => {
         let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
             route: "/objects/edit/2001"
         });
@@ -880,10 +880,10 @@ describe("Keybinds (default sort)", () => {
         const itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[0].item_text);
         fireEvent.focus(itemInput);
 
-        fireEvent.keyDown(itemInput, { key: " ", code: "Space", ctrlKey: true });
+        fireEvent.keyDown(itemInput, { key: "F2", code: "F2" });
         expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeFalsy();
 
-        fireEvent.keyDown(itemInput, { key: " ", code: "Space", ctrlKey: true });
+        fireEvent.keyDown(itemInput, { key: "F2", code: "F2" });
         expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeTruthy();
     });
 });

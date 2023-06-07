@@ -122,19 +122,17 @@ class TDLItem extends React.PureComponent {
             if (e.shiftKey) this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: this.props.id, decrease: true }});
             else this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: this.props.id, increase: true }});
         }
-        
-        // On `Shift + Space` toggle item state.
-        // On `Ctrl + Space` expand/collapse item.
-        else if (e.key === " ") {
-            if (e.shiftKey) {
-                e.preventDefault();
-                this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_state: getNewItemState(this.props.item_state) }});
-            }
 
-            if (e.ctrlKey) {
-                e.preventDefault();
-                this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, is_expanded: !this.props.is_expanded }});
-            }
+        // On `F1` toggle item state.
+        else if (e.key === "F1") {
+            e.preventDefault();
+            this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_state: getNewItemState(this.props.item_state) }});
+        }
+
+        // On `F2` expand/collapse item.
+        else if (e.key === "F2") {
+            e.preventDefault();
+            this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, is_expanded: !this.props.is_expanded }});
         }
     };
 
