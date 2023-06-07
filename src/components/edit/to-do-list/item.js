@@ -198,10 +198,14 @@ class TDLItem extends React.PureComponent {
                 {deleteAllChildren}
             </div>
         );
+
+        // Item container classname
+        let itemContainerClassName = "to-do-list-item-container";
+        if (this.state.isItemHovered && !this.state.isInputHovered) itemContainerClassName += " is-draggable";
         
         // Render component with or without DnD enabled
         const result = (
-            <div className="to-do-list-item-container">
+            <div className={itemContainerClassName}>
                 {dropZones}
                 <div className="to-do-list-item" onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
                     <div className="to-do-list-item-id">{id}</div>

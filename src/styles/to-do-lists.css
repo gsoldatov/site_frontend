@@ -39,6 +39,10 @@ div.to-do-list-container-header {
     position: relative;
 }
 
+.to-do-list-item-container.is-draggable {
+    cursor: grab;
+}
+
 .to-do-list-item {
     display: flex;
     align-items: center;
