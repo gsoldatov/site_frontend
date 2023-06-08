@@ -55,7 +55,28 @@ class TDLItem extends React.PureComponent {
     handleInputMouseLeave() { this.setState({ ...this.state, isInputHovered: false }); }
     handleInputFocus() { this.setState({ ...this.state, isInputFocused: true }); }
     handleInputBlur() { this.setState({ ...this.state, isInputFocused: false }); }
-    handleInputChange(e) { this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_text: e.currentTarget.textContent }}); };
+    handleInputChange(e) {
+        // Pasting text into contenteditable <div> creates an additional text child.
+        // Having more than one child for input interferes with manual caret position setting, 
+        // which may attempt to set it at the position, which is out of range.
+        // E.g.:
+        // 1) let initial text = "abc", it renders fully in a single text node child of input;
+        // 2) after pasting text "d" in the end of the input, it will have two text children: "abc" and "d",
+        //    the caret moves to position 4 (after "d");
+        // 3) If the caret is moved to a neigboring item with >= 4 total characters, and then returned back,
+        //    the focus handler in <TDLItems> will attempt to place the caret on pos 4 in the first child of the initial input,
+        //    which has only 3 characters, and thus cause an out of range error.
+        //
+        // To avoid this, input's text children are squashed into one any time there's more than one of them.
+        const input = this.inputRef.current;
+        while (input.childNodes.length > 1) {
+            input.childNodes[0].textContent += input.childNodes[1].textContent;
+            input.removeChild(input.childNodes[1]);
+        }
+
+        // Update state
+        this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_text: e.currentTarget.textContent }}); 
+    };
 
     handleKeyDown(e) {
         // On `Enter` split current item into two and focus the second (or add a new empty item and focus it if previous failed)
