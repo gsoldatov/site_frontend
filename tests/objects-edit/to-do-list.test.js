@@ -834,6 +834,29 @@ describe("Keybinds (default sort)", () => {
         expect(getRenderedItemIndent(newItemInput.parentNode)).toEqual(oldIndent);
     });
 
+    
+    test("Tab, increase indent and become a child of a collapsed parent", async () => {
+        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            route: "/objects/edit/2903"
+        });
+
+        // Check if object information is displayed on the page
+        await waitFor(() => getByText(container, "Object Information"));
+        clickDataTabButton(container);
+
+        // Get an item, for which to increase indent
+        const TDLContainer = container.querySelector(".to-do-list-container");
+        expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeFalsy();
+        let oldIndent = getCurrentObject(store.getState()).toDoList.items[2].indent;
+        let itemInput = getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[2].item_text);
+        fireEvent.keyDown(itemInput, { key: "Tab", code: "Tab" });
+
+        // Check if item's indent was increased and its new parent was expanded; also check that current item is still rendered
+        expect(getCurrentObject(store.getState()).toDoList.items[2].indent).toEqual(oldIndent + 1);
+        expect(getCurrentObject(store.getState()).toDoList.items[0].is_expanded).toBeTruthy();
+        getByText(TDLContainer, getCurrentObject(store.getState()).toDoList.items[2].item_text);
+    });
+
 
     test("F1", async () => {
         let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {

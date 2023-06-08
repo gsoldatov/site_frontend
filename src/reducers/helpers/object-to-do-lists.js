@@ -388,6 +388,11 @@ export const getUpdatedToDoList = (toDoList, update) => {
         const newToDoList = { ...toDoList, items: newItems };
         setNewItemInputIndent(newToDoList);
 
+        // Expand parents 
+        // (if indent was increased, and a new parent is collapsed, 
+        // this will cause current item to disappear, which is not convenient)
+        expandParents(newToDoList, id);
+
         return newToDoList;
     }
 };
