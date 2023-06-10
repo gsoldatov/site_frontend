@@ -9,6 +9,7 @@ import { ItemDropzone } from "./item-dropzone";
 
 import { getNewItemState } from "../../../store/state-util/to-do-lists";
 import * as caret from "../../../util/caret";   // wrapped into an object to make functions mockable in tests
+import { getElementHeightInLines } from "../../../util/element-styles";
 
 
 /**
@@ -89,14 +90,32 @@ class TDLItem extends React.PureComponent {
                 this.props.updateCallback({ toDoListItemUpdate: { command: "add", id: this.props.id }});
         }
 
-        // On `ArrowUp` focus the previous item (including when new item input is focused)
+        // On `ArrowUp` move caret to a previous line in the item
+        // or focus the previous item (including when new item input is focused)
+        // NOTE: caret position in a new item is calculated is calculated in characters, 
+        // which may give some inconsistency for old and new caret offset widths in px.
         else if (e.key === "ArrowUp") {
-            this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", id: this.props.id, caretPositionOnFocus: caret.getCaretPosition(this.inputRef.current) }});
+            if (!e.shiftKey) {
+                const [line, offset] = caret.getCaretPositionData(this.inputRef.current);
+                if (line === 0) {
+                    e.preventDefault();
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", id: this.props.id, caretPositionOnFocus: offset }});
+                }
+            }
         }
 
-        // On `ArrowUp` focus the next item (including new item input)
+        // On `ArrowUp` move caret to a next line in the item
+        // or focus the next item (including new item input)
+        // NOTE: caret position in a new item is calculated is calculated in characters, 
+        // which may give some inconsistency for old and new caret offset widths in px.
         else if (e.key === "ArrowDown") {
-            this.props.updateCallback({ toDoListItemUpdate: { command: "focusNext", id: this.props.id, caretPositionOnFocus: caret.getCaretPosition(this.inputRef.current) }});
+            if (!e.shiftKey) {
+                const [line, offset] = caret.getCaretPositionData(this.inputRef.current);
+                if (line >= getElementHeightInLines(this.inputRef.current) - 1) {
+                    e.preventDefault();
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusNext", id: this.props.id, caretPositionOnFocus: offset }});
+                }
+            }
         }
         
         // On `Backspace` delete a char before the caret if there is one or do one of the below:
