@@ -100,7 +100,8 @@ class TDLItem extends React.PureComponent {
                 const [line, offset] = caret.getCaretPositionData(this.inputRef.current);
                 if (line === 0 || line === -1) {
                     e.preventDefault();
-                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", id: this.props.id, caretPositionOnFocus: offset }});
+                    // Always move to the last position in the previous item (moving to the same position would require to calculate the correct position in the last row)
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", id: this.props.id, caretPositionOnFocus: Number.MAX_SAFE_INTEGER }});
                 }
             }
         }
@@ -114,7 +115,7 @@ class TDLItem extends React.PureComponent {
                 const [line, offset] = caret.getCaretPositionData(this.inputRef.current);
                 if (line >= getElementHeightInLines(this.inputRef.current) - 1 || line === -1) {
                     e.preventDefault();
-                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusNext", id: this.props.id, caretPositionOnFocus: offset }});
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusNext", id: this.props.id, caretPositionOnFocus: offset /*0*/ }});
                 }
             }
         }

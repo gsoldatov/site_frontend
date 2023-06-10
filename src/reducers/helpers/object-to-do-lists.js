@@ -131,7 +131,9 @@ export const getUpdatedToDoList = (toDoList, update) => {
         return {
             ...toDoList,
             setFocusOnID: position <= 0 ? sortedItemIDs[0] : sortedItemIDs[position - 1],
-            caretPositionOnFocus: update.caretPositionOnFocus > -1 ? update.caretPositionOnFocus : toDoList.caretPositionOnFocus
+            caretPositionOnFocus: position <= 0
+                ? 0     // If trying to move top from the topmost item, explicitly set caret at its start
+                : (update.caretPositionOnFocus > -1 ? update.caretPositionOnFocus : toDoList.caretPositionOnFocus)
         };
     }
 
