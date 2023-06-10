@@ -92,12 +92,13 @@ class TDLItem extends React.PureComponent {
 
         // On `ArrowUp` move caret to a previous line in the item
         // or focus the previous item (including when new item input is focused)
+        //
         // NOTE: caret position in a new item is calculated is calculated in characters, 
         // which may give some inconsistency for old and new caret offset widths in px.
         else if (e.key === "ArrowUp") {
             if (!e.shiftKey) {
                 const [line, offset] = caret.getCaretPositionData(this.inputRef.current);
-                if (line === 0) {
+                if (line === 0 || line === -1) {
                     e.preventDefault();
                     this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", id: this.props.id, caretPositionOnFocus: offset }});
                 }
@@ -111,7 +112,7 @@ class TDLItem extends React.PureComponent {
         else if (e.key === "ArrowDown") {
             if (!e.shiftKey) {
                 const [line, offset] = caret.getCaretPositionData(this.inputRef.current);
-                if (line >= getElementHeightInLines(this.inputRef.current) - 1) {
+                if (line >= getElementHeightInLines(this.inputRef.current) - 1 || line === -1) {
                     e.preventDefault();
                     this.props.updateCallback({ toDoListItemUpdate: { command: "focusNext", id: this.props.id, caretPositionOnFocus: offset }});
                 }

@@ -60,6 +60,9 @@ export const getSplitText = element => {
 /**
  * Returns the current line number of the caret in an `element`.
  * If a caret is not set inside the current element, returns -1.
+ * 
+ * NOTE: this function will return [-1, 0] as a fallback value if element styles can't be computed (for example, in tests).
+ * 
  * @param {Element} element - DOM element to calculate the line number for.
  * @returns {Array[number]} - list with line number and offset of the caret or [-1, 0].
  */
@@ -71,6 +74,8 @@ export const getCaretPositionData = element => {
     // Get max line width in px
     // const maxLineWidth = parseComputedPropSize(element, "width") - parseComputedPropSize(element, "paddingLeft") - parseComputedPropSize(element, "paddingRight");
     const maxLineWidth = parseComputedPropSize(element, "width");   // include paddings both here & when getting clone width
+    if (isNaN(maxLineWidth)) return [-1, 0];    // Fallback exit if element's computed styles are not calculated to avoid endless loop
+                                                // (required for running tests without adding a mock on `getComputedStyle`)
 
     // Get a copy of the element
     const clone = element.cloneNode(true);

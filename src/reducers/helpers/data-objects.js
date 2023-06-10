@@ -1,5 +1,7 @@
 import { getSubobjectDefaults } from "../../store/state-templates/composite-subobjects";
-import { objectAttributes } from "../../store/state-templates/edited-object";
+import { objectAttributes, defaultEditedObjectState } from "../../store/state-templates/edited-object";
+import { deepCopy } from "../../util/copy";
+deepCopy
 
 
 /**

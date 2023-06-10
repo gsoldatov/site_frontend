@@ -9,6 +9,8 @@ export const parseComputedPropSize = (node, attr) => parseFloat(getComputedStyle
 /**
  * Calculates height of a `node` in lines of its text.
  * 
+ * NOTE: this function will return 1 as a fallback value if element styles can't be computed (for example, in tests)
+ * 
  * @param {Node} node - an existing DOM Node.
  * @returns {number} current number of text lines element's content takes.
  */
@@ -19,5 +21,8 @@ export const getElementHeightInLines = node => {
     const lineHeight = parseComputedPropSize(node, "lineHeight");
 
     // Round results
-    return Math.round((height - paddingTop - paddingBottom) / lineHeight);
+    let result = Math.round((height - paddingTop - paddingBottom) / lineHeight);
+
+    // Add a fallback if styles could not computed (needed for running tests)
+    return isNaN(result) ? 1 : result;
 };
