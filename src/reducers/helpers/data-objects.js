@@ -1,7 +1,6 @@
 import { getSubobjectDefaults } from "../../store/state-templates/composite-subobjects";
 import { objectAttributes, defaultEditedObjectState } from "../../store/state-templates/edited-object";
 import { deepCopy } from "../../util/copy";
-deepCopy
 
 
 /**
@@ -37,12 +36,22 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
     for (let od of objectData){
         switch (od["object_type"]) {
             case "link":
-                newLinks[od["object_id"]] = {...od["object_data"]};
+                const link = deepCopy(defaultEditedObjectState.link);
+                for (let attr of Object.keys(link))
+                    if (attr in od.object_data) link[attr] = od.object_data[attr];
+                newLinks[od.object_id] = link;
                 break;
+            
             case "markdown":
-                newMarkdown[od["object_id"]] = {...od["object_data"]};
+                const markdown = deepCopy(defaultEditedObjectState.markdown);
+                for (let attr of Object.keys(markdown))
+                    if (attr in od.object_data) markdown[attr] = od.object_data[attr];
+                newMarkdown[od.object_id] = markdown;
                 break;
+            
             case "to_do_list":
+                const toDoList = deepCopy(defaultEditedObjectState.toDoList);
+
                 let itemOrder = [], items = {};
                 od["object_data"].items.forEach((item, index) => {
                     itemOrder.push(index);
@@ -50,30 +59,29 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
                     delete items[index].item_number;
                 });
 
-                newTDL[od["object_id"]] = {
-                    itemOrder,
-                    setFocusOnID: -1,
-                    caretPositionOnFocus: -1,
-                    newItemInputIndent: 0,
-                    draggedParent: -1,
-                    draggedChildren: [],
-                    draggedOver: -1,
-                    dropIndent: 0,
-                    sort_type: od["object_data"].sort_type,
-                    items
-                };
+                toDoList.items = items;
+                toDoList.itemOrder = itemOrder;
+                toDoList.sort_type = od.object_data.sort_type;
+
+                newTDL[od.object_id] = toDoList;
                 break;
+            
             case "composite":
-                let subobjects = {};
-                od["object_data"].subobjects.forEach(so => {
-                    const { object_id, row, column, selected_tab, is_expanded, show_description_composite, show_description_as_link_composite } = so;
-                    subobjects[object_id] = { ...getSubobjectDefaults(), row, column, selected_tab, is_expanded, show_description_composite, show_description_as_link_composite };
-                })
-                newComposite[od["object_id"]] = { 
-                    subobjects, 
-                    display_mode: od["object_data"]["display_mode"],
-                    numerate_chapters: od["object_data"]["numerate_chapters"]
-                };
+                const composite = deepCopy(defaultEditedObjectState.composite);
+                for (let attr of Object.keys(composite))
+                    if (attr in od.object_data && attr !== "subobjects") composite[attr] = od.object_data[attr];
+                
+                composite.subobjects = {};
+                od.object_data.subobjects.forEach(so => {
+                    const subobject = getSubobjectDefaults();
+                    for (let attr of Object.keys(subobject))
+                        if (attr in so) subobject[attr] = so[attr];
+                    composite.subobjects[so.object_id] = subobject;
+                });
+                
+                newComposite[od.object_id] = composite;
+                break;
+                
             default:
                 break;
         }
