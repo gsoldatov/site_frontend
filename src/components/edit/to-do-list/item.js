@@ -56,6 +56,18 @@ class TDLItem extends React.PureComponent {
     handleInputMouseLeave() { this.setState({ ...this.state, isInputHovered: false }); }
     handleInputFocus() { this.setState({ ...this.state, isInputFocused: true }); }
     handleInputBlur() { this.setState({ ...this.state, isInputFocused: false }); }
+
+    handlePaste(e) {
+        // Add pasted input as a single text line
+        e.preventDefault();
+        // const text = e.clipboardData.getData('text/plain').replace(/[\n\r]+/g, " ");     // Pastes as a single line
+        let text = e.clipboardData.getData('text/plain')    // Pastes from clipboard a single line after trimming each line
+            .split("\n")
+            .map(line => line.trim())
+            .join(" ");
+        document.execCommand('insertText', false, text);
+    }
+
     handleInputChange(e) {
         // NOTE: this implementation bugs out when adding a trailing space in the item or entering text into a cleared with backspace key press item;
         // currently disabled & replaced with updated caret setters & getters, which accomodate for caret being placed into contenteditable's children.
@@ -223,6 +235,7 @@ class TDLItem extends React.PureComponent {
         const input = <div className={inputCSSClass} ref={this.inputRef} contentEditable suppressContentEditableWarning spellCheck={false}
                         onInput={this.handleInputChange} onKeyDown={this.handleKeyDown} onFocus={this.handleInputFocus} onBlur={this.handleInputBlur}
                         onMouseEnter={this.handleInputMouseEnter} onMouseLeave={this.handleInputMouseLeave}
+                        onPaste={this.handlePaste}
                         dangerouslySetInnerHTML={{ __html: this.state.initialItemText }}        // setting item_text as inner content of <div> results
                                                                                                 // in the cursor being moved to the beginning of the <div> on every input
                         key={this.state.forceInitialItemTextUpdate}  />;
