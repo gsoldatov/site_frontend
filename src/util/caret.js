@@ -39,9 +39,7 @@ export const getCaretPositionData = element => {
     // Get a copy of the element
     const clone = element.cloneNode(true);
     clone.style.visibility = "hidden";
-    clone.style.position = "absolute";
-    clone.style.top = 0;
-    clone.style.left = 0;
+    clone.style.position = "absolute";      // setting position is required for function to work
     clone.style.paddingLeft = getComputedStyle(element).paddingLeft;
     clone.style.paddingRight = getComputedStyle(element).paddingRight;
     document.body.appendChild(clone);   // appending is required in order to calculate styles
