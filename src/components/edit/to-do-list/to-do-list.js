@@ -7,7 +7,10 @@ import { DroppableNewTDLItem } from "./new-item";
 
 import { getSortedItemIDs, getVisibleItemIDs } from "../../../store/state-util/to-do-lists";
 
+import * as caret from "../../../util/caret";   // wrapped into an object to make functions mockable in tests
+
 import StyleTDL from "../../../styles/to-do-lists.css";
+
 
 
 /**
@@ -66,20 +69,11 @@ const TDLItems = ({ objectID, toDoList, updateCallback, canDrag }) => {
         if (toDoList.setFocusOnID !== -1) {
             if (toDoList.setFocusOnID === "newItem") {  // new item input (focus)
                 itemsRef.current.querySelector(".to-do-list-item-input.new").focus();
-            } else {    // existing item input (set caret at the end => focus)
+            } else {    // existing item input (set caret & focus)
                 const focusedInput = [...itemsRef.current.querySelectorAll(".to-do-list-item-id")]
                     .filter(node => node.textContent === toDoList.setFocusOnID.toString())[0].parentNode.querySelector(".to-do-list-item-input");
                 
-                const range = document.createRange(), sel = window.getSelection();
-                if (focusedInput.textContent.length > 0) {
-                    const caretPosition = toDoList.caretPositionOnFocus > -1 && toDoList.caretPositionOnFocus < focusedInput.textContent.length
-                        ? toDoList.caretPositionOnFocus     // set caret position to specified value or to the end of the line (default)
-                        : focusedInput.textContent.length;
-                    range.setStart(focusedInput.firstChild, caretPosition);
-                    range.collapse(true);
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                }
+                caret.setCaret(focusedInput, toDoList.caretPositionOnFocus);
 
                 focusedInput.focus();
             }

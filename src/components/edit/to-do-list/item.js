@@ -57,6 +57,9 @@ class TDLItem extends React.PureComponent {
     handleInputFocus() { this.setState({ ...this.state, isInputFocused: true }); }
     handleInputBlur() { this.setState({ ...this.state, isInputFocused: false }); }
     handleInputChange(e) {
+        // NOTE: this implementation bugs out when adding a trailing space in the item or entering text into a cleared with backspace key press item;
+        // currently disabled & replaced with updated caret setters & getters, which accomodate for caret being placed into contenteditable's children.
+        //
         // Pasting text into contenteditable <div> creates an additional text child.
         // Having more than one child for input interferes with manual caret position setting, 
         // which may attempt to set it at the position, which is out of range.
@@ -69,11 +72,11 @@ class TDLItem extends React.PureComponent {
         //    which has only 3 characters, and thus cause an out of range error.
         //
         // To avoid this, input's text children are squashed into one any time there's more than one of them.
-        const input = this.inputRef.current;
-        while (input.childNodes.length > 1) {
-            input.childNodes[0].textContent += input.childNodes[1].textContent;
-            input.removeChild(input.childNodes[1]);
-        }
+        // const input = this.inputRef.current;
+        // while (input.childNodes.length > 1) {
+        //     input.childNodes[0].textContent += input.childNodes[1].textContent;
+        //     input.removeChild(input.childNodes[1]);
+        // }
 
         // Update state
         this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_text: e.currentTarget.textContent }}); 

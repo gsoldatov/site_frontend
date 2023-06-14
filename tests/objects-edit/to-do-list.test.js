@@ -671,7 +671,7 @@ describe("Keybinds (default sort)", () => {
                 - if delete correctly merges 2 non-empty item texts;
                 - delete keypress does nothing when caret is at the end of the last item (for default and state sort).
         */
-        // Mock getSplitText function from src\util\caret.js (getCaretPosition doesn't work in test env => a mock is required to properly trigger merge command)
+        // Mock getSplitText function from src\util\caret.js (getElementCaretPosition doesn't work in test env => a mock is required to properly trigger merge command)
         
 
 
