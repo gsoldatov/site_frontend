@@ -175,6 +175,15 @@ export const setCaret = (element, position) => {
 
 
 /**
+ * 
+ * @returns {boolean} flag indicating if a selection currently exists;
+ */
+export const isRangeSelected = () => {
+    return !window.getSelection().isCollapsed;
+};
+
+
+/**
  * Returns the caret position or selection range's end inside the `element`.
  * 
  * If caret position is outside of `element`, returns -1.
@@ -199,6 +208,6 @@ const getElementCaretPosition = element => {
             position += child.textContent.length;
         }
     }
-    
+
     return position;
 };

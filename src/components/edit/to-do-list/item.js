@@ -122,11 +122,15 @@ class TDLItem extends React.PureComponent {
                 }
             }
         }
-        
-        // On `Backspace` delete a char before the caret if there is one or do one of the below:
-        // 1) merge current item with the previous one if no characters remain before the caret;
-        // 2) delete the current item if its text is empty.
+
+        // On `Backspace`:
+        // - use default handler if a range of text is currently selected;
+        // - use custom handler, which:
+        //     - deletes a char before the caret, if there is one;
+        //     - merges current item with the previous one, is the caret was placed at the start of current item.
         else if (e.key === "Backspace") {
+            if (caret.isRangeSelected()) return;
+            
             const splitText = caret.getSplitText(this.inputRef.current);
             if (splitText !== null) {   // merge item with previous
                 if (splitText.before.length === 0) {
@@ -141,11 +145,15 @@ class TDLItem extends React.PureComponent {
                 }
             }
         }
-        
-        // On `Delete` delete a char after the caret if there is one or do one of the below:
-        // 1) merge current item with the next one if no characters remain after the caret;
-        // 2) delete the current item if its text is empty.
+
+        // On `Delete`:
+        // - use default handler if a range of text is currently selected;
+        // - use custom handler, which:
+        //     - deletes a char after the caret, if there is one;
+        //     - merges current item with the next one, is the caret was placed at the end of current item.
         else if (e.key === "Delete") {
+            if (caret.isRangeSelected()) return;
+
             const splitText = caret.getSplitText(this.inputRef.current);
             if (splitText !== null) {   // merge item with next
                 if (splitText.after.length === 0) {
