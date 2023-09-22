@@ -18,6 +18,13 @@
     margin-top: 0.5rem;
 }
 
+/* Images */
+.rendered-markdown img {
+    max-width: 100%;
+    object-fit: scale-down;
+}
+
+/* Blockquotes */
 .rendered-markdown blockquote {
     padding: 0.5rem;
     /* font-style: italic; */
@@ -33,6 +40,7 @@
     border-left: solid 2px var(--rendered-markdown-blockquote-color);
 }
 
+/* Horizontal lines */
 .rendered-markdown hr {
     border-top: solid 1px var(--border-color-light);
     border-bottom: none;
