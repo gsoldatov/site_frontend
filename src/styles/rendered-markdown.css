@@ -2,6 +2,7 @@
     Rendered markdown styles    
 *******************************/
 
+/* General */
 .rendered-markdown * {
     margin-top: 0;
     word-break: break-word;
@@ -11,11 +12,19 @@
     margin-bottom: 0.5rem;
 }
 
+/* Headers */
 .rendered-markdown > h3:not(:first-child),
 .rendered-markdown > h4:not(:first-child),
 .rendered-markdown > h5:not(:first-child),
 .rendered-markdown > h6:not(:first-child) {
-    margin-top: 0.5rem;
+    /*Increase margin before headers in rendered markdown (won't stack with margin bottom due to margin collapse) */
+    margin-top: 1rem;
+}
+
+/* Lists */
+.rendered-markdown li > p {
+    /* Remove margin-bottom for list items' texts wrapped into paragraph to match margin of <li> tags without paragraphs */
+    margin-bottom: 0;
 }
 
 /* Images */
@@ -38,6 +47,46 @@
 .rendered-markdown blockquote blockquote {
     box-shadow: none;
     border-left: solid 2px var(--rendered-markdown-blockquote-color);
+}
+
+.rendered-markdown blockquote a {
+    color: var(--rendered-markdown-blockquote-link-color);
+}
+
+.rendered-markdown blockquote a:hover,
+.rendered-markdown blockquote a:visited {
+    color: var(--rendered-markdown-blockquote-link-hovered-color);
+}
+
+/* Details */
+.rendered-markdown details {
+    padding: 0.5rem; 
+    border: 1px solid var(--rendered-markdown-blockquote-border-color);
+    /* background-color: var(--rendered-markdown-blockquote-background-color); */
+}
+
+.rendered-markdown details > summary {
+    background-color: var(--rendered-markdown-blockquote-background-color);
+    font-weight: bold;
+}
+
+.rendered-markdown details[open] > summary {
+    /* Draw bottom border over the whole width of parent, ignoring its padding */
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    border-bottom: 1px solid var(--rendered-markdown-blockquote-border-color);
+}
+
+.rendered-markdown details a {
+    color: var(--rendered-markdown-blockquote-link-color);
+}
+
+.rendered-markdown details a:hover,
+.rendered-markdown details a:visited {
+    color: var(--rendered-markdown-blockquote-link-hovered-color);
 }
 
 /* Horizontal lines */

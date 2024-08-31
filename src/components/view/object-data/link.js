@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { getDefaultShowDescriptionAsLinkSelector } from "../../../store/state-util/ui-objects-view";
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
+import StyleObjectsViewLink from "../../../styles/objects-view/link.css";
+
 
 /**
  * Displays link object data in a <ObjectsViewCard> for the provided `objectID`.
@@ -23,9 +25,12 @@ import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state"
     const parsedObjectDecsription = useParsedMarkdownState(showDescriptionAsLink ? objectDescription : "");
     const parsedMarkdown = showDescriptionAsLink ? parsedObjectDecsription : linkData.link;
 
+    // CSS classnames
+    const className = "objects-view-data link" + (objectDescription.length === 0 || showDescriptionAsLink ? " no-description" : "");
+
     // Result
     return parsedMarkdown.length > 0 && (
-        <div className="objects-view-data link">
+        <div className={className}>
             <a href={linkData.link}>
                 <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedMarkdown }} />
             </a>

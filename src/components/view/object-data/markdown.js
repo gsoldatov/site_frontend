@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
+import StyleObjectsViewMarkdown from "../../../styles/objects-view/markdown.css";
+
 
 /**
  * Displays markdown object data in a <ObjectsViewCard> for the provided `objectID`.
@@ -14,9 +16,13 @@ export const Markdown = ({ objectID }) => {
     // Parsed Markdown state
     const parsedMarkdown = useParsedMarkdownState(rawMarkdown);
 
+    // CSS classnames
+    const objectDescription = useSelector(state => (state.objects[objectID] || {}).object_description);
+    const className = "objects-view-data markdown" + (objectDescription.length === 0 ? " no-description" : "");
+
     // Result
     return parsedMarkdown.length > 0 && (
-        <div className="objects-view-data markdown">
+        <div className={className}>
             <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedMarkdown }} />
         </div>
     );

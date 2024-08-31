@@ -2,8 +2,8 @@
   /objects/view/:id page's object card styles, common.
 *******************************************************/
 :root {
-    --max-not-overlown-width: calc(100vw - 2rem - 15px); /* Screen width without - left & right margins around main content column - scrollbar width */
-} 
+    --max-not-overflown-width: calc(100vw - 2rem - 15px); /* Screen width without - left & right margins around main content column - scrollbar width */
+}
 
 /* Object id */
 .objects-view-card-object-id {
@@ -18,7 +18,6 @@
 }
 
 .objects-view-tag-list-container {
-    /* padding-top: 1rem; */
     border-top: solid 1px var(--border-color-light);
 }
 
@@ -29,6 +28,11 @@
     margin-bottom: 1rem;
 }
 
+.objects-view-attributes > .objects-view-header-container:not(:last-child) {
+    /* Reduced margin after object name to match rendered markdown */
+    margin-bottom: 0.5rem;
+}
+
 
 /** Attributes **/
 /* Object header */
@@ -37,7 +41,7 @@
     align-items: center;
 
     /* Limit max-width (for multicolumn composite objects; screen width - margins - scrollbar) */
-    max-width: var(--max-not-overlown-width);
+    max-width: var(--max-not-overflown-width);
 }
 
 .objects-view-header-container > .ui.header {
@@ -70,13 +74,13 @@
 /* Object is edited warning */
 .objects-view-object-is-edited-container {
     /* Limit max-width (for multicolumn composite objects; screen width - margins - scrollbar) */
-    max-width: var(--max-not-overlown-width);
+    max-width: var(--max-not-overflown-width);
 }
 
 /* Description */
 .objects-view-description {
     /* Limit max-width (for multicolumn composite objects; screen width - margins - scrollbar) */
-    max-width: var(--max-not-overlown-width);
+    max-width: var(--max-not-overflown-width);
 
     /* Enable word break for long words */
     word-break: break-word;

@@ -1,0 +1,9 @@
+/****************************************************************************************
+  /objects/view/:id page's object card styles, markdown objects.
+****************************************************************************************/
+
+
+.objects-view-data.markdown.no-description {
+    /* Reduce margin between object name & object data if no object description is present */
+    margin-top: -0.5rem;
+}
