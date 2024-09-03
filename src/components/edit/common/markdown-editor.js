@@ -3,6 +3,7 @@ import { Form } from "semantic-ui-react";
 
 import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../field/field-menu";
 import { OnResizeWrapper } from "../../common/on-resize-wrapper";
+import { RenderedMarkdown } from "./rendered-markdown";
 
 import { useMarkdownParseWorker } from "../../../util/use-markdown-parse-worker";
 import { useMountedState } from "../../../util/use-mounted-state";
@@ -110,7 +111,7 @@ const MarkdownEditorViewEdit = ({ displayMode, editPlaceholder, rawMarkdown, raw
 const MarkdownView = memo(({ parsedMarkdown }) => {
     return parsedMarkdown && (
         <div className="markdown-editor-view-container">
-            <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedMarkdown }} />
+            <RenderedMarkdown parsedMarkdown={parsedMarkdown} />
         </div>
     );
 });

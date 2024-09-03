@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
+import { RenderedMarkdown } from "../../edit/common/rendered-markdown";
+
 import { getDefaultShowDescriptionAsLinkSelector } from "../../../store/state-util/ui-objects-view";
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
@@ -32,7 +34,7 @@ import StyleObjectsViewLink from "../../../styles/objects-view/link.css";
     return parsedMarkdown.length > 0 && (
         <div className={className}>
             <a href={linkData.link}>
-                <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedMarkdown }} />
+                <RenderedMarkdown parsedMarkdown={parsedMarkdown} />
             </a>
         </div>
     );

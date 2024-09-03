@@ -4,6 +4,8 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import { Header, Icon } from "semantic-ui-react";
 
+import { RenderedMarkdown } from "../../edit/common/rendered-markdown";
+
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
 
@@ -65,7 +67,7 @@ export const FeedCardDescription = ({ text }) => {
 
     return parsed && (
         <div className="feed-card-description">
-            <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsed }} />
+            <RenderedMarkdown parsedMarkdown={parsed} />
         </div>
     );
 };

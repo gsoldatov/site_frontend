@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
+import { RenderedMarkdown } from "../../edit/common/rendered-markdown";
+
 import { getDefaultShowDescriptionSelector } from "../../../store/state-util/ui-objects-view";
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
@@ -23,7 +25,7 @@ import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state"
     // Result
     return parsedDescription && (
         <div className="objects-view-description">
-            <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedDescription }} />
+            <RenderedMarkdown parsedMarkdown={parsedDescription} />
         </div>
     );
 };

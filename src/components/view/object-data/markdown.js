@@ -1,6 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
+import { RenderedMarkdown } from "../../edit/common/rendered-markdown";
+
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
 import StyleObjectsViewMarkdown from "../../../styles/objects-view/markdown.css";
@@ -23,7 +25,7 @@ export const Markdown = ({ objectID }) => {
     // Result
     return parsedMarkdown.length > 0 && (
         <div className={className}>
-            <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedMarkdown }} />
+            <RenderedMarkdown parsedMarkdown={parsedMarkdown} />
         </div>
     );
 };

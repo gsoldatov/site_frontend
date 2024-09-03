@@ -4,6 +4,8 @@ import { createSelector } from "reselect";
 
 import { Loader, Message, Header, Table } from "semantic-ui-react";
 
+import { RenderedMarkdown } from "../../edit/common/rendered-markdown";
+
 import { groupedLinksOnLoad } from "../../../fetches/ui-objects-view";
 import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/composite";
 import { useMountedState } from "../../../util/use-mounted-state";
@@ -164,6 +166,6 @@ const GroupedLinksTableObjectDescription = ({ objectDescription }) => {
 
     // Result
     return parsedDescription.length > 0 && (
-        <div className="rendered-markdown" dangerouslySetInnerHTML={{ __html: parsedDescription }} />
+        <RenderedMarkdown parsedMarkdown={parsedDescription} />
     );
 };
