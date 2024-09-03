@@ -4,6 +4,9 @@ import { Redirect, useLocation } from "react-router";
 
 import { setRedirectOnRender } from "../../actions/common";
 import { clearUnsavedCurrentEditedObject } from "../../actions/objects-edit";
+import { setModalImage } from "../../actions/modal";
+
+import { getDefaultModalState } from "../../store/state-templates/modal";
 
 
 /**
@@ -18,6 +21,10 @@ export const LocationManagerWrapper = ({ children }) => {
     // Run through location change handlers
     useEffect(() => {
         if (previousLocation.current !== null) {
+            // Reset modal window's state after a redirect
+            const newModal = getDefaultModalState();
+            dispatch(setModalImage(newModal.image));
+
             // Clear unsaved editedObjects when leaving /objects/edit/:id (both new & existing cases)
             if (previousLocation.current.pathname.startsWith("/objects/edit/")) {
                 // Previous object ID

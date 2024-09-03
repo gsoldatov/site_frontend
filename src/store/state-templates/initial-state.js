@@ -1,6 +1,7 @@
 import { deepCopy } from "../../util/copy";
 
 import { getDefaultAuthState } from "./auth";
+import { getDefaultModalState } from "./modal";
 import { getDefaultCurrentTagState } from "./tags";
 
 
@@ -148,7 +149,10 @@ const initialState = {
     // /objects/edited page UI controllers
     editedObjectsUI: {
         selectedObjectIDs: new Set()
-    }
+    },
+
+    // Modal window state
+    modal: getDefaultModalState()
 };
 
 
