@@ -1,33 +1,13 @@
 /*******************************
-    Field pagination styles. 
+    Navigation menu styles. 
 *******************************/
 
 
-/** Navigation bar and its flow placeholder **/
+/** Navigation bar **/
 div.ui.menu.navigation-bar {
-    /* Fix navbar to always take the full top of the screen */
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 999;
-
-    /* Additional styles */
     margin-top: 0;
     border-radius: 0;
-    /* box-shadow: none; */
     border-top-width: 0;
-}
-
-div.navigation-bar-placeholder:not(.is-stacked),
-div.ui.menu.navigation-bar:not(.is-stacked) {
-    min-height: 52px;   /* Same for when with & without secondary menu;
-                           If stacked, navbar height is calculated automatically on whether it's stack, and placeholder's height is updated in component to match it
-                        */
-    width: 100%;        /* Required for placeholder to properly calculate `isStacked` state */
-}
-
-div.navigation-bar-placeholder.is-stacked {
-    width: 100%;
 }
 
 
