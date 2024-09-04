@@ -3,7 +3,7 @@ import { Form } from "semantic-ui-react";
 
 import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../field/field-menu";
 import { OnResizeWrapper } from "../../common/on-resize-wrapper";
-import { RenderedMarkdown } from "./rendered-markdown";
+import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 
 import { useMarkdownParseWorker } from "../../../util/use-markdown-parse-worker";
 import { useMountedState } from "../../../util/use-mounted-state";

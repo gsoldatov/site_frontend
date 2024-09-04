@@ -4,7 +4,7 @@ import { createSelector } from "reselect";
 
 import { Loader, Message, Header, Table } from "semantic-ui-react";
 
-import { RenderedMarkdown } from "../../edit/common/rendered-markdown";
+import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 
 import { groupedLinksOnLoad } from "../../../fetches/ui-objects-view";
 import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/composite";

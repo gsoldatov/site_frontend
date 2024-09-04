@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Icon, Header } from "semantic-ui-react";
 
-import { RenderedMarkdown } from "../../edit/common/rendered-markdown";
+import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 
 import { enumUserLevels } from "../../../util/enum-user-levels";
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";

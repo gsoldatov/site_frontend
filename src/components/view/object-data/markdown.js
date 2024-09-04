@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { RenderedMarkdown } from "../../edit/common/rendered-markdown";
+import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
