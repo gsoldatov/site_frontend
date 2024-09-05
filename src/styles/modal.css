@@ -1,0 +1,54 @@
+/*******************************
+    Modal window styles    
+*******************************/
+
+
+/* Modal container (SUIR) */
+@media(min-width: 768px) {
+    /* Increase padding around container, so that there is space above close icon
+       (on small screens icon is inside the container) */
+    .modal-container > div.ui.modals {
+        padding: 1.5rem;
+    }
+}
+
+
+/* Modal window (image) > modal & modal content */
+.modal-window.image,
+.modal-window.image > div.content {
+    /* Set modal & modal content size to match the size of image inside
+       (remove unused white space to the right of small images) */
+    max-width: fit-content;
+    max-height: fit-content;
+}
+
+.modal-window.image.expanded {
+    /* Disallow expanded modal to be rendered beyond document top & left borders */
+    position: static;
+
+    /* Position small expanded modals in the horizontal center of the screen */
+    justify-self: center;
+
+    /* Set width for expanded modal to match image inside it */
+    width: fit-content;
+}
+
+.modal-window.image.expanded .content > .image {
+    /* Allow expanded image to take its full size */
+    max-width: fit-content;
+}
+
+
+/* Modal window (image) > image inside modal */
+.modal-window.image.ui.modal  .content > .image {
+    /* Remove padding below the image on small screens */
+    padding: 0 !important;
+
+    /* cursor */
+    cursor: pointer;
+}
+
+.modal-window.image.ui.modal:not(.expanded)  .content > .image {
+    /* Limit height of images, so they fit into the screen */
+    max-height: 90vh;
+}

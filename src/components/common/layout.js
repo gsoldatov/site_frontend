@@ -4,6 +4,7 @@ import { Grid, GridColumn } from "semantic-ui-react";
 import { OnResizeWrapper } from "./on-resize-wrapper";
 import { Navbar } from "./navigation/navbar";
 import SideMenu from "./side-menu";
+import { ModalWindow } from "../state-users/modal-window";
 
 import { enumLayoutTypes } from "../../util/enum-layout-types";
 
@@ -49,17 +50,22 @@ export default ({ sideMenuItems, body, layoutType = enumLayoutTypes.default }) =
 
     return (
         <OnResizeWrapper callback={onResizeCallback}>
-            <Grid stackable className={gridClassName}>
-                <Grid.Row className={navigationRowClassName}>
-                    <Navbar />
-                </Grid.Row>
-                <Grid.Row columns={mainRowColumns} className={mainRowClassName}>
-                    {sideMenuColumn}
-                    <GridColumn width={mainColumnWidth} className={mainContentColumnClassName}>
-                        {body}
-                    </GridColumn>
-                </Grid.Row>
-            </Grid>
+            <>
+                <Grid stackable className={gridClassName}>
+                    <Grid.Row className={navigationRowClassName}>
+                        <Navbar />
+                    </Grid.Row>
+                    <Grid.Row columns={mainRowColumns} className={mainRowClassName}>
+                        {sideMenuColumn}
+                        <GridColumn width={mainColumnWidth} className={mainContentColumnClassName}>
+                            {body}
+                        </GridColumn>
+                    </Grid.Row>
+                </Grid>
+                <div className="modal-container">
+                    <ModalWindow />
+                </div>
+            </>
         </OnResizeWrapper>
     );
 };
