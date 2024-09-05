@@ -29,8 +29,19 @@
 
 /* Images */
 .rendered-markdown img {
-    max-width: 100%;
+    /* Image max size & proportions preserving */
+    max-width: min(640px, 100%);
+    max-height: 1280px;
     object-fit: scale-down;
+
+    /* Cursor styling */
+    cursor: pointer;
+}
+
+.rendered-markdown p:has(img) {
+    /* Center images horizontally */
+    display: flex;
+    justify-content: center;
 }
 
 /* Blockquotes */
