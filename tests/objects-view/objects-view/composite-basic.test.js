@@ -33,7 +33,7 @@ beforeEach(() => {
 
 describe("Subobject display order", () => {
     test("Multicolumn composite object", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/view/3906"
         });
 
@@ -50,7 +50,7 @@ describe("Subobject display order", () => {
 
 describe("Subobject attributes & tags", () => {
     test("Timestamp", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/view/3901"
         });
 
@@ -67,7 +67,7 @@ describe("Subobject attributes & tags", () => {
 
 
     test("Header + edit button (logged as admin)", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/view/3901"
         });
 
@@ -83,12 +83,12 @@ describe("Subobject attributes & tags", () => {
 
         // Check if edit button is displayed and working
         fireEvent.click(cardElements.attributes.header.editButton);
-        expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${cardElements.objectID}`);
+        historyManager.ensureCurrentURL(`/objects/edit/${cardElements.objectID}`);
     });
 
 
     test("Header + view button (logged as admin)", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/view/3901"
         });
 
@@ -104,14 +104,14 @@ describe("Subobject attributes & tags", () => {
 
         // Check if view button is displayed and working
         fireEvent.click(cardElements.attributes.header.viewButton);
-        expect(history.entries[history.length - 1].pathname).toBe(`/objects/view/${cardElements.objectID}`);
+        historyManager.ensureCurrentURL(`/objects/view/${cardElements.objectID}`);
         await waitFor(() => {});    // end page load to correctly end the test
     });
 
 
     test("Header (anonymous)", async () => {
         const store = createTestStore({ addAdminToken: false });
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/view/3901", store
         });
 
@@ -134,7 +134,7 @@ describe("Subobject attributes & tags", () => {
 
         // Check if view button is displayed and working
         fireEvent.click(cardElements.attributes.header.viewButton);
-        expect(history.entries[history.length - 1].pathname).toBe(`/objects/view/${cardElements.objectID}`);
+        historyManager.ensureCurrentURL(`/objects/view/${cardElements.objectID}`);
         await waitFor(() => {});    // end page load to correctly end the test
     });
 
@@ -220,7 +220,7 @@ describe("Subobject attributes & tags", () => {
 
 
     test("Object tags", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/view/3901"
         });
 
@@ -349,7 +349,7 @@ describe("Subobject object data", () => {
 
 
     test("Composite", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/view/3901"
         });
 
@@ -363,7 +363,7 @@ describe("Subobject object data", () => {
 
         // Check if link to subobject standalone page is rendered and working
         fireEvent.click(cardElements.data.compositeSubobjectBasic.linkToViewPage);
-        expect(history.entries[history.length - 1].pathname).toBe(`/objects/view/${cardElements.objectID}`);
+        historyManager.ensureCurrentURL(`/objects/view/${cardElements.objectID}`);
         await waitFor(() => {});    // end page load to correctly end the test
     });
 });

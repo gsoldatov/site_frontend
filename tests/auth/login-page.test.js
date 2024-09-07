@@ -92,7 +92,7 @@ test("Check fetch error display & form disabling during fetch", async () => {
 test("Correct login", async () => {
     // Render login page
     const store = createTestStore({ addAdminToken: false });
-    let { container, history } = renderWithWrappers(<App />, {
+    let { container, historyManager } = renderWithWrappers(<App />, {
         route: "/auth/login", store
     });
 
@@ -127,7 +127,7 @@ test("Correct login", async () => {
     });
 
     // Wait for redirect to index page and index page fetches to end
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/`));
+    await historyManager.waitForCurrentURLToBe("/");
     await waitFor(() => expect(container.querySelector(".feed-card")).toBeTruthy());
 });
 
@@ -139,7 +139,7 @@ test("Correct login with URL query params", async () => {
     params.append("from", redirectPath);
     params.append("message", "registrationComplete");
     const store = createTestStore({ addAdminToken: false });
-    let { container, history } = renderWithWrappers(<App />, {
+    let { container, historyManager } = renderWithWrappers(<App />, {
         route: "/auth/login?" + params.toString(), store
     });
 
@@ -166,5 +166,5 @@ test("Correct login with URL query params", async () => {
     });
 
     // Wait for redirect to the specified page
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(redirectPath));
+    await historyManager.waitForCurrentURLToBe(redirectPath);
 });

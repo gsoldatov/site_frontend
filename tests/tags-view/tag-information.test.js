@@ -3,7 +3,7 @@ import { waitFor, fireEvent } from "@testing-library/react";
 
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
-import { getTagsViewElements, checkDisplayedTagsViewFeedCardIDs } from "../_util/ui-tags-view";
+import { getTagsViewElements } from "../_util/ui-tags-view";
 
 import { App } from "../../src/components/top-level/app";
 
@@ -45,15 +45,14 @@ describe("Tag information", () => {
 
 
     test("Header edit button for admin", async () => {
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/tags/view?tagIDs=5"
         });
 
         // Wait for header text to be correctly displayed
         await waitFor(() => expect(getTagsViewElements(container).tagInformation.tagCard.editButton).toBeTruthy());
         fireEvent.click(getTagsViewElements(container).tagInformation.tagCard.editButton);
-
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/edit/5");
+        historyManager.ensureCurrentURL("/tags/edit/5");
     });
 
 

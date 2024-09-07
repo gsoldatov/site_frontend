@@ -318,7 +318,7 @@ const getCompositeChaptersTableOfContents = dataContainer => {
  */
 export const loadObjectsViewPageAndSelectChapter = async (objectID, chapterNumber) => {
     // Render page and wait for data to load
-    let { container, store, history } = renderWithWrappers(<App />, {
+    let { container, store, historyManager } = renderWithWrappers(<App />, {
         route: `/objects/view/${objectID}`
     });
 
@@ -329,7 +329,7 @@ export const loadObjectsViewPageAndSelectChapter = async (objectID, chapterNumbe
 
     // Open a chapter with `link` object_type
     fireEvent.click(compositeChaptersElements.tableOfContents.container.childElements[chapterNumber - 1].link);
-    await waitFor(() => expect(history.location.pathname + history.location.search).toEqual(compositeChaptersElements.tableOfContents.container.childElements[chapterNumber - 1].URL));
+    await historyManager.waitForCurrentURLAndSearchParamsToBe(compositeChaptersElements.tableOfContents.container.childElements[chapterNumber - 1].URL);
     await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.chapterObject.objectCard).toBeTruthy());
 
     const card = getObjectsViewCardElements({ container }).data.compositeChapters.chapterObject.objectCard;
@@ -339,7 +339,7 @@ export const loadObjectsViewPageAndSelectChapter = async (objectID, chapterNumbe
 
     const chapterObjectID = compositeChaptersElements.tableOfContents.container.childElements[chapterNumber - 1].objectID;
 
-    return { container, store, history, chapterObjectID };
+    return { container, store, historyManager, chapterObjectID };
 };
 
 

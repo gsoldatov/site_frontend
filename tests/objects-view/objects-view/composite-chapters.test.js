@@ -33,14 +33,13 @@ describe("General", () => {
     test("Incorrect chapter numbers", async () => {
         for (let ch of ["str", "1.2.99999"]) {
             // Render page
-            let { container, history } = renderWithWrappers(<App />, {
+            let { container, historyManager } = renderWithWrappers(<App />, {
                 route: `/objects/view/3910?ch=${ch}`
             });
 
             await waitFor(() => {
-                expect(history.location.pathname).toEqual("/objects/view/3910");
-                const params = new URLSearchParams(history.location.search);
-                expect(params.get("ch")).toBeFalsy();
+                historyManager.ensureCurrentURL("/objects/view/3910");
+                expect(historyManager.getCurrentURLSeachParam("ch")).toBeFalsy();
             });
 
             ReactDOM.unmountComponentAtNode(container);
@@ -56,7 +55,7 @@ describe("General", () => {
 
         // Render page
         let { container } = renderWithWrappers(<App />, {
-            route: `/objects/view/3910`
+            route: "/objects/view/3910"
         });
 
         // Wait for a placeholder to be rendered instead of object data
@@ -85,7 +84,7 @@ describe("Table of contents", () => {
 
             // Render page and wait for data to load
             let { container } = renderWithWrappers(<App />, {
-                route: `/objects/view/3910`
+                route: "/objects/view/3910"
             });
 
             // Wait for error placeholder to be displayed
@@ -117,8 +116,8 @@ describe("Table of contents", () => {
     describe("Correct load of root object", () => {
         test("Attributes & tags", async () => {
             // Render page and wait for data to load
-            let { history, container, store } = renderWithWrappers(<App />, {
-                route: `/objects/view/3910`
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
+                route: "/objects/view/3910"
             });
 
             // Wait for error placeholder to be displayed
@@ -157,16 +156,16 @@ describe("Table of contents", () => {
 
             // Check redireact to /tags/view page
             fireEvent.click(getInlineItem({ item: cardElements.tags.tagElements[0] }).link);
-            expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-            expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+            historyManager.ensureCurrentURL("/tags/view");
+            historyManager.ensureCurrentURLParams("?tagIDs=1");
             await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
         });
 
 
         test("Table of contents", async () => {
             // Render page and wait for data to load
-            let { container, store, history } = renderWithWrappers(<App />, {
-                route: `/objects/view/3910`
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
+                route: "/objects/view/3910"
             });
 
             // Wait for error placeholder to be displayed
@@ -217,7 +216,7 @@ describe("Table of contents", () => {
 
             // Check if link redirects
             fireEvent.click(childElements[0].link);
-            await waitFor(() => expect(history.location.pathname + history.location.search).toEqual(childElements[0].URL));
+            await historyManager.waitForCurrentURLAndSearchParamsToBe(childElements[0].URL);
         });
 
 
@@ -227,8 +226,8 @@ describe("Table of contents", () => {
             setConfig({ ...config, compositeChapters: { ...config.compositeChapters, maxHierarchyDepth: 1 }});
 
             // Render page and wait for data to load
-            let { container, store, history } = renderWithWrappers(<App />, {
-                route: `/objects/view/3910`
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/3910"
             });
 
             // Wait for error placeholder to be displayed
@@ -259,8 +258,8 @@ describe("Table of contents", () => {
             }});
 
             // Render page and wait for data to load
-            let { container, store, history } = renderWithWrappers(<App />, {
-                route: `/objects/view/3910`
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
+                route: "/objects/view/3910"
             });
 
             // Wait for error placeholder to be displayed
@@ -272,7 +271,7 @@ describe("Table of contents", () => {
 
             // Open a subchapter
             fireEvent.click(compositeChaptersElements.tableOfContents.container.childElements[6].link);
-            await waitFor(() => expect(history.location.pathname + history.location.search).toEqual(compositeChaptersElements.tableOfContents.container.childElements[6].URL));
+            await historyManager.waitForCurrentURLAndSearchParamsToBe(compositeChaptersElements.tableOfContents.container.childElements[6].URL);
             await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.placeholders.loading).toBeFalsy());
             compositeChaptersElements =  getObjectsViewCardElements({ container }).data.compositeChapters;
 
@@ -318,16 +317,16 @@ describe("Table of contents", () => {
 
             // Check redireact to /tags/view page
             fireEvent.click(getInlineItem({ item: cardElements.tags.tagElements[0] }).link);
-            expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-            expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=101`);
+            historyManager.ensureCurrentURL("/tags/view");
+            historyManager.ensureCurrentURLParams("?tagIDs=101");
             await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
         });
 
 
         test("Table of contents", async () => {
             // Render page and wait for data to load
-            let { container, store, history } = renderWithWrappers(<App />, {
-                route: `/objects/view/3910`
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
+                route: "/objects/view/3910"
             });
 
             // Wait for error placeholder to be displayed
@@ -339,8 +338,7 @@ describe("Table of contents", () => {
 
             // Open a subchapter
             fireEvent.click(compositeChaptersElements.tableOfContents.container.childElements[6].link);
-            await waitFor(() => expect(history.location.pathname + history.location.search).toEqual(compositeChaptersElements.tableOfContents.container.childElements[6].URL));
-            await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.placeholders.loading).toBeFalsy());
+            await historyManager.waitForCurrentURLAndSearchParamsToBe(compositeChaptersElements.tableOfContents.container.childElements[6].URL);
             compositeChaptersElements =  getObjectsViewCardElements({ container }).data.compositeChapters;
 
             // First-level chapters
@@ -372,7 +370,7 @@ describe("Table of contents", () => {
 
             // Check if link redirects
             fireEvent.click(childElements[0].link);
-            await waitFor(() => expect(history.location.pathname + history.location.search).toEqual(childElements[0].URL));
+            await historyManager.waitForCurrentURLAndSearchParamsToBe(childElements[0].URL);
         });
     });
 });
@@ -621,7 +619,7 @@ describe("Hierarchy navigation controls", () => {
     test("Breadcrumb", async () => {
         // Render page and wait for data to load
         let { container, store } = renderWithWrappers(<App />, {
-            route: `/objects/view/3910`
+            route: "/objects/view/3910"
         });
 
         // Wait for the page to load
@@ -683,7 +681,7 @@ describe("Hierarchy navigation controls", () => {
     test("Previous & next", async () => {
         // Render page and wait for data to load
         let { container, store } = renderWithWrappers(<App />, {
-            route: `/objects/view/3910`
+            route: "/objects/view/3910"
         });
 
         // Wait for the page to load

@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, waitFor } from "@testing-library/dom";
+import { fireEvent } from "@testing-library/dom";
 
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
@@ -167,7 +167,7 @@ test("Fetch error display for existing data & form disabling during fetch", asyn
 test("Correct registration & form error clearing", async () => {
     // Render register page
     const store = createTestStore({ addAdminToken: false });
-    let { container, history } = renderWithWrappers(<App />, {
+    let { container, historyManager } = renderWithWrappers(<App />, {
         route: "/auth/register", store
     });
 
@@ -194,7 +194,7 @@ test("Correct registration & form error clearing", async () => {
     expect(formElements.formContainer.classList.contains("error")).toBeFalsy();
 
     // Wait for redirect to login page
-    await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/auth/login`));
+    await historyManager.waitForCurrentURLToBe("/auth/login");
 
     // Check if success message if displayed
     await waitForLoginFormSuccessMessage(container, "You have successfully registered. Login to continue.");

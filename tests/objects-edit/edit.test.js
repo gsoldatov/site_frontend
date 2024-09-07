@@ -96,7 +96,7 @@ describe("Load object errors & UI checks", () => {
 
 
     test("Check 'Add a New Object' button", async () => {
-        let { container, history } = renderWithWrappers(<App />, 
+        let { container, historyManager } = renderWithWrappers(<App />, 
             { route: "/objects/edit/1" }
         );
     
@@ -104,12 +104,12 @@ describe("Load object errors & UI checks", () => {
         await waitFor(() => getByText(container, "Object Information"));
         let addObjectButton = getSideMenuItem(container, "Add a New Object");
         fireEvent.click(addObjectButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/objects/edit/new");
+        historyManager.ensureCurrentURL("/objects/edit/new");
     });
 
 
     test("Check 'View Object' button", async () => {
-        let { container, history } = renderWithWrappers(<App />, 
+        let { container, historyManager } = renderWithWrappers(<App />, 
             { route: "/objects/edit/1" }
         );
     
@@ -117,7 +117,7 @@ describe("Load object errors & UI checks", () => {
         await waitFor(() => getByText(container, "Object Information"));
         let viewObjectButton = getSideMenuItem(container, "View Object");
         fireEvent.click(viewObjectButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/objects/view/1");
+        historyManager.ensureCurrentURL("/objects/view/1");
         await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeTruthy());
         await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
     });
@@ -127,12 +127,9 @@ describe("Load object errors & UI checks", () => {
         let store = getStoreWithCompositeObject();
         setFetchFail(true);
         
-        let { container, history } = renderWithWrappers(<App />, 
-            { 
-                store,
-                route: "/objects/edit/1" 
-            }
-        );
+        let { container } = renderWithWrappers(<App />, { 
+            route: "/objects/edit/1", store
+        });
         
         // Load page
         await waitFor(() => getByText(container, "Object Information"));
@@ -153,9 +150,9 @@ describe("Load object errors & UI checks", () => {
 
 
     test("Object description editor", async () => {
-        let { container, store } = renderWithWrappers(<App />, 
-            { route: "/objects/edit/1" }
-        );
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/objects/edit/1" 
+        });
         
         // Load page
         await waitFor(() => getByText(container, "Object Information"));
@@ -206,8 +203,7 @@ describe("Load object from state", () => {
         store.dispatch(addObjectData([objectData]));
         
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1",
-            store: store
+            route: "/objects/edit/1", store
         });
     
         // Check if object information is displayed on the page
@@ -243,8 +239,7 @@ describe("Load object from state", () => {
         store.dispatch(addObjectData([objectData]));
         
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1",
-            store: store
+            route: "/objects/edit/1", store
         });
     
         // Check if object information is displayed on the page
@@ -295,8 +290,7 @@ describe("Load object from state", () => {
         store.dispatch(addObjectData([objectData]));
         
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1",
-            store: store
+            route: "/objects/edit/1", store
         });
     
         // Check if object information is displayed on the page
@@ -327,8 +321,7 @@ describe("Load object from state", () => {
         let store = getStoreWithCompositeObjectAndSubobjects();
 
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1",
-            store: store
+            route: "/objects/edit/1", store
         });
         
         // Load page
@@ -380,8 +373,7 @@ describe("Load object from backend", () => {
         store.dispatch(setObjectsTags([object]));
         
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1",
-            store: store
+            route: "/objects/edit/1", store
         });
         
         // Check if object information is displayed on the page
@@ -438,8 +430,7 @@ describe("Load object from backend", () => {
         store.dispatch(setObjectsTags([object]));
         
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1001",
-            store: store
+            route: "/objects/edit/1001", store
         });
         
         // Check if object information is displayed on the page
@@ -480,8 +471,7 @@ describe("Load object from backend", () => {
         store.dispatch(setObjectsTags([object]));
         
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/2001",
-            store: store
+            route: "/objects/edit/2001", store
         });
         
         // Check if object information is displayed on the page
@@ -512,8 +502,7 @@ describe("Load object from backend", () => {
         let store = getStoreWithCompositeObject();
 
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1",
-            store: store
+            route: "/objects/edit/1", store
         });
         
         // Load page
@@ -784,13 +773,9 @@ describe("Reset object", () => {
 
 describe("Persist edited object state", () => {
     test("Unchanged objects removal from edited objects storage", async () => {
-        let store = createTestStore();
-        const render = route => renderWithWrappers(<App />, {
-            route, store
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/objects/edit/1"
         });
-
-        // Render page of an existing object
-        var { container } = render("/objects/edit/1");
         await waitFor(() => getByText(container, "Object Information"));
         expect(Object.keys(store.getState().editedObjects).includes("1")).toBeTruthy();
 
@@ -803,8 +788,8 @@ describe("Persist edited object state", () => {
 
     test("Attributes and link", async () => {
         // Render page of the first object
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1", store
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/1"
         });
         // await waitFor(() => getByText(container, "Object Information"));
         await waitForEditObjectPageLoad(container, store);
@@ -825,9 +810,9 @@ describe("Persist edited object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe(linkValue));
 
         // Render another object page, then return to the original object
-        history.push("/objects/edit/2");
+        historyManager.push("/objects/edit/2");
         await waitForEditObjectPageLoad(container, store);
-        history.push("/objects/edit/1");
+        historyManager.push("/objects/edit/1");
         // await waitForEditObjectPageLoad(container, store);   // wait function can't catch fetch changing to true and false if data is present in the state
         
         // Check if modified values are displayed
@@ -843,8 +828,8 @@ describe("Persist edited object state", () => {
 
     test("Markdown", async () => {
         // Render page of the first object
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1001", store
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/1001"
         });
         // await waitFor(() => getByText(container, "Object Information"));
         await waitForEditObjectPageLoad(container, store);
@@ -859,9 +844,9 @@ describe("Persist edited object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).markdown.raw_text).toEqual(rawText));
 
         // Render another object page, then return to the original object
-        history.push("/objects/edit/2");
+        historyManager.push("/objects/edit/2");
         await waitForEditObjectPageLoad(container, store);
-        history.push("/objects/edit/1001");
+        historyManager.push("/objects/edit/1001");
         // await waitForEditObjectPageLoad(container, store);   // wait function can't catch fetch changing to true and false if data is present in the state
         
         // Check if modified Markdown is displayed
@@ -871,8 +856,8 @@ describe("Persist edited object state", () => {
 
     test("To-do list", async () => {
         // Render page of the first object
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/2001", store
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/2001"
         });
         // await waitFor(() => getByText(container, "Object Information"));
         await waitForEditObjectPageLoad(container, store);
@@ -886,9 +871,9 @@ describe("Persist edited object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).toDoList.items[0].item_text).toBe(newItemText));
 
         // Render another object page, then return to the original object
-        history.push("/objects/edit/2");
+        historyManager.push("/objects/edit/2");
         await waitForEditObjectPageLoad(container, store);
-        history.push("/objects/edit/2001");
+        historyManager.push("/objects/edit/2001");
         // await waitForEditObjectPageLoad(container, store);   // wait function can't catch fetch changing to true and false if data is present in the state
         
         // Check if modified Markdown is displayed
@@ -897,7 +882,7 @@ describe("Persist edited object state", () => {
 
 
     test("Composite data and subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -915,7 +900,7 @@ describe("Persist edited object state", () => {
         await waitFor(() => expect(store.getState().editedObjects[card.id].object_name).toEqual(newSubobjectName));
 
         // Render subobject page and check if updated name is displayed
-        history.push(`/objects/edit/${card.id}`);
+        historyManager.push(`/objects/edit/${card.id}`);
         clickGeneralTabButton(container);
         await waitFor(() => expect(getByPlaceholderText(container, "Object name").value).toEqual(newSubobjectName));
         
@@ -925,7 +910,7 @@ describe("Persist edited object state", () => {
         await waitFor(() => expect(store.getState().editedObjects[card.id].object_name).toEqual(newSubobjectName));
 
         // Return to main object page
-        history.push(`/objects/edit/3001`);
+        historyManager.push(`/objects/edit/3001`);
         await waitFor(() => getByText(container, "Object Information"));
         clickDataTabButton(container);
         
@@ -935,8 +920,8 @@ describe("Persist edited object state", () => {
 
 
     test("Unchanged composite object's and subobject removal", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/3001", store
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/objects/edit/3001"
         });
 
         // Wait for the page to load and subobject to load
@@ -954,8 +939,8 @@ describe("Persist edited object state", () => {
 
 
     test("Unchanged composite object and subobject removal", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/3001", store
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/objects/edit/3001"
         });
 
         // Wait for the page to load and subobject to load
@@ -973,8 +958,8 @@ describe("Persist edited object state", () => {
 
 
     test("Unchanged composite object's with changed subobject removal", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/3001", store
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/objects/edit/3001"
         });
 
         // Wait for the page to load and subobject to load
@@ -999,8 +984,8 @@ describe("Persist edited object state", () => {
 
 
     test("Changed composite object's subobjects removal", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/3001", store
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/objects/edit/3001"
         });
 
         // Wait for the page to load
@@ -1053,7 +1038,7 @@ describe("Delete object", () => {
 
 
     test("Delete a link object", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -1078,12 +1063,12 @@ describe("Delete object", () => {
             expect(store.getState().links[1]).toBeUndefined();
             expect(store.getState().editedObjects[1]).toBeUndefined();
         });
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
+        await historyManager.waitForCurrentURLToBe("/objects/list");
     });
 
 
     test("Delete a markdown object", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/1001"
         });
     
@@ -1101,12 +1086,12 @@ describe("Delete object", () => {
             expect(store.getState().markdown[1001]).toBeUndefined();
             expect(store.getState().editedObjects[1001]).toBeUndefined();
         });
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
+        await historyManager.waitForCurrentURLToBe("/objects/list");
     });
 
 
     test("Delete a to-do list object", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
     
@@ -1124,12 +1109,12 @@ describe("Delete object", () => {
             expect(store.getState().toDoLists[2001]).toBeUndefined();
             expect(store.getState().editedObjects[2001]).toBeUndefined();
         });
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
+        await historyManager.waitForCurrentURLToBe("/objects/list");
     });
 
 
     test("Delete a composite object without deleting subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1156,7 +1141,7 @@ describe("Delete object", () => {
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         // Check if redirect occured
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
+        await historyManager.waitForCurrentURLToBe("/objects/list");
         const state = store.getState();
 
         // Check if composite object is removed from state
@@ -1177,7 +1162,7 @@ describe("Delete object", () => {
 
 
     test("Delete a composite object and subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1205,7 +1190,7 @@ describe("Delete object", () => {
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         // Check if redirect occured
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
+        await historyManager.waitForCurrentURLToBe("/objects/list");
         const state = store.getState();
 
         // Check if composite object is removed from state

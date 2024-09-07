@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, waitFor, getByText, createEvent, screen } from "@testing-library/dom";
+import { fireEvent, waitFor } from "@testing-library/dom";
 
 import { getNavigationBarElements } from "./_util/ui-navbar";
 import { getSearchPageElements, checkDisplayedSearchFeedCardIDs, submitSearchQueryWithNavbar } from "./_util/ui-search";
@@ -31,7 +31,7 @@ beforeEach(() => {
 
 describe("Navigation bar search", () => {
     test("Submit correct query with Enter keypress", async () => {
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -39,12 +39,12 @@ describe("Navigation bar search", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
     });
 
 
     test("Submit correct query with button click", async () => {
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -58,9 +58,8 @@ describe("Navigation bar search", () => {
         fireEvent.click(search.button);
 
         // Check if redirect occured
-        expect(history.location.pathname).toEqual("/search");
-        const URLQuery = (new URLSearchParams(history.location.search)).get("q");
-        expect(URLQuery).toEqual(query);
+        historyManager.ensureCurrentURL("/search");
+        expect(historyManager.getCurrentURLSeachParam("q")).toEqual(query);
 
         // Wait for search fetch to end
         await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy());
@@ -68,7 +67,7 @@ describe("Navigation bar search", () => {
 
 
     test("Submit an empty query", async () => {
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -80,7 +79,7 @@ describe("Navigation bar search", () => {
         fireEvent.keyDown(search.input, { key: "Enter", code: "Enter" });
 
         // Check if redirect did not occur
-        expect(history.location.pathname).toEqual("/");
+        historyManager.ensureCurrentURL("/");
     });
 });
 
@@ -108,7 +107,7 @@ describe("Search page input", () => {
         const URLParams = new URLSearchParams();
         URLParams.set("q", query);
 
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: `/search?${URLParams.toString()}`
         });
 
@@ -121,9 +120,8 @@ describe("Search page input", () => {
         fireEvent.keyDown(searchElements.search.input, { key: "Enter", code: "Enter" });
 
         // Check if redirect occured
-        expect(history.location.pathname).toEqual("/search");
-        const URLQuery = (new URLSearchParams(history.location.search)).get("q");
-        expect(URLQuery).toEqual(newQuery);
+        historyManager.ensureCurrentURL("/search");
+        expect(historyManager.getCurrentURLSeachParam("q")).toEqual(newQuery);
 
         // Wait for search fetch to end
         await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy());
@@ -135,7 +133,7 @@ describe("Search page input", () => {
         const URLParams = new URLSearchParams();
         URLParams.set("q", query);
 
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: `/search?${URLParams.toString()}`
         });
 
@@ -148,9 +146,8 @@ describe("Search page input", () => {
         fireEvent.click(searchElements.search.button);
 
         // Check if redirect occured
-        expect(history.location.pathname).toEqual("/search");
-        const URLQuery = (new URLSearchParams(history.location.search)).get("q");
-        expect(URLQuery).toEqual(newQuery);
+        historyManager.ensureCurrentURL("/search");
+        expect(historyManager.getCurrentURLSeachParam("q")).toEqual(newQuery);
 
         // Wait for search fetch to end
         await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy());
@@ -162,7 +159,7 @@ describe("Search page input", () => {
         const URLParams = new URLSearchParams();
         URLParams.set("q", query);
 
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: `/search?${URLParams.toString()}`
         });
 
@@ -174,8 +171,8 @@ describe("Search page input", () => {
         fireEvent.click(searchElements.search.button);
 
         // Check if redirect did not occur
-        const URLQuery = (new URLSearchParams(history.location.search)).get("q");
-        expect(URLQuery).toEqual(query);
+        historyManager.ensureCurrentURL("/search");
+        expect(historyManager.getCurrentURLSeachParam("q")).toEqual(query);
     });
 
 
@@ -208,7 +205,7 @@ describe("Search page input", () => {
         }});
         
         // Render page
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: `/search?${URLParams.toString()}`
         });
 
@@ -223,9 +220,8 @@ describe("Search page input", () => {
         fireEvent.click(searchElements.search.button);
 
         // Check if redirect occured
-        expect(history.location.pathname).toEqual("/search");
-        const URLQuery = (new URLSearchParams(history.location.search)).get("q");
-        expect(URLQuery).toEqual(newQuery);
+        historyManager.ensureCurrentURL("/search");
+        expect(historyManager.getCurrentURLSeachParam("q")).toEqual(newQuery);
 
         // Wait for search fetch to end
         await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy());
@@ -244,7 +240,7 @@ describe("Search page placeholder & fetch errors", () => {
         }});
 
         // Render index page
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -252,7 +248,7 @@ describe("Search page placeholder & fetch errors", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if error message is displayed
         expect(getSearchPageElements(container).feed.placeholders.fetchError).toBeTruthy();
@@ -278,7 +274,7 @@ describe("Search feed card display", () => {
         }});
 
         // Render index page
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -286,7 +282,7 @@ describe("Search feed card display", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if expected feed cards are displayed
         checkDisplayedSearchFeedCardIDs(container, queryItems);
@@ -297,7 +293,7 @@ describe("Search feed card display", () => {
 describe("Search feed > object card", () => {
     test("Timestamp", async () => {
         // Render index page
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -305,7 +301,7 @@ describe("Search feed > object card", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if displayed timestamp equals to feed timestamp
         const feedCard = getSearchPageElements(container).feed.feedCards.feedCards[2];
@@ -325,7 +321,7 @@ describe("Search feed > object card", () => {
 
     test("Header", async () => {
         // Render index page
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -333,7 +329,7 @@ describe("Search feed > object card", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if correct header is displayed
         const feedCard = getSearchPageElements(container).feed.feedCards.feedCards[2];
@@ -343,7 +339,7 @@ describe("Search feed > object card", () => {
 
         // Check if header links to object view page
         fireEvent.click(feedCardElements.header.link);
-        expect(history.entries[history.entries.length - 1].pathname).toEqual(`/objects/view/${objectID}`);
+        historyManager.ensureCurrentURL(`/objects/view/${objectID}`);
         await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
     });
 
@@ -361,7 +357,7 @@ describe("Search feed > object card", () => {
         }});
 
         // Render index page
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -369,7 +365,7 @@ describe("Search feed > object card", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if correct object description is displayed, if show_description = true
         let feedCard = getSearchPageElements(container).feed.feedCards.feedCards[2];      // objectID = 10
@@ -390,7 +386,7 @@ describe("Search feed > object card", () => {
 
     test("Tags", async () => {
         // Render index page
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -398,7 +394,7 @@ describe("Search feed > object card", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if expected tag names are displayed
         const feedCard = getSearchPageElements(container).feed.feedCards.feedCards[2];
@@ -415,8 +411,8 @@ describe("Search feed > object card", () => {
 
         // Check redireact to /tags/view page
         fireEvent.click(getInlineItem({ item: feedCardElements.tags.tags[0] }).link);
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-        expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+        historyManager.ensureCurrentURL("/tags/view");
+        historyManager.ensureCurrentURLParams("?tagIDs=1");
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
     });
 });
@@ -425,7 +421,7 @@ describe("Search feed > object card", () => {
 describe("Search feed > tag card", () => {
     test("Timestamp", async () => {
         // Render index page
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -433,7 +429,7 @@ describe("Search feed > tag card", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if displayed timestamp equals to modified_at
         const feedCard = getSearchPageElements(container).feed.feedCards.feedCards[0];
@@ -447,7 +443,7 @@ describe("Search feed > tag card", () => {
 
     test("Header", async () => {
         // Render index page
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -455,7 +451,7 @@ describe("Search feed > tag card", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if correct header is displayed
         const feedCard = getSearchPageElements(container).feed.feedCards.feedCards[0];
@@ -465,15 +461,15 @@ describe("Search feed > tag card", () => {
 
         // Check if header links to tag page
         fireEvent.click(feedCardElements.header.link);
-        expect(history.entries[history.entries.length - 1].pathname).toEqual(`/tags/view`);
-        expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+        historyManager.ensureCurrentURL("/tags/view");
+        historyManager.ensureCurrentURLParams("?tagIDs=1");
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
     });
 
 
     test("Description", async () => {
         // Render index page
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -481,7 +477,7 @@ describe("Search feed > tag card", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if correct object description is displayed
         const feedCard = getSearchPageElements(container).feed.feedCards.feedCards[0];
@@ -514,7 +510,7 @@ describe("Search feed pagination", () => {
         }});
 
         // Render index page
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -522,7 +518,7 @@ describe("Search feed pagination", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // Check if correct feed cards are rendered and no pagination is displayed
         checkDisplayedSearchFeedCardIDs(container, queryItems);
@@ -555,7 +551,7 @@ describe("Search feed pagination", () => {
         }});
 
         // Render first page
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -563,7 +559,7 @@ describe("Search feed pagination", () => {
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
         // Enter and submit query
-        await submitSearchQueryWithNavbar(container, history, "some text");
+        await submitSearchQueryWithNavbar(container, historyManager, "some text");
 
         // First page: check feed cards
         checkDisplayedSearchFeedCardIDs(container, getQueryItems(1));
@@ -575,8 +571,7 @@ describe("Search feed pagination", () => {
         // Second page: wait for load to end and check URL & displayed feed cards
         expect(getSearchPageElements(container).feed.placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy());
-        let currentPage = (new URLSearchParams(history.location.search)).get("p");
-        expect(currentPage).toEqual("2");
+        expect(historyManager.getCurrentURLSeachParam("p")).toEqual("2");
         checkDisplayedSearchFeedCardIDs(container, getQueryItems(2));
 
         // Get last page button and open the page
@@ -587,8 +582,7 @@ describe("Search feed pagination", () => {
         // Last page: wait for load to end and check URL & displayed feed cards
         expect(getSearchPageElements(container).feed.placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy());
-        currentPage = (new URLSearchParams(history.location.search)).get("p");
-        expect(currentPage).toEqual("10");
+        expect(historyManager.getCurrentURLSeachParam("p")).toEqual("10");
         checkDisplayedSearchFeedCardIDs(container, getQueryItems(10));
 
         // Get previous page button and open the page
@@ -598,8 +592,7 @@ describe("Search feed pagination", () => {
         // Previous to last page: wait for load to end and check URL & displayed feed cards
         expect(getSearchPageElements(container).feed.placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy());
-        currentPage = (new URLSearchParams(history.location.search)).get("p");
-        expect(currentPage).toEqual("9");
+        expect(historyManager.getCurrentURLSeachParam("p")).toEqual("9");
         checkDisplayedSearchFeedCardIDs(container, getQueryItems(9));
 
         // Get first page button and open the page
@@ -609,8 +602,7 @@ describe("Search feed pagination", () => {
         // First page: wait for load to end and check URL & displayed feed cards
         expect(getSearchPageElements(container).feed.placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy());
-        currentPage = (new URLSearchParams(history.location.search)).get("p");
-        expect(currentPage).toBeFalsy();
+        expect(historyManager.getCurrentURLSeachParam("p")).toBeFalsy();
         checkDisplayedSearchFeedCardIDs(container, getQueryItems(1));
     });
 });

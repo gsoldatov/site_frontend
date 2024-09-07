@@ -74,13 +74,13 @@ describe("Basic render & side menu", () => {
 
 
     test("Cancel button", async () => {
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/tags/edit/new"
         });
 
         // Check if cancel button redirects to /tags page
         fireEvent.click(getTagsEditElements(container).sideMenu.cancelButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/tags/list");
+        historyManager.ensureCurrentURL("/tags/list");
     });
 });
 
@@ -162,7 +162,7 @@ describe("Edit & save", () => {
 
 
     test("Handle fetch error", async () => {
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/tags/edit/new"
         });
     
@@ -177,13 +177,13 @@ describe("Edit & save", () => {
             const { tagSaveError } = getTagsEditElements(container);
             getByText(tagSaveError, "Failed to fetch data.");
         });
-        expect(history.entries[history.length - 1].pathname).toBe("/tags/edit/new");
+        historyManager.ensureCurrentURL("/tags/edit/new");
         expect(store.getState().tags[1000]).toBeUndefined();
     });
 
 
     test("Save new tag, tag name", async () => {
-        let { container, history, store } = renderWithWrappers(<App />, 
+        let { container, store, historyManager } = renderWithWrappers(<App />, 
             { route: "/tags/edit/new" }
         );
 
@@ -197,14 +197,14 @@ describe("Edit & save", () => {
         fireEvent.click(elements.sideMenu.saveButton);
         await waitFor(() => expect(store.getState().tagUI.currentTag.tag_id).toBeGreaterThan(0));
         let tag_id = store.getState().tagUI.currentTag.tag_id;
-        expect(history.entries[history.length - 1].pathname).toBe(`/tags/edit/${tag_id}`);
+        historyManager.ensureCurrentURL(`/tags/edit/${tag_id}`);
         elements = getTagsEditElements(container);
         expect(elements.tagNameInput.value).toEqual(store.getState().tags[tag_id].tag_name);
     });
 
 
     test("Save new tag, tag description", async () => {
-        let { container, history, store } = renderWithWrappers(<App />, 
+        let { container, store, historyManager } = renderWithWrappers(<App />, 
             { route: "/tags/edit/new" }
         );
 
@@ -222,14 +222,14 @@ describe("Edit & save", () => {
         fireEvent.click(elements.sideMenu.saveButton);
         await waitFor(() => expect(store.getState().tagUI.currentTag.tag_id).toBeGreaterThan(0));
         let tag_id = store.getState().tagUI.currentTag.tag_id;
-        expect(history.entries[history.length - 1].pathname).toBe(`/tags/edit/${tag_id}`);
+        historyManager.ensureCurrentURL(`/tags/edit/${tag_id}`);
         elements = getTagsEditElements(container);
         expect(elements.tagDescription.editMarkdownInput.value).toEqual(store.getState().tags[tag_id].tag_description);
     });
 
 
     test("Save new tag, publish tag", async () => {
-        let { container, history, store } = renderWithWrappers(<App />, 
+        let { container, store, historyManager } = renderWithWrappers(<App />, 
             { route: "/tags/edit/new" }
         );
 
@@ -250,7 +250,7 @@ describe("Edit & save", () => {
         fireEvent.click(elements.sideMenu.saveButton);
         await waitFor(() => expect(store.getState().tagUI.currentTag.tag_id).toBeGreaterThan(0));
         let tag_id = store.getState().tagUI.currentTag.tag_id;
-        expect(history.entries[history.length - 1].pathname).toBe(`/tags/edit/${tag_id}`);
+        historyManager.ensureCurrentURL(`/tags/edit/${tag_id}`);
         elements = getTagsEditElements(container);
         expect(store.getState().tagUI.currentTag.is_published).toBeFalsy();
         expect(elements.publishTagCheckbox.checked).toBeFalsy();

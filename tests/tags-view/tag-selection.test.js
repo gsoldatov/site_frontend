@@ -65,7 +65,7 @@ test("Tag item on click redirect", async () => {
         return response;
     }});
 
-    let { container, history } = renderWithWrappers(<App />, {
+    let { container, historyManager } = renderWithWrappers(<App />, {
         route: `/tags/view?tagIDs=5,10&p=2`
     });
 
@@ -75,8 +75,8 @@ test("Tag item on click redirect", async () => {
     // Click on tag item and check if redirect occured
     const item = getTagsViewElements(container).selectedTags.tags[1];
     fireEvent.click(getInlineItem({ item }).link);
-    expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-    expect(history.entries[history.entries.length - 1].search).toEqual("?tagIDs=10");
+    historyManager.ensureCurrentURL("/tags/view");
+    historyManager.ensureCurrentURLParams("?tagIDs=10");
     await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
 
     // Check if correct objects are rendered
@@ -106,7 +106,7 @@ test("Select a tag with dropdown", async () => {
         return response;
     }});
 
-    let { container, history } = renderWithWrappers(<App />, {
+    let { container, historyManager } = renderWithWrappers(<App />, {
         route: `/tags/view?tagIDs=5,10&p=2`
     });
 
@@ -119,9 +119,8 @@ test("Select a tag with dropdown", async () => {
     fireEvent.click(getTagsViewElements(container).dropdown.optionsByText[newSelectedTagName]);
 
     // Check if redirect occured
-    expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-    const expectedSearch = history.entries[history.entries.length - 1].search.replace(/%252C/g, ",");      // decodeURIComponent not working in test env for some reason
-    expect(expectedSearch).toEqual(`?tagIDs=5,10,${newSelectedTagID}`);
+    historyManager.ensureCurrentURL("/tags/view");
+    historyManager.ensureCurrentURLParams(`?tagIDs=5,10,${newSelectedTagID}`, true);
     await waitFor(() => expect(getTagsViewElements(container).selectedTags.tags.length).toEqual(3));
 
     // Check if correct objects are rendered
@@ -140,7 +139,7 @@ test("Remove tag selection", async () => {
         return response;
     }});
 
-    let { container, history } = renderWithWrappers(<App />, {
+    let { container, historyManager } = renderWithWrappers(<App />, {
         route: `/tags/view?tagIDs=5,10&p=2`
     });
 
@@ -152,8 +151,8 @@ test("Remove tag selection", async () => {
     fireEvent.click(getInlineItem({ item }).icons[0]);
 
     // Check if redirect occured
-    expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-    expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=5`);
+    historyManager.ensureCurrentURL("/tags/view");
+    historyManager.ensureCurrentURLParams("?tagIDs=5");
     
     await waitFor(() => expect(getTagsViewElements(container).selectedTags.tags.length).toEqual(1));
     expect(getInlineItem({ item: getTagsViewElements(container).selectedTags.tags[0] }).linkTagID).toEqual(5);

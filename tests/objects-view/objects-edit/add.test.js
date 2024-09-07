@@ -36,7 +36,7 @@ beforeEach(() => {
 describe("Object display properties", () => {
     describe("Publish object", () => {
         test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -65,7 +65,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<App />, {
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -84,7 +84,7 @@ describe("Object display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             expect(state.objects[object_id].is_published).toBeTruthy();
@@ -94,7 +94,7 @@ describe("Object display properties", () => {
 
     describe("Publish subobjects", () => {
         test("Link, markdown, to-do list: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -113,7 +113,7 @@ describe("Object display properties", () => {
 
 
         test("Composite: reset", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -142,7 +142,7 @@ describe("Object display properties", () => {
 
 
         test("Composite: toggle & save", async () => {
-            let { store, container, history } = renderWithWrappers(<App />, {
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -185,7 +185,7 @@ describe("Object display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             expect(state.objects[firstID].is_published).toBeTruthy();
@@ -196,7 +196,7 @@ describe("Object display properties", () => {
 
     describe("Show description", () => {
         test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -225,7 +225,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<App />, {
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -248,7 +248,7 @@ describe("Object display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             expect(state.objects[object_id].show_description).toBeTruthy();
@@ -258,7 +258,7 @@ describe("Object display properties", () => {
 
     describe("Show description as link", () => {
         test("Markdown, to-do list, composite: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -277,7 +277,7 @@ describe("Object display properties", () => {
 
 
         test("Link: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -299,7 +299,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<App />, {
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -318,7 +318,7 @@ describe("Object display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             expect(state.links[object_id].show_description_as_link).toBeTruthy();
@@ -328,7 +328,7 @@ describe("Object display properties", () => {
 
     describe("Display in feed", () => {
         test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -357,7 +357,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<App />, {
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -376,7 +376,7 @@ describe("Object display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             expect(state.objects[object_id].display_in_feed).toEqual(false);
@@ -386,7 +386,7 @@ describe("Object display properties", () => {
     
     describe("Feed timestamp", () => {
         test("Link, markdown, to-do list, composite: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -420,7 +420,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container, history } = renderWithWrappers(<App />, {
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -446,7 +446,7 @@ describe("Object display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             expect(state.objects[object_id].feed_timestamp).toEqual(newDate.toISOString());
@@ -456,7 +456,7 @@ describe("Object display properties", () => {
 
     describe("Display mode", () => {
         test("Link, Markdown, to-do list: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -475,7 +475,7 @@ describe("Object display properties", () => {
 
 
         test("Composite: default value & change", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -510,7 +510,7 @@ describe("Object display properties", () => {
 
     describe("Numerate chapters", () => {
         test("Link, markdown, to-do list: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -529,7 +529,7 @@ describe("Object display properties", () => {
 
 
         test("Composite, non-chapters display mode: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -557,7 +557,7 @@ describe("Object display properties", () => {
 
 
         test("Composite, chapters display mode: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -588,7 +588,7 @@ describe("Object display properties", () => {
 
     describe("Show description composite", () => {
         test("Link, markdown, to-do list, composite: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -609,7 +609,7 @@ describe("Object display properties", () => {
 
     describe("Show description as link composite", () => {
         test("Link, markdown, to-do list, composite: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<App />, {
+            let { container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -741,7 +741,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<App />, {
+            let { container, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -771,7 +771,7 @@ describe("Composite subobject display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             const mappedSubobjectID = getMappedSubobjectID(subobjectID, "link");
@@ -835,7 +835,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<App />, {
+            let { container, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -870,7 +870,7 @@ describe("Composite subobject display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             const mappedSubobjectID = getMappedSubobjectID(subobjectID, "link");
@@ -961,7 +961,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<App />, {
+            let { container, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -996,7 +996,7 @@ describe("Composite subobject display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             const mappedSubobjectID = getMappedSubobjectID(subobjectID, "link");
@@ -1068,7 +1068,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<App />, {
+            let { container, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -1098,7 +1098,7 @@ describe("Composite subobject display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             const mappedSubobjectID = getMappedSubobjectID(subobjectID, "link");
@@ -1152,7 +1152,7 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType(true, true);
-            let { container, history } = renderWithWrappers(<App />, {
+            let { container, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new",
                 store
             });
@@ -1187,7 +1187,7 @@ describe("Composite subobject display properties", () => {
             let saveButton = getSideMenuItem(container, "Save");
             fireEvent.click(saveButton);
             const object_id = 1000; // mock object returned has this id
-            await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+            await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
 
             const state = store.getState();
             const mappedSubobjectID = getMappedSubobjectID(subobjectID, "link");

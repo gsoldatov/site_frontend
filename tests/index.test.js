@@ -64,13 +64,13 @@ describe("Page load & placeholders", () => {
 
     test("Incorrect page number", async () => {
         for (let route of ["/feed/asd", "/feed/-1"]) {
-            let { container, history } = renderWithWrappers(<App />, {
+            let { container, historyManager } = renderWithWrappers(<App />, {
                 route
             });
 
             // Check if index page is rendered instead
             await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
-            expect(history.entries[history.entries.length - 1].pathname).toEqual("/");
+            historyManager.ensureCurrentURL("/");
             checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs(_mockPaginationInfo));
 
             ReactDOM.unmountComponentAtNode(container);
@@ -79,7 +79,7 @@ describe("Page load & placeholders", () => {
 
 
     test("Page without objects", async () => {
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/feed/999"
         });
 
@@ -135,7 +135,7 @@ describe("Feed pagination", () => {
 
     test("Multiple pages", async () => {
         // Render first page
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -152,7 +152,7 @@ describe("Feed pagination", () => {
         // Second page: wait for load to end and check URL & displayed objects
         expect(getFeedElements(container).placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/feed/2");
+        historyManager.ensureCurrentURL("/feed/2");
         checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs({ ..._mockPaginationInfo, page: 2 }));
 
         // Get last page button and open the page
@@ -163,7 +163,7 @@ describe("Feed pagination", () => {
         // Last page: wait for load to end and check URL & displayed objects
         expect(getFeedElements(container).placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/feed/10");
+        historyManager.ensureCurrentURL("/feed/10");
         checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs({ ..._mockPaginationInfo, page: 10 }));
 
         // Get previous page button and open the page
@@ -173,7 +173,7 @@ describe("Feed pagination", () => {
         // Previous to last page: wait for load to end and check URL & displayed objects
         expect(getFeedElements(container).placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/feed/9");
+        historyManager.ensureCurrentURL("/feed/9");
         checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs({ ..._mockPaginationInfo, page: 9 }));
 
         // Get first page button and open the page
@@ -183,7 +183,7 @@ describe("Feed pagination", () => {
         // First page: wait for load to end and check URL & displayed objects
         expect(getFeedElements(container).placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/");
+        historyManager.ensureCurrentURL("/");
         checkDisplayedObjectFeedCardIDs(container, getMockedPageObjectIDs(_mockPaginationInfo));
     });
 });
@@ -215,7 +215,7 @@ describe("Object feed card", () => {
 
 
     test("Header", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -230,7 +230,7 @@ describe("Object feed card", () => {
 
         // Check if header links to object view page
         fireEvent.click(feedCardElements.header.link);
-        expect(history.entries[history.entries.length - 1].pathname).toEqual(`/objects/view/${objectID}`);
+        historyManager.ensureCurrentURL(`/objects/view/${objectID}`);
         await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
     });
 
@@ -281,7 +281,7 @@ describe("Object feed card", () => {
 
 
     test("Tags", async () => {
-        let { history, container, store } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -303,8 +303,8 @@ describe("Object feed card", () => {
 
         // Check redireact to /tags/view page
         fireEvent.click(getInlineItem({ item: feedCardElements.tags.tags[0] }).link);
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-        expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+        historyManager.ensureCurrentURL("/tags/view");
+        historyManager.ensureCurrentURLParams("?tagIDs=1");
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
     });
 });

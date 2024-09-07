@@ -89,7 +89,7 @@ describe("Add object page", () => {
     
     
     test("Add & remove tags", async () => {
-        let { store, container } = renderWithWrappers(<App />, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -124,7 +124,7 @@ describe("Add object page", () => {
 
 
     test("Reset tags", async () => {
-        let { store, container } = renderWithWrappers(<App />, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -152,9 +152,9 @@ describe("Add object page", () => {
 
     test("Persist added tags", async () => {
         // Render switch with /objects/edit/:id and /objects page at /objects/edit/new
-        let { container, store } = renderWithWrappers(<App />, 
-            { route: "/objects/edit/new" }
-        );
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new" 
+        });
 
         // Wait for the page to load
         await waitFor(() => getByText(container, "Add a New Object"));
@@ -188,9 +188,9 @@ describe("Add object page", () => {
     
     
     test("Tag item links", async () => {
-        let { container, history, store } = renderWithWrappers(<App />, 
-            { route: "/objects/edit/new" }
-        );
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new" 
+        });
 
         // Wait for the page to load
         await waitFor(() => getByText(container, "Add a New Object"));
@@ -216,16 +216,16 @@ describe("Add object page", () => {
         expect(existingTag.link).toBeTruthy();
         
         fireEvent.click(existingTag.link);
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view")
-        expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+        historyManager.ensureCurrentURL("/tags/view");
+        historyManager.ensureCurrentURLParams("?tagIDs=1");
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
     });
 
 
     test("Add tags & save object", async () => {
-        let { container, history, store } = renderWithWrappers(<App />, 
-            { route: "/objects/edit/new" }
-        );
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new"
+        });
 
         // Wait for the page to load
         await waitFor(() => getByText(container, "Add a New Object"));
@@ -265,7 +265,7 @@ describe("Add object page", () => {
         const object_id = 1000; // mock object returned has this id
     
         // Wait for redirect and tag fetch
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+        await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
         clickGeneralTabButton(container);
         await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(3)); // 2 tags + input
     });
@@ -287,8 +287,7 @@ describe("Edit object page", () => {
             await store.dispatch(getNonCachedTags([tag_id]));
         
         let { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/1",
-            store: store
+            route: "/objects/edit/1", store
         });
     
         // Check if tags are rendered on the page
@@ -317,7 +316,7 @@ describe("Edit object page", () => {
     
 
     test("Load object tags from backend and check tag link", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -329,8 +328,8 @@ describe("Edit object page", () => {
         expect(existingTag.item).toBeTruthy();
 
         fireEvent.click(existingTag.link);
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view")
-        expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+        historyManager.ensureCurrentURL("/tags/view");
+        historyManager.ensureCurrentURLParams("?tagIDs=1");
         await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
     });
 
@@ -393,7 +392,7 @@ describe("Edit object page", () => {
     
     
     test("Delete object", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/1"
         });
     
@@ -407,7 +406,7 @@ describe("Edit object page", () => {
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
     
         await waitFor(() => expect(store.getState().objectsTags[1]).toBeUndefined());
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/list"));
+        await historyManager.waitForCurrentURLToBe("/objects/list");
     });
 
 
@@ -445,7 +444,7 @@ describe("Edit object page", () => {
 
     test("Persist added and removed tags", async () => {
         // Render switch with /objects/edit/:id and /objects page at /objects/edit/new
-        let { container, store, history } = renderWithWrappers(<App />, { 
+        let { container, store, historyManager } = renderWithWrappers(<App />, { 
             route: "/objects/edit/1" 
         });
 
@@ -471,7 +470,7 @@ describe("Edit object page", () => {
         const cancelButton = getSideMenuItem(container, "Cancel");
         fireEvent.click(cancelButton);
 
-        history.push("/objects/edit/1");
+        historyManager.push("/objects/edit/1");
         // await waitFor(() => getByText(container, "object #1"));
         // fireEvent.click(getByText(container, "object #1"));
         await waitFor(() => getByText(container, "Object Information"));

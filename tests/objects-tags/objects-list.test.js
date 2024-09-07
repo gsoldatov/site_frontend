@@ -1,8 +1,7 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
-import { getByText, getByTitle, waitFor, queryByText, queryAllByText, screen } from "@testing-library/dom";
+import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from "@testing-library/dom";
 
 import { getStoreWithTwoSelectedObjects } from "../_mocks/data-objects-tags";
 import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
@@ -13,8 +12,7 @@ import { compareArrays } from "../_util/data-checks";
 import { renderWithWrappers } from "../_util/render";
 import { getFeedElements } from "../_util/ui-index";
 
-import ObjectsList from "../../src/components/top-level/objects-list";
-import { EditObject } from "../../src/components/top-level/objects-edit";
+import { App } from "../../src/components/top-level/app";
 import { getNonCachedTags } from "../../src/fetches/data-tags";
 
 
@@ -35,7 +33,7 @@ beforeEach(() => {
 
 test("Check page without selected objects", async () => {    
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+    let { container } = renderWithWrappers(<App />, {
         route: "/objects/list"
     });
 
@@ -62,7 +60,7 @@ test("Check page without selected objects", async () => {
 
 test("Check tags appearance for one selected object", async () => {
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+    let { container, store } = renderWithWrappers(<App />, {
         route: "/objects/list"
     });
 
@@ -90,9 +88,8 @@ test("Check tags appearance for two selected objects", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-        route: "/objects/list",
-        store: store
+    let { container } = renderWithWrappers(<App />, {
+        route: "/objects/list", store
     });
 
     // Wait for the objects to be loaded and select an object
@@ -117,9 +114,8 @@ test("Check common and partially applied tags on click behaviour", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-        route: "/objects/list",
-        store: store
+    let { container } = renderWithWrappers(<App />, {
+        route: "/objects/list", store
     });
 
     // Wait for the objects to be loaded and select an object
@@ -150,7 +146,7 @@ test("Check tag links", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container, history } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+    let { container, historyManager } = renderWithWrappers(<App />, {
         route: "/objects/list", store
     });
 
@@ -168,19 +164,19 @@ test("Check tag links", async () => {
     // Check link of an existing common tag
     const existingCommonTag = getInlineItem({ container, text: "tag #1" });
     fireEvent.click(existingCommonTag.link);
-    expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-    expect(history.entries[history.entries.length - 1].search).toEqual("?tagIDs=1");
+    historyManager.ensureCurrentURL("/tags/view");
+    historyManager.ensureCurrentURLParams("?tagIDs=1");
     await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 
     // Go back to /objects/list page
-    history.push("/objects/list");
+    historyManager.push("/objects/list");
     await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
 
     // Check link of an existing partially applied tag
     const existingPartiallyAppliedTag = getInlineItem({ container, text: "tag #5" });
     fireEvent.click(existingPartiallyAppliedTag.link);
-    expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-    expect(history.entries[history.entries.length - 1].search).toEqual("?tagIDs=5");
+    historyManager.ensureCurrentURL("/tags/view");
+    historyManager.ensureCurrentURLParams("?tagIDs=5");
     await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 });
 
@@ -190,9 +186,8 @@ test("Check tags input & added tags", async () => {
     await store.dispatch(getNonCachedTags([7]));    // additional tags is required to test adding of an existing tag
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-        route: "/objects/list",
-        store: store
+    let { container } = renderWithWrappers(<App />, {
+        route: "/objects/list", store
     });
 
     // Wait for the objects to be loaded
@@ -232,9 +227,8 @@ test("Check adding existing tags with tag input", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-        route: "/objects/list",
-        store: store
+    let { container } = renderWithWrappers(<App />, {
+        route: "/objects/list", store
     });
 
     // Wait for the objects to be loaded
@@ -265,9 +259,8 @@ test("Check object deletion", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-        route: "/objects/list",
-        store: store
+    let { container } = renderWithWrappers(<App />, {
+        route: "/objects/list", store
     });
 
     // Wait for the objects to be loaded
@@ -299,9 +292,8 @@ test("Check side menu", async () => {
     let store = await getStoreWithTwoSelectedObjects();
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
-    let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-        route: "/objects/list",
-        store: store
+    let { container } = renderWithWrappers(<App />, {
+        route: "/objects/list", store
     });
 
     // Wait for the objects to be loaded
@@ -372,22 +364,19 @@ test("Check tags update + editedObjects reset", async () => {
     await store.dispatch(getNonCachedTags([7]));    // additional tags is required to test adding of an existing tag
 
     // Add & remove tags for two objects on the /objects/edit/:id page without saving the changes
-    let {container, history } = renderWithWrappers(
-        <Switch>
-            <Route exact path="/objects/list"><ObjectsList /></Route>
-            <Route exact path="/objects/edit/:id"><EditObject /></Route>
-        </Switch>
-    , { route: "/objects/edit/1", store });
+    let {container, historyManager } = renderWithWrappers(<App />, {
+        route: "/objects/edit/1", store
+    });
 
     await waitFor(() => getByText(container, "Object Information"));
     await addAndRemoveTags(container, store);
 
-    history.push("/objects/edit/3");
+    historyManager.push("/objects/edit/3");
     await waitFor(() => getByText(container, "Object Information"));
     await addAndRemoveTags(container, store);
 
     // Wait for the /objects page to be loaded
-    history.push("/objects/list");
+    historyManager.push("/objects/list");
     await waitFor(() => expect(queryAllByText(container, "object #1").length).toEqual(2));
 
     // Add an existing tag

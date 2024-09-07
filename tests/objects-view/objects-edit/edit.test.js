@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, waitFor} from "@testing-library/dom";
@@ -14,7 +13,7 @@ import { getReactDatetimeElements } from "../../_util/ui-react-datetime";
 
 import { getStoreWithCompositeObjectAndSubobjectsOfEachType } from "../../_mocks/data-composite";
 
-import { EditObject } from "../../../src/components/top-level/objects-edit";
+import { App } from "../../../src/components/top-level/app";
 import { setEditedObject } from "../../../src/actions/objects-edit";
 import { enumCompositeObjectDisplayModes } from "../../../src/util/enum-composite-object-display-modes";
 
@@ -41,7 +40,7 @@ describe("Object display properties", () => {
 
             for (let i = 0; i < objectTypes.length; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
             
@@ -66,7 +65,7 @@ describe("Object display properties", () => {
 
 
         test("Link: update", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { store, container } = renderWithWrappers(<App />, {
                 route: "/objects/edit/1"
             });
         
@@ -92,7 +91,7 @@ describe("Object display properties", () => {
 
             for (let i = 0; i < objectTypes.length - 1; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
 
@@ -109,7 +108,7 @@ describe("Object display properties", () => {
 
 
         test("Composite: toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/3901"
             });
         
@@ -143,7 +142,7 @@ describe("Object display properties", () => {
 
 
         test("Composite: save", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/3901"
             });
         
@@ -177,7 +176,7 @@ describe("Object display properties", () => {
 
             for (let i = 0; i < objectTypes.length; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
             
@@ -202,7 +201,7 @@ describe("Object display properties", () => {
 
 
         test("Link: update", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/1"
             });
         
@@ -228,7 +227,7 @@ describe("Object display properties", () => {
 
             for (let i = 1; i < objectTypes.length; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
 
@@ -245,7 +244,7 @@ describe("Object display properties", () => {
 
 
         test("Link: toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/1"
             });
         
@@ -269,7 +268,7 @@ describe("Object display properties", () => {
 
 
         test("Link: save", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/1"
             });
         
@@ -297,7 +296,7 @@ describe("Object display properties", () => {
 
             for (let i = 0; i < objectTypes.length; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
             
@@ -322,7 +321,7 @@ describe("Object display properties", () => {
 
 
         test("Link: update", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/1"
             });
         
@@ -348,7 +347,7 @@ describe("Object display properties", () => {
 
             for (let i = 0; i < objectTypes.length; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
             
@@ -378,7 +377,7 @@ describe("Object display properties", () => {
 
 
         test("Link: update", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/1"
             });
         
@@ -412,7 +411,7 @@ describe("Object display properties", () => {
 
             for (let i = 0; i < objectTypes.length - 1; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
             
@@ -429,8 +428,8 @@ describe("Object display properties", () => {
 
 
         test("Composite: default value & change", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: `/objects/edit/3001`
+            let { container, store } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3001"
             });
         
             // Wait for the page to load and open display tab
@@ -467,7 +466,7 @@ describe("Object display properties", () => {
 
             for (let i = 0; i < objectTypes.length - 1; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
             
@@ -484,8 +483,8 @@ describe("Object display properties", () => {
 
 
         test("Composite, non-chapters display mode: control not rendered", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: `/objects/edit/3001`
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3001"
             });
         
             // Wait for the page to load and open display tab
@@ -509,8 +508,8 @@ describe("Object display properties", () => {
 
 
         test("Composite, chapters display mode: default value, toggle & reset", async () => {
-            let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: `/objects/edit/3001`
+            let { container, store } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3001"
             });
         
             // Wait for the page to load and open display tab
@@ -542,7 +541,7 @@ describe("Object display properties", () => {
 
             for (let i = 0; i < objectTypes.length; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
             
@@ -565,7 +564,7 @@ describe("Object display properties", () => {
 
             for (let i = 0; i < objectTypes.length; i++) {
                 const objectID = 1000 * i + 1;
-                let { store, container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container } = renderWithWrappers(<App />, {
                     route: `/objects/edit/${objectID}`
                 });
             
@@ -587,9 +586,8 @@ describe("Composite subobject display properties", () => {
     describe("Publish subobject", () => {
         test("Default value inheritance", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -652,9 +650,8 @@ describe("Composite subobject display properties", () => {
 
         test("Link, markdown, to-do list, composite: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -692,9 +689,8 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -730,9 +726,8 @@ describe("Composite subobject display properties", () => {
     describe("Show description composite", () => {
         test("Link, markdown, to-do list, composite: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -782,9 +777,8 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -825,9 +819,8 @@ describe("Composite subobject display properties", () => {
     describe("Show description as link composite", () => {
         test("Markdown, to-do list, composite: not rendered", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -855,9 +848,8 @@ describe("Composite subobject display properties", () => {
 
         test("Link: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -904,9 +896,8 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -947,9 +938,8 @@ describe("Composite subobject display properties", () => {
     describe("Display in feed", () => {
         test("Default value of a new subobject", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -966,9 +956,8 @@ describe("Composite subobject display properties", () => {
 
         test("Link, markdown, to-do list, composite: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -1006,9 +995,8 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -1044,9 +1032,8 @@ describe("Composite subobject display properties", () => {
     describe("Feed timestamp", () => {
         test("Link, markdown, to-do list: toggle & reset", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -1089,9 +1076,8 @@ describe("Composite subobject display properties", () => {
 
         test("Link: update", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load
@@ -1135,9 +1121,8 @@ describe("Composite subobject display properties", () => {
     describe("Show description; show description as link; display mode; numerate chapters", () => {
         test("Link, markdown, to-do list, composite: not rendered", async () => {
             const store = getStoreWithCompositeObjectAndSubobjectsOfEachType();
-            let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
-                route: "/objects/edit/3201",
-                store
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/edit/3201", store
             });
 
             // Wait for the page to load

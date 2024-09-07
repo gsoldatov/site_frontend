@@ -1,5 +1,4 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlaceholderText } from "@testing-library/dom";
@@ -12,8 +11,7 @@ import { getCurrentObject } from "./_util/ui-objects-edit";
 import { createTestStore } from "./_util/create-test-store";
 import { getStoreWithModifiedCompositeObject } from "./_mocks/data-composite";
 
-import ObjectsList from "../src/components/top-level/objects-list";
-import { EditObject } from "../src/components/top-level/objects-edit";
+import { App } from "../src/components/top-level/app";
 import { setObjectsPaginationInfo } from "../src/actions/objects-list";
 
 
@@ -41,7 +39,7 @@ describe("Page load and pagination", () => {
         setFetchFail(true);
     
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/list"
         });
     
@@ -66,9 +64,8 @@ describe("Page load and pagination", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 100}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store: store
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
     
         // Wait for the objects to be loaded
@@ -84,9 +81,8 @@ describe("Page load and pagination", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 20}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store: store
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
     
         // Check if no pagination is rendered during fetch
@@ -124,9 +120,8 @@ describe("Page load and pagination", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store: store
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
     
         // Wait for the objects to load
@@ -221,9 +216,8 @@ describe("Side menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store: store
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
 
         let addObjectButton = getSideMenuItem(container, "Add a New Object");
@@ -248,9 +242,8 @@ describe("Side menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container, history } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store: store
+        let { container, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
 
         // Wait for the objects to be loaded
@@ -259,7 +252,7 @@ describe("Side menu", () => {
         // Check if add button click redirects to add object page
         let addObjectButton = getSideMenuItem(container, "Add a New Object");
         fireEvent.click(addObjectButton);
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/edit/new"));
+        await historyManager.waitForCurrentURLToBe("/objects/edit/new");
     });
 
 
@@ -268,9 +261,8 @@ describe("Side menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container, history } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store: store
+        let { container, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
 
         // Wait for the objects to be loaded
@@ -291,30 +283,25 @@ describe("Side menu", () => {
         fireEvent.click(secondObjectCheckbox);
         await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs).toEqual(expect.arrayContaining([1, 2])));
         fireEvent.click(editObjectButton);     // editObjectButton.onclick is not null after handler is added, although the button is not clickable, so checking onclick prop on being null is not viable
-        expect(history.entries[history.length - 1].pathname).toBe("/objects/list");
+        historyManager.ensureCurrentURL("/objects/list");
 
         // Deselect a object, click edit object button and check if it redirected to /objects/edit/:id
         fireEvent.click(secondObjectCheckbox);
         await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs).toEqual(expect.arrayContaining([1])));
         editObjectButton = getSideMenuItem(container, "Edit Object");   // get the element again to properly click it
         fireEvent.click(editObjectButton);
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/objects/edit/1"));
+        await historyManager.waitForCurrentURLToBe("/objects/edit/1");
     });
 
 
     test("Delete button + edited objects removal", async () => {
         let store = createTestStore();
-        store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
-
-        const render = route => renderWithWrappers(
-            <Switch>
-                <Route exact path="/objects/list"><ObjectsList /></Route>
-                <Route exact path="/objects/edit/:id"><EditObject /></Route>
-            </Switch>
-        , { route, store });
+        store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}));
         
         // Render an object with id = 1 page and modify it to keep it in the editedObjects storage, then click cancel button
-        var { container } = render("/objects/edit/1");
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/edit/1", store
+        });
         await waitFor(() => getByText(container, "Object Information"));
         let objectNameInput = getByPlaceholderText(container, "Object name");
         const objectNameText = "modified name";
@@ -372,9 +359,8 @@ describe("Side menu", () => {
         let store = getStoreWithModifiedCompositeObject();
 
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
 
         // Wait for the objects to be loaded
@@ -416,9 +402,8 @@ describe("Side menu", () => {
         let store = getStoreWithModifiedCompositeObject();
 
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
 
         // Wait for the objects to be loaded
@@ -464,9 +449,8 @@ describe("Field menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store: store
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
 
         // Wait for the objects to be loaded
@@ -494,9 +478,8 @@ describe("Field menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: objectsPerPage}));
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store: store
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
 
         // Wait for the objects to be loaded
@@ -533,9 +516,8 @@ describe("Field menu", () => {
         store.dispatch(setObjectsPaginationInfo({itemsPerPage: 10}))
         
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
-            route: "/objects/list",
-            store: store
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/list", store
         });
 
         // Wait for the objects to be loaded
@@ -557,7 +539,7 @@ describe("Field menu", () => {
 
     test("Object type filter", async () => {
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        let { store, container } = renderWithWrappers(<App />, {
             route: "/objects/list"
         });
 
@@ -610,7 +592,7 @@ describe("Field menu", () => {
 
     test("Tags filter", async () => {
         // Route component is required for matching (getting :id part of the URL in the Object component)
-        let { store, container } = renderWithWrappers(<Route exact path="/objects/list"><ObjectsList /></Route>, {
+        let { store, container } = renderWithWrappers(<App />, {
             route: "/objects/list"
         });
 

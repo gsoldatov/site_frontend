@@ -161,7 +161,7 @@ describe("Single page", () => {
         const { firstObjectTagIDs } = addCustomResponsesForSinglePageTagsView();
         
         // Render page & wait for load end
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/tags/view?tagIDs=1"
         });
 
@@ -181,8 +181,8 @@ describe("Single page", () => {
 
         // Check redireact to /tags/view page
         fireEvent.click(getInlineItem({ item: feedCardElements.tags.tags[1] }).link);
-        expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-        expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=${firstObjectTagIDs[1]}`);
+        historyManager.ensureCurrentURL("/tags/view");
+        historyManager.ensureCurrentURLParams(`?tagIDs=${firstObjectTagIDs[1]}`);
         await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
     });
 });
@@ -229,7 +229,7 @@ describe("Pagination", () => {
         }});
 
         // Render first page
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/tags/view?tagIDs=1"
         });
 
@@ -246,8 +246,7 @@ describe("Pagination", () => {
         // Second page: wait for load to end and check URL & displayed feed cards
         expect(getTagsViewElements(container).feed.placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
-        let currentPage = (new URLSearchParams(history.location.search)).get("p");
-        expect(currentPage).toEqual("2");
+        expect(historyManager.getCurrentURLSeachParam("p")).toEqual("2");
         checkDisplayedTagsViewFeedCardIDs(container, getQueryItems(2));
 
         // Get last page button and open the page
@@ -258,8 +257,7 @@ describe("Pagination", () => {
         // Last page: wait for load to end and check URL & displayed feed cards
         expect(getTagsViewElements(container).feed.placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
-        currentPage = (new URLSearchParams(history.location.search)).get("p");
-        expect(currentPage).toEqual("10");
+        expect(historyManager.getCurrentURLSeachParam("p")).toEqual("10");
         checkDisplayedTagsViewFeedCardIDs(container, getQueryItems(10));
 
         // Get previous page button and open the page
@@ -269,8 +267,7 @@ describe("Pagination", () => {
         // Previous to last page: wait for load to end and check URL & displayed feed cards
         expect(getTagsViewElements(container).feed.placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
-        currentPage = (new URLSearchParams(history.location.search)).get("p");
-        expect(currentPage).toEqual("9");
+        expect(historyManager.getCurrentURLSeachParam("p")).toEqual("9");
         checkDisplayedTagsViewFeedCardIDs(container, getQueryItems(9));
 
         // Get first page button and open the page
@@ -280,8 +277,7 @@ describe("Pagination", () => {
         // First page: wait for load to end and check URL & displayed feed cards
         expect(getTagsViewElements(container).feed.placeholders.loading).toBeTruthy();
         await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
-        currentPage = (new URLSearchParams(history.location.search)).get("p");
-        expect(currentPage).toBeFalsy();
+        expect(historyManager.getCurrentURLSeachParam("p")).toBeFalsy();
         checkDisplayedTagsViewFeedCardIDs(container, getQueryItems(1));
     });
 });

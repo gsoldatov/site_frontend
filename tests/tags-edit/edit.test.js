@@ -128,7 +128,7 @@ describe("Page load & render", () => {
 
 describe("Side menu ", () => {
     test("'Add Tag' button", async () => {
-        let { container, history } = renderWithWrappers(<App />, 
+        let { container, historyManager } = renderWithWrappers(<App />, 
             { route: "/tags/edit/1" }
         );
 
@@ -137,12 +137,12 @@ describe("Side menu ", () => {
 
         // Click button
         fireEvent.click(getTagsEditElements(container).sideMenu.addNewTagButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/tags/edit/new");
+        historyManager.ensureCurrentURL("/tags/edit/new");
     });
 
 
     test("'View Tag' button", async () => {
-        let { container, history } = renderWithWrappers(<App />, 
+        let { container, historyManager } = renderWithWrappers(<App />, 
             { route: "/tags/edit/1" }
         );
     
@@ -151,8 +151,8 @@ describe("Side menu ", () => {
         
         // Click button
         fireEvent.click(getTagsEditElements(container).sideMenu.viewTagButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/tags/view");
-        expect(history.entries[history.length - 1].search).toBe("?tagIDs=1");
+        historyManager.ensureCurrentURL("/tags/view");
+        historyManager.ensureCurrentURLParams("?tagIDs=1");
         await waitFor(() => expect(getTagsViewElements(container).feed.placeholders.loading).toBeFalsy());
     });
 
@@ -161,7 +161,7 @@ describe("Side menu ", () => {
         const store = createTestStore();
         const tag = getTag({ tag_id: 1 });
         store.dispatch(addTags([tag]));
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/tags/edit/1", store
         });
 
@@ -175,13 +175,13 @@ describe("Side menu ", () => {
 
         // Click button and check redirect & state
         fireEvent.click(elements.sideMenu.cancelButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/tags/list");
+        historyManager.ensureCurrentURL("/tags/list");
         for (let attr of Object.keys(tag)) expect(store.getState().tags[tag.tag_id][attr]).toEqual(tag[attr]);
     });
 
 
     test("Delete a tag", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/tags/edit/1"
         });
 
@@ -200,7 +200,7 @@ describe("Side menu ", () => {
         fireEvent.click(getTagsEditElements(container).sideMenu.deleteButton);
         fireEvent.click(getTagsEditElements(container).sideMenu.deleteDialogControls.buttons["Yes"]);
         await waitFor(() => expect(store.getState().tags[1]).toBeUndefined());
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe("/tags/list"));
+        await historyManager.waitForCurrentURLToBe("/tags/list");
     });
 
 

@@ -95,7 +95,7 @@ describe("Edited objects > New object page", () => {
         // Render new object page
         let store = createTestStore({ useLocalStorage: true });
 
-        let { container, history } = renderWithWrappers(<App />, 
+        let { container, historyManager } = renderWithWrappers(<App />, 
             { route: "/objects/edit/new", store }
         );
 
@@ -129,7 +129,7 @@ describe("Edited objects > New object page", () => {
         // Save the object
         fireEvent.click(getSideMenuItem(container, "Save"));
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+        await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
         
         // Check added object and subobject
         const strObjectID = object_id.toString();
@@ -220,9 +220,9 @@ describe("Edited objects > Existing object page", () => {
         // Render existing object page and modify object name
         let store = createTestStore({ useLocalStorage: true });
 
-        var { container } = renderWithWrappers(<App />, 
-            { route: "/objects/edit/3001", store }
-        );
+        var { container } = renderWithWrappers(<App />, {
+            route: "/objects/edit/3001", store 
+        });
         await waitForEditObjectPageLoad(container, store);
 
         // Modify object name

@@ -1,5 +1,4 @@
 import React from "react";
-import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
@@ -15,7 +14,7 @@ import { getDropdownOptionsContainer, getInlineInputField } from "../_util/ui-ob
 import { getMarkdownEditorElements, waitForMarkdownHeaderRender } from "../_util/ui-markdown-editor";
 import { getInlineItem } from "../_util/ui-inline";
 
-import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
+import { App } from "../../src/components/top-level/app";
 import { enumDeleteModes } from "../../src/store/state-templates/composite-subobjects";
 
 
@@ -40,7 +39,7 @@ beforeEach(() => {
 
 describe("Basic load and UI checks", () => {
     test("Load a new object and add new subobjects", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -78,8 +77,8 @@ describe("Basic load and UI checks", () => {
 
 
     test("Load a new object and add existing subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
-            route: "/objects/edit/new", store
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new"
         });
 
         // Wait for the page to load
@@ -114,7 +113,7 @@ describe("Basic load and UI checks", () => {
 
         // View object page of the first subobject
         const subobjectIDs = Object.keys(store.getState().editedObjects[0].composite.subobjects);
-        history.push(`/objects/edit/${subobjectIDs[0]}`);
+        historyManager.push(`/objects/edit/${subobjectIDs[0]}`);
         await waitFor(() => getByText(container, "Object Information"));
         clickGeneralTabButton(container);
 
@@ -126,7 +125,7 @@ describe("Basic load and UI checks", () => {
         fireEvent.change(nameInput, { target: { value: firstName } });
 
         // Return to composite object page and check if subobject name is displayed correctly;
-        history.push(`/objects/edit/new`);
+        historyManager.push(`/objects/edit/new`);
         await waitFor(() => getByText(container, "Add a New Object"));
         clickDataTabButton(container);
         cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
@@ -135,7 +134,7 @@ describe("Basic load and UI checks", () => {
 
 
     test("Close add existing object menu dropdown", async () => {
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -179,7 +178,7 @@ describe("Basic load and UI checks", () => {
 
 describe("Heading (without indicators)", () => {
     test("Object name display", async () => {
-        let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -209,7 +208,7 @@ describe("Heading (without indicators)", () => {
 
 
     test("Object type icon", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -257,7 +256,7 @@ describe("Heading (without indicators)", () => {
 
 
     test("Expand/collapse toggle", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -315,7 +314,7 @@ describe("Heading (without indicators)", () => {
 
 describe("Subobject card tabs", () => {
     test("New subobject's attributes tab", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -360,7 +359,7 @@ describe("Subobject card tabs", () => {
 
 
     test("Existing subobject's attributes tab", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -412,7 +411,7 @@ describe("Subobject card tabs", () => {
 
 
     test("New subobjects' data tab", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -464,7 +463,7 @@ describe("Subobject card tabs", () => {
 
 
     test("Existing subobjects' data tab", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -540,7 +539,7 @@ describe("Subobject card tabs", () => {
 describe("Subobject card menu buttons", () => {
     describe("New subobject", () => {
         test("Reset button", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -610,7 +609,7 @@ describe("Subobject card menu buttons", () => {
 
 
         test("Delete button", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -663,7 +662,7 @@ describe("Subobject card menu buttons", () => {
 
     describe("Exising subobject", () => {
         test("View subobject page", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -697,7 +696,7 @@ describe("Subobject card menu buttons", () => {
 
 
         test("Reset button (general behaviour)", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -751,7 +750,7 @@ describe("Subobject card menu buttons", () => {
 
 
         test("Reset button (composite subobject)", async () => {
-            let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id" render={ props => props.match.params.id === "new" ? <NewObject /> : <EditObject /> } />, {
+            let { container, store, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -770,7 +769,7 @@ describe("Subobject card menu buttons", () => {
             const subobjectID = card.id;
 
             // Open subobject page and add a new subobject
-            history.push(`/objects/edit/${subobjectID}`);
+            historyManager.push(`/objects/edit/${subobjectID}`);
             await waitFor(() => getByText(container, "Object Information"));
             // fireEvent.click(getSubobjectCardMenuButtons(card).viewObjectPageButton);
             clickDataTabButton(container);
@@ -779,7 +778,7 @@ describe("Subobject card menu buttons", () => {
             const newSubSubobjectID = getSubobjectCards(container, { expectedNumbersOfCards: [subobjectsBeforeUpdate + 1] })[0][subobjectsBeforeUpdate].id;
             
             // Return to main object and reset its composite subobject
-            history.push("/objects/edit/new");
+            historyManager.push("/objects/edit/new");
             await waitFor(() => getByPlaceholderText(container, "Object name"));    // wait for the page to load
             clickDataTabButton(container);
             card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
@@ -793,7 +792,7 @@ describe("Subobject card menu buttons", () => {
 
 
         test("Delete button", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -821,7 +820,7 @@ describe("Subobject card menu buttons", () => {
 
 
         test("Full delete button", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/new"
             });
 
@@ -852,7 +851,7 @@ describe("Subobject card menu buttons", () => {
 
 describe("Indicators", () => {
     test("New subobject", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -872,7 +871,7 @@ describe("Indicators", () => {
 
 
     test("Validation error", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -909,7 +908,7 @@ describe("Indicators", () => {
 
 
     test("Is composite subobject", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -929,7 +928,7 @@ describe("Indicators", () => {
 
 
     test("Is existing subobject with modified attributes", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -957,7 +956,7 @@ describe("Indicators", () => {
 
 
     test("Is existing subobject with modified tags", async () => {
-        let { container, store, history } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -974,7 +973,7 @@ describe("Indicators", () => {
         expect(getSubobjectCardIndicators(cards[0][1]).isExistingSubobjectWithModifiedTags).toBeFalsy();
 
         // Go to first subobject page and add a tag
-        history.push(`/objects/edit/${cards[0][0].id}`);
+        historyManager.push(`/objects/edit/${cards[0][0].id}`);
         await waitFor(() => getByText(container, "Object Information"));
         clickGeneralTabButton(container);
 
@@ -990,7 +989,7 @@ describe("Indicators", () => {
         fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
 
         // Go to second subobject page and remove a tag
-        history.push(`/objects/edit/${cards[0][1].id}`);
+        historyManager.push(`/objects/edit/${cards[0][1].id}`);
         await waitFor(() => getByText(container, "Object Information"));
         clickGeneralTabButton(container);
 
@@ -1000,7 +999,7 @@ describe("Indicators", () => {
         expect(getCurrentObject(store.getState()).removedTagIDs.includes(1)).toBeTruthy();
 
         // Go to composite object page and check if indicators appeared on both subobjects
-        history.push(`/objects/edit/3001`);
+        historyManager.push(`/objects/edit/3001`);
         await waitFor(() => getByText(container, "Object Information"));
         clickDataTabButton(container);
 
@@ -1011,7 +1010,7 @@ describe("Indicators", () => {
 
 
     test("Is existing subobject with modified data", async () => {
-        let { container, store, } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1033,7 +1032,7 @@ describe("Indicators", () => {
 
    
     test("Is existing subobject with modified parameters", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1065,7 +1064,7 @@ describe("Indicators", () => {
 
 
     test("Is subobject deleted", async () => {
-        let { container, store, } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1087,7 +1086,7 @@ describe("Indicators", () => {
 
 
     test("Is subobject fully deleted", async () => {
-        let { container, store, } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001"
         });
 
@@ -1112,7 +1111,7 @@ describe("Indicators", () => {
 describe("Drag and drop", () => {
     describe("Card drag and drop enabling and disabling", () => {
         test("Try to drag a card without hovering over its heading", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/3901"
             });
 
@@ -1137,7 +1136,7 @@ describe("Drag and drop", () => {
 
 
         test("Try to drag a card when hovering over expand/collapse toggle", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/3901"
             });
 
@@ -1166,7 +1165,7 @@ describe("Drag and drop", () => {
 
 
         test("Enter and leave expand/collapse toggle, then start card drag", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/3901"
             });
 
@@ -1196,7 +1195,7 @@ describe("Drag and drop", () => {
     describe("Single column", () => {
         describe("Drag expanded card", () => {
             test("Start and abort dragging a card", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3901"
                 });
 
@@ -1226,7 +1225,7 @@ describe("Drag and drop", () => {
 
 
             test("Drop expanded card on another card", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3901"
                 });
 
@@ -1256,7 +1255,7 @@ describe("Drag and drop", () => {
 
 
             test("Drop expanded card on add menu", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3901"
                 });
 
@@ -1288,7 +1287,7 @@ describe("Drag and drop", () => {
 
         describe("Collapsed card", () => {
             test("Drag collapsed card on an expanded card", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3903"
                 });
 
@@ -1321,7 +1320,7 @@ describe("Drag and drop", () => {
 
 
             test("Drag expanded card on a collapsed card", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3903"
                 });
 
@@ -1356,7 +1355,7 @@ describe("Drag and drop", () => {
 
         describe("Card with an error placeholder", () => {
             test("Drag error placeholder on another card", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3904"
                 });
 
@@ -1394,7 +1393,7 @@ describe("Drag and drop", () => {
     describe("Multicolumn", () => {
         describe("Single column at start", () => {
             test("Drag from a single column with multiple cards to the right", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3901"
                 });
 
@@ -1431,7 +1430,7 @@ describe("Drag and drop", () => {
 
 
             test("Drag from a single column with multiple cards to the left", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3901"
                 });
 
@@ -1471,7 +1470,7 @@ describe("Drag and drop", () => {
 
 
             test("Drag from a single column with a single card to the right", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3001"
                 });
 
@@ -1503,7 +1502,7 @@ describe("Drag and drop", () => {
 
 
             test("Drag from a single column with a single card to the left", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3001"
                 });
 
@@ -1537,7 +1536,7 @@ describe("Drag and drop", () => {
 
         describe("Two columns at start", () => {
             test("Drag from a column with multiple cards onto a card in another column", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3905"
                 });
 
@@ -1585,7 +1584,7 @@ describe("Drag and drop", () => {
 
 
             test("Drag from a column with multiple cards onto an add menu in another column", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3905"
                 });
 
@@ -1630,7 +1629,7 @@ describe("Drag and drop", () => {
 
         describe("Four columns at start", () => {
             test("Drag from a column with a single card onto a card in another column", async () => {
-                let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+                let { container, store } = renderWithWrappers(<App />, {
                     route: "/objects/edit/3906"
                 });
 
@@ -1672,7 +1671,7 @@ describe("Drag and drop", () => {
 
 
         test("Drag from a column with a single card onto right new column dropzone", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/3906"
             });
 
@@ -1714,7 +1713,7 @@ describe("Drag and drop", () => {
 
 
         test("Drag from a column with a single card onto right new column dropzone", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/3906"
             });
 
@@ -1756,7 +1755,7 @@ describe("Drag and drop", () => {
 
 
         test("Drag from a column with multiple cards onto a left new column dropzone", async () => {
-            let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+            let { container, store } = renderWithWrappers(<App />, {
                 route: "/objects/edit/3906"
             });
 

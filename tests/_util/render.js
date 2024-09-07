@@ -7,6 +7,7 @@ import { render } from "@testing-library/react";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 
+import { HistoryManager } from "../_managers/history-manager";
 import { createTestStore } from "./create-test-store";
 
 
@@ -24,9 +25,11 @@ export function renderWithWrappers(ui, params) {
         );
     }
 
+    const historyManager = new HistoryManager(history);
+
     return { 
         ...render(ui, { wrapper }),
-        history,
+        historyManager,
         store
     };
 }

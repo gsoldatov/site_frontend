@@ -55,7 +55,7 @@ test("Timestamp", async () => {
 
 
 test("Header (logged as admin)", async () => {
-    let { container, store, history } = renderWithWrappers(<App />, {
+    let { container, store, historyManager } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
@@ -71,7 +71,7 @@ test("Header (logged as admin)", async () => {
 
     // Check if edit button is displayed and working
     fireEvent.click(cardElements.attributes.header.editButton);
-    expect(history.entries[history.length - 1].pathname).toBe("/objects/edit/1");
+    historyManager.ensureCurrentURL("/objects/edit/1");
 });
 
 
@@ -157,7 +157,7 @@ test("Object description (non-link)", async () => {
 
 
 test("Object tags", async () => {
-    let { history, container, store } = renderWithWrappers(<App />, {
+    let { container, store, historyManager } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
@@ -179,7 +179,7 @@ test("Object tags", async () => {
 
     // Check redireact to /tags/view page
     fireEvent.click(getInlineItem({ item: cardElements.tags.tagElements[0] }).link);
-    expect(history.entries[history.entries.length - 1].pathname).toEqual("/tags/view");
-    expect(history.entries[history.entries.length - 1].search).toEqual(`?tagIDs=1`);
+    historyManager.ensureCurrentURL("/tags/view");
+    historyManager.ensureCurrentURLParams("?tagIDs=1");
     await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 });

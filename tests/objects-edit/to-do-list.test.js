@@ -1,5 +1,4 @@
 import React from "react";
-import { Route } from "react-router-dom";
 
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, queryByTitle, queryByText } from "@testing-library/dom";
@@ -9,7 +8,7 @@ import { renderWithWrappers } from "../_util/render";
 import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../_util/ui-objects-edit";
 import { TDLItemStates, getNewTDLItemState, defaultTDL, expectedSortTestTDLStateSortOrder, expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "../_mocks/data-to-do-lists";
 
-import { NewObject, EditObject } from "../../src/components/top-level/objects-edit";
+import { App } from "../../src/components/top-level/app";
 import * as caret from "../../src/util/caret";
 
 
@@ -29,7 +28,7 @@ beforeEach(() => {
 
 
 test("Load a new to-do list", async () => {
-    let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+    let { container } = renderWithWrappers(<App />, {
         route: "/objects/edit/new"
     });
 
@@ -57,7 +56,7 @@ test("Load a new to-do list", async () => {
 
 
 test("Load an existing to-do list", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+    let { container, store } = renderWithWrappers(<App />, {
         route: "/objects/edit/2001"
     });
 
@@ -120,7 +119,7 @@ test("Load an existing to-do list", async () => {
 
 
 test("Add, edit & delete items", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+    let { container, store } = renderWithWrappers(<App />, {
         route: "/objects/edit/new"
     });
 
@@ -160,7 +159,7 @@ test("Add, edit & delete items", async () => {
 
 
 test("Delete with children button", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+    let { container, store } = renderWithWrappers(<App />, {
         route: "/objects/edit/2001"
     });
 
@@ -191,7 +190,7 @@ test("Delete with children button", async () => {
 
 
 test("Change item states", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+    let { container, store } = renderWithWrappers(<App />, {
         route: "/objects/edit/2001"
     });
 
@@ -217,7 +216,7 @@ test("Change item states", async () => {
 
 
 test("Change item sort", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+    let { container, store } = renderWithWrappers(<App />, {
         route: "/objects/edit/2908"
     });
 
@@ -257,7 +256,7 @@ test("Change item sort", async () => {
 
 
 test("Expand/collapse button", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+    let { container, store } = renderWithWrappers(<App />, {
         route: "/objects/edit/2001"
     });
 
@@ -305,7 +304,7 @@ test("Expand/collapse button", async () => {
 
 
 test("New item input indenation", async () => {
-    let { container } = renderWithWrappers(<Route exact path="/objects/edit/:id"><NewObject /></Route>, {
+    let { container } = renderWithWrappers(<App />, {
         route: "/objects/edit/new"
     });
 
@@ -383,7 +382,7 @@ test("New item input indenation", async () => {
 
 
 test("Item input indenation", async () => {
-    let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+    let { container } = renderWithWrappers(<App />, {
         route: "/objects/edit/2915"
     });
 
@@ -475,7 +474,7 @@ describe("Commentaries", () => {
         /* (*)
             Not checking if comment input is displayed on comment button mouseEnter, because it does not trigger the displayed in test env (onClick is used instead).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
 
@@ -524,7 +523,7 @@ describe("Commentaries", () => {
         /* (*)
             Not checking if comment input is displayed on comment button mouseEnter, because it does not trigger the displayed in test env (onClick is used instead).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
     
@@ -567,7 +566,7 @@ describe("Keybinds (default sort)", () => {
             Not checking caret position update, because it's set to 0 in test env and is not updated by input & keyDown event.
             Test should also check all cases for position updating when moving down/up (beginning, middle, end).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2909"
         });
     
@@ -621,7 +620,7 @@ describe("Keybinds (default sort)", () => {
             In testing environment, caret position is set to 0 and is not changed by KeyDown events => split is checked for the case when full item text is moved into the second item.
             Test should also check if item text is correctly split when caret position != 0.
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2901"
         });
     
@@ -675,7 +674,7 @@ describe("Keybinds (default sort)", () => {
         
 
 
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2902"
         });
 
@@ -735,7 +734,7 @@ describe("Keybinds (default sort)", () => {
                 - if two non-empty item texts are correctly merged;
                 - backspace keypress does nothing when caret is at the beginning of the first item (for default and state sort).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2903"
         });
 
@@ -797,7 +796,7 @@ describe("Keybinds (default sort)", () => {
 
 
     test("Tab / Shift + Tab", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
 
@@ -836,7 +835,7 @@ describe("Keybinds (default sort)", () => {
 
     
     test("Tab, increase indent and become a child of a collapsed parent", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2903"
         });
 
@@ -859,7 +858,7 @@ describe("Keybinds (default sort)", () => {
 
 
     test("F1", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
 
@@ -889,7 +888,7 @@ describe("Keybinds (default sort)", () => {
 
 
     test("F2", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
 
@@ -924,7 +923,7 @@ describe("Keybinds (sort by state)", () => {
     });
 
     test("Up/down", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2910"
         });
 
@@ -975,7 +974,7 @@ describe("Keybinds (sort by state)", () => {
 
 
     test("Enter", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2905"
         });
     
@@ -1022,7 +1021,7 @@ describe("Keybinds (sort by state)", () => {
             - delete in a non-empty item (with the caret at the end);
             - delete in the last item (with the caret at the end).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2906"
         });
 
@@ -1086,7 +1085,7 @@ describe("Keybinds (sort by state)", () => {
             In testing environment, caret position is set to 0 and is not changed by KeyDown events.
             - backspace in the first item (with the caret at the beginning).
         */
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2907"
         });
 
@@ -1144,7 +1143,7 @@ describe("Keybinds (sort by state)", () => {
 
 
     test("Tab / Shift + Tab", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2904"
         });
 
@@ -1185,7 +1184,7 @@ describe("Keybinds (sort by state)", () => {
 
 describe("Drag and drop", () => {
     test("Drop item without children on another item", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2911"
         });
 
@@ -1234,7 +1233,7 @@ describe("Drag and drop", () => {
 
 
     test("Drop item without children on another item and change its indent", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2912"
         });
 
@@ -1290,7 +1289,7 @@ describe("Drag and drop", () => {
 
     
     test("Drop item on a new item input", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2912"
         });
 
@@ -1342,7 +1341,7 @@ describe("Drag and drop", () => {
 
 
     test("Drop an item with children", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2913"
         });
 
@@ -1390,7 +1389,7 @@ describe("Drag and drop", () => {
 
 
     test("Drag last item with children", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2913"
         });
 
@@ -1436,7 +1435,7 @@ describe("Drag and drop", () => {
 
 
     test("Abort dragging an item with children", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2913"
         });
 
@@ -1467,7 +1466,7 @@ describe("Drag and drop", () => {
 
 
     test("Drag collapsed item with children", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2914"
         });
 
@@ -1503,7 +1502,7 @@ describe("Drag and drop", () => {
 
 
     test("Drag an item with children into a collapsed item child position", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2914"
         });
 
@@ -1534,7 +1533,7 @@ describe("Drag and drop", () => {
 
 
     test("Drag and drop is disabled when list is sorted by state", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2904"
         });
 
@@ -1554,7 +1553,7 @@ describe("Drag and drop", () => {
 
 
     test("Drag and drop is disabled when item input is hovered", async () => {
-        let { container, store } = renderWithWrappers(<Route exact path="/objects/edit/:id"><EditObject /></Route>, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001"
         });
 

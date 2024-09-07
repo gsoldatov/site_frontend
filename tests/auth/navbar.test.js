@@ -113,7 +113,7 @@ describe("Secondary menu logged out state", () => {
 
         // Render login page
         const store = createTestStore({ addAdminToken: false });
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
 
@@ -128,13 +128,13 @@ describe("Secondary menu logged out state", () => {
         
         expect(secondaryMenu.registerButton.classList.contains("is-disabled")).toBeTruthy();
         fireEvent.click(secondaryMenu.registerButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/non/existing/route");
+        historyManager.ensureCurrentURL("/non/existing/route");
     });
 
 
     test("Registration button enabled", async () => {
         const store = createTestStore({ addAdminToken: false });
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
 
@@ -149,7 +149,7 @@ describe("Secondary menu logged out state", () => {
         
         expect(secondaryMenu.registerButton.classList.contains("is-disabled")).toBeFalsy();
         fireEvent.click(secondaryMenu.registerButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/auth/register");
+        historyManager.ensureCurrentURL("/auth/register");
 
         // Wait for registration status to be fetched from backend (to prevent error message)
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
@@ -158,7 +158,7 @@ describe("Secondary menu logged out state", () => {
 
     test("Login button", async () => {
         const store = createTestStore({ addAdminToken: false });
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
 
@@ -169,7 +169,7 @@ describe("Secondary menu logged out state", () => {
         expect(secondaryMenu.loginButton).toBeTruthy();
         
         fireEvent.click(secondaryMenu.loginButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/auth/login");
+        historyManager.ensureCurrentURL("/auth/login");
     });
 });
 
@@ -180,7 +180,7 @@ describe("Secondary menu logged in state", () => {
         addCustomRouteResponse("/users/view", "POST", { status: 404, body: {} });
         
         const store = createTestStore({ addAdminToken: true });
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
 
@@ -195,7 +195,7 @@ describe("Secondary menu logged in state", () => {
     
     test("Elements rendering", async () => {
         const store = createTestStore({ addAdminToken: true });
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
 
@@ -212,7 +212,7 @@ describe("Secondary menu logged in state", () => {
 
     test("User page link", async () => {
         const store = createTestStore({ addAdminToken: true });
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
 
@@ -228,7 +228,7 @@ describe("Secondary menu logged in state", () => {
         expect(secondaryMenu.profileLink.textContent).toEqual(username);
         
         fireEvent.click(secondaryMenu.profileLink);
-        expect(history.entries[history.length - 1].pathname).toBe("/users/1");
+        historyManager.ensureCurrentURL("/users/1");
 
         // Wait for user data fetch to end
         await waitFor(() => expect(getUserPageViewModeElements(container).loader).toBeFalsy());
@@ -280,7 +280,7 @@ describe("Secondary menu logged in state", () => {
         for (let route of routes) {
             const fullRoute = route + (routeSuffixes[route] || "");
             const store = createTestStore({ addAdminToken: true });
-            let { container, history } = renderWithWrappers(<App />, {
+            let { container, historyManager } = renderWithWrappers(<App />, {
                 route: fullRoute, store
             });
 
@@ -301,7 +301,7 @@ describe("Secondary menu logged in state", () => {
             // Check if auth state is reset, redirect to index page is triggered & index on load fetch is started
             await waitFor(() => {
                 expect(store.getState().auth).toEqual(getDefaultAuthState());
-                expect(history.entries[history.length - 1].pathname).toBe("/")
+                historyManager.ensureCurrentURL("/");
                 expect(getFeedElements(container).placeholders.loading).toBeTruthy();
             });
 

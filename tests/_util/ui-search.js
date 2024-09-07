@@ -75,15 +75,14 @@ import { getNavigationBarElements } from "./ui-navbar";
 /**
  * Finds navbar search input inside `container`, types provided `query` into it, submits the query and wait for search page to load.
  */
-export const submitSearchQueryWithNavbar = async (container, history, query) => {
+export const submitSearchQueryWithNavbar = async (container, historyManager, query) => {
     const { search } = getNavigationBarElements(container);
     fireEvent.change(search.input, { target: { value: query } });
     fireEvent.keyDown(search.input, { key: "Enter", code: "Enter" });
 
     // Check if redirect occured
-    expect(history.location.pathname).toEqual("/search");
-    const URLQuery = (new URLSearchParams(history.location.search)).get("q");
-    expect(URLQuery).toEqual(query);
+    historyManager.ensureCurrentURL("/search");
+    expect(historyManager.getCurrentURLSeachParam("q")).toEqual(query);
 
     // Wait for search fetch to end
     await waitFor(() => expect(getSearchPageElements(container).feed.placeholders.loading).toBeFalsy());

@@ -70,7 +70,7 @@ describe("UI checks", () => {
 
     
     test("Render page and click cancel button", async () => {
-        let { container, history } = renderWithWrappers(<App />, {
+        let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -78,7 +78,7 @@ describe("UI checks", () => {
         await waitFor(() => getByText(container, "Add a New Object"));
         
         // Check if add object page was loaded with empty input fields
-        let addObjectHeader = getByText(container, "Add a New Object");
+        getByText(container, "Add a New Object");
         let objectNameInput = getByPlaceholderText(container, "Object name");
         let objectDescriptionInput = getByPlaceholderText(container, "Object description");
         expect(objectNameInput.value).toBe("");
@@ -92,12 +92,12 @@ describe("UI checks", () => {
     
         // Check if cancel button redirects to /objects page
         fireEvent.click(cancelButton);
-        expect(history.entries[history.length - 1].pathname).toBe("/objects/list");
+        historyManager.ensureCurrentURL("/objects/list");
     });
 
 
     test("Select different object types", async () => {
-        let { store, container } = renderWithWrappers(<App />, {
+        let { container, store } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -397,8 +397,8 @@ describe("Reset new object state", () => {
 describe("Persist new object state", () => {
     test("Attributes and link data", async () => {
         // Render /objects/edit/new and update object name + link
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/new", store
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new"
         });
 
         // Wait for the page to load
@@ -416,10 +416,10 @@ describe("Persist new object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe(linkValue));
 
         // Render /objects/edit/1, then render /objects/edit/new and check if the state was saved
-        history.push("/objects/edit/1");
+        historyManager.push("/objects/edit/1");
         await waitForEditObjectPageLoad(container, store);
 
-        history.push("/objects/edit/new");
+        historyManager.push("/objects/edit/new");
         await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
         clickGeneralTabButton(container);
         objectNameInput = getByPlaceholderText(container, "Object name");
@@ -433,8 +433,8 @@ describe("Persist new object state", () => {
 
     test("Markdown data", async () => {
         // Render /objects/edit/new and update markdown text
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/new", store
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new"
         });
 
         // Wait for the page to load
@@ -452,10 +452,10 @@ describe("Persist new object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).markdown.raw_text).toEqual(rawText));
 
         // Render /objects/edit/1, then render /objects/edit/new and check if the state was saved
-        history.push("/objects/edit/1");
+        historyManager.push("/objects/edit/1");
         await waitForEditObjectPageLoad(container, store);
 
-        history.push("/objects/edit/new");
+        historyManager.push("/objects/edit/new");
         await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
         clickDataTabButton(container);
         await waitFor(() => expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText));
@@ -464,8 +464,8 @@ describe("Persist new object state", () => {
 
     test("To-do list data", async () => {
         // Render /objects/edit/new and update to-do list items
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/new", store
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new"
         });
 
         // Wait for the page to load
@@ -481,10 +481,10 @@ describe("Persist new object state", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).toDoList.items[0].item_text).toBe(newItemText));
 
         // Render /objects/edit/1, then render /objects/edit/new and check if the state was saved
-        history.push("/objects/edit/1");
+        historyManager.push("/objects/edit/1");
         await waitForEditObjectPageLoad(container, store);
 
-        history.push("/objects/edit/new");
+        historyManager.push("/objects/edit/new");
         await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
 
         clickDataTabButton(container);
@@ -494,8 +494,8 @@ describe("Persist new object state", () => {
 
     test("Composite data and subobjects", async () => {
         // Render /objects/edit/new and add a new & an existing subobject
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/new", store
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new"
         });
 
         // Wait for the page to load
@@ -517,10 +517,10 @@ describe("Persist new object state", () => {
         await waitFor(() => expect(store.getState().editedObjects[firstSubobjectID].object_name).toEqual(newSubobjectName));
 
         // Render /objects/edit/1, then render /objects/edit/new and check if the state was saved
-        history.push("/objects/edit/1");
+        historyManager.push("/objects/edit/1");
         await waitForEditObjectPageLoad(container, store);
 
-        history.push("/objects/edit/new");
+        historyManager.push("/objects/edit/new");
         await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
         clickDataTabButton(container);
 
@@ -535,7 +535,7 @@ describe("Persist new object state", () => {
     test("Composite unchanged existing subobject removal", async () => {
         // Render /objects/edit/new and add a new & an existing subobject
         let { container, store } = renderWithWrappers(<App />, {
-            route: "/objects/edit/new", store
+            route: "/objects/edit/new"
         });
 
         // Wait for the page to load
@@ -567,8 +567,8 @@ describe("Persist new object state", () => {
 
 
     test("Unchanged new object removal from edited objects storage", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
-            route: "/objects/edit/new", store
+        let { container, store } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new"
         });
 
         // Wait for the page to load
@@ -595,7 +595,7 @@ describe("Persist new object state", () => {
 
 describe("Save new object errors", () => {
     test("Handle save fetch error", async () => {
-        let { container, history, store } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -616,7 +616,7 @@ describe("Save new object errors", () => {
         setFetchFail(true);
         fireEvent.click(saveButton);
         await waitFor(() => getByText(container, "Failed to fetch data."));
-        expect(history.entries[history.length - 1].pathname).toBe("/objects/edit/new");
+        historyManager.ensureCurrentURL("/objects/edit/new");
         expect(store.getState().objects[1000]).toBeUndefined(); // mock object returned has this id
         setFetchFail();   // reset fetch fail
     });
@@ -698,7 +698,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object without subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -715,14 +715,14 @@ describe("Save new object errors", () => {
 
         // Check if error message is displayed and save did not occur
         await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
-        expect(history.entries[history.length - 1].pathname).toEqual("/objects/edit/new");
+        historyManager.ensureCurrentURL("/objects/edit/new");
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().composite[1]).toBeUndefined();
     });
 
 
     test("Composite object without non-deleted subobjects", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -747,14 +747,14 @@ describe("Save new object errors", () => {
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Composite object must have at least one non-deleted subobject.", { exact: false }));
-        expect(history.entries[history.length - 1].pathname).toEqual("/objects/edit/new");
+        historyManager.ensureCurrentURL("/objects/edit/new");
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().composite[1]).toBeUndefined();
     });
 
 
     test("Composite object a with a new subobject with incorrect attributes", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -779,7 +779,7 @@ describe("Save new object errors", () => {
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Object name is required.", { exact: false }));
-        expect(history.entries[history.length - 1].pathname).toEqual("/objects/edit/new");
+        historyManager.ensureCurrentURL("/objects/edit/new");
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().composite[1]).toBeUndefined();
         expect(store.getState().editedObjects).toHaveProperty(card.id);
@@ -787,7 +787,7 @@ describe("Save new object errors", () => {
 
 
     test("Composite object a with an existing subobject with incorrect data", async () => {
-        let { container, store, history } = renderWithWrappers(<App />, {
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/new"
         });
 
@@ -812,7 +812,7 @@ describe("Save new object errors", () => {
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
         await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
-        expect(history.entries[history.length - 1].pathname).toEqual("/objects/edit/new");
+        historyManager.ensureCurrentURL("/objects/edit/new");
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().composite[1]).toBeUndefined();
         expect(store.getState().editedObjects).toHaveProperty(card.id);
@@ -822,10 +822,9 @@ describe("Save new object errors", () => {
 
 describe("Save new object", () => {
     test("Save link + check all attributes + check new object state reset", async () => {
-        let { container, history, store } = renderWithWrappers(
-            <App />, 
-            { route: "/objects/edit/new" }
-        );
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new" 
+        });
 
         // Wait for the page to load
         await waitFor(() => getByText(container, "Add a New Object"));
@@ -855,7 +854,7 @@ describe("Save new object", () => {
         // Save object
         fireEvent.click(saveButton);
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+        await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
             
         clickGeneralTabButton(container);
         expect(getByPlaceholderText(container, "Object name").value).toEqual("new object");
@@ -877,10 +876,9 @@ describe("Save new object", () => {
 
 
     test("Save markdown", async () => {
-        let { container, history, store } = renderWithWrappers(
-            <App />, 
-            { route: "/objects/edit/new" }
-        );
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new"
+        });
 
         // Wait for the page to load
         await waitFor(() => getByText(container, "Add a New Object"));
@@ -912,7 +910,7 @@ describe("Save new object", () => {
         // Check if object is redirected after adding a correct object
         fireEvent.click(saveButton);
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+        await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
         expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText);
         
         clickGeneralTabButton(container);
@@ -926,10 +924,9 @@ describe("Save new object", () => {
 
 
     test("Save to-do list", async () => {
-        let { container, history, store } = renderWithWrappers(
-            <App />, 
-            { route: "/objects/edit/new" }
-        );
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new"
+        });
 
         // Wait for the page to load
         await waitFor(() => getByText(container, "Add a New Object"));
@@ -958,7 +955,7 @@ describe("Save new object", () => {
         // Check if object is redirected after adding a correct object
         fireEvent.click(saveButton);
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+        await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
         
         let TDLContainer = container.querySelector(".to-do-list-container");
         getByText(TDLContainer, "new value");
@@ -973,10 +970,9 @@ describe("Save new object", () => {
 
     
     test("Save composite", async () => {
-        let { container, history, store } = renderWithWrappers(
-            <App />, 
-            { route: "/objects/edit/new" }
-        );
+        let { container, store, historyManager } = renderWithWrappers(<App />, {
+            route: "/objects/edit/new" 
+        });
 
         // Wait for the page to load
         await waitFor(() => getByText(container, "Add a New Object"));
@@ -1037,7 +1033,7 @@ describe("Save new object", () => {
         // Check if object is redirected after adding a correct object
         fireEvent.click(getSideMenuItem(container, "Save"));
         const object_id = 1000; // mock object returned has this id
-        await waitFor(() => expect(history.entries[history.length - 1].pathname).toBe(`/objects/edit/${object_id}`));
+        await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
         
         // Check added object (is added to state.editedObjects & state.composite and has 4 subobjects in both states)
         const strObjectID = object_id.toString();
