@@ -1,4 +1,4 @@
-import { RouteHandler } from "./route-handler";
+import { RouteHandler } from "../route-handler";
 
 export class UsersRouteHandlers {
     constructor(backend) {

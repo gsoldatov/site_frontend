@@ -3,9 +3,9 @@ import { BackendDataGenerator } from "./backend-data-generator";
 import { RequestContext } from "./request-context";
 
 import { RouteHandler } from "./route-handlers/route-handler";
-import { ObjectsRouteHandlers } from "./route-handlers/objects";
-import { TagsRouteHandlers } from "./route-handlers/tags";
-import { UsersRouteHandlers } from "./route-handlers/users";
+import { ObjectsRouteHandlers } from "./route-handlers/handlers/objects";
+import { TagsRouteHandlers } from "./route-handlers/handlers/tags";
+import { UsersRouteHandlers } from "./route-handlers/handlers/users";
 
 
 /**

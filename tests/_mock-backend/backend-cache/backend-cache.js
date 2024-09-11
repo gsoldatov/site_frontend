@@ -1,6 +1,6 @@
-import { ObjectsCache } from "./objects";
-import { TagsCache } from "./tags";
-import { UsersCache } from "./users";
+import { ObjectsCache } from "./modules/objects";
+import { TagsCache } from "./modules/tags";
+import { UsersCache } from "./modules/users";
 
 
 /**
