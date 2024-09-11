@@ -1,6 +1,6 @@
-import { ObjectGenerator } from "./objects";
-import { TagGenerator } from "./tags";
-import { UserGenerator } from "./users";
+import { ObjectGenerator } from "./modules/objects";
+import { TagGenerator } from "./modules/tags";
+import { UserGenerator } from "./modules/users";
 
 
 /**
