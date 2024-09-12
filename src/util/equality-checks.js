@@ -30,6 +30,19 @@ export const deepEqual = (a, b) => {
             if (!deepEqual(a[i], b[i])) return false;
         return true;
     }
+
+    // Sets
+    if (a instanceof Set) {
+        if (a.size !== b.size) return false;
+
+        return [...a].every(valueA => {
+            // Non-object valueA
+            if (typeof(valueA) !== "object") return b.has(valueA);
+
+            // Object valueA
+            return [...b].some(valueB => deepEqual(valueA, valueB));
+        });
+    }
     
     // General object check
     let keys = Object.keys(a);

@@ -104,6 +104,43 @@ test("Arrays", () => {
 });
 
 
+test("Sets", () => {
+    let a = new Set(), b = null;
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Set(), b = new Set([1]);
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Set([1]), b = new Set([2]);
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Set([1]), b = new Set(["1"]);
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Set(_PRIMITIVES), b = new Set(_PRIMITIVES);
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = new Set([1, {x: 1}]), b = new Set([1, 2, 3]);
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Set([1, {x: 1}]), b = new Set([1, null]);
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Set([1, {x: 1}]), b = new Set([1, {x: 2}]);
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Set([1, {x: 1}]), b = new Set([1, {x: 1, y: 2}]);
+    expect(deepEqual(a, b)).toBeFalsy();
+
+    a = new Set([1, {x: 1}]), b = new Set([{x: 1}, 1]);
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = new Set([ new Set([ {x: 1} ]) ]), b = new Set([ new Set([ {x: 1} ]) ]);
+    expect(deepEqual(a, b)).toBeTruthy();
+});
+
+
+
 test("Nested objects", () => {
     let a = {x: 1, y: [1, 2]}, b = {x: 1, y: [2, 1]};
     expect(deepEqual(a, b)).toBeFalsy();
