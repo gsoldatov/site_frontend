@@ -36,9 +36,12 @@ test("Set", () => {
 
 test("Datetime", () => {
     const a = new Date();
+    a.setDate(a.getDate() - 1);
+    a.setHours(a.getHours() - 2);
     let b = deepCopy(a);
     expect(b instanceof Date).toBeTruthy();
     expect(a.getTime()).toEqual(b.getTime());
+    expect(b).not.toBe(a);
 });
 
 
