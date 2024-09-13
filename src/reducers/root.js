@@ -40,10 +40,10 @@ function getActionHandlers(rootObjects) {
 const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, dataUsers, auth, common, modal, navigation, tag, tags, objectEdit, objectsList, objectsEdited });
 
 
-export default function getRootReducer (config) {
-    config = config || getConfig();
-
+export default function getRootReducer() {
     return (state, action) => {
+        const config =  getConfig();
+        
         let handler = typeof(action) === "object" 
             ? ACTION_HANDLERS[action.type] : 
             ACTION_HANDLERS[action];

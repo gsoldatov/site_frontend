@@ -48,7 +48,7 @@ describe("UI checks", () => {
         }});
 
         // Create a store with an edited new object, which contains an existing tag (which data will be fetched on load)
-        const store = createTestStore();
+        const { store } = createTestStore();
         store.dispatch(resetEditedObjects({ objectIDs: [0], allowResetToDefaults: true }));    // add an edited new object
         const state = store.getState();
         store.dispatch(setNewState({    // add an existing tag ID as new object added tag

@@ -7,43 +7,27 @@ import { getMockUserData } from "../_mocks/data-users";
 
 import { setAuthInformation } from "../../src/actions/auth";
 import { addUsers } from "../../src/actions/data-users";
+import { StoreManager } from "../_managers/store-manager/store-manager.js";
 
 
 /**
- * Creates a Redux store object used by the app.
- * Adds an admin token by default, unless `addAdminToken` = false is set.
- * Adds user information for admin token owner in state.users, if `addAdminUser` = true.
+ * Creates a test Redux store object used by the app and wraps it in a `StoreManager` instance.
  * 
- * If `useAppConfig` is true, uses default config of the app.
- * Otherwise, creates an object based on the `_mocks/config.js` test config.
- * In both cases, initial settings can be overriden by passing additional `...configProps` arguments.
+ * Store data can be modified by providing `data` object with the following flags:
+ * - `addAdminToken` (enabled by default) - adds an admin auth information to the state;
+ * - `addAdminUser` - adds information about admin user.
  * 
+ * Custom store configuration can be provided via `configProps` argument.
  */
-export const createTestStore = ({ addAdminToken, addAdminUser, useAppConfig, ...configProps } = {}) => {
-    addAdminToken = addAdminToken === undefined ? true : addAdminToken;
+export const createTestStore = (data = {}, configProps = {}) => {
+    const { addAdminToken = true, addAdminUser = false } = data;
+    
+    getTestConfig({ app: { ...configProps }});  // set test app configuration with provided custom values
+    const store = createStore();
+    const storeManager = new StoreManager(store);
 
-    var store;
-
-    // If app config is used
-    if (useAppConfig) {
-        setConfig({ ...getConfig(), ...configProps });
-        store = createStore();
-    }
-    // If a custom config object is used
-    else {
-        const config = getTestConfig({ app: { ...configProps }});
-        store = createStore(config.app);
-    }
-
-    if (addAdminToken) {
-        const { auth } = getMockLoginResponse();
-        store.dispatch(setAuthInformation(auth));
-    }
-
-    if (addAdminUser) {
-        const user = getMockUserData({ full_view_mode: true });
-        store.dispatch(addUsers([user]));
-    }
-
-    return store;
+    if (addAdminToken) storeManager.auth.addAuthData();
+    if (addAdminUser) storeManager.users.add();
+    
+    return storeManager;
 };

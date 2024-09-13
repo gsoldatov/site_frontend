@@ -76,7 +76,7 @@ test("Header (logged as admin)", async () => {
 
 
 test("Header (anonymous)", async () => {
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container } = renderWithWrappers(<App />, {
         route: "/objects/view/1", store
     });

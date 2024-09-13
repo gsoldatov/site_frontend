@@ -57,7 +57,7 @@ describe("Tag information", () => {
 
 
     test("Header edit butoon for anonymous user", async () => {
-        const store = createTestStore({ addAdminToken: false });
+        const { store } = createTestStore({ addAdminToken: false });
         let { container } = renderWithWrappers(<App />, {
             route: "/tags/view?tagIDs=5", store
         });

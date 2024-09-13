@@ -30,7 +30,7 @@ beforeEach(() => {
 
 
 test("Edit tag => delete a tag and check objects' tags", async () => {
-    let store = createTestStore();
+    let { store } = createTestStore();
     
     let objects = [
         generateObjectAttributes(1, {
@@ -69,7 +69,7 @@ test("Edit tag => delete a tag and check objects' tags", async () => {
 
 
 test("Tags => delete tags and check objects' tags", async () => {
-    let store = createTestStore();
+    let { store } = createTestStore();
     let objects = [
         generateObjectAttributes(1, {
             object_type: "link", object_name: "object one", object_description: "", 

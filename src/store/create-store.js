@@ -6,13 +6,12 @@ import getRootReducer from "../reducers/root";
 
 
 /**
- * Accepts an optional `config` object with configuration override.
- * If omitted, uses configuration from the `config.json` file.
+ * Uses configuration from the `document.app.config`.
  */
-const createStoreFunc = config => {
-    const manager = new LocalStorageManager(config);
+const createStoreFunc = () => {
+    const manager = new LocalStorageManager();
     const store = createStore(
-        getRootReducer(config),
+        getRootReducer(),
         manager.loadState(),
         applyMiddleware(
             thunkMiddleware

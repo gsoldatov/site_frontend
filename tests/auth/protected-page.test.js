@@ -52,7 +52,7 @@ test("Render authenticated-only routes without a token", async () => {
 
     // Render each protected route without a token in store & check if it's redirected to login page
     for (let route of routes) {
-        const store = createTestStore({ addAdminToken: false });
+        const { store } = createTestStore({ addAdminToken: false });
         let { container, historyManager } = renderWithWrappers(<App />, { route, store });
         await historyManager.waitForCurrentURLToBe("/auth/login");
         ReactDOM.unmountComponentAtNode(container);
@@ -84,7 +84,7 @@ test("Render anonymous-only routes with a token", async () => {
 
     // Render each protected route with a token in store & check if it's redirected to index page
     for (let route of routes) {
-        const store = createTestStore({ addAdminToken: true });
+        const { store } = createTestStore({ addAdminToken: true });
         let { container, historyManager } = renderWithWrappers(<App />, { route, store });
         await historyManager.waitForCurrentURLToBe("/");
         ReactDOM.unmountComponentAtNode(container);
@@ -93,7 +93,7 @@ test("Render anonymous-only routes with a token", async () => {
 
 
 test("Render authenticated-only route with an expired token", async () => {
-    const store = createTestStore({ addAdminToken: true });
+    const { store } = createTestStore({ addAdminToken: true });
     const expirationTime = new Date();
     expirationTime.setDate(expirationTime.getDate() - 1);
     store.dispatch(setAuthInformation({ access_token_expiration_time: expirationTime.toISOString() }));
@@ -111,7 +111,7 @@ test("Fetch backend with an invalid token", async () => {
     addCustomRouteResponse("/users/view", "POST", { status: 401, body: { _error: "Invalid token." }});
 
     // Render object's edit page
-    const store = createTestStore({ addAdminToken: true });
+    const { store } = createTestStore({ addAdminToken: true });
     let { historyManager } = renderWithWrappers(<App />, {
         route: "/objects/edit/1", store
     });

@@ -110,7 +110,7 @@ test("To-do list (logged as admin)", async () => {
 
 
 test("To-do list (anonymous)", async () => {
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container } = renderWithWrappers(<App />, {
         route: "/objects/view/2001", store
     });

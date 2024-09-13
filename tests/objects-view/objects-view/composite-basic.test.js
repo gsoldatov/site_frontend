@@ -110,7 +110,7 @@ describe("Subobject attributes & tags", () => {
 
 
     test("Header (anonymous)", async () => {
-        const store = createTestStore({ addAdminToken: false });
+        const { store } = createTestStore({ addAdminToken: false });
         let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/view/3901", store
         });

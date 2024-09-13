@@ -9,13 +9,17 @@ import { DndProvider } from "react-dnd";
 
 import { HistoryManager } from "../_managers/history-manager";
 import { createTestStore } from "./create-test-store";
+import { StoreManager } from "../_managers/store-manager/store-manager";
 
 
-export function renderWithWrappers(ui, params) {
-    const { store, history } = getRenderParams(params);
-    function wrapper({ children }) {
+export const renderWithWrappers = (ui, params) => {
+    const storeManager = params.storeManager || (params.store ? new StoreManager(params.store) : createTestStore());
+    const route = params.route || "/";
+    const history = createMemoryHistory({ initialEntries: [route] });
+
+    const wrapper = ({ children }) => {
         return (
-            <Provider store={store}>
+            <Provider store={storeManager.store}>
                 <DndProvider backend={HTML5Backend}>
                     <Router history={history}>
                         {children}
@@ -23,21 +27,13 @@ export function renderWithWrappers(ui, params) {
                 </DndProvider>
             </Provider>
         );
-    }
+    };
 
     const historyManager = new HistoryManager(history);
 
     return { 
         ...render(ui, { wrapper }),
         historyManager,
-        store
+        store: storeManager.store, storeManager
     };
-}
-
-
-const getRenderParams = (params = {}) => {
-    const store = params.store || createTestStore(),
-          route = params.route || "/";
-    const history = createMemoryHistory({ initialEntries: [route] });
-    return { store, history };
 };

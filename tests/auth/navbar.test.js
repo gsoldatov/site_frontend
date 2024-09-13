@@ -34,7 +34,7 @@ beforeEach(() => {
 
 describe("Conditional rendering of navigation bar's elements", () => {
     test("Render a page without an access token", async () => {
-        const store = createTestStore({ addAdminToken: false });
+        const { store } = createTestStore({ addAdminToken: false });
         let { container } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
@@ -68,7 +68,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
 
         // Render auth routes
         for (let route of routes) {
-            const store = createTestStore({ addAdminToken: false });
+            const { store } = createTestStore({ addAdminToken: false });
             let { container } = renderWithWrappers(<App />, { route, store });
             
             // Wait for registration status to be fetched from backend (on /auth/register page only)
@@ -88,7 +88,7 @@ describe("Conditional rendering of navigation bar's elements", () => {
 
 
     test("Render object edit page with an access token", async () => {
-        const store = createTestStore({ addAdminToken: true });
+        const { store } = createTestStore({ addAdminToken: true });
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", store
         });
@@ -112,7 +112,7 @@ describe("Secondary menu logged out state", () => {
         addCustomRouteResponse("/settings/view", "POST", { status: 200, body: { settings: { non_admin_registration_allowed: false }}});
 
         // Render login page
-        const store = createTestStore({ addAdminToken: false });
+        const { store } = createTestStore({ addAdminToken: false });
         let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
@@ -133,7 +133,7 @@ describe("Secondary menu logged out state", () => {
 
 
     test("Registration button enabled", async () => {
-        const store = createTestStore({ addAdminToken: false });
+        const { store } = createTestStore({ addAdminToken: false });
         let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
@@ -157,7 +157,7 @@ describe("Secondary menu logged out state", () => {
 
 
     test("Login button", async () => {
-        const store = createTestStore({ addAdminToken: false });
+        const { store } = createTestStore({ addAdminToken: false });
         let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/non/existing/route", store     // render a non-existing route to avoid non-auth related fetches
         });
@@ -179,7 +179,7 @@ describe("Secondary menu logged in state", () => {
         // Simulate fetch failure for user data
         addCustomRouteResponse("/users/view", "POST", { status: 404, body: {} });
         
-        const store = createTestStore({ addAdminToken: true });
+        const { store } = createTestStore({ addAdminToken: true });
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
@@ -194,7 +194,7 @@ describe("Secondary menu logged in state", () => {
     
     
     test("Elements rendering", async () => {
-        const store = createTestStore({ addAdminToken: true });
+        const { store } = createTestStore({ addAdminToken: true });
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
@@ -211,7 +211,7 @@ describe("Secondary menu logged in state", () => {
 
 
     test("User page link", async () => {
-        const store = createTestStore({ addAdminToken: true });
+        const { store } = createTestStore({ addAdminToken: true });
         let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store
         });
@@ -279,7 +279,7 @@ describe("Secondary menu logged in state", () => {
         // Render each route and logout
         for (let route of routes) {
             const fullRoute = route + (routeSuffixes[route] || "");
-            const store = createTestStore({ addAdminToken: true });
+            const { store } = createTestStore({ addAdminToken: true });
             let { container, historyManager } = renderWithWrappers(<App />, {
                 route: fullRoute, store
             });

@@ -1,11 +1,16 @@
+import { setConfig } from "../../src/config";
 import { deepCopy, deepMerge } from "../../src/util/copy";
 
 
 /**
  * Returns a test configuration object with custom values speicifed in `configProps`.
+ * 
+ * Sets generated test config as app's config in `document.app.config`.
  */
 export const getTestConfig = (configProps = {}) => {
-    return deepMerge(deepCopy(testConfig), configProps);
+    const config = deepMerge(deepCopy(testConfig), configProps);
+    setConfig(config.app);
+    return config;
 };
 
 

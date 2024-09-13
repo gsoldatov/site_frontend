@@ -11,16 +11,11 @@ import { getConfig } from "../config";
 /**
  * Manages state loads and saves to the browser's local storage.
  * 
- * Accepts an optional `config` object with configuration override.
- * If omitted, uses configuration from the `config.json` file.
- * 
  * NOTE: `localStorageSaveTimeout` modification in config during runtime does not change the behaviour of existing instance.
  * To implement this, a new debounced function should be created on change, replacing the old one in the store subscriptions.
  */
 export class LocalStorageManager {
-    constructor(config) {
-        this._config = config;
-
+    constructor() {
         this.previousState = getInitialState();
 
         this.loadState = this.loadState.bind(this);
@@ -34,10 +29,9 @@ export class LocalStorageManager {
 
     /**
      * Returns a config object used by this instance
-     * (passed as an argument or default app config)
      */
     getConfig() {
-        return this._config || getConfig();
+        return getConfig();
     }
 
     /**

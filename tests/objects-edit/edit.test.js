@@ -192,7 +192,7 @@ describe("Load object errors & UI checks", () => {
 
 describe("Load object from state", () => {
     test("Load a link object from state", async () => {
-        let store = createTestStore();
+        let { store } = createTestStore();
         let object = generateObjectAttributes(1, {
             object_type: "link", object_name: "object name", object_description: "object description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
@@ -228,7 +228,7 @@ describe("Load object from state", () => {
 
 
     test("Load a markdown object from state", async () => {
-        let store = createTestStore();
+        let { store } = createTestStore();
         let object = generateObjectAttributes(1, {
             object_type: "markdown", object_name: "object name", object_description: "object description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
@@ -279,7 +279,7 @@ describe("Load object from state", () => {
 
 
     test("Load a to-do list object from state", async () => {
-        let store = createTestStore();
+        let { store } = createTestStore();
         let object = generateObjectAttributes(1, {
             object_type: "to_do_list", object_name: "object name", object_description: "object description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
@@ -364,7 +364,7 @@ describe("Load object from state", () => {
 
 describe("Load object from backend", () => {
     test("Load a link object attributes from state and data from backend", async () => {
-        let store = createTestStore();
+        let { store } = createTestStore();
         let object = generateObjectAttributes(1, {
             object_type: "link", object_name: "object name", object_description: "object description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5]
@@ -421,7 +421,7 @@ describe("Load object from backend", () => {
 
     
     test("Load a markdown object attributes from state and data from backend", async () => {
-        let store = createTestStore();
+        let { store } = createTestStore();
         let object = generateObjectAttributes(1001, {
             object_type: "markdown", object_name: "object name", object_description: "object description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
@@ -462,7 +462,7 @@ describe("Load object from backend", () => {
 
 
     test("Load a to-do list object attributes from state and data from backend", async () => {
-        let store = createTestStore();
+        let { store } = createTestStore();
         let object = generateObjectAttributes(2001, {
             object_type: "to_do_list", object_name: "object name", object_description: "object description", 
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 

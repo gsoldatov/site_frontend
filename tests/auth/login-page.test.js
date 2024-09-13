@@ -31,7 +31,7 @@ beforeEach(() => {
 
 test("Check validation error display", async () => {
     // Render login page
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container } = renderWithWrappers(<App />, {
         route: "/auth/login", store
     });
@@ -66,7 +66,7 @@ test("Check validation error display", async () => {
 
 test("Check fetch error display & form disabling during fetch", async () => {
     // Render login page
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container } = renderWithWrappers(<App />, {
         route: "/auth/login", store
     });
@@ -91,7 +91,7 @@ test("Check fetch error display & form disabling during fetch", async () => {
 
 test("Correct login", async () => {
     // Render login page
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container, historyManager } = renderWithWrappers(<App />, {
         route: "/auth/login", store
     });
@@ -138,7 +138,7 @@ test("Correct login with URL query params", async () => {
     const redirectPath = "/objects/edit/1";
     params.append("from", redirectPath);
     params.append("message", "registrationComplete");
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container, historyManager } = renderWithWrappers(<App />, {
         route: "/auth/login?" + params.toString(), store
     });

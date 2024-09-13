@@ -13,7 +13,7 @@ import { createTestStore } from "../_util/create-test-store";
 export async function getStoreWithTwoSelectedObjects() {
     generateObjectAttributes
     
-    let store = createTestStore();
+    let { store } = createTestStore();
     let objects = [ 
         generateObjectAttributes(1, {
             object_type: "link", object_name: "object #1", object_description: "object description", 

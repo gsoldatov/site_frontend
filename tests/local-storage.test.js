@@ -42,7 +42,7 @@ beforeEach(() => {
 describe("Edited objects > New object page", () => {
     test("Unsaved object persistence", async () => {
         // Render new object page and modify object name
-        let storeOne = createTestStore({ useLocalStorage: true });
+        let storeOne = createTestStore(undefined, { useLocalStorage: true }).store;
         
         var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new",
@@ -76,7 +76,7 @@ describe("Edited objects > New object page", () => {
         ReactDOM.unmountComponentAtNode(container);
 
         // Rerender page with another store
-        let storeTwo = createTestStore({ useLocalStorage: true });
+        let storeTwo = createTestStore(undefined, { useLocalStorage: true }).store;
         var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new",
             store: storeTwo
@@ -93,7 +93,7 @@ describe("Edited objects > New object page", () => {
 
     test("New composite object save", async () => {
         // Render new object page
-        let store = createTestStore({ useLocalStorage: true });
+        let { store } = createTestStore(undefined, { useLocalStorage: true });
 
         let { container, historyManager } = renderWithWrappers(<App />, 
             { route: "/objects/edit/new", store }
@@ -169,7 +169,7 @@ describe("Edited objects > New object page", () => {
 describe("Edited objects > Existing object page", () => {
     test("Unsaved object persistence", async () => {
         // Render existing object page and modify object name
-        let storeOne = createTestStore({ useLocalStorage: true });
+        let storeOne = createTestStore(undefined, { useLocalStorage: true }).store;
 
         var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", 
@@ -203,7 +203,7 @@ describe("Edited objects > Existing object page", () => {
         ReactDOM.unmountComponentAtNode(container);
 
         // Rerender page with another store
-        let storeTwo = createTestStore({ useLocalStorage: true });
+        let storeTwo = createTestStore(undefined, { useLocalStorage: true }).store;
         var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", 
             store: storeTwo
@@ -218,7 +218,7 @@ describe("Edited objects > Existing object page", () => {
 
     test("Unchanged composite object removal", async () => {
         // Render existing object page and modify object name
-        let store = createTestStore({ useLocalStorage: true });
+        let { store } = createTestStore(undefined, { useLocalStorage: true });
 
         var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/3001", store 
@@ -283,7 +283,7 @@ describe("Edited objects > Existing object page", () => {
 
     test("Deleted composite object removal", async () => {
         // Render existing object page and modify object name
-        let store = createTestStore({ useLocalStorage: true });
+        let { store } = createTestStore(undefined, { useLocalStorage: true });
 
         var { container } = renderWithWrappers(<App />,
             { route: "/objects/edit/3001", store }
@@ -338,7 +338,7 @@ describe("Edited objects > Existing object page", () => {
 
 describe("Auth information", () => {
     test("Save auth updates into local storage", async () => {
-        const store = createTestStore({ useLocalStorage: true, localStorageSaveTimeout: 25, addAdminToken: false });
+        const { store } = createTestStore({ addAdminToken: false }, { useLocalStorage: true, localStorageSaveTimeout: 25 });
         let authInfo = getDefaultAuthState();
 
         // Modify each attribute in auth info and check if it's saved to the local storage
@@ -351,7 +351,7 @@ describe("Auth information", () => {
 
 
     test("Load auth from local storage", async () => {
-        let store = createTestStore({ useLocalStorage: true, localStorageSaveTimeout: 25, addAdminToken: false });
+        let { store } = createTestStore({ addAdminToken: false },  { useLocalStorage: true, localStorageSaveTimeout: 25 });
         
         // Check if default auth information is correctly loaded if no auth is saved in the local storage
         let authInfo = getDefaultAuthState();
@@ -366,7 +366,7 @@ describe("Auth information", () => {
         authInfo = { access_token: "some_token", access_token_expiration_time: (new Date()).toISOString(), user_id: 15, numeric_user_level: 10 }
         localStorage.setItem("authInfo", JSON.stringify(authInfo));
 
-        store = createTestStore({ useLocalStorage: true, localStorageSaveTimeout: 25, addAdminToken: false });
+        store = createTestStore({ addAdminToken: false }, { useLocalStorage: true, localStorageSaveTimeout: 25 }).store;
         expect(store.getState().auth).toMatchObject(authInfo);
         expect(authInfo).toMatchObject(store.getState().auth);
     });
@@ -377,7 +377,7 @@ describe("Local storage configuration", () => {
     test("`useLocalStorage` toggling in runtime", async () => {
         // Render new object page and modify object name
         const localStorageSaveTimeout = 50;
-        let store = createTestStore({ useAppConfig: true, useLocalStorage: true, debugLogging: false, localStorageSaveTimeout });
+        let { store } = createTestStore(undefined, { useLocalStorage: true, debugLogging: false, localStorageSaveTimeout });
         
         var { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/new", store

@@ -30,7 +30,7 @@ test("Load register page with disabled admin registration", async () => {
     addCustomRouteResponse("/settings/view", "POST", { status: 200, body: { settings: { non_admin_registration_allowed: false }}});
 
     // Render register page
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container } = renderWithWrappers(<App />, {
         route: "/auth/register", store
     });
@@ -49,7 +49,7 @@ test("Load register page with disabled admin registration", async () => {
 
 test("Check validation error display", async () => {
     // Render register page
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container } = renderWithWrappers(<App />, {
         route: "/auth/register", store
     });
@@ -107,7 +107,7 @@ test("Check validation error display", async () => {
 
 test("Check fetch error display", async () => {
     // Render register page
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container } = renderWithWrappers(<App />, {
         route: "/auth/register", store
     });
@@ -129,7 +129,7 @@ test("Check fetch error display", async () => {
 
 test("Fetch error display for existing data & form disabling during fetch", async () => {
     // Render register page
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container } = renderWithWrappers(<App />, {
         route: "/auth/register", store
     });
@@ -166,7 +166,7 @@ test("Fetch error display for existing data & form disabling during fetch", asyn
 
 test("Correct registration & form error clearing", async () => {
     // Render register page
-    const store = createTestStore({ addAdminToken: false });
+    const { store } = createTestStore({ addAdminToken: false });
     let { container, historyManager } = renderWithWrappers(<App />, {
         route: "/auth/register", store
     });

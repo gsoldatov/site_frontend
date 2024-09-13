@@ -32,7 +32,7 @@ describe("View mode", () => {
         test("Load with fetch error", async () => {
             // Set fetch failure & render page
             setFetchFail(true);
-            const store = createTestStore({ addAdminToken: false });
+            const { store } = createTestStore({ addAdminToken: false });
             let { container } = renderWithWrappers(<App />, {
                 route: "/users/1", store
             });
@@ -52,7 +52,7 @@ describe("View mode", () => {
 
         test("Load page with invalid user ID", async () => {
             for (let invalidID of ["0", "asd"]) {
-                const store = createTestStore({ addAdminToken: false });
+                const { store } = createTestStore({ addAdminToken: false });
                 let { container } = renderWithWrappers(<App />, {
                     route: `/users/${invalidID}`, store
                 });
@@ -74,7 +74,7 @@ describe("View mode", () => {
             // Set mock response & render user page
             const userData = getMockUserData({ user_id: 2, full_view_mode: false });
             addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
-            const store = createTestStore({ addAdminToken: false });
+            const { store } = createTestStore({ addAdminToken: false });
             let { container } = renderWithWrappers(<App />, {
                 route: `/users/2`, store
             });
@@ -131,7 +131,7 @@ describe("Edit mode", () => {
     test("Toggle edit mode", async () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, full_view_mode: true });
-        const store = createTestStore({ addAdminUser: true });
+        const { store } = createTestStore({ addAdminUser: true });
         addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
         let { container } = renderWithWrappers(<App />, {
             route: `/users/2`, store
@@ -157,7 +157,7 @@ describe("Edit mode", () => {
     test("Try updating with incorrect data", async () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, full_view_mode: true });
-        const store = createTestStore({ addAdminUser: true });
+        const { store } = createTestStore({ addAdminUser: true });
         addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
         let { container } = renderWithWrappers(<App />, {
             route: `/users/2`, store
@@ -215,7 +215,7 @@ describe("Edit mode", () => {
     test("Handle fetch errors during correct update", async () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, full_view_mode: true });
-        const store = createTestStore({ addAdminUser: true });
+        const { store } = createTestStore({ addAdminUser: true });
         addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
         let { container } = renderWithWrappers(<App />, {
             route: `/users/2`, store
@@ -258,7 +258,7 @@ describe("Edit mode", () => {
     test("Correct update", async () => {
         // Create mock store, set mock response & render user page
         const userData = getMockUserData({ user_id: 2, user_level: "admin", can_login: true, can_edit_objects: true, full_view_mode: true });
-        const store = createTestStore({ addAdminUser: true });
+        const { store } = createTestStore({ addAdminUser: true });
         addCustomRouteResponse("/users/view", "POST", { status: 200, body: { users: [userData] }});
         addCustomRouteResponse("/users/update", "PUT", { generator: (body, handler) => {
             const body_ = JSON.parse(body);
