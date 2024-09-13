@@ -10,7 +10,7 @@ import { getSingleColumnSubobjectDisplayOrder } from "./composite";
 /**
  * Returns a Redux selector, which calculates the chapter hierarchy for the provided `objectID`.
  */
- export const getChaptersHierarchySelector = objectID => createSelector(
+ export const getChaptersHierarchySelector = (objectID, maxHierarchyDepth) => createSelector(
     state => state.objects,
     state => state.composite,
     (objectsStorage, compositeDataStorage) => {
@@ -30,7 +30,7 @@ import { getSingleColumnSubobjectDisplayOrder } from "./composite";
             const objectType = (objectsStorage[elementObjectID] || {}).object_type;
             const displayMode = (compositeDataStorage[elementObjectID] || {}).display_mode;
             const numerateChapters = (compositeDataStorage[elementObjectID] || {}).numerate_chapters;
-            const isLeaf = objectType !== "composite" || displayMode !== enumCompositeObjectDisplayModes.chapters.value || currentDepth > getConfig().compositeChapters.maxHierarchyDepth;
+            const isLeaf = objectType !== "composite" || displayMode !== enumCompositeObjectDisplayModes.chapters.value || currentDepth > maxHierarchyDepth;
 
             const element = { objectID: elementObjectID, parentElement, depthLevel: currentDepth, chapter, chapterSuffix, URL: elementURL, numerateChapters };
             element.childElements = isLeaf ? null 

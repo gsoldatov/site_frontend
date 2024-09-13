@@ -221,14 +221,14 @@ describe("Table of contents", () => {
 
 
         test("Composite with `chapters` display mode with maximum hierarchy depth exceeded", async () => {
-            // Reduce the maximum hierarchy depth
-            const config = getConfig();
-            setConfig({ ...config, compositeChapters: { ...config.compositeChapters, maxHierarchyDepth: 1 }});
-
             // Render page and wait for data to load
             let { container } = renderWithWrappers(<App />, {
                 route: "/objects/view/3910"
             });
+            
+            // Reduce the maximum hierarchy depth (note, that renderWithWrappers resets app's config)
+            const config = getConfig();
+            setConfig({ ...config, compositeChapters: { ...config.compositeChapters, maxHierarchyDepth: 1 }});
 
             // Wait for error placeholder to be displayed
             await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.placeholders.loading).toBeFalsy());
@@ -237,9 +237,6 @@ describe("Table of contents", () => {
 
             // Check if table of contents has no children for the chapter with maximum depth exceeded
             expect(compositeChaptersElements.tableOfContents.container.childElements[6].childElements).toBeFalsy();
-
-            // Reset config
-            resetConfig();
         });
     });
 
@@ -589,12 +586,8 @@ describe("Chapter object", () => {
 
 
     test("Composite, chapters with exceeded max depth", async () => {
-        // Reduce the maximum hierarchy depth
-        const config = getConfig();
-        setConfig({ ...config, compositeChapters: { ...config.compositeChapters, maxHierarchyDepth: 1 }});
-
         // Render page and open a chapter
-        let { container, store, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(3910, 7);
+        let { container, store, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(3910, 7, 1);
 
         // Check if object name is displayed
         const card = getObjectsViewCardElements({ container }).data.compositeChapters.chapterObject.objectCard;
@@ -608,9 +601,6 @@ describe("Chapter object", () => {
         
         expect(subobjectCards.length).toEqual(expectedSubobjectIDs.length);
         expect([...subobjectCards].map(card => parseInt(getObjectsViewCardElements({ card }).objectID))).toEqual(expectedSubobjectIDs);
-        
-        // Reset config
-        resetConfig();
     });
 });
 

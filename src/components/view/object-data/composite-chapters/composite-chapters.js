@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, Redirect, useLocation } from "react-router-dom";
 import { Loader, Message } from "semantic-ui-react";
 
+import { useConfigState } from "../../../../config";
 import { compositeChaptersOnLoadFetch } from "../../../../fetches/ui-objects-view";
 import { getChaptersHierarchySelector, getHierarchyElements } from "../../../../store/state-util/ui-objects-view";
 import { TableOfContents } from "./table-of-contents";
@@ -35,7 +36,9 @@ export const CompositeChapters = ({ objectID }) => {
     }, [objectID]);
 
     // Chapter hierarchy selector
-    const chaptersHierarchySelector = useMemo(() => getChaptersHierarchySelector(objectID), [objectID]);
+    const maxHierarchyDepthSelector = useMemo(() => config => config.compositeChapters.maxHierarchyDepth, []);
+    const maxHierarchyDepth = useConfigState(maxHierarchyDepthSelector);
+    const chaptersHierarchySelector = useMemo(() => getChaptersHierarchySelector(objectID, maxHierarchyDepth), [objectID, maxHierarchyDepth]);
     const hierarchy = useSelector(chaptersHierarchySelector);
 
     // Get current chapter, corresponding object ID and type of component which should be displayed for it.

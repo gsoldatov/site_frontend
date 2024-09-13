@@ -4,6 +4,7 @@ import { waitFor, fireEvent, queryByTitle, queryByText } from "@testing-library/
 
 import { renderWithWrappers } from "./render";
 import { getInlineItem } from "./ui-inline";
+import { getConfig, setConfig, updateConfig } from "../../src/config";
 
 import { App } from "../../src/components/top-level/app";
 
@@ -314,13 +315,18 @@ const getCompositeChaptersTableOfContents = dataContainer => {
 /**
  * Renders /objects/view/:objectID page for the provided `objectID`, then opens the chapter with the specified `chapterNumber` (1-based).
  * 
+ * If `maxHierarchyDepth` is provided, updates its value after page render
+ * 
  * NOTE: only top-level chapters can currently be opened.
  */
-export const loadObjectsViewPageAndSelectChapter = async (objectID, chapterNumber) => {
+export const loadObjectsViewPageAndSelectChapter = async (objectID, chapterNumber, maxHierarchyDepth) => {
     // Render page and wait for data to load
     let { container, store, historyManager } = renderWithWrappers(<App />, {
         route: `/objects/view/${objectID}`
     });
+
+    // Set maxHierarchyDepth in app config, if provided 
+    if (maxHierarchyDepth !== undefined) updateConfig({ compositeChapters: { maxHierarchyDepth }});
 
     // Wait for error placeholder to be displayed
     await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.placeholders.loading).toBeFalsy());
