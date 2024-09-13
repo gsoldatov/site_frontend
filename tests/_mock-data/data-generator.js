@@ -1,3 +1,4 @@
+import { AuthGenerator } from "./modules/auth";
 import { ObjectGenerator } from "./modules/objects";
 import { TagGenerator } from "./modules/tags";
 import { UserGenerator } from "./modules/users";
@@ -11,5 +12,6 @@ export class DataGenerator {
         this.object = new ObjectGenerator();
         this.tag = new TagGenerator();
         this.user = new UserGenerator();
+        this.auth = new AuthGenerator();
     }
 }
