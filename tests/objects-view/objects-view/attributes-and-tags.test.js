@@ -12,8 +12,6 @@ import { compareDates } from "../../_util/data-checks";
 
 import { resetEditedObjects } from "../../../src/actions/objects-edit";
 
-import { updateStoredObjectAttributes, updateStoredLinkData } from "../../_util/store-updates-objects";
-
 import { App } from "../../../src/components/top-level/app";
 
 
@@ -34,7 +32,7 @@ beforeEach(() => {
 
 
 test("Timestamp", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
+    let { container, storeManager } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
@@ -43,13 +41,13 @@ test("Timestamp", async () => {
 
     // Check if feed timestamp is displayed
     let cardElements = getObjectsViewCardElements({ container });
-    let ed = new Date(store.getState().objects[1].feed_timestamp), dd = new Date(cardElements.attributes.timestamp.element.textContent);
+    let ed = new Date(storeManager.store.getState().objects[1].feed_timestamp), dd = new Date(cardElements.attributes.timestamp.element.textContent);
     compareDates(ed, dd);
 
     // Check if modified at is used as a fallback for missing feed timestamp
-    updateStoredObjectAttributes(store, 1, { feed_timestamp: "" });
+    storeManager.objects.updateAttributes({ object_id: 1, feed_timestamp: "" });
     cardElements = getObjectsViewCardElements({ container });
-    ed = new Date(store.getState().objects[1].modified_at), dd = new Date(cardElements.attributes.timestamp.element.textContent);
+    ed = new Date(storeManager.store.getState().objects[1].modified_at), dd = new Date(cardElements.attributes.timestamp.element.textContent);
     compareDates(ed, dd);
 });
 
@@ -112,7 +110,7 @@ test("'Object is edited' message", async () => {
 
 
 test("Object description (link)", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
+    let { container, storeManager } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
@@ -120,26 +118,27 @@ test("Object description (link)", async () => {
     await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
 
     // !show_description && !show_description_as_link
-    expect(store.getState().objects[1].show_description).toBeFalsy();
-    expect(store.getState().links[1].show_description_as_link).toBeFalsy();
+    expect(storeManager.store.getState().objects[1].show_description).toBeFalsy();
+    expect(storeManager.store.getState().links[1].show_description_as_link).toBeFalsy();
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // !show_description && show_description_as_link
-    updateStoredLinkData(store, 1, { show_description_as_link: true });
+    storeManager.objects.updateData(1, "link", { show_description_as_link: true });
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // show_description && show_description_as_link
-    updateStoredObjectAttributes(store, 1, { show_description: true });
+    storeManager.objects.updateAttributes({ object_id: 1, show_description: true });
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // show_description && !show_description_as_link
-    updateStoredLinkData(store, 1, { show_description_as_link: false });
+    storeManager.objects.updateAttributes({ object_id: 1, show_description: true });
+    storeManager.objects.updateData(1, "link", { show_description_as_link: false });
     await waitFor(() => expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy());
 });
 
 
 test("Object description (non-link)", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
+    let { container, storeManager } = renderWithWrappers(<App />, {
         route: "/objects/view/1001"
     });
 
@@ -147,11 +146,11 @@ test("Object description (non-link)", async () => {
     await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
 
     // !show_description
-    expect(store.getState().objects[1001].show_description).toBeFalsy();
+    expect(storeManager.store.getState().objects[1001].show_description).toBeFalsy();
     expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
     // show_description
-    updateStoredObjectAttributes(store, 1001, { show_description: true });
+    storeManager.objects.updateAttributes({ object_id: 1001, show_description: true });
     await waitFor(() => expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy());
 });
 

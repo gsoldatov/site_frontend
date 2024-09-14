@@ -9,8 +9,6 @@ import { checkDisplayedObjectFeedCardIDs, getFeedCardElements, getFeedElements }
 import { getInlineItem } from "./_util/ui-inline";
 import { compareDates } from "./_util/data-checks";
 
-import { updateStoredObjectAttributes } from "./_util/store-updates-objects";
-
 import { App } from "../src/components/top-level/app";
 
 
@@ -191,7 +189,7 @@ describe("Feed pagination", () => {
 
 describe("Object feed card", () => {
     test("Timestamp", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
+        let { container, storeManager } = renderWithWrappers(<App />, {
             route: "/"
         });
 
@@ -203,13 +201,13 @@ describe("Object feed card", () => {
         let feedCardElements = getFeedCardElements(feedCard);
         const { objectID } = feedCardElements;
 
-        let ed = new Date(store.getState().objects[objectID].feed_timestamp), dd = new Date(feedCardElements.timestamp.textContent);
+        let ed = new Date(storeManager.store.getState().objects[objectID].feed_timestamp), dd = new Date(feedCardElements.timestamp.textContent);
         compareDates(ed, dd);
 
-        // Check if modified at is used as a fallback for missing feed timestamp
-        updateStoredObjectAttributes(store, objectID, { feed_timestamp: "" });
+        // Check if modified_at is used as a fallback for missing feed timestamp
+        storeManager.objects.updateAttributes({ object_id: objectID, feed_timestamp: "" });
         feedCardElements = getFeedCardElements(feedCard);
-        ed = new Date(store.getState().objects[objectID].modified_at), dd = new Date(feedCardElements.timestamp.textContent);
+        ed = new Date(storeManager.store.getState().objects[objectID].modified_at), dd = new Date(feedCardElements.timestamp.textContent);
         compareDates(ed, dd);
     });
 

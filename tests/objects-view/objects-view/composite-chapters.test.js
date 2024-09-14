@@ -3,12 +3,11 @@ import ReactDOM from "react-dom";
 import { waitFor, fireEvent } from "@testing-library/dom";
 
 import { renderWithWrappers } from "../../_util/render";
-import { updateStoredObjectAttributes, updateStoredMarkdownData, updateStoredCompositeSubobjectData, updateStoredLinkData } from "../../_util/store-updates-objects";
 import { getObjectsViewCardElements, loadObjectsViewPageAndSelectChapter, waitForCompositeChapterDescription, waitForCompositeChapterDescriptionAsLink } from "../../_util/ui-objects-view";
 import { compareArrays } from "../../_util/data-checks";
 import { getFeedElements } from "../../_util/ui-index";
 
-import { getConfig, setConfig, resetConfig } from "../../../src/config";
+import { getConfig, setConfig } from "../../../src/config";
 import { App } from "../../../src/components/top-level/app";
 import { getInlineItem } from "../../_util/ui-inline";
 
@@ -116,7 +115,7 @@ describe("Table of contents", () => {
     describe("Correct load of root object", () => {
         test("Attributes & tags", async () => {
             // Render page and wait for data to load
-            let { container, store, historyManager } = renderWithWrappers(<App />, {
+            let { container, storeManager, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/view/3910"
             });
 
@@ -129,15 +128,15 @@ describe("Table of contents", () => {
             expect(compositeChaptersElements.tableOfContents.attributes.timestamp.element).toBeTruthy();
 
             // Check if header and edit button is displayed, and view button is not
-            expect(compositeChaptersElements.tableOfContents.attributes.header.headerText.textContent).toEqual(store.getState().objects[3910].object_name);
+            expect(compositeChaptersElements.tableOfContents.attributes.header.headerText.textContent).toEqual(storeManager.store.getState().objects[3910].object_name);
             expect(compositeChaptersElements.tableOfContents.attributes.header.editButton).toBeTruthy();
             expect(compositeChaptersElements.tableOfContents.attributes.header.viewButton).toBeFalsy();
 
             // Check if description is correctly rendered
-            expect(store.getState().objects[3910].show_description).toBeFalsy();
+            expect(storeManager.store.getState().objects[3910].show_description).toBeFalsy();
             expect(compositeChaptersElements.tableOfContents.attributes.description.element).toBeFalsy();
-
-            updateStoredObjectAttributes(store, 3910, { show_description: true });
+            
+            storeManager.objects.updateAttributes({ object_id: 3910, show_description: true });
             compositeChaptersElements = getObjectsViewCardElements({ container }).data.compositeChapters;
             await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeTruthy());
 
@@ -146,7 +145,7 @@ describe("Table of contents", () => {
             expect(cardElements.tags.isRendered).toBeTruthy();
 
             // Check if each tag name is displayed
-            const state = store.getState();
+            const state = storeManager.store.getState();
             expect(state.objectsTags[3910].length).toEqual(5);
 
             const renderedTagNames = [...cardElements.tags.tagElements].map(e => e.querySelector("span").textContent);        
@@ -255,7 +254,7 @@ describe("Table of contents", () => {
             }});
 
             // Render page and wait for data to load
-            let { container, store, historyManager } = renderWithWrappers(<App />, {
+            let { container, storeManager, historyManager } = renderWithWrappers(<App />, {
                 route: "/objects/view/3910"
             });
 
@@ -264,7 +263,7 @@ describe("Table of contents", () => {
             let compositeChaptersElements = getObjectsViewCardElements({ container }).data.compositeChapters;
             expect(compositeChaptersElements.placeholders.fetchError).toBeFalsy();
 
-            const objectID = compositeChaptersElements.tableOfContents.container.childElements[6].objectID;
+            const object_id = compositeChaptersElements.tableOfContents.container.childElements[6].objectID;
 
             // Open a subchapter
             fireEvent.click(compositeChaptersElements.tableOfContents.container.childElements[6].link);
@@ -276,27 +275,27 @@ describe("Table of contents", () => {
             expect(compositeChaptersElements.tableOfContents.attributes.timestamp.element).toBeFalsy();
 
             // Check if header and edit button is displayed, and view button is not
-            expect(compositeChaptersElements.tableOfContents.attributes.header.headerText.textContent).toEqual(store.getState().objects[objectID].object_name);
+            expect(compositeChaptersElements.tableOfContents.attributes.header.headerText.textContent).toEqual(storeManager.store.getState().objects[object_id].object_name);
             expect(compositeChaptersElements.tableOfContents.attributes.header.editButton).toBeTruthy();
             expect(compositeChaptersElements.tableOfContents.attributes.header.viewButton).toBeFalsy();
 
             // Check if description is correctly rendered (check combination of settings from parent's object data and current object's display settings)
             // show_description = no, show_description_composite = inherit
-            expect(store.getState().objects[objectID].show_description).toBeFalsy();
+            expect(storeManager.store.getState().objects[object_id].show_description).toBeFalsy();
             expect(compositeChaptersElements.tableOfContents.attributes.description.element).toBeFalsy();
 
             // show_description = yes, show_description_composite = inherit
-            updateStoredObjectAttributes(store, objectID, { show_description: true });
+            storeManager.objects.updateAttributes({ object_id, show_description: true });
             compositeChaptersElements = getObjectsViewCardElements({ container }).data.compositeChapters;
             await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeTruthy());
 
             // show_description = yes, show_description_composite = no
-            updateStoredCompositeSubobjectData(store, 3910, objectID, { show_description_composite: "no" });
+            storeManager.objects.updateCompositeSubobjectData(3910, object_id, { show_description_composite: "no" });
             await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeFalsy());
 
             // show_description = no, show_description_composite = yes
-            updateStoredObjectAttributes(store, objectID, { show_description: false });
-            updateStoredCompositeSubobjectData(store, 3910, objectID, { show_description_composite: "yes" });
+            storeManager.objects.updateAttributes({ object_id, show_description: false });
+            storeManager.objects.updateCompositeSubobjectData(3910, object_id, { show_description_composite: "yes" });
             await waitFor(() => expect(getObjectsViewCardElements({ container }).data.compositeChapters.tableOfContents.attributes.description.element).toBeTruthy());
 
             // Check if tags are rendered
@@ -304,7 +303,7 @@ describe("Table of contents", () => {
             expect(cardElements.tags.isRendered).toBeTruthy();
 
             // Check if each tag name (of the root object's tags) is displayed
-            const state = store.getState();
+            const state = storeManager.store.getState();
             expect(state.objectsTags[3910].length).toEqual(6);
 
             const renderedTagNames = [...cardElements.tags.tagElements].map(e => e.querySelector("span").textContent);        
@@ -402,37 +401,34 @@ describe("Chapter object", () => {
     test("Chapter object description", async () => {
         // Render page and open a chapter
         const parentID = 3910;
-        let { container, store, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(parentID, 1);
+        let { container, storeManager, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(parentID, 1);
 
         // object = no & subobject = inherit => not displayed
-        updateStoredObjectAttributes(store, chapterObjectID, { show_description: false });
-        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, 
-            { show_description_composite: "inherit", show_description_as_link_composite: "no" });
+        storeManager.objects.updateAttributes({ object_id: chapterObjectID, show_description: false });
+        storeManager.objects.updateCompositeSubobjectData(parentID, chapterObjectID, { show_description_composite: "inherit", show_description_as_link_composite: "no" });
         await waitForCompositeChapterDescription(container, false);
 
         // object = yes & subobject = inherit => displayed
-        updateStoredObjectAttributes(store, chapterObjectID, { show_description: true });
+        storeManager.objects.updateAttributes({ object_id: chapterObjectID, show_description: true });
         await waitForCompositeChapterDescription(container, true);
 
         // object = yes & subobject = no => not displayed
-        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, { show_description_composite: "no" });
+        storeManager.objects.updateCompositeSubobjectData(parentID, chapterObjectID, { show_description_composite: "no" });
         await waitForCompositeChapterDescription(container, false);
 
         // object = no & subobject = yes => displayed
-        updateStoredObjectAttributes(store, chapterObjectID, { show_description: false });
-        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, { show_description_composite: "yes" });
+        storeManager.objects.updateAttributes({ object_id: chapterObjectID, show_description: false });
+        storeManager.objects.updateCompositeSubobjectData(parentID, chapterObjectID, { show_description_composite: "yes" });
         await waitForCompositeChapterDescription(container, true);
 
         // object = yes & subobject = inherit & subobject show description as link = yes => not displayed, link is displayed
-        updateStoredObjectAttributes(store, chapterObjectID, { show_description: true });
-        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, 
-            { show_description_composite: "inherit", show_description_as_link_composite: "yes" });
+        storeManager.objects.updateAttributes({ object_id: chapterObjectID, show_description: true });
+        storeManager.objects.updateCompositeSubobjectData(parentID, chapterObjectID, { show_description_composite: "inherit", show_description_as_link_composite: "yes" });
         await waitForCompositeChapterDescription(container, false);
 
         // object = no & subobject = yes & subobject show description as link = yes => not displayed, link is displayed
-        updateStoredObjectAttributes(store, chapterObjectID, { show_description: false });
-        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, 
-            { show_description_composite: "yes", show_description_as_link_composite: "yes" });
+        storeManager.objects.updateAttributes({ object_id: chapterObjectID, show_description: false });
+        storeManager.objects.updateCompositeSubobjectData(parentID, chapterObjectID, { show_description_composite: "yes", show_description_as_link_composite: "yes" });
         await waitForCompositeChapterDescription(container, false);
     });
 
@@ -440,25 +436,25 @@ describe("Chapter object", () => {
     test("Chapter object description as link", async () => {
         // Render page and open a chapter
         const parentID = 3910;
-        let { container, store, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(parentID, 1);
-        const descriptionText = store.getState().objects[chapterObjectID].object_description;
+        let { container, storeManager, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(parentID, 1);
+        const descriptionText = storeManager.store.getState().objects[chapterObjectID].object_description;
 
         // parent = no & subobject = inherit => not displayed
-        updateStoredLinkData(store, chapterObjectID, { show_description_as_link: false });
-        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, {show_description_as_link_composite: "inherit" });
+        storeManager.objects.updateData(chapterObjectID, "link", { show_description_as_link: false });
+        storeManager.objects.updateCompositeSubobjectData(parentID, chapterObjectID, {show_description_as_link_composite: "inherit" });
         await waitForCompositeChapterDescriptionAsLink(container, descriptionText, false);
 
         // parent = yes & subobject = inherit = displayed
-        updateStoredLinkData(store, chapterObjectID, { show_description_as_link: true });
+        storeManager.objects.updateData(chapterObjectID, "link", { show_description_as_link: true });
         await waitForCompositeChapterDescriptionAsLink(container, descriptionText, true);
 
         // parent = yes & subobject = no => not displayed
-        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, {show_description_as_link_composite: "no" });
+        storeManager.objects.updateCompositeSubobjectData(parentID, chapterObjectID, {show_description_as_link_composite: "no" });
         await waitForCompositeChapterDescriptionAsLink(container, descriptionText, false);
 
         // parent = no & subobject = yes => displayed
-        updateStoredLinkData(store, chapterObjectID, { show_description_as_link: false });
-        updateStoredCompositeSubobjectData(store, parentID, chapterObjectID, {show_description_as_link_composite: "yes" });
+        storeManager.objects.updateData(chapterObjectID, "link", { show_description_as_link: false });
+        storeManager.objects.updateCompositeSubobjectData(parentID, chapterObjectID, {show_description_as_link_composite: "yes" });
         await waitForCompositeChapterDescriptionAsLink(container, descriptionText, true);
     });
 
@@ -480,16 +476,16 @@ describe("Chapter object", () => {
 
     test("Markdown", async () => {
         // Render page and open a chapter
-        let { container, store, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(3910, 2);
+        let { container, storeManager, chapterObjectID } = await loadObjectsViewPageAndSelectChapter(3910, 2);
 
         // Check if object name is displayed
         const card = getObjectsViewCardElements({ container }).data.compositeChapters.chapterObject.objectCard;
         const cardElements = getObjectsViewCardElements({ card });
         expect(cardElements.placeholders.fetchError).toBeFalsy();
-        expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[chapterObjectID].object_name);
+        expect(cardElements.attributes.header.headerText.textContent).toEqual(storeManager.store.getState().objects[chapterObjectID].object_name);
         
         // Change markdown raw_text
-        updateStoredMarkdownData(store, chapterObjectID, { raw_text: "# Some text" });
+        storeManager.objects.updateData(chapterObjectID, "markdown", { raw_text: "# Some text" });
 
         // Check if updated markdown is rendered
         await waitFor(() => {

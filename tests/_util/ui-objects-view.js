@@ -321,7 +321,7 @@ const getCompositeChaptersTableOfContents = dataContainer => {
  */
 export const loadObjectsViewPageAndSelectChapter = async (objectID, chapterNumber, maxHierarchyDepth) => {
     // Render page and wait for data to load
-    let { container, store, historyManager } = renderWithWrappers(<App />, {
+    let { container, storeManager, historyManager } = renderWithWrappers(<App />, {
         route: `/objects/view/${objectID}`
     });
 
@@ -345,7 +345,7 @@ export const loadObjectsViewPageAndSelectChapter = async (objectID, chapterNumbe
 
     const chapterObjectID = compositeChaptersElements.tableOfContents.container.childElements[chapterNumber - 1].objectID;
 
-    return { container, store, historyManager, chapterObjectID };
+    return { container, storeManager, store: storeManager.store, historyManager, chapterObjectID };
 };
 
 

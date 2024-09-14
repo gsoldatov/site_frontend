@@ -5,8 +5,6 @@ import { getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { createTestStore } from "../../_util/create-test-store";
 import { renderWithWrappers } from "../../_util/render";
-import { updateStoredObjectAttributes, updateStoredLinkData, updateStoredMarkdownData,
-    updateStoredCompositeSubobjectData } from "../../_util/store-updates-objects";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
 import { waitForMarkdownHeaderRender } from "../../_util/ui-markdown-editor";
 
@@ -110,9 +108,8 @@ describe("Subobject attributes & tags", () => {
 
 
     test("Header (anonymous)", async () => {
-        const { store } = createTestStore({ addAdminToken: false });
-        let { container, historyManager } = renderWithWrappers(<App />, {
-            route: "/objects/view/3901", store
+        let { container, historyManager, storeManager } = renderWithWrappers(<App />, {
+            route: "/objects/view/3901", storeManager: createTestStore({ addAdminToken: false })
         });
 
         // Wait for the page to load
@@ -123,11 +120,11 @@ describe("Subobject attributes & tags", () => {
         let cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
 
         // Change is_published value of checked subobject to true to correctly test view button (non-published objects are returned)
-        updateStoredObjectAttributes(store, cardElements.objectID, { is_published: true });
+        storeManager.objects.updateAttributes({ object_id: cardElements.objectID, is_published: true });
         cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
 
         // Check if header is displayed
-        expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[cardElements.objectID].object_name);
+        expect(cardElements.attributes.header.headerText.textContent).toEqual(storeManager.store.getState().objects[cardElements.objectID].object_name);
 
         // Check if edit buttons is not displayed
         expect(cardElements.attributes.header.editButton).toBeFalsy();
@@ -161,7 +158,7 @@ describe("Subobject attributes & tags", () => {
 
 
     test("Object description (link)", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
+        let { container, storeManager } = renderWithWrappers(<App />, {
             route: "/objects/view/3901"
         });
 
@@ -173,21 +170,21 @@ describe("Subobject attributes & tags", () => {
         let cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
 
         // show_description_composite = yes & show_description_as_link_composite = yes
-        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_composite: "yes", show_description_as_link_composite: "yes" });
+        storeManager.objects.updateCompositeSubobjectData(3901, cardElements.objectID, { show_description_composite: "yes", show_description_as_link_composite: "yes" });
         expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy();
 
         // show_description_composite = yes & show_description_as_link_composite = no
-        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_as_link_composite: "no" });
+        storeManager.objects.updateCompositeSubobjectData(3901, cardElements.objectID, { show_description_as_link_composite: "no" });
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
         // Description Markdown is rendered
-        updateStoredObjectAttributes(store, cardElements.objectID, { object_description: "# Some text" });
+        storeManager.objects.updateAttributes({ object_id: cardElements.objectID, object_description: "# Some text" });
         await waitForMarkdownHeaderRender({ renderedMarkdown: getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element, text: "Some text" });
     });
 
 
     test("Object description (non-link)", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
+        let { container, storeManager } = renderWithWrappers(<App />, {
             route: "/objects/view/3901"
         });
 
@@ -200,21 +197,21 @@ describe("Subobject attributes & tags", () => {
 
 
         // show_description_composite = yes & !show_description
-        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_composite: "yes" });
-        updateStoredObjectAttributes(store, cardElements.objectID, { show_description: false });
+        storeManager.objects.updateCompositeSubobjectData(3901, cardElements.objectID, { show_description_composite: "yes" });
+        storeManager.objects.updateAttributes({ object_id: cardElements.objectID, show_description: false });
 
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
         // show_description_composite = inherit & !show_description;
-        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_composite: "inherit" });
+        storeManager.objects.updateCompositeSubobjectData(3901, cardElements.objectID, { show_description_composite: "inherit" });
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy());
 
         // show_description_composite = inherit & show_description;
-        updateStoredObjectAttributes(store, cardElements.objectID, { show_description: true });
+        storeManager.objects.updateAttributes({ object_id: cardElements.objectID, show_description: true });
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeTruthy());
 
         // show_description_composite = no & show_description;
-        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_composite: "no" });
+        storeManager.objects.updateCompositeSubobjectData(3901, cardElements.objectID, { show_description_composite: "no" });
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.description.element).toBeFalsy());
     });
 
@@ -239,7 +236,7 @@ describe("Subobject attributes & tags", () => {
 
 describe("Subobject object data", () => {
     test("Link", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
+        let { container, storeManager } = renderWithWrappers(<App />, {
             route: "/objects/view/3901"
         });
 
@@ -249,46 +246,45 @@ describe("Subobject object data", () => {
         expect(subobjectCards.length).toEqual(4);
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[0] }).placeholders.loading).toBeFalsy());
         const cardElements = getObjectsViewCardElements({ card: subobjectCards[0] });
-        expect(store.getState().objects[cardElements.objectID].object_type).toEqual("link");
+        expect(storeManager.store.getState().objects[cardElements.objectID].object_type).toEqual("link");
 
-        const linkURL = store.getState().links[cardElements.objectID].link;
+        const linkURL = storeManager.store.getState().links[cardElements.objectID].link;
         let { link, renderedMarkdown } = cardElements.data.link;
 
         // show_description_as_link_composite = yes & !show_description_as_link
-        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_as_link_composite: "yes" });
-
-        updateStoredLinkData(store, cardElements.objectID, { show_description_as_link: false });
+        storeManager.objects.updateCompositeSubobjectData(3901, cardElements.objectID, { show_description_as_link_composite: "yes" });
+        storeManager.objects.updateData(cardElements.objectID, "link", { show_description_as_link: false });
 
         expect(link.getAttribute("href")).toEqual(linkURL);
         await waitFor(() => {
             const renderedMarkdown = getObjectsViewCardElements({ card: subobjectCards[0] }).data.link.renderedMarkdown;
             const paragraph = renderedMarkdown.querySelector("p");
             expect(paragraph).toBeTruthy();
-            expect(paragraph.textContent).toEqual(store.getState().objects[cardElements.objectID].object_description); 
+            expect(paragraph.textContent).toEqual(storeManager.store.getState().objects[cardElements.objectID].object_description); 
         });
 
         // show_description_as_link_composite = inherit & !show_description_as_link
-        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_as_link_composite: "inherit" });
+        storeManager.objects.updateCompositeSubobjectData(3901, cardElements.objectID, { show_description_as_link_composite: "inherit" });
         await waitFor(() => { expect(renderedMarkdown.textContent).toEqual(linkURL); });
 
         // show_description_as_link_composite = inherit & show_description_as_link
-        updateStoredLinkData(store, cardElements.objectID, { show_description_as_link: true });
+        storeManager.objects.updateData(cardElements.objectID, "link", { show_description_as_link: true });
 
         await waitFor(() => {
             const renderedMarkdown = getObjectsViewCardElements({ card: subobjectCards[0] }).data.link.renderedMarkdown;
             const paragraph = renderedMarkdown.querySelector("p");
             expect(paragraph).toBeTruthy();
-            expect(paragraph.textContent).toEqual(store.getState().objects[cardElements.objectID].object_description); 
+            expect(paragraph.textContent).toEqual(storeManager.store.getState().objects[cardElements.objectID].object_description); 
         });
 
         // show_description_as_link_composite = no & show_description_as_link
-        updateStoredCompositeSubobjectData(store, 3901, cardElements.objectID, { show_description_as_link_composite: "no" });
+        storeManager.objects.updateCompositeSubobjectData(3901, cardElements.objectID, { show_description_as_link_composite: "no" });
         await waitFor(() => { expect(renderedMarkdown.textContent).toEqual(linkURL); });
     });
 
 
     test("Markdown", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
+        let { container, storeManager } = renderWithWrappers(<App />, {
             route: "/objects/view/3901"
         });
 
@@ -298,10 +294,10 @@ describe("Subobject object data", () => {
         expect(subobjectCards.length).toEqual(4);
         await waitFor(() => expect(getObjectsViewCardElements({ card: subobjectCards[1] }).placeholders.loading).toBeFalsy());
         const cardElements = getObjectsViewCardElements({ card: subobjectCards[1] });
-        expect(store.getState().objects[cardElements.objectID].object_type).toEqual("markdown");
+        expect(storeManager.store.getState().objects[cardElements.objectID].object_type).toEqual("markdown");
 
         // Change markdown raw_text
-        updateStoredMarkdownData(store, cardElements.objectID, { raw_text: "# Some text" });
+        storeManager.objects.updateData(cardElements.objectID, "markdown", { raw_text: "# Some text" });
 
         // Check if updated markdown is rendered
         await waitFor(() => {

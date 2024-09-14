@@ -1,8 +1,7 @@
 import React from "react";
-import { waitFor, fireEvent, screen } from "@testing-library/react";
+import { waitFor, fireEvent } from "@testing-library/react";
 
 import { renderWithWrappers } from "../_util/render";
-import { updateStoredObjectAttributes } from "../_util/store-updates-objects";
 import { getTagsViewElements, checkDisplayedTagsViewFeedCardIDs } from "../_util/ui-tags-view";
 import { getFeedCardElements } from "../_util/ui-index";
 import { compareArrays, compareDates } from "../_util/data-checks";
@@ -85,7 +84,7 @@ describe("Single page", () => {
         const { expectedObjectIDs } = addCustomResponsesForSinglePageTagsView();
         
         // Render page & wait for load end
-        let { container, store } = renderWithWrappers(<App />, {
+        let { container, storeManager } = renderWithWrappers(<App />, {
             route: "/tags/view?tagIDs=1"
         });
 
@@ -94,15 +93,15 @@ describe("Single page", () => {
         // Check if displayed timestamp equals to feed timestamp
         const feedCard = getTagsViewElements(container).feed.feedCards.feedCards[0];
         let feedCardElements = getFeedCardElements(feedCard);
-        const objectID = expectedObjectIDs[0];
+        const object_id = expectedObjectIDs[0];
 
-        let ed = new Date(store.getState().objects[objectID].feed_timestamp), dd = new Date(feedCardElements.timestamp.textContent);
+        let ed = new Date(storeManager.store.getState().objects[object_id].feed_timestamp), dd = new Date(feedCardElements.timestamp.textContent);
         compareDates(ed, dd);
 
         // Check if modified at is used as a fallback for missing feed timestamp
-        updateStoredObjectAttributes(store, objectID, { feed_timestamp: "" });
+        storeManager.objects.updateAttributes({ object_id, feed_timestamp: "" });
         feedCardElements = getFeedCardElements(feedCard);
-        ed = new Date(store.getState().objects[objectID].modified_at), dd = new Date(feedCardElements.timestamp.textContent);
+        ed = new Date(storeManager.store.getState().objects[object_id].modified_at), dd = new Date(feedCardElements.timestamp.textContent);
         compareDates(ed, dd);
     });
 

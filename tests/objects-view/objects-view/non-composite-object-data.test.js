@@ -5,7 +5,6 @@ import { getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { createTestStore } from "../../_util/create-test-store";
 import { renderWithWrappers } from "../../_util/render";
-import { updateStoredLinkData, updateStoredMarkdownData } from "../../_util/store-updates-objects";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
 
 import { App } from "../../../src/components/top-level/app";
@@ -28,7 +27,7 @@ beforeEach(() => {
 
 
 test("Link", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
+    let { container, storeManager } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
@@ -36,9 +35,9 @@ test("Link", async () => {
     await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
 
     // !show_description_as_link
-    expect(store.getState().links[1].show_description_as_link).toBeFalsy();
+    expect(storeManager.store.getState().links[1].show_description_as_link).toBeFalsy();
     
-    const linkURL = store.getState().links[1].link;
+    const linkURL = storeManager.store.getState().links[1].link;
     await waitFor(() => {
         let { link, renderedMarkdown } = getObjectsViewCardElements({ container }).data.link;
         expect(link.getAttribute("href")).toEqual(linkURL);
@@ -46,20 +45,20 @@ test("Link", async () => {
     });
 
     // !show_description && show_description_as_link
-    updateStoredLinkData(store, 1, { show_description_as_link: true });
+    storeManager.objects.updateData(1, "link", { show_description_as_link: true });
 
     await waitFor(() => {
         let { link, renderedMarkdown } = getObjectsViewCardElements({ container }).data.link;
         expect(link.getAttribute("href")).toEqual(linkURL);
         const paragraph = renderedMarkdown.querySelector("p");
         expect(paragraph).toBeTruthy();
-        expect(paragraph.textContent).toEqual(store.getState().objects[1].object_description); 
+        expect(paragraph.textContent).toEqual(storeManager.store.getState().objects[1].object_description); 
     });
 });
 
 
 test("Markdown", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
+    let { container, storeManager } = renderWithWrappers(<App />, {
         route: "/objects/view/1001"
     });
 
@@ -67,7 +66,7 @@ test("Markdown", async () => {
     await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
 
     // Change markdown raw_text
-    updateStoredMarkdownData(store, 1001, { raw_text: "# Some text" });
+    storeManager.objects.updateData(1001, "markdown", { raw_text: "# Some text" });
 
     // Check if updated markdown is rendered
     await waitFor(() => {
