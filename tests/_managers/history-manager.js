@@ -58,6 +58,13 @@ export class HistoryManager {
     }
 
     /**
+     * Returns current URL path
+     */
+    getCurrentURL() {
+        return this.history.location.pathname;
+    }
+
+    /**
      * Returns the value of the provided URL search `param` from the current URL of the history
      */
     getCurrentURLSeachParam(param) {
