@@ -10,6 +10,7 @@ import { DndProvider } from "react-dnd";
 import { HistoryManager } from "../_managers/history-manager";
 import { createTestStore } from "./create-test-store";
 import { StoreManager } from "../_managers/store-manager/store-manager";
+import { ModelContext } from "../_page-object-models/_util/model-context";
 
 
 export const renderWithWrappers = (ui, params) => {
@@ -29,11 +30,16 @@ export const renderWithWrappers = (ui, params) => {
         );
     };
 
+    if (!document.app) document.app = {};
+    document.app.store = storeManager.store;
+
     const historyManager = new HistoryManager(history);
+    const modelContext = new ModelContext({ storeManager, historyManager });
 
     return { 
         ...render(ui, { wrapper }),
         historyManager,
-        store: storeManager.store, storeManager
+        store: storeManager.store, storeManager,
+        modelContext
     };
 };
