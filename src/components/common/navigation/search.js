@@ -20,7 +20,7 @@ export const NavbarSearch = memo(({ isStacked }) => {
             params.append("q", query);
             history.push(`/search?${params.toString()}`);
 
-            if (isMounted) setQuery("");
+            if (isMounted()) setQuery("");
         }
     };
 
