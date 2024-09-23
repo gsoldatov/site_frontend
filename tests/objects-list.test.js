@@ -6,6 +6,7 @@ import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlace
 import { waitForFetch, checkObjectsDisplay, selectObjectTypeInFilter, deselectObjectTypeInFilter, searchTagInFilter, checkIfTagIsAddedToFilter } from "./_util/ui-objects-list";
 import { getSideMenuDialogControls, getSideMenuItem } from "./_util/ui-common";
 import { getInlineItem } from "./_util/ui-inline";
+import { resetTestConfig } from "./_mocks/config";
 import { renderWithWrappers } from "./_util/render";
 import { getCurrentObject } from "./_util/ui-objects-edit";
 import { createTestStore } from "./_util/create-test-store";
@@ -23,6 +24,9 @@ beforeEach(() => {
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("./_mocks/mock-fetch");
         const { paginationGetComputedStyle } = require("./_mocks/mock-get-computed-style");
+        
+        // Set test app configuration
+        resetTestConfig();
 
         // reset fetch mocks
         jest.resetAllMocks();

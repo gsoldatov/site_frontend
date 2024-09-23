@@ -6,6 +6,7 @@ import { getByText, getByTitle, waitFor, queryByText, queryAllByText, getByPlace
 
 import { getMockedPageTagIDs } from "./_mocks/mock-fetch-handlers-tags";
 import { getSideMenuItem, getSideMenuDialogControls } from "./_util/ui-common";
+import { resetTestConfig } from "./_mocks/config";
 import { renderWithWrappers } from "./_util/render";
 import { createTestStore } from "./_util/create-test-store";
 import { getFeedElements } from "./_util/ui-index";
@@ -22,6 +23,9 @@ beforeEach(() => {
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("./_mocks/mock-fetch");
         const { paginationGetComputedStyle } = require("./_mocks/mock-get-computed-style");
+        
+        // Set test app configuration
+        resetTestConfig();
 
         // reset fetch mocks
         jest.resetAllMocks();

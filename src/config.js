@@ -5,6 +5,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useMountedState } from "./util/use-mounted-state";
 
 
+/**
+ * App configuration management & access functions.
+ */
+
+
+/**
+ * Returns current app config.
+ */
 export const getConfig = () => {
     return document.app.config;
 };
@@ -29,7 +37,7 @@ export const updateConfig = newProps => {
 
 
 /**
- * Resets config to default state from `config.json`.
+ * Resets app config to default state from `config.json`.
  */
 export const resetConfig = () => {
     document.app.config = deepCopy(originalConfig.app);
@@ -38,7 +46,7 @@ export const resetConfig = () => {
 
 
 /**
- * Adds a callback function to be called on config change via change functions.
+ * Adds a callback function to be called on app config change via change functions.
  */
 export const addCallback = callback => {
     configStateChangeCallbacks.add(callback);

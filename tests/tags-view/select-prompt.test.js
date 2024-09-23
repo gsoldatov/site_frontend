@@ -1,5 +1,6 @@
 import React from "react";
 
+import { resetTestConfig } from "../_mocks/config";
 import { renderWithWrappers } from "../_util/render";
 import { getTagsViewElements } from "../_util/ui-tags-view";
 
@@ -14,6 +15,10 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
+        
+        // Set test app configuration
+        resetTestConfig();
+        
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

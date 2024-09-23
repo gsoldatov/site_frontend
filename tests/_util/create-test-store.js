@@ -1,12 +1,5 @@
 import createStore from "../../src/store/create-store";
-import { getConfig, setConfig } from "../../src/config";
-import { getTestConfig } from "../_mocks/config.js";
-
-import { getMockLoginResponse } from "../_mocks/data-auth";
-import { getMockUserData } from "../_mocks/data-users";
-
-import { setAuthInformation } from "../../src/actions/auth";
-import { addUsers } from "../../src/actions/data-users";
+import { updateConfig } from "../../src/config";
 import { StoreManager } from "../_managers/store-manager/store-manager.js";
 
 
@@ -19,10 +12,13 @@ import { StoreManager } from "../_managers/store-manager/store-manager.js";
  * 
  * Custom store configuration can be provided via `configProps` argument.
  */
-export const createTestStore = (data = {}, configProps = {}) => {
+export const createTestStore = (data = {}, configProps) => {
     const { addAdminToken = true, addAdminUser = false } = data;
     
-    getTestConfig({ app: { ...configProps }});  // set test app configuration with provided custom values
+    // Update app configuration
+    if (configProps) updateConfig(configProps);
+    
+    // Create store & populate it with data
     const store = createStore();
     const storeManager = new StoreManager(store);
 

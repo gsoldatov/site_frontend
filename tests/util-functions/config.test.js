@@ -1,8 +1,8 @@
 import { deepCopy } from "../../src/util/copy";
 import { hasEqualAttributes } from "../../src/util/equality-checks";
 
-import appConfig from "../../src/config.json";
-import { getTestConfig } from "../_mocks/config";
+import mainConfig from "../../src/config.json";
+import { getFullTestConfig } from "../_mocks/config";
 
 
 const fs = require("fs");
@@ -14,19 +14,19 @@ const sampleConfig = JSON.parse(sampleConfigText);
 
 
 test("All configs have equal attributes", () => {
-    expect(hasEqualAttributes(appConfig, sampleConfig)).toBeTruthy();
-    expect(hasEqualAttributes(appConfig, getTestConfig())).toBeTruthy();
+    expect(hasEqualAttributes(mainConfig, sampleConfig)).toBeTruthy();
+    expect(hasEqualAttributes(mainConfig, getFullTestConfig())).toBeTruthy();
 });
 
 
 test("Test config with custom props has correct attributes", () => {
-    const testConfig = getTestConfig({ app: { compositeChapters: { maxHierarchyDepth: 10 }}});
-    expect(hasEqualAttributes(appConfig, testConfig)).toBeTruthy();
+    const testConfig = getFullTestConfig({ app: { compositeChapters: { maxHierarchyDepth: 10 }}});
+    expect(hasEqualAttributes(mainConfig, testConfig)).toBeTruthy();
 });
 
 
 test("Modified configs don't have equal attributes", () => {
-    const appConfigCopy = deepCopy(appConfig);
-    appConfigCopy.__nonExistingAttribute = 1;
-    expect(hasEqualAttributes(appConfig, appConfigCopy)).toBeFalsy();
+    const mainConfigCopy = deepCopy(mainConfig);
+    mainConfigCopy.__nonExistingAttribute = 1;
+    expect(hasEqualAttributes(mainConfig, mainConfigCopy)).toBeFalsy();
 });

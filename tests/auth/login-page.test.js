@@ -1,6 +1,7 @@
 import React from "react";
 import { fireEvent, waitFor } from "@testing-library/dom";
 
+import { resetTestConfig } from "../_mocks/config";
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
 import { getLoginFormElements, waitForFormErrorMessage, enterValidFormData, checkValidInputErrorDisplay } from "../_util/ui-auth";
@@ -20,6 +21,10 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../_mocks/mock-fetch");
+        
+        // Set test app configuration
+        resetTestConfig();
+
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

@@ -3,6 +3,7 @@ import React from "react";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle } from "@testing-library/dom";
 
+import { resetTestConfig } from "../_mocks/config";
 import { compareArrays } from "../_util/data-checks";
 import { checkRenderedItemsOrder } from "../_util/to-do-lists";
 import { renderWithWrappers } from "../_util/render";
@@ -29,6 +30,10 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
+        
+        // Set test app configuration
+        resetTestConfig();
+
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

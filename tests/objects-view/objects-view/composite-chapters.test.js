@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { waitFor, fireEvent } from "@testing-library/dom";
 
+import { resetTestConfig } from "../../_mocks/config";
 import { renderWithWrappers } from "../../_util/render";
 import { getObjectsViewCardElements, loadObjectsViewPageAndSelectChapter, waitForCompositeChapterDescription, waitForCompositeChapterDescriptionAsLink } from "../../_util/ui-objects-view";
 import { compareArrays } from "../../_util/data-checks";
@@ -19,6 +20,10 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../../_mocks/mock-fetch");
+        
+        // Set test app configuration
+        resetTestConfig();
+        
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

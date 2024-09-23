@@ -3,6 +3,7 @@ import React from "react";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByPlaceholderText, queryByTitle, queryByText } from "@testing-library/dom";
 
+import { resetTestConfig } from "../_mocks/config";
 import { compareItemData, getDefaultSortOrder, getRenderedItemIndent, checkRenderedItemsOrder } from "../_util/to-do-lists";
 import { renderWithWrappers } from "../_util/render";
 import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../_util/ui-objects-edit";
@@ -19,6 +20,10 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
+        
+        // Set test app configuration
+        resetTestConfig();
+        
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

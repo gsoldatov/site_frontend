@@ -1,6 +1,7 @@
 import React from "react";
 
 import { MockBackend } from "./_mock-backend/mock-backend";
+import { resetTestConfig } from "./_mocks/config";
 import { renderWithWrappers } from "./_util/render";
 import { App } from "../src/components/top-level/app";
 
@@ -15,6 +16,9 @@ import { markdownObjectWithImages } from "./_scenarios/modal";
     Modal window display tests for rendered markdown images.
 */
 beforeEach(() => {
+    // Set test app configuration
+    resetTestConfig();
+    
     global.backend = new MockBackend();
     global.fetch = global.backend.fetch;
 

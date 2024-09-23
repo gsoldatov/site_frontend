@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, waitFor } from "@testing-library/dom";
 
+import { resetTestConfig } from "../_mocks/config";
 import { getTagsViewElements } from "../_util/ui-tags-view";
 import { renderWithWrappers } from "../_util/render";
 import { createTestStore } from "../_util/create-test-store";
@@ -22,6 +23,10 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
+        
+        // Set test app configuration
+        resetTestConfig();
+        
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

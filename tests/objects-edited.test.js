@@ -3,6 +3,7 @@ import React from "react";
 import { getByTitle, queryByTitle } from "@testing-library/dom";
 
 import { getStoreWithEditedObjects } from "./_mocks/data-edited-objects";
+import { resetTestConfig } from "./_mocks/config";
 import { renderWithWrappers } from "./_util/render";
 import { getEditedObjectsHeaderCells, getEditedObjectItemRow, clickDeleteControl, 
     clickConfirmButton, clickCheckbox } from "./_util/ui-objects-edited";
@@ -17,6 +18,10 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("./_mocks/mock-fetch");
+        
+        // Set test app configuration
+        resetTestConfig();
+        
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);

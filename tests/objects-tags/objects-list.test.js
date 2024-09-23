@@ -3,6 +3,7 @@ import React from "react";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByTitle, waitFor, queryByText, queryAllByText } from "@testing-library/dom";
 
+import { resetTestConfig } from "../_mocks/config";
 import { getStoreWithTwoSelectedObjects } from "../_mocks/data-objects-tags";
 import { getSideMenuDialogControls, getSideMenuItem } from "../_util/ui-common";
 import { getInlineInputField, getDropdownOptionsContainer } from "../_util/ui-objects-tags";
@@ -23,6 +24,10 @@ beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
         const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
+        
+        // Set test app configuration
+        resetTestConfig();
+        
         // reset fetch mocks
         jest.resetAllMocks();
         global.fetch = jest.fn(mockFetch);
