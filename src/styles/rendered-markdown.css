@@ -79,6 +79,7 @@
 .rendered-markdown details > summary {
     background-color: var(--rendered-markdown-blockquote-background-color);
     font-weight: bold;
+    cursor: pointer;
 }
 
 .rendered-markdown details[open] > summary {
