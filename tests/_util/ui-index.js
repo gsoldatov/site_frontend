@@ -41,7 +41,7 @@ export const getFeedElements = container => {
         }
 
         /* Pagination */
-        result.pagination.container = feedContainer.querySelector(".feed-pagination-container");
+        result.pagination.container = feedContainer.querySelector(".pagination-container");
         if (result.pagination.container) {
             const buttons = result.pagination.container.querySelectorAll("a.item");
             for (let b of buttons) {

@@ -1,14 +1,14 @@
 /*******************************
-    Field pagination styles. 
+    Pagination styles. 
 *******************************/
 
-.field-pagination-container {
+.pagination-container {
     display: flex;
     flex-flow: row wrap; 
     justify-content: center;
     align-items: center;
 }
 
-.field-pagination-container > .field-pagination {
+.pagination-container > .pagination {
     flex-wrap: wrap;
 }

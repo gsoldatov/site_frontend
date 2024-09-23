@@ -59,7 +59,7 @@ describe("Page load and pagination", () => {
         // expect(deleteButton.onclick).toBeNull();
     
         // Check if pagination is not rendered
-        expect(container.querySelector(".field-pagination")).toBeNull();
+        expect(container.querySelector(".pagination")).toBeNull();
     });
     
     
@@ -76,7 +76,7 @@ describe("Page load and pagination", () => {
         await waitFor(() => getByText(container, "object #1"));
     
         // Check if pagination is not rendered
-        expect(container.querySelector(".field-pagination")).toBeNull();
+        expect(container.querySelector(".pagination")).toBeNull();
     });
     
     
@@ -92,7 +92,7 @@ describe("Page load and pagination", () => {
         // Check if no pagination is rendered during fetch
         await waitFor(() => expect(
             store.getState().objectsUI.fetch.isFetching === true
-            && container.querySelector(".field-pagination") === null
+            && container.querySelector(".pagination") === null
         ).toBeTruthy());
     
         // Check if objects 1 to 20 are displayed on the page after fetch is complete
@@ -101,7 +101,7 @@ describe("Page load and pagination", () => {
         expect(queryByText(container, "object #21")).toBeNull();
     
         // Check if pagination is correctly rendered
-        let paginationDiv = container.querySelector(".field-pagination");
+        let paginationDiv = container.querySelector(".pagination");
         expect(paginationDiv).toBeTruthy();
         for (let btn of ["⟨", "1", "2", "3", "4", "5", "⟩"]) {
             getByText(paginationDiv, btn);
@@ -132,7 +132,7 @@ describe("Page load and pagination", () => {
         await waitFor(() => getByText(container, "object #1"));
     
         // Check if pagination is correctly rendered (p 1 2 3 4 5 6 7 . 10 n)
-        let paginationDiv = container.querySelector(".field-pagination");
+        let paginationDiv = container.querySelector(".pagination");
         expect(paginationDiv).toBeTruthy();
         for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
             getByText(paginationDiv, btn);
@@ -146,7 +146,7 @@ describe("Page load and pagination", () => {
         fireEvent.click(pageThreeButton);
         await waitFor(() => getByText(container, "object #21"));
     
-        paginationDiv = container.querySelector(".field-pagination");
+        paginationDiv = container.querySelector(".pagination");
         expect(paginationDiv).toBeTruthy();
         for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
             getByText(paginationDiv, btn);
@@ -160,7 +160,7 @@ describe("Page load and pagination", () => {
         fireEvent.click(pageFiveButton);
         await waitFor(() => getByText(container, "object #41"));
     
-        paginationDiv = container.querySelector(".field-pagination");
+        paginationDiv = container.querySelector(".pagination");
         expect(paginationDiv).toBeTruthy();
         for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
             getByText(paginationDiv, btn);
@@ -174,7 +174,7 @@ describe("Page load and pagination", () => {
         fireEvent.click(nextPageButton);
         await waitFor(() => getByText(container, "object #51"));
     
-        paginationDiv = container.querySelector(".field-pagination");
+        paginationDiv = container.querySelector(".pagination");
         expect(paginationDiv).toBeTruthy();
         for (let btn of ["⟨", "1", "...", "4", "5", "6", "7", "8", "9", "10", "⟩"]) {
             getByText(paginationDiv, btn);
@@ -188,7 +188,7 @@ describe("Page load and pagination", () => {
         fireEvent.click(previousPageButton);
         await waitFor(() => getByText(container, "object #41"));
     
-        paginationDiv = container.querySelector(".field-pagination");
+        paginationDiv = container.querySelector(".pagination");
         expect(paginationDiv).toBeTruthy();
         for (let btn of ["⟨", "1", "2", "3", "4", "5", "6", "7", "...", "10", "⟩"]) {
             getByText(paginationDiv, btn);
@@ -202,7 +202,7 @@ describe("Page load and pagination", () => {
         fireEvent.click(pageTenButton);
         await waitFor(() => getByText(container, "object #91"));
     
-        paginationDiv = container.querySelector(".field-pagination");
+        paginationDiv = container.querySelector(".pagination");
         expect(paginationDiv).toBeTruthy();
         for (let btn of ["⟨", "1", "...", "4", "5", "6", "7", "8", "9", "10", "⟩"]) {
             getByText(paginationDiv, btn);

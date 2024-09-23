@@ -74,9 +74,6 @@ i.icon.feed-card-header-icon {
 
 
 /** Feed pagination **/
-.feed-pagination-container {
+.feed-container > .pagination-container {
     margin-top: 2rem;
-    width: 100%;
-    display: flex;
-    justify-content: center;
 }

@@ -4,7 +4,7 @@ import { Pagination } from "semantic-ui-react";
 
 import { OnResizeWrapper } from "../common/on-resize-wrapper";
 
-import StyleFieldPagination from "../../styles/modules/field/pagination.css";
+import StyleFieldPagination from "../../styles/modules/pagination.css";
 
 
 /**
@@ -41,8 +41,8 @@ export const FeedPagination = ({ currentPage, totalPages, getURL }) => {
     // Render pagination
     return currentPage && totalPages > 1 && (
         <OnResizeWrapper callback={onResizeCallback}>
-            <div className="feed-pagination-container">
-                <Pagination className="feed-pagination" activePage={currentPage} totalPages={totalPages} siblingRange={siblingRange} firstItem={null} lastItem={null} onPageChange={onChange}/>
+            <div className="pagination-container">
+                <Pagination activePage={currentPage} totalPages={totalPages} siblingRange={siblingRange} firstItem={null} lastItem={null} onPageChange={onChange}/>
             </div>
         </OnResizeWrapper>
     );
