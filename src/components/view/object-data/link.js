@@ -6,7 +6,7 @@ import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 import { getDefaultShowDescriptionAsLinkSelector } from "../../../store/state-util/ui-objects-view";
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
-import StyleObjectsViewLink from "../../../styles/objects-view/link.css";
+import StyleObjectsViewLink from "../../../styles/pages/objects-view/link.css";
 
 
 /**

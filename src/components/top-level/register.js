@@ -7,7 +7,7 @@ import Layout from "../common/layout";
 import { registerFetch, registrationStatusFetch } from "../../fetches/auth";
 import { setRedirectOnRender } from "../../actions/common";
 
-import StyleAuth from "../../styles/auth.css";
+import StyleAuth from "../../styles/pages/auth.css";
 
 
 const getDefaultErrors = () => ({ login: "", password: "", passwordRepeat: "", username: "", form: "" });

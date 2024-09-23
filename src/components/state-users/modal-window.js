@@ -6,7 +6,7 @@ import { Image, Modal, ModalContent } from "semantic-ui-react";
 import { setModalImage } from "../../actions/modal";
 import { getDefaultModalState } from "../../store/state-templates/modal";
 
-import StyleModal from "../../styles/modal.css";
+import StyleModalWindow from "../../styles/modules/modal-window.css";
 
 
 /**

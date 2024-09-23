@@ -9,7 +9,7 @@ import { getNonCachedUsers, updateUsersFetch } from "../../fetches/data-users";
 import { enumUserLevels, userLevelInfo } from "../../util/enum-user-levels";
 import { enumLayoutTypes } from "../../util/enum-layout-types";
 
-import StyleUser from "../../styles/user.css";
+import StyleUsers from "../../styles/pages/users.css";
 
 
 /**

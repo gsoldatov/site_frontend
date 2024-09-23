@@ -5,7 +5,7 @@ import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 
-import StyleObjectsViewMarkdown from "../../../styles/objects-view/markdown.css";
+import StyleObjectsViewMarkdown from "../../../styles/pages/objects-view/markdown.css";
 
 
 /**

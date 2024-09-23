@@ -8,7 +8,7 @@ import { ModalWindow } from "../state-users/modal-window";
 
 import { enumLayoutTypes } from "../../util/enum-layout-types";
 
-import StyleLayout from "./../../styles/layout.css";
+import StyleLayout from "./../../styles/modules/layout.css";
 
 
 /**

@@ -10,7 +10,7 @@ import { TagInformation } from "./tag-information";
 import { enumLayoutTypes } from "../../../util/enum-layout-types";
 import { TagPageObjectsFeed } from "./tag-page-objects-feed";
 
-import StyleTagsView from "../../../styles/tags-view.css";
+import StyleTagsView from "../../../styles/pages/tags-view.css";
 
 
 /**

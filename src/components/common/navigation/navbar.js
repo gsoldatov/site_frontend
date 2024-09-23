@@ -10,7 +10,7 @@ import { NavbarSearch } from "./search";
 
 import { enumUserLevels } from "../../../util/enum-user-levels";
 
-import StyleNavigation from "../../../styles/navigation.css";
+import StyleNavigation from "../../../styles/modules/navigation.css";
 
 
 /**

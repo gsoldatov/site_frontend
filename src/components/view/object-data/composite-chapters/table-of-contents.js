@@ -7,7 +7,7 @@ import { HierarchyNavigation } from "./hierarchy-navigation";
 
 import { getSubobjectShowDescriptionSelector } from "../../../../store/state-util/ui-objects-view";
 
-import StyleCompositeChapters from "../../../../styles/objects-view/composite-chapters.css";
+import StyleCompositeChapters from "../../../../styles/pages/objects-view/composite-chapters.css";
 
 
 /**

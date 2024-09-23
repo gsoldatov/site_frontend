@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Checkbox } from "semantic-ui-react";
 
-import StyleDisplayControls from "../../../styles/display-controls.css";
+import StyleDisplayControls from "../../../styles/modules/edit/display-controls.css";
 
 
 /**

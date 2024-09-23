@@ -8,8 +8,8 @@ import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 import { useMarkdownParseWorker } from "../../../util/use-markdown-parse-worker";
 import { useMountedState } from "../../../util/use-mounted-state";
 
-import StyleMarkdownEditor from "../../../styles/markdown-editor.css";
-import StyleRenderedMarkdown from "../../../styles/rendered-markdown.css";
+import StyleMarkdownEditor from "../../../styles/modules/markdown/editor.css";
+import StyleRenderedMarkdown from "../../../styles/modules/markdown/rendered.css";
 import StyleHighlight from "highlight.js/styles/vs2015.css";
 
 

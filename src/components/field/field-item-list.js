@@ -6,7 +6,7 @@ import { Header, Icon } from "semantic-ui-react";
 import debounce from "../../util/debounce";
 import { enumDebounceDelayRefreshMode } from "../../util/enum-debounce-delay-refresh-mode";
 
-import StyleFieldItemList from "../../styles/field-item-list.css";
+import StyleFieldItemList from "../../styles/modules/field/item-list.css";
 
 
 /**

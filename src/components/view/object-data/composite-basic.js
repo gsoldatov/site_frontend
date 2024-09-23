@@ -5,7 +5,7 @@ import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/
 
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
-import StyleCompositeBasic from "../../../styles/objects-view/composite-basic.css";
+import StyleCompositeBasic from "../../../styles/pages/objects-view/composite-basic.css";
 
 
 /**

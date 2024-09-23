@@ -9,7 +9,7 @@ import { getSortedItemIDs, getVisibleItemIDs } from "../../../store/state-util/t
 
 import * as caret from "../../../util/caret";   // wrapped into an object to make functions mockable in tests
 
-import StyleTDL from "../../../styles/to-do-lists.css";
+import StyleTDL from "../../../styles/modules/edit/to-do-lists.css";
 
 
 

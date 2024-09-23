@@ -13,7 +13,7 @@ import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state"
 
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
-import StyleCompositeGroupedLinks from "../../../styles/objects-view/composite-grouped-links.css";
+import StyleCompositeGroupedLinks from "../../../styles/pages/objects-view/composite-grouped-links.css";
 
 
 /**

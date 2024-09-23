@@ -7,7 +7,7 @@ import { SearchInput } from "./search-input";
 
 import { enumLayoutTypes } from "../../../util/enum-layout-types";
 
-import StyleSearch from "../../../styles/search.css";
+import StyleSearch from "../../../styles/pages/search.css";
 
 
 /**

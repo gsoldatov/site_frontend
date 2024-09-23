@@ -11,7 +11,7 @@ import { ObjectData, SubobjectDataSwitch } from "./object-data/object-data";
 import { getSubobjectShowDescriptionAsLinkSelector, getSubobjectShowDescriptionSelector } from "../../store/state-util/ui-objects-view";
 import { useMountedState } from "../../util/use-mounted-state";
 
-import StyleObjectsViewCommon from "../../styles/objects-view/common.css";
+import StyleObjectsViewCommon from "../../styles/pages/objects-view/common.css";
 
 
 /**

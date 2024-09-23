@@ -9,7 +9,7 @@ import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../actions/
 import { getSubobjectDisplayOrder, isCompositeDragAndDropEnabledSelector } from "../../../store/state-util/composite";
 import { enumDeleteModes } from "../../../store/state-templates/composite-subobjects";
 
-import StyleSubobjects from "../../../styles/subobjects.css";
+import StyleCompositeSubobjects from "../../../styles/modules/edit/composite-subobjects.css";
 
 
 /**

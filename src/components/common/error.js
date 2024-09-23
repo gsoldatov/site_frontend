@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Message } from "semantic-ui-react";
 
-import StyleError from "../../styles/error.css";
+import StyleError from "../../styles/modules/error.css";
 
 
 /**

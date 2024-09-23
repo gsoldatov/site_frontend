@@ -4,7 +4,7 @@ import { Pagination } from "semantic-ui-react";
 
 import { OnResizeWrapper } from "../common/on-resize-wrapper";
 
-import StyleFieldPagination from "../../styles/field-pagination.css";
+import StyleFieldPagination from "../../styles/modules/field/pagination.css";
 
 
 /**

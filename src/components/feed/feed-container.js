@@ -3,7 +3,7 @@ import { Loader, Message } from "semantic-ui-react";
 
 import { useMountedState } from "../../util/use-mounted-state";
 
-import StyleFeed from "../../styles/feed.css";
+import StyleFeed from "../../styles/modules/feed.css";
 
 
 /**

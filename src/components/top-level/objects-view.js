@@ -9,7 +9,7 @@ import { ObjectsViewCard } from "../view/objects-view-card";
 
 import { enumLayoutTypes } from "../../util/enum-layout-types";
 
-import StyleRootObjectsViewCard from "../../styles/objects-view/root-card.css";
+import StyleRootObjectsViewCard from "../../styles/pages/objects-view/root-card.css";
 
 /**
     /objects/view/:id page component.

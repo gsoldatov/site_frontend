@@ -9,7 +9,7 @@ import { loginFetch } from "../../fetches/auth";
 import { setRedirectOnRender } from "../../actions/common";
 import { setAuthInformation } from "../../actions/auth";
 
-import StyleAuth from "../../styles/auth.css";
+import StyleAuth from "../../styles/pages/auth.css";
 
 
 const getDefaultErrors = () => ({ login: "", password: "", form: "" });

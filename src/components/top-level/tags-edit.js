@@ -11,7 +11,7 @@ import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../store/state-ut
 import { loadNewTagPage, setCurrentTag, setShowDeleteDialogTag } from "../../actions/tags-edit";
 import { addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../../fetches/ui-tags-edit";
 
-import StyleTag from "../../styles/tags-edit.css";
+import StyleTag from "../../styles/pages/tags-edit.css";
 
 
 /*

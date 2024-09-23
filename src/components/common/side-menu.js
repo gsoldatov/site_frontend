@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
 
-import StyleSideMenu from "../../styles/side-menu.css";
+import StyleSideMenu from "../../styles/modules/side-menu.css";
 
 
 /**

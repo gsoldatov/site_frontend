@@ -7,7 +7,7 @@ import { enumDebounceDelayRefreshMode } from "../../util/enum-debounce-delay-ref
 
 import { OnResizeWrapper } from "../common/on-resize-wrapper";
 
-import StlyeFieldMenu from "../../styles/field-menu.css";
+import StlyeFieldMenu from "../../styles/modules/field/menu.css";
 
 
 const menuIsFullscreenThreshold = 768;

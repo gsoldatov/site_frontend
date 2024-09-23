@@ -6,7 +6,7 @@ import moment from "moment";
 import Error from "../../common/error";
 import { MarkdownEditor } from "./markdown-editor";
 
-import StyleEditInputs from "../../../styles/edit-inputs.css";
+import StyleEditInputs from "../../../styles/modules/edit/edit-inputs.css";
 
 /*
     Reusable components for tag/object edit pages.

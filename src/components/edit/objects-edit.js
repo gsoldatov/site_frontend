@@ -13,7 +13,7 @@ import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-obje
 import { getIsTDLDragAndDropEnabledSelector } from "../../store/state-util/to-do-lists";
 import { enumObjectTypes } from "../../util/enum-object-types";
 
-import StyleObjectsEdit from "../../styles/objects-edit.css";
+import StyleObjectsEdit from "../../styles/pages/objects-edit.css";
 
 
 /*

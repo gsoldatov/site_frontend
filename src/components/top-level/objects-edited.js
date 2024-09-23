@@ -10,7 +10,7 @@ import { loadObjectsEditedPage, toggleEditedObjectSelection, toggleAllObjectsSel
 import { enumObjectTypes } from "../../util/enum-object-types";
 import { enumLayoutTypes } from "../../util/enum-layout-types";
 
-import StyleObjectsEdited from "../../styles/objects-edited.css";
+import StyleObjectsEdited from "../../styles/pages/objects-edited.css";
 
 
 /**
