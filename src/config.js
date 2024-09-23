@@ -37,6 +37,14 @@ export const resetConfig = () => {
 };
 
 
+/**
+ * Adds a callback function to be called on config change via change functions.
+ */
+export const addCallback = callback => {
+    configStateChangeCallbacks.add(callback);
+};
+
+
 const runCallbacks = () => {
     configStateChangeCallbacks.forEach(callback => { 
         callback(document.app.config);

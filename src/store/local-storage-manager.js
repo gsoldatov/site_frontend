@@ -5,14 +5,13 @@ import { getDefaultAuthState } from "./state-templates/auth";
 import debounce from "../util/debounce";
 import { enumDebounceDelayRefreshMode } from "../util/enum-debounce-delay-refresh-mode";
 
-import { getConfig } from "../config";
+import { getConfig, addCallback } from "../config";
 
 
 /**
  * Manages state loads and saves to the browser's local storage.
  * 
- * NOTE: `localStorageSaveTimeout` modification in config during runtime does not change the behaviour of existing instance.
- * To implement this, a new debounced function should be created on change, replacing the old one in the store subscriptions.
+ * NOTE: save state timeout can be updated for an instance of this class via config changing functions, but not directly.
  */
 export class LocalStorageManager {
     constructor() {
@@ -23,7 +22,17 @@ export class LocalStorageManager {
 
         this._authStateKeys = Object.keys(getDefaultAuthState());
 
-        const { localStorageSaveTimeout } = this.getConfig();
+        // Set up debounced save state function and its update on config updates
+        this.setSaveState(this.getConfig());
+        this.setSaveState = this.setSaveState.bind(this);
+        addCallback(this.setSaveState);
+    }
+
+    /**
+     * Assigns a new debounced state saving function to `this.saveState`
+     */
+    setSaveState(config) {
+        const { localStorageSaveTimeout } = config;
         this.saveState = debounce(this.save, localStorageSaveTimeout, enumDebounceDelayRefreshMode.onCall);
     }
 
