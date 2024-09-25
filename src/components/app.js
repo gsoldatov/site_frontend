@@ -23,7 +23,7 @@ import { TagsView } from "./top-level/tags-view/tags-view";
 import TagsList from "./top-level/tags-list";
 import { NewObject, EditObject } from "./top-level/objects-edit";
 import { ObjectsView } from "./top-level/objects-view";
-import { ObjectsEdited } from "./top-level/objects-edited";
+import { ObjectsEdited } from "./pages/objects-edited";
 import ObjectsList from "./top-level/objects-list";
 import { NotFound } from "./pages/not-found";
 
