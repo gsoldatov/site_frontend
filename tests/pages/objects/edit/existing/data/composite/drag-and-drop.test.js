@@ -10,7 +10,7 @@ import { clickDataTabButton } from "../../../../../../_util/ui-objects-edit";
 import { getSubobjectCards, getSubobjectExpandToggleButton, startSubobjectCardDrag, 
     getSubobjectGridColumnContainers, getNewColumnDropzones } from "../../../../../../_util/ui-composite";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 
 
 /*

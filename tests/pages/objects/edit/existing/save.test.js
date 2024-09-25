@@ -13,7 +13,7 @@ import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButt
 
 import { getMappedSubobjectID } from "../../../../_mocks/data-composite";
 
-import { App } from "../../../../../src/components/top-level/app";
+import { App } from "../../../../../src/components/app";
 
 
 /*

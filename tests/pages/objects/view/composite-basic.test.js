@@ -11,7 +11,7 @@ import { waitForMarkdownHeaderRender } from "../../../_util/ui-markdown-editor";
 
 import { resetEditedObjects } from "../../../../src/actions/objects-edit";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 
 
 /*

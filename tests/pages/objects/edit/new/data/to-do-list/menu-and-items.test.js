@@ -8,7 +8,7 @@ import { getRenderedItemIndent } from "../../../../../../_util/to-do-lists";
 import { renderWithWrappers } from "../../../../../../_util/render";
 import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../../../../../../_util/ui-objects-edit";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 
 
 /*

@@ -6,7 +6,7 @@ import { resetTestConfig } from "../../_mocks/config";
 import { createTestStore } from "../../_util/create-test-store";
 import { renderWithWrappers } from "../../_util/render";
 
-import { App } from "../../../src/components/top-level/app";
+import { App } from "../../../src/components/app";
 
 import { getDefaultAuthState } from "../../../src/store/state-templates/auth";
 import { getAdminPageElements } from "../../_util/ui-admin";

@@ -9,7 +9,7 @@ import { renderWithWrappers } from "../../../../../../_util/render";
 import { getCurrentObject, clickDataTabButton } from "../../../../../../_util/ui-objects-edit";
 import { expectedUpDownTDLItemOrder, enterKeyDownDefaultSortTDL } from "../../../../../../_mocks/data-to-do-lists";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 
 import * as caret from "../../../../../../../src/util/caret";
 

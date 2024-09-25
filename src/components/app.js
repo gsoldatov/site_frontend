@@ -7,27 +7,27 @@ import { DndProvider } from "react-dnd";
 import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import createStore from "../../store/create-store";
+import createStore from "../store/create-store";
 
-import { LocationManagerWrapper } from "../common/location-manager-wrapper";
-import { ProtectedRoute } from "../common/protected-route";
+import { LocationManagerWrapper } from "./common/location-manager-wrapper";
+import { ProtectedRoute } from "./common/protected-route";
 
-import { IndexPage } from "./index/index";
-import { SearchPage } from "./search/search";
-import { LoginPage } from "./login";
-import { RegisterPage } from "./register";
-import { AdminPage } from "./admin";
-import { UserPage } from "./user";
-import { NewTag, EditTag } from "./tags-edit";
-import { TagsView } from "./tags-view/tags-view";
-import TagsList from "./tags-list";
-import { NewObject, EditObject } from "./objects-edit";
-import { ObjectsView } from "./objects-view";
-import { ObjectsEdited } from "./objects-edited";
-import ObjectsList from "./objects-list";
-import { NotFound } from "./not-found";
+import { IndexPage } from "./top-level/index/index";
+import { SearchPage } from "./top-level/search/search";
+import { LoginPage } from "./top-level/login";
+import { RegisterPage } from "./top-level/register";
+import { AdminPage } from "./top-level/admin";
+import { UserPage } from "./top-level/user";
+import { NewTag, EditTag } from "./top-level/tags-edit";
+import { TagsView } from "./top-level/tags-view/tags-view";
+import TagsList from "./top-level/tags-list";
+import { NewObject, EditObject } from "./top-level/objects-edit";
+import { ObjectsView } from "./top-level/objects-view";
+import { ObjectsEdited } from "./top-level/objects-edited";
+import ObjectsList from "./top-level/objects-list";
+import { NotFound } from "./top-level/not-found";
 
-import { enumUserLevels } from "../../util/enum-user-levels";
+import { enumUserLevels } from "../util/enum-user-levels";
 
 
 export const isAuthenticatedCondition = state => state.auth.numeric_user_level > enumUserLevels.anonymous;

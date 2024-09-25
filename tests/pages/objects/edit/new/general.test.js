@@ -13,7 +13,7 @@ import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRen
 import { setNewState } from "../../../../../src/actions/common";
 import { resetEditedObjects } from "../../../../../src/actions/objects-edit";
 
-import { App } from "../../../../../src/components/top-level/app";
+import { App } from "../../../../../src/components/app";
 
 /*
     /objects/edit/new page tests, general (page load & ui elements).

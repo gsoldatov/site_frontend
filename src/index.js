@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { WrappedApp }from "./components/top-level/app";
+import { WrappedApp }from "./components/app";
 
 import StyleRoot from "./styles/root.css"
 

@@ -10,7 +10,7 @@ import { clickDataTabButton, clickDisplayTabButton, getObjectDisplayControls, cl
     clickDisplayInFeedCheckbox, setObjectType, setFeedTimestampDate } from "../../../../../../_util/ui-objects-edit";
 import { addANewSubobject, clickSubobjectCardDisplayTabButton, getSubobjectCards, resetSubobject } from "../../../../../../_util/ui-composite";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 import { getMappedSubobjectID, getStoreWithCompositeObjectAndSubobjectsOfEachType } from "../../../../../../_mocks/data-composite";
 
 

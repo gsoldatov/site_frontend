@@ -6,7 +6,7 @@ import { resetTestConfig } from "../../../_mocks/config";
 import { renderWithWrappers } from "../../../_util/render";
 import { getObjectsViewCardElements } from "../../../_util/ui-objects-view";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 
 
 /*

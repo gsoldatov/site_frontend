@@ -13,7 +13,7 @@ import { clickDataTabButton, clickDisplayTabButton, getObjectDisplayControls, cl
 import { getSubobjectCards } from "../../../../_util/ui-composite";
 import { getReactDatetimeElements } from "../../../../_util/ui-react-datetime";
 
-import { App } from "../../../../../src/components/top-level/app";
+import { App } from "../../../../../src/components/app";
 import { setEditedObject } from "../../../../../src/actions/objects-edit";
 import { enumCompositeObjectDisplayModes } from "../../../../../src/util/enum-composite-object-display-modes";
 

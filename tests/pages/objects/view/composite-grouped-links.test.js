@@ -9,7 +9,7 @@ import { compositeWithGroupedLinksDisplayMode, compositeWithGroupedLinksDisplayM
 import { handleView } from "../../../_mocks/mock-fetch-handlers-objects";
 import { compareArrays } from "../../../_util/data-checks";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 
 
 /*

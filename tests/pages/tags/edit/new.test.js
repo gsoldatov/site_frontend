@@ -8,7 +8,7 @@ import { renderWithWrappers } from "../../../_util/render";
 import { getTagsEditElements } from "../../../_util/ui-tags-edit";
 import { setMarkdownRawText, waitForMarkdownHeaderRender } from "../../../_util/ui-markdown-editor";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 import { addTags } from "../../../../src/actions/data-tags";
 
 

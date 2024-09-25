@@ -12,7 +12,7 @@ import { getCurrentObject } from "../../../_util/ui-objects-edit";
 import { createTestStore } from "../../../_util/create-test-store";
 import { getStoreWithModifiedCompositeObject } from "../../../_mocks/data-composite";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 import { setObjectsPaginationInfo } from "../../../../src/actions/objects-list";
 
 

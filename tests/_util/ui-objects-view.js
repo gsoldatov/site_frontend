@@ -4,9 +4,9 @@ import { waitFor, fireEvent, queryByTitle, queryByText } from "@testing-library/
 
 import { renderWithWrappers } from "./render";
 import { getInlineItem } from "./ui-inline";
-import { getConfig, setConfig, updateConfig } from "../../src/config";
+import { updateConfig } from "../../src/config";
 
-import { App } from "../../src/components/top-level/app";
+import { App } from "../../src/components/app";
 
 
 /**

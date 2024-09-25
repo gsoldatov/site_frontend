@@ -12,7 +12,7 @@ import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElem
 import { getDropdownOptionsContainer, getInlineInputField } from "../../../../../../_util/ui-objects-tags";
 import { getInlineItem } from "../../../../../../_util/ui-inline";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 
 
 /*

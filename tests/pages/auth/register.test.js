@@ -7,7 +7,7 @@ import { renderWithWrappers } from "../../_util/render";
 import { getRegistrationFormElements, waitForEnabledRegistationForm, waitForFormErrorMessage, enterValidFormData, 
     checkValidInputErrorDisplay, waitForLoginFormSuccessMessage } from "../../_util/ui-auth";
 
-import { App } from "../../../src/components/top-level/app";
+import { App } from "../../../src/components/app";
 
 
 /*

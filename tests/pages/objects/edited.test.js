@@ -8,7 +8,7 @@ import { renderWithWrappers } from "../../_util/render";
 import { getEditedObjectsHeaderCells, getEditedObjectItemRow, clickDeleteControl, 
     clickConfirmButton, clickCheckbox } from "../../_util/ui-objects-edited";
 
-import { App } from "../../../src/components/top-level/app";
+import { App } from "../../../src/components/app";
 
 
 /*

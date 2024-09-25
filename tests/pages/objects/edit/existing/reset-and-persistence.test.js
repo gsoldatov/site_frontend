@@ -9,7 +9,7 @@ import { getSideMenuDialogControls, getSideMenuItem } from "../../../../_util/ui
 import { getCurrentObject, waitForEditObjectPageLoad, clickDataTabButton, clickGeneralTabButton, resetObject } from "../../../../_util/ui-objects-edit";
 import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElements, getSubobjectCards } from "../../../../_util/ui-composite";
 
-import { App } from "../../../../../src/components/top-level/app";
+import { App } from "../../../../../src/components/app";
 
 
 /*

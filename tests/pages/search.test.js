@@ -9,7 +9,7 @@ import { getFeedCardElements, getFeedElements } from "../_util/ui-index";
 import { getInlineItem } from "../_util/ui-inline";
 import { compareDates } from "../_util/data-checks";
 
-import { App } from "../../src/components/top-level/app";
+import { App } from "../../src/components/app";
 
 
 /*

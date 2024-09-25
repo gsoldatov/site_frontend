@@ -16,7 +16,7 @@ import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRen
 import { getTDLByObjectID } from "../../../../_mocks/data-to-do-lists";
 import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject } from "../../../../_mocks/data-composite";
 
-import { App } from "../../../../../src/components/top-level/app";
+import { App } from "../../../../../src/components/app";
 import { setObjectsTags } from "../../../../../src/actions/data-tags";
 import { addObjects, addObjectData } from "../../../../../src/actions/data-objects";
 import { enumDeleteModes } from "../../../../../src/store/state-templates/composite-subobjects";

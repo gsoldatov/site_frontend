@@ -13,7 +13,7 @@ import { compareDates } from "../../../_util/data-checks";
 
 import { resetEditedObjects } from "../../../../src/actions/objects-edit";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 
 
 /*

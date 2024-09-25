@@ -12,7 +12,7 @@ import { getCurrentObject, resetObject } from "../../../../_util/ui-objects-edit
 import { getInlineItem } from "../../../../_util/ui-inline";
 import { getFeedElements } from "../../../../_util/ui-index";
 
-import { App } from "../../../../../src/components/top-level/app";
+import { App } from "../../../../../src/components/app";
 import { setObjectsTags } from "../../../../../src/actions/data-tags";
 import { getNonCachedTags } from "../../../../../src/fetches/data-tags";
 import { addObjects, addObjectData } from "../../../../../src/actions/data-objects";

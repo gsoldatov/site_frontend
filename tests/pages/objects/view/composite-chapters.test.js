@@ -9,7 +9,7 @@ import { compareArrays } from "../../../_util/data-checks";
 import { getFeedElements } from "../../../_util/ui-index";
 
 import { getConfig, setConfig } from "../../../../src/config";
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 import { getInlineItem } from "../../../_util/ui-inline";
 
 

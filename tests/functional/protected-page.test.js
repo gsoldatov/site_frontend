@@ -5,7 +5,7 @@ import { resetTestConfig } from "../_mocks/config";
 import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
 
-import { App, isAnonymousCondition, isAuthenticatedCondition } from "../../src/components/top-level/app";
+import { App, isAnonymousCondition, isAuthenticatedCondition } from "../../src/components/app";
 import { ProtectedRoute } from "../../src/components/common/protected-route";
 import { setAuthInformation } from "../../src/actions/auth";
 

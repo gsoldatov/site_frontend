@@ -4,7 +4,7 @@ import { resetTestConfig } from "../../../_mocks/config";
 import { renderWithWrappers } from "../../../_util/render";
 import { getTagsViewElements } from "../../../_util/ui-tags-view";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 import { waitFor } from "@testing-library/react";
 
 

@@ -14,7 +14,7 @@ import { setMarkdownRawText, waitForMarkdownHeaderRender } from "../../../_util/
 import { getTag } from "../../../_mocks/data-tags";
 import { generateObjectAttributes } from "../../../_mocks/data-objects";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 import { addTags, setObjectsTags } from "../../../../src/actions/data-tags";
 import { addObjects } from "../../../../src/actions/data-objects";
 

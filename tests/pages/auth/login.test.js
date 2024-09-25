@@ -7,7 +7,7 @@ import { renderWithWrappers } from "../../_util/render";
 import { getLoginFormElements, waitForFormErrorMessage, enterValidFormData, checkValidInputErrorDisplay } from "../../_util/ui-auth";
 import { getMockLoginResponse } from "../../_mocks/data-auth";
 
-import { App } from "../../../src/components/top-level/app";
+import { App } from "../../../src/components/app";
 
 import { deepEqual } from "../../../src/util/equality-checks";
 import { getDefaultAuthState } from "../../../src/store/state-templates/auth";

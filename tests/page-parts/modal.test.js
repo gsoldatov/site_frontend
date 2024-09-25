@@ -3,7 +3,7 @@ import React from "react";
 import { MockBackend } from "../_mock-backend/mock-backend";
 import { resetTestConfig } from "../_mocks/config";
 import { renderWithWrappers } from "../_util/render";
-import { App } from "../../src/components/top-level/app";
+import { App } from "../../src/components/app";
 
 import { ObjectsViewModel } from "../_page-object-models/pages/objects-view";
 import { ModalWindowModel } from "../_page-object-models/state-users/modal-window";

@@ -9,7 +9,7 @@ import { compareArrays, compareDates } from "../../../_util/data-checks";
 import { getInlineItem } from "../../../_util/ui-inline";
 import { addCustomResponsesForSinglePageTagsView } from "../../../_mocks/data-objects";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 
 
 /*

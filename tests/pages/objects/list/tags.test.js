@@ -13,7 +13,7 @@ import { compareArrays } from "../../../_util/data-checks";
 import { renderWithWrappers } from "../../../_util/render";
 import { getFeedElements } from "../../../_util/ui-index";
 
-import { App } from "../../../../src/components/top-level/app";
+import { App } from "../../../../src/components/app";
 import { getNonCachedTags } from "../../../../src/fetches/data-tags";
 
 

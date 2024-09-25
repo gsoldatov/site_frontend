@@ -11,7 +11,7 @@ import { getCurrentObject, clickDataTabButton, clickGeneralTabButton, resetObjec
 import { getInlineItem } from "../../../../_util/ui-inline";
 import { getFeedElements } from "../../../../_util/ui-index";
 
-import { App } from "../../../../../src/components/top-level/app";
+import { App } from "../../../../../src/components/app";
 
 
 /*

@@ -13,7 +13,7 @@ import { getReactDatetimeElements } from "../../../../../../_util/ui-react-datet
 
 import { getStoreWithCompositeObjectAndSubobjectsOfEachType } from "../../../../../../_mocks/data-composite";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 
 
 /*

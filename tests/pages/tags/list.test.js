@@ -13,7 +13,7 @@ import { renderWithWrappers } from "../../_util/render";
 import { createTestStore } from "../../_util/create-test-store";
 import { getFeedElements } from "../../_util/ui-index";
 
-import { App } from "../../../src/components/top-level/app";
+import { App } from "../../../src/components/app";
 import { setTagsPaginationInfo } from "../../../src/actions/tags-list";
 import { addObjects } from "../../../src/actions/data-objects";
 import { setObjectsTags } from "../../../src/actions/data-tags";

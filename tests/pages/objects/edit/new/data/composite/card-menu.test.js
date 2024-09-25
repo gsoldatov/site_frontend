@@ -9,7 +9,7 @@ import { clickDataTabButton, clickGeneralTabButton, getObjectTypeSwitchElements 
 import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElements, getSubobjectCards, 
     clickSubobjectCardDataTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons } from "../../../../../../_util/ui-composite";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 import { enumDeleteModes } from "../../../../../../../src/store/state-templates/composite-subobjects";
 
 

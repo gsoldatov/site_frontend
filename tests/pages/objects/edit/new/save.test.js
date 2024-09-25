@@ -11,7 +11,7 @@ import { getCurrentObject, getObjectTypeSwitchElements, clickGeneralTabButton, c
 import { addANewSubobject, addAnExistingSubobject, clickSubobjectCardDataTabButton, clickSubobjectCardDisplayTabButton, 
     getSubobjectCardAttributeElements, getSubobjectCardMenuButtons, getSubobjectCards, getSubobjectExpandToggleButton } from "../../../../_util/ui-composite";
 
-import { App } from "../../../../../src/components/top-level/app";
+import { App } from "../../../../../src/components/app";
 import { getMappedSubobjectID } from "../../../../_mocks/data-composite";
 
 /*

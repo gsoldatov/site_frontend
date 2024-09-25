@@ -9,7 +9,7 @@ import { clickDataTabButton, clickGeneralTabButton, getObjectTypeSwitchElements 
 import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElements, getSubobjectCards, 
     getAddSubobjectMenu, getAddSubobjectMenuDropdown } from "../../../../../../_util/ui-composite";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 
 
 /*

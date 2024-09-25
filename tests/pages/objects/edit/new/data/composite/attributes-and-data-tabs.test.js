@@ -11,7 +11,7 @@ import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElem
     clickSubobjectCardAttributeTabButton, clickSubobjectCardDataTabButton } from "../../../../../../_util/ui-composite";
 import { getMarkdownEditorElements, waitForMarkdownHeaderRender } from "../../../../../../_util/ui-markdown-editor";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 
 
 /*

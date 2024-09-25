@@ -9,7 +9,7 @@ import { getUserPageViewModeElements, getUserPageEditModeElements, checkValidInp
     clearFormData, waitForFormMessage } from "../_util/ui-user";
 import { getMockUserData } from "../_mocks/data-users";
 
-import { App } from "../../src/components/top-level/app";
+import { App } from "../../src/components/app";
 
 
 /*

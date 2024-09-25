@@ -13,7 +13,7 @@ import { addANewSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttr
 import { createTestStore } from "../_util/create-test-store";
 import { getMappedSubobjectID } from "../_mocks/data-composite";
 
-import { App } from "../../src/components/top-level/app";
+import { App } from "../../src/components/app";
 
 import { getDefaultAuthState } from "../../src/store/state-templates/auth";
 

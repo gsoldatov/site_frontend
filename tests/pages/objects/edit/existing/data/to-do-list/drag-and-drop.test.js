@@ -8,7 +8,7 @@ import { getDefaultSortOrder, getRenderedItemIndent, checkRenderedItemsOrder } f
 import { renderWithWrappers } from "../../../../../../_util/render";
 import { getCurrentObject, clickDataTabButton } from "../../../../../../_util/ui-objects-edit";
 
-import { App } from "../../../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/app";
 
 /*
     To-do list editing tests, item drag and drop.
