@@ -1,41 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Button, Form, Loader, Message, Tab } from "semantic-ui-react";
-
-import Layout from "../common/layout";
+import { Button, Form, Loader, Message } from "semantic-ui-react";
 
 import { viewSettingsFetch, updateSettingsFetch } from "../../fetches/data-settings";
-
-import { enumLayoutTypes } from "../../util/enum-layout-types";
-
-
-/**
- * Admin page component.
- */
-export const AdminPage = () => {
-    const tabPanes = useMemo(() => [
-        {
-            menuItem: "Settings",
-            render: () => 
-                <Tab.Pane>
-                    <SettingsTabPane />
-                </Tab.Pane>
-        }
-    ]);
-    
-    const body = (
-        <Tab className="admin-page-tabs-container" panes={tabPanes}>
-            {tabPanes}
-        </Tab>
-    );
-    return <Layout body={body} layoutType={enumLayoutTypes.shortWidth} />;
-};
 
 
 /**
  * Settings tab pane.
  */
-const SettingsTabPane = () => {
+export const SettingsTabPane = () => {
     const dispatch = useDispatch();
 
     // Fetch, message and form disable state

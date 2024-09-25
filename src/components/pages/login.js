@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router";
 import { Button, Message, Form } from "semantic-ui-react";
@@ -6,7 +6,6 @@ import { Button, Message, Form } from "semantic-ui-react";
 import Layout from "../common/layout";
 
 import { loginFetch } from "../../fetches/auth";
-import { setRedirectOnRender } from "../../actions/common";
 import { setAuthInformation } from "../../actions/auth";
 
 import StyleAuth from "../../styles/pages/auth.css";

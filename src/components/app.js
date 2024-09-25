@@ -14,9 +14,9 @@ import { ProtectedRoute } from "./common/protected-route";
 
 import { IndexPage } from "./top-level/index/index";
 import { SearchPage } from "./top-level/search/search";
-import { LoginPage } from "./top-level/login";
-import { RegisterPage } from "./top-level/register";
-import { AdminPage } from "./top-level/admin";
+import { LoginPage } from "./pages/login";
+import { RegisterPage } from "./pages/register";
+import { AdminPage } from "./pages/admin";
 import { UserPage } from "./top-level/user";
 import { NewTag, EditTag } from "./top-level/tags-edit";
 import { TagsView } from "./top-level/tags-view/tags-view";
@@ -25,7 +25,7 @@ import { NewObject, EditObject } from "./top-level/objects-edit";
 import { ObjectsView } from "./top-level/objects-view";
 import { ObjectsEdited } from "./top-level/objects-edited";
 import ObjectsList from "./top-level/objects-list";
-import { NotFound } from "./top-level/not-found";
+import { NotFound } from "./pages/not-found";
 
 import { enumUserLevels } from "../util/enum-user-levels";
 
