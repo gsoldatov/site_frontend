@@ -3,23 +3,23 @@ import React from "react";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor, getByTitle, queryByText } from "@testing-library/dom";
 
-import { resetTestConfig } from "../../../../_mocks/config";
-import { getRenderedItemIndent } from "../../../../_util/to-do-lists";
-import { renderWithWrappers } from "../../../../_util/render";
-import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../../../../_util/ui-objects-edit";
+import { resetTestConfig } from "../../../../../../_mocks/config";
+import { getRenderedItemIndent } from "../../../../../../_util/to-do-lists";
+import { renderWithWrappers } from "../../../../../../_util/render";
+import { getCurrentObject, clickDataTabButton, getObjectTypeSwitchElements } from "../../../../../../_util/ui-objects-edit";
 
-import { App } from "../../../../../src/components/top-level/app";
+import { App } from "../../../../../../../src/components/top-level/app";
 
 
 /*
     To-do list editing tests.
 
-    NOTE: most of functionality available both for new & existing is tested in ../existing folder.
+    NOTE: most of functionality is tested in /objects/edit/existing tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("../../../../_mocks/mock-fetch");
+        const { mockFetch, setFetchFail } = require("../../../../../../_mocks/mock-fetch");
         
         // Set test app configuration
         resetTestConfig();
