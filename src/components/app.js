@@ -17,7 +17,7 @@ import { SearchPage } from "./top-level/search/search";
 import { LoginPage } from "./pages/login";
 import { RegisterPage } from "./pages/register";
 import { AdminPage } from "./pages/admin";
-import { UserPage } from "./top-level/user";
+import { UsersPage } from "./pages/users";
 import { NewTag, EditTag } from "./top-level/tags-edit";
 import { TagsView } from "./top-level/tags-view/tags-view";
 import TagsList from "./top-level/tags-list";
@@ -70,7 +70,7 @@ export const App = () => {
 
                 {/* Users */}
                 <Route exact path="/users/:id">
-                    <UserPage />
+                    <UsersPage />
                 </Route>
 
                 {/* Tags */}
