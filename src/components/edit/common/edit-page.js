@@ -15,10 +15,9 @@ import StyleEditInputs from "../../../styles/modules/edit/edit-inputs.css";
 /**
  * On load fetch indication & error.
  */
-export const LoadIndicatorAndError = ({ fetchSelector, loadingMessage = "Loading..." }) => {
-    const fetch = useSelector(fetchSelector);
-    if (fetch.isFetching) return <Loader active inline="centered">{loadingMessage}</Loader>;
-    if (fetch.fetchError) return <Error text={fetch.fetchError}/>;
+export const LoadIndicatorAndError = ({ isFetching, fetchError, loadingMessage = "Loading..." }) => {
+    if (isFetching) return <Loader active inline="centered">{loadingMessage}</Loader>;
+    if (fetchError) return <Error text={fetchError}/>;
     return null;
 }
 

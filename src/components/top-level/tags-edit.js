@@ -127,8 +127,12 @@ const Tag = ({ header, sideMenuItems, onLoad }) => {
         dispatch(onLoad);
     }, [id]);
 
-    const loadIndicatorAndError = LoadIndicatorAndError({ fetchSelector: onLoadFetchSelector }) && <LoadIndicatorAndError fetchSelector={onLoadFetchSelector} />;
-    const pageBody = loadIndicatorAndError ? loadIndicatorAndError : (
+    // Render loader/error or body
+    const { isFetching, fetchError } = useSelector(state => state.tagUI.tagOnLoadFetch);
+
+    let body = isFetching || fetchError ?
+        <LoadIndicatorAndError isFetching={isFetching} fetchError={fetchError} />
+    : (
         <>
             <Header as="h1" className="add-edit-page-header">{header}</Header>
             <TagTimeStamps />
@@ -137,18 +141,15 @@ const Tag = ({ header, sideMenuItems, onLoad }) => {
             <TagsEditDisplayControls />
         </>
     );
-    const body = (
+
+    body = (
         <div className="tag-edit-page-container">
-            {pageBody}
+            {body}
         </div>
     );
 
     return <Layout sideMenuItems={sideMenuItems} body={body} />;
 };
-
-
-// OnLoad fetch selector
-const onLoadFetchSelector = state => state.tagUI.tagOnLoadFetch;
 
 
 // Created at & modified at timestamps
