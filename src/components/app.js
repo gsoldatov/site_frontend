@@ -21,7 +21,7 @@ import { UsersPage } from "./pages/users";
 import { NewTag, EditTag } from "./top-level/tags-edit";
 import { TagsView } from "./top-level/tags-view/tags-view";
 import TagsList from "./top-level/tags-list";
-import { NewObject, EditObject } from "./top-level/objects-edit";
+import { ObjectsEditNew, ObjectsEditExisting } from "./pages/objects-edit";
 import { ObjectsView } from "./top-level/objects-view";
 import { ObjectsEdited } from "./pages/objects-edited";
 import ObjectsList from "./top-level/objects-list";
@@ -104,11 +104,11 @@ export const App = () => {
                 
                 <ProtectedRoute exact path="/objects/edit/new"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <NewObject />
+                    <ObjectsEditNew />
                 </ProtectedRoute>
                 <ProtectedRoute exact path="/objects/edit/:id"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <EditObject />
+                    <ObjectsEditExisting />
                 </ProtectedRoute>
 
                 <Route exact path="/objects/view/:id">
