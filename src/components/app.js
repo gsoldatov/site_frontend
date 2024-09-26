@@ -24,7 +24,7 @@ import { TagsListPage } from "./pages/tags-list";
 import { ObjectsEditNew, ObjectsEditExisting } from "./pages/objects-edit";
 import { ObjectsView } from "./top-level/objects-view";
 import { ObjectsEdited } from "./pages/objects-edited";
-import ObjectsList from "./top-level/objects-list";
+import { ObjectsListPage } from "./pages/objects-list";
 import { NotFound } from "./pages/not-found";
 
 import { enumUserLevels } from "../util/enum-user-levels";
@@ -94,7 +94,7 @@ export const App = () => {
                 {/* Objects */}
                 <ProtectedRoute exact path="/objects/list"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <ObjectsList />
+                    <ObjectsListPage />
                 </ProtectedRoute>
                 
                 <ProtectedRoute exact path="/objects/edited"
