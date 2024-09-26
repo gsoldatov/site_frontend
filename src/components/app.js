@@ -20,7 +20,7 @@ import { AdminPage } from "./pages/admin";
 import { UsersPage } from "./pages/users";
 import { TagsEditNew, TagsEditExisting } from "./pages/tags-edit";
 import { TagsView } from "./top-level/tags-view/tags-view";
-import TagsList from "./top-level/tags-list";
+import { TagsListPage } from "./pages/tags-list";
 import { ObjectsEditNew, ObjectsEditExisting } from "./pages/objects-edit";
 import { ObjectsView } from "./top-level/objects-view";
 import { ObjectsEdited } from "./pages/objects-edited";
@@ -75,7 +75,7 @@ export const App = () => {
 
                 {/* Tags */}
                 <Route exact path="/tags/list">
-                    <TagsList />
+                    <TagsListPage />
                 </Route>
 
                 <Route exact path="/tags/view">
