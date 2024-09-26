@@ -1,16 +1,16 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 
-import Layout from "../../common/layout";
-import { TagDropdown } from "./tag-dropdown";
-import { SelectPrompt } from "./select-prompt";
-import { SelectedTags } from "./selected-tags";
-import { TagInformation } from "./tag-information";
+import Layout from "../common/layout";
+import { TagDropdown } from "../page-parts/tags-view/tag-dropdown";
+import { SelectPrompt } from "../page-parts/tags-view/select-prompt";
+import { SelectedTags } from "../page-parts/tags-view/selected-tags";
+import { TagInformation } from "../page-parts/tags-view/tag-information";
 
-import { enumLayoutTypes } from "../../../util/enum-layout-types";
-import { TagPageObjectsFeed } from "./tag-page-objects-feed";
+import { enumLayoutTypes } from "../../util/enum-layout-types";
+import { TagPageObjectsFeed } from "../page-parts/tags-view/tag-page-objects-feed";
 
-import StyleTagsView from "../../../styles/pages/tags-view.css";
+import StyleTagsView from "../../styles/pages/tags-view.css";
 
 
 /**

@@ -19,7 +19,7 @@ import { RegisterPage } from "./pages/register";
 import { AdminPage } from "./pages/admin";
 import { UsersPage } from "./pages/users";
 import { TagsEditNew, TagsEditExisting } from "./pages/tags-edit";
-import { TagsView } from "./top-level/tags-view/tags-view";
+import { TagsView } from "./pages/tags-view";
 import { TagsListPage } from "./pages/tags-list";
 import { ObjectsEditNew, ObjectsEditExisting } from "./pages/objects-edit";
 import { ObjectsView } from "./top-level/objects-view";
