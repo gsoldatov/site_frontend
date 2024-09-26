@@ -1,24 +1,20 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { Header } from "semantic-ui-react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import { LoadIndicatorAndError, SaveError, TimeStamps, NameInput, DescriptionEditor } from "../edit/common/edit-page";
-import Layout from "../common/layout";
-import { TagsEditDisplayControls } from "../edit/tags-edit-display-controls/tags-edit-display-controls";
+import { TagsEdit } from "../page-parts/tags-edit/tags-edit";
 
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../store/state-util/ui-tags-edit";
-import { loadNewTagPage, setCurrentTag, setShowDeleteDialogTag } from "../../actions/tags-edit";
+import { loadNewTagPage, setShowDeleteDialogTag } from "../../actions/tags-edit";
 import { addTagOnSaveFetch, editTagOnLoadFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../../fetches/ui-tags-edit";
 
 import StyleTag from "../../styles/pages/tags-edit.css";
 
 
-/*
-    /objects/edit/:id page components.
+/**
+    /objects/edit/:id page component for new tags.
 */
-// Exports
-export const NewTag = () => {
+export const TagsEditNew = () => {
     const dispatch = useDispatch();
 
     // Side menu items
@@ -41,11 +37,14 @@ export const NewTag = () => {
         }
     ]);
 
-    return <Tag sideMenuItems={addTagSideMenuItems} onLoad={loadNewTagPage()} header="Add a New Tag" />;
+    return <TagsEdit sideMenuItems={addTagSideMenuItems} onLoad={loadNewTagPage()} header="Add a New Tag" />;
 };
 
 
-export const EditTag = () => {
+/**
+    /objects/edit/:id page component for existing tags.
+*/
+export const TagsEditExisting = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
 
@@ -113,75 +112,5 @@ export const EditTag = () => {
         }
     ], [id]);
 
-    return <Tag sideMenuItems={editTagSideMenuItems} onLoad={editTagOnLoadFetch(id)} header="Tag Information" />;
-};
-
-
-// Basic add/edit tag page
-const Tag = ({ header, sideMenuItems, onLoad }) => {
-    const dispatch = useDispatch();
-    const { id } = useParams();
-
-    // On load action (also triggers when tag ids change)
-    useEffect(() => {
-        dispatch(onLoad);
-    }, [id]);
-
-    // Render loader/error or body
-    const { isFetching, fetchError } = useSelector(state => state.tagUI.tagOnLoadFetch);
-
-    let body = isFetching || fetchError ?
-        <LoadIndicatorAndError isFetching={isFetching} fetchError={fetchError} />
-    : (
-        <>
-            <Header as="h1" className="add-edit-page-header">{header}</Header>
-            <TagTimeStamps />
-            <TagSaveError />
-            <TagInput />
-            <TagsEditDisplayControls />
-        </>
-    );
-
-    body = (
-        <div className="tag-edit-page-container">
-            {body}
-        </div>
-    );
-
-    return <Layout sideMenuItems={sideMenuItems} body={body} />;
-};
-
-
-// Created at & modified at timestamps
-const createdAtSelector = state => state.tagUI.currentTag.created_at;
-const modifiedAtSelector = state => state.tagUI.currentTag.modified_at;
-const isDisplayedSelector = state => state.tagUI.currentTag.tag_id > 0;
-const TagTimeStamps = () => <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} isDisplayedSelector={isDisplayedSelector} />;
-
-
-// Save fetch error message
-const fetchSelector = state => state.tagUI.tagOnSaveFetch;
-const TagSaveError = () => <SaveError fetchSelector={fetchSelector} />;
-
-
-// Tag input form
-const TagInput = () => {
-    const dispatch = useDispatch();
-    const name = useSelector(state => state.tagUI.currentTag.tag_name);
-    const description = useSelector(state => state.tagUI.currentTag.tag_description);
-
-    const nameOnChange = useRef(tag_name => {
-        dispatch(setCurrentTag({ tag_name }));
-    }).current;
-
-    const descriptionOnChange = useRef(tag_description => {
-        dispatch(setCurrentTag({ tag_description }));
-    }).current;
-
-    return (
-        <>
-            <NameInput label="Tag Name" placeholder="Tag name" value={name} onChange={nameOnChange} />
-            <DescriptionEditor label="Tag Description" placeholder="Tag description" value={description} onChange={descriptionOnChange} />
-        </>
-    );
+    return <TagsEdit sideMenuItems={editTagSideMenuItems} onLoad={editTagOnLoadFetch(id)} header="Tag Information" />;
 };

@@ -18,7 +18,7 @@ import { LoginPage } from "./pages/login";
 import { RegisterPage } from "./pages/register";
 import { AdminPage } from "./pages/admin";
 import { UsersPage } from "./pages/users";
-import { NewTag, EditTag } from "./top-level/tags-edit";
+import { TagsEditNew, TagsEditExisting } from "./pages/tags-edit";
 import { TagsView } from "./top-level/tags-view/tags-view";
 import TagsList from "./top-level/tags-list";
 import { ObjectsEditNew, ObjectsEditExisting } from "./pages/objects-edit";
@@ -84,11 +84,11 @@ export const App = () => {
                 
                 <ProtectedRoute exact path="/tags/edit/new"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <NewTag />
+                    <TagsEditNew />
                 </ProtectedRoute>
                 <ProtectedRoute exact path="/tags/edit/:id"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <EditTag />
+                    <TagsEditExisting />
                 </ProtectedRoute>
 
                 {/* Objects */}
