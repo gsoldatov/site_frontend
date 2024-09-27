@@ -12,7 +12,7 @@ import createStore from "../store/create-store";
 import { LocationManagerWrapper } from "./common/location-manager-wrapper";
 import { ProtectedRoute } from "./common/protected-route";
 
-import { IndexPage } from "./top-level/index/index";
+import { IndexPage } from "./pages/index";
 import { SearchPage } from "./top-level/search/search";
 import { LoginPage } from "./pages/login";
 import { RegisterPage } from "./pages/register";

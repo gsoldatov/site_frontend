@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { FeedContainer, FeedCardsContainer } from "../../feed/feed-container";
 import { ObjectFeedCard } from "../../feed/feed-card/object-feed-card";
