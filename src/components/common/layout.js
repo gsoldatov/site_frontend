@@ -3,7 +3,7 @@ import { Grid, GridColumn } from "semantic-ui-react";
 
 import { OnResizeWrapper } from "../modules/wrappers/on-resize-wrapper";
 import { Navbar } from "../state-users/navbar/navbar";
-import SideMenu from "./side-menu";
+import SideMenu from "../state-users/side-menu";
 import { ModalWindow } from "../state-users/modal-window";
 
 import { enumLayoutTypes } from "../../util/enum-layout-types";
