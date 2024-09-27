@@ -9,7 +9,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../store/create-store";
 
-import { LocationManagerWrapper } from "./common/location-manager-wrapper";
+import { LocationManagerWrapper } from "./state-users/location-manager-wrapper";
 import { ProtectedRoute } from "./common/protected-route";
 
 import { IndexPage } from "./pages/index";
