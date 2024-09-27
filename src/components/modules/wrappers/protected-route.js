@@ -2,8 +2,6 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Redirect, Route, useLocation } from "react-router";
 
-import { setRedirectOnRender } from "../../actions/common";
-
 
 /**
  * Wrapper for React Router `Route` component. Renders a `Route` with provided route component params wrapping `children` component(-s).

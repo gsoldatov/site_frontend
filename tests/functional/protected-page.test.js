@@ -6,7 +6,7 @@ import { createTestStore } from "../_util/create-test-store";
 import { renderWithWrappers } from "../_util/render";
 
 import { App, isAnonymousCondition, isAuthenticatedCondition } from "../../src/components/app";
-import { ProtectedRoute } from "../../src/components/common/protected-route";
+import { ProtectedRoute } from "../../src/components/modules/wrappers/protected-route";
 import { setAuthInformation } from "../../src/actions/auth";
 
 import { deepEqual } from "../../src/util/equality-checks";
