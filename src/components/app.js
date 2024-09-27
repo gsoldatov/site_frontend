@@ -13,7 +13,7 @@ import { LocationManagerWrapper } from "./common/location-manager-wrapper";
 import { ProtectedRoute } from "./common/protected-route";
 
 import { IndexPage } from "./pages/index";
-import { SearchPage } from "./top-level/search/search";
+import { SearchPage } from "./pages/search";
 import { LoginPage } from "./pages/login";
 import { RegisterPage } from "./pages/register";
 import { AdminPage } from "./pages/admin";

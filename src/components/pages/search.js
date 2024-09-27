@@ -1,13 +1,13 @@
 import React from "react";
 import { useLocation } from "react-router";
 
-import Layout from "../../common/layout";
-import { SearchFeed } from "./search-feed";
-import { SearchInput } from "./search-input";
+import Layout from "../common/layout";
+import { SearchFeed } from "../page-parts/search/search-feed";
+import { SearchInput } from "../page-parts/search/search-input";
 
-import { enumLayoutTypes } from "../../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../util/enum-layout-types";
 
-import StyleSearch from "../../../styles/pages/search.css";
+import StyleSearch from "../../styles/pages/search.css";
 
 
 /**
