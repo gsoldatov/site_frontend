@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Tab } from "semantic-ui-react";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 import { SettingsTabPane } from "../page-parts/admin";
 
 import { enumLayoutTypes } from "../../util/enum-layout-types";

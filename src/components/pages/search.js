@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 import { SearchFeed } from "../page-parts/search/search-feed";
 import { SearchInput } from "../page-parts/search/search-input";
 

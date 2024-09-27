@@ -1,21 +1,21 @@
 import React, { useState, useMemo } from "react";
 import { Grid, GridColumn } from "semantic-ui-react";
 
-import { OnResizeWrapper } from "../modules/wrappers/on-resize-wrapper";
-import { Navbar } from "../state-users/navbar/navbar";
-import SideMenu from "../state-users/side-menu";
-import { ModalWindow } from "../state-users/modal-window";
+import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
+import { Navbar } from "../../state-users/navbar/navbar";
+import SideMenu from "../../state-users/side-menu";
+import { ModalWindow } from "../../state-users/modal-window";
 
-import { enumLayoutTypes } from "../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../../util/enum-layout-types";
 
-import StyleLayout from "./../../styles/modules/layout.css";
+import StyleLayout from "../../../styles/modules/layout.css";
 
 
 /**
  * Page layout with navigation, side menu and main content (body).
  */
 // export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStacked = false }) => {
-export default ({ sideMenuItems, body, layoutType = enumLayoutTypes.default }) => {
+export const Layout = ({ sideMenuItems, body, layoutType = enumLayoutTypes.default }) => {
     // Side menu column (hide if it's stacked & no `sideMenuItems` are provided)
     const [isStacked, setIsStacked] = useState(window.innerWidth < 768);
     const onResizeCallback = useMemo(() => gridRef => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 import { TagDropdown } from "../page-parts/tags-view/tag-dropdown";
 import { SelectPrompt } from "../page-parts/tags-view/select-prompt";
 import { SelectedTags } from "../page-parts/tags-view/selected-tags";

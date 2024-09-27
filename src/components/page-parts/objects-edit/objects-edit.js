@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { Header, Tab } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Layout from "../../common/layout";
+import { Layout } from "../../modules/layout/layout";
 import { LoadIndicatorAndError, SaveError } from "../../edit/common/edit-page";
 import { AttributesTabPane } from "./attributes-tab-pane";
 import { ObjectViewEditSwitch } from "../../edit/objects-edit";

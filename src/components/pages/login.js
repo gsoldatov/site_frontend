@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useLocation } from "react-router";
 import { Button, Message, Form } from "semantic-ui-react";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 
 import { loginFetch } from "../../fetches/auth";
 import { setAuthInformation } from "../../actions/auth";

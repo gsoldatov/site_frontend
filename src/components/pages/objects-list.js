@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 import { ObjectsListFieldMenu } from "../page-parts/objects-list/field-menu";
 import { TagsFilter } from "../page-parts/objects-list/tags-filter";
 import { ObjectsListFieldBody } from "../page-parts/objects-list/field-body";

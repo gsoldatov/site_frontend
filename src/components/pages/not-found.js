@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Header } from "semantic-ui-react";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 
 import { enumLayoutTypes } from "../../util/enum-layout-types";
 

@@ -3,7 +3,7 @@ import { Header } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import Layout from "../../common/layout";
+import { Layout } from "../../modules/layout/layout";
 import { LoadIndicatorAndError, SaveError } from "../../edit/common/edit-page";
 import { TagTimestamps, TagNameDescription } from "./attributes";
 import { TagDisplayContainer } from "./display";

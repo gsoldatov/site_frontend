@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Message, Form } from "semantic-ui-react";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 
 import { registerFetch, registrationStatusFetch } from "../../fetches/auth";
 import { setRedirectOnRender } from "../../actions/common";

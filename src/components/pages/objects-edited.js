@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Message } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 import { ObjectsEditedConfirm } from "../page-parts/objects-edited/confirm";
 import { ObjectsEditedTable } from "../page-parts/objects-edited/table";
 

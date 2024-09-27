@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 import { ViewUser } from "../page-parts/users/view-user";
 import { EditUser } from "../page-parts/users/edit-user";
 

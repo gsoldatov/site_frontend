@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 import { TagsListFieldMenu } from "../page-parts/tags-list/field-menu";
 import { TagsListFieldBody } from "../page-parts/tags-list/field-body";
 

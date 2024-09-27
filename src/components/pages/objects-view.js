@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 
 import { enumCompositeObjectDisplayModes } from "../../util/enum-composite-object-display-modes";
 
-import Layout from "../common/layout";
+import { Layout } from "../modules/layout/layout";
 import { ObjectsViewRootCard } from "../page-parts/objects-view/objects-view-root-card";
 
 import { enumLayoutTypes } from "../../util/enum-layout-types";
