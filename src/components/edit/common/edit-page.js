@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 
 import { ErrorMessage } from "../../modules/error-message";
-import { MarkdownEditor } from "./markdown-editor";
+import { MarkdownEditor } from "../../modules/markdown/markdown-editor";
 
 import StyleEditInputs from "../../../styles/modules/edit/edit-inputs.css";
 

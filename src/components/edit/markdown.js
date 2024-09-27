@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setEditedObject } from "../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-objects-edit";
 
-import { MarkdownEditor } from "./common/markdown-editor";
+import { MarkdownEditor } from "../modules/markdown/markdown-editor";
 
 
 /**

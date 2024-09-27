@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, useMemo, memo } from "react";
 import { Form } from "semantic-ui-react";
 
 import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../field/field-menu";
-import { OnResizeWrapper } from "../../modules/wrappers/on-resize-wrapper";
-import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
+import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
+import { RenderedMarkdown } from "./rendered-markdown";
 
 import { useMarkdownParseWorker } from "../../../util/use-markdown-parse-worker";
 import { useMountedState } from "../../../util/use-mounted-state";
