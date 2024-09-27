@@ -1,11 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
+import { RenderedMarkdown } from "../../../modules/markdown/rendered-markdown";
 
-import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
+import { useParsedMarkdownState } from "../../../../util/use-parsed-markdown-state";
 
-import StyleObjectsViewMarkdown from "../../../styles/pages/objects-view/markdown.css";
+import StyleObjectsViewMarkdown from "../../../../styles/pages/objects-view/markdown.css";
 
 
 /**

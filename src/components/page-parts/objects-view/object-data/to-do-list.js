@@ -2,15 +2,15 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Message } from "semantic-ui-react";
 
-import { TDLContainer } from "../../edit/to-do-list/to-do-list";
+import { TDLContainer } from "../../../edit/to-do-list/to-do-list";
 
-import { toDoListObjectUpdateFetch } from "../../../fetches/ui-objects-view";
+import { toDoListObjectUpdateFetch } from "../../../../fetches/ui-objects-view";
 
-import { getUpdatedToDoList } from "../../../reducers/helpers/object-to-do-lists";
-import { deepCopy } from "../../../util/copy";
-import debounce from "../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../util/enum-debounce-delay-refresh-mode";
-import { enumUserLevels } from "../../../util/enum-user-levels";
+import { getUpdatedToDoList } from "../../../../reducers/helpers/object-to-do-lists";
+import { deepCopy } from "../../../../util/copy";
+import debounce from "../../../../util/debounce";
+import { enumDebounceDelayRefreshMode } from "../../../../util/enum-debounce-delay-refresh-mode";
+import { enumUserLevels } from "../../../../util/enum-user-levels";
 
 
 /**

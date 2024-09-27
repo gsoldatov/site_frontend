@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, Redirect, useLocation } from "react-router-dom";
 import { Loader, Message } from "semantic-ui-react";
 
-import { useConfigState } from "../../../../config";
-import { compositeChaptersOnLoadFetch } from "../../../../fetches/ui-objects-view";
-import { getChaptersHierarchySelector, getHierarchyElements } from "../../../../store/state-util/ui-objects-view";
+import { useConfigState } from "../../../../../config";
+import { compositeChaptersOnLoadFetch } from "../../../../../fetches/ui-objects-view";
+import { getChaptersHierarchySelector, getHierarchyElements } from "../../../../../store/state-util/ui-objects-view";
 import { TableOfContents } from "./table-of-contents";
 import { ChapterObject } from "./chapter-object";
 

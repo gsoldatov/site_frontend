@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Button, Header } from "semantic-ui-react";
 
-import { enumUserLevels } from "../../../util/enum-user-levels";
+import { enumUserLevels } from "../../../../util/enum-user-levels";
 
 
 /**

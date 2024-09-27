@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
+import { RenderedMarkdown } from "../../../modules/markdown/rendered-markdown";
 
-import { getDefaultShowDescriptionSelector } from "../../../store/state-util/ui-objects-view";
-import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
+import { getDefaultShowDescriptionSelector } from "../../../../store/state-util/ui-objects-view";
+import { useParsedMarkdownState } from "../../../../util/use-parsed-markdown-state";
 
 
 /**

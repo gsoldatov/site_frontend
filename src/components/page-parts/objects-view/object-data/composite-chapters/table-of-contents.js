@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 import { ObjectAttributes } from "../../object-attributes/object-attributes";
 import { HierarchyNavigation } from "./hierarchy-navigation";
 
-import { getSubobjectShowDescriptionSelector } from "../../../../store/state-util/ui-objects-view";
+import { getSubobjectShowDescriptionSelector } from "../../../../../store/state-util/ui-objects-view";
 
-import StyleCompositeChapters from "../../../../styles/pages/objects-view/composite-chapters.css";
+import StyleCompositeChapters from "../../../../../styles/pages/objects-view/composite-chapters.css";
 
 
 /**

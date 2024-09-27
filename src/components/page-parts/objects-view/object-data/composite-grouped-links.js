@@ -4,16 +4,16 @@ import { createSelector } from "reselect";
 
 import { Loader, Message, Header, Table } from "semantic-ui-react";
 
-import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
+import { RenderedMarkdown } from "../../../modules/markdown/rendered-markdown";
 
-import { groupedLinksOnLoad } from "../../../fetches/ui-objects-view";
-import { getSingleColumnSubobjectDisplayOrder } from "../../../store/state-util/composite";
-import { useMountedState } from "../../../util/use-mounted-state";
-import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
+import { groupedLinksOnLoad } from "../../../../fetches/ui-objects-view";
+import { getSingleColumnSubobjectDisplayOrder } from "../../../../store/state-util/composite";
+import { useMountedState } from "../../../../util/use-mounted-state";
+import { useParsedMarkdownState } from "../../../../util/use-parsed-markdown-state";
 
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
-import StyleCompositeGroupedLinks from "../../../styles/pages/objects-view/composite-grouped-links.css";
+import StyleCompositeGroupedLinks from "../../../../styles/pages/objects-view/composite-grouped-links.css";
 
 
 /**

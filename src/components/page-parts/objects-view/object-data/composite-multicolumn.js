@@ -1,10 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { getSubobjectDisplayOrder } from "../../../store/state-util/composite";
+import { getSubobjectDisplayOrder } from "../../../../store/state-util/composite";
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
-import StyleCompositeMulticolumn from "../../../styles/pages/objects-view/composite-multicolumn.css";
+import StyleCompositeMulticolumn from "../../../../styles/pages/objects-view/composite-multicolumn.css";
 
 
 /**

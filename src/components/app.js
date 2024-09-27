@@ -22,7 +22,7 @@ import { TagsEditNew, TagsEditExisting } from "./pages/tags-edit";
 import { TagsView } from "./pages/tags-view";
 import { TagsListPage } from "./pages/tags-list";
 import { ObjectsEditNew, ObjectsEditExisting } from "./pages/objects-edit";
-import { ObjectsView } from "./top-level/objects-view";
+import { ObjectsView } from "./pages/objects-view";
 import { ObjectsEdited } from "./pages/objects-edited";
 import { ObjectsListPage } from "./pages/objects-list";
 import { NotFound } from "./pages/not-found";

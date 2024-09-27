@@ -3,7 +3,7 @@ import React from "react";
 import { HierarchyNavigation } from "./hierarchy-navigation";
 import { ObjectsViewCard } from "../../objects-view-card";
 import { ChaptersDataSwitch } from "../object-data";
-import { getSubobjectShowDescriptionSelector, getSubobjectShowDescriptionAsLinkSelector } from "../../../../store/state-util/ui-objects-view";
+import { getSubobjectShowDescriptionSelector, getSubobjectShowDescriptionAsLinkSelector } from "../../../../../store/state-util/ui-objects-view";
 
 
 /**

@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Loader, Message } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
 
-import { objectsViewCardOnLoadFetch } from "../../fetches/ui-objects-view";
+import { objectsViewCardOnLoadFetch } from "../../../fetches/ui-objects-view";
 
 import { ObjectAttributes } from "./object-attributes/object-attributes";
 import { ObjectsViewTagList } from "./object-tags";
 import { ObjectData, SubobjectDataSwitch } from "./object-data/object-data";
 
-import { getSubobjectShowDescriptionAsLinkSelector, getSubobjectShowDescriptionSelector } from "../../store/state-util/ui-objects-view";
-import { useMountedState } from "../../util/use-mounted-state";
+import { getSubobjectShowDescriptionAsLinkSelector, getSubobjectShowDescriptionSelector } from "../../../store/state-util/ui-objects-view";
+import { useMountedState } from "../../../util/use-mounted-state";
 
-import StyleObjectsViewCommon from "../../styles/pages/objects-view/common.css";
+import StyleObjectsViewCommon from "../../../styles/pages/objects-view/common.css";
 
 
 /**
