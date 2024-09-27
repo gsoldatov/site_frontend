@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Button, Checkbox, Container, Header, Icon, Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
-import { OnResizeWrapper } from "./on-resize-wrapper";
+import { OnResizeWrapper } from "../modules/wrappers/on-resize-wrapper";
 
 import StyleSideMenu from "../../styles/modules/side-menu.css";
 

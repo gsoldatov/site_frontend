@@ -5,7 +5,7 @@ import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 import debounce from "../../util/debounce";
 import { enumDebounceDelayRefreshMode } from "../../util/enum-debounce-delay-refresh-mode";
 
-import { OnResizeWrapper } from "../common/on-resize-wrapper";
+import { OnResizeWrapper } from "../modules/wrappers/on-resize-wrapper";
 
 import StlyeFieldMenu from "../../styles/modules/field/menu.css";
 

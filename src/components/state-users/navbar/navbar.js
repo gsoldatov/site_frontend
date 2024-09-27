@@ -2,7 +2,7 @@ import React, { memo, useMemo, useState } from "react";
 import { Icon, Menu } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 
-import { OnResizeWrapper } from "../../common/on-resize-wrapper";
+import { OnResizeWrapper } from "../../modules/wrappers/on-resize-wrapper";
 import { NavbarSecondaryMenu } from "./secondary-menu";
 import { NavbarItem } from "./menu-item";
 import { NavbarSubmenu, NavbarSubmenuItem } from "./submenu";

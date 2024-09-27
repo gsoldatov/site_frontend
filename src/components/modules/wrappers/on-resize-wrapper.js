@@ -2,8 +2,8 @@ import React, { useRef, useLayoutEffect, useMemo } from "react";
 
 import { Ref } from "semantic-ui-react";
 
-import debounce from "../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../util/enum-debounce-delay-refresh-mode";
+import debounce from "../../../util/debounce";
+import { enumDebounceDelayRefreshMode } from "../../../util/enum-debounce-delay-refresh-mode";
 
 
 /**

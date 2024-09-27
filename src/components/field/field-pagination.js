@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Pagination } from "semantic-ui-react";
 
-import { OnResizeWrapper } from "../common/on-resize-wrapper";
+import { OnResizeWrapper } from "../modules/wrappers/on-resize-wrapper";
 
 import StyleFieldPagination from "../../styles/modules/pagination.css";
 
