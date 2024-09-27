@@ -14,7 +14,7 @@ import StyleTag from "../../styles/pages/tags-edit.css";
 /**
     /objects/edit/:id page component for new tags.
 */
-export const TagsEditNew = () => {
+export const TagsEditNewPage = () => {
     const dispatch = useDispatch();
 
     // Side menu items
@@ -44,7 +44,7 @@ export const TagsEditNew = () => {
 /**
     /objects/edit/:id page component for existing tags.
 */
-export const TagsEditExisting = () => {
+export const TagsEditExistingPage = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
 

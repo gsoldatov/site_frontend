@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Layout from "../common/layout";
 import { TagsListFieldMenu } from "../page-parts/tags-list/field-menu";
+import { TagsListFieldBody } from "../page-parts/tags-list/field-body";
 
 import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../../actions/common";
 import { setShowDeleteDialogTags } from "../../actions/tags-list";
@@ -10,8 +11,6 @@ import { onDeleteFetch } from "../../fetches/ui-tags-list";
 import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../store/state-util/ui-tags-list";
 
 import { enumUserLevels } from "../../util/enum-user-levels";
-import { TagsListFieldBody } from "../page-parts/tags-list/field-body";
-
 
 
 /**

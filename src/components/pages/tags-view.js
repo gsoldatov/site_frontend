@@ -16,7 +16,7 @@ import StyleTagsView from "../../styles/pages/tags-view.css";
 /**
  * /tags/view top-level component.
  */
-export const TagsView = () => {
+export const TagsViewPage = () => {
     const location = useLocation();
     const URLParams = new URLSearchParams(location.search);
     const p = URLParams.get("p");

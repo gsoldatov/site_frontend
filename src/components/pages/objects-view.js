@@ -13,7 +13,7 @@ import { enumLayoutTypes } from "../../util/enum-layout-types";
 /**
     /objects/view/:id page component.
 */
-export const ObjectsView = () => {
+export const ObjectsViewPage = () => {
     const { id } = useParams();
 
     const multicolumnLayout = useSelector(state => (state.composite[id] || {}).display_mode === enumCompositeObjectDisplayModes.multicolumn.value);

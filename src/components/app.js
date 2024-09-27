@@ -18,14 +18,14 @@ import { LoginPage } from "./pages/login";
 import { RegisterPage } from "./pages/register";
 import { AdminPage } from "./pages/admin";
 import { UsersPage } from "./pages/users";
-import { TagsEditNew, TagsEditExisting } from "./pages/tags-edit";
-import { TagsView } from "./pages/tags-view";
+import { TagsEditNewPage, TagsEditExistingPage } from "./pages/tags-edit";
+import { TagsViewPage } from "./pages/tags-view";
 import { TagsListPage } from "./pages/tags-list";
-import { ObjectsEditNew, ObjectsEditExisting } from "./pages/objects-edit";
-import { ObjectsView } from "./pages/objects-view";
-import { ObjectsEdited } from "./pages/objects-edited";
+import { ObjectsEditNewPage, ObjectsEditExistingPage } from "./pages/objects-edit";
+import { ObjectsViewPage } from "./pages/objects-view";
+import { ObjectsEditedPage } from "./pages/objects-edited";
 import { ObjectsListPage } from "./pages/objects-list";
-import { NotFound } from "./pages/not-found";
+import { NotFoundPage } from "./pages/not-found";
 
 import { enumUserLevels } from "../util/enum-user-levels";
 
@@ -79,16 +79,16 @@ export const App = () => {
                 </Route>
 
                 <Route exact path="/tags/view">
-                    <TagsView />
+                    <TagsViewPage />
                 </Route>
                 
                 <ProtectedRoute exact path="/tags/edit/new"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <TagsEditNew />
+                    <TagsEditNewPage />
                 </ProtectedRoute>
                 <ProtectedRoute exact path="/tags/edit/:id"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <TagsEditExisting />
+                    <TagsEditExistingPage />
                 </ProtectedRoute>
 
                 {/* Objects */}
@@ -99,25 +99,25 @@ export const App = () => {
                 
                 <ProtectedRoute exact path="/objects/edited"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <ObjectsEdited />
+                    <ObjectsEditedPage />
                 </ProtectedRoute>
                 
                 <ProtectedRoute exact path="/objects/edit/new"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <ObjectsEditNew />
+                    <ObjectsEditNewPage />
                 </ProtectedRoute>
                 <ProtectedRoute exact path="/objects/edit/:id"
                     childrenRenderedSelector={isAuthenticatedCondition} fallbackRoute="/auth/login" addQueryString>
-                    <ObjectsEditExisting />
+                    <ObjectsEditExistingPage />
                 </ProtectedRoute>
 
                 <Route exact path="/objects/view/:id">
-                    <ObjectsView />
+                    <ObjectsViewPage />
                 </Route>
 
                 {/* Not found */}
                 <Route>
-                    <NotFound />
+                    <NotFoundPage />
                 </Route>
             </Switch>
         </LocationManagerWrapper>

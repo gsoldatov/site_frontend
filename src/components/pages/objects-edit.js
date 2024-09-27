@@ -1,32 +1,18 @@
-import React, { memo, useEffect, useMemo, useRef } from "react";
-import { Header, Tab } from "semantic-ui-react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { createSelector } from "reselect";
 
-import { LoadIndicatorAndError, SaveError, TimeStamps, NameInput, DescriptionEditor } from "../edit/common/edit-page";
-import { ObjectTypeSelector, ObjectViewEditSwitch } from "../edit/objects-edit";
-import { DisplayTab } from "../edit/objects-edit-display-controls/display-tab";
-import Layout from "../common/layout";
-import { InlineItemListBlock, InlineItemListWrapper } from "../inline/inline-item-list-containers";
-import { InlineItemList } from "../inline/inline-item-list";
-import { InlineItem } from "../inline/inline-item";
-import { InlineInput } from "../inline/inline-input";
+import { ObjectsEdit } from "../page-parts/objects-edit/objects-edit";
 
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../../store/state-util/ui-objects-edit";
-import { resetEditedObjects, setEditedObject, setEditedObjectTags, setSelectedTab, setObjectTagsInput, 
-         setShowResetDialogObject, setShowDeleteDialogObject } from "../../actions/objects-edit";
-import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch, objectTagsDropdownFetch } from "../../fetches/ui-objects-edit";
-
-import { isMultiColumnCompositeDataDisplayed } from "../../store/state-util/composite";
-import { enumLayoutTypes } from "../../util/enum-layout-types";
-import { ObjectsEdit } from "../page-parts/objects-edit/objects-edit";
+import { resetEditedObjects, setShowResetDialogObject, setShowDeleteDialogObject } from "../../actions/objects-edit";
+import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch } from "../../fetches/ui-objects-edit";
 
 
 /**
     /objects/edit/:id page component for new objects
 */
-export const ObjectsEditNew = () => {
+export const ObjectsEditNewPage = () => {
     const dispatch = useDispatch();
 
     const addObjectSideMenuItems = useMemo(() => [
@@ -88,7 +74,7 @@ export const ObjectsEditNew = () => {
 /**
     /objects/edit/:id page component for existing objects
 */
-export const ObjectsEditExisting = () => {
+export const ObjectsEditExistingPage = () => {
     const dispatch = useDispatch();
     let { id } = useParams();
     id = parseInt(id);

@@ -15,7 +15,7 @@ import StyleObjectsEdited from "../../styles/pages/objects-edited.css";
 /**
  * /objects/edited page components.
  */
-export const ObjectsEdited = () => {
+export const ObjectsEditedPage = () => {
     const dispatch = useDispatch();
     const editedObjectsExist = useSelector(state => Object.keys(state.editedObjects).length > 0);
 

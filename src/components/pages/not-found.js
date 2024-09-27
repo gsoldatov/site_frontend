@@ -10,7 +10,7 @@ import { enumLayoutTypes } from "../../util/enum-layout-types";
 /**
  * Not found page component.
  */
-export const NotFound = () => {
+export const NotFoundPage = () => {
     const body = (
         <div className="not-found-container">
             <Header as="h1" className="not-found-header">
