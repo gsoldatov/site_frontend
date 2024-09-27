@@ -1,7 +1,7 @@
 import { Locator } from "../_util/locator";
 import { ModelContext } from "../_util/model-context";
 
-import { ObjectsViewCardModel } from "../page-components/objects-view/objects-view-card";
+import { ObjectsViewCardModel } from "../page-parts/objects-view/objects-view-card";
 import { ModalWindowModel } from "../state-users/modal-window";
 
 
