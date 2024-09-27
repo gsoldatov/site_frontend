@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Grid, GridColumn } from "semantic-ui-react";
 
 import { OnResizeWrapper } from "./on-resize-wrapper";
-import { Navbar } from "./navigation/navbar";
+import { Navbar } from "../state-users/navbar/navbar";
 import SideMenu from "./side-menu";
 import { ModalWindow } from "../state-users/modal-window";
 
