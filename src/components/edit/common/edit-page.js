@@ -3,7 +3,7 @@ import { Form, Loader } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import moment from "moment";
 
-import Error from "../../common/error";
+import { ErrorMessage } from "../../modules/error-message";
 import { MarkdownEditor } from "./markdown-editor";
 
 import StyleEditInputs from "../../../styles/modules/edit/edit-inputs.css";
@@ -17,7 +17,7 @@ import StyleEditInputs from "../../../styles/modules/edit/edit-inputs.css";
  */
 export const LoadIndicatorAndError = ({ isFetching, fetchError, loadingMessage = "Loading..." }) => {
     if (isFetching) return <Loader active inline="centered">{loadingMessage}</Loader>;
-    if (fetchError) return <Error text={fetchError}/>;
+    if (fetchError) return <ErrorMessage text={fetchError}/>;
     return null;
 }
 
@@ -28,7 +28,7 @@ export const LoadIndicatorAndError = ({ isFetching, fetchError, loadingMessage =
 export const SaveError = ({ fetchSelector }) => {
     const fetch = useSelector(fetchSelector);
     if (fetch.isFetching || !fetch.fetchError) return null;
-    return <Error header="" text={fetch.fetchError}/>;
+    return <ErrorMessage header="" text={fetch.fetchError}/>;
 };
 
 

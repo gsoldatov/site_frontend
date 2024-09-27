@@ -2,7 +2,7 @@ import React, { memo, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "semantic-ui-react";
 
-import Error from "../../common/error";
+import { ErrorMessage } from "../../modules/error-message";
 import { SelectedObjectsTags } from "./selected-objects-tags";
 import { FieldItemList, FieldItem } from "../../field/field-item-list";
 import FieldPagination from "../../field/field-pagination";
@@ -29,7 +29,7 @@ export const ObjectsListFieldBody = () => {
     }, []);
 
     if (isFetching) return <Loader active inline="centered">Loading tags...</Loader>;
-    if (fetchError) return  <Error text={fetchError}/>;
+    if (fetchError) return  <ErrorMessage text={fetchError}/>;
 
     return (
         <>

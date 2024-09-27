@@ -7,7 +7,7 @@ import StyleError from "../../styles/modules/error.css";
 /**
  * Error message component.
  */
-export default ({ header, text, containerClassName, messageClassName }) => {
+export const ErrorMessage = ({ header, text, containerClassName, messageClassName }) => {
     const _header = header === undefined ? "Error" : header;
     const _containerClassName = containerClassName !== undefined ? containerClassName : "error-container";
     const _messageClassName = messageClassName !== undefined ? messageClassName : "error-message";
@@ -19,4 +19,4 @@ export default ({ header, text, containerClassName, messageClassName }) => {
             </Message>
         </Container>
     )
-}
+};
