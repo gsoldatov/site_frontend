@@ -2,9 +2,9 @@ import React, { memo, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 
-import { InlineItemListBlock, InlineItemListWrapper } from "../../inline/inline-item-list-containers";
-import { InlineItemList } from "../../inline/inline-item-list";
-import { InlineItem } from "../../inline/inline-item";
+import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemList } from "../../modules/inline/inline-item-list";
+import { InlineItem } from "../../modules/inline/inline-item";
 
 import { tagsViewLoadSelectedTags } from "../../../fetches/ui-tags-view";
 import { useURLParamIDs } from "../../../util/use-url-param-array";

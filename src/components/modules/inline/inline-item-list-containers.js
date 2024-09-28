@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import StyleInline from "../../styles/modules/inline.css";
+
+import StyleInline from "../../../styles/modules/inline.css";
 
 
 /**

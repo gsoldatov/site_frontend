@@ -1,9 +1,9 @@
 import React, { memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { InlineItemListBlock, InlineItemListWrapper } from "../../inline/inline-item-list-containers";
-import { InlineItemList } from "../../inline/inline-item-list";
-import { InlineItem } from "../../inline/inline-item";
+import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemList } from "../../modules/inline/inline-item-list";
+import { InlineItem } from "../../modules/inline/inline-item";
 
 import { setTagsFilterAndFetchPage } from "../../../fetches/ui-objects-list";
 

@@ -1,10 +1,10 @@
 import React, { memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { InlineItemListBlock, InlineItemListWrapper } from "../../inline/inline-item-list-containers";
-import { InlineItemList } from "../../inline/inline-item-list";
-import { InlineItem } from "../../inline/inline-item";
-import { InlineInput } from "../../inline/inline-input";
+import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemList } from "../../modules/inline/inline-item-list";
+import { InlineItem } from "../../modules/inline/inline-item";
+import { InlineInput } from "../../modules/inline/inline-input";
 
 import { setCurrentObjectsTags, setObjectsTagsInput  } from "../../../actions/objects-list";
 import { objectsTagsDropdownFetch } from "../../../fetches/ui-objects-list";

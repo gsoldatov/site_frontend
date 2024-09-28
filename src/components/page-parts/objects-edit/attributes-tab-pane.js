@@ -5,10 +5,10 @@ import { createSelector } from "reselect";
 
 import { TimeStamps, NameInput, DescriptionEditor } from "../../edit/common/edit-page";
 import { ObjectTypeSelector } from "../../edit/objects-edit";
-import { InlineItemListBlock, InlineItemListWrapper } from "../../inline/inline-item-list-containers";
-import { InlineItemList } from "../../inline/inline-item-list";
-import { InlineItem } from "../../inline/inline-item";
-import { InlineInput } from "../../inline/inline-input";
+import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemList } from "../../modules/inline/inline-item-list";
+import { InlineItem } from "../../modules/inline/inline-item";
+import { InlineInput } from "../../modules/inline/inline-input";
 
 import { getCurrentObject } from "../../../store/state-util/ui-objects-edit";
 import { setEditedObject, setEditedObjectTags, setObjectTagsInput } from "../../../actions/objects-edit";

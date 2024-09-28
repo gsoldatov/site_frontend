@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { InlineItem } from "../../inline/inline-item";
-import { InlineTextItem } from "../../inline/inline-text-item";
-import { InlineItemList } from "../../inline/inline-item-list";
-import { InlineItemListBlock, InlineItemListWrapper } from "../../inline/inline-item-list-containers";
+import { InlineItem } from "../../modules/inline/inline-item";
+import { InlineTextItem } from "../../modules/inline/inline-text-item";
+import { InlineItemList } from "../../modules/inline/inline-item-list";
+import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
 
 
 /**
