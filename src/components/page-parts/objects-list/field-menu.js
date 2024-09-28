@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
-import { FieldMenu, FieldMenuGroup, FieldMenuButton, FieldMenuFilter, FieldMenuDropdown, FieldMenuUpdatableDropdown } from "../../field/field-menu";
+import { FieldMenu, FieldMenuGroup, FieldMenuButton, FieldMenuFilter, FieldMenuDropdown, FieldMenuUpdatableDropdown } from "../../modules/field/field-menu";
 
 import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo, setTagsFilterInput  } from "../../../actions/objects-list";
 import { setObjectsPaginationInfoAndFetchPage, setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../../../fetches/ui-objects-list";

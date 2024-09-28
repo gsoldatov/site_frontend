@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "semantic-ui-react";
 
 import { ErrorMessage } from "../../modules/error-message";
-import { FieldItemList, FieldItem } from "../../field/field-item-list";
-import FieldPagination from "../../field/field-pagination";
+import { FieldItemList, FieldItem } from "../../modules/field/field-item-list";
+import { FieldPagination } from "../../modules/field/field-pagination";
 
 import { toggleTagSelection } from "../../../actions/tags-list";
 import { pageFetch } from "../../../fetches/ui-tags-list";

@@ -4,8 +4,8 @@ import { Loader } from "semantic-ui-react";
 
 import { ErrorMessage } from "../../modules/error-message";
 import { SelectedObjectsTags } from "./selected-objects-tags";
-import { FieldItemList, FieldItem } from "../../field/field-item-list";
-import FieldPagination from "../../field/field-pagination";
+import { FieldItemList, FieldItem } from "../../modules/field/field-item-list";
+import { FieldPagination } from "../../modules/field/field-pagination";
 
 import { toggleObjectSelection } from "../../../actions/objects-list";
 import { objectsOnLoadFetch, pageFetch } from "../../../fetches/ui-objects-list";

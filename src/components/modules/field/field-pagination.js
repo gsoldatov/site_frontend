@@ -2,15 +2,15 @@ import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Pagination } from "semantic-ui-react";
 
-import { OnResizeWrapper } from "../modules/wrappers/on-resize-wrapper";
+import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
 
-import StyleFieldPagination from "../../styles/modules/pagination.css";
+import StyleFieldPagination from "../../../styles/modules/pagination.css";
 
 
 /**
  * Field pagination component.
  */
-export default ({ paginationInfoSelector, setCurrentPage }) => {
+export const FieldPagination = ({ paginationInfoSelector, setCurrentPage }) => {
     const dispatch = useDispatch();
     const paginationInfo = useSelector(paginationInfoSelector);
     const currentPage = paginationInfo ? paginationInfo.currentPage : null;

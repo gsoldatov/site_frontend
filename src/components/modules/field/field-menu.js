@@ -1,13 +1,12 @@
 import React, { useState, useRef, memo, useMemo, createContext, useContext } from "react";
-import { useSelector } from "react-redux";
 import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
-import debounce from "../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../util/enum-debounce-delay-refresh-mode";
+import debounce from "../../../util/debounce";
+import { enumDebounceDelayRefreshMode } from "../../../util/enum-debounce-delay-refresh-mode";
 
-import { OnResizeWrapper } from "../modules/wrappers/on-resize-wrapper";
+import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
 
-import StlyeFieldMenu from "../../styles/modules/field/menu.css";
+import StlyeFieldMenu from "../../../styles/modules/field/menu.css";
 
 
 const menuIsFullscreenThreshold = 768;

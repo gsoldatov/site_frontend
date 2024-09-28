@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { FieldMenu, FieldMenuButton, FieldMenuFilter, FieldMenuGroup } from "../../field/field-menu";
+import { FieldMenu, FieldMenuButton, FieldMenuFilter, FieldMenuGroup } from "../../modules/field/field-menu";
 
 import { selectTags, clearSelectedTags, setTagsPaginationInfo } from "../../../actions/tags-list";
 import { setTagsPaginationInfoAndFetchPage } from "../../../fetches/ui-tags-list";

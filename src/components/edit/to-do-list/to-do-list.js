@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, memo, useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../field/field-menu";
+import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../modules/field/field-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 
