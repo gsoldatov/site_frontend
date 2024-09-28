@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { DefaultObjectData } from  "../../../edit/default-object-data";
+import { DefaultObjectData } from  "./default-object-data";
 
-import { LinkInput } from "../../../edit/link";
-import { MarkdownDataEditor } from "../../../edit/markdown";
+import { LinkInput } from "./link";
+import { MarkdownDataEditor } from "./markdown";
 import { TDLContainer } from "../../../edit/to-do-list/to-do-list";
 import { SubobjectsContainer } from "../../../edit/composite/subobjects";
 

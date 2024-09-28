@@ -1,10 +1,10 @@
 import React, { useMemo, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setEditedObject } from "../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../store/state-util/ui-objects-edit";
+import { setEditedObject } from "../../../../actions/objects-edit";
+import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
 
-import { MarkdownEditor } from "../modules/markdown/markdown-editor";
+import { MarkdownEditor } from "../../../modules/markdown/markdown-editor";
 
 
 /**
