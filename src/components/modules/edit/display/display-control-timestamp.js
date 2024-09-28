@@ -3,7 +3,7 @@ import React, { memo } from "react";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 
-import StyleDisplayControls from "../../../styles/modules/edit/display-controls.css";
+import StyleDisplayControls from "../../../../styles/modules/edit/display-controls.css";
 
 
 /**

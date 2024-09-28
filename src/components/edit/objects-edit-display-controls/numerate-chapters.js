@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { DisplayControlCheckbox } from "../display-controls/display-control-checkbox";
+import { DisplayControlCheckbox } from "../../modules/edit/display/display-control-checkbox";
 
 import { setEditedObject } from "../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../store/state-util/ui-objects-edit";

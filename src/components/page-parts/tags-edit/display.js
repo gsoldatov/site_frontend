@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { DisplayControlCheckbox } from "../../edit/display-controls/display-control-checkbox";
+import { DisplayControlCheckbox } from "../../modules/edit/display/display-control-checkbox";
 
 import { setCurrentTag } from "../../../actions/tags-edit";
 
