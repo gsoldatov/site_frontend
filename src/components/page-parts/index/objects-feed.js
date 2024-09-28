@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 
-import { FeedContainer, FeedCardsContainer } from "../../feed/feed-container";
-import { ObjectFeedCard } from "../../feed/feed-card/object-feed-card";
-import { FeedPagination } from "../../feed/feed-pagination";
+import { FeedContainer, FeedCardsContainer } from "../../modules/feed/feed-container";
+import { ObjectFeedCard } from "../../state-users/feed/object-feed-card";
+import { FeedPagination } from "../../modules/feed/feed-pagination";
 
 import { loadIndexPageObjects } from "../../../fetches/ui-index";
 

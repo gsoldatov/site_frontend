@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Redirect } from "react-router";
 import { Pagination } from "semantic-ui-react";
 
-import { OnResizeWrapper } from "../modules/wrappers/on-resize-wrapper";
+import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
 
-import StyleFieldPagination from "../../styles/modules/pagination.css";
+import StyleFieldPagination from "../../../styles/modules/pagination.css";
 
 
 /**

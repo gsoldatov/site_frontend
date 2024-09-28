@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { FeedCard, FeedCardTimestamp, FeedCardHeader, FeedCardDescription } from "./feed-card";
+import { FeedCard, FeedCardTimestamp, FeedCardHeader, FeedCardDescription } from "../../modules/feed/feed-card";
 
 
 /**

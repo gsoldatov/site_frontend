@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { FeedCard, FeedCardTimestamp, FeedCardHeader, FeedCardDescription } from "./feed-card";
+import { FeedCard, FeedCardTimestamp, FeedCardHeader, FeedCardDescription } from "../../modules/feed/feed-card";
 
 import { InlineItemListBlock, InlineItemListWrapper } from "../../inline/inline-item-list-containers";
 import { InlineItemList } from "../../inline/inline-item-list";
