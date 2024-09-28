@@ -6,7 +6,7 @@ import { Layout } from "../../modules/layout/layout";
 import { LoadIndicatorAndError, SaveError } from "../../modules/edit/placeholders";
 import { AttributesTabPane } from "./attributes-tab-pane";
 import { ObjectDataSwitch } from "../../state-users/objects-edit/data/object-data-switch";
-import { DisplayTab } from "../../edit/objects-edit-display-controls/display-tab";
+import { DisplayTab } from "../../state-users/objects-edit/display/display-tab";
 
 import { setSelectedTab } from "../../../actions/objects-edit";
 import { isMultiColumnCompositeDataDisplayed } from "../../../store/state-util/composite";

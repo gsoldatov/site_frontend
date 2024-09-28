@@ -1,6 +1,6 @@
 import React from "react";
 
-import { DisplayTab } from "../../objects-edit-display-controls/display-tab";
+import { DisplayTab } from "../../../state-users/objects-edit/display/display-tab";
 
 
 /**
