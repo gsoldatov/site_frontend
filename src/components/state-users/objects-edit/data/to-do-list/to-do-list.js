@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useRef, memo, useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../modules/field/field-menu";
+import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../../../modules/field/field-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 
-import { getSortedItemIDs, getVisibleItemIDs } from "../../../store/state-util/to-do-lists";
+import { getSortedItemIDs, getVisibleItemIDs } from "../../../../../store/state-util/to-do-lists";
 
-import * as caret from "../../../util/caret";   // wrapped into an object to make functions mockable in tests
+import * as caret from "../../../../../util/caret";   // wrapped into an object to make functions mockable in tests
 
-import StyleTDL from "../../../styles/modules/edit/to-do-lists.css";
-
+import StyleTDL from "../../../../../styles/modules/edit/to-do-lists.css";
 
 
 /**

@@ -7,9 +7,9 @@ import { Comment } from "./comment";
 import { ExpandControl } from "./expand-control";
 import { ItemDropzone } from "./item-dropzone";
 
-import { getNewItemState } from "../../../store/state-util/to-do-lists";
-import * as caret from "../../../util/caret";   // wrapped into an object to make functions mockable in tests
-import { getElementHeightInLines } from "../../../util/element-styles";
+import { getNewItemState } from "../../../../../store/state-util/to-do-lists";
+import * as caret from "../../../../../util/caret";   // wrapped into an object to make functions mockable in tests
+import { getElementHeightInLines } from "../../../../../util/element-styles";
 
 
 /**

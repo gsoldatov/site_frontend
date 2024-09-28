@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Message } from "semantic-ui-react";
 
-import { TDLContainer } from "../../../edit/to-do-list/to-do-list";
+import { TDLContainer } from "../../../state-users/objects-edit/data/to-do-list/to-do-list";
 
 import { toDoListObjectUpdateFetch } from "../../../../fetches/ui-objects-view";
 

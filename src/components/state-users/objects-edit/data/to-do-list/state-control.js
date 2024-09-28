@@ -1,7 +1,7 @@
-import React, { memo, useState } from "react";
+import React, { memo } from "react";
 import { Icon } from "semantic-ui-react";
 
-import { getNewItemState } from "../../../store/state-util/to-do-lists";
+import { getNewItemState } from "../../../../../store/state-util/to-do-lists";
 
 
 export const stateControlParams = {
