@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Button, Container, Message } from "semantic-ui-react";
 
-import { enumDeleteModes } from "../../../../../store/state-templates/composite-subobjects";
+import { enumDeleteModes } from "../../../../../../../store/state-templates/composite-subobjects";
 
 
 /**

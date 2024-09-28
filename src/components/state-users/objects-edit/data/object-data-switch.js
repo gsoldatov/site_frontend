@@ -6,7 +6,7 @@ import { DefaultObjectData } from  "./default-object-data";
 import { LinkInput } from "./link";
 import { MarkdownDataEditor } from "./markdown";
 import { TDLContainer } from "./to-do-list/to-do-list";
-import { SubobjectsContainer } from "../../../edit/composite/subobjects";
+import { SubobjectsContainer } from "./composite/subobjects";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";

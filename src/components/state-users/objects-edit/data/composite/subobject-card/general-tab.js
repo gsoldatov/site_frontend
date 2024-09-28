@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { ObjectTypeSelector } from "../../../state-users/objects-edit/attributes/object-type-selector";
-import { Timestamps, NameInput, DescriptionEditor } from "../../../modules/edit/attributes";
+import { ObjectTypeSelector } from "../../../attributes/object-type-selector";
+import { Timestamps, NameInput, DescriptionEditor } from "../../../../../modules/edit/attributes";
 
-import { setEditedObject } from "../../../../actions/objects-edit";
+import { setEditedObject } from "../../../../../../actions/objects-edit";
 
 
 /**

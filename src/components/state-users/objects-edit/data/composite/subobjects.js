@@ -5,11 +5,11 @@ import { DraggableSubobjectCard } from "./subobject-card/subobject-card";
 import { DroppableAddSubobjectMenu } from "./add-subobject-menu";
 import { NewSubobjectGridColumn } from "./new-subobject-grid-column";
 
-import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../actions/objects-edit";
-import { getSubobjectDisplayOrder, isCompositeDragAndDropEnabledSelector } from "../../../store/state-util/composite";
-import { enumDeleteModes } from "../../../store/state-templates/composite-subobjects";
+import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../../../actions/objects-edit";
+import { getSubobjectDisplayOrder, isCompositeDragAndDropEnabledSelector } from "../../../../../store/state-util/composite";
+import { enumDeleteModes } from "../../../../../store/state-templates/composite-subobjects";
 
-import StyleCompositeSubobjects from "../../../styles/modules/edit/composite-subobjects.css";
+import StyleCompositeSubobjects from "../../../../../styles/modules/edit/composite-subobjects.css";
 
 
 /**

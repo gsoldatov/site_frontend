@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ObjectDataSwitch } from "../../../state-users/objects-edit/data/object-data-switch";
+import { ObjectDataSwitch } from "../../object-data-switch";
 
 
 /**

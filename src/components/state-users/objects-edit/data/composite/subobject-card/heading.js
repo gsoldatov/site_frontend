@@ -3,10 +3,10 @@ import { Button, Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
-import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified, getObjectDataFromStore } from "../../../../store/state-util/objects";
-import { subobjectStateIsModified, nonCompositeSubobjectIsValid, getNonCompositeSubobjectValidationError } from "../../../../store/state-util/composite";
-import { enumDeleteModes } from "../../../../store/state-templates/composite-subobjects";
-import { enumObjectTypes } from "../../../../util/enum-object-types";
+import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified, getObjectDataFromStore } from "../../../../../../store/state-util/objects";
+import { subobjectStateIsModified, nonCompositeSubobjectIsValid, getNonCompositeSubobjectValidationError } from "../../../../../../store/state-util/composite";
+import { enumDeleteModes } from "../../../../../../store/state-templates/composite-subobjects";
+import { enumObjectTypes } from "../../../../../../util/enum-object-types";
 
 /**
  * Subobject card heading line with object type and name, object name and indicators.

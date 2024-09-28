@@ -3,10 +3,10 @@ import { DropTarget } from "react-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown } from "semantic-ui-react";
 
-import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../fetches/ui-objects-edit";
+import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../../../fetches/ui-objects-edit";
 
-import debounce from "../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../util/enum-debounce-delay-refresh-mode";
+import debounce from "../../../../../util/debounce";
+import { enumDebounceDelayRefreshMode } from "../../../../../util/enum-debounce-delay-refresh-mode";
 
 
 /**
