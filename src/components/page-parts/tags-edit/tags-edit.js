@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import { Layout } from "../../modules/layout/layout";
-import { LoadIndicatorAndError, SaveError } from "../../edit/common/edit-page";
+import { LoadIndicatorAndError, SaveError } from "../../modules/edit/placeholders";
 import { TagTimestamps, TagNameDescription } from "./attributes";
 import { TagDisplayContainer } from "./display";
 

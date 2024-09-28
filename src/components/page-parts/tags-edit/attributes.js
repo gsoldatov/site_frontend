@@ -1,7 +1,7 @@
 import React, { useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { TimeStamps, NameInput, DescriptionEditor } from "../../edit/common/edit-page";
+import { Timestamps, NameInput, DescriptionEditor } from "../../modules/edit/attributes";
 
 import { setCurrentTag } from "../../../actions/tags-edit";
 
@@ -15,7 +15,7 @@ export const TagTimestamps = () => {
     const isDisplayedSelector = useMemo(() => state => state.tagUI.currentTag.tag_id, []);
 
     return (
-        <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} 
+        <Timestamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} 
             isDisplayedSelector={isDisplayedSelector} />
     );
 };

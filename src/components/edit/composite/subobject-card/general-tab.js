@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { ObjectTypeSelector } from "../../../edit/objects-edit";
-import { TimeStamps, NameInput, DescriptionEditor } from "../../../edit/common/edit-page";
+import { Timestamps, NameInput, DescriptionEditor } from "../../../modules/edit/attributes";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 
@@ -32,7 +32,7 @@ export const CardGeneralTab = ({ subobjectID }) => {
     return (
         <div className="composite-subobject-card-tab">
             <ObjectTypeSelector objectID={subobjectID} isSubobject />
-            <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} isDisplayedSelector={isDisplayedSelector} />
+            <Timestamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} isDisplayedSelector={isDisplayedSelector} />
             <NameInput label="Object Name" placeholder="Object name" value={name} onChange={nameOnChange} />
             <DescriptionEditor label="Object Description" placeholder="Object description" value={description} onChange={descriptionOnChange} />
         </div>

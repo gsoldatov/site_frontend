@@ -3,7 +3,7 @@ import { Header, Tab } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Layout } from "../../modules/layout/layout";
-import { LoadIndicatorAndError, SaveError } from "../../edit/common/edit-page";
+import { LoadIndicatorAndError, SaveError } from "../../modules/edit/placeholders";
 import { AttributesTabPane } from "./attributes-tab-pane";
 import { ObjectViewEditSwitch } from "../../edit/objects-edit";
 import { DisplayTab } from "../../edit/objects-edit-display-controls/display-tab";

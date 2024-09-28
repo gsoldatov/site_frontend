@@ -3,7 +3,7 @@ import { Tab } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
-import { TimeStamps, NameInput, DescriptionEditor } from "../../edit/common/edit-page";
+import { Timestamps, NameInput, DescriptionEditor } from "../../modules/edit/attributes";
 import { ObjectTypeSelector } from "../../edit/objects-edit";
 import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
@@ -39,7 +39,7 @@ const ObjectTimestamps = () => {
     const isDisplayedSelector = useMemo(() => state => state.objectUI.currentObjectID > 0, []);
 
     return (
-        <TimeStamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} 
+        <Timestamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} 
             isDisplayedSelector={isDisplayedSelector} />
     );
 };
