@@ -8,6 +8,8 @@ import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } fro
 import { resetEditedObjects, setShowResetDialogObject, setShowDeleteDialogObject } from "../../actions/objects-edit";
 import { addObjectOnLoad, addObjectOnSaveFetch, editObjectOnLoadFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch } from "../../fetches/ui-objects-edit";
 
+import StyleObjectsEdit from "../../styles/pages/objects-edit.css";
+
 
 /**
     /objects/edit/:id page component for new objects

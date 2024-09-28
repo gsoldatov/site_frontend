@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
 import { Timestamps, NameInput, DescriptionEditor } from "../../modules/edit/attributes";
-import { ObjectTypeSelector } from "../../edit/objects-edit";
+import { ObjectTypeSelector } from "../../state-users/objects-edit/attributes/object-type-selector";
 import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";

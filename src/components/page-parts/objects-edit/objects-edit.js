@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Layout } from "../../modules/layout/layout";
 import { LoadIndicatorAndError, SaveError } from "../../modules/edit/placeholders";
 import { AttributesTabPane } from "./attributes-tab-pane";
-import { ObjectViewEditSwitch } from "../../edit/objects-edit";
+import { ObjectDataSwitch } from "../../state-users/objects-edit/data/object-data-switch";
 import { DisplayTab } from "../../edit/objects-edit-display-controls/display-tab";
 
 import { setSelectedTab } from "../../../actions/objects-edit";
@@ -52,7 +52,7 @@ const ObjectTabPanes = ({ objectID }) => {
             { menuItem: "General", render: () =>  <AttributesTabPane objectID={objectID} /> },
             { menuItem: "Data", render: () =>
                 <Tab.Pane>
-                    <ObjectViewEditSwitch objectID={objectID} />
+                    <ObjectDataSwitch objectID={objectID} />
                 </Tab.Pane>
             },
             { menuItem: "Display", render: () =>

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ObjectViewEditSwitch } from "../../objects-edit";
+import { ObjectDataSwitch } from "../../../state-users/objects-edit/data/object-data-switch";
 
 
 /**
@@ -9,7 +9,7 @@ import { ObjectViewEditSwitch } from "../../objects-edit";
 export const CardDataTab = ({ subobjectID }) => {
     return (
         <div className="composite-subobject-card-tab">
-            <ObjectViewEditSwitch objectID={subobjectID} subobjectCard />
+            <ObjectDataSwitch objectID={subobjectID} subobjectCard />
         </div>
     );
 }; 
