@@ -52,7 +52,7 @@ export const SearchFeed = ({ query, page }) => {
 
     // Feed pagination params
     const totalPages = displayedItems ? Math.ceil(totalItems / items_per_page) : null;
-    const paginationURLGetter = useMemo(() => newPage => {
+    const getNewURL = useMemo(() => newPage => {
         const params = new URLSearchParams();
         params.append("q", query);
         if (newPage > 1) params.append("p", newPage);
@@ -64,7 +64,7 @@ export const SearchFeed = ({ query, page }) => {
             <FeedCardsContainer>
                 {feedCards}
             </FeedCardsContainer>
-            <FeedPagination currentPage={page} totalPages={totalPages} getURL={paginationURLGetter} />
+            <FeedPagination activePage={page} totalPages={totalPages} getNewURL={getNewURL} />
         </FeedContainer>
     );
 };

@@ -49,7 +49,7 @@ export const ObjectsFeed = ({ page, items_per_page = 10 }) => {
 
     // Feed pagination params
     const totalPages = paginationInfo ? Math.ceil(paginationInfo.totalItems / paginationInfo.items_per_page) : null;
-    const paginationURLGetter = useMemo(() => newPage =>  newPage > 1 ? `/feed/${newPage}` : "/", []);
+    const getNewURL = useMemo(() => newPage =>  newPage > 1 ? `/feed/${newPage}` : "/", []);
 
     // Object feed cards
     const feedCards = paginationInfo.currentPageObjectIDs.map(objectID => <ObjectFeedCard key={objectID} objectID={objectID} />);
@@ -59,7 +59,7 @@ export const ObjectsFeed = ({ page, items_per_page = 10 }) => {
             <FeedCardsContainer>
                 {feedCards}
             </FeedCardsContainer>
-            <FeedPagination currentPage={page} totalPages={totalPages} getURL={paginationURLGetter} />
+            <FeedPagination activePage={page} totalPages={totalPages} getNewURL={getNewURL} />
         </FeedContainer>
     );
 };

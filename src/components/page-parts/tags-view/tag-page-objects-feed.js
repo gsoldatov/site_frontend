@@ -54,7 +54,7 @@ export const TagPageObjectsFeed = ({ page, items_per_page = 10 }) => {
 
     // Feed pagination params
     const totalPages = paginationInfo ? Math.ceil(paginationInfo.totalItems / paginationInfo.items_per_page) : null;
-    const paginationURLGetter = useMemo(() => newPage => {
+    const getNewURL = useMemo(() => newPage => {
         const params = new URLSearchParams();
         params.append("tagIDs", tagIDs);
         if (newPage > 1) params.append("p", newPage);
@@ -63,7 +63,7 @@ export const TagPageObjectsFeed = ({ page, items_per_page = 10 }) => {
 
     // Don't render if no tags are selected
     if (tagIDs.length === 0) return null;
-
+    
     // Object feed cards
     const feedCards = paginationInfo.currentPageObjectIDs.map(objectID => <ObjectFeedCard key={objectID} objectID={objectID} />);
 
@@ -72,7 +72,7 @@ export const TagPageObjectsFeed = ({ page, items_per_page = 10 }) => {
             <FeedCardsContainer>
                 {feedCards}
             </FeedCardsContainer>
-            <FeedPagination currentPage={page} totalPages={totalPages} getURL={paginationURLGetter} />
+            <FeedPagination activePage={page} totalPages={totalPages} getNewURL={getNewURL} />
         </FeedContainer>
     );
 };
