@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useContext } from "react";
 import { Grid, GridColumn } from "semantic-ui-react";
 
-import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
+import { WindowWidthContext } from "../wrappers/window-width-provider";
 import { Navbar } from "../../state-users/navbar/navbar";
 import SideMenu from "../../state-users/side-menu";
 import { ModalWindow } from "../../state-users/modal-window";
@@ -14,16 +14,8 @@ import StyleLayout from "../../../styles/modules/layout.css";
 /**
  * Page layout with navigation, side menu and main content (body).
  */
-// export default ({ sideMenuItems, body, className, useSideMenuPlaceholderWhenStacked = false }) => {
 export const Layout = ({ sideMenuItems, body, layoutType = enumLayoutTypes.default }) => {
-    // Side menu column (hide if it's stacked & no `sideMenuItems` are provided)
-    const [isStacked, setIsStacked] = useState(window.innerWidth < 768);
-    const onResizeCallback = useMemo(() => gridRef => {
-        // const width = parseInt(getComputedStyle(gridRef).width.replace("px", ""));
-        // setIsStacked(width < 768);     // 768 = SUIR @media threshold
-
-        setIsStacked(window.innerWidth < 768);   // 768 = SUIR @media threshold
-    }, []);
+    const isStacked = useContext(WindowWidthContext) === 0;
 
     // Grid classnames
     const layoutTypePostfix = ` ${layoutType}`;
@@ -49,23 +41,21 @@ export const Layout = ({ sideMenuItems, body, layoutType = enumLayoutTypes.defau
     const mainColumnWidth = sideMenuColumn ? 12 : 16;
 
     return (
-        <OnResizeWrapper callback={onResizeCallback}>
-            <>
-                <Grid stackable className={gridClassName}>
-                    <Grid.Row className={navigationRowClassName}>
-                        <Navbar />
-                    </Grid.Row>
-                    <Grid.Row columns={mainRowColumns} className={mainRowClassName}>
-                        {sideMenuColumn}
-                        <GridColumn width={mainColumnWidth} className={mainContentColumnClassName}>
-                            {body}
-                        </GridColumn>
-                    </Grid.Row>
-                </Grid>
-                <div className="modal-container">
-                    <ModalWindow />
-                </div>
-            </>
-        </OnResizeWrapper>
+        <>
+            <Grid stackable className={gridClassName}>
+                <Grid.Row className={navigationRowClassName}>
+                    <Navbar />
+                </Grid.Row>
+                <Grid.Row columns={mainRowColumns} className={mainRowClassName}>
+                    {sideMenuColumn}
+                    <GridColumn width={mainColumnWidth} className={mainContentColumnClassName}>
+                        {body}
+                    </GridColumn>
+                </Grid.Row>
+            </Grid>
+            <div className="modal-container">
+                <ModalWindow />
+            </div>
+        </>
     );
 };

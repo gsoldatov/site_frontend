@@ -9,6 +9,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../store/create-store";
 
+import { WindowWidthProvider } from "./modules/wrappers/window-width-provider";
 import { LocationManagerWrapper } from "./state-users/location-manager-wrapper";
 import { ProtectedRoute } from "./modules/wrappers/protected-route";
 
@@ -134,7 +135,9 @@ export const WrappedApp = () => {
         <Provider store={store}>
             <DndProvider backend={HTML5Backend}>
                 <BrowserRouter>
-                    <App />
+                    <WindowWidthProvider>
+                        <App />
+                    </WindowWidthProvider>
                 </BrowserRouter>
             </DndProvider>
         </Provider>

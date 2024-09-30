@@ -1,15 +1,13 @@
-import React, { useState, useRef, memo, useMemo, createContext, useContext } from "react";
+import React, { useState, useRef, memo, createContext, useContext } from "react";
 import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
 import debounce from "../../../util/debounce";
 import { enumDebounceDelayRefreshMode } from "../../../util/enum-debounce-delay-refresh-mode";
 
-import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
+import { WindowWidthContext } from "../wrappers/window-width-provider";
 
 import StlyeFieldMenu from "../../../styles/modules/field/menu.css";
 
-
-const menuIsFullscreenThreshold = 768;
 
 
 /**
@@ -24,22 +22,16 @@ const FieldMenuSizeContext = createContext(undefined);
  * Renders SUIR <Menu> with the provided `size` and `compact` props and controls its fullscreen/smallscreen styling.
  */
 export const FieldMenu = memo(({ className = "field-menu", compact, size, children }) => {
-    const [isFullscreenStyle, setIsFullscreenStyle] = useState(window.innerWidth >= menuIsFullscreenThreshold);
-
-    const onResizeCallback = useMemo(() => menuRef => {
-        setIsFullscreenStyle(window.innerWidth >= menuIsFullscreenThreshold);
-    }, []);
+    const isStacked = useContext(WindowWidthContext) === 0;
     
-    if (!isFullscreenStyle) className += " smallscreen";
+    if (isStacked) className += " smallscreen";
 
     return (
-        <OnResizeWrapper callback={onResizeCallback}>
-            <FieldMenuSizeContext.Provider value={size}>
-                <Menu className={className} compact={compact} size={size}>
-                    {children}
-                </Menu>
-            </FieldMenuSizeContext.Provider>
-        </OnResizeWrapper>
+        <FieldMenuSizeContext.Provider value={size}>
+            <Menu className={className} compact={compact} size={size}>
+                {children}
+            </Menu>
+        </FieldMenuSizeContext.Provider>
     );
 });
 

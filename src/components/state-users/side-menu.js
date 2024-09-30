@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button, Checkbox, Container, Header, Icon, Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
 import { OnResizeWrapper } from "../modules/wrappers/on-resize-wrapper";
+import { WindowWidthContext } from "../modules/wrappers/window-width-provider";
 
 import StyleSideMenu from "../../styles/modules/side-menu.css";
 
@@ -15,7 +16,7 @@ export default ({ items, usePlaceholderWhenStacked = false }) => {
     if (!items || items.length === 0) return null;
 
     // Fullscreen style state & on resize update
-    const [isStacked, setIsStacked] = useState(window.innerWidth < 768);    // Toggles side menu mobile styling
+    const isStacked = useContext(WindowWidthContext) === 0;
     const [placeholderHeight, setPlaceholderHeight] = useState(0);
     const [itemFullscreenStyle, setItemFullscreenStyle] = useState(false);                  // Toggles icon only side menu items on small widths
     const [dialogButtonsFullscreenStyle, setDialogButtonsFullscreenStyle] = useState(false);    // Toggles icon only confirmation dialog on small widths
@@ -23,7 +24,6 @@ export default ({ items, usePlaceholderWhenStacked = false }) => {
         const width = parseInt(getComputedStyle(sideMenuRef).width.replace("px", ""));
         const height = parseInt(getComputedStyle(sideMenuRef).height.replace("px", ""));
         
-        setIsStacked(window.innerWidth < 768);       // 768 = SUIR @media threshold
         setPlaceholderHeight(height);
         setItemFullscreenStyle(width >= 100);
         setDialogButtonsFullscreenStyle(width >= 170);
