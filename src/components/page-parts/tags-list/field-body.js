@@ -4,7 +4,7 @@ import { Loader } from "semantic-ui-react";
 
 import { ErrorMessage } from "../../modules/error-message";
 import { FieldItemList, FieldItem } from "../../modules/field/field-item-list";
-import { FieldPagination } from "../../modules/field/field-pagination";
+import { TagsListPagination } from "./tags-list-pagination";
 
 import { toggleTagSelection } from "../../../actions/tags-list";
 import { pageFetch } from "../../../fetches/ui-tags-list";
@@ -22,7 +22,6 @@ export const TagsListFieldBody = () => {
 
     const selectedTagIDsSelector = useMemo(() => state => state.tagsUI.selectedTagIDs, []);
     const pageTagIDsSelector = state => useMemo(() => state.tagsUI.paginationInfo.currentPageTagIDs, []);
-    const paginationInfoSelector = state => useMemo(() => state.tagsUI.paginationInfo, []);
 
     // On load action
     useEffect(() => {
@@ -36,7 +35,7 @@ export const TagsListFieldBody = () => {
         <>
         <FieldItemList header="Selected Tags" itemIDsSelector={selectedTagIDsSelector} ItemComponent={TagsListFieldItem} isExpandable />
         <FieldItemList itemIDsSelector={pageTagIDsSelector} ItemComponent={TagsListFieldItem} />
-        <FieldPagination paginationInfoSelector={paginationInfoSelector} setCurrentPage={pageFetch} />
+        <TagsListPagination />
         </>
     );
 };
