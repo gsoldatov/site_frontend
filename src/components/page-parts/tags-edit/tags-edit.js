@@ -12,7 +12,7 @@ import { TagDisplayContainer } from "./display";
 /**
  * /tags/edit/:id base component
  */
-export const TagsEdit = ({ header, sideMenuItems, onLoad }) => {
+export const TagsEdit = ({ header, sideMenu, onLoad }) => {
     const dispatch = useDispatch();
     const { id } = useParams();
 
@@ -42,7 +42,7 @@ export const TagsEdit = ({ header, sideMenuItems, onLoad }) => {
         </div>
     );
 
-    return <Layout sideMenuItems={sideMenuItems} body={body} />;
+    return <Layout sideMenu={sideMenu} body={body} />;
 };
 
 

@@ -16,7 +16,7 @@ import { enumLayoutTypes } from "../../../util/enum-layout-types";
 /**
  * /objects/edit/:id base component
  */
-export const ObjectsEdit = ({ header, sideMenuItems, onLoad, objectID }) => {
+export const ObjectsEdit = ({ header, sideMenu, onLoad, objectID }) => {
     const dispatch = useDispatch();
     
     const enableStylesForMulticolumnCompositeObjectData = useSelector(isMultiColumnCompositeDataDisplayed);
@@ -42,7 +42,7 @@ export const ObjectsEdit = ({ header, sideMenuItems, onLoad, objectID }) => {
     // Layout type (unlimited width for multicolumn object data)
     const layoutType = enableStylesForMulticolumnCompositeObjectData ? enumLayoutTypes.unlimitedWidth : enumLayoutTypes.default;
 
-    return <Layout sideMenuItems={sideMenuItems} body={body} layoutType={layoutType} />;;
+    return <Layout sideMenu={sideMenu} body={body} layoutType={layoutType} />;;
 };
 
 

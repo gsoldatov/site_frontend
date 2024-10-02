@@ -3,7 +3,6 @@ import { Grid, GridColumn } from "semantic-ui-react";
 
 import { WindowWidthContext } from "../wrappers/window-width-provider";
 import { Navbar } from "../../state-users/navbar/navbar";
-import SideMenu from "../../state-users/side-menu";
 import { ModalWindow } from "../../state-users/modal-window";
 
 import { enumLayoutTypes } from "../../../util/enum-layout-types";
@@ -14,7 +13,7 @@ import StyleLayout from "../../../styles/modules/layout.css";
 /**
  * Page layout with navigation, side menu and main content (body).
  */
-export const Layout = ({ sideMenuItems, body, layoutType = enumLayoutTypes.default }) => {
+export const Layout = ({ sideMenu, body, layoutType = enumLayoutTypes.default }) => {
     const isStacked = useContext(WindowWidthContext) === 0;
 
     // Grid classnames
@@ -28,11 +27,9 @@ export const Layout = ({ sideMenuItems, body, layoutType = enumLayoutTypes.defau
     const mainContentColumnClassName = "layout-grid-main-content-column" + layoutTypePostfix + stackedClassNamePostfix;
     
     // Side menu
-    const usePlaceholderWhenStacked = layoutType === enumLayoutTypes.unlimitedWidth && isStacked;   // Stacked side menu with unlimited width layout uses 'fixed` postion and requires a placeholder to not overflow main content
-
-    const sideMenuColumn = sideMenuItems && (
+    const sideMenuColumn = sideMenu && (
         <Grid.Column width={2} className={sideMenuColumnClassName}>
-            <SideMenu items={sideMenuItems} usePlaceholderWhenStacked={usePlaceholderWhenStacked} />
+            {sideMenu}
         </Grid.Column>
     );
 
