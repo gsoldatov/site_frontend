@@ -14,9 +14,9 @@ export const CardGeneralTab = ({ subobjectID }) => {
     const dispatch = useDispatch();
 
     // Timestamps' props
-    const createdAtSelector = useRef(state => state.editedObjects[subobjectID].created_at).current;
-    const modifiedAtSelector = useRef(state => state.editedObjects[subobjectID].modified_at).current;
-    const isDisplayedSelector = useRef(state => subobjectID > 0).current;
+    const createdAt = useSelector(state => state.editedObjects[subobjectID].created_at);
+    const modifiedAt = useSelector(state => state.editedObjects[subobjectID].modified_at);
+    const areTimestampsDisplayed = useSelector(state => subobjectID > 0);
 
     // Name & description props
     const name = useSelector(state => state.editedObjects[subobjectID].object_name);
@@ -30,10 +30,12 @@ export const CardGeneralTab = ({ subobjectID }) => {
         dispatch(setEditedObject({ object_description }, subobjectID));
     }).current;
 
+    const timestamps = areTimestampsDisplayed && <Timestamps createdAt={createdAt} modifiedAt={modifiedAt} />;
+
     return (
         <div className="composite-subobject-card-tab">
             <ObjectTypeSelector objectID={subobjectID} isSubobject />
-            <Timestamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} isDisplayedSelector={isDisplayedSelector} />
+            {timestamps}
             <NameInput label="Object Name" placeholder="Object name" value={name} onChange={nameOnChange} />
             <DescriptionEditor label="Object Description" placeholder="Object description" value={description} onChange={descriptionOnChange} />
         </div>

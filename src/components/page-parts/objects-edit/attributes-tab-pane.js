@@ -34,14 +34,13 @@ export const AttributesTabPane = ({ objectID }) => {
  * Created at & modified at timestamps
  */
 const ObjectTimestamps = () => {
-    const createdAtSelector = useMemo(() => state => getCurrentObject(state).created_at, []);
-    const modifiedAtSelector = useMemo(() => state => getCurrentObject(state).modified_at, []);
-    const isDisplayedSelector = useMemo(() => state => state.objectUI.currentObjectID > 0, []);
+    const createdAt = useSelector(state => getCurrentObject(state).created_at);
+    const modifiedAt = useSelector(state => getCurrentObject(state).modified_at);
+    const isDisplayed = useSelector(state => state.objectUI.currentObjectID > 0);
 
-    return (
-        <Timestamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} 
-            isDisplayedSelector={isDisplayedSelector} />
-    );
+    if (!isDisplayed) return null;
+
+    return <Timestamps createdAt={createdAt} modifiedAt={modifiedAt} />;
 };
 
 

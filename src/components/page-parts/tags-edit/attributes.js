@@ -10,14 +10,13 @@ import { setCurrentTag } from "../../../actions/tags-edit";
  * Created at & modified at timestamps
  */
 export const TagTimestamps = () => {
-    const createdAtSelector = useMemo(() => state => state.tagUI.currentTag.created_at, []);
-    const modifiedAtSelector = useMemo(() => state => state.tagUI.currentTag.modified_at, []);
-    const isDisplayedSelector = useMemo(() => state => state.tagUI.currentTag.tag_id, []);
+    const createdAt = useSelector(state => state.tagUI.currentTag.created_at);
+    const modifiedAt = useSelector(state => state.tagUI.currentTag.modified_at);
+    const isDisplayed = useSelector(state => state.tagUI.currentTag.tag_id > 0);
 
-    return (
-        <Timestamps createdAtSelector={createdAtSelector} modifiedAtSelector={modifiedAtSelector} 
-            isDisplayedSelector={isDisplayedSelector} />
-    );
+    if (!isDisplayed) return null;
+
+    return <Timestamps createdAt={createdAt} modifiedAt={modifiedAt} />;
 };
 
 

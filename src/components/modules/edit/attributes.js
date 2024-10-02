@@ -1,6 +1,5 @@
 import React, { useMemo, useState, memo } from "react";
 import { Form } from "semantic-ui-react";
-import { useSelector } from "react-redux";
 import moment from "moment";
 
 import { MarkdownEditor } from "../../modules/markdown/markdown-editor";
@@ -11,12 +10,9 @@ import StyleEditAttributes from "../../../styles/modules/edit/attributes.css";
 /**
  * Created at & modified at timestamps.
  */
-export const Timestamps = ({ createdAtSelector, modifiedAtSelector, isDisplayedSelector }) => {
-    const createdAt = moment(useSelector(createdAtSelector)).format("lll");
-    const modifiedAt = moment(useSelector(modifiedAtSelector)).format("lll");
-    const isDisplayed = useSelector(isDisplayedSelector);
-    
-    if (!isDisplayed) return null;
+export const Timestamps = ({ createdAt, modifiedAt }) => {
+    createdAt =  moment(createdAt).format("lll");
+    modifiedAt =  moment(modifiedAt).format("lll");
 
     return (
         <div className="created-modified-timestamps-container">
@@ -40,7 +36,7 @@ export const NameInput = memo(({ label, placeholder, value, onChange }) => {
     const handleNameChange = useMemo(() => e => { onChange(e.target.value); }, []);
 
     return (
-        <Form className="name-form">
+        <Form>
             <Form.Input label={label} placeholder={placeholder} value={value} onChange={handleNameChange} />
         </Form>
     );
