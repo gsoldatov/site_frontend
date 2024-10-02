@@ -6,7 +6,6 @@ import { SideMenuItem } from "../../modules/side-menu/side-menu-item";
 import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogCheckbox, SideMenuDialogButtonsContainer, SideMenuDialogButton } from "../../modules/side-menu/side-menu-dialog";
 
-import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../../../actions/common";
 import { setShowDeleteDialogObjects, setCurrentObjectsTags } from "../../../actions/objects-list";
 import { onDeleteFetch, onObjectsTagsUpdateFetch } from "../../../fetches/ui-objects-list";
 import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive } from "../../../store/state-util/ui-objects-list";
@@ -40,7 +39,7 @@ const AddANewObject = () => {
 
 const EditObject = () => {
     const isActive = useSelector(state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchingOrShowingDeleteDialogObjects(state));
-    const URL = useSelector(REDIRECT_ON_RENDER_PATH_CREATORS.objectsEdit);
+    const URL = useSelector(state => `/objects/edit/${state.objectsUI.selectedObjectIDs[0]}`);
     const isVisible = useSelector(state => !isObjectsTagsEditActive(state));
     
     if (!isVisible) return null;

@@ -6,7 +6,6 @@ import { SideMenuItem } from "../../modules/side-menu/side-menu-item";
 import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogButtonsContainer, SideMenuDialogButton } from "../../modules/side-menu/side-menu-dialog";
 
-import { REDIRECT_ON_RENDER_PATH_CREATORS } from "../../../actions/common";
 import { setShowDeleteDialogTags } from "../../../actions/tags-list";
 import { onDeleteFetch } from "../../../fetches/ui-tags-list";
 import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../../store/state-util/ui-tags-list";
@@ -43,7 +42,7 @@ const AddANewTag = () => {
 
 const EditTag = () => {
     const isActive = useSelector(state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state));
-    const URL = useSelector(REDIRECT_ON_RENDER_PATH_CREATORS.tagsEdit);
+    const URL = useSelector(state => `/tags/edit/${state.tagsUI.selectedTagIDs[0]}`);
     return <SideMenuLink text="Edit Tag" icon="edit outline" isActive={isActive} URL={URL} />;
 };
 
