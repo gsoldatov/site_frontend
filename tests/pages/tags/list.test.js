@@ -502,7 +502,7 @@ describe("Field menu", () => {
         await waitFor(() => getByText(container, "tag #1"));
 
         // Filter with matching tags and check if they are correctly displayed
-        // let tagFilterInput = container.querySelector(".field-menu-filter").querySelector("input");
+        // let tagFilterInput = container.querySelector(".horizontal-menu-filter").querySelector("input");
         let tagFilterInput = getByPlaceholderText(container, "Filter tags");
         fireEvent.change(tagFilterInput, { target: { value: "some text" } });
         await waitForFetch(store);

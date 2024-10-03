@@ -528,7 +528,7 @@ describe("Field menu", () => {
         await waitFor(() => getByText(container, "object #1"));
 
         // Filter with matching objects and check if they are correctly displayed
-        // let objectFilterInput = container.querySelector(".field-menu-filter").querySelector("input");
+        // let objectFilterInput = container.querySelector(".horizontal-menu-filter").querySelector("input");
         let objectFilterInput = getByPlaceholderText(container, "Filter objects");
         expect(objectFilterInput).toBeTruthy();
         fireEvent.change(objectFilterInput, { target: { value: "some text" } });

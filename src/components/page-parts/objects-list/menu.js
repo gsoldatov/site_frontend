@@ -2,7 +2,8 @@ import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
-import { FieldMenu, FieldMenuGroup, FieldMenuButton, FieldMenuFilter, FieldMenuDropdown, FieldMenuUpdatableDropdown } from "../../modules/field/field-menu";
+import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton, 
+    HorizontalMenuFilter, HorizontalMenuDropdown, HorizontalMenuUpdatableDropdown } from "../../modules/horizontal-menu";
 
 import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo, setTagsFilterInput  } from "../../../actions/objects-list";
 import { setObjectsPaginationInfoAndFetchPage, setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../../../fetches/ui-objects-list";
@@ -13,7 +14,7 @@ import { enumObjectTypes } from "../../../util/enum-object-types";
 /**
  * /objects/list field menu
  */
-export const ObjectsListFieldMenu = () => {
+export const ObjectsListHorizontalMenu = () => {
     const dispatch = useDispatch();
 
     // Common props
@@ -75,36 +76,37 @@ export const ObjectsListFieldMenu = () => {
     const tagsFilterClearIsDisabled = useSelector(state => isFetchingObjects(state) || state.objectsUI.paginationInfo.tagsFilter.length == 0);
 
     return (
-        <FieldMenu>
-            <FieldMenuGroup isButtonGroup>
-                <FieldMenuButton icon="check" title="Select all objects on page" onClick={selectAllOnClick} isDisabled={isDisabled} />
-                <FieldMenuButton icon="cancel" title="Deselect all objects" onClick={deselectAllOnClick} isDisabled={isDisabled} />
-                <FieldMenuButton icon="sort content descending" title="Sort in ascending order" onClick={sortAscOnClick} 
+        <HorizontalMenu>
+            <HorizontalMenuGroup isButtonGroup>
+                <HorizontalMenuButton icon="check" title="Select all objects on page" onClick={selectAllOnClick} isDisabled={isDisabled} />
+                <HorizontalMenuButton icon="cancel" title="Deselect all objects" onClick={deselectAllOnClick} isDisabled={isDisabled} />
+                <HorizontalMenuButton icon="sort content descending" title="Sort in ascending order" onClick={sortAscOnClick} 
                     isDisabled={isDisabled} isActive={sortAscIsActive} />
-                <FieldMenuButton icon="sort content ascending" title="Sort in descending order" onClick={sortDescOnClick} 
+                <HorizontalMenuButton icon="sort content ascending" title="Sort in descending order" onClick={sortDescOnClick} 
                     isDisabled={isDisabled} isActive={sortDescIsActive} />
-                <FieldMenuButton icon="font" title="Sort by object name" onClick={sortByNameOnClick} 
+                <HorizontalMenuButton icon="font" title="Sort by object name" onClick={sortByNameOnClick} 
                     isDisabled={isDisabled} isActive={sortByNameIsActive} />
-                <FieldMenuButton icon="clock outline" title="Sort by modify time" onClick={sortByModifyTimeOnClick} 
+                <HorizontalMenuButton icon="clock outline" title="Sort by modify time" onClick={sortByModifyTimeOnClick} 
                     isDisabled={isDisabled} isActive={sortByModifyTimeIsActive} />
-            </FieldMenuGroup>
+            </HorizontalMenuGroup>
             
-            <FieldMenuGroup>
-                <FieldMenuFilter value={objectNameFilterValue} placeholder="Filter objects" isDisabled={isDisabled}
+            <HorizontalMenuGroup>
+                <HorizontalMenuFilter value={objectNameFilterValue} placeholder="Filter objects" isDisabled={isDisabled}
                     onChange={objectNameFilterOnChange} onChangeDelayed={objectNameFilterOnChangeDelayed} />
-            </FieldMenuGroup>
+            </HorizontalMenuGroup>
 
-            <FieldMenuGroup>
-                <FieldMenuDropdown defaultValue={objectTypesDefaultValue} options={objectTypesOptions} onChange={objectTypesOnChange}
+            <HorizontalMenuGroup>
+                <HorizontalMenuDropdown defaultValue={objectTypesDefaultValue} options={objectTypesOptions} onChange={objectTypesOnChange}
                     placeholder="Filter by object type" isDisabled={isDisabled} />
-            </FieldMenuGroup>
+            </HorizontalMenuGroup>
 
-            <FieldMenuGroup>
-                <FieldMenuUpdatableDropdown placeholder="Filter objects by tags" isDisabled={isDisabled}
+            <HorizontalMenuGroup>
+                <HorizontalMenuUpdatableDropdown placeholder="Filter objects by tags" isDisabled={isDisabled}
                     inputState={tagsFilterInputState} existingIDs={tagsFilterExistingIDs} options={tagsFilterOptions} 
                     onSearchChange={tagsFilterOnSearchChange} onSearchChangeDelayed={tagsFilterOnSearchChangeDelayed} onChange={tagsFilterOnChange} />
-                <FieldMenuButton icon="remove" title="Clear tags filter" className="borderless" onClick={tagsFilterClearOnClick} isDisabled={tagsFilterClearIsDisabled} />
-            </FieldMenuGroup>
-        </FieldMenu>
+                <HorizontalMenuButton icon="remove" title="Clear tags filter" className="borderless" 
+                    onClick={tagsFilterClearOnClick} isDisabled={tagsFilterClearIsDisabled} />
+            </HorizontalMenuGroup>
+        </HorizontalMenu>
     );
 };

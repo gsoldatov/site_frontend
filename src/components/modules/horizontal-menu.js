@@ -1,37 +1,36 @@
 import React, { useState, useRef, memo, createContext, useContext } from "react";
 import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
-import debounce from "../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../util/enum-debounce-delay-refresh-mode";
+import debounce from "../../util/debounce";
+import { enumDebounceDelayRefreshMode } from "../../util/enum-debounce-delay-refresh-mode";
 
-import { WindowWidthContext } from "../wrappers/window-width-provider";
+import { WindowWidthContext } from "./wrappers/window-width-provider";
 
-import StlyeFieldMenu from "../../../styles/modules/field/menu.css";
-
+import StlyeHorizontalMenu from "../../styles/modules/horizontal-menu.css";
 
 
 /**
- * Context for passing `size` prop of <FieldMenu> into its children.
+ * Context for passing `size` prop of <HorizontalMenu> into its children.
  */
-const FieldMenuSizeContext = createContext(undefined);
+const HorizontalMenuSizeContext = createContext(undefined);
 
 
 /**
- * Field menu component.
+ * Horizontal menu component.
  * 
  * Renders SUIR <Menu> with the provided `size` and `compact` props and controls its fullscreen/smallscreen styling.
  */
-export const FieldMenu = memo(({ className = "field-menu", compact, size, children }) => {
+export const HorizontalMenu = memo(({ className = "horizontal-menu", compact, size, children }) => {
     const isStacked = useContext(WindowWidthContext) === 0;
     
     if (isStacked) className += " smallscreen";
 
     return (
-        <FieldMenuSizeContext.Provider value={size}>
+        <HorizontalMenuSizeContext.Provider value={size}>
             <Menu className={className} compact={compact} size={size}>
                 {children}
             </Menu>
-        </FieldMenuSizeContext.Provider>
+        </HorizontalMenuSizeContext.Provider>
     );
 });
 
@@ -42,9 +41,9 @@ export const FieldMenu = memo(({ className = "field-menu", compact, size, childr
  * Container can be set to SUIR <Button.Group> by `isButtonGroup` prop or rendered as a div by default.
  * If `disableSmallScreenStyling` is true, disables smallscreen styling for the group and its children. 
  */
-export const FieldMenuGroup = memo(({ isButtonGroup, disableSmallScreenStyling = false, children }) => {
-    const size = useContext(FieldMenuSizeContext);
-    let groupClassName = "field-menu-group";
+export const HorizontalMenuGroup = memo(({ isButtonGroup, disableSmallScreenStyling = false, children }) => {
+    const size = useContext(HorizontalMenuSizeContext);
+    let groupClassName = "horizontal-menu-group";
     if (disableSmallScreenStyling) groupClassName += " smallscreen-disabled";
 
     if (isButtonGroup) {
@@ -64,11 +63,11 @@ export const FieldMenuGroup = memo(({ isButtonGroup, disableSmallScreenStyling =
 
 
 /**
- * Field menu button.
+ * Horizontal menu button.
  */
-export const FieldMenuButton = memo(({ icon, title, isDisabled = false, isActive = false, onClick, className }) => {
-    const size = useContext(FieldMenuSizeContext);
-    className = "field-menu-button" + (
+export const HorizontalMenuButton = memo(({ icon, title, isDisabled = false, isActive = false, onClick, className }) => {
+    const size = useContext(HorizontalMenuSizeContext);
+    className = "horizontal-menu-button" + (
         className === undefined ? ""
         : (className.startsWith(" ") ? className : (" " + className))
     );
@@ -78,9 +77,9 @@ export const FieldMenuButton = memo(({ icon, title, isDisabled = false, isActive
 
 
 /**
- * Field menu filter.
+ * Horizontal menu filter.
  */
-export const FieldMenuFilter = memo(({ value, placeholder = "Filter", isDisabled, onChange, onChangeDelayed }) => {
+export const HorizontalMenuFilter = memo(({ value, placeholder = "Filter", isDisabled, onChange, onChangeDelayed }) => {
     const _onChangeDelayed = useRef(debounce(onChangeDelayed, 250, 
         enumDebounceDelayRefreshMode.onCall)).current;     // wrap onChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
     const handleChange = e => {
@@ -89,15 +88,15 @@ export const FieldMenuFilter = memo(({ value, placeholder = "Filter", isDisabled
         _onChangeDelayed(value);                 // onChangeDelayed is called after a delay since last input value change (and dispatches a fetch)
     };
 
-    return <Input className="field-menu-filter" fluid icon="search" disabled={isDisabled} placeholder={placeholder} value={value} onChange={handleChange} />;
+    return <Input className="horizontal-menu-filter" fluid icon="search" disabled={isDisabled} placeholder={placeholder} value={value} onChange={handleChange} />;
 });
 
 
 /**
- * Field menu dropdown.
+ * Horizontal menu dropdown.
  */
-export const FieldMenuDropdown = memo(({ placeholder, isDisabled, defaultValue, options, onChange }) => {
-    return <Dropdown multiple selection fluid className="field-menu-dropdown"
+export const HorizontalMenuDropdown = memo(({ placeholder, isDisabled, defaultValue, options, onChange }) => {
+    return <Dropdown multiple selection fluid className="horizontal-menu-dropdown"
         placeholder={placeholder}
         disabled={isDisabled}
         defaultValue={defaultValue}
@@ -108,9 +107,9 @@ export const FieldMenuDropdown = memo(({ placeholder, isDisabled, defaultValue, 
 
 
 /**
- * Field menu dropdown with updatable options.
+ * Horizontal menu dropdown with updatable options.
  */
-export const FieldMenuUpdatableDropdown = ({ placeholder, isDisabled, inputState, existingIDs, onSearchChange, onSearchChangeDelayed, 
+export const HorizontalMenuUpdatableDropdown = ({ placeholder, isDisabled, inputState, existingIDs, onSearchChange, onSearchChangeDelayed, 
         onChange, options }) => {
     // Search text change handlers (updates state & runs a delayed fetch to get dropdown items)
     const _onSearchChangeDelayed = useRef(debounce(onSearchChangeDelayed , 250, enumDebounceDelayRefreshMode.onCall)).current;
@@ -140,7 +139,7 @@ export const FieldMenuUpdatableDropdown = ({ placeholder, isDisabled, inputState
         }
     };
 
-    return <Dropdown search selectOnNavigation={false} selection selectOnBlur={false} className="field-menu-updatable-dropdown"
+    return <Dropdown search selectOnNavigation={false} selection selectOnBlur={false} className="horizontal-menu-updatable-dropdown"
         placeholder={placeholder}
         disabled={isDisabled}
         open={options.length > 0}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, memo, useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../../../../modules/field/field-menu";
+import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton } from "../../../../modules/horizontal-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 
@@ -37,12 +37,12 @@ const TDLMenu = memo(({ sortType, updateCallback }) => {
     const sortByStateIsActive = sortType === "state";
 
     return (
-        <FieldMenu size="mini" className="to-do-list-menu">
-            <FieldMenuGroup isButtonGroup disableSmallScreenStyling>
-                <FieldMenuButton icon="ordered list" title="Default sort" onClick={defaultSortOnClick} isActive={defaultSortIsActive} />
-                <FieldMenuButton icon="tasks" title="Sort by state" onClick={sortByStateOnClick} isActive={sortByStateIsActive} />
-            </FieldMenuGroup>
-        </FieldMenu>
+        <HorizontalMenu size="mini" className="to-do-list-menu">
+            <HorizontalMenuGroup isButtonGroup disableSmallScreenStyling>
+                <HorizontalMenuButton icon="ordered list" title="Default sort" onClick={defaultSortOnClick} isActive={defaultSortIsActive} />
+                <HorizontalMenuButton icon="tasks" title="Sort by state" onClick={sortByStateOnClick} isActive={sortByStateIsActive} />
+            </HorizontalMenuGroup>
+        </HorizontalMenu>
     );
 });
 

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { FieldMenu, FieldMenuButton, FieldMenuFilter, FieldMenuGroup } from "../../modules/field/field-menu";
+import { HorizontalMenu, HorizontalMenuButton, HorizontalMenuFilter, HorizontalMenuGroup } from "../../modules/horizontal-menu";
 
 import { selectTags, clearSelectedTags, setTagsPaginationInfo } from "../../../actions/tags-list";
 import { setTagsPaginationInfoAndFetchPage } from "../../../fetches/ui-tags-list";
@@ -13,7 +13,7 @@ import { enumUserLevels } from "../../../util/enum-user-levels";
 /**
  * /tags/list field menu
  */
-export const TagsListFieldMenu = () => {
+export const TagsListHorizontalMenu = () => {
     const dispatch = useDispatch();
 
     // Common props
@@ -23,11 +23,13 @@ export const TagsListFieldMenu = () => {
     // Select all tags button
     const currentPageTagIDs = useSelector(state => state.tagsUI.paginationInfo.currentPageTagIDs);
     const selectAllOnClick = useMemo(() => () => dispatch(selectTags(currentPageTagIDs)), [currentPageTagIDs]);
-    const selectAllButton = isLoggedInAsAdmin && <FieldMenuButton icon="check" title="Select all tags on page" onClick={selectAllOnClick} isDisabled={isDisabled} />;
+    const selectAllButton = isLoggedInAsAdmin && 
+        <HorizontalMenuButton icon="check" title="Select all tags on page" onClick={selectAllOnClick} isDisabled={isDisabled} />;
 
     // Deselect all tags button
     const deselectAllOnClick = useMemo(() => () => dispatch(clearSelectedTags()), []);
-    const deselectAllButton = isLoggedInAsAdmin && <FieldMenuButton icon="cancel" title="Deselect all tags" onClick={deselectAllOnClick} isDisabled={isDisabled} />
+    const deselectAllButton = isLoggedInAsAdmin && 
+        <HorizontalMenuButton icon="cancel" title="Deselect all tags" onClick={deselectAllOnClick} isDisabled={isDisabled} />
 
     // Sort asc button
     const sortAscOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortOrder: "asc" })), []);
@@ -51,24 +53,24 @@ export const TagsListFieldMenu = () => {
     const tagNameFilterOnChangeDelayed = useMemo(() => value => dispatch(setTagsPaginationInfoAndFetchPage({ filterText: value })), []);
 
     return (
-        <FieldMenu>
-            <FieldMenuGroup isButtonGroup>
+        <HorizontalMenu>
+            <HorizontalMenuGroup isButtonGroup>
                 {selectAllButton}
                 {deselectAllButton}
-                <FieldMenuButton icon="sort content descending" title="Sort in ascending order" onClick={sortAscOnClick} 
+                <HorizontalMenuButton icon="sort content descending" title="Sort in ascending order" onClick={sortAscOnClick} 
                     isDisabled={isDisabled} isActive={sortAscIsActive} />
-                <FieldMenuButton icon="sort content ascending" title="Sort in descending order" onClick={sortDescOnClick} 
+                <HorizontalMenuButton icon="sort content ascending" title="Sort in descending order" onClick={sortDescOnClick} 
                     isDisabled={isDisabled} isActive={sortDescIsActive} />
-                <FieldMenuButton icon="font" title="Sort by tag name" onClick={sortByNameOnClick} 
+                <HorizontalMenuButton icon="font" title="Sort by tag name" onClick={sortByNameOnClick} 
                     isDisabled={isDisabled} isActive={sortByNameIsActive} />
-                <FieldMenuButton icon="clock outline" title="Sort by modify time" onClick={sortByModifyTimeOnClick} 
+                <HorizontalMenuButton icon="clock outline" title="Sort by modify time" onClick={sortByModifyTimeOnClick} 
                     isDisabled={isDisabled} isActive={sortByModifyTimeIsActive} />
-            </FieldMenuGroup>
+            </HorizontalMenuGroup>
             
-            <FieldMenuGroup>
-                <FieldMenuFilter value={tagNameFilterValue} placeholder="Filter tags" isDisabled={isDisabled}
+            <HorizontalMenuGroup>
+                <HorizontalMenuFilter value={tagNameFilterValue} placeholder="Filter tags" isDisabled={isDisabled}
                     onChange={tagNameFilterOnChange} onChangeDelayed={tagNameFilterOnChangeDelayed} />
-            </FieldMenuGroup>
-        </FieldMenu>
+            </HorizontalMenuGroup>
+        </HorizontalMenu>
     );
 };

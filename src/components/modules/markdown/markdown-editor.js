@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, memo } from "react";
 import { Form } from "semantic-ui-react";
 
-import { FieldMenu, FieldMenuGroup, FieldMenuButton } from "../field/field-menu";
+import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton } from "../horizontal-menu";
 import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
 import { RenderedMarkdown } from "./rendered-markdown";
 
@@ -49,13 +49,13 @@ const MarkdownEditorDisplayModeMenu = memo(({ displayMode, setDisplayMode }) => 
     const bothIsActive = displayMode === "both";
     
     return (
-        <FieldMenu className="markdown-editor-display-mode-menu" size="mini" compact>
-            <FieldMenuGroup isButtonGroup>
-                <FieldMenuButton icon="square outline" title="Display parsed markdown" onClick={viewOnClick} isActive={viewIsActive} />
-                <FieldMenuButton icon="pencil" title="Display edit window" onClick={editOnClick} isActive={editIsActive} />
-                <FieldMenuButton icon="clone outline" title="Display edit window and parsed markdown" onClick={bothOnClick} isActive={bothIsActive} />
-            </FieldMenuGroup>
-        </FieldMenu>
+        <HorizontalMenu className="markdown-editor-display-mode-menu" size="mini" compact>
+            <HorizontalMenuGroup isButtonGroup>
+                <HorizontalMenuButton icon="square outline" title="Display parsed markdown" onClick={viewOnClick} isActive={viewIsActive} />
+                <HorizontalMenuButton icon="pencil" title="Display edit window" onClick={editOnClick} isActive={editIsActive} />
+                <HorizontalMenuButton icon="clone outline" title="Display edit window and parsed markdown" onClick={bothOnClick} isActive={bothIsActive} />
+            </HorizontalMenuGroup>
+        </HorizontalMenu>
     );
 });
 

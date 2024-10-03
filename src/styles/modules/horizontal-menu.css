@@ -1,13 +1,13 @@
-/*************************
-    Field menu styles. 
-*************************/
+/******************************
+    Horizontal menu styles. 
+******************************/
 
 :root {
     --dropdown-and-input-min-width: 180px;
 }
 
 /** Menu **/
-.ui.menu.field-menu {
+.ui.menu.horizontal-menu {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 1em;
@@ -15,23 +15,23 @@
     box-shadow: none;
 }
 
-.ui.menu.field-menu:not(.smallscreen) {
+.ui.menu.horizontal-menu:not(.smallscreen) {
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
 }
 
-.ui.menu.field-menu:not(.smallscreen) > *:not(:last-child) {
-    /* margins between fullscreen field menu children */
+.ui.menu.horizontal-menu:not(.smallscreen) > *:not(:last-child) {
+    /* margins between fullscreen horizontal menu children */
     margin-right: 0.5rem;
 }
 
-.ui.menu.field-menu.smallscreen > *:first-child {
+.ui.menu.horizontal-menu.smallscreen > *:first-child {
     margin-top: 0.5rem;
 }
 
-.ui.menu.field-menu.smallscreen > * {
+.ui.menu.horizontal-menu.smallscreen > * {
     margin-left: 1rem;
     margin-right: 1rem;
     margin-bottom: 0.5rem;
@@ -39,18 +39,18 @@
 
 
 /** Group **/
-div.field-menu-group {
+div.horizontal-menu-group {
     display: flex;
 }
 
-.ui.menu.field-menu.smallscreen div.field-menu-group:not(.smallscreen-disabled) {
+.ui.menu.horizontal-menu.smallscreen div.horizontal-menu-group:not(.smallscreen-disabled) {
     /* Expand to take full line in menu on small screens */
     width: 100%
 }
 
 
 /** Button **/
-.ui.button.field-menu-button {
+.ui.button.horizontal-menu-button {
     /* Separation & border styling */
     margin-right: 0px;
     border-radius: 0 !important;
@@ -61,16 +61,16 @@ div.field-menu-group {
     border-right: solid 1px var(--border-color-input) !important;
 }
 
-.ui.basic.button.field-menu-button:hover {
+.ui.basic.button.horizontal-menu-button:hover {
     background-color: var(--background-hover-color) !important;
 }
 
-.ui.menu.field-menu .ui.button.field-menu-button:not(.borderless):first-child {
+.ui.menu.horizontal-menu .ui.button.horizontal-menu-button:not(.borderless):first-child {
     /* Additional left border for first child button */
     border-left: solid 1px var(--border-color-input) !important;
 }
 
-.ui.button.field-menu-button.borderless {
+.ui.button.horizontal-menu-button.borderless {
     /* Borderless button */
     border-width: 0 !important;
     border-image-width: 0 !important;
@@ -79,12 +79,12 @@ div.field-menu-group {
 
 
 /** Filter **/
-.ui.menu.field-menu.smallscreen div.field-menu-group:not(.smallscreen-disabled) div.ui.input {
+.ui.menu.horizontal-menu.smallscreen div.horizontal-menu-group:not(.smallscreen-disabled) div.ui.input {
     /* Allow input to take available width when not in fullscreen */
     flex: 1 1 auto;
 }
 
-div.field-menu-group div.ui.input {
+div.horizontal-menu-group div.ui.input {
     /* Reduce filter height & center filter vertically */
     height: 2.25rem;
     margin-top: auto;
@@ -94,14 +94,14 @@ div.field-menu-group div.ui.input {
     min-width: var(--dropdown-and-input-min-width);
 }
 
-div.field-menu .ui.input > input {
+div.horizontal-menu .ui.input > input {
     /* Disable border radius */
     border-radius: 0;
 }
 
 
 /** Dropdown **/
-div.field-menu .ui.dropdown {
+div.horizontal-menu .ui.dropdown {
     /* Disable border radius */
     border-radius: 0;
 
@@ -118,30 +118,30 @@ div.field-menu .ui.dropdown {
     min-width: var(--dropdown-and-input-min-width);
 }
 
-div.field-menu .ui.dropdown > input {
+div.horizontal-menu .ui.dropdown > input {
     /* Adjust height of input inside dropdown */
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
 }
 
-div.field-menu .ui.dropdown > div.divider {
+div.horizontal-menu .ui.dropdown > div.divider {
     /* Adjust position of placeholder text inside dropdown 
        (works for tags filter only, object type 
        dropdown adjusts its placeholder position on its own)  */
     top: 30%;
 }
 
-div.field-menu .ui.dropdown > i.dropdown.icon {
+div.horizontal-menu .ui.dropdown > i.dropdown.icon {
     /* Adjust position & padding of icon inside dropdown */
     top: 50%;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
 }
 
-div.field-menu div.ui.dropdown > .visible.menu.transition {   
+div.horizontal-menu div.ui.dropdown > .visible.menu.transition {   
     /* 
         Fix dropdown list right border being rendered 1px off
-        (workaround for the specific widths of field menu dropdowns;
+        (workaround for the specific widths of horizontal menu dropdowns;
         offset randomly appears if dropdown width is changed)
      */
     min-width: 100% !important;

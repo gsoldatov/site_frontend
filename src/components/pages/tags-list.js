@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Layout } from "../modules/layout/layout";
-import { TagsListFieldMenu } from "../page-parts/tags-list/field-menu";
+import { TagsListHorizontalMenu } from "../page-parts/tags-list/menu";
 import { TagsListFieldBody } from "../page-parts/tags-list/field-body";
 import { TagsListSideMenu } from "../page-parts/tags-list/side-menu";
 
@@ -13,7 +13,7 @@ export const TagsListPage = () => {
     const sideMenu = <TagsListSideMenu />;
     const body = (
         <>
-            <TagsListFieldMenu />
+            <TagsListHorizontalMenu />
             <TagsListFieldBody />
         </>
     );
