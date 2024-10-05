@@ -19,6 +19,10 @@ export const WindowWidthProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
+        // Update context on render
+        onResize();
+
+        // Handle resize event listening
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
     }, []);
