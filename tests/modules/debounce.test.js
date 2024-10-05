@@ -55,7 +55,7 @@ describe("No refresh delay mode", () => {
     test("Subsequent calls are performed after fixed delay", async () => {
         const cm = new CallMonitor();
         const { fn, calls } = cm;
-        const delay = 250, callAttemptInterval = 50;
+        const delay = 500, callAttemptInterval = 50;
         const debouncedFn = debounce(fn, delay);
 
         // Call function for the first time
@@ -89,7 +89,7 @@ describe("No refresh delay mode", () => {
     test("Function is called once with last set of args when called multiple times during a delay", async () => {
         const cm = new CallMonitor();
         const { fn, calls, args } = cm;
-        const delay = 250, callAttemptInterval = 50;
+        const delay = 500, callAttemptInterval = 50;
         const debouncedFn = debounce(fn, delay);
 
         // Call function for the first time
@@ -156,7 +156,7 @@ describe("No refresh on first call delay mode", () => {
     test("Call delay is refreshed on subsequent calls before execution", async () => {
         const cm = new CallMonitor();
         const { fn, calls } = cm;
-        const delay = 250, callAttemptInterval = 50, numberOfCallAttempts = 3;
+        const delay = 500, callAttemptInterval = 50, numberOfCallAttempts = 3;
         const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.noRefreshOnFirstCall);
 
         // Make first call
@@ -184,7 +184,7 @@ describe("No refresh on first call delay mode", () => {
     test("Function is called once with last set of args when called multiple times during a delay", async () => {
         const cm = new CallMonitor();
         const { fn, args } = cm;
-        const delay = 250, callAttemptInterval = 50;
+        const delay = 500, callAttemptInterval = 50;
         const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.noRefreshOnFirstCall);
 
         // Make first call
@@ -253,7 +253,7 @@ describe("Refresh delay on call mode", () => {
     test("Call delay is refreshed on subsequent calls before execution", async () => {
         const cm = new CallMonitor();
         const { fn, calls } = cm;
-        const delay = 250, callAttemptInterval = 50, numberOfCallAttempts = 3;
+        const delay = 500, callAttemptInterval = 50, numberOfCallAttempts = 3;
         const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.onCall);
 
         // Schedule a debounced call
@@ -278,7 +278,7 @@ describe("Refresh delay on call mode", () => {
     test("Function is called once with last set of args when called multiple times during a delay", async () => {
         const cm = new CallMonitor();
         const { fn, args } = cm;
-        const delay = 250, callAttemptInterval = 50;
+        const delay = 500, callAttemptInterval = 50;
         const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.onCall);
 
         // Attempt multiple function calls during a delay
