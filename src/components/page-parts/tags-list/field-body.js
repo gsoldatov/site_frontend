@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "semantic-ui-react";
 
 import { ErrorMessage } from "../../modules/error-message";
-import { FieldItemList, FieldItem } from "../../modules/field/field-item-list";
+import { FieldItemList, FieldItem } from "../../modules/field-item-list";
+import { ExpandableContainer } from "../../modules/expandable-container";
 import { TagsListPagination } from "./tags-list-pagination";
 
 import { toggleTagSelection } from "../../../actions/tags-list";
@@ -20,9 +21,6 @@ export const TagsListFieldBody = () => {
     const currentPage = useSelector(state => state.tagsUI.paginationInfo.currentPage);
     const { isFetching, fetchError } = useSelector(state => state.tagsUI.fetch);
 
-    const selectedTagIDsSelector = useMemo(() => state => state.tagsUI.selectedTagIDs, []);
-    const pageTagIDsSelector = state => useMemo(() => state.tagsUI.paginationInfo.currentPageTagIDs, []);
-
     // On load action
     useEffect(() => {
         dispatch(pageFetch(currentPage));
@@ -33,11 +31,34 @@ export const TagsListFieldBody = () => {
 
     return (
         <>
-        <FieldItemList header="Selected Tags" itemIDsSelector={selectedTagIDsSelector} ItemComponent={TagsListFieldItem} isExpandable />
-        <FieldItemList itemIDsSelector={pageTagIDsSelector} ItemComponent={TagsListFieldItem} />
+        <SelectedTags />
+        <PageTags />
         <TagsListPagination />
         </>
     );
+};
+
+
+/**
+ * Selected tags field item list.
+ */
+const SelectedTags = () => {
+    const itemIDs = useSelector(state => state.tagsUI.selectedTagIDs);
+
+    return (    // 67px = header + 1 line with borders
+        <ExpandableContainer maxCollapsedHeight={67}>
+            <FieldItemList header="Selected Tags" itemIDs={itemIDs} ItemComponent={TagsListFieldItem} />
+        </ExpandableContainer>
+    );
+};
+
+
+/**
+ * Current page tags field item list.
+ */
+const PageTags = () => {
+    const itemIDs = useSelector(state => state.tagsUI.paginationInfo.currentPageTagIDs);
+    return <FieldItemList itemIDs={itemIDs} ItemComponent={TagsListFieldItem} />;
 };
 
 

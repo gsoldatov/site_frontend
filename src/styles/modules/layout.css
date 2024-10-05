@@ -29,6 +29,11 @@ div.layout-grid.ui.grid > .layout-grid-navigation-row.row {
 }
 
 @media(min-width:768px) {
+    .ui.grid > .row > .layout-grid-main-content-column > *:not(:last-child) {
+        /* Add separation between main content children */
+        margin-bottom: 1rem;
+    }
+
     .ui.grid > .row > .layout-grid-main-content-column.column.twelve.wide {
         /* Remove padding around main content column, if side menu is displayed */
         padding-left: 0;

@@ -4,11 +4,12 @@ import { Loader } from "semantic-ui-react";
 
 import { ErrorMessage } from "../../modules/error-message";
 import { SelectedObjectsTags } from "./selected-objects-tags";
-import { FieldItemList, FieldItem } from "../../modules/field/field-item-list";
+import { FieldItemList, FieldItem } from "../../modules/field-item-list";
+import { ExpandableContainer } from "../../modules/expandable-container";
+import { ObjectsListPagination } from "./objects-list-pagination";
 
 import { toggleObjectSelection } from "../../../actions/objects-list";
-import { objectsOnLoadFetch, pageFetch } from "../../../fetches/ui-objects-list";
-import { ObjectsListPagination } from "./objects-list-pagination";
+import { objectsOnLoadFetch } from "../../../fetches/ui-objects-list";
 
 
 /**
@@ -17,10 +18,6 @@ import { ObjectsListPagination } from "./objects-list-pagination";
 export const ObjectsListFieldBody = () => {
     const dispatch = useDispatch();
     const { isFetching, fetchError } = useSelector(state => state.objectsUI.fetch);
-
-    // Selectors
-    const selectedObjectIDsSelector = useMemo(() => state => state.objectsUI.selectedObjectIDs, []);
-    const pageObjectIDsSelector = useMemo(() => state => state.objectsUI.paginationInfo.currentPageObjectIDs, []);
 
     // On load action
     useEffect(() => {
@@ -33,11 +30,34 @@ export const ObjectsListFieldBody = () => {
     return (
         <>
         <SelectedObjectsTags />
-        <FieldItemList header="Selected Objects" itemIDsSelector={selectedObjectIDsSelector} ItemComponent={ObjectsFieldItem} isExpandable />
-        <FieldItemList itemIDsSelector={pageObjectIDsSelector} ItemComponent={ObjectsFieldItem} />
+        <SelectedObjects />
+        <PageObjects />
         <ObjectsListPagination />
         </>
     );
+};
+
+
+/**
+ * Selected objects field item list.
+ */
+const SelectedObjects = () => {
+    const itemIDs = useSelector(state => state.objectsUI.selectedObjectIDs);
+
+    return (    // 67px = header + 1 line with borders
+        <ExpandableContainer maxCollapsedHeight={67}>
+            <FieldItemList header="Selected Objects" itemIDs={itemIDs} ItemComponent={ObjectsFieldItem} />
+        </ExpandableContainer>
+    );
+};
+
+
+/**
+ * Current page objects field item list.
+ */
+const PageObjects = () => {
+    const itemIDs = useSelector(state => state.objectsUI.paginationInfo.currentPageObjectIDs);
+    return <FieldItemList itemIDs={itemIDs} ItemComponent={ObjectsFieldItem} />;
 };
 
 

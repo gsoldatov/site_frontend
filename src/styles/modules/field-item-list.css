@@ -1,0 +1,52 @@
+/******************************
+    Field item list styles.
+******************************/
+
+
+/** Field item list & wrapper **/
+.field-item-list-wrapper {
+    border: solid 1px var(--border-color-input);
+}
+
+.expandable-container.with-toggle .field-item-list-wrapper {
+    /* Don't display bottom border in expandable container, if expand toggle is displayed */
+    border-bottom: 0;
+}
+
+.ui.header.field-item-list-header {
+    margin: 0.5em;
+    font-size: var(--input-header-font-size);
+}
+
+.field-item-list {
+    line-height: 1.5em;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: left;
+    align-items: center;
+}
+
+.field-item-list.no-header {
+    padding-top: 0.25em;
+}
+
+
+/** Field item **/
+.field-item {
+    display: flex;
+    align-items: center;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    margin-bottom: 0.4em;
+}
+
+.field-item-checkbox {
+    margin-right: 0.4em;
+    /* transform: scale(1.5); */
+}
+
+.field-item-link {
+    color: var(--text-color);
+    text-decoration: none;
+    word-break: break-word;
+}
