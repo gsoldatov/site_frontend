@@ -1,3 +1,5 @@
+import { createSelector } from "reselect";
+
 import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
 
 
@@ -50,3 +52,28 @@ export const getEditedObjectAndSubobjectIDs = (state, objectIDs) => {
 
     return objectAndSubobjectIDs;
 };
+
+
+/**
+ * Returns memoized list with current & added existing tag IDs.
+ */
+export const existingIDsSelector = createSelector(
+    state => getCurrentObject(state).currentTagIDs,
+    state => getCurrentObject(state).addedTags,
+    (currentTagIDs, addedTags) => currentTagIDs.concat(
+        addedTags.filter(tag => typeof(tag) === "number")
+    )
+);
+
+
+/**
+ * Returns an object, which maps current matching tag IDs to their names for the new tag input dropdown option list.
+ */
+export const matchingTagIDsNames = createSelector(
+    state => state.objectUI.tagsInput.matchingIDs,
+    state => state.tags,
+    (matchingTagIDs, tagsStore) => matchingTagIDs.reduce((result, tagID) => {
+        result[tagID] = tagsStore[tagID].tag_name;
+        return result; 
+    }, {})
+);

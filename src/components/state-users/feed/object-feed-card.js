@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+ import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { FeedCard, FeedCardTimestamp, FeedCardHeader, FeedCardDescription } from "../../modules/feed/feed-card";
@@ -46,15 +46,16 @@ export const ObjectFeedCard = ({ objectID }) => {
  * Object feed card tag list.
  */
 const ObjectPreviewTagList = ({ objectID }) => {
-    const tagsSelector = useMemo(() => state => state.objectsTags[objectID], [objectID]);
-    const showTagList = useSelector(state => (state.objectsTags[objectID] || []).length > 0);
+    const tagIDs = useSelector(state => state.objectsTags[objectID] || []);
 
-    return showTagList && (
+    if (tagIDs.length === 0) return null;
+
+    return (
         <div className="object-feed-card-tag-list-container">
             <InlineItemListBlock className="borderless">
                 <InlineItemListWrapper>
                     <InlineTextItem text="Tags:" />
-                    <InlineItemList itemIDSelector={tagsSelector} ItemComponent={Tag} />
+                    <InlineItemList itemIDs={tagIDs} ItemComponent={Tag} />
                 </InlineItemListWrapper>
             </InlineItemListBlock>
         </div>

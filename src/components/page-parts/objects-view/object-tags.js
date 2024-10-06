@@ -10,17 +10,17 @@ import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline
 /**
  * Object view page tag list.
  */
-export const ObjectsViewTagList = ({ objectID, tagProps = {} }) => {
-    const tagsSelector = useMemo(() => state => state.objectsTags[objectID], [objectID]);
-    const displayTags = tagProps.displayTags !== undefined ? tagProps.displayTags : true;
-    const isRendered = useSelector(state => displayTags && (state.objectsTags[objectID] || []).length > 0);
+export const ObjectsViewTagList = ({ objectID, tagProps = { displayTags: true } }) => {
+    const tagIDs = useSelector(state => state.objectsTags[objectID] || []);
 
-    return isRendered && (
+    if (!tagProps.displayTags || tagIDs.length === 0) return null;
+
+    return (
         <div className="objects-view-tag-list-container">
             <InlineItemListBlock className="borderless">
                 <InlineItemListWrapper>
                     <InlineTextItem text="Tags:" />
-                    <InlineItemList itemIDSelector={tagsSelector} ItemComponent={Tag} />
+                    <InlineItemList itemIDs={tagIDs} ItemComponent={Tag} />
                 </InlineItemListWrapper>
             </InlineItemListBlock>
         </div>

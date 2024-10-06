@@ -12,13 +12,13 @@ import { setTagsFilterAndFetchPage } from "../../../fetches/ui-objects-list";
  * /objects/list tags filter list.
  */
 export const TagsFilter = () => {
-    const shouldRender = useSelector(state => state.objectsUI.paginationInfo.tagsFilter.length > 0);
-    const tagsFilterItemIDSelector = useMemo(() => state => state.objectsUI.paginationInfo.tagsFilter, []);
+    const itemIDs = useSelector(state => state.objectsUI.paginationInfo.tagsFilter);
+    if (itemIDs.length === 0) return null;
 
-    return shouldRender && (
+    return (
         <InlineItemListBlock>
             <InlineItemListWrapper header="Tags Filter">
-                <InlineItemList itemIDSelector={tagsFilterItemIDSelector} ItemComponent={TagsFilterItem} />
+                <InlineItemList itemIDs={itemIDs} ItemComponent={TagsFilterItem} />
             </InlineItemListWrapper>
         </InlineItemListBlock>
     )

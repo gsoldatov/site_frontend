@@ -8,37 +8,84 @@ import { InlineInput } from "../../modules/inline/inline-input";
 
 import { setCurrentObjectsTags, setObjectsTagsInput  } from "../../../actions/objects-list";
 import { objectsTagsDropdownFetch } from "../../../fetches/ui-objects-list";
-import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector } from "../../../store/state-util/ui-objects-list";
+import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-list";
 
 
 /**
  * Common, added & partially applied tags for selected objects on the /objects/list page.
  */
 export const SelectedObjectsTags = () => {
-    const commonTagsWrapperIsDisplayedSelector = useMemo(() => state => state.objectsUI.selectedObjectIDs.length > 0, []);
-    const partiallyAppliedTagsWrapperIsDisplayedSelector = useMemo(() => state => partiallyAppliedTagIDsSelector(state).length > 0, []);
-    const inputStateSelector = useMemo(() => state => state.objectsUI.tagsInput, []);
-    const inlineInputDropdownItemTextSelectors = useMemo(() => ({ itemStoreSelector: state => state.tags, itemTextSelector: (store, id) => store[id].tag_name }), []);
-    // const renderBlock = useSelector(commonTagsWrapperIsDisplayedSelector) || useSelector(partiallyAppliedTagsWrapperIsDisplayedSelector);
-    const shouldRenderCommonTags = useSelector(commonTagsWrapperIsDisplayedSelector);
-    const shouldRenderPartiallyAppliedTags = useSelector(partiallyAppliedTagsWrapperIsDisplayedSelector)
+    const isVisible = useSelector(state => state.objectsUI.selectedObjectIDs.length > 0 || partiallyAppliedTagIDsSelector(state).length > 0);
+    if (!isVisible) return null;
 
-    return (shouldRenderCommonTags || shouldRenderPartiallyAppliedTags) && (
+    return (
         <InlineItemListBlock>
-            <InlineItemListWrapper header="Common Tags" isDisplayedSelector={commonTagsWrapperIsDisplayedSelector}>
-                <InlineItemList itemIDSelector={commonTagIDsSelector} ItemComponent={CommonCurrentTagItem} />
-                <InlineItemList itemIDSelector={addedTagsSelector} ItemComponent={AddedTagItem} />
-                {/* <InlineInput inputStateSelector={inputStateSelector} setInputState={setObjectsTagsInput} inputPlaceholder="Enter tag name..." onChangeDelayed={objectsTagsDropdownFetch} 
-                    existingIDsSelector={existingIDsSelector} getItemTextSelector={getItemTextSelector} setItem={setCurrentObjectsTags} /> */}
-                <InlineInput placeholder="Enter tag name..." inputStateSelector={inputStateSelector} setInputState={setObjectsTagsInput} onSearchChangeDelayed={objectsTagsDropdownFetch} 
-                    existingIDsSelector={existingIDsSelector} setItem={setCurrentObjectsTags} getDropdownItemTextSelectors={inlineInputDropdownItemTextSelectors} />
-            </InlineItemListWrapper>
-
-            <InlineItemListWrapper header="Partially Applied Tags" isDisplayedSelector={partiallyAppliedTagsWrapperIsDisplayedSelector}>
-                <InlineItemList itemIDSelector={partiallyAppliedTagIDsSelector} ItemComponent={PartiallyAppliedTagItem} />
-            </InlineItemListWrapper>
+            <CommonTags />
+            <PartiallyAppliedTags />
         </InlineItemListBlock>
     )
+};
+
+
+/**
+ * Common existing & added tags inline item lists.
+ */
+const CommonTags = () => {
+    const isVisible = useSelector(state => state.objectsUI.selectedObjectIDs.length > 0);
+    if (!isVisible) return null;
+
+    return (
+        <InlineItemListWrapper header="Common Tags">
+            <ExistingTagsList />
+            <AddedTagsList />
+            <NewTagInput />
+        </InlineItemListWrapper>
+    );
+};
+
+
+const ExistingTagsList = () => {
+    const itemIDs = useSelector(commonTagIDsSelector);
+    return <InlineItemList itemIDs={itemIDs} ItemComponent={CommonCurrentTagItem} />
+};
+
+
+const AddedTagsList = () => {
+    const itemIDs = useSelector(addedTagsSelector);
+    return <InlineItemList itemIDs={itemIDs} ItemComponent={AddedTagItem} />;
+};
+
+
+const NewTagInput = () => {
+    const dispatch = useDispatch();
+    const inputState = useSelector(state => state.objectsUI.tagsInput);
+    
+    const setInputState = useMemo(() => newState => dispatch(setObjectsTagsInput(newState)), []);
+    const setItem = useMemo(() => params => dispatch(setCurrentObjectsTags(params)), []);
+    const onSearchChangeDelayed = useMemo(() => params => dispatch(objectsTagsDropdownFetch(params)), []);
+
+    const existingIDs = useSelector(existingIDsSelector);
+    const matchingIDsText = useSelector(matchingTagIDsNames);
+
+    return <InlineInput placeholder="Enter tag name..." inputState={inputState} setInputState={setInputState} setItem={setItem}
+        existingIDs={existingIDs} matchingIDsText={matchingIDsText} onSearchChangeDelayed={onSearchChangeDelayed} />;
+};
+
+
+/**
+ * Common existing & added tags inline item lists.
+ */
+const PartiallyAppliedTags = () => {
+    const isVisible = useSelector(state => partiallyAppliedTagIDsSelector(state).length > 0);
+    const itemIDs = useSelector(partiallyAppliedTagIDsSelector);
+    
+    if (!isVisible) return null;
+
+    return (
+        <InlineItemListWrapper header="Partially Applied Tags">
+            <InlineItemList itemIDs={itemIDs} ItemComponent={PartiallyAppliedTagItem} />
+        </InlineItemListWrapper>
+    );
 };
 
 

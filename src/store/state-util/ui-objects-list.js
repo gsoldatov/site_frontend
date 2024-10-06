@@ -94,3 +94,16 @@ export const addedTagsSelector = createSelector(
     partiallyAppliedTagIDsSelector,
     (addedTags, partiallyAppliedTagIDs) => addedTags.filter(tagID => !partiallyAppliedTagIDs.includes(tagID))
 );
+
+
+/**
+ * Returns an object, which maps current matching tag IDs to their names for the new tag input dropdown option list.
+ */
+export const matchingTagIDsNames = createSelector(
+    state => state.objectsUI.tagsInput.matchingIDs,
+    state => state.tags,
+    (matchingTagIDs, tagsStore) => matchingTagIDs.reduce((result, tagID) => {
+        result[tagID] = tagsStore[tagID].tag_name;
+        return result; 
+    }, {})
+);

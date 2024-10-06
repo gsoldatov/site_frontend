@@ -1,5 +1,4 @@
 import React from "react";
-import { useSelector } from "react-redux";
 
 import StyleInline from "../../../styles/modules/inline.css";
 
@@ -29,10 +28,7 @@ export const InlineItemListBlock = ({ header, children, className }) => {
 /**
  * Component for groupping inline item lists and input controls.
  */
-export const InlineItemListWrapper = ({header, children, isDisplayedSelector}) => {
-    const isDisplayed = isDisplayedSelector ? useSelector(isDisplayedSelector) : true;
-    if (!isDisplayed) return null;
-
+export const InlineItemListWrapper = ({ header, children }) => {
     const _header = header && <div className="inline-item-list-wrapper-header">{header}</div>;
 
     return (
