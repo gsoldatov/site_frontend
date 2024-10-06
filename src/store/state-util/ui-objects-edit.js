@@ -57,7 +57,7 @@ export const getEditedObjectAndSubobjectIDs = (state, objectIDs) => {
 /**
  * Returns memoized list with current & added existing tag IDs.
  */
-export const existingIDsSelector = createSelector(
+export const existingTagIDsSelector = createSelector(
     state => getCurrentObject(state).currentTagIDs,
     state => getCurrentObject(state).addedTags,
     (currentTagIDs, addedTags) => currentTagIDs.concat(

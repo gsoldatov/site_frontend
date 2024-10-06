@@ -9,7 +9,7 @@ import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
 
-import { getCurrentObject, existingIDsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-edit";
+import { getCurrentObject, existingTagIDsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-edit";
 import { setEditedObject, setEditedObjectTags, setObjectTagsInput } from "../../../actions/objects-edit";
 import { objectTagsDropdownFetch } from "../../../fetches/ui-objects-edit";
 
@@ -104,8 +104,7 @@ const NewTagInput = () => {
     const setItem = useMemo(() => params => dispatch(setEditedObjectTags(params)), []);
     const onSearchChangeDelayed = useMemo(() => params => dispatch(objectTagsDropdownFetch(params)), []);
 
-    existingIDsSelector
-    const existingIDs = useSelector(existingIDsSelector);
+    const existingIDs = useSelector(existingTagIDsSelector);
     const matchingIDsText = useSelector(matchingTagIDsNames);
 
     return <InlineInput placeholder="Enter tag name..." inputState={inputState} setInputState={setInputState} setItem={setItem}

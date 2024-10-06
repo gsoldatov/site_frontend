@@ -8,7 +8,7 @@ import { InlineInput } from "../../modules/inline/inline-input";
 
 import { setCurrentObjectsTags, setObjectsTagsInput  } from "../../../actions/objects-list";
 import { objectsTagsDropdownFetch } from "../../../fetches/ui-objects-list";
-import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingIDsSelector, addedTagsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-list";
+import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingTagIDsSelector, addedTagsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-list";
 
 
 /**
@@ -64,7 +64,7 @@ const NewTagInput = () => {
     const setItem = useMemo(() => params => dispatch(setCurrentObjectsTags(params)), []);
     const onSearchChangeDelayed = useMemo(() => params => dispatch(objectsTagsDropdownFetch(params)), []);
 
-    const existingIDs = useSelector(existingIDsSelector);
+    const existingIDs = useSelector(existingTagIDsSelector);
     const matchingIDsText = useSelector(matchingTagIDsNames);
 
     return <InlineInput placeholder="Enter tag name..." inputState={inputState} setInputState={setInputState} setItem={setItem}

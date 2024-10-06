@@ -70,7 +70,7 @@ export const commonTagIDsSelector = createSelector(commonAndPartiallyAppliedTags
 /**
  * Selector with memoization which returns common, partially applied and added existing tags for selected objects on /objects/list page.
  */
-export const existingIDsSelector = createSelector(
+export const existingTagIDsSelector = createSelector(
     state => state.objectsUI.addedTags,
     commonAndPartiallyAppliedTagsSelector,
     (addedTags, commonAndPartiallyAppliedTags) => {
