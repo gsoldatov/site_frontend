@@ -19,7 +19,7 @@ export const SelectedObjectsTags = () => {
     if (!isVisible) return null;
 
     return (
-        <InlineItemListBlock>
+        <InlineItemListBlock bordered>
             <CommonTags />
             <PartiallyAppliedTags />
         </InlineItemListBlock>

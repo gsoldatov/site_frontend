@@ -19,6 +19,7 @@
 
 .objects-view-tag-list-container {
     border-top: solid 1px var(--border-color-light);
+    padding-top: var(--inline-top-bottom-padding);
 }
 
 

@@ -20,13 +20,6 @@
 }
 
 
-/** Selected tags **/
-.inline-item-list-block-content.tags-view-inline-itemlist-block {
-    border: 0;
-    padding: 0;
-}
-
-
 /** Tag information, main container **/
 .tags-view-tag-information-container {
     /* Stretch children to full height */

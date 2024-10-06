@@ -1,10 +1,10 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 
 import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineTextItem } from "../../modules/inline/inline-text-item";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
-import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
 
 
 /**
@@ -17,12 +17,10 @@ export const ObjectsViewTagList = ({ objectID, tagProps = { displayTags: true } 
 
     return (
         <div className="objects-view-tag-list-container">
-            <InlineItemListBlock className="borderless">
-                <InlineItemListWrapper>
-                    <InlineTextItem text="Tags:" />
-                    <InlineItemList itemIDs={tagIDs} ItemComponent={Tag} />
-                </InlineItemListWrapper>
-            </InlineItemListBlock>
+            <InlineItemListWrapper>
+                <InlineTextItem text="Tags:" />
+                <InlineItemList itemIDs={tagIDs} ItemComponent={Tag} />
+            </InlineItemListWrapper>
         </div>
     );
 };

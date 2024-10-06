@@ -1,7 +1,6 @@
 /*********************************************************** 
     Inline item lists, items, input and container styles.
 ***********************************************************/
-
 :root {
     /* Left & right padding width; top & bottom padding height is increased by 1.5 */
     --inline-left-right-padding: 0.4em;
@@ -10,25 +9,18 @@
 }
 
 
-/** Container headers **/
-div.inline-item-list-block-header, div.inline-item-list-wrapper-header {
+/** Containers, Font size **/
+.inline-item-list-block, .inline-item-list-wrapper {
     font-size: var(--input-header-font-size);
-    font-weight: bold;
-    margin-bottom: 0.25em;
 }
 
 
-/** Containers **/
-div.inline-item-list-block:not(:last-child) {
-    margin-bottom: 1em;
-}
-
-div.inline-item-list-block-content {
-    font-size: var(--input-header-font-size);
-
+/** Containers, bordered styling **/
+.inline-item-list-block.bordered,
+.inline-item-list-wrapper.bordered > .inline-item-list-wrapper-content {
     border: solid 1px var(--border-color-input);
-
-    /* Add padding between visible borders of `.inline-item-list-block-content` and its content */
+    
+    /* Add padding between visible container borders and content */
     padding-left: var(--inline-left-right-padding);
     padding-right: var(--inline-left-right-padding);
 
@@ -36,21 +28,25 @@ div.inline-item-list-block-content {
     padding-bottom: var(--inline-top-bottom-padding);
 }
 
-div.inline-item-list-block-content.borderless {
-    border: 0;
-}
 
-div.inline-item-list-wrapper:not(:last-child) {
+/** <InlineItemListBlock> **/
+.inline-item-list-block > *:not(:last-child) {
     margin-bottom: 1rem;
 }
 
-div.inline-item-list-wrapper-content {
+
+/** <InlineItemListWrapper> **/
+.inline-item-list-wrapper-header {
+    font-weight: bold;
+    margin-bottom: 0.25em;
+}
+
+.inline-item-list-wrapper-content {
     display: flex;
+    vertical-align: middle;
     flex-wrap: wrap; 
     column-gap: var(--inline-left-right-padding);   /* separation between inline items (instead of padding) */
     row-gap: var(--inline-top-bottom-padding);   /* separation between inline items (instead of padding) */
-
-    vertical-align: middle;
 
     line-height: 1.8em;
 }

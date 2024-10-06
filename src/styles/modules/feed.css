@@ -66,6 +66,7 @@ i.icon.feed-card-header-icon {
 /** Object tag list **/
 .object-feed-card-tag-list-container {
     border-top: solid 1px var(--border-color-light);
+    padding-top: var(--inline-top-bottom-padding);
 }
 
 .object-feed-card-tag-list-container:last-child .inline-item-list-block-content {

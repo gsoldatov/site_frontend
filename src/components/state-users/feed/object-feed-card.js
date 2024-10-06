@@ -1,9 +1,9 @@
- import React, { useMemo } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 
 import { FeedCard, FeedCardTimestamp, FeedCardHeader, FeedCardDescription } from "../../modules/feed/feed-card";
 
-import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineTextItem } from "../../modules/inline/inline-text-item";
 import { InlineItem } from "../../modules/inline/inline-item";
@@ -52,12 +52,10 @@ const ObjectPreviewTagList = ({ objectID }) => {
 
     return (
         <div className="object-feed-card-tag-list-container">
-            <InlineItemListBlock className="borderless">
-                <InlineItemListWrapper>
-                    <InlineTextItem text="Tags:" />
-                    <InlineItemList itemIDs={tagIDs} ItemComponent={Tag} />
-                </InlineItemListWrapper>
-            </InlineItemListBlock>
+            <InlineItemListWrapper>
+                <InlineTextItem text="Tags:" />
+                <InlineItemList itemIDs={tagIDs} ItemComponent={Tag} />
+            </InlineItemListWrapper>
         </div>
     );
 };

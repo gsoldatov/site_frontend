@@ -16,7 +16,7 @@ export const TagsFilter = () => {
     if (itemIDs.length === 0) return null;
 
     return (
-        <InlineItemListBlock>
+        <InlineItemListBlock bordered>
             <InlineItemListWrapper header="Tags Filter">
                 <InlineItemList itemIDs={itemIDs} ItemComponent={TagsFilterItem} />
             </InlineItemListWrapper>
