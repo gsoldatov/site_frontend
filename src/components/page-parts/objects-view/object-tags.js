@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineTextItem } from "../../modules/inline/inline-text-item";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
-import { InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemListContainer } from "../../modules/inline/inline-item-list-containers";
 
 
 /**
@@ -17,10 +17,10 @@ export const ObjectsViewTagList = ({ objectID, tagProps = { displayTags: true } 
 
     return (
         <div className="objects-view-tag-list-container">
-            <InlineItemListWrapper>
+            <InlineItemListContainer>
                 <InlineTextItem text="Tags:" />
                 <InlineItemList itemIDs={tagIDs} ItemComponent={Tag} />
-            </InlineItemListWrapper>
+            </InlineItemListContainer>
         </div>
     );
 };

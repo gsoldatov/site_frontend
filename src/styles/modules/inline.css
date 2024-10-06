@@ -10,14 +10,14 @@
 
 
 /** Containers, Font size **/
-.inline-item-list-block, .inline-item-list-wrapper {
+.inline-block, .inline-item-list-container {
     font-size: var(--input-header-font-size);
 }
 
 
 /** Containers, bordered styling **/
-.inline-item-list-block.bordered,
-.inline-item-list-wrapper.bordered > .inline-item-list-wrapper-content {
+.inline-block.bordered,
+.inline-item-list-container.bordered > .inline-item-list {
     border: solid 1px var(--border-color-input);
     
     /* Add padding between visible container borders and content */
@@ -29,19 +29,19 @@
 }
 
 
-/** <InlineItemListBlock> **/
-.inline-item-list-block > *:not(:last-child) {
+/** <InlineBlock> **/
+.inline-block > *:not(:last-child) {
     margin-bottom: 1rem;
 }
 
 
-/** <InlineItemListWrapper> **/
-.inline-item-list-wrapper-header {
+/** <InlineItemListContainer> **/
+.inline-item-list-header {
     font-weight: bold;
     margin-bottom: 0.25em;
 }
 
-.inline-item-list-wrapper-content {
+.inline-item-list {
     display: flex;
     vertical-align: middle;
     flex-wrap: wrap; 

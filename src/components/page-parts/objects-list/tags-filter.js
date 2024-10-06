@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineBlock, InlineItemListContainer } from "../../modules/inline/inline-item-list-containers";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 
@@ -16,11 +16,11 @@ export const TagsFilter = () => {
     if (itemIDs.length === 0) return null;
 
     return (
-        <InlineItemListBlock bordered>
-            <InlineItemListWrapper header="Tags Filter">
+        <InlineBlock bordered>
+            <InlineItemListContainer header="Tags Filter">
                 <InlineItemList itemIDs={itemIDs} ItemComponent={TagsFilterItem} />
-            </InlineItemListWrapper>
-        </InlineItemListBlock>
+            </InlineItemListContainer>
+        </InlineBlock>
     )
 };
 

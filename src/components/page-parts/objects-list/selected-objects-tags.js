@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { InlineItemListBlock, InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineBlock, InlineItemListContainer } from "../../modules/inline/inline-item-list-containers";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
@@ -19,10 +19,10 @@ export const SelectedObjectsTags = () => {
     if (!isVisible) return null;
 
     return (
-        <InlineItemListBlock bordered>
+        <InlineBlock bordered>
             <CommonTags />
             <PartiallyAppliedTags />
-        </InlineItemListBlock>
+        </InlineBlock>
     )
 };
 
@@ -35,11 +35,11 @@ const CommonTags = () => {
     if (!isVisible) return null;
 
     return (
-        <InlineItemListWrapper header="Common Tags">
+        <InlineItemListContainer header="Common Tags">
             <ExistingTagsList />
             <AddedTagsList />
             <NewTagInput />
-        </InlineItemListWrapper>
+        </InlineItemListContainer>
     );
 };
 
@@ -82,9 +82,9 @@ const PartiallyAppliedTags = () => {
     if (!isVisible) return null;
 
     return (
-        <InlineItemListWrapper header="Partially Applied Tags">
+        <InlineItemListContainer header="Partially Applied Tags">
             <InlineItemList itemIDs={itemIDs} ItemComponent={PartiallyAppliedTagItem} />
-        </InlineItemListWrapper>
+        </InlineItemListContainer>
     );
 };
 

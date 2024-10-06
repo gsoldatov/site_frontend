@@ -56,7 +56,7 @@ test("Load object tags from state", async () => {
     });
 
     // Check if tags are rendered on the page
-    await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper-content").childNodes.length).toBeGreaterThan(1));
+    await waitFor(() => expect(container.querySelector(".inline-item-list").childNodes.length).toBeGreaterThan(1));
     for(let i = 1; i <= 5; i++)
         getByText(container, `tag #${i}`);
 });
@@ -68,7 +68,7 @@ test("Load object tags from backend & test tag removal", async () => {
     });
 
     // Check if tags are rendered on the page
-    await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper-content").childNodes.length).toBeGreaterThan(1));
+    await waitFor(() => expect(container.querySelector(".inline-item-list").childNodes.length).toBeGreaterThan(1));
     for(let i = 1; i <= 5; i++) getByText(container, `tag #${i}`);
     
     // Check tag removal

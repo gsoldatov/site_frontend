@@ -70,9 +70,9 @@ export const getTagsViewElements = container => {
     result.selectPrompt = queryByText(container, "Select a tag");
 
     // Selected tags
-    const inlineBlock = container.querySelector(".tags-view-inline-itemlist-block");
-    if (inlineBlock) {
-        result.selectedTags.tags = [...inlineBlock.querySelectorAll(".tags-view-selected-tag")];
+    const inlineItemListContainer = container.querySelector(".tags-view-container > .inline-item-list-container");
+    if (inlineItemListContainer) {
+        result.selectedTags.tags = [...inlineItemListContainer.querySelectorAll(".tags-view-selected-tag")];
         result.selectedTags.tags.forEach(t => {
             result.selectedTags.tagsByName[t.querySelector(".inline-text").textContent] = t;
         });

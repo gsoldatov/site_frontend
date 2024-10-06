@@ -266,5 +266,5 @@ test("Add tags & save object", async () => {
     // Wait for redirect and tag fetch
     await historyManager.waitForCurrentURLToBe(`/objects/edit/${object_id}`);
     clickGeneralTabButton(container);
-    await waitFor(() => expect(container.querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(3)); // 2 tags + input
+    await waitFor(() => expect(container.querySelector(".inline-item-list").childNodes.length).toEqual(3)); // 2 tags + input
 });

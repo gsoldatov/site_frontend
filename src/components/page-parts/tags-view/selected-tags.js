@@ -2,7 +2,7 @@ import React, { memo, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 
-import { InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemListContainer } from "../../modules/inline/inline-item-list-containers";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 
@@ -50,8 +50,8 @@ export const SelectedTags = () => {
     });
 
     return tagIDs.length > 0 && (
-        <InlineItemListWrapper>
+        <InlineItemListContainer>
             <InlineItemList itemIDs={tagIDs} ItemComponent={Tag} />
-        </InlineItemListWrapper>
+        </InlineItemListContainer>
     );
 };

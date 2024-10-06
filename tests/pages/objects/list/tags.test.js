@@ -46,7 +46,7 @@ test("Check page without selected objects", async () => {
     await waitFor(() => getByText(container, "object #1"));
 
     // Check if common and partially applied are not rendered
-    expect(container.querySelector(".inline-item-list-wrapper")).toBeNull();
+    expect(container.querySelector(".inline-item-list-container")).toBeNull();
     expect(queryByText(container, "Common Tags")).toBeNull();
     expect(queryByText(container, "Partially Applied Tags")).toBeNull();
 
@@ -57,7 +57,7 @@ test("Check page without selected objects", async () => {
     fireEvent.click(deselectAllButton);
 
     // Check if common and partially applied are not rendered
-    expect(container.querySelector(".inline-item-list-wrapper")).toBeNull();
+    expect(container.querySelector(".inline-item-list-container")).toBeNull();
     expect(queryByText(container, "Common Tags")).toBeNull();
     expect(queryByText(container, "Partially Applied Tags")).toBeNull();
 });
@@ -80,12 +80,12 @@ test("Check tags appearance for one selected object", async () => {
 
     // Check if common tags block is rendered
     getByText(container, "Common Tags");
-    let commonTagsWrapper = container.querySelector(".inline-item-list-wrapper");
+    let commonTagsWrapper = container.querySelector(".inline-item-list-container");
     expect(commonTagsWrapper).toBeTruthy();
 
     // Check if object's tags are rendered
     store.getState().objectsTags[1].forEach(tagID => getByText(commonTagsWrapper, `tag #${tagID}`));
-    expect(commonTagsWrapper.querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(store.getState().objectsTags[1].length + 1);   // tags + input toggle
+    expect(commonTagsWrapper.querySelector(".inline-item-list").childNodes.length).toEqual(store.getState().objectsTags[1].length + 1);   // tags + input toggle
 });
 
 
@@ -103,15 +103,15 @@ test("Check tags appearance for two selected objects", async () => {
     // Check if common and partially applied tag wrappers are rendered
     getByText(container, "Common Tags");
     getByText(container, "Partially Applied Tags");
-    let wrappers = container.querySelectorAll(".inline-item-list-wrapper");
+    let wrappers = container.querySelectorAll(".inline-item-list-container");
     expect(wrappers.length).toEqual(2);
 
     // Check if common and partially applied tag items are rendered
     [1, 2].forEach(tagID => getByText(wrappers[0], `tag #${tagID}`));
     [3, 4, 5, 6].forEach(tagID => getByText(wrappers[1], `tag #${tagID}`));
 
-    expect(wrappers[0].querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(3);   // 2 tags + input toggle
-    expect(wrappers[1].querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(4);   // 4 tags
+    expect(wrappers[0].querySelector(".inline-item-list").childNodes.length).toEqual(3);   // 2 tags + input toggle
+    expect(wrappers[1].querySelector(".inline-item-list").childNodes.length).toEqual(4);   // 4 tags
 });
 
 
@@ -423,7 +423,7 @@ test("Check tags update + editedObjects reset", async () => {
     expect(store.getState().objects[2].modified_at).toEqual(expectedModifiedAt);
 
     // Check if correct common and partially applied tags are displayed
-    let wrappers = container.querySelectorAll(".inline-item-list-wrapper");
+    let wrappers = container.querySelectorAll(".inline-item-list-container");
     expect(wrappers.length).toEqual(2);
 
     // Check if common and partially applied tag items are rendered
@@ -431,8 +431,8 @@ test("Check tags update + editedObjects reset", async () => {
     getByText(wrappers[0], "new tag");
     [5, 6].forEach(tagID => getByText(wrappers[1], `tag #${tagID}`));
 
-    expect(wrappers[0].querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(5);   // 4 tags + input toggle
-    expect(wrappers[1].querySelector(".inline-item-list-wrapper-content").childNodes.length).toEqual(2);   // 2 tags
+    expect(wrappers[0].querySelector(".inline-item-list").childNodes.length).toEqual(5);   // 4 tags + input toggle
+    expect(wrappers[1].querySelector(".inline-item-list").childNodes.length).toEqual(2);   // 2 tags
 
     // Check if object with id = 1 was reset in state.editedObjects (tags and modified_at)
     const objectOneTags = store.getState().objectsTags[1].slice(), objectOneEditedTags = store.getState().editedObjects[1].currentTagIDs.slice();

@@ -612,7 +612,7 @@ describe("Field menu", () => {
         expect(clearTagsFilterButton.className.indexOf("disabled")).toBeGreaterThan(-1);
 
         // Filter tags list is not displayed when no tags are selected
-        container.querySelectorAll(".inline-item-list-wrapper-header").forEach(header => expect(header.textContent === "Tags filter").toBeFalsy());
+        container.querySelectorAll(".inline-item-list-header").forEach(header => expect(header.textContent === "Tags filter").toBeFalsy());
 
         // Try filtering with a non-existing tag
         const tagsFilterInput = tagsFilterContainer.querySelector("input.search");

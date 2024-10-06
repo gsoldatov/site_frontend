@@ -69,10 +69,6 @@ i.icon.feed-card-header-icon {
     padding-top: var(--inline-top-bottom-padding);
 }
 
-.object-feed-card-tag-list-container:last-child .inline-item-list-block-content {
-    padding-bottom: 0;
-}
-
 
 /** Feed pagination **/
 .feed-container > .pagination-container {

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import { FeedCard, FeedCardTimestamp, FeedCardHeader, FeedCardDescription } from "../../modules/feed/feed-card";
 
-import { InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemListContainer } from "../../modules/inline/inline-item-list-containers";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineTextItem } from "../../modules/inline/inline-text-item";
 import { InlineItem } from "../../modules/inline/inline-item";
@@ -52,10 +52,10 @@ const ObjectPreviewTagList = ({ objectID }) => {
 
     return (
         <div className="object-feed-card-tag-list-container">
-            <InlineItemListWrapper>
+            <InlineItemListContainer>
                 <InlineTextItem text="Tags:" />
                 <InlineItemList itemIDs={tagIDs} ItemComponent={Tag} />
-            </InlineItemListWrapper>
+            </InlineItemListContainer>
         </div>
     );
 };

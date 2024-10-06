@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Timestamps, NameInput, DescriptionEditor } from "../../modules/edit/attributes";
 import { ObjectTypeSelector } from "../../state-users/objects-edit/attributes/object-type-selector";
-import { InlineItemListWrapper } from "../../modules/inline/inline-item-list-containers";
+import { InlineItemListContainer } from "../../modules/inline/inline-item-list-containers";
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
@@ -73,11 +73,11 @@ const ObjectNameDescription = () => {
  */
 const ObjectTags = () => {
     return (
-        <InlineItemListWrapper header="Tags" bordered>
+        <InlineItemListContainer header="Tags" bordered>
             <CurrentTags />
             <AddedTags />
             <NewTagInput />
-        </InlineItemListWrapper>
+        </InlineItemListContainer>
     );
 };
 
