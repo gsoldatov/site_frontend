@@ -197,7 +197,7 @@ div.composite-subobject-card.no-padding.is-draggable {
 }
 
 div.ui.message.subobject-error-message {
-    height: var(--subobject-card-min-height);
+    min-height: var(--subobject-card-min-height);
 
     display: flex;
     flex-direction: column;
