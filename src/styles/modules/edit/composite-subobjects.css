@@ -364,6 +364,33 @@ button.ui.button.subobject-card-dialog-button {
 }
 
 
+/** Card collapse area **/
+.composite-subobject-card-collapse-area {
+    /* Size (extend to cover subobject card padding & add separation from content above) */
+    height: 50px;
+    margin-top: var(--subobject-card-padding-top-bottom);
+    margin-bottom: calc(-1 * var(--subobject-card-padding-top-bottom));
+    margin-left: calc(-1 * var(--subobject-card-padding-left-right));
+    margin-right: calc(-1 * var(--subobject-card-padding-left-right));
+
+    /* Text alignment */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Colors & cursor */
+    color: var(--clickable-area-text-color);
+    background-color: var(--clickable-area-background-color);
+    cursor: pointer;
+}
+
+.composite-subobject-card-collapse-area:hover {
+    /* Hovered colors */
+    color: var(--clickable-area-text-color-hover);
+    background-color: var(--clickable-area-background-color-hover);
+}
+
+
 /** Add menu **/
 div.composite-subobject-card.add-menu {
     /* Override default `composite-subobject-card` params */

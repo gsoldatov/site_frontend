@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { forwardRef, useMemo, useState } from "react";
 import { Button, Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
@@ -8,10 +8,11 @@ import { subobjectStateIsModified, nonCompositeSubobjectIsValid, getNonComposite
 import { enumDeleteModes } from "../../../../../../store/state-templates/composite-subobjects";
 import { enumObjectTypes } from "../../../../../../util/enum-object-types";
 
+
 /**
  * Subobject card heading line with object type and name, object name and indicators.
  */
-export const Heading = ({ objectID, subobjectID, updateCallback, setIsMouseOverDraggable }) => {
+export const Heading = forwardRef(({ objectID, subobjectID, updateCallback, setIsMouseOverDraggable }, headingRef) => {
     // Mouse enter and leave event handlers which toggles drag and drop functionality of the card
     // DND is enabled is cursor is hovered over heading, but not over expand/collapse toggle
     const [isOverHeading, setIsOverHeading] = useState(false);
@@ -42,7 +43,7 @@ export const Heading = ({ objectID, subobjectID, updateCallback, setIsMouseOverD
     if (isOverHeading) containerHeadingClassName += " is-hovered-over";
 
     return (
-        <div className={containerHeadingClassName} onMouseEnter={onHeadingMouseEnter} onMouseLeave={onHeadingMouseLeave} >
+        <div className={containerHeadingClassName} onMouseEnter={onHeadingMouseEnter} onMouseLeave={onHeadingMouseLeave} ref={headingRef} >
             <div className="composite-subobjct-card-heading">
                 <div className="composite-subobject-card-heading-left">
                     <HeadingLeft objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} isHoveredOver={isOverHeading}
@@ -54,7 +55,7 @@ export const Heading = ({ objectID, subobjectID, updateCallback, setIsMouseOverD
             </div>
         </div>
     );
-};
+});
 
 
 const HeadingLeft = ({ objectID, subobjectID, updateCallback, isHoveredOver, onExpandCollapseMouseEnter, onExpandCollapseMouseLeave }) => {

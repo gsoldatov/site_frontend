@@ -10,6 +10,8 @@ import { CardPlaceholder } from "./placeholders/error";
 import { LoadingPlaceholder } from "./placeholders/loading";
 import { DeletedPlaceholder } from "./placeholders/deleted";
 import { ResetSubobjectDialog } from "./dialogs/reset-subobject-dialog";
+import { CardCollapseArea } from "./card-collapse-area";
+import { OnResizeWrapper } from "../../../../../modules/wrappers/on-resize-wrapper";
 
 
 /**
@@ -21,19 +23,30 @@ class SubobjectCard extends React.PureComponent {
 
         this.setIsResetDialogDisplayed = this.setIsResetDialogDisplayed.bind(this);
         this.setIsMouseOverDraggable = this.setIsMouseOverDraggable.bind(this);
+        this.onResizeCallback = this.onResizeCallback.bind(this);
+
+        this.headingRef = React.createRef();
         
         this.state = {
             isResetDialogDisplayed: false,
+            isCollapseAreaDisplayed: false,
             isMouseOverDraggable: false     // component can be dragged by its heading (except for expand/collapse toggle)
         };
     }
 
-    setIsResetDialogDisplayed (isResetDialogDisplayed) { this.setState({ isResetDialogDisplayed }); }
-    setIsMouseOverDraggable (isMouseOverDraggable) { this.setState({ isMouseOverDraggable }); }
+    setIsResetDialogDisplayed(isResetDialogDisplayed) { this.setState({ isResetDialogDisplayed }); }
+    setIsMouseOverDraggable(isMouseOverDraggable) { this.setState({ isMouseOverDraggable }); }
+
+    // Toggle collapse area display, if component's height is big enough
+    onResizeCallback(cardRef) {
+        const height = parseInt(getComputedStyle(cardRef).height.replace("px", ""));
+        const isCollapseAreaDisplayed = height >= 1000;
+        this.setState({ isCollapseAreaDisplayed });
+    }
 
     render() {
         const { objectID, subobjectID, updateCallback, selectedTab, isExpanded, isSubobjectEdited, fetchError, isSubobjectDeleted } = this.props;
-        const { isResetDialogDisplayed } = this.state;
+        const { isResetDialogDisplayed, isCollapseAreaDisplayed } = this.state;
         const { connectDragSource, connectDropTarget, isDragging, isDraggedOver } = this.props;
         let result, isDraggable = false;
         
@@ -67,9 +80,10 @@ class SubobjectCard extends React.PureComponent {
         // Render object card
         else {
             // Heading & menu
-            const heading = <Heading objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} setIsMouseOverDraggable={this.setIsMouseOverDraggable} />;
-            const menu = isExpanded && <CardMenu objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} isResetDialogDisplayed={isResetDialogDisplayed} 
-                                            setIsResetDialogDisplayed={this.setIsResetDialogDisplayed} />;
+            const heading = <Heading objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} 
+                setIsMouseOverDraggable={this.setIsMouseOverDraggable} ref={this.headingRef}/>;
+            const menu = isExpanded && <CardMenu objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback} 
+                isResetDialogDisplayed={isResetDialogDisplayed} setIsResetDialogDisplayed={this.setIsResetDialogDisplayed} />;
 
             // Card body
             const body = 
@@ -85,23 +99,36 @@ class SubobjectCard extends React.PureComponent {
                 )
                 : null;
             
+            // Collapse area
+            const collapseArea = isExpanded && isCollapseAreaDisplayed && (
+                <CardCollapseArea updateCallback={updateCallback} subobjectID={subobjectID} ref={this.headingRef} />
+            );
+            
             // CSS card classname
             let cardClassName = isExpanded ? "composite-subobject-card expanded" : "composite-subobject-card";
             if (isDraggedOver) cardClassName += " is-dragged-over";
             if (isDragging) cardClassName += " is-dragged";
-            
+
             result = (
                 <div className={cardClassName} id={subobjectID}>
                     {heading}
                     {menu}
                     {body}
+                    {collapseArea}
                 </div>
             );
         }
 
         // Disable dragging if not hovering over component's heading (except for expand/collapse toggle)
-        if (!this.state.isMouseOverDraggable && !isDraggable) return connectDropTarget(result);
-        return connectDropTarget(connectDragSource(result));
+        result = connectDropTarget(result);
+        if (this.state.isMouseOverDraggable || isDraggable) result = connectDragSource(result);
+        
+        // Add on resize event handling (NOTE: placing wrapper before DnD connectors requires an additional <div> element above wrapper)
+        return (
+            <OnResizeWrapper callback={this.onResizeCallback}>
+                {result}
+            </OnResizeWrapper>
+        );
     }
 }
 
