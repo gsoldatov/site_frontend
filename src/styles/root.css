@@ -18,7 +18,8 @@
     --border-color-input-active: rgb(90, 169, 230);
     
     --header-color: rgb(0, 0, 0);
-    --header-5-text-color: rgb(60, 120, 200);
+    /* --header-5-text-color: rgb(60, 120, 200); */
+    --header-5-text-color: rgb(0, 113, 184);
     --header-6-text-color:rgb(128, 128, 128);
 
     --text-color: rgb(33, 33, 33);
@@ -27,13 +28,12 @@
     --faded-text-color: rgb(128, 128, 128);
     --placeholder-text-color: rgb(200, 200, 200);
     --placeholder-text-color-hovered: rgb(160, 160, 160);
-
     
     /* Clickable interface areas (expand toggles / button-link divs) */
-    --clickable-area-background-color: rgb(246, 246, 246);
-    --clickable-area-background-color-hover: rgb(217, 234, 247);
-    --clickable-area-text-color: rgb(0, 119, 182);
-    --clickable-area-text-color-hover: rgb(3, 4, 94);
+    --clickable-area-background-color: rgb(214, 239, 255);
+    --clickable-area-background-color-hover: rgb(173, 222, 255);
+    --clickable-area-text-color: var(--header-5-text-color);      /* Same color as field item list container's header, other colors in the section are its shades */
+    --clickable-area-text-color-hover: rgb(0, 75, 122);
 
     /* Tables */
     --table-odd-row-background-color: rgb(244, 244, 244);
