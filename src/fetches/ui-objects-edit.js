@@ -3,9 +3,10 @@ import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch
 import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
 
 import { setRedirectOnRender } from "../actions/common";
-import { loadNewObjectPage, loadEditObjectPage, resetEditedObjects, setObjectOnLoadFetchState, setObjectOnSaveFetchState,
-        setShowDeleteDialogObject, setEditedObject, 
-        setEditedObjectTags, setObjectTagsInput, setAddCompositeSubobjectMenu } from "../actions/objects-edit";
+import { loadNewObjectPage, loadEditObjectPage, setEditedObject, resetEditedObjects, setEditedObjectTags,
+    setObjectOnLoadFetchState, setObjectOnSaveFetchState, setShowDeleteDialogObject,  
+    setObjectTagsInput, setAddCompositeSubobjectMenu,
+    preSaveEditedObjectsUpdate, setToDoListRerenderPending } from "../actions/objects-edit";
 
 import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-objects-edit";
 import { objectDataIsInState } from "../store/state-util/objects";
@@ -54,6 +55,10 @@ export const addObjectOnSaveFetch = () => {
 
         // Exit if already fetching
         if (isFetchingObject(state)) return;
+
+        // Prepare edited objects for fetch & trigger to-do list rerender (required due to ponential reassignment of item IDs)
+        dispatch(preSaveEditedObjectsUpdate());
+        dispatch(setToDoListRerenderPending(true));
 
         // Run fetch & add object
         dispatch(setObjectOnSaveFetchState(true, ""));
@@ -156,6 +161,10 @@ export const editObjectOnSaveFetch = () => {
 
         // Exit if already fetching
         if (isFetchingObject(state)) return;
+
+        // Prepare edited objects for fetch & trigger to-do list rerender (required due to ponential reassignment of item IDs)
+        dispatch(preSaveEditedObjectsUpdate());
+        dispatch(setToDoListRerenderPending(true));
 
         // Run fetch & update object
         dispatch(setObjectOnSaveFetchState(true, ""));

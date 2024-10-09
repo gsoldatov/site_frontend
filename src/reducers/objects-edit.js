@@ -1,9 +1,9 @@
 import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
     SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_OBJECT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
     SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_TO_DO_LIST_RERENDER_PENDING, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
-    SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
+    PRE_SAVE_EDITED_OBJECTS_UPDATE, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/objects-edit";
-import { deepCopy } from "../util/copy";
+import { deepCopy, deepMerge } from "../util/copy";
 
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
 import { getCurrentObject } from "../store/state-util/ui-objects-edit";
@@ -421,6 +421,38 @@ function setAddCompositeSubobjectMenu(state, action) {
 }
 
 
+/**
+ * Applies required updates to edited objects before they are saved:
+ * - normalizes item ID numeration in to-do lists, so that it matches the numeration in the saved version of the object;
+ * - triggers to-do list rerender to update item IDs;
+ */
+const preSaveEditedObjectsUpdate = (state, action) => {
+    let newState = state;
+
+    // Get object IDs of to-do lists, which are being saved
+    const objectID = newState.objectUI.currentObjectID;
+    const currentObjectType = newState.editedObjects[objectID].object_type;
+    let toDoListObjectIDs = currentObjectType === "to_do_list" ? [objectID]
+        : currentObjectType === "composite" ? 
+            [...Object.keys(newState.editedObjects[objectID].composite.subobjects)].filter(
+                subobjectID => newState.editedObjects[subobjectID].object_type === "to_do_list")
+        : [];
+    
+    // Normalize itemIDs in to-do lists
+    if (toDoListObjectIDs.length > 0) {
+        const newEditedObjects = toDoListObjectIDs.reduce((result, objectID) => {
+            const editedObject = newState.editedObjects[objectID];
+            const toDoList = getUpdatedToDoList(editedObject.toDoList, { command: "normalizeItemIDs" });
+            result[objectID] = { ...editedObject, toDoList };
+            return result;
+        }, {});
+        newState = { ...newState, editedObjects: { ...newState.editedObjects, ...newEditedObjects }};
+    }
+    
+    return newState;
+};
+
+
 function setObjectOnLoadFetchState(state, action) {
     return {
         ...state,
@@ -464,6 +496,7 @@ const root = {
     SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject,
     SET_TO_DO_LIST_RERENDER_PENDING: setToDoListRerenderPending,
     SET_ADD_COMPOSITE_SUBOBJECT_MENU: setAddCompositeSubobjectMenu,
+    PRE_SAVE_EDITED_OBJECTS_UPDATE: preSaveEditedObjectsUpdate,
     SET_OBJECT_ON_LOAD_FETCH_STATE: setObjectOnLoadFetchState,
     SET_OBJECT_ON_SAVE_FETCH_STATE: setObjectOnSaveFetchState
 };
