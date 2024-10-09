@@ -51,17 +51,9 @@ const TDLItems = ({ objectID, toDoList, updateCallback, canDrag }) => {
     const itemsRef = useRef();
     const itemOrder = toDoList.itemOrder;
 
-    // State checks performed to update dangerouslySetInnerHTML of <TDLItem> and <Comment> components when needed
-    // (currently checks if a reset side menu dialog was closed, because innerHTML of the components may need to be updated to the values restored by reset)
-    const showResetDialog = useSelector(state => state.objectUI.showResetDialog);
-    const [previousShowResetDialog, setPreviousShowResetDialog] = useState(showResetDialog);
-    const [updateInnerHTMLRequired, setUpdateInnerHTMLRequired] = useState(false);
-    
-    useEffect(() => {
-        setUpdateInnerHTMLRequired(!showResetDialog && previousShowResetDialog);
-        setPreviousShowResetDialog(showResetDialog);
-    }); // update after each render to set updateInnerHTMLRequired = false as soon as possible
-    // }, [showResetDialog]);
+    // Check if to-do list items should be rerendered to match the state of object
+    // (currently used on /objects/edit/:id page whenever an object is reset or saved)
+    const updateInnerHTMLRequired = useSelector(state => state.objectUI.toDoListRerenderPending);
 
     // Focus item specified in setFocusOnID
     useEffect(() => {

@@ -102,6 +102,7 @@ const initialState = {
 
         showResetDialog: false,
         showDeleteDialog: false,
+        toDoListRerenderPending: false,
 
         addCompositeSubobjectMenu: {
             row: -1,

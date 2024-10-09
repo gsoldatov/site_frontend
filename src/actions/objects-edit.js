@@ -10,6 +10,7 @@ export const RESET_EDITED_OBJECTS_TAGS = "RESET_EDITED_OBJECTS_TAGS";
 export const SET_SELECTED_TAB = "SET_SELECTED_TAB";
 export const SET_SHOW_RESET_DIALOG_OBJECT = "SET_SHOW_RESET_DIALOG_OBJECT";
 export const SET_SHOW_DELETE_DIALOG_OBJECT = "SET_SHOW_DELETE_DIALOG_OBJECT";
+export const SET_TO_DO_LIST_RERENDER_PENDING = "SET_TO_DO_LIST_RERENDER_PENDING";
 export const SET_ADD_COMPOSITE_SUBOBJECT_MENU = "SET_ADD_COMPOSITE_SUBOBJECT_MENU";
 export const SET_OBJECT_ON_LOAD_FETCH_STATE = "SET_OBJECT_ON_LOAD_FETCH_STATE";
 export const SET_OBJECT_ON_SAVE_FETCH_STATE = "SET_OBJECT_ON_SAVE_FETCH_STATE";
@@ -40,6 +41,8 @@ export const setSelectedTab                  = selectedTab => ({ type: SET_SELEC
 export const setShowResetDialogObject        = (showResetDialog = false) => ({ type: SET_SHOW_RESET_DIALOG_OBJECT, showResetDialog });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const setShowDeleteDialogObject       = (showDeleteDialog = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECT, showDeleteDialog });
+/** [Reducer file](../reducers/objects-edit.js) */
+export const setToDoListRerenderPending      = (toDoListRerenderPending = false) => ({ type: SET_TO_DO_LIST_RERENDER_PENDING, toDoListRerenderPending });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const setAddCompositeSubobjectMenu    = addCompositeSubobjectMenu => ({ type: SET_ADD_COMPOSITE_SUBOBJECT_MENU, addCompositeSubobjectMenu });
 

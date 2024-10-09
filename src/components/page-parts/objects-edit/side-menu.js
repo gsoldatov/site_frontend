@@ -9,7 +9,7 @@ import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer, S
 
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../../../store/state-util/ui-objects-edit";
 import { isMultiColumnCompositeDataDisplayed } from "../../../store/state-util/composite";
-import { resetEditedObjects, setShowResetDialogObject, setShowDeleteDialogObject } from "../../../actions/objects-edit";
+import { resetEditedObjects, setShowResetDialogObject, setShowDeleteDialogObject, setToDoListRerenderPending } from "../../../actions/objects-edit";
 import { addObjectOnSaveFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch } from "../../../fetches/ui-objects-edit";
 
 
@@ -104,6 +104,7 @@ const ResetDialog = () => {
         let params = { hideObjectResetDialog: true, resetCompositeSubobjects };
         if (id === undefined) params = { ...params, allowResetToDefaults: true, defaultDisplayInFeed: true };
         dispatch(resetEditedObjects(params));
+        dispatch(setToDoListRerenderPending(true)); // toggle rerender of content editable inputs with reset values
     }, [id]);
     const noOnClick = useMemo(() => () => dispatch(setShowResetDialogObject(false)), []);
 

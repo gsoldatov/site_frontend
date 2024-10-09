@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { memo, useEffect, useMemo, useRef } from "react";
 import { Header, Tab } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -8,7 +8,7 @@ import { AttributesTabPane } from "./attributes-tab-pane";
 import { ObjectDataSwitch } from "../../state-users/objects-edit/data/object-data-switch";
 import { DisplayTab } from "../../state-users/objects-edit/display/display-tab";
 
-import { setSelectedTab } from "../../../actions/objects-edit";
+import { setSelectedTab, setToDoListRerenderPending } from "../../../actions/objects-edit";
 import { isMultiColumnCompositeDataDisplayed } from "../../../store/state-util/composite";
 import { enumLayoutTypes } from "../../../util/enum-layout-types";
 
@@ -25,6 +25,12 @@ export const ObjectsEdit = ({ header, sideMenu, onLoad, objectID }) => {
     useEffect(() => {
         dispatch(onLoad);
     }, [objectID]);
+
+    // Set edited to-do list rerender to false, whenever it was toggled (flag is handled here to avoid multiple dispatch calls)
+    const toDoListRerenderPending = useSelector(state => state.objectUI.toDoListRerenderPending);
+    useEffect(() => {
+        if (toDoListRerenderPending) dispatch(setToDoListRerenderPending(false));
+    }, [toDoListRerenderPending]);
 
     // Render loader/error or body
     const { isFetching, fetchError } = useSelector(state => state.objectUI.objectOnLoadFetch);
@@ -46,7 +52,7 @@ export const ObjectsEdit = ({ header, sideMenu, onLoad, objectID }) => {
 };
 
 
-const ObjectTabPanes = ({ objectID }) => {
+const ObjectTabPanes = memo(({ objectID }) => {
     const tabPanes = useMemo(() => {
         return [
             { menuItem: "General", render: () =>  <AttributesTabPane objectID={objectID} /> },
@@ -70,7 +76,7 @@ const ObjectTabPanes = ({ objectID }) => {
     }).current;
 
     return <Tab panes={tabPanes} activeIndex={activeIndex} onTabChange={onTabChange} />;
-};
+});
 
 
 /**
