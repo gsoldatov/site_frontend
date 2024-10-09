@@ -3,11 +3,25 @@
 ***********************************************/
 
 
+/** Containers **/
+.feed-cards-container > *:not(:last-child) {
+    margin-bottom: 2rem;
+}
+
+
 /** Feed card container **/
 .feed-card {
-    box-shadow: var(--card-box-shadow);
     padding-top: 1rem;
     padding-bottom: 1rem;
+
+    /* Set border (box shadow does not work with "overflow: hidden" without using ) */
+    /* box-shadow: var(--card-box-shadow); */
+    border: solid 1px var(--border-color-light);
+}
+
+.expandable-container.with-toggle .feed-card {
+    /* Remove bottom border, when expand toggle is displayed */
+    border-bottom: 0px;
 }
 
 @media(min-width: 768px) {
@@ -22,10 +36,6 @@
         padding-left: 1rem;
         padding-right: 1rem;
     }
-}
-
-.feed-card:not(:last-child) {
-    margin-bottom: 2rem;
 }
 
 

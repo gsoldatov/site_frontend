@@ -7,6 +7,7 @@ import { Header, Icon } from "semantic-ui-react";
 import { RenderedMarkdown } from "../markdown/rendered-markdown";
 
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
+import { ExpandableContainer } from "../expandable-container";
 
 
 /**
@@ -15,10 +16,14 @@ import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state"
  * Renders card borders and provided children inside.
  */
 export const FeedCard = ({ children }) => {
-    return children && (
-        <div className="feed-card">
-            {children}
-        </div>
+    if (!children) return null;
+
+    return (
+        <ExpandableContainer maxCollapsedHeight={1000}>
+            <div className="feed-card">
+                {children}
+            </div>
+        </ExpandableContainer>
     );
 };
 

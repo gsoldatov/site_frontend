@@ -12,5 +12,10 @@ export const anyChildIsRendered = children => {
     const childArray = Children.toArray(children);
 
     if (childArray.length === 0) return false;
-    return childArray.some(child => isValidElement(child) && child.type(child.props));
+    return childArray.some(child => {
+        if (!isValidElement(child)) return false;
+        // child.type can be at least a function or a string
+        if (typeof(child.type) === "function" && !child.type(child.props)) return false;
+        return child.type;
+    });
 };
