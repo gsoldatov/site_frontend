@@ -1,15 +1,15 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Button, Icon, Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
-import { SideMenuContext } from "./side-menu";
+import { useSideMenuState } from "./side-menu";
 
 
 /**
  * Side menu item, which redirects on click.
  */
 export const SideMenuLink = ({ text, icon, iconColor, iconFlipped, isActive = true, URL }) => {
-    const { isItemStacked } = useContext(SideMenuContext);
+    const isItemStacked = useSideMenuState(state => state.isItemStacked);
 
     // Icon
     icon = icon && <Icon name={icon} color={iconColor} flipped={iconFlipped} />;

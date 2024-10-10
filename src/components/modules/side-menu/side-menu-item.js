@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Button, Icon, Menu } from "semantic-ui-react";
 
-import { SideMenuContext } from "./side-menu";
+import { useSideMenuState } from "./side-menu";
 
 
 /**
  * Basic side menu item.
  */
 export const SideMenuItem = ({ text, icon, iconColor, iconFlipped, isActive = true, onClick }) => {
-    const { isItemStacked } = useContext(SideMenuContext);
+    const isItemStacked = useSideMenuState(state => state.isItemStacked);
 
     onClick = isActive ? onClick : undefined;
 

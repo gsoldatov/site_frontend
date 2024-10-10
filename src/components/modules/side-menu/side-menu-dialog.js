@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 import { Button, Checkbox, Container, Header, Icon, Menu } from "semantic-ui-react";
 
-import { SideMenuContext } from "./side-menu";
+import { useSideMenuState } from "./side-menu";
 
 
 const SideMenuDialogCheckboxContext = createContext({});
@@ -31,7 +31,7 @@ export const SideMenuDialog = ({ text, children }) => {
  * Side menu dialog header text/icon component.
  */
 const SideMenuDialogHeader = ({ text }) => {
-    const { isItemStacked } = useContext(SideMenuContext);
+    const isItemStacked = useSideMenuState(state => state.isItemStacked);
 
     if (isItemStacked) return <Icon className="side-menu-dialog-header" name="question circle outline" color="blue" title={text} />
 
@@ -43,7 +43,7 @@ const SideMenuDialogHeader = ({ text }) => {
  * Side menu dialog checkbox component.
  */
 export const SideMenuDialogCheckbox = ({ label }) => {
-    const { isItemStacked } = useContext(SideMenuContext);
+    const isItemStacked = useSideMenuState(state => state.isItemStacked);
     const { isChecked, setIsChecked } = useContext(SideMenuDialogCheckboxContext);
 
     const _label = !isItemStacked ? label : undefined;
@@ -70,11 +70,11 @@ export const SideMenuDialogButtonsContainer = ({ children }) => {
  * Side menu dialog button component.
  */
 export const SideMenuDialogButton = ({ text, icon, color, onClick }) => {
-    const { areDialogButtonsStacked } = useContext(SideMenuContext);
+    const areDialogButtonsStacked = useSideMenuState(state => state.areDialogButtonsStacked);
     const { isChecked } = useContext(SideMenuDialogCheckboxContext);
     
     icon = icon && <Icon name={icon} />;
-    text = !areDialogButtonsStacked && text;
+    text = !areDialogButtonsStacked ? text : undefined;
 
     const _onClick = useMemo(() => () => onClick(isChecked), [onClick, isChecked]);
 

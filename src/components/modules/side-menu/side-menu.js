@@ -1,6 +1,8 @@
-import React, { createContext, memo, useContext, useMemo, useState } from "react";
+import React, { createContext, memo, useContext, useEffect, useMemo } from "react";
+import { createDispatchHook, createSelectorHook, Provider } from "react-redux";
 import { Icon, Menu } from "semantic-ui-react";
 
+import { createComponentStore } from "../../../util/components";
 import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
 import { WindowWidthContext } from "../wrappers/window-width-provider";
 
@@ -14,56 +16,47 @@ export const SideMenu = ({ children, usePlaceholderWhenStacked }) => {
     if (!children) return null;
 
     return (
-        <SideMenuContextProvider>
+        <SideMenuStoreProvider>
             <SideMenuContainer>
                 {children}
             </SideMenuContainer>
             <StackedMenuFlowPlaceholder usePlaceholderWhenStacked={usePlaceholderWhenStacked} />
-        </SideMenuContextProvider>
+        </SideMenuStoreProvider>
     );
 };
 
 
+// Set up custom hooks for side menu store
 export const SideMenuContext = createContext({});
+export const useSideMenuState = createSelectorHook(SideMenuContext);
+const _useSideMenuDispatch = createDispatchHook(SideMenuContext);
+// Wrapper over dispatch hook, which adds `type` attribute to the `stateProps` (required by Redux), so it can be omitted when declaring them
+export const useSideMenuDispatch = () => {
+    const dispatch = _useSideMenuDispatch();
+    return stateProps => dispatch({ type: "", ...stateProps });
+};
 
 
-/**
- * Stores, updates and provides via context shared side menu state.
- * 
- * NOTE: `useContext` hooks forces all consumers to rerender on value change, even if attributes they take from value didn't change.
- * Reducing the amount of rerenders requires either using multiple context providers to decouple components or using a state manager library to handle updates
- * (e.g.: another Redux store or https://zustand.docs.pmnd.rs/guides/initialize-state-with-props)
- */
-const SideMenuContextProvider = ({ children }) => {
-    // Side menu state
+const SideMenuStoreProvider = ({ children }) => {
     const isStacked = useContext(WindowWidthContext) === 0;
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [height, setHeight] = useState(0);
 
-    // Side menu item state
-    const [isItemStacked, setIsItemStacked] = useState(false);
-    const [areDialogButtonsStacked, setAreDialogButtonsStacked] = useState(false)
+    const store = useMemo(() => createComponentStore({
+        isStacked,
+        isExpanded: false,
+        height: 0,
+        isItemStacked: false,
+        areDialogButtonsStacked: false
+    }), []);
 
-    // On resize callback, which is used by <SideMenuContainer> to keep track of its size in state
-    // (<SideMenuContextProvider> can wrap multiple components, and, therefore, 
-    // <OnResizeWrapper> is used in <SideMenuContainer>, rather than here)
-    const onSideMenuResize = useMemo(() => sideMenuRef => {
-        const width = parseInt(getComputedStyle(sideMenuRef).width.replace("px", ""));
-        const height = parseInt(getComputedStyle(sideMenuRef).height.replace("px", ""));
-        
-        setHeight(height);
-        setIsItemStacked(width < 100);
-        setAreDialogButtonsStacked(width < 170);
-    }, []);
-
-    const context = useMemo(() => ({ 
-        isStacked, isExpanded, setIsExpanded, height, isItemStacked, areDialogButtonsStacked, onSideMenuResize 
-    }), [isStacked, isExpanded, setIsExpanded, height, isItemStacked, areDialogButtonsStacked]);
+    // Propagate `isStacked` changes to the component store
+    useEffect(() => {
+        store.dispatch({ type: "", isStacked });
+    }, [isStacked]);
 
     return (
-        <SideMenuContext.Provider value={context}>
+        <Provider store={store} context={SideMenuContext}>
             {children}
-        </SideMenuContext.Provider>
+        </Provider>
     );
 };
 
@@ -73,7 +66,21 @@ const SideMenuContextProvider = ({ children }) => {
  * Renders provided `children` and <ExpandToggle>. 
  */
 const SideMenuContainer = memo(({ children }) => {
-    const { isStacked, isExpanded, onSideMenuResize } = useContext(SideMenuContext);
+    const sideMenuDispatch = useSideMenuDispatch();
+    const isStacked = useSideMenuState(state => state.isStacked);
+    const isExpanded = useSideMenuState(state => state.isExpanded);
+    
+    // On resize callback, which is used to keep track of component size in state
+    const onSideMenuResize = useMemo(() => sideMenuRef => {
+        const width = parseInt(getComputedStyle(sideMenuRef).width.replace("px", ""));
+        const height = parseInt(getComputedStyle(sideMenuRef).height.replace("px", ""));
+
+        sideMenuDispatch({
+            height,
+            isItemStacked: width < 100,
+            areDialogButtonsStacked: width < 170
+        });
+    }, []);
 
     const className = "side-menu" + (isStacked ? " is-stacked" : "");
     children = !isStacked || isExpanded ? children : null;  // Don't render children in collapsed & stacked menu
@@ -93,12 +100,14 @@ const SideMenuContainer = memo(({ children }) => {
  * Expand toggle for stacked side menu
  */
 const ExpandToggle = () => {
-    const { isStacked, isExpanded, setIsExpanded } = useContext(SideMenuContext);
+    const sideMenuDispatch = useSideMenuDispatch();
+    const isStacked = useSideMenuState(state => state.isStacked);
+    const isExpanded = useSideMenuState(state => state.isExpanded);
 
     if (!isStacked) return null;
 
     const icon = isExpanded ? "close" : "options";
-    const onClick = () => setIsExpanded(!isExpanded);
+    const onClick = () => sideMenuDispatch({ isExpanded: !isExpanded });
 
     return (
         <Menu.Item className="side-menu-expand-container">
@@ -113,7 +122,8 @@ const ExpandToggle = () => {
  * Takes position of <SideMenuContainer>, when it's position is set to `fixed`.
  */
 const StackedMenuFlowPlaceholder = (usePlaceholderWhenStacked) => {
-    const { isStacked, height } = useContext(SideMenuContext);
+    const isStacked = useSideMenuState(state => state.isStacked);
+    const height = useSideMenuState(state => state.height);
 
     if (!usePlaceholderWhenStacked) return null;
 
