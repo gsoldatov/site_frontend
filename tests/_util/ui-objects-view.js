@@ -153,7 +153,8 @@ export const getObjectsViewCardElements = ({ container, card }) => {
                 const columns = dataContainer.querySelectorAll(".objects-view-data-composite-multicolumn-column");
 
                 columns.forEach(column => {
-                    const columnSubobjectCards = [...column.childNodes].filter(n => n.classList.contains("objects-view-card-container"));
+                    const columnSubobjectCards = [...column.querySelectorAll(".objects-view-card-container")];
+                    // const columnSubobjectCards = [...column.childNodes].filter(n => n.classList.contains("objects-view-card-container"));
                     result.data.compositeMulticolumn.subobjectCards.push(columnSubobjectCards);
                 });
             }

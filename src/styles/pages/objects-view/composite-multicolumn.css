@@ -3,40 +3,123 @@
 *******************************************************************************************/
 
 
+/** Container **/
 .objects-view-data.composite-multicolumn {
     /* Override width of containers to fit multicolumn composite subobject grids */
     width: max-content !important;
-}
 
-.objects-view-card-container.multicolumn-subobject {
-    /* Always display borders in subobject cards */
-    box-shadow: var(--card-box-shadow);
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-}
-
-.objects-view-data.composite-multicolumn {
     /* Set columns display */
     display: flex;
     flex-direction: row;
 }
 
-.objects-view-data-composite-multicolumn-column {
-    /* Fix column width in multicolumn display */
-    width: 500px;
-}
-
-.objects-view-data-composite-multicolumn-column:not(:last-child) {
-    /* Fix column width in multicolumn display */
+.objects-view-data.composite-multicolumn > *:not(:last-child) {
+    /* Add separation between columns */
     margin-right: 2rem;
 }
 
-.objects-view-data.composite-multicolumn .objects-view-card-container.multicolumn-subobject:not(:last-child) {
-    /* Add separation between subobjects */
-    margin-bottom: 2rem;
 
+/** Columns **/
+.objects-view-data-composite-multicolumn-column {
     /* Fix column width in multicolumn display */
     width: 500px;
+
+    /* Scale subobject cards to full width */
+    display: flex;
+    flex-direction: column;
+}
+
+.objects-view-data-composite-multicolumn-column > *:not(:last-child) {
+    /* Add separation between subobjects */
+    margin-bottom: 2rem;
+}
+
+
+/** Expand toggle **/
+.objects-view-data-expand-toggle-container {
+    /* Always display borders in subobject cards */
+    box-shadow: var(--card-box-shadow);
+    
+}
+
+.objects-view-data-expand-toggle {
+    /* Size, padding & vertical alignment */
+    height: 40px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    display: flex;
+    align-items: center;
+
+    /* Icon & text separation */
+    column-gap: 0.5rem;
+
+    /* Cursor */
+    cursor: pointer;
+
+    /* Colors */
+    color: var(--clickable-area-text-color);
+    background-color: var(--clickable-area-background-color);
+}
+
+.objects-view-data-expand-toggle:hover {
+    /* Hovered colors */
+    color: var(--clickable-area-text-color-hover);
+    background-color: var(--clickable-area-background-color-hover);
+}
+
+
+/** Expand toggle animation, icon **/
+.objects-view-data-expand-toggle > i {
+    /* Animate rotation */
+    transition: .25s linear;
+
+    /* Collapsed rotation target */
+    rotate: -90deg;
+}
+
+.objects-view-data-expand-toggle-container.expanded > .objects-view-data-expand-toggle > i {
+    /* Expanded rotation target */
+    rotate: 0deg;
+}
+
+.objects-view-data-expand-toggle > span {
+    font-weight: bold;
+
+    /* Hide overflown text */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/** Expand toggle animation, content **/
+.objects-view-data-expand-toggle-container > .objects-view-data-expand-toggle-content {
+    /* Animate visibility & max height prop */
+    /* transition: visibility 1s, max-height 1s; */
+
+    /* Collapsed content visibility */
+    visibility: hidden;
+
+    /* Element with `visibility: hidden;` still occupies space in the flow, so max-height is set to 0 to negate that */
+    max-height: 0;
+    overflow: hidden;
+}
+
+.objects-view-data-expand-toggle-container.expanded > .objects-view-data-expand-toggle-content {
+    /* Expanded content visibility & height */
+    visibility: visible;
+    max-height: unset;
+    overflow: inherit;
+}
+
+
+/** Subobject card **/
+.objects-view-card-container.multicolumn-subobject {
+    /* Separation from borders & expand toggle */
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }

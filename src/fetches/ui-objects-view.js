@@ -4,9 +4,11 @@ import { getResponseErrorType } from "./common";
 import { updateObjectFetch, viewCompositeHierarchyElementsFetch, viewObjectsFetch } from "./data-objects";
 import { getNonCachedTags } from "./data-tags";
 
-import { objectDataIsInState } from "../store/state-util/objects";
+import { canEditObject, objectDataIsInState } from "../store/state-util/objects";
+import { serializeObjectForUpdate } from "../store/state-util/composite";
 import { getToDoListUpdateFetchBody } from "../store/state-util/to-do-lists";
 import { enumResponseErrorType } from "../util/enum-response-error-type";
+
 
 
 const backendURL = getConfig().backendURL;
@@ -64,6 +66,26 @@ export const toDoListObjectUpdateFetch = (objectID, toDoList) => {
     return async (dispatch, getState) => {
         const obj = getToDoListUpdateFetchBody(getState(), objectID, toDoList);
         return await dispatch(updateObjectFetch(obj));
+    };
+};
+
+
+/**
+ * Updates suboobject's `is_expanded` state on expand/collapse toggle
+ * 
+ * NOTE: should use patched update, because paraller fetch calls can lead to data inconsistency.
+ */
+export const multicolumnExpandToggleUpdateFetch = (objectID, subobjectID, is_expanded) => {
+    return async (dispatch, getState) => {
+        // Check if current user can update the object
+        const state = getState();
+        if (!canEditObject(state, objectID)) return;
+
+        const newProps = { composite: { subobjects: { [subobjectID]: { is_expanded }}}};
+
+        const object = serializeObjectForUpdate(state, objectID, newProps);
+        
+        return await dispatch(updateObjectFetch(object));
     };
 };
 

@@ -4,6 +4,7 @@ import { enumDeleteModes, serializedCompositeObjectDataProps } from "../state-te
 import { getSubobjectDisplayOrder } from "./composite";
 import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
 import { compositeSubobjectObjectAttributes, addedObjectAttributes, updatedObjectAttributes } from "../state-templates/edited-object";
+import { enumUserLevels } from "../../util/enum-user-levels";
 /*
     Functions for checking/getting objects state.
 */
@@ -379,4 +380,17 @@ export const objectDataIsModified = (objectData, editedObject) => {
         default:
             throw Error(`objectDataIsModified received an unexpected object type ${editedObject.object_type} when checking object ${editedObject.objectID}`);
     }
+};
+
+
+/**
+ * Checks if current user can update object with the specified `objectID`
+ */
+export const canEditObject = (state, objectID) => {
+    // Exit early, if data is absent
+    if (!objectID in state.objects) return false;
+    if (!objectDataIsInState(state, objectID)) return false;
+
+    return state.auth.numeric_user_level === enumUserLevels.admin
+        || (state.auth.numeric_user_level > enumUserLevels.anonymous && state.objects[objectID].owner_id === state.auth.user_id);
 };
