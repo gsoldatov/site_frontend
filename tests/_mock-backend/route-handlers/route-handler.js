@@ -5,7 +5,7 @@ export class RouteHandler {
         this.route = route;                                 // route the handler is assigned to
         this.method = method;                               // HTTP method handler is assigned to
         this.getResponseParams = getResponseParams || {};   // configurable response params for default response generator
-        this._getResponse = getResponse.bind(this);         // default response generator
+        this.getResponse = getResponse.bind(this);         // default response generator
         this.throwNetworkError = false;                     // if true, handler will throw a network error
 
         this.customResponse = null;         // overridable static response object
@@ -21,7 +21,7 @@ export class RouteHandler {
         if (this.throwNetworkError) throw TypeError("NetworkError");   // Network errors are instances of TypeError
         
         let response = this.customResponse ? this.customResponse :
-            this._getCustomResponse ? this._getCustomResponse(requestContext) : this._getResponse(requestContext);
+            this._getCustomResponse ? this._getCustomResponse(requestContext) : this.getResponse(requestContext);
         
         return response;
     }
