@@ -22,10 +22,10 @@ export class ObjectsViewModel {
     get objectsViewCard() {
         if (!this._objectsViewCard) {
             const context = new ModelContext({
-                getObjectID: (() => {
+                getObjectID: (function() {
                     const historyManager = context.get("historyManager");
                     return historyManager.getCurrentURL().replace("/objects/view/", "");
-                }).bind(context)
+                }).bind(this.context)
             }, this.context);
             this._objectsViewCard = new ObjectsViewCardModel(this.objectsViewCardLocator.node, context);
         }
