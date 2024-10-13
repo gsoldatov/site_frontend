@@ -16,7 +16,7 @@ export class ModelContext {
         let curr = this;
 
         while (curr) {
-            if (prop in curr) return curr[prop];
+            if (prop in curr.props) return curr.props[prop];
             curr = curr.parentContext;
         }
 
