@@ -43,9 +43,13 @@ export const ObjectsViewCard = ({ objectID, classNames, attributeProps, dataProp
     let containerClassNames = "objects-view-card-container";
     if (classNames instanceof Array && classNames.length > 0) containerClassNames += " " + classNames.join(" ");
 
+    // objectID div
+    const objectIDDiv = <div className="objects-view-card-object-id">{objectID}</div>;
+
     // Error message
     if (error.length > 0) return (
         <div className={containerClassNames}>
+            {objectIDDiv}
             <Message error content={error} />
         </div>
     );
@@ -53,6 +57,7 @@ export const ObjectsViewCard = ({ objectID, classNames, attributeProps, dataProp
     // Loading placeholder
     if (isFetching) return (
         <div className={containerClassNames}>
+            {objectIDDiv}
             <Loader active inline="centered">Loading...</Loader>
         </div>
     );
@@ -60,7 +65,7 @@ export const ObjectsViewCard = ({ objectID, classNames, attributeProps, dataProp
     // Object card
     return (
         <div className = {containerClassNames}>
-            <div className="objects-view-card-object-id">{objectID}</div>
+            {objectIDDiv}
             <ObjectAttributes objectID={objectID} attributeProps={attributeProps} />
             <ObjectData objectID={objectID} dataProps={dataProps} />
             <ObjectsViewTagList objectID={objectID} tagProps={tagProps} />
