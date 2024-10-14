@@ -12,7 +12,6 @@ import { updateConfig } from "../../src/config";
 import { HistoryManager } from "../_managers/history-manager";
 import { createTestStore } from "./create-test-store";
 import { StoreManager } from "../_managers/store-manager/store-manager";
-import { ModelContext } from "../_page-object-models/_util/model-context";
 
 
 export const renderWithWrappers = (ui, params) => {
@@ -30,9 +29,6 @@ export const renderWithWrappers = (ui, params) => {
     const history = createMemoryHistory({ initialEntries: [route] });
     const historyManager = new HistoryManager(history);
 
-    // Default object model context object
-    const modelContext = new ModelContext({ storeManager, historyManager });
-
     // Render & return results
     const wrapper = ({ children }) => {
         return (
@@ -49,7 +45,6 @@ export const renderWithWrappers = (ui, params) => {
     return { 
         ...render(ui, { wrapper }),
         historyManager,
-        store: storeManager.store, storeManager,
-        modelContext
+        store: storeManager.store, storeManager
     };
 };

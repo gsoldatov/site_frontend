@@ -5,11 +5,10 @@ import { resetTestConfig } from "../_mocks/config";
 import { renderWithWrappers } from "../_util/render";
 import { App } from "../../src/components/app";
 
-import { ObjectsViewModel } from "../_page-object-models/pages/objects-view";
-import { ModalWindowModel } from "../_page-object-models/state-users/modal-window";
-
 import { markdownObjectWithImages } from "../_scenarios/modal";
-
+import { ObjectsViewActions } from "../_ui/actions/pages/objects-view";
+import { ModalActions } from "../_ui/actions/state-users/modal";
+import { Actions } from "../_ui/actions/actions";
 
 
 /*
@@ -35,31 +34,29 @@ test("Image is correctly displayed on click", async () => {
     // Add backend data & render
     markdownObjectWithImages();
 
-    let { container, modelContext } = renderWithWrappers(<App />, {
+    let { container } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
     // Wait for page load
-    const objectsViewModel = new ObjectsViewModel(container, modelContext);
-    await objectsViewModel.objectsViewCard.waitForPageLoad();
+    const pageActions = new ObjectsViewActions(container);
+    const pageLayout = await pageActions.waitForPageLoad();
 
     // Check if modal is not displayed by default
-    const modalWindowModel = new ModalWindowModel(container);
-    modalWindowModel.ensureNotDisplayed();
-    
+    const modalActions = new ModalActions(container);
+    modalActions.ensureNotDisplayed();
+
     // Click on first image
-    const { images } = objectsViewModel.objectsViewCard.data.markdown;
-    images[0].click();
-    modalWindowModel.ensureDisplayed();
-    modalWindowModel.ensureImageSrc(images[0].src);
+    const images = Actions.getMatchingChildren(pageLayout.rootCard.data.markdown.markdown, "img", 2);
+    Actions.click(images[0]);
+    modalActions.ensureImageSrc(images[0].src);
 
     // Close modal and click another image
-    modalWindowModel.background.click();
-    modalWindowModel.ensureNotDisplayed();
+    modalActions.clickBackground();
+    modalActions.ensureNotDisplayed();
 
-    images[1].click();
-    modalWindowModel.ensureDisplayed();
-    modalWindowModel.ensureImageSrc(images[1].src);
+    Actions.click(images[1]);
+    modalActions.ensureImageSrc(images[1].src);
 });
 
 
@@ -67,30 +64,26 @@ test("Image is correctly expanded & collapsed", async () => {
     // Add backend data & render
     markdownObjectWithImages();
 
-    let { container, modelContext } = renderWithWrappers(<App />, {
+    let { container } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
     // Wait for page load
-    const objectsViewModel = new ObjectsViewModel(container, modelContext);
-    await objectsViewModel.objectsViewCard.waitForPageLoad();
+    const pageActions = new ObjectsViewActions(container);
+    const pageLayout = await pageActions.waitForPageLoad();
 
-    // Check if modal is not displayed by default
-    const modalWindowModel = new ModalWindowModel(container);
-    modalWindowModel.ensureNotDisplayed();
-    
     // Click on first image
-    const { images } = objectsViewModel.objectsViewCard.data.markdown;
-    images[0].click();
-    modalWindowModel.ensureDisplayed();
+    const images = Actions.getMatchingChildren(pageLayout.rootCard.data.markdown.markdown, "img", 2);
+    Actions.click(images[0]);
+    const modalActions = new ModalActions(container);
     
     // Expand modal
-    modalWindowModel.img.click();
-    modalWindowModel.ensureExpanded();
+    modalActions.clickImage();
+    modalActions.ensureExpanded();
 
     // Collapse modal
-    modalWindowModel.img.click();
-    modalWindowModel.ensureNotExpanded();
+    modalActions.clickImage();
+    modalActions.ensureNotExpanded();
 });
 
 
@@ -98,26 +91,22 @@ test("Image is correctly closed on outside click", async () => {
     // Add backend data & render
     markdownObjectWithImages();
 
-    let { container, modelContext } = renderWithWrappers(<App />, {
+    let { container } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
     // Wait for page load
-    const objectsViewModel = new ObjectsViewModel(container, modelContext);
-    await objectsViewModel.objectsViewCard.waitForPageLoad();
+    const pageActions = new ObjectsViewActions(container);
+    const pageLayout = await pageActions.waitForPageLoad();
 
-    // Check if modal is not displayed by default
-    const modalWindowModel = new ModalWindowModel(container);
-    modalWindowModel.ensureNotDisplayed();
-    
     // Click on first image
-    const { images } = objectsViewModel.objectsViewCard.data.markdown;
-    images[0].click();
-    modalWindowModel.ensureDisplayed();
-    
-    // Close modal and click another image
-    modalWindowModel.background.click();
-    modalWindowModel.ensureNotDisplayed();
+    const images = Actions.getMatchingChildren(pageLayout.rootCard.data.markdown.markdown, "img", 2);
+    Actions.click(images[0]);
+
+    // Close modal
+    const modalActions = new ModalActions(container);
+    modalActions.clickBackground();
+    modalActions.ensureNotDisplayed();
 });
 
 
@@ -125,24 +114,20 @@ test("Image is correctly closed on close icon click", async () => {
     // Add backend data & render
     markdownObjectWithImages();
 
-    let { container, modelContext } = renderWithWrappers(<App />, {
+    let { container } = renderWithWrappers(<App />, {
         route: "/objects/view/1"
     });
 
     // Wait for page load
-    const objectsViewModel = new ObjectsViewModel(container, modelContext);
-    await objectsViewModel.objectsViewCard.waitForPageLoad();
+    const pageActions = new ObjectsViewActions(container);
+    const pageLayout = await pageActions.waitForPageLoad();
 
-    // Check if modal is not displayed by default
-    const modalWindowModel = new ModalWindowModel(container);
-    modalWindowModel.ensureNotDisplayed();
-    
     // Click on first image
-    const { images } = objectsViewModel.objectsViewCard.data.markdown;
-    images[0].click();
-    modalWindowModel.ensureDisplayed();
-    
-    // Close modal and click another image
-    modalWindowModel.closeIcon.click();
-    modalWindowModel.ensureNotDisplayed();
+    const images = Actions.getMatchingChildren(pageLayout.rootCard.data.markdown.markdown, "img", 2);
+    Actions.click(images[0]);
+
+    // Close modal
+    const modalActions = new ModalActions(container);
+    modalActions.clickCloseIcon();
+    modalActions.ensureNotDisplayed();
 });
