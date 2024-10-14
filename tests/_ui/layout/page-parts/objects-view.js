@@ -15,12 +15,12 @@ export class ObjectsViewCardLayout {
         if (!card) return;
 
         // objectID
-        const objectIDNode = card.querySelector(":scope > .objects-view-card-object-id");   // look for object id node in direct children only
+        const objectIDNode = [...card.childNodes].filter(n => n.classList.contains("objects-view-card-object-id"))[0];
         if (objectIDNode) this.objectID = objectIDNode.textContent;
 
         // Placeholders
-        this.placeholders.loading = card.querySelector(":scope > .ui.loader");          // look for placeholders in direct children only
-        this.placeholders.error = card.querySelector(":scope > .ui.message.error");
+        this.placeholders.loading = [...card.childNodes].filter(n => ["ui", "loader"].every(cls => n.classList.contains(cls)))[0];
+        this.placeholders.error = [...card.childNodes].filter(n => ["ui", "message", "error"].every(cls => n.classList.contains(cls)))[0];
         
         this.attributes = new AttributesLayout(card);
         this.data = new DataLayout(card);
@@ -40,7 +40,7 @@ class AttributesLayout {
         this.description = null;
         if (!card) return;
 
-        const attributesContainer = card.querySelector(":scope > .objects-view-attributes");    // look for attributes in direct children only
+        const attributesContainer = [...card.childNodes].filter(n => n.classList.contains("objects-view-attributes"))[0];
         if (attributesContainer) {
             // Timestamp
             this.timestamp = attributesContainer.querySelector(".objects-view-timestamp");
@@ -94,7 +94,7 @@ class DataLayout {
         this.compositeSubobjectStub = null;
         if (!card) return;
 
-        const dataContainer = card.querySelector(":scope > .objects-view-data");
+        const dataContainer = [...card.childNodes].filter(n => n.classList.contains("objects-view-data"))[0];
         if (dataContainer) {
             this.link = new LinkDataLayout(dataContainer);
             this.markdown = new MarkdownDataLayout(dataContainer);
@@ -179,8 +179,8 @@ class CompositeGroupedLinksLayout {
         
         this.subobjectCards = dataContainer.querySelectorAll(".objects-view-card-container");
 
-        this.placeholders.loading = dataContainer.querySelector(":scope > .ui.loader");
-        this.placeholders.error = dataContainer.querySelector(":scope > .ui.message.error");
+        this.placeholders.loading = [...dataContainer.childNodes].filter(n => ["ui", "loader"].every(cls => n.classList.contains(cls)))[0];
+        this.placeholders.error = [...dataContainer.childNodes].filter(n => ["ui", "message", "error"].every(cls => n.classList.contains(cls)))[0];
         
         this.subobjectCards = [...dataContainer.querySelectorAll(".objects-view-card-container:not(.link-card)")];
 
@@ -243,8 +243,9 @@ class CompositeChaptersDataLayout {
         if (!dataContainer.classList.contains("composite-chapters")) return;
 
         // Placeholders
-        this.placeholders.loading = dataContainer.querySelector(":scope > .ui.loader");
-        this.placeholders.error =  dataContainer.querySelector(":scope > .ui.message.error");
+        this.placeholders.loading = [...dataContainer.childNodes].filter(n => ["ui", "loader"].every(cls => n.classList.contains(cls)))[0];
+        this.placeholders.error = [...dataContainer.childNodes].filter(n => ["ui", "message", "error"].every(cls => n.classList.contains(cls)))[0];
+        
 
         // Hierarchy navigation
         const hierarchyNavigationContainer = dataContainer.querySelector(".composite-chapters-hierarchy-navigation-container");
@@ -280,7 +281,7 @@ class CompositeChaptersDataLayout {
         this.tableOfContents.container = getCompositeChaptersTableOfContents(dataContainer);
 
         // Chapter object
-        this.chapterObject.objectCard = dataContainer.querySelector(":scope > .objects-view-card-container");
+        this.chapterObject.objectCard = [...dataContainer.childNodes].filter(n => n.classList.contains("objects-view-card-container"))[0];
     }
 }
 
