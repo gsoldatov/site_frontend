@@ -1,4 +1,5 @@
 import { ObjectsCache } from "./modules/objects";
+import { SettingsCache } from "./modules/settings";
 import { TagsCache } from "./modules/tags";
 import { UsersCache } from "./modules/users";
 
@@ -11,5 +12,7 @@ export class BackendCache {
         this.objects = new ObjectsCache();
         this.tags = new TagsCache();
         this.users = new UsersCache();
+
+        this.settings = new SettingsCache();
     }
 }

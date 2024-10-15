@@ -6,6 +6,7 @@ import { RouteHandler } from "./route-handlers/route-handler";
 import { ObjectsRouteHandlers } from "./route-handlers/handlers/objects";
 import { TagsRouteHandlers } from "./route-handlers/handlers/tags";
 import { UsersRouteHandlers } from "./route-handlers/handlers/users";
+import { SettingsRouteHandlers } from "./route-handlers/handlers/settings";
 
 
 /**
@@ -19,7 +20,8 @@ export class MockBackend {
         this.routeHandlers = {
             objects: new ObjectsRouteHandlers(this),
             tags: new TagsRouteHandlers(this),
-            users: new UsersRouteHandlers(this)
+            users: new UsersRouteHandlers(this),
+            settings: new SettingsRouteHandlers(this)
         }
         
         // Map route handlers by path & method for an easier search
