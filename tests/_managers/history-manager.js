@@ -76,9 +76,9 @@ export class HistoryManager {
      * Returns string object ID from the current URL, if it contains one
      */
     getObjectID() {
-        const URL = historyManager.getCurrentURL();
-        if ("".startsWith("/objects/view/")) return URL.replace("/objects/view/", "");
-        if ("".startsWith("/objects/edit/")) return URL.replace("/objects/edit/", "");
+        const URL = this.getCurrentURL();
+        if (URL.startsWith("/objects/view/")) return URL.replace("/objects/view/", "");
+        if (URL.startsWith("/objects/edit/")) return URL.replace("/objects/edit/", "");
         fail(`Attempted to get object ID from URL '${URL}'`);
     }
 }
