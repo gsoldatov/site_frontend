@@ -1,7 +1,5 @@
-import { waitFor } from "@testing-library/react";
-
-import { Actions } from "../actions";
 import { ObjectsViewLayout } from "../../layout/pages/objects-view";
+import { ObjectsViewCardActions } from "../page-parts/objects-view";
 import { ObjectsViewCardLayout } from "../../layout/page-parts/objects-view";
 
 
@@ -15,49 +13,47 @@ export class ObjectsViewActions {
     }
 
     /**
-     * Waits for page load to end and markdown containers to appear
+     * Refreshes layout and returns it
      */
-    async waitForPageLoad() {
-        await this.waitForCardLoad((new ObjectsViewLayout(this.container)).rootCard.card);
+    getLayout() {
         this.layout = new ObjectsViewLayout(this.container);
         return this.layout;
     }
 
     /**
-     * Wait for error message to appear on the page with the specified `text`
+     * Waits for page load to end and markdown containers to appear
      */
-    async waitForErrorText(text) {
-        await waitFor((function() {
-            this.layout = new ObjectsViewLayout(this.container);
-            expect(this.layout.rootCard.placeholders.loading).toBeFalsy();
-            expect(Actions.containsText(this.layout.rootCard.placeholders.error), text).toBeTrue();
-        }).bind(this));
+    async waitForLoad() {
+        const cardActions = new ObjectsViewCardActions(this.layout.rootCard.card);
+        await cardActions.waitForLoad();
+        this.layout = new ObjectsViewLayout(this.container);
         return this.layout;
     }
 
+    /**
+     * Waits for error message to appear on the page.
+     * If `text` is provided, ensures it's in the error message.
+     */
+    async waitForError(text) {
+        const cardActions = new ObjectsViewCardActions(this.layout.rootCard.card);
+        await cardActions.waitForError(text);
+        this.layout = new ObjectsViewLayout(this.container);
+        return this.layout;
+    }
 
     /**
-     * Waits for card loading placeholder to disappear and markdown containers to render
+     * Returns a subobject card for the specified `subobjectID` or fails, if it does not exist.
      */
-    async waitForCardLoad(card) {
-        let cardLayout;
+    getSubobjectCardLayoutByID(subobjectID) {
+        if (!this.layout.rootCard.data.compositeMulticolumn) fail("Failed to get subobject card: multicolumn data not found.");
+        
+        for (let column of this.layout.rootCard.data.compositeMulticolumn.columns) {
+            for (let cardData of column) {
+                const layout = new ObjectsViewCardLayout(cardData.card);
+                if (layout.objectID === subobjectID.toString()) return layout;
+            }
+        }
 
-        // Wait for placeholder to disappear
-        await waitFor((function() {
-            cardLayout = new ObjectsViewCardLayout(card);
-            expect(cardLayout.placeholders.loading).toBeFalsy();
-            expect(cardLayout.placeholders.error).toBeFalsy();
-        }).bind(this));
-
-        // Wait for markdown renders
-        const { object_type, show_description } = global.backend.data.object(cardLayout.objectID);
-
-        await waitFor(() => {
-            cardLayout = new ObjectsViewCardLayout(card);
-            if (show_description) expect(cardLayout.attributes.description).toBeTruthy();
-            if (object_type === "markdown") expect(cardLayout.data.markdown.markdown).toBeTruthy();
-        });
-
-        return cardLayout;
+        fail(`Failed to get subobject card: card for subobject '${subobjectID}' not found.`);
     }
 }

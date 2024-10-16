@@ -211,15 +211,32 @@ class CompositeMulticolumnDataLayout {
 
         [...dataContainer.querySelectorAll(".objects-view-data-composite-multicolumn-column")].forEach(column => {
             this.columns.push(
-                [...column.querySelectorAll(".objects-view-data-expand-toggle-container")].map(expandContainer => {
-                    const multicolumnCard = { expandToggle: null, expandContent: null, card: null };
-                    multicolumnCard.expandToggle = expandContainer.querySelector(".objects-view-data-expand-toggle");
-                    multicolumnCard.expandContent = expandContainer.querySelector(".objects-view-data-expand-content");
-                    if (multicolumnCard.expandContent) multicolumnCard.card = multicolumnCard.expandContent(".objects-view-card-container");
-                    return multicolumnCard;
-                })
+                [...column.querySelectorAll(".objects-view-data-expand-toggle-container")].map(
+                    expandToggleContainer => new CompositeMulticolumnExpandToggleLayout(expandToggleContainer)
+                )
             );
         });
+    }
+}
+
+
+/**
+ * /objects/view/:id multicolumn expand toggle container nodes' references.
+ */
+export class CompositeMulticolumnExpandToggleLayout {
+    constructor(expandToggleContainer) {
+        this.expandToggleContainer = expandToggleContainer;
+        this.expandToggle = null;
+        this.expandToggleText = null;
+        this.expandContent = null
+        this.card = null;
+
+        if (!expandToggleContainer) return;
+
+        this.expandToggle = expandToggleContainer.querySelector(".objects-view-data-expand-toggle");
+        if (this.expandToggle) this.expandToggleText = this.expandToggle.querySelector("span");
+        this.expandContent = expandToggleContainer.querySelector(".objects-view-data-expand-toggle-content");
+        if (this.expandContent) this.card = this.expandContent.querySelector(".objects-view-card-container");
     }
 }
 
