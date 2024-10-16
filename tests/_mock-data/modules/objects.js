@@ -11,15 +11,15 @@ export class ObjectGenerator {
 
         object_id = object_id === undefined ? 1 : object_id;
 
-        if (!created_at) {
+        if (created_at === undefined) {
             created_at = object_id > 0 ? (new Date(Date.now() - 24*60*60*1000 - object_id)).toISOString() : "";
         }
 
-        if (!modified_at) {
+        if (modified_at === undefined) {
             modified_at = object_id > 0 ? (new Date(Date.now() - object_id)).toISOString() : "";
         }
 
-        if (!feed_timestamp) {
+        if (feed_timestamp  === undefined) {
             if (object_id < 0) feed_timestamp = "";
             else {
                 const now = new Date();
