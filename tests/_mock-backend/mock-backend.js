@@ -1,6 +1,7 @@
 import { BackendCache } from "./backend-cache/backend-cache";
 import { BackendDataGenerator } from "./backend-data-generator";
 import { RequestContext } from "./request-context";
+import { RequestHistory } from "./request-history";
 
 import { RouteHandler } from "./route-handlers/route-handler";
 import { ObjectsRouteHandlers } from "./route-handlers/handlers/objects";
@@ -23,6 +24,8 @@ export class MockBackend {
             users: new UsersRouteHandlers(this),
             settings: new SettingsRouteHandlers(this)
         }
+
+        this.history = new RequestHistory();
         
         // Map route handlers by path & method for an easier search
         const _handlers = {};
@@ -50,11 +53,18 @@ export class MockBackend {
         // Generate a response
         const handler = (this._handlers[context.URLPath] || {})[context.method];
         if (!handler) throw Error(`Route handler for path '${context.URLPath}' and method '${context.method}' not found.`);
-        let response = handler.processRequest(context);
+        
+        try {
+            let response = handler.processRequest(context);
 
-        // Post-process response object & return it
-        this.postProcessResponse(response, context);
-        return Promise.resolve(response);
+            // Post-process response object & return it
+            this.postProcessResponse(response, context);
+            this.history.addRequest(context, response, false);
+            return Promise.resolve(response);
+        } catch (e) {
+            if (e instanceof TypeError && e.message === "NetworkError") this.history.addRequest(context, undefined, true);
+            throw e;
+        }
     }
 
     postProcessResponse(response, requestContext) {
