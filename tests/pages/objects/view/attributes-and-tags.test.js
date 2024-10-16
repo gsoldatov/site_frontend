@@ -1,189 +1,331 @@
 import React from "react";
 
-import { fireEvent } from "@testing-library/react";
-import { waitFor } from "@testing-library/dom";
-
+import { MockBackend } from "../../../_mock-backend/mock-backend";
 import { resetTestConfig } from "../../../_mocks/config";
-import { createTestStore } from "../../../_util/create-test-store";
 import { renderWithWrappers } from "../../../_util/render";
-import { getObjectsViewCardElements } from "../../../_util/ui-objects-view";
-import { getFeedElements } from "../../../_util/ui-index";
-import { getInlineItem } from "../../../_util/ui-inline";
-import { compareDates } from "../../../_util/data-checks";
-
-import { resetEditedObjects } from "../../../../src/actions/objects-edit";
-
+import { createTestStore } from "../../../_util/create-test-store";
 import { App } from "../../../../src/components/app";
+
+import { ObjectsViewActions } from "../../../_ui/actions/pages/objects-view";
+import {  ObjectsViewCardActions } from "../../../_ui/actions/page-parts/objects-view";
+
+import { setObject } from "../../../_scenarios/objects/objects";
+import { TagsViewActions } from "../../../_ui/actions/pages/tags-view";
 
 
 /*
-    /objects/view/:id page tests, attributes and tags.
+    /objects/view/:id page tests for composite multicolumn objects
 */
 beforeEach(() => {
-    // isolate fetch mock to avoid tests state collision because of cached data in fetch
-    jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../../../_mocks/mock-fetch");
-        
-        // Set test app configuration
-        resetTestConfig();
-        
-        // reset fetch mocks
-        jest.resetAllMocks();
-        global.fetch = jest.fn(mockFetch);
-        global.setFetchFail = jest.fn(setFetchFail);
-        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
-    });
-});
-
-
-test("Timestamp", async () => {
-    let { container, storeManager } = renderWithWrappers(<App />, {
-        route: "/objects/view/1"
-    });
-
-    // Wait for the page to load
-    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
-
-    // Check if feed timestamp is displayed
-    let cardElements = getObjectsViewCardElements({ container });
-    let ed = new Date(storeManager.store.getState().objects[1].feed_timestamp), dd = new Date(cardElements.attributes.timestamp.element.textContent);
-    compareDates(ed, dd);
-
-    // Check if modified at is used as a fallback for missing feed timestamp
-    storeManager.objects.updateAttributes({ object_id: 1, feed_timestamp: "" });
-    cardElements = getObjectsViewCardElements({ container });
-    ed = new Date(storeManager.store.getState().objects[1].modified_at), dd = new Date(cardElements.attributes.timestamp.element.textContent);
-    compareDates(ed, dd);
-});
-
-
-test("Header (logged as admin)", async () => {
-    let { container, store, historyManager } = renderWithWrappers(<App />, {
-        route: "/objects/view/1"
-    });
-
-    // Wait for the page to load
-    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
-
-    // Check if header is displayed
-    const cardElements = getObjectsViewCardElements({ container });
-    expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[1].object_name);
-
-    // Check if view button is not displayed
-    expect(cardElements.attributes.header.viewButton).toBeFalsy();
-
-    // Check if edit button is displayed and working
-    fireEvent.click(cardElements.attributes.header.editButton);
-    historyManager.ensureCurrentURL("/objects/edit/1");
-});
-
-
-test("Header (anonymous)", async () => {
-    const { store } = createTestStore({ addAdminToken: false });
-    let { container } = renderWithWrappers(<App />, {
-        route: "/objects/view/1", store
-    });
-
-    // Wait for the page to load
-    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
-
-    // Check if header is displayed
-    const cardElements = getObjectsViewCardElements({ container });
-    expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[1].object_name);
-
-    // Check if view and edit buttons are not displayed
-    expect(cardElements.attributes.header.viewButton).toBeFalsy();
-    expect(cardElements.attributes.header.editButton).toBeFalsy();
-});
-
-
-test("'Object is edited' message", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
-        route: "/objects/view/1"
-    });
-
-    // Wait for the page to load
-    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
-
-    // Check if message is not displayed
-    expect(getObjectsViewCardElements({ container }).attributes.objectIsEdited.element).toBeFalsy();
+    // Set test app configuration
+    resetTestConfig();
     
-    // Add object to state.editedObjects & check if message if dispalyed
-    store.dispatch(resetEditedObjects({ objectIDs: [1] }));
-    expect(getObjectsViewCardElements({ container }).attributes.objectIsEdited.element).toBeTruthy();
+    global.backend = new MockBackend();
+    global.fetch = global.backend.fetch;
 });
 
 
-test("Object description (link)", async () => {
-    let { container, storeManager } = renderWithWrappers(<App />, {
-        route: "/objects/view/1"
+afterEach(async () => {
+    await (async () => {})();
+})
+
+
+
+describe("Common", () => {
+    describe("Object ID <div>", () => {
+        test("Object ID <div> is displayed", async () => {
+            // Render page
+            let { container, historyManager } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if object ID <div> contains expected value
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.ensureObjectID(historyManager.getObjectID());
+        });
     });
 
-    // Wait for the page to load
-    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
+    describe("Timestamp", () => {
+        test("Feed timestamp display", async () => {
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
 
-    // !show_description && !show_description_as_link
-    expect(storeManager.store.getState().objects[1].show_description).toBeFalsy();
-    expect(storeManager.store.getState().links[1].show_description_as_link).toBeFalsy();
-    expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
 
-    // !show_description && show_description_as_link
-    storeManager.objects.updateData(1, "link", { show_description_as_link: true });
-    expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
+            // Check card timestamp
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.checkTimestamp("feed_timestamp");
+        });
 
-    // show_description && show_description_as_link
-    storeManager.objects.updateAttributes({ object_id: 1, show_description: true });
-    expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
 
-    // show_description && !show_description_as_link
-    storeManager.objects.updateAttributes({ object_id: 1, show_description: true });
-    storeManager.objects.updateData(1, "link", { show_description_as_link: false });
-    await waitFor(() => expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy());
+        test("Modified at display", async () => {
+            // Remove `feed_timestamp` value
+            setObject(1, { feed_timestamp: "" });
+
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check card timestamp
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.checkTimestamp("modified_at");
+        });
+    });
+
+    describe("Header", () => {
+        test("Text", async () => {
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check card header text
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.checkHeaderText();
+        });
+
+
+        test("View object button", async () => {
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if view object button is not displayed
+            expect(pageLayout.rootCard.attributes.header.viewButton).toBeFalsy();
+        });
+
+
+        test("Edit button (logged as admin)", async () => {
+            // Render page
+            let { container, historyManager } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if edit object button is displayed & working
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.clickEditObjectButton();
+            historyManager.ensureCurrentURL("/objects/edit/1");
+        });
+
+
+        test("Edit button (anonymous)", async () => {
+            // Render page
+            const { store } = createTestStore({ addAdminToken: false });
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1", store
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if edit object button is not displayed
+            expect(pageLayout.rootCard.attributes.header.editButton).toBeFalsy();
+        });
+    });
+
+
+    describe("Object is edited message", () => {
+        test("Display with & without edited object present in state", async () => {
+            // Render page
+            let { container, storeManager } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if message is not displayed when object is not edited
+            expect(pageLayout.rootCard.attributes.objectIsEdited).toBeFalsy();
+
+            // Add object as edited & check if mesage is displayed
+            storeManager.editedObjects.reset([1]);
+            expect(pageActions.getLayout().rootCard.attributes.objectIsEdited).toBeTruthy();
+        });
+    });
+
+    describe("Description (non-link)", () => {
+        test("Not displayed", async () => {
+            setObject(1, { object_type: "markdown" });
+
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if description is not displayed
+            expect(pageLayout.rootCard.attributes.description).toBeFalsy();
+        });
+
+
+        test("Displayed", async () => {
+            // Set object type & `show_description` to true
+            setObject(1, { object_type: "markdown", show_description: true });
+
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if description is displayed
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.checkDescriptionText();
+        });
+    });
+
+    describe("Tags", () => {
+        test("Object without tags", async () => {
+            // Clear default object tags
+            setObject(1, { current_tag_ids: [] });
+
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if tag container is not displayed
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.checkTags();
+        });
+
+
+        test("Object with tags", async () => {
+            // Render page
+            let { container, historyManager } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if correct tags are displayed
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.checkTags();
+
+            // Click tag and check if redirect occured
+            const tagID = global.backend.data.object(1).attributes.current_tag_ids[0];
+            cardActions.clickTag(pageLayout.rootCard.tags.tags[0]);
+            historyManager.ensureCurrentURL("/tags/view");
+            historyManager.ensureCurrentURLParams(`?tagIDs=${tagID}`);
+
+            // Wait for /tags/view page load
+            const tagsViewPageActions = new TagsViewActions(container);
+            await tagsViewPageActions.waitForFeedLoad();
+        });
+    });
 });
 
 
-test("Object description (non-link)", async () => {
-    let { container, storeManager } = renderWithWrappers(<App />, {
-        route: "/objects/view/1001"
+describe("Link", () => {
+    describe("Description (link)", () => {
+        test("Desctiption NOT displayed & link NOT displayed as description", async () => {
+            setObject(1, { object_type: "link", show_description: false }, { show_description_as_link: false });
+
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if description is not displayed
+            expect(pageLayout.rootCard.attributes.description).toBeFalsy();
+        });
+
+
+        test("Desctiption NOT displayed & link displayed as description", async () => {
+            setObject(1, { object_type: "link", show_description: false }, { show_description_as_link: true });
+
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if description is not displayed
+            expect(pageLayout.rootCard.attributes.description).toBeFalsy();
+        });
+
+
+        test("Desctiption displayed & link displayed as description", async () => {
+            setObject(1, { object_type: "link", show_description: true }, { show_description_as_link: true });
+
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check if description is not displayed
+            expect(pageLayout.rootCard.attributes.description).toBeFalsy();
+        });
+
+
+        test("Desctiption displayed & link NOT displayed as description", async () => {
+            setObject(1, { object_type: "link", show_description: true }, { show_description_as_link: false });
+
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // // Check if description is not displayed
+            // expect(pageLayout.rootCard.attributes.description).toBeFalsy();
+            // Check if description is displayed
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.checkDescriptionText();
+        });
     });
-
-    // Wait for the page to load
-    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
-
-    // !show_description
-    expect(storeManager.store.getState().objects[1001].show_description).toBeFalsy();
-    expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeFalsy();
-
-    // show_description
-    storeManager.objects.updateAttributes({ object_id: 1001, show_description: true });
-    await waitFor(() => expect(getObjectsViewCardElements({ container }).attributes.description.element).toBeTruthy());
-});
-
-
-test("Object tags", async () => {
-    let { container, store, historyManager } = renderWithWrappers(<App />, {
-        route: "/objects/view/1"
-    });
-
-    // Wait for the page to load
-    await waitFor(() => expect(getObjectsViewCardElements({ container }).placeholders.loading).toBeFalsy());
-
-    // Check if tags are rendered
-    const cardElements = getObjectsViewCardElements({ container });
-    expect(cardElements.tags.isRendered).toBeTruthy();
-
-    // Check if each tag name is displayed
-    const state = store.getState();
-    expect(state.objectsTags[1].length).toEqual(5);
-
-    const renderedTagNames = [...cardElements.tags.tagElements].map(e => e.querySelector("span").textContent);        
-    expect(renderedTagNames.length).toEqual(5);
-    
-    state.objectsTags[1].forEach(tagID => expect(renderedTagNames.indexOf(state.tags[tagID].tag_name)).toBeGreaterThan(-1));
-
-    // Check redireact to /tags/view page
-    fireEvent.click(getInlineItem({ item: cardElements.tags.tagElements[0] }).link);
-    historyManager.ensureCurrentURL("/tags/view");
-    historyManager.ensureCurrentURLParams("?tagIDs=1");
-    await waitFor(() => expect(getFeedElements(container).placeholders.loading).toBeFalsy());
 });

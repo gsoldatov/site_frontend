@@ -31,10 +31,12 @@ export class ObjectsViewCardActions {
 
         // Wait for markdown renders
         const { object_type, show_description } = global.backend.data.object(this.layout.objectID).attributes;
+        const { show_description_as_link } = global.backend.data.object(this.layout.objectID).data;
 
         await waitFor((function() {
             this.layout = new ObjectsViewCardLayout(this.card);
-            if (show_description) expect(this.layout.attributes.description).toBeTruthy();
+            if (show_description && !show_description_as_link) expect(this.layout.attributes.description).toBeTruthy();
+            if (object_type === "link" && show_description_as_link) expect(this.layout.data.link.description).toBeTruthy();
             if (object_type === "markdown") expect(this.layout.data.markdown.markdown).toBeTruthy();
         }).bind(this));
 

@@ -1,154 +1,224 @@
 import React from "react";
+import { waitFor } from "@testing-library/react";
 
-import { waitFor } from "@testing-library/dom";
-
+import { MockBackend } from "../../../_mock-backend/mock-backend";
 import { resetTestConfig } from "../../../_mocks/config";
 import { renderWithWrappers } from "../../../_util/render";
-import { getObjectsViewCardElements } from "../../../_util/ui-objects-view";
-import { compositeMulticolumnDisplayMode } from "../../../_mocks/data-composite";
-
+import { createTestStore } from "../../../_util/create-test-store";
 import { App } from "../../../../src/components/app";
+
+import { ObjectsViewActions } from "../../../_ui/actions/pages/objects-view";
+import { ExpandToggleActions, ObjectsViewCardActions } from "../../../_ui/actions/page-parts/objects-view";
+
+import { basicCompositeMulticolumnObject } from "../../../_scenarios/objects/composite-multicolumn";
+import { addNonExistingObjectsForObjectsView, mockFetchFailForObjectsView } from "../../../_scenarios/objects/fetch-failures";
+import { ObjectsViewCardLayout } from "../../../_ui/layout/page-parts/objects-view";
 
 
 /*
-    /objects/view/:id page tests, composite object data display in `multicolumn` display mode.
+    /objects/view/:id page tests for composite multicolumn objects
 */
 beforeEach(() => {
-    // isolate fetch mock to avoid tests state collision because of cached data in fetch
-    jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../../../_mocks/mock-fetch");
+    // Set test app configuration
+    resetTestConfig();
+    
+    global.backend = new MockBackend();
+    global.fetch = global.backend.fetch;
+});
+
+
+afterEach(async () => {
+    await (async () => {})();
+})
+
+
+describe("Load errors", () => {
+    test("Object load fetch failure", async () => {
+        // Adds a composite multicolumn object & simulate its fetch failure
+        basicCompositeMulticolumnObject(1);
+        mockFetchFailForObjectsView([1]);
+
+        // Render page
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/view/1"
+        });
+
+        // Wait for page load
+        const pageActions = new ObjectsViewActions(container);
+        await pageActions.waitForError("Failed to fetch data.");
+    });
+
+
+    test("Subobject load fetch failure", async () => {
+        // Adds a composite multicolumn object & simulate subobject fetch failure
+        basicCompositeMulticolumnObject(1);
+        mockFetchFailForObjectsView([2]);
+
+        // Render page
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/view/1"
+        });
+
+        // Wait for page load
+        const pageActions = new ObjectsViewActions(container);
+        await pageActions.waitForLoad();
+
+        // Get card of subobject, which will fail to load & ensure error is displayed
+        const { card } = pageActions.getSubobjectCardLayoutByID(2);
+        const cardActions = new ObjectsViewCardActions(card);
+        await cardActions.waitForError("Failed to fetch data.");
+    });
+
+
+    test("Subobject does not exist", async () => {
+        // Adds a composite multicolumn object & simulate subobject fetch failure
+        basicCompositeMulticolumnObject(1);
+        addNonExistingObjectsForObjectsView([2]);
+
+        // Render page
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/view/1"
+        });
+
+        // Wait for page load
+        const pageActions = new ObjectsViewActions(container);
+        await pageActions.waitForLoad();
+
+        // Get card of subobject, which will fail to load & ensure error is displayed
+        const { card } = pageActions.getSubobjectCardLayoutByID(2);
+        const cardActions = new ObjectsViewCardActions(card);
+        await cardActions.waitForError("not found");
+    });
+});
+
+
+describe("Successful load", () => {
+    test("Subobject card positions", async () => {
+        // Adds a composite multicolumn object & simulate its fetch failure
+        basicCompositeMulticolumnObject(1);
+
+        // Render page
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/view/1"
+        });
+
+        // Wait for page load
+        const pageActions = new ObjectsViewActions(container);
+        const pageLayout = await pageActions.waitForLoad();
+
+        // Check if subobject cards are displayed in correct positions
+        const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+        cardActions.checkCompositeMulticolumnSubobjectPositions();
+    });
+});
+
+
+describe("Expand/collapse toggle", () => {
+    test("Default state is correct", async () => {
+        // Adds a composite multicolumn object & simulate its fetch failure
+        basicCompositeMulticolumnObject(1);
+
+        // Render page
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/view/1"
+        });
+
+        // Wait for page load
+        const pageActions = new ObjectsViewActions(container);
+        const pageLayout = await pageActions.waitForLoad();
+
+        // Check if subobject with `is_expanded` prop set to true has its toggle expanded.
+        let expandToggleActions = new ExpandToggleActions(pageLayout.rootCard.data.compositeMulticolumn.columns[0][0].expandToggleContainer);
+        expandToggleActions.ensureVisible();
         
-        // Set test app configuration
-        resetTestConfig();
+        // Check if subobject with `is_expanded` prop set to false has its toggle collapsed.
+        expandToggleActions = new ExpandToggleActions(pageLayout.rootCard.data.compositeMulticolumn.columns[0][1].expandToggleContainer);
+        expandToggleActions.ensureHidden();
+    });
+
+
+    test("Expansion toggle click changes visibility", async () => {
+        // Adds a composite multicolumn object & simulate its fetch failure
+        basicCompositeMulticolumnObject(1);
+
+        // Render page
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/view/1"
+        });
+
+        // Wait for page load
+        const pageActions = new ObjectsViewActions(container);
+        const pageLayout = await pageActions.waitForLoad();
+
+        // Get collapsed card and click toggle to expand it
+        let expandToggleActions = new ExpandToggleActions(pageLayout.rootCard.data.compositeMulticolumn.columns[0][1].expandToggleContainer);
+        expandToggleActions.ensureHidden();
+        expandToggleActions.clickToggle();
+        expandToggleActions.ensureVisible();
+
+        // Click toggle and collapse card
+        expandToggleActions.clickToggle();
+        expandToggleActions.ensureHidden();
         
-        // reset fetch mocks
-        jest.resetAllMocks();
-        global.fetch = jest.fn(mockFetch);
-        global.setFetchFail = jest.fn(setFetchFail);
-        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
-    });
-});
-
-
-test("Loading & error placeholders", async () => {
-    // Add a fetch failure for grouped link on load fetch
-    addCustomRouteResponse("/objects/view", "POST", { generator: body => {
-        const parsedBody = JSON.parse(body);
-
-        if ("object_ids" in parsedBody) {
-            const queriedObjectIDs = parsedBody.object_ids;
-            const expectedSubobjectIDs = compositeMulticolumnDisplayMode.subobjects.map(s => s.object_id);
-            if (expectedSubobjectIDs.indexOf(queriedObjectIDs[0]) === -1) return null;
-            
-            // Throw network error when fetching any subobject of `compositeMulticolumnDisplayMode`
-            throw TypeError("NetworkError");
-        }
-    }});
-
-    // Render page
-    let { container } = renderWithWrappers(<App />, {
-        route: "/objects/view/3909"
+        // Wait for update fetch to complete (otherwise it will fire during the next test)
+        await waitFor(() => { expect(global.backend.history.getMatchingRequestsCount("/objects/update")).toEqual(1); });
     });
 
-    // Wait for main object to load and check if subobject cards are rendered
-    await waitFor(() => {
-        const compositeMulticolumn = getObjectsViewCardElements({ container }).data.compositeMulticolumn;
 
-        const expectedSubobjectCardCounts = [];
-        compositeMulticolumnDisplayMode.subobjects.forEach(subobject => {
-            const column = subobject.column;
-            expectedSubobjectCardCounts[column] = expectedSubobjectCardCounts[column] ? expectedSubobjectCardCounts[column] + 1 : 1;
+    test("Expansion toggle click update fetch (admins)", async () => {
+        // Adds a composite multicolumn object & simulate its fetch failure
+        basicCompositeMulticolumnObject(1);
+
+        // Render page
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/view/1"
         });
 
-        expect(compositeMulticolumn.subobjectCards.length).toEqual(expectedSubobjectCardCounts.length);
+        // Wait for page load
+        const pageActions = new ObjectsViewActions(container);
+        const pageLayout = await pageActions.waitForLoad();
 
-        for (let i = 0; i < expectedSubobjectCardCounts.length; i++)
-            expect(compositeMulticolumn.subobjectCards[i].length).toEqual(expectedSubobjectCardCounts[i]);
+        // Get collapsed card and click toggle to expand it
+        let expandToggleActions = new ExpandToggleActions(pageLayout.rootCard.data.compositeMulticolumn.columns[0][1].expandToggleContainer);
+        expandToggleActions.ensureHidden();
+        expandToggleActions.clickToggle();
+        expandToggleActions.ensureVisible();
+
+        const changedSubobjectCardLayout = new ObjectsViewCardLayout(pageLayout.rootCard.data.compositeMulticolumn.columns[0][1].card);
+        const changedSubobjectID = parseInt(changedSubobjectCardLayout.objectID);
+        
+        // Check if update fetch was fired
+        await waitFor(() => {
+            expect(global.backend.history.getMatchingRequestsCount("/objects/update")).toEqual(1);
+            const { body } = global.backend.history.getMatchingRequests("/objects/update")[0].requestContext;
+            const changedSubobjectData = body.object.object_data.subobjects.filter(so => so.object_id === changedSubobjectID)[0];
+            expect(changedSubobjectData.is_expanded).toEqual(true);
+        });
     });
 
-    // Wait for fetch errors in subobject cards to be displayed
-    await waitFor(() => {
-        const subobjectCard = getObjectsViewCardElements({ container }).data.compositeMulticolumn.subobjectCards[0][0];
-        expect(getObjectsViewCardElements({ card: subobjectCard }).placeholders.fetchError).toBeTruthy();
-    });
-});
 
+    test("Expansion toggle click update fetch (anonymous)", async () => {
+        // Adds a composite multicolumn object & simulate its fetch failure
+        basicCompositeMulticolumnObject(1);
 
-test("Missing subobject display", async () => {
-    // Add a fetch failure for grouped link on load fetch
-    addCustomRouteResponse("/objects/view", "POST", { generator: body => {
-        const parsedBody = JSON.parse(body);
-
-        if ("object_ids" in parsedBody) {
-            const queriedObjectIDs = parsedBody.object_ids;
-            const missingSubobjectID = compositeMulticolumnDisplayMode.subobjects.filter(s => s.column === 0 && s.row === 0)[0].object_id;
-            if (queriedObjectIDs[0] !== missingSubobjectID) return null;
-            
-            // Return 404 for a particular subboject
-            return { status: 404 };
-        }
-    }});
-
-    // Render page
-    let { store, container } = renderWithWrappers(<App />, {
-        route: "/objects/view/3909"
-    });
-
-    // Wait for main object to load and check if subobject cards are rendered
-    await waitFor(() => {
-        const compositeMulticolumn = getObjectsViewCardElements({ container }).data.compositeMulticolumn;
-
-        const expectedSubobjectCardCounts = [];
-        compositeMulticolumnDisplayMode.subobjects.forEach(subobject => {
-            const column = subobject.column;
-            expectedSubobjectCardCounts[column] = expectedSubobjectCardCounts[column] ? expectedSubobjectCardCounts[column] + 1 : 1;
+        // Render page
+        const { store } = createTestStore({ addAdminToken: false });
+        let { container } = renderWithWrappers(<App />, {
+            route: "/objects/view/1", store
         });
 
-        expect(compositeMulticolumn.subobjectCards.length).toEqual(expectedSubobjectCardCounts.length);
+        // Wait for page load
+        const pageActions = new ObjectsViewActions(container);
+        const pageLayout = await pageActions.waitForLoad();
 
-        for (let i = 0; i < expectedSubobjectCardCounts.length; i++)
-            expect(compositeMulticolumn.subobjectCards[i].length).toEqual(expectedSubobjectCardCounts[i]);
-    });
-
-    // Wait for error to be displayed in the first card
-    await waitFor(() => {
-        const subobjectCard = getObjectsViewCardElements({ container }).data.compositeMulticolumn.subobjectCards[0][0];
-        expect(getObjectsViewCardElements({ card: subobjectCard }).placeholders.fetchError).toBeTruthy();
-    });
-
-    // Wait for another subobject to be correctly displayed
-    await waitFor(() => {
-        const subobjectCard = getObjectsViewCardElements({ container }).data.compositeMulticolumn.subobjectCards[0][1];
-        const cardElements = getObjectsViewCardElements({ card: subobjectCard });
-        expect(cardElements.placeholders.loading).toBeFalsy();
-        const subobjectID = cardElements.objectID;
-        expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[subobjectID].object_name);
-    });
-});
-
-
-test("Correct display", async () => {
-    // Render page
-    let { container, store } = renderWithWrappers(<App />, {
-        route: "/objects/view/3909"
-    });
-
-    await waitFor(() => {
-        // Wait for subobjects to load
-        const subobjectCards = getObjectsViewCardElements({ container }).data.compositeMulticolumn.subobjectCards;
-        subobjectCards.forEach(column => {
-            column.forEach(card => {
-                const cardElements = getObjectsViewCardElements({ card });
-                expect(cardElements.placeholders.loading).toBeFalsy();
-                const subobjectID = cardElements.objectID;
-                expect(cardElements.attributes.header.headerText.textContent).toEqual(store.getState().objects[subobjectID].object_name);
-            });
-        });
-
-        // Check if subobjects are displayed in the correct order
-        compositeMulticolumnDisplayMode.subobjects.forEach(subobject => {
-            const subobjectID = subobject.object_id.toString();
-            expect(getObjectsViewCardElements({ card: subobjectCards[subobject.column][subobject.row] }).objectID).toEqual(subobjectID);
-        })
+        // Get collapsed card and click toggle to expand it
+        let expandToggleActions = new ExpandToggleActions(pageLayout.rootCard.data.compositeMulticolumn.columns[0][1].expandToggleContainer);
+        expandToggleActions.ensureHidden();
+        expandToggleActions.clickToggle();
+        expandToggleActions.ensureVisible();
+        
+        // Check if update fetch was not fired
+        for (let i = 0; i < 5; i++) await waitFor(() => undefined);
+        expect(global.backend.history.getMatchingRequestsCount("/objects/update")).toEqual(0);
     });
 });
