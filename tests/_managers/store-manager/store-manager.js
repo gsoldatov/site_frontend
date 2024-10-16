@@ -1,6 +1,7 @@
 import { DataGenerator } from "../../_mock-data/data-generator";
 
 import { AuthStoreManager } from "./modules/auth";
+import { EditedObjectsStoreManager } from "./modules/edited-objects";
 import { ObjectsStoreManager } from "./modules/objects";
 import { UsersStoreManager } from "./modules/users";
 
@@ -16,5 +17,7 @@ export class StoreManager {
         this.auth = new AuthStoreManager(this.store, this.generator);
         this.users = new UsersStoreManager(this.store, this.generator);
         this.objects = new ObjectsStoreManager(this.store, this.generator);
+
+        this.editedObjects = new EditedObjectsStoreManager(this.store, this.generator);
     }
 }
