@@ -40,7 +40,7 @@ test("Image is correctly displayed on click", async () => {
 
     // Wait for page load
     const pageActions = new ObjectsViewActions(container);
-    const pageLayout = await pageActions.waitForPageLoad();
+    const pageLayout = await pageActions.waitForLoad();
 
     // Check if modal is not displayed by default
     const modalActions = new ModalActions(container);
@@ -70,7 +70,7 @@ test("Image is correctly expanded & collapsed", async () => {
 
     // Wait for page load
     const pageActions = new ObjectsViewActions(container);
-    const pageLayout = await pageActions.waitForPageLoad();
+    const pageLayout = await pageActions.waitForLoad();
 
     // Click on first image
     const images = Actions.getMatchingChildren(pageLayout.rootCard.data.markdown.markdown, "img", 2);
@@ -97,7 +97,7 @@ test("Image is correctly closed on outside click", async () => {
 
     // Wait for page load
     const pageActions = new ObjectsViewActions(container);
-    const pageLayout = await pageActions.waitForPageLoad();
+    const pageLayout = await pageActions.waitForLoad();
 
     // Click on first image
     const images = Actions.getMatchingChildren(pageLayout.rootCard.data.markdown.markdown, "img", 2);
@@ -120,7 +120,7 @@ test("Image is correctly closed on close icon click", async () => {
 
     // Wait for page load
     const pageActions = new ObjectsViewActions(container);
-    const pageLayout = await pageActions.waitForPageLoad();
+    const pageLayout = await pageActions.waitForLoad();
 
     // Click on first image
     const images = Actions.getMatchingChildren(pageLayout.rootCard.data.markdown.markdown, "img", 2);
