@@ -3,8 +3,8 @@
 *******************************/
 
 
-/** Navigation bar **/
-div.ui.menu.navigation-bar {
+/** Navigation bar, common **/
+.navigation-bar {
     margin-top: 0;
     border-radius: 0;
     border-top-width: 0;
@@ -12,101 +12,97 @@ div.ui.menu.navigation-bar {
 
 
 /** Fullscreen navigation bar and its children width **/
-div.ui.menu.navigation-bar:not(.is-stacked) {
+.navigation-bar:not(.is-stacked) {
     display: flex;
 }
 
-div.ui.menu.navigation-bar:not(.is-stacked) > .navbar-search-container {
+.navigation-bar:not(.is-stacked) > .navbar-search-container {
     /* Allow width change for search container */
     flex: 1 1 300px;
     max-width: 300px;
 }
 
-div.ui.menu.navigation-bar:not(.is-stacked) > .navbar-search-container::before {
+.navigation-bar:not(.is-stacked) > .navbar-search-container::before {
+    /* Remove pseudo-element before search & its left border */
     width: 0;
 }
 
-div.ui.menu.navigation-bar:not(.is-stacked) > *:not(.navbar-search-container) {
+.navigation-bar:not(.is-stacked) > *:not(.navbar-search-container) {
     /* Disable width change for other navbar items */
     flex: 0 0 auto;
 }
 
 
-/** Background & text colors and borders **/
-div.ui.menu.navigation-bar,
-.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item {
+/** Common background & text colors and borders **/
+.navigation-bar,
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item {  /* Increased selectivity required */
     /* Background color */
     background-color: var(--navbar-background-color) !important;
 }
 
-.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item:not(:last-child) {
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item:not(:last-child) {     /* Increased selectivity required */
     /* Remove double borders */
     border-bottom-width: 0;
 }
 
-div.ui.menu.navigation-bar > .item.active:not(.dropdown),   /* Active menu items */
+/* Active menu items */
+.navigation-bar > .item.active:not(.dropdown),
 /* Menu item hovering (except for expand/collapse button, submenu in stacked mode and right side) */
 div.ui.menu.navigation-bar > .item:hover:not(.navigation-bar-expand-container):not(.navbar-submenu-container.is-expanded):not(.right),
-
-.navbar-submenu > .item:hover,      /* Stacked submenu item hovering */
-.navbar-submenu > .item.active,     /* Stacked submenu, active item */
-
-.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item:hover, /* Dropdown submenu hovering */
-.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item.active {   /* Dropdown submenu, active item */
+/* Stacked submenu items */
+.navbar-submenu > .item:hover, .navbar-submenu > .item.active,
+/* Dropdown submenu */
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item:hover,     /* Increased selectivity required */
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item.active {
     /* Background color for active & hovered elements */
     background-color: var(--navbar-background-active-color) !important;
 }
 
-div.ui.menu.navigation-bar .item,
-div.ui.menu.navigation-bar .item:hover,
-.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item {
+.navigation-bar .item,
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > a.item {      /* Increased selectivity required */
+    /* Item text color */
     color: var(--navbar-text-color) !important;
     text-decoration-color: var(--navbar-text-color) !important;
-}
-.navigation-bar-username {
-    /* Text color */
-    color: var(--navbar-text-color-username) !important;
-    text-decoration-color: var(--navbar-text-color-username) !important;
-}
-
-.ui.dropdown .menu.navbar-submenu-dropdown {
-    /* Remove borders between dropdown and navbar */
-    border: 0px;
 }
 
 
 /** Top-level items **/
-div.ui.menu.navigation-bar > .item {
+div.ui.menu.navigation-bar > .item {    /* Increased selectivity required */
+    /* Content positioning in items (required for stacked items) */
     display: flex;
     justify-content: center;
     border-radius: 0;
 }
 
-div.ui.menu.navigation-bar > .item:before {
+div.ui.menu.navigation-bar > .item:before {     /* Increased selectivity required */
     /* Set separation color for navbar & submenu dropdown items  */
     background: var(--navbar-separation-color);
 }
 
-
-/** Item font-weight **/
-.ui.menu.navigation-bar > .item,
-.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > .item {
+.navigation-bar > .item,
+.ui.menu .ui.dropdown .menu.navbar-submenu-dropdown > .item {   /* Increased selectivity required */
+    /* Item font-weight */
     font-weight: bold !important;
 }
 
 
 /** Submenu dropdown (fullscreen) **/
-.ui.dropdown .menu.navbar-submenu-dropdown > a,
-.ui.dropdown .menu.navbar-submenu-dropdown > a:first-child {
+.ui.dropdown .menu.navbar-submenu-dropdown {    /* Increased selectivity required */
+    /* Remove borders between dropdown and navbar */
+    border: 0px;
+}
+
+.ui.dropdown .menu.navbar-submenu-dropdown > a {    /* Increased selectivity required */
     /* Submenu dropdown item separation */
     border: solid 1px var(--navbar-separation-color);
 }
 
-.ui.dropdown .menu.navbar-submenu-dropdown > a .ui.label {
+.ui.dropdown .menu.navbar-submenu-dropdown > a .ui.label {  /* Increased selectivity required */
     /* Space between text and label */
     margin-left: 0.5rem;
     margin-right: 0;
 }
+
 
 /** Submenu menu (stacked) **/
 .navbar-submenu-container {
@@ -122,7 +118,7 @@ div.ui.menu.navigation-bar > .item:before {
     justify-content: center;
 }
 
-.navbar-submenu-container > .menu.navbar-submenu > a.item {
+.navbar-submenu-container > .menu.navbar-submenu > a.item {     /* Increased selectivity required */
     width: 100%;
     display: flex;
     justify-content: center;
@@ -135,7 +131,7 @@ div.ui.menu.navigation-bar > .item:before {
 }
 
 /** Menu expand toggle **/
-div.ui.menu.navigation-bar > div.item.navigation-bar-expand-container {
+div.ui.menu.navigation-bar > div.item.navigation-bar-expand-container { /* Increased selectivity required */
     justify-content: end;
 }
 
@@ -165,7 +161,7 @@ i.navigation-bar-expand-toggle:hover {
     border-right-width: 0;
 }
 
-.navbar-search-container > button.ui.button.navbar-search-button {
+.navbar-search-container > .navbar-search-button {
     border: solid 0px var(--border-color-input) !important;
 
     /* Set button height & width equal to input with "mini" prop */
@@ -188,7 +184,7 @@ i.navigation-bar-expand-toggle:hover {
     border-left: solid 1px var(--navbar-separation-color);
 }
 
-div.ui.menu.navigation-bar div.nagivation-bar-button-container {
+div.ui.menu.navigation-bar div.nagivation-bar-button-container {    /* Increased selectivity required */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -197,11 +193,11 @@ div.ui.menu.navigation-bar div.nagivation-bar-button-container {
     border-left-width: 0;
 }
 
-div.navigation-right-menu.is-stacked {
+.navigation-right-menu.is-stacked {
     border-top: solid 1px var(--navbar-separation-color);
 }
 
-div.ui.menu.navigation-bar .item > button.navigation-bar-button {    /* override SUIR styling */
+div.ui.menu.navigation-bar .item > button.navigation-bar-button {    /* Increased selectivity required */
     margin-left: 0.5em;
     margin-right: 0.5em;
     width: 105px;
@@ -227,10 +223,14 @@ div.ui.menu.navigation-bar .item > button.navigation-bar-button.is-disabled:hove
 
 /** Right menu user page link **/
 a.navigation-bar-username {
-    text-decoration: underline;
-    font-weight: bold;
     margin-left: 0.5em;
     margin-right: 0.5em;
+
+    /* Username text color & font */
+    color: var(--navbar-text-color-username) !important;
+    text-decoration-color: var(--navbar-text-color-username) !important;    
+    text-decoration: underline;
+    font-weight: bold;
 
     /* Max width and long text display */
     max-width: 200px;
