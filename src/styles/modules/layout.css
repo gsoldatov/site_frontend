@@ -98,8 +98,17 @@ div.layout-grid.ui.grid > .layout-grid-navigation-row.row {
     padding-right: 1rem;
 }
 
+.layout-grid-navigation-row.unlimited-width > .navigation-bar {
+    /* Set fixed position to the navigation bar, so that it's always stretched to the size of the window */
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    right: 0;
+}
+
 .layout-grid-side-menu-column.unlimited-width.stacked > .ui.menu.side-menu {
-    /* Set fixed position, so that menu is always stretched to the size of the window (top position should be calculated automatically based on navbar height) */
+    /* Set fixed position to the side menu, so that it's always stretched to the size of the window 
+    (top position should be calculated automatically based on navbar height) */
     position: fixed;
     z-index: 999;
     left: 0;

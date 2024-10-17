@@ -16,6 +16,10 @@ import StyleLayout from "../../../styles/modules/layout.css";
 export const Layout = ({ sideMenu, body, layoutType = enumLayoutTypes.default }) => {
     const isStacked = useContext(WindowWidthContext) === 0;
 
+    // Grid column numbers & widths
+    const mainRowColumns = sideMenu ? 2 : 1;
+    const mainColumnWidth = sideMenu ? 12 : 16;
+
     // Grid classnames
     const layoutTypePostfix = ` ${layoutType}`;
     const stackedClassNamePostfix = isStacked ? " stacked" : "";
@@ -25,6 +29,9 @@ export const Layout = ({ sideMenu, body, layoutType = enumLayoutTypes.default })
     const mainRowClassName = "layout-grid-main-row" + layoutTypePostfix + stackedClassNamePostfix;
     const sideMenuColumnClassName = "layout-grid-side-menu-column" + layoutTypePostfix + stackedClassNamePostfix;
     const mainContentColumnClassName = "layout-grid-main-content-column" + layoutTypePostfix + stackedClassNamePostfix;
+
+    // Navbar props
+    const usePlaceholder = layoutType === enumLayoutTypes.unlimitedWidth;
     
     // Side menu
     const sideMenuColumn = sideMenu && (
@@ -33,15 +40,11 @@ export const Layout = ({ sideMenu, body, layoutType = enumLayoutTypes.default })
         </Grid.Column>
     );
 
-    // Grid column numbers & widths
-    const mainRowColumns = sideMenuColumn ? 2 : 1;
-    const mainColumnWidth = sideMenuColumn ? 12 : 16;
-
     return (
         <>
             <Grid stackable className={gridClassName}>
                 <Grid.Row className={navigationRowClassName}>
-                    <Navbar />
+                    <Navbar usePlaceholder={usePlaceholder} />
                 </Grid.Row>
                 <Grid.Row columns={mainRowColumns} className={mainRowClassName}>
                     {sideMenuColumn}
