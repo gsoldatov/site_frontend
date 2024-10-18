@@ -46,6 +46,8 @@
     /* --rendered-markdown-blockquote-link-color: rgb(244, 128, 36); */
     --rendered-markdown-blockquote-link-color: rgb(160, 25, 25);
     --rendered-markdown-blockquote-link-hovered-color: rgb(100, 10, 10);
+    --rendered-markdown-table-row-hover-color: rgb(252, 236, 197);
+    --rendered-markdown-table-cell-hover-color: rgb(248, 211, 119);
 
 
     /* Navigation */

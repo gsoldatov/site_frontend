@@ -2,7 +2,7 @@
     Rendered markdown styles    
 *******************************/
 
-/* General */
+/** General **/
 .rendered-markdown * {
     margin-top: 0;
     word-break: break-word;
@@ -12,7 +12,8 @@
     margin-bottom: 0.5rem;
 }
 
-/* Headers */
+
+/** Headers **/
 .rendered-markdown > h3:not(:first-child),
 .rendered-markdown > h4:not(:first-child),
 .rendered-markdown > h5:not(:first-child),
@@ -21,13 +22,15 @@
     margin-top: 1rem;
 }
 
-/* Lists */
+
+/** Lists **/
 .rendered-markdown li > p {
     /* Remove margin-bottom for list items' texts wrapped into paragraph to match margin of <li> tags without paragraphs */
     margin-bottom: 0;
 }
 
-/* Images */
+
+/** Images **/
 .rendered-markdown img {
     /* Image max size & proportions preserving */
     max-width: min(640px, 100%);
@@ -44,7 +47,8 @@
     justify-content: center;
 }
 
-/* Blockquotes */
+
+/** Blockquotes **/
 .rendered-markdown blockquote {
     padding: 0.5rem;
     /* font-style: italic; */
@@ -69,7 +73,8 @@
     color: var(--rendered-markdown-blockquote-link-hovered-color);
 }
 
-/* Details */
+
+/** Details **/
 .rendered-markdown details {
     padding: 0.5rem; 
     border: 1px solid var(--rendered-markdown-blockquote-border-color);
@@ -101,31 +106,34 @@
     color: var(--rendered-markdown-blockquote-link-hovered-color);
 }
 
-/* Horizontal lines */
+
+/** Horizontal lines **/
 .rendered-markdown hr {
     border-top: solid 1px var(--border-color-light);
     border-bottom: none;
 }
 
-/*.rendered-markdown table {
-    /* Center table * /
-    margin-left: auto;
-    margin-right: auto;
+
+/** Tables **/
+.rendered-markdown div:has(table) {
+    /* Center tables inside <div> tags
+    (if they're provided with custom styling which sets their width to less than 100% of container */
+    display: flex;
+    justify-content: center;
 }
 
-.rendered-markdown table, 
-.rendered-markdown th, 
-.rendered-markdown td {
-    border: solid 1px var(--border-color-main);
-    border-collapse: collapse;
+.rendered-markdown table tr:hover,
+.rendered-markdown .ui.table.striped tbody tr:nth-child(2n):hover {     /* Increased selectivity required */
+    /* Hovered row color */
+    background-color: var(--rendered-markdown-table-row-hover-color);
+}
+.rendered-markdown table td:hover {
+    /* Hovered body cell color */
+    background-color: var(--rendered-markdown-table-cell-hover-color);
 }
 
-.rendered-markdown th, 
-.rendered-markdown td {
-    padding: 0.25em;
-} */
 
-/* Code highlighting */
+/** Code highlighting **/
 .rendered-markdown pre code.hljs {
     display: block;
 }
