@@ -1,4 +1,4 @@
-import { enumDebounceDelayRefreshMode } from "./enum-debounce-delay-refresh-mode";
+import { enumDebounceDelayRefreshMode } from "./enums/enum-debounce-delay-refresh-mode";
 
 class DebounceRunner {
     constructor(func, delay, refreshDelayMode) {

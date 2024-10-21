@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { Button, Message, Form, Header } from "semantic-ui-react";
 
 import { updateUsersFetch } from "../../../fetches/data-users";
-import { enumUserLevels, userLevelInfo } from "../../../util/enum-user-levels";
+import { enumUserLevels, userLevelInfo } from "../../../util/enums/enum-user-levels";
 
 
 const getDefaultErrors = () => ({ login: "", password: "", passwordRepeat: "", username: "", tokenOwnerPassword: "" });

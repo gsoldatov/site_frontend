@@ -7,7 +7,7 @@ import { selectTags, clearSelectedTags, setTagsPaginationInfo } from "../../../a
 import { setTagsPaginationInfoAndFetchPage } from "../../../fetches/ui-tags-list";
 import { isFetchingTags } from "../../../store/state-util/ui-tags-list";
 
-import { enumUserLevels } from "../../../util/enum-user-levels";
+import { enumUserLevels } from "../../../util/enums/enum-user-levels";
 
 
 /**

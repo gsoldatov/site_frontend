@@ -7,7 +7,7 @@ import { setObjectsFetch, setObjectsPaginationInfo, setObjectsTagsInput, setCurr
 
 import { isFetchingObjects } from "../store/state-util/ui-objects-list";
 
-import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
 
 /**

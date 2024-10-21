@@ -5,7 +5,7 @@ import { DisplayControlDropdown } from "../../../modules/edit/display/display-co
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
-import { enumCompositeObjectDisplayModes } from "../../../../util/enum-composite-object-display-modes";
+import { enumCompositeObjectDisplayModes } from "../../../../util/enums/enum-composite-object-display-modes";
 
 
 const showDescriptionDropdownOptions = Object.values(enumCompositeObjectDisplayModes).map((t, k) => ({ key: k, text: t.name, value: t.value }));

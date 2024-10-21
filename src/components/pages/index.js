@@ -4,7 +4,7 @@ import { Redirect, useParams } from "react-router";
 import { Layout } from "../modules/layout/layout";
 import { ObjectsFeed } from "../page-parts/index/objects-feed";
 
-import { enumLayoutTypes } from "../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
 
 
 /**

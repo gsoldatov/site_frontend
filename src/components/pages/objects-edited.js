@@ -7,7 +7,7 @@ import { ObjectsEditedConfirm } from "../page-parts/objects-edited/confirm";
 import { ObjectsEditedTable } from "../page-parts/objects-edited/table";
 
 import { loadObjectsEditedPage } from "../../actions/objects-edited";
-import { enumLayoutTypes } from "../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
 
 import StyleObjectsEdited from "../../styles/pages/objects-edited.css";
 

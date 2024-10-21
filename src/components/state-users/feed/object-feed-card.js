@@ -8,7 +8,7 @@ import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineTextItem } from "../../modules/inline/inline-text-item";
 import { InlineItem } from "../../modules/inline/inline-item";
 
-import { enumObjectTypes } from "../../../util/enum-object-types";
+import { enumObjectTypes } from "../../../util/enums/enum-object-types";
 
 
 /**

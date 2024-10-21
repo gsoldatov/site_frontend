@@ -28,7 +28,7 @@ import { ObjectsEditedPage } from "./pages/objects-edited";
 import { ObjectsListPage } from "./pages/objects-list";
 import { NotFoundPage } from "./pages/not-found";
 
-import { enumUserLevels } from "../util/enum-user-levels";
+import { enumUserLevels } from "../util/enums/enum-user-levels";
 
 
 export const isAuthenticatedCondition = state => state.auth.numeric_user_level > enumUserLevels.anonymous;

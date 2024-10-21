@@ -7,7 +7,7 @@ import { SelectPrompt } from "../page-parts/tags-view/select-prompt";
 import { SelectedTags } from "../page-parts/tags-view/selected-tags";
 import { TagInformation } from "../page-parts/tags-view/tag-information";
 
-import { enumLayoutTypes } from "../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
 import { TagPageObjectsFeed } from "../page-parts/tags-view/tag-page-objects-feed";
 
 import StyleTagsView from "../../styles/pages/tags-view.css";

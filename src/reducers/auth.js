@@ -1,7 +1,7 @@
 import { SET_AUTH_INFORMATION } from "../actions/auth";
 
 import { getDefaultAuthState } from "../store/state-templates/auth";
-import { enumUserLevels } from "../util/enum-user-levels";
+import { enumUserLevels } from "../util/enums/enum-user-levels";
 
 
 function setAuthInformation(state, action) {

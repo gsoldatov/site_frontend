@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useMemo, memo } from "react";
 import { Dropdown, Icon } from "semantic-ui-react";
 
 import debounce from "../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../util/enum-debounce-delay-refresh-mode";
+import { enumDebounceDelayRefreshMode } from "../../../util/enums/enum-debounce-delay-refresh-mode";
 
 
 /**

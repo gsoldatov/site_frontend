@@ -6,7 +6,7 @@ import { Icon, Header } from "semantic-ui-react";
 
 import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 
-import { enumUserLevels } from "../../../util/enum-user-levels";
+import { enumUserLevels } from "../../../util/enums/enum-user-levels";
 import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
 import { useURLParamIDs } from "../../../util/use-url-param-array";
 

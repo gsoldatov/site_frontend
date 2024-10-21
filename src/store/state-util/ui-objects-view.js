@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 
 import { getConfig } from "../../config";
 
-import { enumCompositeObjectDisplayModes } from "../../util/enum-composite-object-display-modes";
+import { enumCompositeObjectDisplayModes } from "../../util/enums/enum-composite-object-display-modes";
 import { enumShowDescriptionComposite } from "../state-templates/composite-subobjects";
 import { getSingleColumnSubobjectDisplayOrder } from "./composite";
 

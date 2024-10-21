@@ -10,7 +10,7 @@ import { CompositeGroupedLinks } from "./composite-grouped-links";
 import { CompositeMulticolumn } from "./composite-multicolumn";
 import { CompositeChapters } from "./composite-chapters/composite-chapters";
 
-import { enumCompositeObjectDisplayModes } from "../../../../util/enum-composite-object-display-modes";
+import { enumCompositeObjectDisplayModes } from "../../../../util/enums/enum-composite-object-display-modes";
 import { objectDataIsInState } from "../../../../store/state-util/objects";
 
 

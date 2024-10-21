@@ -4,7 +4,7 @@ import { enumDeleteModes, serializedCompositeObjectDataProps } from "../state-te
 import { getSubobjectDisplayOrder } from "./composite";
 import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
 import { compositeSubobjectObjectAttributes, addedObjectAttributes, updatedObjectAttributes } from "../state-templates/edited-object";
-import { enumUserLevels } from "../../util/enum-user-levels";
+import { enumUserLevels } from "../../util/enums/enum-user-levels";
 /*
     Functions for checking/getting objects state.
 */

@@ -7,7 +7,7 @@ import { setTagsFetch, setShowDeleteDialogTags, setTagsPaginationInfo } from "..
 
 import { isFetchingTags } from "../store/state-util/ui-tags-list";
 
-import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
 
 const backendURL = getConfig().backendURL;

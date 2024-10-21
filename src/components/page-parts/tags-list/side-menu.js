@@ -10,7 +10,7 @@ import { setShowDeleteDialogTags } from "../../../actions/tags-list";
 import { onDeleteFetch } from "../../../fetches/ui-tags-list";
 import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../../store/state-util/ui-tags-list";
 
-import { enumUserLevels } from "../../../util/enum-user-levels";
+import { enumUserLevels } from "../../../util/enums/enum-user-levels";
 
 
 /**

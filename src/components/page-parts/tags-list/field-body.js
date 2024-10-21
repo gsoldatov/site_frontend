@@ -10,7 +10,7 @@ import { TagsListPagination } from "./tags-list-pagination";
 import { toggleTagSelection } from "../../../actions/tags-list";
 import { pageFetch } from "../../../fetches/ui-tags-list";
 
-import { enumUserLevels } from "../../../util/enum-user-levels";
+import { enumUserLevels } from "../../../util/enums/enum-user-levels";
 
 
 /**

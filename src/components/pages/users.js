@@ -5,7 +5,7 @@ import { Layout } from "../modules/layout/layout";
 import { ViewUser } from "../page-parts/users/view-user";
 import { EditUser } from "../page-parts/users/edit-user";
 
-import { enumLayoutTypes } from "../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
 
 import StyleUsers from "../../styles/pages/users.css";
 

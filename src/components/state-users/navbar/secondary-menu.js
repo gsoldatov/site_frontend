@@ -5,7 +5,7 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 
 import { registrationStatusFetch, logoutFetch, getCurrentUserData } from "../../../fetches/auth";
 
-import { enumUserLevels } from "../../../util/enum-user-levels";
+import { enumUserLevels } from "../../../util/enums/enum-user-levels";
 import { useMountedState } from "../../../util/use-mounted-state";
 
 

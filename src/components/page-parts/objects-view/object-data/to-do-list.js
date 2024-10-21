@@ -9,8 +9,8 @@ import { toDoListObjectUpdateFetch } from "../../../../fetches/ui-objects-view";
 import { getUpdatedToDoList } from "../../../../reducers/helpers/object-to-do-lists";
 import { deepCopy } from "../../../../util/copy";
 import debounce from "../../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../../util/enum-debounce-delay-refresh-mode";
-import { enumUserLevels } from "../../../../util/enum-user-levels";
+import { enumDebounceDelayRefreshMode } from "../../../../util/enums/enum-debounce-delay-refresh-mode";
+import { enumUserLevels } from "../../../../util/enums/enum-user-levels";
 
 
 /**

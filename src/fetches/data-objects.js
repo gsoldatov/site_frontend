@@ -1,7 +1,7 @@
 import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
-import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 import { getNonCachedTags } from "./data-tags";
 
 import { setObjectsTags } from "../actions/data-tags";

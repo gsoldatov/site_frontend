@@ -2,12 +2,12 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router";
 
-import { enumCompositeObjectDisplayModes } from "../../util/enum-composite-object-display-modes";
+import { enumCompositeObjectDisplayModes } from "../../util/enums/enum-composite-object-display-modes";
 
 import { Layout } from "../modules/layout/layout";
 import { ObjectsViewRootCard } from "../page-parts/objects-view/objects-view-root-card";
 
-import { enumLayoutTypes } from "../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
 
 
 /**

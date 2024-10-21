@@ -1,7 +1,7 @@
 import { getResponseErrorType } from "./common";
 import { viewObjectsFetch, getPageObjectIDs } from "./data-objects";
 
-import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
 
 /**

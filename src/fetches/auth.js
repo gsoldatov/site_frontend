@@ -7,8 +7,8 @@ import { setAuthInformation } from "../actions/auth";
 import { resetStateExceptForEditedObjects, setRedirectOnRender } from "../actions/common";
 
 import { validateLoginCredentials, validateRegisterCredentials } from "../store/state-util/auth";
-import { enumUserLevels } from "../util/enum-user-levels";
-import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { enumUserLevels } from "../util/enums/enum-user-levels";
+import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 import { setNavigationUI } from "../actions/navigation";
 
 

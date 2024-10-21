@@ -3,7 +3,7 @@ import { defaultEditedObjectState } from "./state-templates/edited-object";
 import { getDefaultAuthState } from "./state-templates/auth";
 
 import debounce from "../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../util/enum-debounce-delay-refresh-mode";
+import { enumDebounceDelayRefreshMode } from "../util/enums/enum-debounce-delay-refresh-mode";
 
 import { getConfig, addCallback } from "../config";
 

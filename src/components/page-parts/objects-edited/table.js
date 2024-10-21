@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { removeEditedObjects } from "../../../actions/objects-edit";
 import { toggleEditedObjectSelection, toggleAllObjectsSelection } from "../../../actions/objects-edited";
-import { enumObjectTypes } from "../../../util/enum-object-types";
+import { enumObjectTypes } from "../../../util/enums/enum-object-types";
 
 
 /**

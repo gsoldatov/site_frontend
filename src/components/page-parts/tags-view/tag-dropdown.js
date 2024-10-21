@@ -7,7 +7,7 @@ import { Dropdown } from "semantic-ui-react";
 import { tagsViewDropdownOptionsSearch } from "../../../fetches/ui-tags-view";
 
 import debounce from "../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../util/enum-debounce-delay-refresh-mode";
+import { enumDebounceDelayRefreshMode } from "../../../util/enums/enum-debounce-delay-refresh-mode";
 import { useMountedState } from "../../../util/use-mounted-state";
 import { useURLParamIDs } from "../../../util/use-url-param-array";
 

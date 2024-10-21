@@ -1,6 +1,6 @@
 import { deepCopy } from "../../util/copy";
 
-import { enumUserLevels } from "../../util/enum-user-levels";
+import { enumUserLevels } from "../../util/enums/enum-user-levels";
 
 
 /**

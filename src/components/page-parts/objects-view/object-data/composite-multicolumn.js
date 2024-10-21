@@ -7,7 +7,7 @@ import { SubobjectObjectsViewCard } from "../objects-view-card";
 
 import { getSubobjectDisplayOrder } from "../../../../store/state-util/composite";
 import debounce from "../../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../../util/enum-debounce-delay-refresh-mode";
+import { enumDebounceDelayRefreshMode } from "../../../../util/enums/enum-debounce-delay-refresh-mode";
 
 import StyleCompositeMulticolumn from "../../../../styles/pages/objects-view/composite-multicolumn.css";
 import { multicolumnExpandToggleUpdateFetch } from "../../../../fetches/ui-objects-view";

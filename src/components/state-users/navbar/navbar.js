@@ -9,7 +9,7 @@ import { NavbarSubmenu, NavbarSubmenuItem } from "./submenu";
 import { NavbarSearch } from "./search";
 
 import { WindowWidthContext } from "../../modules/wrappers/window-width-provider";
-import { enumUserLevels } from "../../../util/enum-user-levels";
+import { enumUserLevels } from "../../../util/enums/enum-user-levels";
 
 import StyleNavigation from "../../../styles/modules/navigation.css";
 

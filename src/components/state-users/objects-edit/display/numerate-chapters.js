@@ -5,7 +5,7 @@ import { DisplayControlCheckbox } from "../../../modules/edit/display/display-co
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
-import { enumCompositeObjectDisplayModes } from "../../../../util/enum-composite-object-display-modes";
+import { enumCompositeObjectDisplayModes } from "../../../../util/enums/enum-composite-object-display-modes";
 
 
 /**

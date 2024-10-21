@@ -15,7 +15,7 @@ import { getReactDatetimeElements } from "../../../../_util/ui-react-datetime";
 
 import { App } from "../../../../../src/components/app";
 import { setEditedObject } from "../../../../../src/actions/objects-edit";
-import { enumCompositeObjectDisplayModes } from "../../../../../src/util/enum-composite-object-display-modes";
+import { enumCompositeObjectDisplayModes } from "../../../../../src/util/enums/enum-composite-object-display-modes";
 
 
 /*

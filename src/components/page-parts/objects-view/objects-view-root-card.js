@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { enumCompositeObjectDisplayModes } from "../../../util/enum-composite-object-display-modes";
+import { enumCompositeObjectDisplayModes } from "../../../util/enums/enum-composite-object-display-modes";
 
 import { ObjectsViewCard } from "./objects-view-card";
 

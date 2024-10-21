@@ -6,7 +6,7 @@ import { loadEditTagPage, setTagOnLoadFetchState, setTagOnSaveFetchState, setSho
 
 import { isFetchingTag } from "../store/state-util/ui-tags-edit";
 
-import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 import { addedTagAttributes, updatedTagAttributes } from "../store/state-templates/tags";
 
 

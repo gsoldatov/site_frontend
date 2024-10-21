@@ -10,7 +10,7 @@ import { DisplayTab } from "../../state-users/objects-edit/display/display-tab";
 
 import { setSelectedTab, setToDoListRerenderPending } from "../../../actions/objects-edit";
 import { isMultiColumnCompositeDataDisplayed } from "../../../store/state-util/composite";
-import { enumLayoutTypes } from "../../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../../util/enums/enum-layout-types";
 
 
 /**

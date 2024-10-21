@@ -11,7 +11,7 @@ import { App } from "../../../src/components/app";
 
 import { deepEqual } from "../../../src/util/equality-checks";
 import { getDefaultAuthState } from "../../../src/store/state-templates/auth";
-import { enumUserLevels } from "../../../src/util/enum-user-levels";
+import { enumUserLevels } from "../../../src/util/enums/enum-user-levels";
 
 
 /*

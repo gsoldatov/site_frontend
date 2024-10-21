@@ -6,7 +6,7 @@ import { createSelector } from "reselect";
 import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified, getObjectDataFromStore } from "../../../../../../store/state-util/objects";
 import { subobjectStateIsModified, nonCompositeSubobjectIsValid, getNonCompositeSubobjectValidationError } from "../../../../../../store/state-util/composite";
 import { enumDeleteModes } from "../../../../../../store/state-templates/composite-subobjects";
-import { enumObjectTypes } from "../../../../../../util/enum-object-types";
+import { enumObjectTypes } from "../../../../../../util/enums/enum-object-types";
 
 
 /**

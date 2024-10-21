@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
-import { enumObjectTypes } from "../../../../util/enum-object-types";
+import { enumObjectTypes } from "../../../../util/enums/enum-object-types";
 
 
 /**

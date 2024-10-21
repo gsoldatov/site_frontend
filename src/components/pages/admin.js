@@ -4,7 +4,7 @@ import { Tab } from "semantic-ui-react";
 import { Layout } from "../modules/layout/layout";
 import { SettingsTabPane } from "../page-parts/admin";
 
-import { enumLayoutTypes } from "../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
 
 
 /**

@@ -7,7 +7,7 @@ import { getNonCachedTags } from "./data-tags";
 import { canEditObject, objectDataIsInState } from "../store/state-util/objects";
 import { serializeObjectForUpdate } from "../store/state-util/composite";
 import { getToDoListUpdateFetchBody } from "../store/state-util/to-do-lists";
-import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
 
 

@@ -8,7 +8,7 @@ import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton,
 import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo, setTagsFilterInput  } from "../../../actions/objects-list";
 import { setObjectsPaginationInfoAndFetchPage, setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../../../fetches/ui-objects-list";
 import { isFetchingObjects } from "../../../store/state-util/ui-objects-list";
-import { enumObjectTypes } from "../../../util/enum-object-types";
+import { enumObjectTypes } from "../../../util/enums/enum-object-types";
 
 
 /**

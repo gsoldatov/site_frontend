@@ -4,7 +4,7 @@ import { search } from "./data-search";
 import { getNonCachedObjects } from "./data-objects";
 import { getNonCachedTags } from "./data-tags";
 
-import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
 
 /**

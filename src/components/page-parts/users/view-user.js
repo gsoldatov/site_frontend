@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { Button, Message, Loader, Header } from "semantic-ui-react";
 
 import { getNonCachedUsers } from "../../../fetches/data-users";
-import { enumUserLevels } from "../../../util/enum-user-levels";
+import { enumUserLevels } from "../../../util/enums/enum-user-levels";
 
 
 /**

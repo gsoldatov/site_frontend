@@ -1,6 +1,6 @@
 import { setAuthInformation } from "../actions/auth";
 import { getDefaultAuthState } from "../store/state-templates/auth";
-import { enumResponseErrorType } from "../util/enum-response-error-type";
+import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
 
 /**

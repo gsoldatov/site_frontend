@@ -1,7 +1,7 @@
 import { waitFor } from "@testing-library/dom";
 
 import debounce from "../../src/util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../src/util/enum-debounce-delay-refresh-mode";
+import { enumDebounceDelayRefreshMode } from "../../src/util/enums/enum-debounce-delay-refresh-mode";
 
 
 /** Test class for monitoring function call times and arguments passed */

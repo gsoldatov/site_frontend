@@ -5,7 +5,7 @@ import { WindowWidthContext } from "../wrappers/window-width-provider";
 import { Navbar } from "../../state-users/navbar/navbar";
 import { ModalWindow } from "../../state-users/modal-window";
 
-import { enumLayoutTypes } from "../../../util/enum-layout-types";
+import { enumLayoutTypes } from "../../../util/enums/enum-layout-types";
 
 import StyleLayout from "../../../styles/modules/layout.css";
 
