@@ -12,9 +12,8 @@ import { enumUserLevels } from "../../../../util/enums/enum-user-levels";
  */
 export const Header_ = ({ objectID, headerProps = {} }) => {
     // Get props
-    const headerTag = headerProps.headerTag !== undefined ? headerProps.headerTag : "h1";
-    const displayEditButton = headerProps.displayEditButton !== undefined ? headerProps.displayEditButton : true;
-    const displayViewButton = headerProps.displayViewButton !== undefined ? headerProps.displayViewButton : true;
+    const { headerTag = "h1", wrapHeaderInLink = true,
+        displayEditButton = true, displayViewButton = true } = headerProps;
 
     // Header prefix text <span>
     const headerPrefix = headerProps.prefixText && <span className="objects-view-header-prefix">{headerProps.prefixText}</span>;
@@ -22,6 +21,16 @@ export const Header_ = ({ objectID, headerProps = {} }) => {
     // Header text <span>
     const text = useSelector(state => (state.objects[objectID] || {}).object_name);
     const headerText = <span className="objects-view-header-text">{text}</span>;
+
+    // Header
+    let header = (
+        <Header className="objects-view-header" as={headerTag}>
+            {headerPrefix}
+            {headerText}
+        </Header>
+    );
+
+    if (wrapHeaderInLink) header = <Link className="objects-view-header-text-link" to={`/objects/view/${objectID}`}>{header}</Link>;
 
     // Edit button
     const renderEditButton = useSelector(state => displayEditButton && (state.auth.numeric_user_level === enumUserLevels.admin || state.auth.user_id === (state.objects[objectID] || {}).owner_id));
@@ -44,10 +53,7 @@ export const Header_ = ({ objectID, headerProps = {} }) => {
     // Result
     return (
         <div className="objects-view-header-container">
-            <Header className="objects-view-header" as={headerTag}>
-                {headerPrefix}
-                {headerText}
-            </Header>
+            {header}
             {editButton}
             {viewButton}
         </div>

@@ -102,6 +102,22 @@ describe("Common", () => {
         });
 
 
+        test("Text link", async () => {
+            // Render page
+            let { container } = renderWithWrappers(<App />, {
+                route: "/objects/view/1"
+            });
+
+            // Wait for page load
+            const pageActions = new ObjectsViewActions(container);
+            const pageLayout = await pageActions.waitForLoad();
+
+            // Check card header text
+            const cardActions = new ObjectsViewCardActions(pageLayout.rootCard.card);
+            cardActions.checkHeaderTextLink();
+        });
+
+
         test("View object button", async () => {
             // Render page
             let { container } = renderWithWrappers(<App />, {

@@ -35,7 +35,7 @@ export class ObjectsViewCardLayout {
 class AttributesLayout {
     constructor(card) {
         this.timestamp = null;
-        this.header = { prefix: null, text: null, editButton: null, viewButton: null };
+        this.header = { prefix: null, textLink: null, text: null, editButton: null, viewButton: null };
         this.objectIsEdited = null;
         this.description = null;
         if (!card) return;
@@ -49,6 +49,7 @@ class AttributesLayout {
             const headerContainer = attributesContainer.querySelector(".objects-view-header-container")
             if (headerContainer) {
                 this.header.prefix = headerContainer.querySelector(".header > .objects-view-header-prefix");
+                this.header.textLink = headerContainer.querySelector(".objects-view-header-text-link");
                 this.header.text = headerContainer.querySelector(".header > .objects-view-header-text");
                 this.header.editButton = queryByTitle(headerContainer, "Edit object");
                 this.header.viewButton = queryByTitle(headerContainer, "View object");

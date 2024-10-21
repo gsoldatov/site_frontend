@@ -95,6 +95,16 @@ export class ObjectsViewCardActions {
     }
 
     /**
+     * Ensures header text contains a link to the /objects/view page of this object
+     */
+    checkHeaderTextLink() {
+        if (!this.layout.attributes.header.textLink) fail("Header text link not found.");
+        if (this.layout.attributes.header.textLink.tagName !== "A") fail("Header text link element is not <a> tag.");
+        if (!this.layout.attributes.header.textLink.href.includes(`/objects/view/${this.layout.objectID}`)) 
+            fail(`Expected link URL to include '/objects/view/${this.layout.objectID}', found '${this.layout.attributes.header.textLink.href}'.`);
+    }
+
+    /**
      * Ensures link to object's edit page is present in the card & clicks it.
      */
     clickEditObjectButton() {
