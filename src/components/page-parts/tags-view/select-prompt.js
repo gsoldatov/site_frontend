@@ -1,7 +1,7 @@
 import React from "react";
 import { Message, MessageHeader } from "semantic-ui-react";
 
-import { useURLParamIDs } from "../../../util/use-url-param-array";
+import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
 
 
 /**

@@ -2,7 +2,7 @@ import { deepCopy, deepMerge } from "./util/copy";
 
 import originalConfig from "./config.json";
 import { useCallback, useEffect, useState } from "react";
-import { useMountedState } from "./util/use-mounted-state";
+import { useMountedState } from "./util/hooks/use-mounted-state";
 
 
 /**

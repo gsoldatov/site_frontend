@@ -1,4 +1,4 @@
-import parse from "../../src/util/markdown-parser";
+import parse from "../../src/util/markdown/markdown-parser";
 
 
 test("Headers + check rendering", () => {

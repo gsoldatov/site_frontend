@@ -6,7 +6,7 @@ import { Header, Icon } from "semantic-ui-react";
 
 import { RenderedMarkdown } from "../markdown/rendered-markdown";
 
-import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
+import { useParsedMarkdownState } from "../../../util/hooks/use-parsed-markdown-state";
 import { ExpandableContainer } from "../expandable-container";
 
 

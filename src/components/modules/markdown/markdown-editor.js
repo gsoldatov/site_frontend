@@ -5,8 +5,8 @@ import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton } from "../ho
 import { OnResizeWrapper } from "../wrappers/on-resize-wrapper";
 import { RenderedMarkdown } from "./rendered-markdown";
 
-import { useMarkdownParseWorker } from "../../../util/use-markdown-parse-worker";
-import { useMountedState } from "../../../util/use-mounted-state";
+import { useMarkdownParseWorker } from "../../../util/hooks/use-markdown-parse-worker";
+import { useMountedState } from "../../../util/hooks/use-mounted-state";
 
 import StyleMarkdownEditor from "../../../styles/modules/markdown/editor.css";
 import StyleRenderedMarkdown from "../../../styles/modules/markdown/rendered.css";

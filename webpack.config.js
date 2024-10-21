@@ -10,7 +10,7 @@ const TerserWebpackPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
-const HLJSUsedLanguages = require("./src/util/hljs-used-languages.json");
+const HLJSUsedLanguages = require("./src/util/markdown/hljs-used-languages.json");
 
 
 // Get settings from environment variables

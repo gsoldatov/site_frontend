@@ -2,7 +2,7 @@ import React, { memo, useMemo, useState } from "react";
 import { useHistory } from "react-router";
 import { Button, Input, Menu } from "semantic-ui-react";
 
-import { useMountedState } from "../../../util/use-mounted-state";
+import { useMountedState } from "../../../util/hooks/use-mounted-state";
 
 
 /**

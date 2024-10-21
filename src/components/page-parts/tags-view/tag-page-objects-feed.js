@@ -6,7 +6,7 @@ import { ObjectFeedCard } from "../../state-users/feed/object-feed-card";
 import { FeedPagination } from "../../modules/feed/feed-pagination";
 
 import { tagsViewLoadPageObjects } from "../../../fetches/ui-tags-view";
-import { useURLParamIDs } from "../../../util/use-url-param-array";
+import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
 
 
 /**

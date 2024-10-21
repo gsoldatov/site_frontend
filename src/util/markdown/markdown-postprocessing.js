@@ -1,4 +1,4 @@
-import { SET_MODAL_IMAGE } from "../actions/modal";
+import { SET_MODAL_IMAGE } from "../../actions/modal";
 
 
 /**

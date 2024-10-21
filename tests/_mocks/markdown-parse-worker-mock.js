@@ -1,4 +1,4 @@
-import parse from "../../src/util/markdown-parser";
+import parse from "../../src/util/markdown/markdown-parser";
 export default class Worker {
     postMessage(raw) {
         const parsed = parse(raw);

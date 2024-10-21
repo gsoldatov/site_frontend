@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 
-import { addImageOnClickHandlers } from "../../../util/markdown-postprocessing";
+import { addImageOnClickHandlers } from "../../../util/markdown/markdown-postprocessing";
 
 
 /**

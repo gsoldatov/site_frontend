@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { RenderedMarkdown } from "../../../modules/markdown/rendered-markdown";
 
 import { getDefaultShowDescriptionAsLinkSelector } from "../../../../store/state-util/ui-objects-view";
-import { useParsedMarkdownState } from "../../../../util/use-parsed-markdown-state";
+import { useParsedMarkdownState } from "../../../../util/hooks/use-parsed-markdown-state";
 
 import StyleObjectsViewLink from "../../../../styles/pages/objects-view/link.css";
 

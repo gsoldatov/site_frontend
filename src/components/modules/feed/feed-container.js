@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Loader, Message } from "semantic-ui-react";
 
-import { useMountedState } from "../../../util/use-mounted-state";
+import { useMountedState } from "../../../util/hooks/use-mounted-state";
 
 import StyleFeed from "../../../styles/modules/feed.css";
 

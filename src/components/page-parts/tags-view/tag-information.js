@@ -7,8 +7,8 @@ import { Icon, Header } from "semantic-ui-react";
 import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 
 import { enumUserLevels } from "../../../util/enums/enum-user-levels";
-import { useParsedMarkdownState } from "../../../util/use-parsed-markdown-state";
-import { useURLParamIDs } from "../../../util/use-url-param-array";
+import { useParsedMarkdownState } from "../../../util/hooks/use-parsed-markdown-state";
+import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
 
 /**
  * /tags/view tag information block with header, description and prev/next tag selectors

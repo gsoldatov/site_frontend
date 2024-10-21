@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import ParseMarkdownWorker from "./parse-markdown.worker";
-import debounce from "./debounce";
-import { enumDebounceDelayRefreshMode } from "./enums/enum-debounce-delay-refresh-mode";
+import ParseMarkdownWorker from "../markdown/parse-markdown.worker";
+import debounce from "../debounce";
+import { enumDebounceDelayRefreshMode } from "../enums/enum-debounce-delay-refresh-mode";
 
 
 /**
