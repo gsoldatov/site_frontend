@@ -68,7 +68,7 @@ export const TagsListHorizontalMenu = () => {
             </HorizontalMenuGroup>
             
             <HorizontalMenuGroup>
-                <HorizontalMenuFilter value={tagNameFilterValue} placeholder="Filter tags" isDisabled={isDisabled}
+                <HorizontalMenuFilter value={tagNameFilterValue} placeholder="Filter tags"
                     onChange={tagNameFilterOnChange} onChangeDelayed={tagNameFilterOnChangeDelayed} />
             </HorizontalMenuGroup>
         </HorizontalMenu>

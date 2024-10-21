@@ -80,7 +80,7 @@ export const HorizontalMenuButton = memo(({ icon, title, isDisabled = false, isA
  * Horizontal menu filter.
  */
 export const HorizontalMenuFilter = memo(({ value, placeholder = "Filter", isDisabled, onChange, onChangeDelayed }) => {
-    const _onChangeDelayed = useRef(debounce(onChangeDelayed, 250, 
+    const _onChangeDelayed = useRef(debounce(onChangeDelayed, 500, 
         enumDebounceDelayRefreshMode.onCall)).current;     // wrap onChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
     const handleChange = e => {
         const value = e.target.value;
@@ -112,7 +112,7 @@ export const HorizontalMenuDropdown = memo(({ placeholder, isDisabled, defaultVa
 export const HorizontalMenuUpdatableDropdown = ({ placeholder, isDisabled, inputState, existingIDs, onSearchChange, onSearchChangeDelayed, 
         onChange, options }) => {
     // Search text change handlers (updates state & runs a delayed fetch to get dropdown items)
-    const _onSearchChangeDelayed = useRef(debounce(onSearchChangeDelayed , 250, enumDebounceDelayRefreshMode.onCall)).current;
+    const _onSearchChangeDelayed = useRef(debounce(onSearchChangeDelayed , 500, enumDebounceDelayRefreshMode.onCall)).current;
     const handleSearchChange = (e, data) => {
         onSearchChange({ inputText: data.searchQuery });
         _onSearchChangeDelayed({ queryText: data.searchQuery, existingIDs });

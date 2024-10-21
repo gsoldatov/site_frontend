@@ -91,17 +91,17 @@ export const ObjectsListHorizontalMenu = () => {
             </HorizontalMenuGroup>
             
             <HorizontalMenuGroup>
-                <HorizontalMenuFilter value={objectNameFilterValue} placeholder="Filter objects" isDisabled={isDisabled}
+                <HorizontalMenuFilter value={objectNameFilterValue} placeholder="Filter objects"
                     onChange={objectNameFilterOnChange} onChangeDelayed={objectNameFilterOnChangeDelayed} />
             </HorizontalMenuGroup>
 
             <HorizontalMenuGroup>
                 <HorizontalMenuDropdown defaultValue={objectTypesDefaultValue} options={objectTypesOptions} onChange={objectTypesOnChange}
-                    placeholder="Filter by object type" isDisabled={isDisabled} />
+                    placeholder="Filter by object type" />
             </HorizontalMenuGroup>
 
             <HorizontalMenuGroup>
-                <HorizontalMenuUpdatableDropdown placeholder="Filter objects by tags" isDisabled={isDisabled}
+                <HorizontalMenuUpdatableDropdown placeholder="Filter objects by tags"
                     inputState={tagsFilterInputState} existingIDs={tagsFilterExistingIDs} options={tagsFilterOptions} 
                     onSearchChange={tagsFilterOnSearchChange} onSearchChangeDelayed={tagsFilterOnSearchChangeDelayed} onChange={tagsFilterOnChange} />
                 <HorizontalMenuButton icon="remove" title="Clear tags filter" className="borderless" 

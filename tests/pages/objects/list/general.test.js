@@ -549,9 +549,6 @@ describe("Field menu", () => {
 
         const dropdown = getByText(container, "Filter by object type").parentNode;
 
-        // Check if object type filter is disabled during fetches
-        await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching && dropdown.className.indexOf("disabled") > -1).toBeTruthy());
-
         // Wait for the objects to be loaded
         await waitFor(() => getByText(container, "object #1"));
         expect(store.getState().objectsUI.paginationInfo.objectTypes.length).toEqual(0);
@@ -600,10 +597,6 @@ describe("Field menu", () => {
             route: "/objects/list"
         });
 
-        // Dropdown is disabled during fetch 
-        const tagsFilterContainer = getByText(container, "Filter objects by tags").parentNode;
-        await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching && tagsFilterContainer.className.indexOf("disabled") > -1).toBeTruthy());
-
         // Wait for the objects to be loaded
         await waitFor(() => getByText(container, "object #1"));
 
@@ -615,6 +608,7 @@ describe("Field menu", () => {
         container.querySelectorAll(".inline-item-list-header").forEach(header => expect(header.textContent === "Tags filter").toBeFalsy());
 
         // Try filtering with a non-existing tag
+        const tagsFilterContainer = getByText(container, "Filter objects by tags").parentNode;
         const tagsFilterInput = tagsFilterContainer.querySelector("input.search");
         expect(tagsFilterInput).toBeTruthy();
         await searchTagInFilter("not found", tagsFilterInput, store);
