@@ -26,7 +26,7 @@ export const Comment = ({ id, commentary, updateCallback, updateInnerHTMLRequire
     const trigger = <Icon className={iconClassName} name="comment" title="Item comment" />;
     
     return (
-        <Popup position="right center"
+        <Popup position="top center"
             trigger={trigger}
             hoverable
             onOpen={() => setInitialCommentary(commentary)}     // inner HTML value must be updated on every open
