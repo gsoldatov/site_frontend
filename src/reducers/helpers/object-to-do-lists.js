@@ -18,35 +18,34 @@ export const getUpdatedToDoList = (toDoList, update) => {
     let result;
     // Adds a new item after the item with provided `id`. 
     // Sets the properties of the new item with provided properties or uses values stored in `itemDefaults`.
+    // If `newItemID` is provided, sets new item's ID to it.
     //
     // Focuses the new item and sets the caret at the end of it.
     //
     // Expands all parents of the new item.
     if (command === "add") {
+        let { id, position, newItemID } = update;
         const newItem = {};
         const itemDefaults = getItemDefaults();
         Object.keys(itemDefaults).forEach(k => {
             newItem[k] = update[k] !== undefined ? update[k] : itemDefaults[k];
         });
 
-        const position = update.position !== undefined
-            ? update.position
-            : toDoList.itemOrder.indexOf(update.id) + 1;
-
-        const newID = getNewItemID(toDoList);
+        if (position === undefined) position = toDoList.itemOrder.indexOf(id) + 1;
+        if (newItemID === undefined) newItemID = getNewItemID(toDoList);
         const newItemOrder = [...toDoList.itemOrder];
-        newItemOrder.splice(position, 0, newID);
+        newItemOrder.splice(position, 0, newItemID);
         const newItems = deepCopy(toDoList.items);
-        newItems[newID] = newItem;
+        newItems[newItemID] = newItem;
 
         // Expand parents of the new item
         result = {
             ...toDoList,
-            setFocusOnID: newID,
+            setFocusOnID: newItemID,
             itemOrder: newItemOrder,
             items: newItems
         };
-        expandParents(result, newID);
+        expandParents(result, newItemID);
     }
 
     // Updates the properties of the item with provided `id` to values passed in the props.
@@ -81,6 +80,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
         }
         else 
             childrenIDs.forEach(i => { newItems[i].indent -= 1 });
+        
 
         // Set focus (for Delete & Backspace key press handling)
         let setFocusOnID = toDoList.setFocusOnID;
@@ -101,6 +101,12 @@ export const getUpdatedToDoList = (toDoList, update) => {
             setFocusOnID,
             itemOrder: newItemOrder,
             items: newItems
+        };
+
+        // Add an empty item, if no items are present in to-do list after deletes
+        if ([...Object.keys(result.items)].length === 0) {
+            const newItemID = getNewItemID(toDoList);   // get an ID for the new item which did not previously exist, so that deleted item components get unmounted
+            result = getUpdatedToDoList(result, { command: "add", position: 0, indent: 0, newItemID });
         };
 
         // Update new item input's indent

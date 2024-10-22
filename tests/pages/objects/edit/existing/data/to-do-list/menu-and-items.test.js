@@ -96,6 +96,48 @@ test("Load an existing to-do list", async () => {
 });
 
 
+test("Delete button -> delete last item", async () => {
+    let { container, storeManager } = renderWithWrappers(<App />, {
+        route: "/objects/edit/2001"
+    });
+
+    // Check if object information is displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+    clickDataTabButton(container);
+    const TDLContainer = container.querySelector(".to-do-list-container");
+    expect(TDLContainer).toBeTruthy();
+
+    // Delete items unrelated to test
+    let items = TDLContainer.querySelectorAll(".to-do-list-item:not(.new)");
+    for (let i = 1; i < 8; i++) {
+        const item = items[i];
+        fireEvent.mouseEnter(item);
+        const deleteButton = getByTitle(item.querySelector(".to-do-list-right-menu"), "Delete item");
+        fireEvent.click(deleteButton);
+    }
+    items = [...TDLContainer.querySelectorAll(".to-do-list-item:not(.new)")];
+    expect(items.length).toEqual(1);
+
+    // Delete root item with children
+    const item = items[0];
+    fireEvent.mouseEnter(item);
+    const deleteButton = getByTitle(item.querySelector(".to-do-list-right-menu"), "Delete item");
+    fireEvent.click(deleteButton);
+
+    // Check if a single empty item remains
+    items = [...TDLContainer.querySelectorAll(".to-do-list-item:not(.new)")];
+    expect(items.length).toEqual(1);
+    const itemInput = items[0].querySelector(".to-do-list-item-input");
+    expect(itemInput.textContent).toEqual("");
+
+    // Check state
+    const { toDoList } = storeManager.store.getState().editedObjects[2001];
+    const itemIDs = [...Object.keys(toDoList.items)];
+    expect(itemIDs.length).toEqual(1);
+    expect(toDoList.items[itemIDs[0]].item_text).toEqual("");
+});
+
+
 test("Delete with children button", async () => {
     let { container, store } = renderWithWrappers(<App />, {
         route: "/objects/edit/2001"
@@ -124,6 +166,48 @@ test("Delete with children button", async () => {
         const itemID = newItems[index].querySelector(".to-do-list-item-id").textContent;
         expect(parseInt(itemID)).toEqual(id);
     });
+});
+
+
+test("Delete with children button -> delete last items", async () => {
+    let { container, storeManager } = renderWithWrappers(<App />, {
+        route: "/objects/edit/2001"
+    });
+
+    // Check if object information is displayed on the page
+    await waitFor(() => getByText(container, "Object Information"));
+    clickDataTabButton(container);
+    const TDLContainer = container.querySelector(".to-do-list-container");
+    expect(TDLContainer).toBeTruthy();
+
+    // Delete items unrelated to test
+    let items = TDLContainer.querySelectorAll(".to-do-list-item:not(.new)");
+    for (let itemNum of [4, 5, 6, 7]) {
+        const item = items[itemNum];
+        fireEvent.mouseEnter(item);
+        const deleteButton = getByTitle(item.querySelector(".to-do-list-right-menu"), "Delete item");
+        fireEvent.click(deleteButton);
+    }
+    items = [...TDLContainer.querySelectorAll(".to-do-list-item:not(.new)")];
+    expect(items.length).toEqual(4);
+
+    // Delete root item with children
+    const item = items[0];
+    fireEvent.mouseEnter(item);
+    const deleteWithChildrenButton = getByTitle(item.querySelector(".to-do-list-right-menu"), "Delete item and its children");
+    fireEvent.click(deleteWithChildrenButton);
+
+    // Check if a single empty item remains
+    items = [...TDLContainer.querySelectorAll(".to-do-list-item:not(.new)")];
+    expect(items.length).toEqual(1);
+    const itemInput = items[0].querySelector(".to-do-list-item-input");
+    expect(itemInput.textContent).toEqual("");
+
+    // Check state
+    const { toDoList } = storeManager.store.getState().editedObjects[2001];
+    const itemIDs = [...Object.keys(toDoList.items)];
+    expect(itemIDs.length).toEqual(1);
+    expect(toDoList.items[itemIDs[0]].item_text).toEqual("");
 });
 
 

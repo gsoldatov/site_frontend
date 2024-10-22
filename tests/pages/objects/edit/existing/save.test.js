@@ -120,34 +120,34 @@ describe("Update object errors", () => {
     });
 
 
-    test("Save an empty to-do list object", async () => {
-        let { container, store } = renderWithWrappers(<App />, {
-            route: "/objects/edit/2001"
-        });
+    // test("Save an empty to-do list object", async () => {            // Deleting last to-do list item(-s) now causes an empty item to be created instead
+    //     let { container, store } = renderWithWrappers(<App />, {
+    //         route: "/objects/edit/2001"
+    //     });
     
-        // Wait for object information to be displayed on the page
-        await waitFor(() => getByText(container, "Object Information"));
-        let saveButton = getSideMenuItem(container, "Save");
-        let oldObjectData = {...store.getState().toDoLists[2001]};
-        clickDataTabButton(container);
-        const TDLContainer = container.querySelector(".to-do-list-container");
-        expect(TDLContainer).toBeTruthy();
+    //     // Wait for object information to be displayed on the page
+    //     await waitFor(() => getByText(container, "Object Information"));
+    //     let saveButton = getSideMenuItem(container, "Save");
+    //     let oldObjectData = {...store.getState().toDoLists[2001]};
+    //     clickDataTabButton(container);
+    //     const TDLContainer = container.querySelector(".to-do-list-container");
+    //     expect(TDLContainer).toBeTruthy();
         
-        // Delete all items
-        TDLContainer.querySelectorAll(".to-do-list-item").forEach(item => {
-            if (!queryByPlaceholderText(item, "New item")) {    // skip new item input
-                fireEvent.mouseEnter(item);
-                const deleteButton = getByTitle(item, "Delete item");
-                fireEvent.click(deleteButton);
-            }
-        });
-        expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(0);
+    //     // Delete all items
+    //     TDLContainer.querySelectorAll(".to-do-list-item").forEach(item => {
+    //         if (!queryByPlaceholderText(item, "New item")) {    // skip new item input
+    //             fireEvent.mouseEnter(item);
+    //             const deleteButton = getByTitle(item, "Delete item");
+    //             fireEvent.click(deleteButton);
+    //         }
+    //     });
+    //     expect(Object.keys(getCurrentObject(store.getState()).toDoList.items).length).toEqual(0);
     
-        // Check if an empty to-do list is not saved
-        fireEvent.click(saveButton);
-        await waitFor(() => getByText(container, "At least one item is required in the to-do list.", { exact: false }));
-        expect(compareArrays(Object.keys(store.getState().toDoLists[2001].items).sort(), Object.keys(oldObjectData.items).sort())).toBeTruthy();
-    });
+    //     // Check if an empty to-do list is not saved
+    //     fireEvent.click(saveButton);
+    //     await waitFor(() => getByText(container, "At least one item is required in the to-do list.", { exact: false }));
+    //     expect(compareArrays(Object.keys(store.getState().toDoLists[2001].items).sort(), Object.keys(oldObjectData.items).sort())).toBeTruthy();
+    // });
 
 
     test("Composite object without non-deleted subobjects", async () => {
