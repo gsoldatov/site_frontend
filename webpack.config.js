@@ -110,13 +110,17 @@ module.exports = {
 
     // webpack-dev-server configuration
     devServer: {
-        contentBase: path.resolve(__dirname, "dist"),
+        static: {
+            directory: path.resolve(__dirname, "dist"),
+        },
 
         // Serve index.html instead of 404 responses to enable HTML5 History API usage
         historyApiFallback: true,
 
-        // Save served files to disk after they're built by dev server
-        writeToDisk: true
+        devMiddleware: {
+            // Save served files to disk after they're built by dev server
+            writeToDisk: true
+        }
     },
 
 
@@ -151,15 +155,21 @@ module.exports = {
             },
             {
                 test: /\.(png|svg|jpg|gif|eot)$/,
-                loader: "file-loader?name=static/icons/[name].[ext]"
+                // loader: "file-loader?name=static/icons/[name].[ext]"
+                type: "asset/resource",
+                generator: {
+                    filename: "static/icons/[name].[ext]"
+                }
             },
-            {   // required for imports is Semantic UI
+            {   // required for imports from Semantic UI
                 test: /\.(ttf|woff|woff2)$/,
-                loader: "file-loader?name=static/fonts/[name].[ext]"
+                type: "asset/resource",
+                generator: {
+                    filename: "static/fonts/[name].[ext]"
+                }
             },
             {
                 test: /\.worker\.js$/,
-                // use: [{ loader: "worker-loader", options: { publicPath: "/workers/" } }]
                 exclude: /(node_modules)/,
                 loader: "worker-loader",
                 options: {
