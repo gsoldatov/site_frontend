@@ -40,6 +40,10 @@ module.exports = {
         publicPath: "/"
     },
 
+    resolve: {
+        // Possible extensions of module files
+        extensions: [".ts", ".tsx", ".js", ".jsx"]
+    },
 
     optimization: {
         // SplitChunksPlugin (deduplicates repeatedly imported modules by putting them in separate chunks)
@@ -131,20 +135,21 @@ module.exports = {
     // Settings for module processing
     module: {
         rules: [
-            {
-                test: /\.js$/,
-                exclude: /(node_modules)/,
-                loader: "babel-loader",
-                options: {
-                    // preset = a set of plugins used for transforming code
-                    // @babel/preset-env controls target environments of the transpile code and which syntax transforms and polyfills are required to work in them (environments can be configured here as well)
-                    // @babel/preset-react transpiles JSX into javascript code
-                    presets: ["@babel/preset-env", "@babel/preset-react"],
-
-                    // transform-runtime fixes "regeneratorRuntime is not defined" error,
-                    plugins: ["@babel/plugin-transform-runtime"]
-                }
+            isDevEnv && {
+                // Enable source map loader in dev env in order to generate source maps
+                // (Typescript processing, unlike regulate JS, is done using a separate loader)
+                enforce: "pre",     // runs before other loaders
+                test: /\.[jt]sx?$/, 
+                exclude: /node_modules/, 
+                loader: "source-map-loader" 
             },
+
+            {
+                test: /\.[jt]sx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
+
             {
                 test: /\.css$/,
                 use: [

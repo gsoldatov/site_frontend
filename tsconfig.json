@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "outDir": "./dist/",
+
+        "sourceMap": true,
+        
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "target": "es5",
+        "jsx": "react",
+    },
+
+    "include": [
+        "src/**/*", "tests/**/*"
+    ],
+
+    "exclude": ["node_modules", "build"]
+}
