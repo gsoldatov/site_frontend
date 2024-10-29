@@ -1,24 +1,29 @@
 import { waitFor } from "@testing-library/react";
 
+import type { MemoryHistory } from "history";
+
+
 /**
  * Wrapper over browser history mock instance, implementing interactions with it.
  */
 export class HistoryManager {
-    constructor(history) {
+    history: MemoryHistory
+
+    constructor(history: MemoryHistory) {
         this.history = history;
     }
 
     /**
      * Updates the current URL in the history
      */
-    push(URL) {
+    push(URL: string): void {
         this.history.push(URL);
     }
 
     /**
      * Ensures current history address matches provided `URL`.
      */
-    ensureCurrentURL(URL) {
+    ensureCurrentURL(URL: string): void {
         if (this.history.entries.length === 0) throw Error("Mock history is empty");
         expect(this.history.entries[this.history.length - 1].pathname).toBe(URL);
     }
@@ -26,14 +31,14 @@ export class HistoryManager {
     /**
      * Attempts to wait until specified `URL` becomes the last one in the history.
      */
-    async waitForCurrentURLToBe(URL) {
+    async waitForCurrentURLToBe(URL: string): Promise<void> {
         await waitFor(() => this.ensureCurrentURL(URL));
     }
 
     /**
      * Attempts to wait until current history address has URL and search params specified in `URLWithParams`
      */
-    async waitForCurrentURLAndSearchParamsToBe(URLWithParams) {
+    async waitForCurrentURLAndSearchParamsToBe(URLWithParams: string): Promise<void> {
         const [URL, params] = URLWithParams.split("?");
         await this.waitForCurrentURLToBe(URL);
         this.ensureCurrentURLParams(`?${params}`);
@@ -45,7 +50,7 @@ export class HistoryManager {
      * `params` must start from question mark, e.g.: `?tagIDs=1`
      * `decodeURIEncoding` can be set to true to decode (some) characters in URI encoded query params.
      */
-    ensureCurrentURLParams(params, decodeURIEncoding = false) {
+    ensureCurrentURLParams(params: string, decodeURIEncoding: boolean = false): void {
         if (this.history.entries.length === 0) throw Error("Mock history is empty");
         
         let { search } = this.history.entries[this.history.entries.length - 1];
@@ -60,14 +65,14 @@ export class HistoryManager {
     /**
      * Returns current URL path
      */
-    getCurrentURL() {
+    getCurrentURL(): string {
         return this.history.location.pathname;
     }
 
     /**
      * Returns the value of the provided URL search `param` from the current URL of the history
      */
-    getCurrentURLSeachParam(param) {
+    getCurrentURLSeachParam(param: string): string | null {
         const params = new URLSearchParams(this.history.location.search);
         return params.get(param);
     }
@@ -75,7 +80,7 @@ export class HistoryManager {
     /**
      * Returns string object ID from the current URL, if it contains one
      */
-    getObjectID() {
+    getObjectID(): string {
         const URL = this.getCurrentURL();
         if (URL.startsWith("/objects/view/")) return URL.replace("/objects/view/", "");
         if (URL.startsWith("/objects/edit/")) return URL.replace("/objects/edit/", "");
