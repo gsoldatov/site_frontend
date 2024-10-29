@@ -7,7 +7,7 @@ interface UserMin {
     username: string
 }
 
-interface User extends UserMin {
+export interface User extends UserMin {
     user_level: UserLevel,
     can_login: boolean,
     can_edit_objects: boolean

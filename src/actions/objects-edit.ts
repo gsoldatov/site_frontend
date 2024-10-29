@@ -22,7 +22,9 @@ export const loadNewObjectPage               = () => ({ type: LOAD_ADD_OBJECT_PA
 /** [Reducer file](../reducers/objects-edit.js) */
 export const loadEditObjectPage              = currentObjectID => ({ type: LOAD_EDIT_OBJECT_PAGE, currentObjectID });
 /** [Reducer file](../reducers/objects-edit.js) */
-export const resetEditedObjects              = ({ objectIDs, hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed }) => ({ 
+export const resetEditedObjects              = ({ objectIDs, hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed }: 
+                                                { objectIDs: number[], hideObjectResetDialog?: boolean, resetCompositeSubobjects?: boolean, 
+                                                    allowResetToDefaults?: boolean, defaultDisplayInFeed?: boolean }) => ({ 
                                                 type: RESET_EDITED_OBJECTS, objectIDs, hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const removeEditedObjects             = ({ objectIDs, removeSubobjects, removeAll }) => ({ type: REMOVE_EDITED_OBJECTS, objectIDs, removeSubobjects, removeAll });

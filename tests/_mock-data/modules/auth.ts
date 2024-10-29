@@ -1,7 +1,7 @@
 import type { UserLevel } from "../../../src/util/types/users";
 
 
-type AuthData = {
+export interface AuthData {
     user_id: number,
     user_level: UserLevel,
     access_token: string,

@@ -1,11 +1,17 @@
 import { setAuthInformation } from "../../../../src/actions/auth";
 
+import type { Store } from "redux";
+import type { DataGenerator } from "../../../_mock-data/data-generator";
+import type { AuthData } from "../../../_mock-data/modules/auth";
 
 /**
  * Performs operations with `state.auth` part of the state.
  */
 export class AuthStoreManager {
-    constructor(store, generator) {
+    store: Store
+    generator: DataGenerator
+
+    constructor(store: Store, generator: DataGenerator) {
         this.store = store;
         this.generator = generator;
     }
@@ -16,8 +22,8 @@ export class AuthStoreManager {
      * Custom values for any attribute can be passed in the `customValues` argument
      * (note, that they will be wrapped as `auth` object, when passed to data generator)
      */
-    addAuthData(customValues = {}) {
-        const { auth } = this.generator.auth.login({ auth: customValues });
+    addAuthData(customValues?: Partial<AuthData>): AuthData {
+        const { auth } = this.generator.auth.login({ auth: customValues || {} });
         this.store.dispatch(setAuthInformation(auth));
         return auth;
     }

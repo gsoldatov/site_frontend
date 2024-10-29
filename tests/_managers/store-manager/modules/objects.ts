@@ -1,11 +1,19 @@
 import { addObjectData, addObjects, updateObjects, updateObjectData } from "../../../../src/actions/data-objects";
 
+import type { Store } from "redux";
+import type { DataGenerator } from "../../../_mock-data/data-generator";
+import type { ObjectType, ObjectAttributes, PartialObjectData, ObjectData } from "../../../_mock-data/modules/objects";
+
+
 
 /**
  * Performs operations with objects' attributes, tags and data stores in the state.
  */
 export class ObjectsStoreManager {
-    constructor(store, generator) {
+    store: Store
+    generator: DataGenerator
+
+    constructor(store: Store, generator: DataGenerator) {
         this.store = store;
         this.generator = generator;
     }
@@ -15,8 +23,8 @@ export class ObjectsStoreManager {
      * 
      * Custom attributes can be passed in the `attributes` argument.
      */
-    addAttributes(object_id, attributes = {}) {
-        const objectAttributes = this.generator.object.attributes({ ...attributes, object_id });
+    addAttributes(object_id, attributes?: Partial<ObjectAttributes>): ObjectAttributes {
+        const objectAttributes = this.generator.object.attributes({ ...(attributes || {}), object_id });
         delete objectAttributes.current_tag_ids;
         this.store.dispatch(addObjects([ objectAttributes ]));
         return objectAttributes;
@@ -27,7 +35,7 @@ export class ObjectsStoreManager {
      * 
      * `attributes` must include `object_id` prop.
      */
-    updateAttributes(attributes) {
+    updateAttributes(attributes: Partial<ObjectAttributes>): void {
         this.store.dispatch(updateObjects([ attributes ]));
     }
 
@@ -36,7 +44,7 @@ export class ObjectsStoreManager {
      * 
      * Custom attributes can be passed in the `object_data` argument.
      */
-    addData(object_id, object_type, object_data) {
+    addData<T extends ObjectType>(object_id: number, object_type: T, object_data: PartialObjectData<T>): ObjectData<T> {
         const objectData = this.generator.object.data(object_id, object_type, object_data);
         this.store.dispatch(addObjectData([{ object_id, object_type, object_data: objectData }]));
         return objectData;
@@ -47,7 +55,7 @@ export class ObjectsStoreManager {
      * 
      * `attributes` must include `object_id` prop.
      */
-    updateData(object_id, object_type, object_data) {
+    updateData(object_id: number, object_type: ObjectType, object_data: any): void {
         this.store.dispatch(updateObjectData([{ object_id, object_type, object_data }]));
     }
 
@@ -56,7 +64,7 @@ export class ObjectsStoreManager {
      * 
      * `object_id` and `subobject_id` are the ids of object and its subobject, respectively
      */
-    updateCompositeSubobjectData(object_id, subobject_id, subobject) {
+    updateCompositeSubobjectData(object_id: number, subobject_id: number, subobject: any): void {
         this.updateData(object_id, "composite", { subobjects: { [subobject_id]: subobject }});
     }
 }

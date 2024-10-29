@@ -1,6 +1,6 @@
-type ObjectType = "link" | "markdown" | "to_do_list" | "composite";
+export type ObjectType = "link" | "markdown" | "to_do_list" | "composite";
 
-interface ObjectAttributes {
+export interface ObjectAttributes {
     object_id: number,
     object_type: ObjectType,
     object_name: string,
@@ -41,7 +41,7 @@ interface ToDoListData {
  */
 interface PartialToDoListData extends Omit<Partial<ToDoListData>, "items"> { items?: PartialToDoListItemData[] };
 
-interface CompositeSubobjectData {
+export interface CompositeSubobjectData {
     object_id: number,
     column: number,
     row: number,
@@ -50,7 +50,7 @@ interface CompositeSubobjectData {
     show_description_composite: "yes" | "no" | "inherit",
     show_description_as_link_composite: "yes" | "no" | "inherit"
 }
-interface PartialCompositeSubobjectData extends Partial<CompositeSubobjectData> {};
+export interface PartialCompositeSubobjectData extends Partial<CompositeSubobjectData> {};
 
 interface CompositeData {
     subobjects: CompositeSubobjectData[],
@@ -64,14 +64,28 @@ interface CompositeData {
 interface PartialCompositeData extends Omit<Partial<CompositeData>, "subobjects"> { subobjects?: PartialCompositeSubobjectData[] };
 
 /**
- * Interface, which maps object types to their partial object data interfaces.
+ * Type, which maps object types to their partial object data interfaces.
  */
-type ObjectTypePartialDataMapping = {
-    link: PartialLinkData,
-    markdown: PartialMarkdownData,
-    to_do_list: PartialToDoListData,
-    composite: PartialCompositeData
-}
+export type PartialObjectData<T> =
+    T extends "link"? PartialLinkData:
+    T extends "markdown"? PartialMarkdownData:
+    T extends "to_do_list"? PartialToDoListData:
+    T extends "composite"? PartialCompositeData:
+    never
+;
+
+/**
+ * Type, which maps object types to their object data interfaces.
+ */
+export type ObjectData<T> =
+    T extends "link"? LinkData:
+    T extends "markdown"? MarkdownData:
+    T extends "to_do_list"? ToDoListData:
+    T extends "composite"? CompositeData:
+    never
+;
+
+
 
 
 /**
@@ -130,13 +144,15 @@ export class ObjectGenerator {
      * Any overrides of default values can be passed in `object_data`
      * (including to-do list items & composite subobjects with partially defined values).
      */
-    data<T extends keyof ObjectTypePartialDataMapping>(object_id: number, object_type: T, object_data: ObjectTypePartialDataMapping[T]) {
+    data<T extends ObjectType>(object_id: number, object_type: T, object_data: PartialObjectData<T>): ObjectData<T> {
         // NOTE: `object_data` props are correctly narrowed by `object_type` value outside of function, when using currently implemented typing with generics;
-        // however, additional type assertion for `object_data` is required when calling object type specific data generation function
-        if (object_type === "link") return this.linkData(object_id, object_data as PartialLinkData);
-        else if (object_type === "markdown") return this.markdownData(object_id, object_data as PartialMarkdownData);
-        else if (object_type === "to_do_list") return this.toDoListData(object_id, object_data as PartialToDoListData);
-        else if (object_type === "composite") return this.compositeData(object_data as PartialCompositeData);
+        // however, additional type assertions are required:
+        // 1) for `object_data` is required when calling object type specific data generation function;
+        // 2) when returns data generation function's results.
+        if (object_type === "link") return this.linkData(object_id, object_data as PartialLinkData) as ObjectData<T>;
+        else if (object_type === "markdown") return this.markdownData(object_id, object_data as PartialMarkdownData) as ObjectData<T>;
+        else if (object_type === "to_do_list") return this.toDoListData(object_id, object_data as PartialToDoListData) as ObjectData<T>;
+        else if (object_type === "composite") return this.compositeData(object_data as PartialCompositeData) as ObjectData<T>;
     }
 
     /**
