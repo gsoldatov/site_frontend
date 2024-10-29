@@ -1,0 +1,1 @@
+export type UserLevel = "admin" | "user" | "anonymous";

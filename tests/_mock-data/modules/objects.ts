@@ -1,3 +1,79 @@
+type ObjectType = "link" | "markdown" | "to_do_list" | "composite";
+
+interface ObjectAttributes {
+    object_id: number,
+    object_type: ObjectType,
+    object_name: string,
+    object_description: string,
+    created_at: string,
+    modified_at: string,
+    is_published: boolean,
+    display_in_feed: boolean,
+    feed_timestamp: string,
+    show_description: boolean,
+    owner_id: number,
+    current_tag_ids: number[]
+};
+
+interface LinkData { link: string,  show_description_as_link: boolean };
+interface PartialLinkData extends Partial<LinkData> {};
+
+interface MarkdownData { raw_text: string };
+interface PartialMarkdownData extends Partial<MarkdownData> {};
+
+interface ToDoListItemData {
+    item_number: number,
+    item_state: "active" | "optional" | "completed" | "cancelled",
+    item_text: string,
+    commentary: string, 
+    indent: number,
+    is_expanded: boolean
+};
+interface PartialToDoListItemData extends Partial<ToDoListItemData> {};
+
+interface ToDoListData {
+    sort_type: "default" | "state",
+    items: ToDoListItemData[]
+};
+
+/**
+ * To-do list data with `items` allowed to contain some, but not all of theirs properties.
+ */
+interface PartialToDoListData extends Omit<Partial<ToDoListData>, "items"> { items?: PartialToDoListItemData[] };
+
+interface CompositeSubobjectData {
+    object_id: number,
+    column: number,
+    row: number,
+    selected_tab: number,
+    is_expanded: boolean,
+    show_description_composite: "yes" | "no" | "inherit",
+    show_description_as_link_composite: "yes" | "no" | "inherit"
+}
+interface PartialCompositeSubobjectData extends Partial<CompositeSubobjectData> {};
+
+interface CompositeData {
+    subobjects: CompositeSubobjectData[],
+    display_mode: "basic" | "grouped_links" | "multicolumn" | "chapters",
+    numerate_chapters: boolean
+}
+
+/**
+ * Composite data with `subobjects` allowed to contain some, but not all of theirs properties.
+ */
+interface PartialCompositeData extends Omit<Partial<CompositeData>, "subobjects"> { subobjects?: PartialCompositeSubobjectData[] };
+
+/**
+ * Interface, which maps object types to their partial object data interfaces.
+ */
+type ObjectTypePartialDataMapping = {
+    link: PartialLinkData,
+    markdown: PartialMarkdownData,
+    to_do_list: PartialToDoListData,
+    composite: PartialCompositeData
+}
+
+
 /**
  * Object generator class.
  */
@@ -5,9 +81,9 @@ export class ObjectGenerator {
     /**
      * Generates object attributes. Custom values for any attribute can be passed in the `customValues` argument.
      */
-    attributes(customValues = {}) {
+    attributes(customValues?: Partial<ObjectAttributes>): ObjectAttributes {
         let { object_id, object_type, object_name, object_description, created_at, modified_at, 
-                is_published, display_in_feed, feed_timestamp, show_description, owner_id, current_tag_ids } = customValues;
+                is_published, display_in_feed, feed_timestamp, show_description, owner_id, current_tag_ids } = customValues || {};
 
         object_id = object_id === undefined ? 1 : object_id;
 
@@ -54,11 +130,13 @@ export class ObjectGenerator {
      * Any overrides of default values can be passed in `object_data`
      * (including to-do list items & composite subobjects with partially defined values).
      */
-    data(object_id, object_type, object_data) {
-        if (object_type === "link") return this.linkData(object_id, object_data);
-        else if (object_type === "markdown") return this.markdownData(object_id, object_data);
-        else if (object_type === "to_do_list") return this.toDoListData(object_id, object_data);
-        else if (object_type === "composite") return this.compositeData(object_data);
+    data<T extends keyof ObjectTypePartialDataMapping>(object_id: number, object_type: T, object_data: ObjectTypePartialDataMapping[T]) {
+        // NOTE: `object_data` props are correctly narrowed by `object_type` value outside of function, when using currently implemented typing with generics;
+        // however, additional type assertion for `object_data` is required when calling object type specific data generation function
+        if (object_type === "link") return this.linkData(object_id, object_data as PartialLinkData);
+        else if (object_type === "markdown") return this.markdownData(object_id, object_data as PartialMarkdownData);
+        else if (object_type === "to_do_list") return this.toDoListData(object_id, object_data as PartialToDoListData);
+        else if (object_type === "composite") return this.compositeData(object_data as PartialCompositeData);
     }
 
     /**
@@ -66,8 +144,8 @@ export class ObjectGenerator {
      * 
      * Custom values for data attributes can be provided in the `customValues` argument.
      */
-    linkData(object_id, customValues = {}) {
-        let { link, show_description_as_link } = customValues;
+    linkData(object_id: number, customValues?: PartialLinkData): LinkData {
+        let { link, show_description_as_link } = customValues || {};
 
         return {
             link: link || `https://website${object_id}.com`,
@@ -80,8 +158,8 @@ export class ObjectGenerator {
      * 
      * Custom values for data attributes can be provided in the `customValues` argument.
      */
-    markdownData(object_id, customValues = {}) {
-        let { raw_text } = customValues;
+    markdownData(object_id: number, customValues?: PartialMarkdownData): MarkdownData {
+        let { raw_text } = customValues || {};
 
         return {
             raw_text: raw_text || `# Markdown Object \\#${object_id}\n1. item 1;\n2. item 2;`
@@ -96,10 +174,11 @@ export class ObjectGenerator {
      * If `items` is provided, each object from it will be passed to `toDoListDataItem` function as custom item values
      * (and the total number of items will be equal to the length of `items`).
      */
-    toDoListData(object_id, customValues = {}) {
-        let { sort_type, items } = customValues;
+    toDoListData(object_id: number, customValues?: PartialToDoListData): ToDoListData {
+        let { sort_type, items } = customValues || {};
+        let _items: ToDoListItemData[];
 
-        if (items) items = items.map(item => this.toDoListDataItem(object_id, item));
+        if (items) _items = items.map(item => this.toDoListDataItem(object_id, item));
         else {
             /* Default items:
             - 0
@@ -111,7 +190,7 @@ export class ObjectGenerator {
                 - 6
                     - 7
             */
-            items = [
+            _items = [
                 this.toDoListDataItem(object_id, { item_number: 0, item_state: "active",    indent: 0 }),
                 this.toDoListDataItem(object_id, { item_number: 1, item_state: "optional",  indent: 1, commentary: "" }),
                 this.toDoListDataItem(object_id, { item_number: 2, item_state: "completed", indent: 1, commentary: "" }),
@@ -125,7 +204,7 @@ export class ObjectGenerator {
 
         return {
             sort_type: sort_type || "default",
-            items
+            items: _items
         };
     }
 
@@ -134,8 +213,8 @@ export class ObjectGenerator {
      * 
      * Custom values for data attributes can be provided in the `customValues` argument.
      */
-    toDoListDataItem(object_id, customValues = {}) {
-        let { item_number, item_state, item_text, commentary, indent, is_expanded } = customValues;
+    toDoListDataItem(object_id: number, customValues?: PartialToDoListItemData): ToDoListItemData {
+        let { item_number, item_state, item_text, commentary, indent, is_expanded } = customValues || {};
         item_number = item_number === undefined ? 0 : item_number;
 
         return {
@@ -156,12 +235,14 @@ export class ObjectGenerator {
      * If `subobjects` is provided, each object from it will be passed to `compositeDataSubobject` function as custom subobject values
      * (and the total number of subobjects will be equal to the length of `subobjects`).
      */
-    compositeData({ subobjects, display_mode, numerate_chapters }) {
-        if (subobjects) subobjects = subobjects.map(subobject => this.compositeDataSubobject(subobject));
-        else subobjects = [this.compositeDataSubobject()];
+    compositeData(customValues?: PartialCompositeData): CompositeData {
+        const { subobjects, display_mode, numerate_chapters } = customValues || {};
+        let _subobjects: CompositeSubobjectData[];
+        if (subobjects) _subobjects = subobjects.map(subobject => this.compositeDataSubobject(subobject));
+        else _subobjects = [this.compositeDataSubobject()];
 
         return {
-            subobjects,
+            subobjects: _subobjects,
             display_mode: display_mode || "basic",
             numerate_chapters: numerate_chapters || false
         };
@@ -174,8 +255,8 @@ export class ObjectGenerator {
      * 
      * Note that `object_id` represents id of the subobject being generated.
      */
-    compositeDataSubobject(customValues = {}) {
-        let { object_id, column, row, selected_tab, is_expanded, show_description_composite, show_description_as_link_composite } = customValues;
+    compositeDataSubobject(customValues?: PartialCompositeSubobjectData): CompositeSubobjectData {
+        let { object_id, column, row, selected_tab, is_expanded, show_description_composite, show_description_as_link_composite } = customValues || {};
         return {
             object_id: object_id || 101,
             column: column || 0,

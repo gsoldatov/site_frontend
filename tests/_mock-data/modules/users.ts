@@ -1,3 +1,19 @@
+import type { UserLevel } from "../../../src/util/types/users";
+
+
+interface UserMin {
+    user_id: number,
+    registered_at: string,
+    username: string
+}
+
+interface User extends UserMin {
+    user_level: UserLevel,
+    can_login: boolean,
+    can_edit_objects: boolean
+}
+
+
 /**
  * User generator class.
  */
@@ -5,8 +21,8 @@ export class UserGenerator {
     /**
      * Generates user attributes. Custom values for any attribute can be passed in the `customValues` argument.
      */
-    user(customValues = {}) {
-        let { user_id, registered_at, username, user_level, can_login, can_edit_objects } = customValues;
+    user(customValues?: Partial<User>): User {
+        let { user_id, registered_at, username, user_level, can_login, can_edit_objects } = customValues || {};
 
         user_id = user_id || 1;
 
@@ -27,8 +43,8 @@ export class UserGenerator {
     /**
      * Generates user attributes viewable without full view mode. Custom values for any attribute can be passed in the `customValues` argument.
      */
-    userMin(customValues = {}) {
-        let { user_id, registered_at, username } = this.user(customValues);
+    userMin(customValues?: Partial<UserMin>): UserMin {
+        let { user_id, registered_at, username } = this.user(customValues || {});
         return { user_id, registered_at, username };
     }
 }

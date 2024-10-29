@@ -9,6 +9,12 @@ import { UserGenerator } from "./modules/users";
  * Provides interface for specific data generators
  */
 export class DataGenerator {
+    object: ObjectGenerator
+    tag: TagGenerator
+    user: UserGenerator
+    auth: AuthGenerator
+    settings: SettingsGenerator
+
     constructor() {
         this.object = new ObjectGenerator();
         this.tag = new TagGenerator();
