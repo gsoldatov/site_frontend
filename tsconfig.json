@@ -25,6 +25,8 @@
 
         "esModuleInterop": true,     // required for `import foo from "foo"` statements to work in tests
 
+        "resolveJsonModule": true,   // allow importing JSON files as modules
+
         
         
         /* Code checks */

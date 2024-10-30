@@ -1,18 +1,18 @@
 /**
  * Returns a deep copy of the provided object `obj`.
  */
-export const deepCopy = obj => {
+export const deepCopy = (obj: any): any => {
     // Non-object, null and loop break
-    if (obj === null || typeof (obj) !== "object" || "isActiveClone" in obj) return obj;
+    if (obj === null || typeof (obj) !== "object" || "isBeingCloned" in obj) return obj;
 
     // Set
     if (obj instanceof Set) {
-        let result = new Set();
-        result["isActiveClone"] = null;
+        let result = new Set() as any;
+        result["isBeingCloned"] = null;
         obj.forEach(item => {
             result.add(deepCopy(item));
         });
-        delete obj["isActiveClone"];
+        if ("isBeingCloned" in obj) delete obj["isBeingCloned"];
         return result;
     }
 
@@ -24,9 +24,9 @@ export const deepCopy = obj => {
 
     for (var key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {   // don't copy prototype props
-            obj["isActiveClone"] = null;
+            obj["isBeingCloned"] = null;
             result[key] = deepCopy(obj[key]);
-            delete obj["isActiveClone"];
+            delete obj["isBeingCloned"];
         }
     }
 
@@ -37,7 +37,7 @@ export const deepCopy = obj => {
 /**
  * Returns a deep copy of `a` with its attributes recursively merged with (replaced by) the attributes of `b`.
  */
-export const deepMerge = (a, b) => {
+export const deepMerge = (a: any, b: any): any => {
     // Merge different types
     if (typeof(a) !== typeof(b)) return deepCopy(b);
 

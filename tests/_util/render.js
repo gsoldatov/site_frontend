@@ -8,6 +8,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 
 import { updateConfig } from "../../src/config";
+import { setDocumentApp } from "../../src/util/document-app";
 
 import { HistoryManager } from "../_managers/history-manager";
 import { createTestStore } from "./create-test-store";
@@ -21,8 +22,7 @@ export const renderWithWrappers = (ui, params) => {
 
     // Store & manager
     const storeManager = params.storeManager || (params.store ? new StoreManager(params.store) : createTestStore());
-    if (!document.app) document.app = {};
-    document.app.store = storeManager.store;
+    setDocumentApp({ store: storeManager.store });
 
     // History & manager
     const route = params.route || "/";
