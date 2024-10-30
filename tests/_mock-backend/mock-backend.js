@@ -59,10 +59,10 @@ export class MockBackend {
 
             // Post-process response object & return it
             this.postProcessResponse(response, context);
-            this.history.addRequest(context, response, false);
+            this.history.addRequest(context, false, response);
             return Promise.resolve(response);
         } catch (e) {
-            if (e instanceof TypeError && e.message === "NetworkError") this.history.addRequest(context, undefined, true);
+            if (e instanceof TypeError && e.message === "NetworkError") this.history.addRequest(context, true);
             throw e;
         }
     }
