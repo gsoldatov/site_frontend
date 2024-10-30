@@ -3,6 +3,7 @@ import { addObjectData, addObjects, updateObjects, updateObjectData } from "../.
 import type { Store } from "redux";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 import type { ObjectType, ObjectAttributes, PartialObjectData, ObjectData } from "../../../_mock-data/modules/objects";
+import type { PickPartial } from "../../../../src/util/types/common";
 
 
 
@@ -23,8 +24,8 @@ export class ObjectsStoreManager {
      * 
      * Custom attributes can be passed in the `attributes` argument.
      */
-    addAttributes(object_id, attributes?: Partial<ObjectAttributes>): ObjectAttributes {
-        const objectAttributes = this.generator.object.attributes({ ...(attributes || {}), object_id });
+    addAttributes(object_id: number, attributes?: Partial<ObjectAttributes>): PickPartial<ObjectAttributes, "current_tag_ids"> {
+        const objectAttributes = this.generator.object.attributes({ ...(attributes || {}), object_id }) as PickPartial<ObjectAttributes, "current_tag_ids">;
         delete objectAttributes.current_tag_ids;
         this.store.dispatch(addObjects([ objectAttributes ]));
         return objectAttributes;

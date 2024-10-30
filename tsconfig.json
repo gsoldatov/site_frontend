@@ -1,15 +1,13 @@
 {
     "compilerOptions": {
-        // directory, where files will be emitted by tsc
-        "outDir": "./dist/",
-
-        // include .js(x) files into project, along with .ts(x)
-        "allowJs": true,
-
-        // enable source map generation
-        "sourceMap": true,
+        /* General */
+        "outDir": "./dist/",    // directory, where files will be emitted by tsc
+        "allowJs": true,        // include .js(x) files into project, along with .ts(x)
+        "sourceMap": true,      // enable source map generation
         
-        // Modules & compilation
+        
+        
+        /* Modules & compilation */
         "module": "NodeNext",   // which module system is used in the project 
                                 // (Node supports ES modules, so it can be used for React code;
                                 // besides, moduleResolution = `NodeNext` implies the same option for this param)
@@ -25,7 +23,15 @@
         // // `@types/...` directories inside `node_modules`, which are included into the proejct (instead of including everything)
         // "types": ["node", "jest", "react", "react-dom"],
 
-        "esModuleInterop": true     // required for `import foo from "foo"` statements to work in tests
+        "esModuleInterop": true,     // required for `import foo from "foo"` statements to work in tests
+
+        
+        
+        /* Code checks */
+        "strict": true,
+        "allowUnreachableCode": false,
+        "noFallthroughCasesInSwitch": true
+
     },
 
     // Which files are included into project by tsc

@@ -153,6 +153,7 @@ export class ObjectGenerator {
         else if (object_type === "markdown") return this.markdownData(object_id, object_data as PartialMarkdownData) as ObjectData<T>;
         else if (object_type === "to_do_list") return this.toDoListData(object_id, object_data as PartialToDoListData) as ObjectData<T>;
         else if (object_type === "composite") return this.compositeData(object_data as PartialCompositeData) as ObjectData<T>;
+        else throw Error(`Incorrect object type: '${object_type}'`);
     }
 
     /**

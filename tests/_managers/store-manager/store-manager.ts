@@ -20,7 +20,7 @@ export class StoreManager {
     objects: ObjectsStoreManager
     editedObjects: EditedObjectsStoreManager
     
-    constructor(store) {
+    constructor(store: Store) {
         this.store = store;
         this.generator = new DataGenerator();
 
