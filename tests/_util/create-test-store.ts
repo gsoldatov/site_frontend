@@ -2,6 +2,7 @@ import createStore from "../../src/store/create-store";
 import { updateConfig } from "../../src/config";
 import { StoreManager } from "../_managers/store-manager/store-manager";
 
+import type { AppConfig } from "../../src/util/types/config";
 
 /**
  * Creates a test Redux store object used by the app and wraps it in a `StoreManager` instance.
@@ -12,8 +13,8 @@ import { StoreManager } from "../_managers/store-manager/store-manager";
  * 
  * Custom store configuration can be provided via `configProps` argument.
  */
-export const createTestStore = (data = {}, configProps) => {
-    const { addAdminToken = true, addAdminUser = false } = data;
+export const createTestStore = (data?: CreateTestStoreDataProps, configProps?: Partial<AppConfig>): StoreManager => {
+    const { addAdminToken = true, addAdminUser = false } = data || {};
     
     // Update app configuration
     if (configProps) updateConfig(configProps);
@@ -26,4 +27,9 @@ export const createTestStore = (data = {}, configProps) => {
     if (addAdminUser) storeManager.users.add();
     
     return storeManager;
+};
+
+type CreateTestStoreDataProps = {
+    addAdminToken?: boolean,
+    addAdminUser?: boolean
 };

@@ -110,3 +110,14 @@ export class MockBackend {
         return result;
     }
 }
+
+
+/** 
+ * Returns current `MockBackend` instance and narrows its type.
+ */
+export const getBackend = (): MockBackend => {
+    const { backend } = (global as any as { backend: MockBackend });
+    // Error will appear in old tests, which don't use backend, so type assertion without actual narrowing is used
+    // if (!(backend instanceof MockBackend)) throw Error("Mock backend was not initialized.");
+    return backend;
+};

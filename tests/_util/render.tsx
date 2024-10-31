@@ -13,9 +13,13 @@ import { setDocumentApp } from "../../src/util/document-app";
 import { HistoryManager } from "../_managers/history-manager";
 import { createTestStore } from "./create-test-store";
 import { StoreManager } from "../_managers/store-manager/store-manager";
+import { getBackend } from "../_mock-backend/mock-backend";
+
+import type { AppConfig } from "../../src/util/types/config";
+import type { Store } from "redux";
 
 
-export const renderWithWrappers = (ui, params) => {
+export const renderWithWrappers = (ui: React.ReactElement, params: RenderParams) => {
     // Update config
     const { configProps } = params;
     if (configProps) updateConfig(configProps);
@@ -30,9 +34,11 @@ export const renderWithWrappers = (ui, params) => {
     const historyManager = new HistoryManager(history);
 
     // Render & return results
-    const wrapper = ({ children }) => {
+    const wrapper = ({ children }: React.PropsWithChildren): React.ReactNode => {
         return (
             <Provider store={storeManager.store}>
+                {/* NOTE: react-dnd typing does not support children until v15: https://github.com/microsoft/TypeScript/issues/49972
+                // @ts-expect-error  */}
                 <DndProvider backend={HTML5Backend}>
                     <Router history={history}>
                         {children}
@@ -45,6 +51,15 @@ export const renderWithWrappers = (ui, params) => {
     return { 
         ...render(ui, { wrapper }),
         historyManager,
-        store: storeManager.store, storeManager
+        store: storeManager.store, storeManager,
+        backend: getBackend()
     };
 };
+
+
+type RenderParams = {
+    configProps?: Partial<AppConfig>,
+    storeManager?: StoreManager,
+    store?: Store,
+    route?: string
+}

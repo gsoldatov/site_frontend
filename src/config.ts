@@ -104,7 +104,7 @@ export const useConfigState = (selector: (config: AppConfig) => any): any => {
 
 // Add default config & updater to document.app store
 const config = configSchema.parse(originalConfig).app;
-setDocumentApp({ config, updateConfig })
+setDocumentApp({ config, updateConfig });
 
 /** Store for callback, which are run on config change */
 const configStateChangeCallbacks: Set<ConfigOnChangeCallback> = new Set();
