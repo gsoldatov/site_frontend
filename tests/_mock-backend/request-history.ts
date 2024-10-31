@@ -1,17 +1,5 @@
-import { z } from "zod";
-
 import type { RequestContext } from "./request-context";
-
-
-/**
- * Mock backend's response object schema for route handlers
- */
-export const responseSchema = z.object({
-    status: z.number().int(),
-    body: z.record(z.string(), z.any()).optional()
-});
-
-export type Response = z.infer<typeof responseSchema>;
+import type { RouteHandlerResponse } from "./types";
 
 /**
  * Logs requests sent to backend and generated responses.
@@ -23,7 +11,7 @@ export class RequestHistory {
         this.log = [];
     }
 
-    addRequest(requestContext: RequestContext, threwNetworkError: boolean, response?: Response): void {
+    addRequest(requestContext: RequestContext, threwNetworkError: boolean, response?: RouteHandlerResponse): void {
         this.log.push(new RequestHistoryItem(requestContext, threwNetworkError, response));
     }
 
@@ -48,10 +36,10 @@ export class RequestHistory {
  */
 class RequestHistoryItem {
     requestContext: RequestContext
-    response: Response
+    response: RouteHandlerResponse
     threwNetworkError: boolean
 
-    constructor(requestContext: RequestContext, threwNetworkError: boolean, response?: Response) {
+    constructor(requestContext: RequestContext, threwNetworkError: boolean, response?: RouteHandlerResponse) {
         this.requestContext = requestContext;
         this.response = response || { status: -1 };
         this.threwNetworkError = threwNetworkError;

@@ -1,5 +1,22 @@
+import type { MockBackend } from "../mock-backend";
+import type { RequestContext } from "../request-context";
+import type { RouteHandlerResponse } from "../types";
+
+
 export class RouteHandler {
-    constructor(backend, { route, method, getResponseParams, getResponse }) {
+    backend: MockBackend
+    route: string
+    method: string
+    getResponseParams: object
+    getResponse: (ctx: RequestContext) => RouteHandlerResponse
+    throwNetworkError: boolean
+    customResponse: RouteHandlerResponse | null
+    _getCustomResponse: ((this: RouteHandler, ctx: RequestContext) => RouteHandlerResponse) | null
+
+
+    constructor(backend: MockBackend, { route, method, getResponseParams, getResponse }:
+        { route: string, method: string, getResponseParams?: object, getResponse: (ctx: RequestContext) => RouteHandlerResponse }
+    ) {
         this.backend = backend;
 
         this.route = route;                                 // route the handler is assigned to
@@ -17,7 +34,7 @@ export class RouteHandler {
      * @param {object} requestContext - `RequestContext` instance with the context of current request.
      * @returns fetch response object with `status` and optional `body` attributes.
      */
-    processRequest(requestContext) {
+    processRequest(requestContext: RequestContext): RouteHandlerResponse {
         if (this.throwNetworkError) throw TypeError("NetworkError");   // Network errors are instances of TypeError
         
         let response = this.customResponse ? this.customResponse :
@@ -29,14 +46,14 @@ export class RouteHandler {
     /**
      * Overrides default response generator with `fn`.
      */
-    setCustomResponseFunction(fn) {
+    setCustomResponseFunction(fn: (ctx: RequestContext) => RouteHandlerResponse): void {
         this._getCustomResponse = fn.bind(this);
     }
 
     /**
      * Removes custom response generator from the handler.
      */
-    clearCustomResponseFunction () {
+    clearCustomResponseFunction (): void {
         this._getCustomResponse = null;
     }
 }

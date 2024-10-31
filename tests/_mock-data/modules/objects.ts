@@ -15,7 +15,11 @@ export interface ObjectAttributes {
     current_tag_ids: number[]
 };
 
-interface LinkData { link: string,  show_description_as_link: boolean };
+export interface ObjectAttributesWithType<T extends ObjectType> extends Omit<ObjectAttributes, "object_type"> {
+    object_type: T
+}
+
+export interface LinkData { link: string,  show_description_as_link: boolean };
 interface PartialLinkData extends Partial<LinkData> {};
 
 interface MarkdownData { raw_text: string };
@@ -74,6 +78,8 @@ export type PartialObjectData<T> =
     never
 ;
 
+export type PartialObjectDataUnion = PartialLinkData | PartialMarkdownData | PartialToDoListData | PartialCompositeData;
+
 /**
  * Type, which maps object types to their object data interfaces.
  */
@@ -85,7 +91,7 @@ export type ObjectData<T> =
     never
 ;
 
-
+export type ObjectDataUnion = LinkData | MarkdownData | ToDoListData | CompositeData;
 
 
 /**

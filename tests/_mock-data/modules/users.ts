@@ -1,7 +1,7 @@
 import type { UserLevel } from "../../../src/util/types/users";
 
 
-interface UserMin {
+export interface UserMin {
     user_id: number,
     registered_at: string,
     username: string

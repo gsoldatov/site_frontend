@@ -1,5 +1,7 @@
 import { getConfig } from "../../src/config";
 
+import type { FetchArgs } from "./types";
+
 
 /**
  * Stores request context.
@@ -10,8 +12,8 @@ export class RequestContext {
     headers: Record<string, string>
     body: object | undefined
 
-    constructor(URL: string, fetchArgs: { method?: string, headers?: Record<string, string>, body?: string }) {
-        const { method, headers, body } = fetchArgs;
+    constructor(URL: string, fetchArgs?: FetchArgs) {
+        const { method, headers, body } = fetchArgs || {};
         
         this.method = method || "GET";
         this.headers = headers || {};

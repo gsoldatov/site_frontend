@@ -9,11 +9,26 @@ import { TagsRouteHandlers } from "./route-handlers/handlers/tags";
 import { UsersRouteHandlers } from "./route-handlers/handlers/users";
 import { SettingsRouteHandlers } from "./route-handlers/handlers/settings";
 
+import type { FetchArgs, RouteHandlerResponse, Response } from "./types";
+
 
 /**
  * Mock backend implementation
  */
 export class MockBackend {
+    cache: BackendCache
+    data: BackendDataGenerator
+    history: RequestHistory
+
+    routeHandlers: {
+        [index: string]: { [index: string]: RouteHandler | MockBackend },
+        objects: ObjectsRouteHandlers,
+        tags: TagsRouteHandlers,
+        users: UsersRouteHandlers,
+        settings: SettingsRouteHandlers
+    }
+    private _handlers: Record<string, Record<string, RouteHandler>>
+
     constructor() {
         this.cache = new BackendCache();
         this.data = new BackendDataGenerator(this);
@@ -28,17 +43,18 @@ export class MockBackend {
         this.history = new RequestHistory();
         
         // Map route handlers by path & method for an easier search
-        const _handlers = {};
+        const _handlers: Record<string, Record<string, RouteHandler>> = {};
 
-        Object.keys(this.routeHandlers).forEach(handlerGroup => {
-            Object.keys(this.routeHandlers[handlerGroup]).forEach(key => {
-                const attr = this.routeHandlers[handlerGroup][key];
+        for (let group in this.routeHandlers) {
+            for(let key in this.routeHandlers[group]) {
+                const attr = this.routeHandlers[group][key];
                 if (attr instanceof RouteHandler) {
                     if (!(attr.route in _handlers)) _handlers[attr.route] = {};
                     _handlers[attr.route][attr.method] = attr;
                 }
-            })
-        });
+            }
+        }
+
         this._handlers = _handlers;
 
         this.fetch = this.fetch.bind(this);
@@ -47,7 +63,7 @@ export class MockBackend {
     /**
      * Mock `fetch` function.
      */
-    fetch(URL, fetchArgs = {}) {
+    fetch(URL: string, fetchArgs?: FetchArgs): Promise<Response> {
         const context = new RequestContext(URL, fetchArgs);
         
         // Generate a response
@@ -58,32 +74,39 @@ export class MockBackend {
             let response = handler.processRequest(context);
 
             // Post-process response object & return it
-            this.postProcessResponse(response, context);
-            this.history.addRequest(context, false, response);
-            return Promise.resolve(response);
+            let fullResponse = this.postProcessResponse(response, context);
+            this.history.addRequest(context, false, fullResponse);
+            return Promise.resolve(fullResponse);
         } catch (e) {
             if (e instanceof TypeError && e.message === "NetworkError") this.history.addRequest(context, true);
             throw e;
         }
     }
 
-    postProcessResponse(response, requestContext) {
+    postProcessResponse(response: RouteHandlerResponse, requestContext: RequestContext): Response {
+        const result: Response = {
+            ...response,
+            
+            // Mock methods used by app 
+            headers: { 
+                get: header => {
+                    if (header === "content-type") return "body" in response ? "application/json" : "";
+                    return undefined;
+                }
+            },
+            clone: () => ({ ...result })
+        };
+
         // Add auth data (new token expiration time)
-        if (response.status === 200 && "Authorization" in requestContext.headers && !requestContext.URLPath.startsWith("/auth/")) {
+        if (result.status === 200 && "Authorization" in requestContext.headers && !requestContext.URLPath.startsWith("/auth/")
+            && result.body !== undefined) {
             const expirationTime = new Date();
             expirationTime.setDate(expirationTime.getDate() + 10);
-            response.body.auth = { access_token_expiration_time: expirationTime.toISOString() };
+            result.body.auth = { access_token_expiration_time: expirationTime.toISOString() };
         }
 
-        // Add mock methods
-        response.headers = { 
-            get: header => {
-                if (header === "content-type") return "body" in response ? "application/json" : "";
-                return undefined;
-            }
-        };
-    
-        response.clone = () => ({ ...response });
-        if ("body" in response) response.json = () => Promise.resolve(response.body);
+        if (result.body !== undefined) result.json = () => Promise.resolve(result.body as Record<string, any>);
+        
+        return result;
     }
 }

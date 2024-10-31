@@ -1,3 +1,19 @@
+import { z } from "zod";
+
+
+export const int = z.number().int();
+export const positiveInt = int.min(1);
+export const nonNegativeInt = int.min(0);
+
+export const intArray = int.array();
+export const positiveIntArray = positiveInt.array();
+export const nonNegativeIntArray = nonNegativeInt.array();
+
+export const nonEmptyIntArray = intArray.min(1);
+export const nonEmptyPositiveIntArray = positiveIntArray.min(1);
+export const nonEmptyNonNegativeIntArray = nonNegativeIntArray.min(1);
+
+
 /**
  * Makes type from `T` with attributes specified in `K` optional.
  */

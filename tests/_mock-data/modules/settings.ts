@@ -1,6 +1,8 @@
-interface Settings {
+export interface Settings {
     non_admin_registration_allowed: boolean
 }
+export type SettingsNames = keyof Settings;
+
 
 /**
  * settings data generator class.
