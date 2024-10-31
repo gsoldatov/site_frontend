@@ -246,7 +246,7 @@ describe("Common", () => {
 
         test("Object with tags", async () => {
             // Render page
-            let { container, historyManager } = renderWithWrappers(<App />, {
+            let { container, historyManager, backend } = renderWithWrappers(<App />, {
                 route: "/objects/view/1"
             });
 
@@ -259,7 +259,7 @@ describe("Common", () => {
             cardActions.checkTags();
 
             // Click tag and check if redirect occured
-            const tagID = global.backend.data.object(1).attributes.current_tag_ids[0];
+            const tagID = backend.data.object(1).attributes.current_tag_ids[0];
             cardActions.clickTag(pageLayout.rootCard.tags.tags[0]);
             historyManager.ensureCurrentURL("/tags/view");
             historyManager.ensureCurrentURLParams(`?tagIDs=${tagID}`);

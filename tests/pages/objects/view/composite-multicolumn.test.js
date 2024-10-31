@@ -142,7 +142,7 @@ describe("Expand/collapse toggle", () => {
         basicCompositeMulticolumnObject(1);
 
         // Render page
-        let { container } = renderWithWrappers(<App />, {
+        let { container, backend } = renderWithWrappers(<App />, {
             route: "/objects/view/1"
         });
 
@@ -161,7 +161,7 @@ describe("Expand/collapse toggle", () => {
         expandToggleActions.ensureHidden();
         
         // Wait for update fetch to complete (otherwise it will fire during the next test)
-        await waitFor(() => { expect(global.backend.history.getMatchingRequestsCount("/objects/update")).toEqual(1); });
+        await waitFor(() => { expect(backend.history.getMatchingRequestsCount("/objects/update")).toEqual(1); });
     });
 
 
@@ -170,7 +170,7 @@ describe("Expand/collapse toggle", () => {
         basicCompositeMulticolumnObject(1);
 
         // Render page
-        let { container } = renderWithWrappers(<App />, {
+        let { container, backend } = renderWithWrappers(<App />, {
             route: "/objects/view/1"
         });
 
@@ -189,8 +189,8 @@ describe("Expand/collapse toggle", () => {
         
         // Check if update fetch was fired
         await waitFor(() => {
-            expect(global.backend.history.getMatchingRequestsCount("/objects/update")).toEqual(1);
-            const { body } = global.backend.history.getMatchingRequests("/objects/update")[0].requestContext;
+            expect(backend.history.getMatchingRequestsCount("/objects/update")).toEqual(1);
+            const { body } = backend.history.getMatchingRequests("/objects/update")[0].requestContext;
             const changedSubobjectData = body.object.object_data.subobjects.filter(so => so.object_id === changedSubobjectID)[0];
             expect(changedSubobjectData.is_expanded).toEqual(true);
         });
@@ -203,7 +203,7 @@ describe("Expand/collapse toggle", () => {
 
         // Render page
         const { store } = createTestStore({ addAdminToken: false });
-        let { container } = renderWithWrappers(<App />, {
+        let { container, backend } = renderWithWrappers(<App />, {
             route: "/objects/view/1", store
         });
 
@@ -219,6 +219,6 @@ describe("Expand/collapse toggle", () => {
         
         // Check if update fetch was not fired
         for (let i = 0; i < 5; i++) await waitFor(() => undefined);
-        expect(global.backend.history.getMatchingRequestsCount("/objects/update")).toEqual(0);
+        expect(backend.history.getMatchingRequestsCount("/objects/update")).toEqual(0);
     });
 });
