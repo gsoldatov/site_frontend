@@ -284,9 +284,9 @@ type ObjectsAddUpdateObject = ObjectsUpdateObject & { object_type?: string };   
 
 
 /***************************
- * /objects/update schema
+ * /objects/view schema
 ***************************/
-const objectsViewBodySchema = z.object({
+export const objectsViewBodySchema = z.object({
     object_ids: nonEmptyPositiveIntArray.optional(),
     object_data_ids: nonEmptyPositiveIntArray.optional()
 }).refine(({ object_ids, object_data_ids}) => (object_ids || []).length > 0 || (object_data_ids || []).length > 0);
