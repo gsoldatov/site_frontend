@@ -2,7 +2,13 @@
  * Modal window node references.
  */
 export class ModalLayout {
-    constructor(container) {
+    modalContainer: HTMLElement | null
+    background: HTMLElement | null
+    modal: HTMLElement | null
+    image: HTMLElement | null
+    closeIcon: HTMLElement | null
+
+    constructor(container: HTMLElement) {
         this.modalContainer = null;
         this.background = null;
         this.modal = null;
