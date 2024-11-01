@@ -7,7 +7,10 @@ import { TagsViewLayout } from "../../layout/pages/tags-view";
  * UI actions & checks /objects/view/:id object card
  */
 export class TagsViewActions {
-    constructor(container) {
+    container: HTMLElement
+    layout: TagsViewLayout
+
+    constructor(container: HTMLElement) {
         this.container = container;
         this.layout = new TagsViewLayout(container);
     }
@@ -17,7 +20,7 @@ export class TagsViewActions {
      */
     async waitForFeedLoad() {
         // Wait for placeholder to disappear
-        await waitFor((function() {
+        await waitFor((function(this: TagsViewActions) {
             this.layout = new TagsViewLayout(this.container);
             expect(this.layout.feed.placeholders.loading).toBeFalsy();
             expect(this.layout.feed.placeholders.error).toBeFalsy();

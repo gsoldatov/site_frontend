@@ -6,7 +6,10 @@ import { Actions } from "../actions";
  * UI actions & checks for modal window
  */
 export class ModalActions {
-    constructor(container) {
+    container: HTMLElement
+    layout: ModalLayout
+
+    constructor(container: HTMLElement) {
         this.container = container;
         this.layout = new ModalLayout(container);
     }
@@ -33,9 +36,10 @@ export class ModalActions {
     /**
      * Fail if modal does not have `expected` src
      */
-    ensureImageSrc(expected) {
-        if (!this.isDisplayed()) fail("Incorrect modal image: modal not displayed");
-        if (!Actions.hasSrc(this.layout.image, expected)) fail(`Incorrect modal image: expected '${expected}' received '${this.layout.image.src}'`);
+    ensureImageSrc(expected: string) {
+        if (!this.isDisplayed()) fail("Incorrect modal image: modal not displayed.");
+        if (!(this.layout.image instanceof HTMLImageElement)) throw Error("Incorrect modal image: modal image is not an <img> tag.");
+        if (!Actions.hasSrc(this.layout.image, expected)) fail(`Incorrect modal image: expected '${expected}' received '${this.layout.image.src}'.`);
     }
 
     /**
@@ -68,14 +72,14 @@ export class ModalActions {
      */
     ensureExpanded() {
         if (!this.isDisplayed()) fail("Modal window is not displayed.");
-        if (!this.layout.modal.classList.contains("expanded")) fail("Modal window is not expanded.");
+        if (!this.layout.modal?.classList.contains("expanded")) fail("Modal window is not expanded.");
     }
 
     /**
      * Ensures modal window is displayed & not expanded
      */
-    ensureNotExpanded(refresh) {
+    ensureNotExpanded() {
         if (!this.isDisplayed()) fail("Modal window is not displayed.");
-        if (this.layout.modal.classList.contains("expanded")) fail("Modal window is expanded.");
+        if (this.layout.modal?.classList.contains("expanded")) fail("Modal window is expanded.");
     }
 }

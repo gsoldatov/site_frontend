@@ -7,7 +7,10 @@ import { ObjectsViewCardLayout } from "../../layout/page-parts/objects-view";
  * UI actions & checks /objects/view/:id page
  */
 export class ObjectsViewActions {
-    constructor(container) {
+    container: HTMLElement
+    layout: ObjectsViewLayout
+
+    constructor(container: HTMLElement) {
         this.container = container;
         this.layout = new ObjectsViewLayout(container);
     }
@@ -34,7 +37,7 @@ export class ObjectsViewActions {
      * Waits for error message to appear on the page.
      * If `text` is provided, ensures it's in the error message.
      */
-    async waitForError(text) {
+    async waitForError(text: string) {
         const cardActions = new ObjectsViewCardActions(this.layout.rootCard.card);
         await cardActions.waitForError(text);
         this.layout = new ObjectsViewLayout(this.container);
@@ -44,8 +47,8 @@ export class ObjectsViewActions {
     /**
      * Returns a subobject card for the specified `subobjectID` or fails, if it does not exist.
      */
-    getSubobjectCardLayoutByID(subobjectID) {
-        if (!this.layout.rootCard.data.compositeMulticolumn) fail("Failed to get subobject card: multicolumn data not found.");
+    getSubobjectCardLayoutByID(subobjectID: number | string) {
+        if (!this.layout.rootCard?.data?.compositeMulticolumn) fail("Failed to get subobject card: multicolumn data not found.");
         
         for (let column of this.layout.rootCard.data.compositeMulticolumn.columns) {
             for (let cardData of column) {
