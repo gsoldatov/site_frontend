@@ -55,7 +55,7 @@ export class Actions {
      */
     static getMatchingChildren(container: HTMLElement, selector: string, expectedCount: number) {
         const result = [...container.querySelectorAll(selector)];
-        if (expectedCount !== undefined && result.length !== expectedCount) fail(`Expected ${expectedCount} matches for '${selector}', found ${result.length}`);
+        if (expectedCount !== undefined && result.length !== expectedCount) throw Error(`Expected ${expectedCount} matches for '${selector}', found ${result.length}`);
         return result;
     }
 }

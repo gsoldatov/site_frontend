@@ -48,7 +48,7 @@ export class ObjectsViewActions {
      * Returns a subobject card for the specified `subobjectID` or fails, if it does not exist.
      */
     getSubobjectCardLayoutByID(subobjectID: number | string) {
-        if (!this.layout.rootCard?.data?.compositeMulticolumn) fail("Failed to get subobject card: multicolumn data not found.");
+        if (!this.layout.rootCard?.data?.compositeMulticolumn) throw Error("Failed to get subobject card: multicolumn data not found.");
         
         for (let column of this.layout.rootCard.data.compositeMulticolumn.columns) {
             for (let cardData of column) {
@@ -57,6 +57,6 @@ export class ObjectsViewActions {
             }
         }
 
-        fail(`Failed to get subobject card: card for subobject '${subobjectID}' not found.`);
+        throw Error(`Failed to get subobject card: card for subobject '${subobjectID}' not found.`);
     }
 }

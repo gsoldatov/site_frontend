@@ -23,30 +23,30 @@ export class ModalActions {
      * Fail if modal is not displayed
      */
     ensureDisplayed() {
-        if (!this.isDisplayed()) fail("Failed to find a displayed modal window.");
+        if (!this.isDisplayed()) throw Error("Failed to find a displayed modal window.");
     }
 
     /**
      * Fail if modal is displayed
      */
     ensureNotDisplayed() {
-        if (this.isDisplayed()) fail("Found unexpected displayed modal window.");
+        if (this.isDisplayed()) throw Error("Found unexpected displayed modal window.");
     }
 
     /**
      * Fail if modal does not have `expected` src
      */
     ensureImageSrc(expected: string) {
-        if (!this.isDisplayed()) fail("Incorrect modal image: modal not displayed.");
+        if (!this.isDisplayed()) throw Error("Incorrect modal image: modal not displayed.");
         if (!(this.layout.image instanceof HTMLImageElement)) throw Error("Incorrect modal image: modal image is not an <img> tag.");
-        if (!Actions.hasSrc(this.layout.image, expected)) fail(`Incorrect modal image: expected '${expected}' received '${this.layout.image.src}'.`);
+        if (!Actions.hasSrc(this.layout.image, expected)) throw Error(`Incorrect modal image: expected '${expected}' received '${this.layout.image.src}'.`);
     }
 
     /**
      * Attempts to click modal image
      */
     clickImage() {
-        if (!this.layout.image) fail("Failed to click modal background: element not found.");
+        if (!this.layout.image) throw Error("Failed to click modal background: element not found.");
         Actions.click(this.layout.image);
     }
 
@@ -55,7 +55,7 @@ export class ModalActions {
      * Attempts to click modal background
      */
     clickBackground() {
-        if (!this.layout.background) fail("Failed to click modal background: element not found.");
+        if (!this.layout.background) throw Error("Failed to click modal background: element not found.");
         Actions.click(this.layout.background);
     }
 
@@ -63,7 +63,7 @@ export class ModalActions {
      * Attempts to click modal close icon
      */
     clickCloseIcon() {
-        if (!this.layout.closeIcon) fail("Failed to click modal close icon: element not found.");
+        if (!this.layout.closeIcon) throw Error("Failed to click modal close icon: element not found.");
         Actions.click(this.layout.closeIcon);
     }
 
@@ -71,15 +71,15 @@ export class ModalActions {
      * Ensures modal window is displayed & expanded
      */
     ensureExpanded() {
-        if (!this.isDisplayed()) fail("Modal window is not displayed.");
-        if (!this.layout.modal?.classList.contains("expanded")) fail("Modal window is not expanded.");
+        if (!this.isDisplayed()) throw Error("Modal window is not displayed.");
+        if (!this.layout.modal?.classList.contains("expanded")) throw Error("Modal window is not expanded.");
     }
 
     /**
      * Ensures modal window is displayed & not expanded
      */
     ensureNotExpanded() {
-        if (!this.isDisplayed()) fail("Modal window is not displayed.");
-        if (this.layout.modal?.classList.contains("expanded")) fail("Modal window is expanded.");
+        if (!this.isDisplayed()) throw Error("Modal window is not displayed.");
+        if (this.layout.modal?.classList.contains("expanded")) throw Error("Modal window is expanded.");
     }
 }

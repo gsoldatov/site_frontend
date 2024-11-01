@@ -59,7 +59,7 @@ export class ObjectsViewCardActions {
             this.layout = new ObjectsViewCardLayout(this.card);
             expect(this.layout.placeholders.loading).toBeFalsy();
             expect(this.layout.placeholders.error).toBeTruthy();
-            if (text && !Actions.containsTextInChildren(this.layout.placeholders.error, text)) fail(`Failed to find error text '${text}'`);
+            if (text && !Actions.containsTextInChildren(this.layout.placeholders.error, text)) throw Error(`Failed to find error text '${text}'`);
         }).bind(this));
 
         return this.layout;
@@ -73,48 +73,48 @@ export class ObjectsViewCardActions {
      * Ensures objectID <div> contains `expectedObjectID` as its text content.
      */
     ensureObjectID(expectedObjectID: number | string) {
-        if (this.layout.objectID !== expectedObjectID.toString()) fail(`Card object ID '${this.layout.objectID}' does not match expected '${expectedObjectID}'`);
+        if (this.layout.objectID !== expectedObjectID.toString()) throw Error(`Card object ID '${this.layout.objectID}' does not match expected '${expectedObjectID}'`);
     }
 
     /**
      * Ensures card timestamp is rendered & contains correct timestamp (matches to the value of `attr` attribute of the object displayed in the card).
      */
     checkTimestamp(attr: "feed_timestamp" | "modified_at") {
-        if (!this.layout.attributes?.timestamp) fail("Card timestamp not found.");
+        if (!this.layout.attributes?.timestamp) throw Error("Card timestamp not found.");
 
         const timestamp = getBackend().data.object(this.layout.objectID).attributes[attr];
         const textTimestamp = moment(timestamp).format("lll");
 
         if (!Actions.hasText(this.layout.attributes.timestamp, textTimestamp))
-            fail(`Card timestamp '${this.layout.attributes.timestamp.textContent}' does not match expected '${textTimestamp}'.`);
+            throw Error(`Card timestamp '${this.layout.attributes.timestamp.textContent}' does not match expected '${textTimestamp}'.`);
     }
 
     /**
      * Ensures object name is displayed in card header.
      */
     checkHeaderText() {
-        if (!this.layout.attributes?.header.text) fail("Header text not found.");
+        if (!this.layout.attributes?.header.text) throw Error("Header text not found.");
         const { object_name } = getBackend().data.object(this.layout.objectID).attributes;
 
         if (!Actions.hasText(this.layout.attributes.header.text, object_name))
-            fail(`Object header text '${this.layout.attributes.header.text.textContent}' does not match expected '${object_name}'.`);
+            throw Error(`Object header text '${this.layout.attributes.header.text.textContent}' does not match expected '${object_name}'.`);
     }
 
     /**
      * Ensures header text contains a link to the /objects/view page of this object
      */
     checkHeaderTextLink() {
-        if (!this.layout.attributes?.header.textLink) fail("Header text link not found.");
-        if (!(this.layout.attributes.header.textLink instanceof HTMLAnchorElement)) fail("Header text link element is not <a> tag.");
+        if (!this.layout.attributes?.header.textLink) throw Error("Header text link not found.");
+        if (!(this.layout.attributes.header.textLink instanceof HTMLAnchorElement)) throw Error("Header text link element is not <a> tag.");
         if (!this.layout.attributes.header.textLink.href.includes(`/objects/view/${this.layout.objectID}`)) 
-            fail(`Expected link URL to include '/objects/view/${this.layout.objectID}', found '${this.layout.attributes.header.textLink.href}'.`);
+            throw Error(`Expected link URL to include '/objects/view/${this.layout.objectID}', found '${this.layout.attributes.header.textLink.href}'.`);
     }
 
     /**
      * Ensures link to object's edit page is present in the card & clicks it.
      */
     clickEditObjectButton() {
-        if (!this.layout.attributes?.header.editButton) fail("Edit object button not found.");
+        if (!this.layout.attributes?.header.editButton) throw Error("Edit object button not found.");
         Actions.click(this.layout.attributes.header.editButton);
     }
 
@@ -123,11 +123,11 @@ export class ObjectsViewCardActions {
      * Ensures object description is displayed in card header.
      */
     checkDescriptionText() {
-        if (!this.layout.attributes?.description) fail("Object description not found.");
+        if (!this.layout.attributes?.description) throw Error("Object description not found.");
         const { object_description } = getBackend().data.object(this.layout.objectID).attributes;
 
         if (!Actions.hasTextInChildren(this.layout.attributes.description, object_description))
-            fail(`Object header text '${this.layout.attributes.description.textContent}' does not match expected '${object_description}'.`);
+            throw Error(`Object header text '${this.layout.attributes.description.textContent}' does not match expected '${object_description}'.`);
     }
 
     /************************************************
@@ -143,16 +143,16 @@ export class ObjectsViewCardActions {
 
         if (current_tag_ids.length === 0) {
             // Object is not tagged case
-            if (this.layout.tags?.tagsContainer) fail("Found unexpected object tags container.");
+            if (this.layout.tags?.tagsContainer) throw Error("Found unexpected object tags container.");
         
         } else {
             // Objects is tagged -> check if all tags are displayed in the correct order
-            if (!this.layout.tags?.tagsContainer) fail("Object tags not found.");
-            if(this.layout.tags.tags.length !== current_tag_ids.length) fail(`Found ${this.layout.tags.tags.length} tags, expected ${current_tag_ids.length}`);
+            if (!this.layout.tags?.tagsContainer) throw Error("Object tags not found.");
+            if(this.layout.tags.tags.length !== current_tag_ids.length) throw Error(`Found ${this.layout.tags.tags.length} tags, expected ${current_tag_ids.length}`);
 
             for (let i = 0; i < current_tag_ids.length; i++) {
                 const { tag_name } = backend.data.tag(current_tag_ids[i]);
-                if (!Actions.hasTextInChildren(this.layout.tags.tags[i], tag_name)) fail(`Failed to find object tag '${tag_name}' on position {i}`);
+                if (!Actions.hasTextInChildren(this.layout.tags.tags[i], tag_name)) throw Error(`Failed to find object tag '${tag_name}' on position {i}`);
             }
         }
     }
@@ -161,9 +161,9 @@ export class ObjectsViewCardActions {
      * Clicks a provided object tag (item of cardLayout.tags.tags)
      */
     clickTag(tag: HTMLElement | null) {
-        if (!tag) fail("Tag is not an element.");
+        if (!tag) throw Error("Tag is not an element.");
         const link = tag.querySelector("a");
-        if (!link) fail("Tag does not contain a link.");
+        if (!link) throw Error("Tag does not contain a link.");
         Actions.click(link);
     }
 
@@ -178,22 +178,22 @@ export class ObjectsViewCardActions {
         const backend = getBackend();
         const { data } = backend.data.object(this.layout.objectID);
 
-        if (!("subobjects" in data)) fail(`Composite subobjects not found for objectID '${this.layout.objectID}'.`);
+        if (!("subobjects" in data)) throw Error(`Composite subobjects not found for objectID '${this.layout.objectID}'.`);
         const { subobjects } = data;
         
         // Check if total number of displayed subobject cards is correct
         const displayedColumns = this.layout.data?.compositeMulticolumn?.columns;
-        if (!displayedColumns) fail("Composite multicolumn columns not found.")
+        if (!displayedColumns) throw Error("Composite multicolumn columns not found.")
         const numberOfDisplayedCards = displayedColumns.reduce((result, column) => result + column.length, 0);
-        if (subobjects.length !== numberOfDisplayedCards) fail(`Expected ${subobjects.length} cards, but found ${numberOfDisplayedCards}.`);
+        if (subobjects.length !== numberOfDisplayedCards) throw Error(`Expected ${subobjects.length} cards, but found ${numberOfDisplayedCards}.`);
 
         subobjects.forEach(subobject => {
             const { object_id, column, row } = subobject;
 
-            if (displayedColumns.length < column) fail(`Column ${column} not found.`);
-            if (!displayedColumns[column][row]) fail(`Card not found at [${column}][${row}].`);
+            if (displayedColumns.length < column) throw Error(`Column ${column} not found.`);
+            if (!displayedColumns[column][row]) throw Error(`Card not found at [${column}][${row}].`);
             const cardLayout = new ObjectsViewCardLayout(displayedColumns[column][row].card);
-            if (cardLayout.objectID !== object_id.toString()) fail(`Expected subobject ID '${object_id}' at [${column}][${row}], found '${cardLayout.objectID}'.`);
+            if (cardLayout.objectID !== object_id.toString()) throw Error(`Expected subobject ID '${object_id}' at [${column}][${row}], found '${cardLayout.objectID}'.`);
         })
     }
 }
@@ -215,32 +215,31 @@ export class ExpandToggleActions {
      * Ensures current styles of the expand toggle match its visible state.
      */
     ensureVisible() {
-        if(!this.layout.expandToggleContainer) fail("Expand toggle container is not an element.")
-        if (![...this.layout.expandToggleContainer.classList].includes("expanded")) fail("Expand toggle container is not expanded.");
-        if (!this.layout.expandToggleText) fail("Expand toggle text element not found.");
+        if(!this.layout.expandToggleContainer) throw Error("Expand toggle container is not an element.")
+        if (![...this.layout.expandToggleContainer.classList].includes("expanded")) throw Error("Expand toggle container is not expanded.");
+        if (!this.layout.expandToggleText) throw Error("Expand toggle text element not found.");
         if ((this.layout.expandToggleText?.textContent || "").length > 0)   // textContent shouldn't be null, but if it is, consider it empty
-            fail(`Expected empty expand toggle text, found '${this.layout.expandToggleText.textContent}'.`);
+            throw Error(`Expected empty expand toggle text, found '${this.layout.expandToggleText.textContent}'.`);
     }
 
     /**
      * Ensures current styles of the expand toggle match its hidden state.
      */
     ensureHidden() {
-        if(!this.layout.expandToggleContainer) fail("Expand toggle container is not an element.")
-        if ([...this.layout.expandToggleContainer.classList].includes("expanded")) fail("Expand toggle container is expanded.");
+        if(!this.layout.expandToggleContainer) throw Error("Expand toggle container is not an element.")
+        if ([...this.layout.expandToggleContainer.classList].includes("expanded")) throw Error("Expand toggle container is expanded.");
         
-        if (!this.layout.card) fail("Subobject card not found.");
+        if (!this.layout.card) throw Error("Subobject card not found.");
         const cardLayout = new ObjectsViewCardLayout(this.layout.card);
         const { object_name } = getBackend().data.object(cardLayout.objectID).attributes;
-        if (!Actions.hasText(this.layout.expandToggleText, object_name)) fail(`Expected toggle text '${object_name}', found '${this.layout.expandToggleText?.textContent}'.`);
+        if (!Actions.hasText(this.layout.expandToggleText, object_name)) throw Error(`Expected toggle text '${object_name}', found '${this.layout.expandToggleText?.textContent}'.`);
     }
 
     /**
      * Clicks expand toggle header to change its visibility state.
      */
     clickToggle() {
-        if (!this.layout.expandToggle) fail("Expand toggle is not an element.");
+        if (!this.layout.expandToggle) throw Error("Expand toggle is not an element.");
         Actions.click(this.layout.expandToggle);
     }
 }
-    

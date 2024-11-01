@@ -50,7 +50,7 @@ export class TagsViewActions {
     //         this.layout = new ObjectsViewCardLayout(this.card);
     //         expect(this.layout.placeholders.loading).toBeFalsy();
     //         expect(this.layout.placeholders.error).toBeTruthy();
-    //         if (text && !Actions.containsTextInChildren(this.layout.placeholders.error, text)) fail(`Failed to find error text '${text}'`);
+    //         if (text && !Actions.containsTextInChildren(this.layout.placeholders.error, text)) throw Error(`Failed to find error text '${text}'`);
     //     }).bind(this));
 
     //     return this.layout;

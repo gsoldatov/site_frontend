@@ -54,7 +54,7 @@ describe("Card drag and drop enabling and disabling", () => {
             timeout: 500, onTimeout: () => { dragStarted = false; }
         });
 
-        if (dragStarted) fail("Subobject card drag operation started without hovering over heading.");
+        if (dragStarted) throw Error("Subobject card drag operation started without hovering over heading.");
     });
 
 
@@ -83,7 +83,7 @@ describe("Card drag and drop enabling and disabling", () => {
             timeout: 500, onTimeout: () => { dragStarted = false; }
         });
 
-        if (dragStarted) fail("Subobject card drag operation started when hovering over expand/collapse toggle.");
+        if (dragStarted) throw Error("Subobject card drag operation started when hovering over expand/collapse toggle.");
     });
 
 

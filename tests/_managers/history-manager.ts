@@ -84,6 +84,6 @@ export class HistoryManager {
         const URL = this.getCurrentURL();
         if (URL.startsWith("/objects/view/")) return URL.replace("/objects/view/", "");
         if (URL.startsWith("/objects/edit/")) return URL.replace("/objects/edit/", "");
-        fail(`Attempted to get object ID from URL '${URL}'`);
+        throw Error(`Attempted to get object ID from URL '${URL}'`);
     }
 }
