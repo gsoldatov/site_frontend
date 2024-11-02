@@ -1,7 +1,7 @@
 /**
  * Returns true if `a` is deeply equal to `b` (cyclic references are not checked).
  */
-export const deepEqual = (a, b) => {
+export const deepEqual = (a: any, b: any): boolean => {
     // Check if types are the same
     if (typeof(a) !== typeof(b)) return false;
 
@@ -62,7 +62,7 @@ export const deepEqual = (a, b) => {
  * Diffrent types and objects with different constructors are consiredered to have different attributes.
  * 
  */
-export const hasEqualAttributes = (a, b) => {
+export const hasEqualAttributes = (a: any, b: any) => {
     // Different types are considered to always have different attributes.
     if (typeof(a) !== typeof(b)) return false;
 
