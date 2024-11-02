@@ -1,7 +1,9 @@
 import marked from "marked";
+// @ts-ignore (import from library subfolder results in no types being visible)
 import { escape } from "marked/src/helpers";
 
 // Import core library and white-listed languages to manually register them
+// @ts-ignore (import from library subfolder results in no types being visible)
 import hljs from "highlight.js/lib/core";
 import HLJSUsedLanguages from "./hljs-used-languages.json";
 
@@ -14,7 +16,7 @@ import rules from "./markdown-rules";
  * Markdown parser setup. 
  */
 const tokenizer = {
-    code(src) {
+    code(src: string) {
         // Tokenize block formulas ($$ ... $$) as code
         const match = src.match(rules.blockFormula);
 
@@ -29,7 +31,7 @@ const tokenizer = {
         return false;
     },
 
-    codespan(src) {
+    codespan(src: string) {
         // Tokenize inline block formulas ($ ... $) as a codespan
         const match = src.match(rules.inlineFormula);
         if (match) {
@@ -44,7 +46,7 @@ const tokenizer = {
         return false;
     },
 
-    inlineText(src, inRawBlock, smartypants) {
+    inlineText(this: marked.Tokenizer, src: string, inRawBlock: boolean, smartypants: any) {
         // Default inline text tokenizer with an additional rule for stopping before inline formulas
         const cap = rules.inlineText.exec(src);
         if (cap) {
@@ -66,7 +68,7 @@ const tokenizer = {
 
 const renderer = {
     // Modified default heading renderer which adds +2 to header levels and adds a classname
-    heading(text, _level, raw, slugger) {
+    heading(this: marked.Tokenizer, text: string, _level: number, raw: string, slugger: any) {
         const level = Math.min(_level + 2, 6);
       
         if (this.options.headerIds) {
@@ -87,17 +89,17 @@ const renderer = {
     },
 
     // Default renderer with a custom classname
-    blockquote(quote) {
+    blockquote(quote: string) {
         return '<blockquote class="markdown-blockquote">\n' + quote + '</blockquote>\n';
     },
 
     // Default renderer with a custom classname
-    hr() {
+    hr(this: marked.Tokenizer) {
         return this.options.xhtml ? '<hr class="markdown-hr"/>\n' : '<hr class="markdown-hr">\n';
     },
 
     // Default renderer with a custom classname
-    table(header, body) {
+    table(header: string, body: string) {
         if (body) body = '<tbody>' + body + '</tbody>';
 
         return '<table class="ui striped table">\n'
@@ -109,7 +111,7 @@ const renderer = {
     },
 
     // Default renderer with a custom classname
-    tablecell(content, flags) {
+    tablecell(content: string, flags: any) {
         const type = flags.header ? 'th' : 'td';
         // const className = ' class="markdown-' + type + '"';
         const tag = flags.align
@@ -118,7 +120,7 @@ const renderer = {
     return tag + content + '</' + type + '>\n';
     },
     
-    code(code, infostring, escaped) {
+    code(this: marked.Tokenizer, code: string, infostring: string, escaped: boolean) {
         // Formula code renderer
         const isFormula = code.match(rules.blockFormula);
 
@@ -129,7 +131,7 @@ const renderer = {
         }
 
         // Default code renderer with an added "hljs" classname required for highlighting
-        const lang = (infostring || '').match(/\S*/)[0];
+        const lang = ((infostring || '').match(/\S*/) || [])[0] || "";
         if (this.options.highlight) {
             const out = this.options.highlight(code, lang);
             if (out != null && out !== code) {
@@ -153,7 +155,7 @@ const renderer = {
             + '</code></pre>\n';
         },
   
-    codespan(text) {
+    codespan(text: string) {
         // Inline formula renderer
         const isFormula = text.match(rules.inlineFormula);
 
@@ -185,10 +187,11 @@ HLJSUsedLanguages.forEach(lang => {
  * (an additional "hljs" classname must be added separately to \<code\> tags in order to apply styles them).
  */
 // const highlight = (code) => hljs.highlightAuto(code).value;  // very slow
-const highlight = (code, language) => {
+const highlight = (code: string, language: string) => {
     const validLanguage = hljs.getLanguage(language) ? language : "plaintext";
     return hljs.highlight(code, { language: validLanguage }).value;
 };
 
+// @ts-ignore (optional props for tokenizer & renderer overrides are declared as required in types)
 marked.use({ tokenizer, renderer, highlight });
-export default text => marked(text);
+export default (text: string) => marked(text);
