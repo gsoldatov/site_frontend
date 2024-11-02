@@ -1,7 +1,10 @@
 import { useMemo } from "react";
 
+// @ts-ignore (worker file does not have default export, which results in a typing error)
 import ParseMarkdownWorker from "../markdown/parse-markdown.worker";
 import debounce from "../debounce";
+
+import type { DebounceDelayRefreshModes } from "../debounce";
 
 
 /**
@@ -12,10 +15,12 @@ import debounce from "../debounce";
  * @param {boolean} [refreshDelayMode=false] - flag indicating if delay for the next parse is reset when raw markdown changes.
  * @return {function} debounced function which accepts raw markdown, parses it in a worker and calls `onPostParse` callback after that.
  */
-export const useMarkdownParseWorker = (onPostParse, delay = 250, refreshDelayMode = "noRefreshOnFirstCall") => {
+export const useMarkdownParseWorker = (onPostParse: (parsedText: string) => any, 
+                                       delay: number = 250,
+                                       refreshDelayMode: DebounceDelayRefreshModes = "noRefreshOnFirstCall") => {
     // Delayed function, which parses markdown in a separate thread
-    return useMemo(() => debounce(rawMarkdown => {
-        const w = new ParseMarkdownWorker();
+    return useMemo(() => debounce((rawMarkdown: string) => {
+        const w = new ParseMarkdownWorker() as Worker;
         w.onmessage = e => {
             // Run `onPostParse` function & terminate worker after parsing is complete
             onPostParse(e.data);

@@ -87,5 +87,5 @@ export default function debounce(func: Function, delay: number = 1000, refreshDe
 };
 
 
-type DebounceDelayRefreshModes = "noRefresh" | "noRefreshOnFirstCall" | "onCall";
+export type DebounceDelayRefreshModes = "noRefresh" | "noRefreshOnFirstCall" | "onCall";
 type TimerID = ReturnType<typeof setTimeout>;
