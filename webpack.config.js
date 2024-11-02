@@ -145,6 +145,7 @@ module.exports = {
             },
 
             {
+                enforce: "pre",     // runs before other loaders (typescript transpilation must be run before worker-loader)
                 test: /\.[jt]sx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
@@ -174,7 +175,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.worker\.js$/,
+                test: /\.worker\.[jt]s$/,
                 exclude: /(node_modules)/,
                 loader: "worker-loader",
                 options: {
