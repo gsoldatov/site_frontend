@@ -4,28 +4,29 @@ import { parseComputedPropSize } from "./element-styles";
 /**
  * Returns text before and after caret position in the `element`.
  */
-export const getSplitText = element => {
+export const getSplitText = (element: HTMLElement) => {
     const position = getElementCaretPosition(element);
     if (position === -1) return null;
 
     return {
-        before: element.textContent.slice(0, position),
-        after: element.textContent.slice(position)
+        before: (element.textContent as string).slice(0, position),
+        after: (element.textContent as string).slice(position)
     };
 };
 
 
 /**
- * Returns the current line number of the caret in an `element`.
- * If `element` is a text node, calculates line number relative to the whole text content of its parent.
- * If a caret is not set inside the current element, returns -1.
+ * Returns the current line number and offset from line start of the caret in an `element`.
+ * 
+ * If `element` is a text node, calculates line number relative to the whole text content of its parent
+ * (NOTE: might require rechecking if text nodes are actually provided into the function, and the function processes them as described above;
+ * at the moment typing is done for HTML elements only).
+ * 
+ * If a caret is not set inside the current element, returns [-1, 0].
  * 
  * NOTE: this function will return [-1, 0] as a fallback value if element styles can't be computed (for example, in tests).
- * 
- * @param {Node} element - DOM element or text node to calculate the line number for.
- * @returns {Array[number]} - list with line number and offset of the caret or [-1, 0].
  */
-export const getCaretPositionData = element => {
+export const getCaretPositionData = (element: HTMLElement): [number, number] => {
     // Get caret position
     const caretPosition = getElementCaretPosition(element);
     if (caretPosition === -1) return [-1, 0];
@@ -37,14 +38,14 @@ export const getCaretPositionData = element => {
                                                 // (required for running tests without adding a mock on `getComputedStyle`)
 
     // Get a copy of the element
-    const clone = element.cloneNode(true);
+    const clone = element.cloneNode(true) as HTMLElement;
     clone.style.visibility = "hidden";
     clone.style.position = "absolute";      // setting position is required for function to work
     clone.style.paddingLeft = getComputedStyle(element).paddingLeft;
     clone.style.paddingRight = getComputedStyle(element).paddingRight;
     document.body.appendChild(clone);   // appending is required in order to calculate styles
 
-    const text = element.textContent;
+    const text = element.textContent as string;
 
     let i = 0, line = 0, lineStart = 0;
 
@@ -97,12 +98,9 @@ export const getCaretPositionData = element => {
  * If the `element` contains text node children, places caret into one of them at the corresponding position.
  * 
  * If `position` can't be found in the `element`, caret is placed at its end (or at the end of its last text child).
- * 
- * @param {Element} element - DOM element to place caret into.
- * @param {*} position - caret position.
  */
-export const setCaret = (element, position) => {
-    const totalTextContentLength = element.textContent.length;
+export const setCaret = (element: HTMLElement, position: number) => {
+    const totalTextContentLength = (element.textContent as string).length;
 
     // Update `position` value to fit into the element, 
     // if it could not be calculated or is greater than `totalTextContentLength`
@@ -112,7 +110,7 @@ export const setCaret = (element, position) => {
     // Get nodes into which a caret can be inserted;
     // These can be any child text nodes, or,
     // if an element has no child nodes (e.g., an empty contenteditable <div>), the element itself
-    let nodes = [...element.childNodes].filter(n => n.constructor === Text);
+    let nodes: Node[] = [...element.childNodes].filter(n => n.constructor === Text);
     if (nodes.length === 0) nodes = [element];
     
     // Calculate the target element and a position in it to place caret into
@@ -127,7 +125,7 @@ export const setCaret = (element, position) => {
         let number = 0, nodeStartPosition = 0;
 
         while (nodeStartPosition < totalTextContentLength) {
-            const nodeLength = nodes[number].textContent.length;
+            const nodeLength = (nodes[number].textContent as string).length;
             
             // Current child contains the caret position
             if (position < nodeStartPosition + nodeLength) {
@@ -148,7 +146,7 @@ export const setCaret = (element, position) => {
                 // If current element is last, place caret in its end
                 else {
                     target = nodes[number];
-                    targetPosition = target.textContent.length;
+                    targetPosition = (target.textContent as string).length;
                     break;
                 }
             }
@@ -162,48 +160,48 @@ export const setCaret = (element, position) => {
     }
 
     // Place caret in the target position
+    if (target !== undefined && targetPosition !== undefined) {
     const range = document.createRange();
     range.setStart(target, targetPosition);
-    range.collapse = true;
+    // range.collapse = true;
+    range.collapse(true);
 
-    const selection = window.getSelection();
+    const selection = window.getSelection() as Selection;
     selection.removeAllRanges();
     selection.addRange(range);
+    }
 };
 
 
-/**
- * 
- * @returns {boolean} flag indicating if a selection currently exists;
- */
+/** Returns true if a selection currently exists or false otherwise. */
 export const isRangeSelected = () => {
-    return !window.getSelection().isCollapsed;
+    const selection = window.getSelection();
+    if (!selection) return false;
+    return !selection.isCollapsed;
 };
 
 
 /**
- * Returns the caret position or selection range's end inside the `element`.
+ * Returns the caret position or selection range's end inside the `node`.
  * 
- * If caret position is outside of `element`, returns -1.
- * 
- * @param {Element} element - DOM element or text node.
- * @returns {number} caret position or -1.
+ * If caret position is outside of `node`, returns -1.
  */
-const getElementCaretPosition = element => {
+const getElementCaretPosition = (node: Node) => {
     const isSupported = typeof window.getSelection !== "undefined";
     if (!isSupported) return -1;
     
     const selection = window.getSelection();
-    if (selection.focusNode !== element && !element.contains(selection.focusNode)) return -1;
+    if (!selection) return -1;
+    if (selection.focusNode !== node && !node.contains(selection.focusNode)) return -1;
 
     let position = selection.focusOffset;
 
     // If caret is placed inside a text node, which is a direct child of `element`, add preceding children's length to the result
-    if (selection.focusNode.constructor === Text) {
-        if (selection.focusNode.parentNode !== element) return -1;    // nested children are not supported
-        for (let child of element.childNodes) {
+    if (selection.focusNode instanceof Text) {
+        if (selection.focusNode.parentNode !== node) return -1;    // nested children are not supported
+        for (let child of node.childNodes) {
             if (child === selection.focusNode) break;
-            position += child.textContent.length;
+            position += (child.textContent as string).length;
         }
     }
 
