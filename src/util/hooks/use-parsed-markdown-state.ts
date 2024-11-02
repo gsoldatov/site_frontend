@@ -3,6 +3,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useMarkdownParseWorker } from "./use-markdown-parse-worker";
 import { useMountedState } from "./use-mounted-state";
 
+import type { DebounceDelayRefreshModes } from "../debounce";
+
 
 /**
  * Hooks for storing and managing parsed markdown. Renders provided raw markdown when it changes and, optionally runs provided function after render.
@@ -18,7 +20,7 @@ import { useMountedState } from "./use-mounted-state";
  *     - `refreshDelayMode` - boolean, if true, first render is started after `delay`, otherwise it's started immediately after `rawMarkdown` is changed 
  *       (another render can be still executed only after `delay` time has passed), see `useMarkdownParseWorker` for default value.
  */
-export const useParsedMarkdownState = (rawMarkdown, renderParams = {}) => {
+export const useParsedMarkdownState = (rawMarkdown: string, renderParams: UseParsedMarkdownStateParams = {}) => {
     const { onPostParse, delay, refreshDelayMode } = renderParams;
     const runAfterComponentUnmount = "runAfterComponentUnmount" in renderParams ? renderParams.runAfterComponentUnmount : false;
     
@@ -27,7 +29,7 @@ export const useParsedMarkdownState = (rawMarkdown, renderParams = {}) => {
     const [parsedMarkdown, setParsedMarkdown] = useState("");
 
     // Wrapped `onPostParse` callback with conditional execution and parsed Markdown state update
-    const wrappedOnPostParse = useMemo(() => parsed => {
+    const wrappedOnPostParse = useMemo(() => (parsed: string) => {
         if ((isMounted() || runAfterComponentUnmount) && typeof(onPostParse) === "function") onPostParse(parsed);
         if (isMounted()) setParsedMarkdown(parsed);
     }, [runAfterComponentUnmount, onPostParse]);
@@ -43,3 +45,10 @@ export const useParsedMarkdownState = (rawMarkdown, renderParams = {}) => {
 
     return parsedMarkdown;
 };
+
+
+type UseParsedMarkdownStateParams = {
+    onPostParse?: (parsed: string) => any,
+    delay?: number,
+    refreshDelayMode?: DebounceDelayRefreshModes
+}
