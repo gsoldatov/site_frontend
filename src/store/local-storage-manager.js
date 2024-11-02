@@ -3,7 +3,6 @@ import { defaultEditedObjectState } from "./state-templates/edited-object";
 import { getDefaultAuthState } from "./state-templates/auth";
 
 import debounce from "../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../util/enums/enum-debounce-delay-refresh-mode";
 
 import { getConfig, addCallback } from "../config";
 
@@ -33,7 +32,7 @@ export class LocalStorageManager {
      */
     setSaveState(config) {
         const { localStorageSaveTimeout } = config;
-        this.saveState = debounce(this.save, localStorageSaveTimeout, enumDebounceDelayRefreshMode.onCall);
+        this.saveState = debounce(this.save, localStorageSaveTimeout, "onCall");
     }
 
     /**

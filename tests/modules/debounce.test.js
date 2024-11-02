@@ -1,7 +1,6 @@
 import { waitFor } from "@testing-library/dom";
 
 import debounce from "../../src/util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../src/util/enums/enum-debounce-delay-refresh-mode";
 
 
 /** Test class for monitoring function call times and arguments passed */
@@ -33,7 +32,7 @@ describe("Incorrect parameter values", () => {
 
     test.each([null, true, "string", {}, -1, 1])("refresh delay mode value %s", (value) => {
         const cm = new CallMonitor();
-        expect(() => { debounce(cm.fn, undefined, value); }).toThrow(/must be an enumDebounceDelayRefreshMode value/);
+        expect(() => { debounce(cm.fn, undefined, value); }).toThrow(/Incorrect refreshDelayMode value/);
     });
 });
 
@@ -144,7 +143,7 @@ describe("No refresh on first call delay mode", () => {
         const cm = new CallMonitor();
         const { fn, calls } = cm;
         const delay = 50;
-        const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.noRefreshOnFirstCall);
+        const debouncedFn = debounce(fn, delay, "noRefreshOnFirstCall");
         const time = performance.now();
 
         // Call a debounced function and check if it was executed instantly
@@ -157,7 +156,7 @@ describe("No refresh on first call delay mode", () => {
         const cm = new CallMonitor();
         const { fn, calls } = cm;
         const delay = 500, callAttemptInterval = 50, numberOfCallAttempts = 3;
-        const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.noRefreshOnFirstCall);
+        const debouncedFn = debounce(fn, delay, "noRefreshOnFirstCall");
 
         // Make first call
         debouncedFn();
@@ -185,7 +184,7 @@ describe("No refresh on first call delay mode", () => {
         const cm = new CallMonitor();
         const { fn, args } = cm;
         const delay = 500, callAttemptInterval = 50;
-        const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.noRefreshOnFirstCall);
+        const debouncedFn = debounce(fn, delay, "noRefreshOnFirstCall");
 
         // Make first call
         debouncedFn();
@@ -214,7 +213,7 @@ describe("No refresh on first call delay mode", () => {
         const cm = new CallMonitor();
         const { fn, calls } = cm;
         const delay = 50;
-        const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.noRefreshOnFirstCall);
+        const debouncedFn = debounce(fn, delay, "noRefreshOnFirstCall");
 
         // Make first call (which is instantly performed)
         debouncedFn();
@@ -238,7 +237,7 @@ describe("Refresh delay on call mode", () => {
         const cm = new CallMonitor();
         const { fn, calls } = cm;
         const delay = 50;
-        const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.onCall);
+        const debouncedFn = debounce(fn, delay, "onCall");
         
         // Call a debounced function and check if it was executed after `delay`
         const time = performance.now();
@@ -254,7 +253,7 @@ describe("Refresh delay on call mode", () => {
         const cm = new CallMonitor();
         const { fn, calls } = cm;
         const delay = 500, callAttemptInterval = 50, numberOfCallAttempts = 3;
-        const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.onCall);
+        const debouncedFn = debounce(fn, delay, "onCall");
 
         // Schedule a debounced call
         const firstCallTime = performance.now();
@@ -279,7 +278,7 @@ describe("Refresh delay on call mode", () => {
         const cm = new CallMonitor();
         const { fn, args } = cm;
         const delay = 500, callAttemptInterval = 50;
-        const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.onCall);
+        const debouncedFn = debounce(fn, delay, "onCall");
 
         // Attempt multiple function calls during a delay
         for (let i = 1; i <= 3; i++) {
@@ -306,7 +305,7 @@ describe("Refresh delay on call mode", () => {
         const cm = new CallMonitor();
         const { fn, calls } = cm;
         const delay = 50;
-        const debouncedFn = debounce(fn, delay, enumDebounceDelayRefreshMode.onCall);
+        const debouncedFn = debounce(fn, delay, "onCall");
 
         // Call debounced function for and abort its pending execution
         const abort = debouncedFn();

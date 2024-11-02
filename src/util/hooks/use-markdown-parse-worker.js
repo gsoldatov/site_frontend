@@ -2,7 +2,6 @@ import { useMemo } from "react";
 
 import ParseMarkdownWorker from "../markdown/parse-markdown.worker";
 import debounce from "../debounce";
-import { enumDebounceDelayRefreshMode } from "../enums/enum-debounce-delay-refresh-mode";
 
 
 /**
@@ -13,7 +12,7 @@ import { enumDebounceDelayRefreshMode } from "../enums/enum-debounce-delay-refre
  * @param {boolean} [refreshDelayMode=false] - flag indicating if delay for the next parse is reset when raw markdown changes.
  * @return {function} debounced function which accepts raw markdown, parses it in a worker and calls `onPostParse` callback after that.
  */
-export const useMarkdownParseWorker = (onPostParse, delay = 250, refreshDelayMode = enumDebounceDelayRefreshMode.noRefreshOnFirstCall) => {
+export const useMarkdownParseWorker = (onPostParse, delay = 250, refreshDelayMode = "noRefreshOnFirstCall") => {
     // Delayed function, which parses markdown in a separate thread
     return useMemo(() => debounce(rawMarkdown => {
         const w = new ParseMarkdownWorker();

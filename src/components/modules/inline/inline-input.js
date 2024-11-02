@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useMemo, memo } from "react";
 import { Dropdown, Icon } from "semantic-ui-react";
 
 import debounce from "../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../util/enums/enum-debounce-delay-refresh-mode";
 
 
 /**
@@ -76,7 +75,7 @@ export const InlineInput = memo(({ placeholder, inputState, setInputState, setIt
 
     // Handle input text change event
     const _onSearchChangeDelayed = useRef(debounce(onSearchChangeDelayed, 
-        250, enumDebounceDelayRefreshMode.onCall)).current;     // wrap onSearchChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
+        250, "onCall")).current;     // wrap onSearchChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
     const handleSearchChange = (e) => {
         setInputState({ inputText: e.target.value });     // inputText is updated immediately after every change
         abortFetch.current = _onSearchChangeDelayed({     // onSearchChangeDelayed is called after a delay since last input value change (and dispatches a fetch)

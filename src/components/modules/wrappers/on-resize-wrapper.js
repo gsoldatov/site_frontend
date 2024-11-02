@@ -3,7 +3,6 @@ import React, { useRef, useLayoutEffect, useMemo } from "react";
 import { Ref } from "semantic-ui-react";
 
 import debounce from "../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../util/enums/enum-debounce-delay-refresh-mode";
 
 
 /**
@@ -19,7 +18,7 @@ export const OnResizeWrapper = ({ callback, children, delay = 100 }) => {
 
     const onResize = useMemo(() => debounce(() => {
         if (innerRef.current) abortResizeCallbackRef.current = callback(innerRef.current);
-    }, delay, enumDebounceDelayRefreshMode.noRefresh), [callback]);
+    }, delay, "noRefresh"), [callback]);
 
     // Handle subscription to resize events of the child element.
     // `useLayoutEffect` is used instead of `useEffect` in order to run callback synchronously.

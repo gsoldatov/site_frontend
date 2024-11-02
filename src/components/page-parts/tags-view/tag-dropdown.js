@@ -7,7 +7,6 @@ import { Dropdown } from "semantic-ui-react";
 import { tagsViewDropdownOptionsSearch } from "../../../fetches/ui-tags-view";
 
 import debounce from "../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../util/enums/enum-debounce-delay-refresh-mode";
 import { useMountedState } from "../../../util/hooks/use-mounted-state";
 import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
 
@@ -49,7 +48,7 @@ export const TagDropdown = () => {
             if ("error" in result) setMatchingIDs([]);
             else setMatchingIDs(result);
         }
-    }, 250, enumDebounceDelayRefreshMode.onCall)).current;
+    }, 250, "onCall")).current;
 
     const handleSearchChange = (e, data) => {
         setInputText(data.searchQuery);

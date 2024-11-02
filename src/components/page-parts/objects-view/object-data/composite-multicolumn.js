@@ -5,12 +5,12 @@ import { Icon } from "semantic-ui-react";
 
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
+import { multicolumnExpandToggleUpdateFetch } from "../../../../fetches/ui-objects-view";
+
 import { getSubobjectDisplayOrder } from "../../../../store/state-util/composite";
 import debounce from "../../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../../util/enums/enum-debounce-delay-refresh-mode";
 
 import StyleCompositeMulticolumn from "../../../../styles/pages/objects-view/composite-multicolumn.css";
-import { multicolumnExpandToggleUpdateFetch } from "../../../../fetches/ui-objects-view";
 
 
 /**
@@ -65,7 +65,7 @@ const MulticolumnSubobjectCard = ({ objectID, subobjectID }) => {
     // Debounced fetch, which updates `is_expanded` prop of the toggled subobject
     const updateFetch = useMemo(() => debounce(async is_expanded => {
         await dispatch(multicolumnExpandToggleUpdateFetch(objectID, subobjectID, is_expanded));
-    }, 100, enumDebounceDelayRefreshMode.onCall), [objectID, subobjectID]);
+    }, 100, "onCall"), [objectID, subobjectID]);
 
     // Render
     const toggle = (

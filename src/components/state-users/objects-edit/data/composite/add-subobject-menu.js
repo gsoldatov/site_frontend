@@ -6,7 +6,6 @@ import { Button, Dropdown } from "semantic-ui-react";
 import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../../../fetches/ui-objects-edit";
 
 import debounce from "../../../../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../../../../util/enums/enum-debounce-delay-refresh-mode";
 
 
 /**
@@ -115,7 +114,7 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
 
     // Search text change handlers (updates state & runs a delayed fetch to get dropdown items)
     const _onSearchChangeDelayed = useRef(debounce(params => dispatch(compositeSubobjectDropdownFetch(params))
-                                    , 250, enumDebounceDelayRefreshMode.onCall)).current;
+                                    , 250, "onCall")).current;
     const handleSearchChange = (e, data) => {
         setAddMenuCallback({ inputText: data.searchQuery });
         _onSearchChangeDelayed({ queryText: data.searchQuery, existingIDs });

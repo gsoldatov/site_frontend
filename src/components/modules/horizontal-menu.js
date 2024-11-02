@@ -2,7 +2,6 @@ import React, { useState, useRef, memo, createContext, useContext } from "react"
 import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
 import debounce from "../../util/debounce";
-import { enumDebounceDelayRefreshMode } from "../../util/enums/enum-debounce-delay-refresh-mode";
 
 import { WindowWidthContext } from "./wrappers/window-width-provider";
 
@@ -81,7 +80,7 @@ export const HorizontalMenuButton = memo(({ icon, title, isDisabled = false, isA
  */
 export const HorizontalMenuFilter = memo(({ value, placeholder = "Filter", isDisabled, onChange, onChangeDelayed }) => {
     const _onChangeDelayed = useRef(debounce(onChangeDelayed, 500, 
-        enumDebounceDelayRefreshMode.onCall)).current;     // wrap onChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
+        "onCall")).current;     // wrap onChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
     const handleChange = e => {
         const value = e.target.value;
         onChange(value);                         // onChange is called on every change to properly dispatch state updates for input value
@@ -112,7 +111,7 @@ export const HorizontalMenuDropdown = memo(({ placeholder, isDisabled, defaultVa
 export const HorizontalMenuUpdatableDropdown = ({ placeholder, isDisabled, inputState, existingIDs, onSearchChange, onSearchChangeDelayed, 
         onChange, options }) => {
     // Search text change handlers (updates state & runs a delayed fetch to get dropdown items)
-    const _onSearchChangeDelayed = useRef(debounce(onSearchChangeDelayed , 500, enumDebounceDelayRefreshMode.onCall)).current;
+    const _onSearchChangeDelayed = useRef(debounce(onSearchChangeDelayed , 500, "onCall")).current;
     const handleSearchChange = (e, data) => {
         onSearchChange({ inputText: data.searchQuery });
         _onSearchChangeDelayed({ queryText: data.searchQuery, existingIDs });
