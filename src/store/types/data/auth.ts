@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { nonNegativeInt } from "../../../util/types/common";
+import { nonNegativeInt, timestampOrEmptyString } from "../../../util/types/common";
 
 
 /** User privilege level enumeration. */
@@ -20,9 +20,7 @@ export const userLevelInfo = [
 /** Auth data validation schema. */
 export const auth = z.object({
     access_token: z.string(),
-    access_token_expiration_time: z.string().datetime({ offset: true }).or(
-        z.string().max(0)
-    ),
+    access_token_expiration_time: timestampOrEmptyString,
     user_id: nonNegativeInt,
     numeric_user_level: z.nativeEnum(UserLevels)
 });

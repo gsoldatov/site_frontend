@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { RouteHandler } from "../route-handler";
 
-import { int, nonEmptyPositiveIntArray, nonNegativeInt, positiveInt, positiveIntArray } from "../../../../src/util/types/common";
+import { int, nonEmptyPositiveIntArray, nonNegativeInt, positiveInt, positiveIntArray, timestampOrEmptyString } from "../../../../src/util/types/common";
 import type { MockBackend } from "../../mock-backend";
 
 
@@ -183,7 +183,7 @@ const objectsUpdateAttributes = z.object({
     object_description: z.string(),
     is_published: z.boolean(),
     display_in_feed: z.boolean(),
-    feed_timestamp: z.string().datetime({ offset: true }).or(z.string().max(0)),
+    feed_timestamp: timestampOrEmptyString,
     show_description: z.boolean(),
     owner_id: positiveInt.optional(),
     added_tags: positiveInt.or(z.string().min(1)).array().optional(),

@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { positiveInt } from "../../../util/types/common";
+import { positiveInt, timestampString } from "../../../util/types/common";
 import { UserLevels } from "./auth";
 
 
 const userMin = z.object({
     user_id: positiveInt,
-    registered_at: z.string().datetime({ offset: true }),
+    registered_at: timestampString,
     username: z.string()
 });
 

@@ -13,6 +13,10 @@ export const nonEmptyIntArray = intArray.min(1);
 export const nonEmptyPositiveIntArray = positiveIntArray.min(1);
 export const nonEmptyNonNegativeIntArray = nonNegativeIntArray.min(1);
 
+/** ISO timestamp string with timezone */
+export const timestampString = z.string().datetime({ offset: true });
+export const timestampOrEmptyString = timestampString.or(z.string().max(0));
+
 
 /**
  * Makes type from `T` with attributes specified in `K` optional.
