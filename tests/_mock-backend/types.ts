@@ -7,13 +7,13 @@ import { int } from "../../src/util/types/common";
 export type FetchArgs = { method?: string, headers?: Record<string, string>, body?: string };
 
 /** Mock backend's response object schema for route handlers */
-export const responseSchema = z.object({
+export const routeHandlerResponse = z.object({
     status: int,
     body: z.record(z.string(), z.any()).optional()
 });
 
 /** Response type returned by mock backend's route handlers. */
-export type RouteHandlerResponse = z.infer<typeof responseSchema>;
+export type RouteHandlerResponse = z.infer<typeof routeHandlerResponse>;
 
 /** Response type returned by mock fetch */
 export type Response = RouteHandlerResponse & {

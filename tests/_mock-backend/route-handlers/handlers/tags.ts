@@ -6,7 +6,7 @@ import { nonEmptyPositiveIntArray } from "../../../../src/util/types/common";
 import type { MockBackend } from "../../mock-backend";
 
 
-const tagsViewBodySchema = z.object({
+const tagsViewBody = z.object({
     tag_ids: nonEmptyPositiveIntArray
 });
 
@@ -22,7 +22,7 @@ export class TagsRouteHandlers {
         this.view = new RouteHandler(backend, {
             route: "/tags/view", method: "POST",
             getResponse: requestContext => {
-                const { tag_ids = [] } = tagsViewBodySchema.parse(requestContext.body);
+                const { tag_ids = [] } = tagsViewBody.parse(requestContext.body);
                 if (tag_ids.length === 0) return { status: 400, body: { _error: "Non-empty tag_ids required." }};
 
                 const tags = tag_ids.map(tag_id => this.backend.data.tag(tag_id));

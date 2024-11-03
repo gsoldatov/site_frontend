@@ -23,7 +23,7 @@ export class ObjectsRouteHandlers {
                 currentTagID: 1000      // current "existing" tag_id (incremented, when a new tag is added)
             },
             getResponse: function (this: RouteHandler, requestContext) {
-                const { object } = objectsUpdateSchema.parse(requestContext.body);
+                const { object } = objectsUpdate.parse(requestContext.body);
                 const timestamp = (new Date()).toISOString();
                 
                 // Bind processing function to this handler, so it can use its state
@@ -38,7 +38,7 @@ export class ObjectsRouteHandlers {
         this.view = new RouteHandler(backend, {
             route: "/objects/view", method: "POST",
             getResponse: requestContext => {
-                const { object_ids = [], object_data_ids = [] } = objectsViewBodySchema.parse(requestContext.body);
+                const { object_ids = [], object_data_ids = [] } = objectsViewBody.parse(requestContext.body);
 
                 const objects = object_ids.map(object_id => this.backend.data.object(object_id).attributes);
                 const object_data = object_data_ids.map(object_id => {
@@ -58,7 +58,7 @@ export class ObjectsRouteHandlers {
             route: "/objects/get_page_object_ids", method: "POST",
             getResponse: requestContext => {
                 // NOTE: this is a stub, not full implementation
-                const { pagination_info } = getPageObjectIDsSchema.parse(requestContext.body);
+                const { pagination_info } = getPageObjectIDs.parse(requestContext.body);
                 const responseObj = { 
                     pagination_info: {
                         ...pagination_info,
@@ -132,7 +132,7 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
         // NOTE: resursive `inner` calls will skip this block, since composite subobjects can't contain updates
         let data = object["object_data"], id_mapping: Record<number, number> = {};
         if (object_type === "composite") {
-            (data as CompositeDataSchema).subobjects.forEach(subobject => {
+            (data as CompositeData).subobjects.forEach(subobject => {
                 // Process only subobjects, which contain data that needs to be updated
                 // (add it to cache and get object mapping)
                 if ("object_type" in subobject) {
@@ -145,10 +145,10 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
         // Update data in cache
         if (object_type === "composite") {
             // map subobject IDs to new values & remove non-composite props
-            data = data as CompositeDataSchema;
+            data = data as CompositeData;
             data = { ...data, subobjects: data.subobjects.map(subobject => {
                     const object_id = id_mapping[subobject.object_id] || subobject.object_id;
-                    return { ...compositeSubobjectBaseSchema.parse(subobject), object_id };
+                    return { ...compositeSubobjectBase.parse(subobject), object_id };
                 })
             };
         }
@@ -177,7 +177,7 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
 /***************************
  * /objects/update schemas
 ***************************/
-const objectsUpdateAttributesSchema = z.object({
+const objectsUpdateAttributes = z.object({
     object_id: positiveInt,
     object_name: z.string().min(1).max(255),
     object_description: z.string(),
@@ -191,16 +191,16 @@ const objectsUpdateAttributesSchema = z.object({
 });
 
 
-const linkDataSchema = z.object({
+const linkData = z.object({
     link: z.string().url(),
     show_description_as_link: z.boolean()
 });
 
-const markdownDataSchema = z.object({
+const markdownData = z.object({
     raw_text: z.string().min(1)
 });
 
-const toDoListDataSchema = z.object({
+const toDoListData = z.object({
     sort_type: z.enum(["default", "state"]),
     items: z.object({
         item_number: nonNegativeInt,
@@ -213,7 +213,7 @@ const toDoListDataSchema = z.object({
 });
 
 /** Subobject props without props passed for update */
-const compositeSubobjectBaseSchema = z.object({
+const compositeSubobjectBase = z.object({
     object_id: int,
     row: nonNegativeInt,
     column: nonNegativeInt,
@@ -224,61 +224,61 @@ const compositeSubobjectBaseSchema = z.object({
 });
 
 /** Subobject attributes can be passed along with basic props */
-const compositeSubobjectWithAttributesBaseSchema = objectsUpdateAttributesSchema
+const compositeSubobjectWithAttributesBase = objectsUpdateAttributes
     .omit({ object_id: true, added_tags: true, removed_tag_ids: true })
     .merge(z.object({ object_id: int }))
-    .merge(compositeSubobjectBaseSchema)
+    .merge(compositeSubobjectBase)
 ;
 
 /** Full schema of composite subobjects with attributes & data provided */
-const compositeSubobjectWithAttributesAndDataSchema = 
-    compositeSubobjectWithAttributesBaseSchema
+const compositeSubobjectWithAttributesAndData = 
+    compositeSubobjectWithAttributesBase
     .merge(z.object({ 
         object_type: z.literal("link"), 
-        object_data: linkDataSchema
+        object_data: linkData
     }))
     // subobject with markdown data & object attributes
-    .or(compositeSubobjectWithAttributesBaseSchema
+    .or(compositeSubobjectWithAttributesBase
         .merge(z.object({ 
             object_type: z.literal("markdown"), 
-            object_data: markdownDataSchema
+            object_data: markdownData
     })))    
     // subobject with to-do list data & object attributes
-    .or(compositeSubobjectWithAttributesBaseSchema
+    .or(compositeSubobjectWithAttributesBase
         .merge(z.object({ 
             object_type: z.literal("to_do_list"), 
-            object_data: linkDataSchema
+            object_data: linkData
     })))
 ;
 
 /** Full schema of a composite subobject (with & without attributes and data) */
-const compositeSubobjectSchema = compositeSubobjectBaseSchema.or(compositeSubobjectWithAttributesAndDataSchema);
+const compositeSubobject = compositeSubobjectBase.or(compositeSubobjectWithAttributesAndData);
 
 /** Full composite data schema */
-const compositeDataSchema = z.object({
+const compositeData = z.object({
     display_mode: z.enum(["basic", "grouped_links", "multicolumn", "chapters"]),
     numerate_chapters: z.boolean(),    
-    subobjects: compositeSubobjectSchema.array().min(1)
+    subobjects: compositeSubobject.array().min(1)
 });
 
-type CompositeDataSchema = z.infer<typeof compositeDataSchema>;
-type CompositeSubobjectWithAttributesAndData = z.infer<typeof compositeSubobjectWithAttributesAndDataSchema>;
+type CompositeData = z.infer<typeof compositeData>;
+type CompositeSubobjectWithAttributesAndData = z.infer<typeof compositeSubobjectWithAttributesAndData>;
 
 
-const objectDataSchema = 
-    linkDataSchema
-    .or(markdownDataSchema)
-    .or(toDoListDataSchema)
-    .or(compositeDataSchema)
+const objectData = 
+    linkData
+    .or(markdownData)
+    .or(toDoListData)
+    .or(compositeData)
 ;
 
-const objectsUpdateSchema = z.object({
+const objectsUpdate = z.object({
     object: 
-        objectsUpdateAttributesSchema
-        .merge(z.object({ object_data: objectDataSchema }))
+        objectsUpdateAttributes
+        .merge(z.object({ object_data: objectData }))
 });
 
-type ObjectsUpdateObject = z.infer<typeof objectsUpdateSchema.shape.object>;
+type ObjectsUpdateObject = z.infer<typeof objectsUpdate.shape.object>;
 
 type ObjectsAddUpdateObject = ObjectsUpdateObject & { object_type?: string };    // NOTE: implement fully if/when required
 
@@ -286,7 +286,7 @@ type ObjectsAddUpdateObject = ObjectsUpdateObject & { object_type?: string };   
 /***************************
  * /objects/view schema
 ***************************/
-export const objectsViewBodySchema = z.object({
+export const objectsViewBody = z.object({
     object_ids: nonEmptyPositiveIntArray.optional(),
     object_data_ids: nonEmptyPositiveIntArray.optional()
 }).refine(({ object_ids, object_data_ids}) => (object_ids || []).length > 0 || (object_data_ids || []).length > 0);
@@ -295,7 +295,7 @@ export const objectsViewBodySchema = z.object({
 /***********************************
  * /objects/getPageObjectIDs schema
 ***********************************/
-const getPageObjectIDsSchema = z.object({
+const getPageObjectIDs = z.object({
     pagination_info: z.object({
         page: positiveInt,
         items_per_page: positiveInt,

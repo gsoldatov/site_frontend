@@ -1,5 +1,5 @@
 import { getBackend } from "../../_mock-backend/mock-backend";
-import { objectsViewBodySchema } from "../../_mock-backend/route-handlers/handlers/objects";
+import { objectsViewBody } from "../../_mock-backend/route-handlers/handlers/objects";
 
 import type { RequestContext } from "../../_mock-backend/request-context";
 import type { RouteHandler } from "../../_mock-backend/route-handlers/route-handler";
@@ -13,7 +13,7 @@ export function mockFetchFailForObjectsView(this: RouteHandler, objectIDs: numbe
     const backend = getBackend();
 
     backend.routeHandlers.objects.view.setCustomResponseFunction(function (this: RouteHandler, requestContext: RequestContext) {
-        const { object_ids = [], object_data_ids = [] } = objectsViewBodySchema.parse(requestContext.body);
+        const { object_ids = [], object_data_ids = [] } = objectsViewBody.parse(requestContext.body);
         if (object_ids.filter(id => objectIDs.includes(id)).length > 0 || object_data_ids.filter(id => objectIDs.includes(id)).length > 0) {
             throw TypeError("NetworkError");
         } else {
@@ -30,7 +30,7 @@ export function addNonExistingObjectsForObjectsView(this: RouteHandler, objectID
     const backend = getBackend();
 
     backend.routeHandlers.objects.view.setCustomResponseFunction(function (this: RouteHandler, requestContext: RequestContext) {
-        let { object_ids = [], object_data_ids = [] } = objectsViewBodySchema.parse(requestContext.body);
+        let { object_ids = [], object_data_ids = [] } = objectsViewBody.parse(requestContext.body);
         object_ids = object_ids.filter(id => !objectIDs.includes(id));
         object_data_ids = object_data_ids.filter(id => !objectIDs.includes(id));
 

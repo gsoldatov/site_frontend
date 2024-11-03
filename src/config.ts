@@ -6,7 +6,7 @@ import originalConfig from "./config.json";
 
 import { useMountedState } from "./util/hooks/use-mounted-state";
 import { getFromDocumentApp, setDocumentApp } from "./util/document-app";
-import { configSchema } from "./util/types/config";
+import { config } from "./util/types/config";
 
 import type { AppConfig } from "./util/types/config";
 
@@ -50,8 +50,8 @@ export const updateConfig = (newProps: Partial<AppConfig>): void => {
  * Resets app config to default state from `config.json`.
  */
 export const resetConfig = (): void => {
-    const config = configSchema.parse(originalConfig).app;
-    setDocumentApp({ config });
+    const c = config.parse(originalConfig).app;
+    setDocumentApp({ config: c });
     runCallbacks();
 };
 
@@ -103,8 +103,8 @@ export const useConfigState = (selector: (config: AppConfig) => any): any => {
 
 
 // Add default config & updater to document.app store
-const config = configSchema.parse(originalConfig).app;
-setDocumentApp({ config, updateConfig });
+const c = config.parse(originalConfig).app;
+setDocumentApp({ config: c, updateConfig });
 
 /** Store for callback, which are run on config change */
 const configStateChangeCallbacks: Set<ConfigOnChangeCallback> = new Set();

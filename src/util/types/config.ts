@@ -4,7 +4,7 @@ import { int, nonNegativeInt } from "./common";
 
 
 /** App config schema */
-export const appConfigSchema = z.object({
+const appConfig = z.object({
     backendURL: z.string().url(),
     compositeChapters: z.object({
         maxHierarchyDepth: int.min(1).max(6)
@@ -15,11 +15,11 @@ export const appConfigSchema = z.object({
 });
 
 /** Full config schema */
-export const configSchema = z.object({
-    app: appConfigSchema,
+export const config = z.object({
+    app: appConfig,
     server: z.object({
         port: int.min(1024).max(65536)
     })
 });
 
-export type AppConfig = z.infer<typeof appConfigSchema>;
+export type AppConfig = z.infer<typeof appConfig>;

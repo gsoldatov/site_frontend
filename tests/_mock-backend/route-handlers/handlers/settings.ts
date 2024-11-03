@@ -5,7 +5,7 @@ import { RouteHandler } from "../route-handler";
 import type { MockBackend } from "../../mock-backend";
 import type { Settings, SettingsNames } from "../../../_mock-data/modules/settings";
 
-const settingsViewBodySchema = z.object({ view_all: z.boolean() }).or(
+const settingsViewBody = z.object({ view_all: z.boolean() }).or(
     z.object({ setting_names: z.string().array().min(1) })
 );
 
@@ -21,7 +21,7 @@ export class SettingsRouteHandlers {
         this.view = new RouteHandler(backend, {
             route: "/settings/view", method: "POST",
             getResponse: requestContext => {
-                const body = settingsViewBodySchema.parse(requestContext.body);
+                const body = settingsViewBody.parse(requestContext.body);
 
                 let settings: Partial<Settings> = this.backend.data.settings();
                 if ("setting_names" in body) {
