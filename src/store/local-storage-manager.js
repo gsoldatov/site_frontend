@@ -1,6 +1,6 @@
 import getInitialState from "./state-templates/initial-state";
 import { defaultEditedObjectState } from "./state-templates/edited-object";
-import { getDefaultAuthState } from "./state-templates/auth";
+import { getDefaultAuthState } from "./types/data/auth";
 
 import debounce from "../util/debounce";
 

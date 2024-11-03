@@ -5,7 +5,7 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 
 import { registrationStatusFetch, logoutFetch, getCurrentUserData } from "../../../fetches/auth";
 
-import { enumUserLevels } from "../../../util/enums/enum-user-levels";
+import { UserLevels } from "../../../store/types/data/auth";
 import { useMountedState } from "../../../util/hooks/use-mounted-state";
 
 
@@ -13,7 +13,7 @@ import { useMountedState } from "../../../util/hooks/use-mounted-state";
  * Navigation bar's secondary menu component with auth controls.
  */
 export const NavbarSecondaryMenu = ({ isStacked, isExpanded }) => {
-    const isUserLoggedIn = useSelector(state => state.auth.numeric_user_level > enumUserLevels.anonymous);
+    const isUserLoggedIn = useSelector(state => state.auth.numeric_user_level > UserLevels.anonymous);
 
     const location = useLocation();
     const isMenuDisplayed = (!isStacked || isExpanded) && location.pathname.startsWith("/auth/") === false;

@@ -1,6 +1,6 @@
 import { deepCopy } from "../../util/copy";
 
-import { getDefaultAuthState } from "./auth";
+import { getDefaultAuthState } from "../types/data/auth";
 import { getDefaultModalState } from "./modal";
 import { getDefaultCurrentTagState } from "./tags";
 

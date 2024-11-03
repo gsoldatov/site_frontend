@@ -10,7 +10,7 @@ import { ProtectedRoute } from "../../src/components/modules/wrappers/protected-
 import { setAuthInformation } from "../../src/actions/auth";
 
 import { deepEqual } from "../../src/util/equality-checks";
-import { getDefaultAuthState } from "../../src/store/state-templates/auth";
+import { getDefaultAuthState } from "../../src/store/types/data/auth";
 
 
 /*

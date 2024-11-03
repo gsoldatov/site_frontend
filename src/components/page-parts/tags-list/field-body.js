@@ -10,7 +10,7 @@ import { TagsListPagination } from "./tags-list-pagination";
 import { toggleTagSelection } from "../../../actions/tags-list";
 import { pageFetch } from "../../../fetches/ui-tags-list";
 
-import { enumUserLevels } from "../../../util/enums/enum-user-levels";
+import { UserLevels } from "../../../store/types/data/auth";
 
 
 /**
@@ -67,7 +67,7 @@ const PageTags = () => {
  */
 const TagsListFieldItem = memo(({ id }) => {
     const dispatch = useDispatch();
-    const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === enumUserLevels.admin);
+    const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === UserLevels.admin);
 
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     const URL = `/tags/view?tagIDs=${id}`;

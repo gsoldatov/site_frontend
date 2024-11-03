@@ -3,11 +3,10 @@ import { getConfig } from "../config";
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { getNonCachedUsers } from "./data-users";
 
-import { setAuthInformation } from "../actions/auth";
-import { resetStateExceptForEditedObjects, setRedirectOnRender } from "../actions/common";
+import { resetStateExceptForEditedObjects } from "../actions/common";
 
 import { validateLoginCredentials, validateRegisterCredentials } from "../store/state-util/auth";
-import { enumUserLevels } from "../util/enums/enum-user-levels";
+import { UserLevels } from "../store/types/data/auth";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 import { setNavigationUI } from "../actions/navigation";
 
@@ -88,7 +87,7 @@ export const registrationStatusFetch = () => {
 export const loginFetch = (login, password) => {
     return async (dispatch, getState) => {
         // Exit if logged in
-        if (getState().auth.numeric_user_level > enumUserLevels.anonymous) return { errors: { form: "You are already logged in." }};
+        if (getState().auth.numeric_user_level > UserLevels.anonymous) return { errors: { form: "You are already logged in." }};
 
         // Validate entered credentials
         let validationErrors = validateLoginCredentials(login, password);
@@ -163,7 +162,7 @@ export const logoutFetch = () => {
  export const getCurrentUserData = () => {
     return async (dispatch, getState) => {
         const user_id = getState().auth.user_id;
-        const fullViewMode = getState().auth.numeric_user_level === enumUserLevels.admin;
+        const fullViewMode = getState().auth.numeric_user_level === UserLevels.admin;
 
         dispatch(setNavigationUI({ isFetching: true }));
         let result = await dispatch(getNonCachedUsers([user_id], fullViewMode));

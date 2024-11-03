@@ -10,7 +10,7 @@ import { setShowDeleteDialogTags } from "../../../actions/tags-list";
 import { onDeleteFetch } from "../../../fetches/ui-tags-list";
 import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../../store/state-util/ui-tags-list";
 
-import { enumUserLevels } from "../../../util/enums/enum-user-levels";
+import { UserLevels } from "../../../store/types/data/auth";
 
 
 /**
@@ -18,7 +18,7 @@ import { enumUserLevels } from "../../../util/enums/enum-user-levels";
  */
 export const TagsListSideMenu = () => {
     // const dispatch = useDispatch();
-    const isLoggedIn = useSelector(state => state.auth.numeric_user_level > enumUserLevels.anonymous);
+    const isLoggedIn = useSelector(state => state.auth.numeric_user_level > UserLevels.anonymous);
 
     // Render an empty side menu to keep side menu column in layout
     if (!isLoggedIn) return <SideMenu />;

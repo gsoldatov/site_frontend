@@ -28,12 +28,12 @@ import { ObjectsEditedPage } from "./pages/objects-edited";
 import { ObjectsListPage } from "./pages/objects-list";
 import { NotFoundPage } from "./pages/not-found";
 
-import { enumUserLevels } from "../util/enums/enum-user-levels";
+import { UserLevels } from "../store/types/data/auth";
 
 
-export const isAuthenticatedCondition = state => state.auth.numeric_user_level > enumUserLevels.anonymous;
-export const isAuthenticatedAdminCondition = state => state.auth.numeric_user_level === enumUserLevels.admin;
-export const isAnonymousCondition = state => state.auth.numeric_user_level === enumUserLevels.anonymous;
+export const isAuthenticatedCondition = state => state.auth.numeric_user_level > UserLevels.anonymous;
+export const isAuthenticatedAdminCondition = state => state.auth.numeric_user_level === UserLevels.admin;
+export const isAnonymousCondition = state => state.auth.numeric_user_level === UserLevels.anonymous;
 
 
 export const App = () => {

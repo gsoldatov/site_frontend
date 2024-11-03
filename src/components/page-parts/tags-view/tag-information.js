@@ -6,7 +6,7 @@ import { Icon, Header } from "semantic-ui-react";
 
 import { RenderedMarkdown } from "../../modules/markdown/rendered-markdown";
 
-import { enumUserLevels } from "../../../util/enums/enum-user-levels";
+import { UserLevels } from "../../../store/types/data/auth";
 import { useParsedMarkdownState } from "../../../util/hooks/use-parsed-markdown-state";
 import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
 
@@ -71,7 +71,7 @@ export const TagInformation = () => {
  */
 const TagInformationHeader = ({ tagID }) => {
     const text = useSelector(state => tagID in state.tags ? state.tags[tagID].tag_name : "");
-    const renderEditButton = useSelector(state => state.auth.numeric_user_level === enumUserLevels.admin);
+    const renderEditButton = useSelector(state => state.auth.numeric_user_level === UserLevels.admin);
 
     const header = text.length > 0 && <Header as="h2" className="tags-view-information-header">{text}</Header>;
 

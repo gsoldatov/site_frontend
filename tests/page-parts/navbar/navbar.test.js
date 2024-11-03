@@ -8,7 +8,7 @@ import { renderWithWrappers } from "../../_util/render";
 
 import { App } from "../../../src/components/app";
 
-import { getDefaultAuthState } from "../../../src/store/state-templates/auth";
+import { getDefaultAuthState } from "../../../src/store/types/data/auth";
 import { getAdminPageElements } from "../../_util/ui-admin";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
 import { getSearchPageElements } from "../../_util/ui-search";

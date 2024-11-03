@@ -15,7 +15,7 @@ import { getMappedSubobjectID } from "../_mocks/data-composite";
 
 import { App } from "../../src/components/app";
 
-import { getDefaultAuthState } from "../../src/store/state-templates/auth";
+import { getDefaultAuthState } from "../../src/store/types/data/auth";
 
 import { getConfig, setConfig } from "../../src/config";
 
