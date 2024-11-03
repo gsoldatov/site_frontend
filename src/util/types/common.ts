@@ -15,7 +15,11 @@ export const nonEmptyNonNegativeIntArray = nonNegativeIntArray.min(1);
 
 /** ISO timestamp string with timezone */
 export const timestampString = z.string().datetime({ offset: true });
+/** ISO timestamp string with timezone or an empty string */
 export const timestampOrEmptyString = timestampString.or(z.string().max(0));
+
+/** String with a width between 1 and 255 chars */
+export const nameString = z.string().min(1).max(255);
 
 
 /**
