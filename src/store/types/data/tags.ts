@@ -11,3 +11,5 @@ export const tag = z.object({
     tag_description: z.string(),
     is_published: z.boolean()
 });
+
+export const tags = z.record(positiveInt, tag);

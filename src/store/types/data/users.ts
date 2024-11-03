@@ -17,3 +17,5 @@ export const userFull = userMin.extend({
 });
 
 export const user = userMin.or(userFull);
+
+export const users = z.record(positiveInt, user);
