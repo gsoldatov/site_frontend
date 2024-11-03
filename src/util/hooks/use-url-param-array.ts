@@ -9,20 +9,21 @@ import { useLocation } from "react-router-dom";
  * 
  * Returned array is memoized.
  */
-export const useURLParamArray = (param) => {
+export const useURLParamArray = (param: string) => {
     const location = useLocation();
     const URLParams = new URLSearchParams(location.search);
 
     return useMemo(() => {  // Memoize returned array
-        let array = URLParams.get(param);
+        let result: string[];
     
         try {
+            let array = URLParams.get(param);
             if (!array) throw(`${param} URL search param is missing`);
-            array = decodeURIComponent(array).split(",");
+            result = decodeURIComponent(array).split(",");
         } catch {
-            array = [];
+            result = [];
         }
 
-        return array;
+        return result;
     }, [param, location.search]);
 };

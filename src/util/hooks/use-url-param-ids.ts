@@ -9,7 +9,7 @@ import { useURLParamArray } from "./use-url-param-array";
  * 
  * Returned array is memoized.
  */
-export const useURLParamIDs = (param) => {
+export const useURLParamIDs = (param: string) => {
     let array = useURLParamArray(param);
 
     return useMemo(() => {  // Memoize returned array
