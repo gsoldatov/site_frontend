@@ -1,4 +1,4 @@
-import { getSubobjectDefaults } from "../../store/state-templates/composite-subobjects";
+import { getDefaultSubobject } from "../../store/types/data/composite";
 import { objectAttributes, defaultEditedObjectState } from "../../store/state-templates/edited-object";
 import { deepCopy } from "../../util/copy";
 
@@ -73,7 +73,7 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
                 
                 composite.subobjects = {};
                 od.object_data.subobjects.forEach(so => {
-                    const subobject = getSubobjectDefaults();
+                    const subobject = getDefaultSubobject();
                     for (let attr of Object.keys(subobject))
                         if (attr in so) subobject[attr] = so[attr];
                     composite.subobjects[so.object_id] = subobject;

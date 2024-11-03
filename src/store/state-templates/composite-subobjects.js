@@ -2,16 +2,6 @@ import { deepCopy } from "../../util/copy";
 
 
 /**
- * Subobject's `deleteMode` values.
- */
-export const enumDeleteModes = {
-    none: 0,
-    subobjectOnly: 1,
-    full: 2
-};
-
-
-/**
  * Possible options for display of composite subobject's description & and link object data.
  */
 export const enumShowDescriptionComposite = {
@@ -32,7 +22,7 @@ const subobjectDefaults = {
     column: -1, 
     selected_tab: 0, 
     is_expanded: true,
-    deleteMode: enumDeleteModes.none, 
+    deleteMode: 0,  // NOTE: change to using enum, if not deleted
     fetchError: "",
     show_description_composite: enumShowDescriptionComposite.inherit.value,
     show_description_as_link_composite: enumShowDescriptionComposite.inherit.value
@@ -43,12 +33,6 @@ const subobjectDefaults = {
  * Composite subobject state, which is checked for modification.
  */
 export const subobjectAttributesCheckedForModification = ["row", "column", "selected_tab", "is_expanded", "show_description_composite", "show_description_as_link_composite"];
-
-
-/**
- * Returns a deep copy of a composite subobject's default state.
- */
-export const getSubobjectDefaults = () => deepCopy(subobjectDefaults);
 
 
 /**

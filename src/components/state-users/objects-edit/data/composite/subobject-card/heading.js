@@ -5,7 +5,7 @@ import { createSelector } from "reselect";
 
 import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified, getObjectDataFromStore } from "../../../../../../store/state-util/objects";
 import { subobjectStateIsModified, nonCompositeSubobjectIsValid, getNonCompositeSubobjectValidationError } from "../../../../../../store/state-util/composite";
-import { enumDeleteModes } from "../../../../../../store/state-templates/composite-subobjects";
+import { SubobjectDeleteModes } from "../../../../../../store/types/data/composite";
 import { enumObjectTypes } from "../../../../../../util/enums/enum-object-types";
 
 
@@ -148,9 +148,9 @@ const Indicators = ({ objectID, subobjectID }) => {
             
             // Deleted
             { name: "trash alternate", color: "black", title: "Subobject is marked for deletion", 
-                isDisplayedSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.subobjectOnly },
+                isDisplayedSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.subobjectOnly },
             { name: "trash alternate", color: "red", title: "Subobject is marked for full deletion", 
-                isDisplayedSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.full }
+                isDisplayedSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.full }
         ]
     }, [objectID, subobjectID]);
 

@@ -1,10 +1,12 @@
 import { deepCopy } from "../../util/copy";
 import { deepEqual } from "../../util/equality-checks";
-import { enumDeleteModes, serializedCompositeObjectDataProps } from "../state-templates/composite-subobjects";
+import { serializedCompositeObjectDataProps } from "../state-templates/composite-subobjects";
+import { SubobjectDeleteModes } from "../types/data/composite";
 import { getSubobjectDisplayOrder } from "./composite";
 import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
 import { compositeSubobjectObjectAttributes, addedObjectAttributes, updatedObjectAttributes } from "../state-templates/edited-object";
 import { UserLevels } from "../../store/types/data/auth";
+
 /*
     Functions for checking/getting objects state.
 */
@@ -38,7 +40,7 @@ export const validateObject = (state, obj) => {
             // Check if at least one non-deleted subobject exists
             let hasNonDeletedSubobjects = false;
             for (let subobjectID of Object.keys(obj.composite.subobjects))
-                if (obj.composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none) {
+                if (obj.composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.none) {
                     hasNonDeletedSubobjects = true;
                     break;
                 }
@@ -48,7 +50,7 @@ export const validateObject = (state, obj) => {
             // Recursively check non-composite non-deleted subobjects
             for (let subobjectID of Object.keys(obj.composite.subobjects)) {
                 const subobject = state.editedObjects[subobjectID];
-                if (subobject !== undefined && subobject.object_type !== "composite" && obj.composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none) 
+                if (subobject !== undefined && subobject.object_type !== "composite" && obj.composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.none) 
                     validateNonCompositeObject(subobject);
             }
 
@@ -144,7 +146,7 @@ export const serializeObjectData = (state, obj) => {
             // Get non-deleted subobjects
             let nonDeletedSubobjects = {};
             for (let subobjectID of Object.keys(obj.composite.subobjects)) {
-                if (obj.composite.subobjects[subobjectID].deleteMode === enumDeleteModes.none) {
+                if (obj.composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.none) {
                     nonDeletedSubobjects[subobjectID] = deepCopy(obj.composite.subobjects[subobjectID]);
                 }
             }
@@ -197,8 +199,8 @@ export const serializeObjectData = (state, obj) => {
             for (let subobjectID of Object.keys(obj.composite.subobjects)) {
                 const object_id = parseInt(subobjectID);
                 const deleteMode = obj.composite.subobjects[subobjectID].deleteMode;
-                if (object_id > 0 && deleteMode !== enumDeleteModes.none)
-                    deleted_subobjects.push({ object_id, is_full_delete: deleteMode === enumDeleteModes.full });
+                if (object_id > 0 && deleteMode !== SubobjectDeleteModes.none)
+                    deleted_subobjects.push({ object_id, is_full_delete: deleteMode === SubobjectDeleteModes.full });
             }
 
             // Return serialized composite object data

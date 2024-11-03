@@ -1,7 +1,7 @@
 import { getStateWithAddedObjects, getStateWithAddedObjectsData, getStateWithDeletedObjects } from "./data-objects";
 import { getStateWithDeletedEditedNewSubobjects, getStateWithResetEditedObjects } from "./object";
 
-import { enumDeleteModes, getSubobjectDefaults } from "../../store/state-templates/composite-subobjects";
+import { SubobjectDeleteModes, getDefaultSubobject } from "../../store/types/data/composite";
 import { getNewSubobjectID } from "../../store/state-util/composite";
 import { objectHasNoChanges } from "../../store/state-util/objects";
 import { deepCopy } from "../../util/copy";
@@ -29,7 +29,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         };
 
         const { row, column } = update;
-        newCompositeData.subobjects[newID] = { ...getSubobjectDefaults(), row, column };
+        newCompositeData.subobjects[newID] = { ...getDefaultSubobject(), row, column };
 
         newState.editedObjects[objectID] = {
             ...newState.editedObjects[objectID],
@@ -50,7 +50,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
             newState = getStateWithResetEditedObjects(newState, [subobjectID]);
         }
         const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };
-        newSubobjects[subobjectID] = { ...getSubobjectDefaults(), row, column };
+        newSubobjects[subobjectID] = { ...getDefaultSubobject(), row, column };
         
         return {
             ...newState,
@@ -74,7 +74,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         if (oldSubobjectState === undefined) return state;
         
         const newSubobjectState = { ...oldSubobjectState };
-        for (let attr of Object.keys(getSubobjectDefaults()))
+        for (let attr of Object.keys(getDefaultSubobject()))
             if (update[attr] !== undefined) newSubobjectState[attr] = update[attr];
         
         return {
@@ -140,13 +140,13 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         // Remove new and unchanged (non-fully) deleted existing objects from state
         let subobjectIDs = Object.keys(newState.editedObjects[objectID].composite.subobjects);
         let deletedSubobjectIDs = subobjectIDs.filter(subobjectID => 
-                                                    newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.subobjectOnly
+                                                    newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.subobjectOnly
                                                     && objectHasNoChanges(newState, subobjectID));
         newState = getStateWithDeletedObjects(newState, deletedSubobjectIDs);
         
         // Remove fully deleted existing objectsfrom state
         let fullyDeletedExistingSubobjectIDs = subobjectIDs.filter(subobjectID => {
-            return parseInt(subobjectID) > 0 && newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === enumDeleteModes.full
+            return parseInt(subobjectID) > 0 && newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.full
         });
         newState = getStateWithDeletedObjects(newState, fullyDeletedExistingSubobjectIDs);
 

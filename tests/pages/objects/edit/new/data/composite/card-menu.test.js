@@ -10,7 +10,7 @@ import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElem
     clickSubobjectCardDataTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons } from "../../../../../../_util/ui-composite";
 
 import { App } from "../../../../../../../src/components/app";
-import { enumDeleteModes } from "../../../../../../../src/store/state-templates/composite-subobjects";
+import { SubobjectDeleteModes } from "../../../../../../../src/store/types/data/composite";
 
 
 /*
@@ -130,7 +130,7 @@ describe("New subobject", () => {
 
         // Check if first subobject is deleted
         getByText(firstCard, "Subobject is marked for deletion.");
-        expect(store.getState().editedObjects[0].composite.subobjects[firstCard.id].deleteMode).toEqual(enumDeleteModes.subobjectOnly);
+        expect(store.getState().editedObjects[0].composite.subobjects[firstCard.id].deleteMode).toEqual(SubobjectDeleteModes.subobjectOnly);
         
         // Check if tab selection is disabled
         const { subobjectGeneralTabButton, subobjectDataTabButton } = getSubobjectCardTabSelectionButtons(firstCard);
@@ -138,7 +138,7 @@ describe("New subobject", () => {
         expect(subobjectDataTabButton.classList.contains("disabled")).toBeTruthy();
 
         // Check if second subobject is not deleted
-        expect(store.getState().editedObjects[0].composite.subobjects[secondCard.id].deleteMode).toEqual(enumDeleteModes.none);
+        expect(store.getState().editedObjects[0].composite.subobjects[secondCard.id].deleteMode).toEqual(SubobjectDeleteModes.none);
 
         // Restore first subobject
         const { restoreButton } = getSubobjectCardMenuButtons(firstCard);
@@ -147,7 +147,7 @@ describe("New subobject", () => {
 
         // Check if first subobject is restored
         expect(getSubobjectCardAttributeElements(firstCard).subobjectDescriptionInput).toBeTruthy();
-        expect(store.getState().editedObjects[0].composite.subobjects[firstCard.id].deleteMode).toEqual(enumDeleteModes.none);
+        expect(store.getState().editedObjects[0].composite.subobjects[firstCard.id].deleteMode).toEqual(SubobjectDeleteModes.none);
 
         // Check if restore button is not displayed
         expect(getSubobjectCardMenuButtons(firstCard).restoreButton).toBeFalsy();
@@ -306,11 +306,11 @@ describe("Exising subobject", () => {
 
         // Click delete button and check if subobject is deleted
         fireEvent.click(getSubobjectCardMenuButtons(card).deleteButton);
-        expect(store.getState().editedObjects[0].composite.subobjects[card.id].deleteMode).toEqual(enumDeleteModes.subobjectOnly);
+        expect(store.getState().editedObjects[0].composite.subobjects[card.id].deleteMode).toEqual(SubobjectDeleteModes.subobjectOnly);
 
         // Click restore button and check if subobject is restored
         fireEvent.click(getSubobjectCardMenuButtons(card).restoreButton);
-        expect(store.getState().editedObjects[0].composite.subobjects[card.id].deleteMode).toEqual(enumDeleteModes.none);
+        expect(store.getState().editedObjects[0].composite.subobjects[card.id].deleteMode).toEqual(SubobjectDeleteModes.none);
     });
 
 
@@ -334,10 +334,10 @@ describe("Exising subobject", () => {
 
         // Click delete button and check if subobject is deleted
         fireEvent.click(getSubobjectCardMenuButtons(card).fullDeleteButton);
-        expect(store.getState().editedObjects[0].composite.subobjects[card.id].deleteMode).toEqual(enumDeleteModes.full);
+        expect(store.getState().editedObjects[0].composite.subobjects[card.id].deleteMode).toEqual(SubobjectDeleteModes.full);
 
         // Click restore button and check if subobject is restored
         fireEvent.click(getSubobjectCardMenuButtons(card).restoreButton);
-        expect(store.getState().editedObjects[0].composite.subobjects[card.id].deleteMode).toEqual(enumDeleteModes.none);
+        expect(store.getState().editedObjects[0].composite.subobjects[card.id].deleteMode).toEqual(SubobjectDeleteModes.none);
     });
 });
