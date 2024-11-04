@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { nonNegativeInt, positiveInt, positiveIntArray, timestampOrEmptyString } from "../../../util/types/common";
+import { nonNegativeInt, positiveInt, positiveIntArray } from "../../../util/types/common";
 
 
 /** /tags/list page UI state schema. */
@@ -28,7 +28,7 @@ export const tagsListUI = z.object({
 type TagsListUI = z.infer<typeof tagsListUI>;
 
 
-/** Returns /tags/liststate with default values being replaced `customValues`. */
+/** Returns /tags/list state with default values being replaced `customValues`. */
 export const getTagsListUI = (customValues: Partial<TagsListUI> = {}) => tagsListUI.parse({
     paginationInfo: {
         currentPage: 1,
