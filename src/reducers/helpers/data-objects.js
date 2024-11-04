@@ -145,7 +145,7 @@ export const getStateWithDeletedObjects = (state, objectIDs, deleteSubobjects) =
     objectIDs = objectIDs.concat(...subobjectIDs);
     
     // Deselect objects
-    const newSelectedObjectIDs = state.objectsUI.selectedObjectIDs.filter(objectID => objectIDs.indexOf(objectID) === -1);
+    const newSelectedObjectIDs = state.objectsListUI.selectedObjectIDs.filter(objectID => objectIDs.indexOf(objectID) === -1);
     
     // Remove from storage
     const storageNames = ["objects", "links", "markdown", "toDoLists", "composite", "objectsTags", "editedObjects"];
@@ -160,8 +160,8 @@ export const getStateWithDeletedObjects = (state, objectIDs, deleteSubobjects) =
     return { 
         ...state, 
         ...newStorages,
-        objectsUI: {
-            ...state.objectsUI,
+        objectsListUI: {
+            ...state.objectsListUI,
             selectedObjectIDs: newSelectedObjectIDs
         }
     };

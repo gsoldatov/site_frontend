@@ -15,7 +15,7 @@ import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingTagIDsSel
  * Common, added & partially applied tags for selected objects on the /objects/list page.
  */
 export const SelectedObjectsTags = () => {
-    const isVisible = useSelector(state => state.objectsUI.selectedObjectIDs.length > 0 || partiallyAppliedTagIDsSelector(state).length > 0);
+    const isVisible = useSelector(state => state.objectsListUI.selectedObjectIDs.length > 0 || partiallyAppliedTagIDsSelector(state).length > 0);
     if (!isVisible) return null;
 
     return (
@@ -31,7 +31,7 @@ export const SelectedObjectsTags = () => {
  * Common existing & added tags inline item lists.
  */
 const CommonTags = () => {
-    const isVisible = useSelector(state => state.objectsUI.selectedObjectIDs.length > 0);
+    const isVisible = useSelector(state => state.objectsListUI.selectedObjectIDs.length > 0);
     if (!isVisible) return null;
 
     return (
@@ -58,7 +58,7 @@ const AddedTagsList = () => {
 
 const NewTagInput = () => {
     const dispatch = useDispatch();
-    const inputState = useSelector(state => state.objectsUI.tagsInput);
+    const inputState = useSelector(state => state.objectsListUI.tagsInput);
     
     const setInputState = useMemo(() => newState => dispatch(setObjectsTagsInput(newState)), []);
     const setItem = useMemo(() => params => dispatch(setCurrentObjectsTags(params)), []);
@@ -93,7 +93,7 @@ const CommonCurrentTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
 
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
-    const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
+    const isRemoved = useSelector(state => state.objectsListUI.removedTagIDs.includes(id));
     const className = isRemoved ? "deleted" : undefined;
     const URL = `/tags/view?tagIDs=${id}`;
     const icons = useMemo(() =>
@@ -126,8 +126,8 @@ const PartiallyAppliedTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
 
     const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
-    const isAdded = useSelector(state => state.objectsUI.addedTags.includes(id));
-    const isRemoved = useSelector(state => state.objectsUI.removedTagIDs.includes(id));
+    const isAdded = useSelector(state => state.objectsListUI.addedTags.includes(id));
+    const isRemoved = useSelector(state => state.objectsListUI.removedTagIDs.includes(id));
     const className = isAdded ? "existing" : isRemoved ? "deleted" : undefined;
     const URL = `/tags/view?tagIDs=${id}`;
     const icons = useMemo(() =>

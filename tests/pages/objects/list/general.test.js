@@ -91,7 +91,7 @@ describe("Page load and pagination", () => {
     
         // Check if no pagination is rendered during fetch
         await waitFor(() => expect(
-            store.getState().objectsUI.fetch.isFetching === true
+            store.getState().objectsListUI.fetch.isFetching === true
             && container.querySelector(".pagination") === null
         ).toBeTruthy());
     
@@ -230,7 +230,7 @@ describe("Side menu", () => {
 
         // Check if buttons can't be clicked during fetch
         await waitFor(() => expect(
-            store.getState().objectsUI.fetch.isFetching === true
+            store.getState().objectsListUI.fetch.isFetching === true
             && addObjectButton.classList.contains("disabled") // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
             && editObjectButton.classList.contains("disabled")
             && deleteObjectButton.classList.contains("disabled")
@@ -285,13 +285,13 @@ describe("Side menu", () => {
         // Select two objects and check if edit button is disabled
         fireEvent.click(firstObjectCheckbox);
         fireEvent.click(secondObjectCheckbox);
-        await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs).toEqual(expect.arrayContaining([1, 2])));
+        await waitFor(() => expect(store.getState().objectsListUI.selectedObjectIDs).toEqual(expect.arrayContaining([1, 2])));
         fireEvent.click(editObjectButton);     // editObjectButton.onclick is not null after handler is added, although the button is not clickable, so checking onclick prop on being null is not viable
         historyManager.ensureCurrentURL("/objects/list");
 
         // Deselect a object, click edit object button and check if it redirected to /objects/edit/:id
         fireEvent.click(secondObjectCheckbox);
-        await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs).toEqual(expect.arrayContaining([1])));
+        await waitFor(() => expect(store.getState().objectsListUI.selectedObjectIDs).toEqual(expect.arrayContaining([1])));
         editObjectButton = getSideMenuItem(container, "Edit Object");   // get the element again to properly click it
         fireEvent.click(editObjectButton);
         await historyManager.waitForCurrentURLToBe("/objects/edit/1");
@@ -375,7 +375,7 @@ describe("Side menu", () => {
         // Select composite object
         const compositeObjectName = store.getState().editedObjects[1].object_name;
         fireEvent.click(getByText(container, compositeObjectName).parentNode.parentNode.querySelector(".field-item-checkbox"));
-        await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
+        await waitFor(() => expect(store.getState().objectsListUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
 
         // Delete composite object with subobjects
         const deleteButton = getSideMenuItem(container, "Delete");
@@ -389,7 +389,7 @@ describe("Side menu", () => {
         expect(state.objectsTags).not.toHaveProperty("1");
         expect(state.composite).not.toHaveProperty("1");
         expect(state.editedObjects).not.toHaveProperty("1");
-        expect(state.objectsUI.selectedObjectIDs.indexOf(1)).toEqual(-1);
+        expect(state.objectsListUI.selectedObjectIDs.indexOf(1)).toEqual(-1);
 
         // Check if new subobject is deleted from editedObjects
         expect(state.editedObjects).not.toHaveProperty("-1");
@@ -418,7 +418,7 @@ describe("Side menu", () => {
         // Select composite object
         const compositeObjectName = store.getState().editedObjects[1].object_name;
         fireEvent.click(getByText(container, compositeObjectName).parentNode.parentNode.querySelector(".field-item-checkbox"));
-        await waitFor(() => expect(store.getState().objectsUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
+        await waitFor(() => expect(store.getState().objectsListUI.selectedObjectIDs.indexOf(1)).toBeGreaterThan(-1));
 
         // Delete composite object with subobjects
         const deleteButton = getSideMenuItem(container, "Delete");
@@ -433,7 +433,7 @@ describe("Side menu", () => {
         expect(state.objectsTags).not.toHaveProperty("1");
         expect(state.composite).not.toHaveProperty("1");
         expect(state.editedObjects).not.toHaveProperty("1");
-        expect(state.objectsUI.selectedObjectIDs.indexOf(1)).toEqual(-1);
+        expect(state.objectsListUI.selectedObjectIDs.indexOf(1)).toEqual(-1);
 
         // Check if new subobject is deleted from editedObjects
         expect(state.editedObjects).not.toHaveProperty("-1");
@@ -551,41 +551,41 @@ describe("Field menu", () => {
 
         // Wait for the objects to be loaded
         await waitFor(() => getByText(container, "object #1"));
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.length).toEqual(0);
+        expect(store.getState().objectsListUI.paginationInfo.objectTypes.length).toEqual(0);
 
         // Select each object type separately
         const objectTypeNames = ["Links", "Markdown", "To-do lists", "Composite objects"], objectTypes = ["link", "markdown", "to_do_list", "composite"];
 
         for (let i in objectTypeNames) {
             await selectObjectTypeInFilter(objectTypeNames[i], dropdown, store);
-            expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeTruthy();
+            expect(store.getState().objectsListUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeTruthy();
             checkObjectsDisplay(store, container);
             await deselectObjectTypeInFilter(objectTypeNames[i], dropdown, store);
-            expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeFalsy();
+            expect(store.getState().objectsListUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeFalsy();
         }
 
         // Select 2 object types at the same time (links + markdown)
         await selectObjectTypeInFilter(objectTypeNames[0], dropdown, store);
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[0])).toBeTruthy();
+        expect(store.getState().objectsListUI.paginationInfo.objectTypes.includes(objectTypes[0])).toBeTruthy();
         await selectObjectTypeInFilter(objectTypeNames[1], dropdown, store);
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[1])).toBeTruthy();
+        expect(store.getState().objectsListUI.paginationInfo.objectTypes.includes(objectTypes[1])).toBeTruthy();
         checkObjectsDisplay(store, container);
         await deselectObjectTypeInFilter(objectTypeNames[0], dropdown, store);
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[0])).toBeFalsy();
+        expect(store.getState().objectsListUI.paginationInfo.objectTypes.includes(objectTypes[0])).toBeFalsy();
         await deselectObjectTypeInFilter(objectTypeNames[1], dropdown, store);
-        expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[1])).toBeFalsy();
+        expect(store.getState().objectsListUI.paginationInfo.objectTypes.includes(objectTypes[1])).toBeFalsy();
 
         // Select all object types
         for (let i in objectTypeNames) {
             await selectObjectTypeInFilter(objectTypeNames[i], dropdown, store);
-            expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeTruthy();
+            expect(store.getState().objectsListUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeTruthy();
         }
         checkObjectsDisplay(store, container);
 
         // Deselect all object types
         for (let i in objectTypeNames) {
             await deselectObjectTypeInFilter(objectTypeNames[i], dropdown, store);
-            expect(store.getState().objectsUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeFalsy();
+            expect(store.getState().objectsListUI.paginationInfo.objectTypes.includes(objectTypes[i])).toBeFalsy();
         }
         checkObjectsDisplay(store, container);
     });
@@ -613,7 +613,7 @@ describe("Field menu", () => {
         expect(tagsFilterInput).toBeTruthy();
         await searchTagInFilter("not found", tagsFilterInput, store);
         fireEvent.keyDown(tagsFilterInput, { key: "Enter", code: "Enter" });
-        expect(store.getState().objectsUI.paginationInfo.tagsFilter.length).toEqual(0);     // no filter was added
+        expect(store.getState().objectsListUI.paginationInfo.tagsFilter.length).toEqual(0);     // no filter was added
         expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();  // dropdown list is not displayed
 
         // Add and item via Enter key press (tag #3)
@@ -666,7 +666,7 @@ describe("Field menu", () => {
 
         expect(tagsFilterInput.value).toEqual("");                                          // search text is reset
         expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();  // dropdown list is not displayed
-        expect(store.getState().objectsUI.tagsFilterInput.inputText).toEqual("");           // input text is reset in the state
-        expect(store.getState().objectsUI.tagsFilterInput.matchingIDs).toEqual([]);         // matching IDs are reset in the state
+        expect(store.getState().objectsListUI.tagsFilterInput.inputText).toEqual("");           // input text is reset in the state
+        expect(store.getState().objectsListUI.tagsFilterInput.matchingIDs).toEqual([]);         // matching IDs are reset in the state
     });
 });

@@ -7,11 +7,11 @@ import { getInlineItem } from "./ui-inline";
 
 
 /**
- * Waits for objectsUI fetch to start and end in the provided `store`.
+ * Waits for objectsListUI fetch to start and end in the provided `store`.
  */
 export const waitForFetch = async store => {
-    await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching).toBeTruthy());
-    await waitFor(() => expect(store.getState().objectsUI.fetch.isFetching).toBeFalsy());
+    await waitFor(() => expect(store.getState().objectsListUI.fetch.isFetching).toBeTruthy());
+    await waitFor(() => expect(store.getState().objectsListUI.fetch.isFetching).toBeFalsy());
 };
 
 
@@ -32,7 +32,7 @@ export const checkObjectsDisplay = (store, container) => {
  * Returns object IDs which are returned by mock fetch handler.
  */
 const getPageObjectIDsFromMock = store => {
-    const pI = store.getState().objectsUI.paginationInfo;
+    const pI = store.getState().objectsListUI.paginationInfo;
     return getMockedPageObjectIDs({
         page: pI.currentPage,
         items_per_page: pI.itemsPerPage,
@@ -82,9 +82,9 @@ export const deselectObjectTypeInFilter = async (type, dropdown, store) => {
  * Searches for the provided `tag` via the /objects page `tagsFilterInput`.
  */
 export const searchTagInFilter = async (tag, tagsFilterInput, store) => {    
-    let oldMatchingIDs = store.getState().objectsUI.tagsFilterInput.matchingIDs;
+    let oldMatchingIDs = store.getState().objectsListUI.tagsFilterInput.matchingIDs;
     fireEvent.change(tagsFilterInput, { target: { value: tag } });
-    await waitFor(() => expect(oldMatchingIDs).not.toBe(store.getState().objectsUI.tagsFilterInput.matchingIDs));
+    await waitFor(() => expect(oldMatchingIDs).not.toBe(store.getState().objectsListUI.tagsFilterInput.matchingIDs));
 };
 
 
@@ -95,16 +95,16 @@ export const checkIfTagIsAddedToFilter = async (tagID, container, store) => {
     const tagsFilterContainer = getByText(container, "Filter objects by tags").parentNode;
     const tagsFilterInput = tagsFilterContainer.querySelector("input.search");
 
-    await waitFor(() => expect(store.getState().objectsUI.paginationInfo.tagsFilter.includes(tagID)).toBeTruthy());     // tag is added to tagsFilter
+    await waitFor(() => expect(store.getState().objectsListUI.paginationInfo.tagsFilter.includes(tagID)).toBeTruthy());     // tag is added to tagsFilter
     expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();      // dropdown list is not displayed
     expect(tagsFilterInput.value).toEqual("");                                              // search text is reset
     getByText(getByText(container, "Tags Filter").parentNode, `tag #${tagID}`);                // tags filter block is displayed and contains the added tag
-    // if (store.getState().objectsUI.paginationInfo.tagsFilter.length < 3)
+    // if (store.getState().objectsListUI.paginationInfo.tagsFilter.length < 3)
     //     checkObjectsDisplay(store, container);                                                  // correct objects are displayed
     // else
     //     getByText(container, "No objects found.");      // no objects are found if 3 or more tags are in the filter
     checkObjectsDisplay(store, container);                                                  // correct objects are displayed
-    if (store.getState().objectsUI.paginationInfo.tagsFilter.length > 2) getByText(container, "No objects found.");      // no objects are found if 3 or more tags are in the filter
+    if (store.getState().objectsListUI.paginationInfo.tagsFilter.length > 2) getByText(container, "No objects found.");      // no objects are found if 3 or more tags are in the filter
 };
 
 

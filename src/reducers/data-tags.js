@@ -20,8 +20,8 @@ function addTags(state, action) {
         }
     };
 
-    // Replace string added tags in state.objectsUI.addedTags, which have the same name as one of the added tags
-    let k = 0, addedTags = deepCopy(state.objectsUI.addedTags);
+    // Replace string added tags in state.objectsListUI.addedTags, which have the same name as one of the added tags
+    let k = 0, addedTags = deepCopy(state.objectsListUI.addedTags);
     for (let i = 0; i < addedTags.length; i++) {
         if (typeof(addedTags[i]) === "string") {
             const loweredTagName = addedTags[i].toLowerCase();
@@ -32,7 +32,7 @@ function addTags(state, action) {
         }
     }
 
-    if (k > 0) newState = { ...newState, objectsUI: { ...newState.objectsUI, addedTags }};
+    if (k > 0) newState = { ...newState, objectsListUI: { ...newState.objectsListUI, addedTags }};
 
     // Replace string added tags in state.editedObjects, which have the same name as one of the added tags
     k = 0;

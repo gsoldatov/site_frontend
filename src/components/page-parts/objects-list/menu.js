@@ -21,7 +21,7 @@ export const ObjectsListHorizontalMenu = () => {
     const isDisabled = useSelector(state => isFetchingObjects(state));
     
     // Select all objects button
-    const currentPageObjectIDs = useSelector(state => state.objectsUI.paginationInfo.currentPageObjectIDs);
+    const currentPageObjectIDs = useSelector(state => state.objectsListUI.paginationInfo.currentPageObjectIDs);
     const selectAllOnClick = useMemo(() => () => dispatch(selectObjects(currentPageObjectIDs)), [currentPageObjectIDs]);
 
     // Deselect all objects button
@@ -29,36 +29,36 @@ export const ObjectsListHorizontalMenu = () => {
 
     // Sort asc button
     const sortAscOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortOrder: "asc" })), []);
-    const sortAscIsActive = useSelector(state => state.objectsUI.paginationInfo.sortOrder === "asc");
+    const sortAscIsActive = useSelector(state => state.objectsListUI.paginationInfo.sortOrder === "asc");
 
     // Sort desc button
     const sortDescOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortOrder: "desc" })), []);
-    const sortDescIsActive = useSelector(state => state.objectsUI.paginationInfo.sortOrder === "desc");
+    const sortDescIsActive = useSelector(state => state.objectsListUI.paginationInfo.sortOrder === "desc");
 
     // Sort by name button
     const sortByNameOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortField: "object_name" })), []);
-    const sortByNameIsActive = useSelector(state => state.objectsUI.paginationInfo.sortField === "object_name");
+    const sortByNameIsActive = useSelector(state => state.objectsListUI.paginationInfo.sortField === "object_name");
 
     // Sort by modify time button
     const sortByModifyTimeOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortField: "modified_at" })), []);
-    const sortByModifyTimeIsActive = useSelector(state => state.objectsUI.paginationInfo.sortField === "modified_at");
+    const sortByModifyTimeIsActive = useSelector(state => state.objectsListUI.paginationInfo.sortField === "modified_at");
 
     // Object name filter
-    const objectNameFilterValue = useSelector(state => state.objectsUI.paginationInfo.filterText);
+    const objectNameFilterValue = useSelector(state => state.objectsListUI.paginationInfo.filterText);
     const objectNameFilterOnChange = useMemo(() => value => dispatch(setObjectsPaginationInfo({ filterText: value })), []);
     const objectNameFilterOnChangeDelayed = useMemo(() => value => dispatch(setObjectsPaginationInfoAndFetchPage({ filterText: value })), []);
 
     // Object type dropdown
-    const objectTypesDefaultValue = useSelector(state => state.objectsUI.paginationInfo.objectTypes);
+    const objectTypesDefaultValue = useSelector(state => state.objectsListUI.paginationInfo.objectTypes);
     const objectTypesOptions = useMemo(() => Object.values(enumObjectTypes).map((t, k) => ({ key: k, text: t.multipleName, value: t.type })), []);
     const objectTypesOnChange = useMemo(() => (e, data) => dispatch(setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })), []);
 
     // Tags filter dropdown
-    const tagsFilterInputState = useSelector(state => state.objectsUI.tagsFilterInput);
-    const tagsFilterExistingIDs = useSelector(state => state.objectsUI.paginationInfo.tagsFilter);
+    const tagsFilterInputState = useSelector(state => state.objectsListUI.tagsFilterInput);
+    const tagsFilterExistingIDs = useSelector(state => state.objectsListUI.paginationInfo.tagsFilter);
     const tagsFilterOptionsSelector = useMemo(() => createSelector(
         state => state.tags,
-        state => state.objectsUI.tagsFilterInput,
+        state => state.objectsListUI.tagsFilterInput,
         (tags, inputState) => {
             return inputState.matchingIDs.map(tagID => {
                 return { key: tagID, text: tags[tagID].tag_name, value: tagID };
@@ -73,7 +73,7 @@ export const ObjectsListHorizontalMenu = () => {
 
     // Tags filter clear button
     const tagsFilterClearOnClick = useMemo(() => () => dispatch(setTagsFilterAndFetchPage()), []);
-    const tagsFilterClearIsDisabled = useSelector(state => isFetchingObjects(state) || state.objectsUI.paginationInfo.tagsFilter.length == 0);
+    const tagsFilterClearIsDisabled = useSelector(state => isFetchingObjects(state) || state.objectsListUI.paginationInfo.tagsFilter.length == 0);
 
     return (
         <HorizontalMenu>

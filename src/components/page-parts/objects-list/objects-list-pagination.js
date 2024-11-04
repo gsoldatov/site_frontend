@@ -11,7 +11,7 @@ import { pageFetch } from "../../../fetches/ui-objects-list";
  */
 export const ObjectsListPagination = () => {
     const dispatch = useDispatch();
-    const { currentPage, totalItems, itemsPerPage } = useSelector(state => state.objectsUI.paginationInfo);
+    const { currentPage, totalItems, itemsPerPage } = useSelector(state => state.objectsListUI.paginationInfo);
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const onPageChange = useMemo(() => (e, props) => {

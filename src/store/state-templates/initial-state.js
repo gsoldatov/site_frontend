@@ -113,7 +113,7 @@ const initialState = {
     },
 
     // /objects/list page UI controllers
-    objectsUI: {
+    objectsListUI: {
         paginationInfo: {
             currentPage: 1,
             itemsPerPage: 100,

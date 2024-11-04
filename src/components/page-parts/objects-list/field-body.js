@@ -17,7 +17,7 @@ import { objectsOnLoadFetch } from "../../../fetches/ui-objects-list";
  */
 export const ObjectsListFieldBody = () => {
     const dispatch = useDispatch();
-    const { isFetching, fetchError } = useSelector(state => state.objectsUI.fetch);
+    const { isFetching, fetchError } = useSelector(state => state.objectsListUI.fetch);
 
     // On load action
     useEffect(() => {
@@ -42,7 +42,7 @@ export const ObjectsListFieldBody = () => {
  * Selected objects field item list.
  */
 const SelectedObjects = () => {
-    const itemIDs = useSelector(state => state.objectsUI.selectedObjectIDs);
+    const itemIDs = useSelector(state => state.objectsListUI.selectedObjectIDs);
 
     return (    // 67px = header + 1 line with borders
         <ExpandableContainer maxCollapsedHeight={67}>
@@ -56,7 +56,7 @@ const SelectedObjects = () => {
  * Current page objects field item list.
  */
 const PageObjects = () => {
-    const itemIDs = useSelector(state => state.objectsUI.paginationInfo.currentPageObjectIDs);
+    const itemIDs = useSelector(state => state.objectsListUI.paginationInfo.currentPageObjectIDs);
     return <FieldItemList itemIDs={itemIDs} ItemComponent={ObjectsFieldItem} />;
 };
 
@@ -70,7 +70,7 @@ const ObjectsFieldItem = memo(({ id }) => {
     const text = useSelector(state => state.objects[id] ? state.objects[id].object_name : "?");
     const URL = `/objects/view/${id}`;
     const onChange = useMemo(() => () => dispatch(toggleObjectSelection(id)), [id]);
-    const isChecked = useSelector(state => state.objectsUI.selectedObjectIDs.includes(id));
+    const isChecked = useSelector(state => state.objectsListUI.selectedObjectIDs.includes(id));
     
     return <FieldItem text={text} URL={URL} onChange={onChange} isChecked={isChecked} />;
 });

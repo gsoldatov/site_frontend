@@ -129,21 +129,21 @@ test("Check common and partially applied tags on click behaviour", async () => {
     // Check common tag on click events
     const tagOne = getInlineItem({ container, text: "tag #1" });
     fireEvent.click(tagOne.icons[0]);
-    expect(store.getState().objectsUI.removedTagIDs.includes(1)).toBeTruthy();
+    expect(store.getState().objectsListUI.removedTagIDs.includes(1)).toBeTruthy();
     fireEvent.click(tagOne.icons[0]);
-    expect(store.getState().objectsUI.removedTagIDs.includes(1)).toBeFalsy();
+    expect(store.getState().objectsListUI.removedTagIDs.includes(1)).toBeFalsy();
 
     // Check partially applied on click events
     const tagFive = getInlineItem({ container, text: "tag #5" });
     fireEvent.click(tagFive.icons[0]);
-    expect(store.getState().objectsUI.addedTags.includes(5)).toBeTruthy();
-    expect(store.getState().objectsUI.removedTagIDs.includes(5)).toBeFalsy();
+    expect(store.getState().objectsListUI.addedTags.includes(5)).toBeTruthy();
+    expect(store.getState().objectsListUI.removedTagIDs.includes(5)).toBeFalsy();
     fireEvent.click(tagFive.icons[0]);
-    expect(store.getState().objectsUI.addedTags.includes(5)).toBeFalsy();
-    expect(store.getState().objectsUI.removedTagIDs.includes(5)).toBeTruthy();
+    expect(store.getState().objectsListUI.addedTags.includes(5)).toBeFalsy();
+    expect(store.getState().objectsListUI.removedTagIDs.includes(5)).toBeTruthy();
     fireEvent.click(tagFive.icons[0]);
-    expect(store.getState().objectsUI.addedTags.includes(5)).toBeFalsy();
-    expect(store.getState().objectsUI.removedTagIDs.includes(5)).toBeFalsy();
+    expect(store.getState().objectsListUI.addedTags.includes(5)).toBeFalsy();
+    expect(store.getState().objectsListUI.removedTagIDs.includes(5)).toBeFalsy();
 });
 
 
@@ -209,7 +209,7 @@ test("Check tags input & added tags", async () => {
 
     // Add & remove an "existing" tag
     fireEvent.change(input, { target: { value: "tag #7" } });
-    expect(store.getState().objectsUI.tagsInput.inputText).toEqual("tag #7");
+    expect(store.getState().objectsListUI.tagsInput.inputText).toEqual("tag #7");
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });  // check enter key down handle
     let addedTag = getInlineItem({ container, text: "tag #7" });
     expect(addedTag.textSpan).toBeTruthy();
@@ -218,7 +218,7 @@ test("Check tags input & added tags", async () => {
 
     // Add & remove a new tag
     fireEvent.change(input, { target: { value: "new tag" } });
-    expect(store.getState().objectsUI.tagsInput.inputText).toEqual("new tag");
+    expect(store.getState().objectsListUI.tagsInput.inputText).toEqual("new tag");
     let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
     expect(dropdown).toBeTruthy();
     fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
@@ -245,18 +245,18 @@ test("Check adding existing tags with tag input", async () => {
     // Add & remove an existing common tag & check if it was toggled for removal
     fireEvent.change(input, { target: { value: "tag #1" } });
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-    expect(store.getState().objectsUI.removedTagIDs.includes(1)).toBeTruthy();
+    expect(store.getState().objectsListUI.removedTagIDs.includes(1)).toBeTruthy();
     fireEvent.change(input, { target: { value: "tag #1" } });
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-    expect(store.getState().objectsUI.removedTagIDs.includes(1)).toBeFalsy();
+    expect(store.getState().objectsListUI.removedTagIDs.includes(1)).toBeFalsy();
     
     // Add & remove an existing partially applied tag & check if it was toggled for adding
     fireEvent.change(input, { target: { value: "tag #3" } });
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-    expect(store.getState().objectsUI.addedTags.includes(3)).toBeTruthy();
+    expect(store.getState().objectsListUI.addedTags.includes(3)).toBeTruthy();
     fireEvent.change(input, { target: { value: "tag #3" } });
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-    expect(store.getState().objectsUI.addedTags.includes(3)).toBeFalsy();
+    expect(store.getState().objectsListUI.addedTags.includes(3)).toBeFalsy();
 });
 
 
@@ -317,7 +317,7 @@ test("Check side menu", async () => {
     let cancelTagUpdateButton = getSideMenuItem(container, "Cancel Tag Update");
     fireEvent.click(cancelTagUpdateButton);
     checkIfDefaultItemsRendered();
-    expect(store.getState().objectsUI.addedTags.length).toEqual(0);
+    expect(store.getState().objectsListUI.addedTags.length).toEqual(0);
 
     // Remove a common tag
     let tagOne = getInlineItem({ container, text: "tag #1" });
@@ -328,7 +328,7 @@ test("Check side menu", async () => {
     cancelTagUpdateButton = getSideMenuItem(container, "Cancel Tag Update");
     fireEvent.click(cancelTagUpdateButton);
     checkIfDefaultItemsRendered();
-    expect(store.getState().objectsUI.removedTagIDs.length).toEqual(0);
+    expect(store.getState().objectsListUI.removedTagIDs.length).toEqual(0);
 
     // Remove & stop removing a common tag
     fireEvent.click(tagOne.icons[0]);
@@ -344,7 +344,7 @@ test("Check side menu", async () => {
     cancelTagUpdateButton = getSideMenuItem(container, "Cancel Tag Update");
     fireEvent.click(cancelTagUpdateButton);
     checkIfDefaultItemsRendered();
-    expect(store.getState().objectsUI.addedTags.length).toEqual(0);
+    expect(store.getState().objectsListUI.addedTags.length).toEqual(0);
 
     // Remove partially applied tag for all
     fireEvent.click(tagFive.icons[0]);
@@ -354,7 +354,7 @@ test("Check side menu", async () => {
     cancelTagUpdateButton = getSideMenuItem(container, "Cancel Tag Update");
     fireEvent.click(cancelTagUpdateButton);
     checkIfDefaultItemsRendered();
-    expect(store.getState().objectsUI.removedTagIDs.length).toEqual(0);
+    expect(store.getState().objectsListUI.removedTagIDs.length).toEqual(0);
 
     // Add => remove => reset partially applied tag
     fireEvent.click(tagFive.icons[0]);

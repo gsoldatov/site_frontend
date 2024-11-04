@@ -7,19 +7,19 @@ import { commonTagIDsSelector } from "../store/state-util/ui-objects-list";
 function setObjectsTagsInput(state, action) {
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
+        objectsListUI: {
+            ...state.objectsListUI,
             tagsInput: {
-                isDisplayed: action.tagsInput.isDisplayed !== undefined ? action.tagsInput.isDisplayed : state.objectsUI.tagsInput.isDisplayed,
-                inputText: action.tagsInput.inputText !== undefined ? action.tagsInput.inputText : state.objectsUI.tagsInput.inputText,
-                matchingIDs: action.tagsInput.matchingIDs !== undefined ? action.tagsInput.matchingIDs : state.objectsUI.tagsInput.matchingIDs
+                isDisplayed: action.tagsInput.isDisplayed !== undefined ? action.tagsInput.isDisplayed : state.objectsListUI.tagsInput.isDisplayed,
+                inputText: action.tagsInput.inputText !== undefined ? action.tagsInput.inputText : state.objectsListUI.tagsInput.inputText,
+                matchingIDs: action.tagsInput.matchingIDs !== undefined ? action.tagsInput.matchingIDs : state.objectsListUI.tagsInput.matchingIDs
             }
         }
     };
 }
 
 /*
-    Updates addedTags & removedTagIDs in objectsUI state.
+    Updates addedTags & removedTagIDs in objectsListUI state.
     
     addedTags can be reset to an empty list (if an empty list is passed as value) or updated with a list of values. 
     In the second case, string values are replaced with corresponding tagIDs where possible. Existing values passed via action are removed from the new list.
@@ -33,7 +33,7 @@ function setCurrentObjectsTags(state, action) {
     if (action.tagUpdates.added instanceof Array && action.tagUpdates.added.length === 0) { // handle reset case
         newAddedTags = [];
     } else {    // handle general update case
-        const lowerCaseOldAddedTags = state.objectsUI.addedTags.map(t => getLowerCaseTagNameOrID(t));
+        const lowerCaseOldAddedTags = state.objectsListUI.addedTags.map(t => getLowerCaseTagNameOrID(t));
         const at = (action.tagUpdates.added || []).map(tag => {     // replace tag names by ids if there is a match in local state
             if (typeof(tag) === "number") {
                 if (lowerCaseOldAddedTags.includes(getLowerCaseTagNameOrID(state.tags[tag].tag_name))) return state.tags[tag].tag_name;    // If existing tag was added by tag_name, add it by tag name a second time
@@ -44,7 +44,7 @@ function setCurrentObjectsTags(state, action) {
         });
         if (at) {
             const lowerCaseAT = at.map(t => getLowerCaseTagNameOrID(t));
-            newAddedTags = state.objectsUI.addedTags.slice();
+            newAddedTags = state.objectsListUI.addedTags.slice();
             newAddedTags = newAddedTags.filter(t => !lowerCaseAT.includes(getLowerCaseTagNameOrID(t)));
             newAddedTags = newAddedTags.concat(at.filter(t => !lowerCaseOldAddedTags.includes(getLowerCaseTagNameOrID(t))));
 
@@ -60,24 +60,24 @@ function setCurrentObjectsTags(state, action) {
         if (rt || addedExistingTagIDs) {
             rt = rt || [];
             addedExistingTagIDs = addedExistingTagIDs || [];
-            newRemovedTagIDs = state.objectsUI.removedTagIDs.slice();
+            newRemovedTagIDs = state.objectsListUI.removedTagIDs.slice();
 
             // stop removing tags passed for the second time or added common tags already being removed
             let removedExistingTagIDs = addedExistingTagIDs.filter(t => !newRemovedTagIDs.includes(t));
             newRemovedTagIDs = newRemovedTagIDs.filter(t => !rt.includes(t) && !addedExistingTagIDs.includes(t));
             
             // remove tags passed for the first time or added common tags, which were not being removed
-            newRemovedTagIDs = newRemovedTagIDs.concat(rt.filter(t => !state.objectsUI.removedTagIDs.includes(t)));
+            newRemovedTagIDs = newRemovedTagIDs.concat(rt.filter(t => !state.objectsListUI.removedTagIDs.includes(t)));
             newRemovedTagIDs = newRemovedTagIDs.concat(removedExistingTagIDs.filter(t => !newRemovedTagIDs.includes(t)));
         }
     }
 
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
-            addedTags: newAddedTags !== undefined ? newAddedTags : state.objectsUI.addedTags,
-            removedTagIDs: newRemovedTagIDs !== undefined ? newRemovedTagIDs : state.objectsUI.removedTagIDs
+        objectsListUI: {
+            ...state.objectsListUI,
+            addedTags: newAddedTags !== undefined ? newAddedTags : state.objectsListUI.addedTags,
+            removedTagIDs: newRemovedTagIDs !== undefined ? newRemovedTagIDs : state.objectsListUI.removedTagIDs
         }
     };
 }
@@ -85,24 +85,24 @@ function setCurrentObjectsTags(state, action) {
 function selectObjects(state, action) {
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
-            selectedObjectIDs: [...(new Set(state.objectsUI.selectedObjectIDs.concat(action.object_ids)))]
+        objectsListUI: {
+            ...state.objectsListUI,
+            selectedObjectIDs: [...(new Set(state.objectsListUI.selectedObjectIDs.concat(action.object_ids)))]
         }
     }
 }
 
 function toggleObjectSelection(state, action) {
-    const newSelectedObjectIDs = state.objectsUI.selectedObjectIDs.includes(action.object_id) 
-                                ? state.objectsUI.selectedObjectIDs.filter(object_id => object_id !== action.object_id)
-                                : state.objectsUI.selectedObjectIDs.concat(action.object_id);
+    const newSelectedObjectIDs = state.objectsListUI.selectedObjectIDs.includes(action.object_id) 
+                                ? state.objectsListUI.selectedObjectIDs.filter(object_id => object_id !== action.object_id)
+                                : state.objectsListUI.selectedObjectIDs.concat(action.object_id);
     
-    const newShowDeleteDialog = newSelectedObjectIDs.length > 0 ? state.objectsUI.showDeleteDialog : false;     // Reset delete dialog if no objects are selected
+    const newShowDeleteDialog = newSelectedObjectIDs.length > 0 ? state.objectsListUI.showDeleteDialog : false;     // Reset delete dialog if no objects are selected
                                 
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
+        objectsListUI: {
+            ...state.objectsListUI,
             selectedObjectIDs: newSelectedObjectIDs,
             showDeleteDialog: newShowDeleteDialog
         }
@@ -112,8 +112,8 @@ function toggleObjectSelection(state, action) {
 function clearSelectedObjects(state, action) {
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
+        objectsListUI: {
+            ...state.objectsListUI,
             selectedObjectIDs: [],
             showDeleteDialog: false
         }
@@ -121,12 +121,12 @@ function clearSelectedObjects(state, action) {
 }
 
 function setObjectsPaginationInfo(state, action) {
-    let oPI = state.objectsUI.paginationInfo;
+    let oPI = state.objectsListUI.paginationInfo;
     let pI = action.paginationInfo;
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
+        objectsListUI: {
+            ...state.objectsListUI,
             paginationInfo: {
                     currentPage: pI.currentPage !== undefined ? pI.currentPage : oPI.currentPage,
                     itemsPerPage: pI.itemsPerPage !== undefined ? pI.itemsPerPage : oPI.itemsPerPage,
@@ -143,11 +143,11 @@ function setObjectsPaginationInfo(state, action) {
 }
 
 /*
-    Adds/removes provided tag ID to/from objectsUI.paginationInfo.tagsFilter list.
+    Adds/removes provided tag ID to/from objectsListUI.paginationInfo.tagsFilter list.
     Clears the list if no tag ID is provided.
 */
 function setTagsFilter(state, action) {
-    let tagsFilter, oldTagsFilter = state.objectsUI.paginationInfo.tagsFilter;
+    let tagsFilter, oldTagsFilter = state.objectsListUI.paginationInfo.tagsFilter;
     if (!action.tagID) tagsFilter = [];    // clear case
     else {  // add/remove case
         const i = oldTagsFilter.indexOf(action.tagID);
@@ -159,10 +159,10 @@ function setTagsFilter(state, action) {
     }
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
+        objectsListUI: {
+            ...state.objectsListUI,
             paginationInfo: {
-                ...state.objectsUI.paginationInfo,
+                ...state.objectsListUI.paginationInfo,
                 tagsFilter
             }
         }
@@ -173,11 +173,11 @@ function setTagsFilterInput(state, action) {
     const { inputText, matchingIDs } = action.tagsFilterInput;
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
+        objectsListUI: {
+            ...state.objectsListUI,
             tagsFilterInput: {
-                inputText: inputText !== undefined ? inputText : state.objectsUI.tagsFilterInput.inputText,
-                matchingIDs: matchingIDs !== undefined ? matchingIDs : state.objectsUI.tagsFilterInput.matchingIDs
+                inputText: inputText !== undefined ? inputText : state.objectsListUI.tagsFilterInput.inputText,
+                matchingIDs: matchingIDs !== undefined ? matchingIDs : state.objectsListUI.tagsFilterInput.matchingIDs
             }
         }
     };
@@ -186,8 +186,8 @@ function setTagsFilterInput(state, action) {
 function setShowDeleteDialogObjects(state, action) {
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
+        objectsListUI: {
+            ...state.objectsListUI,
             showDeleteDialog: action.showDeleteDialog
         }
     }
@@ -196,8 +196,8 @@ function setShowDeleteDialogObjects(state, action) {
 function setObjectsFetch(state, action) {
     return {
         ...state,
-        objectsUI: {
-            ...state.objectsUI,
+        objectsListUI: {
+            ...state.objectsListUI,
             fetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError

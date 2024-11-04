@@ -15,7 +15,7 @@ import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
  */
 export const objectsOnLoadFetch = () => {
     return async (dispatch, getState) => {
-        const currentPage = getState().objectsUI.paginationInfo.currentPage;
+        const currentPage = getState().objectsListUI.paginationInfo.currentPage;
         dispatch(setObjectsTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
         dispatch(setCurrentObjectsTags({ added: [], removed: [] }));
         dispatch(pageFetch(currentPage));
@@ -24,7 +24,7 @@ export const objectsOnLoadFetch = () => {
 
 
 /**
- * Updates `state.objectsUI.paginationInfo`, resets current displayed page to 1 and fetches objects to display on it.
+ * Updates `state.objectsListUI.paginationInfo`, resets current displayed page to 1 and fetches objects to display on it.
  */
 export const setObjectsPaginationInfoAndFetchPage = paginationInfo => {
     return async (dispatch, getState) => {
@@ -57,7 +57,7 @@ export const pageFetch = currentPage => {
 
         dispatch(setObjectsPaginationInfo({ currentPage }));
         dispatch(setObjectsFetch(true, ""));
-        const pI = getState().objectsUI.paginationInfo;
+        const pI = getState().objectsListUI.paginationInfo;
 
         // Exit with error if filter text is too long
         if (pI.filterText.length > 255) {
@@ -112,7 +112,7 @@ export const onDeleteFetch = deleteSubobjects => {
 
         // Run view fetch & delete objects data
         dispatch(setObjectsFetch(true, ""));
-        const result = await dispatch(deleteObjectsFetch(state.objectsUI.selectedObjectIDs, deleteSubobjects));
+        const result = await dispatch(deleteObjectsFetch(state.objectsListUI.selectedObjectIDs, deleteSubobjects));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
@@ -123,7 +123,7 @@ export const onDeleteFetch = deleteSubobjects => {
         }
 
         // Handle successful fetch end
-        dispatch(setObjectsPaginationInfo({ currentPageObjectIDs: state.objectsUI.paginationInfo.currentPageObjectIDs.filter(id => !result.includes(id)) }));  // delete from current page
+        dispatch(setObjectsPaginationInfo({ currentPageObjectIDs: state.objectsListUI.paginationInfo.currentPageObjectIDs.filter(id => !result.includes(id)) }));  // delete from current page
         dispatch(setObjectsFetch(false, ""));
     };
 };
@@ -157,8 +157,8 @@ const dropdownFetchThunkCreatorCreator = (actionCreator, inputTextSelector) => {
 
 
 // Thunks for fetching tags created by `dropdownFetchThunkCreatorCreator`
-export const objectsTagsDropdownFetch = dropdownFetchThunkCreatorCreator(setObjectsTagsInput, state => state.objectsUI.tagsInput.inputText);
-export const tagsFilterDropdownFetch = dropdownFetchThunkCreatorCreator(setTagsFilterInput, state => state.objectsUI.tagsFilterInput.inputText);
+export const objectsTagsDropdownFetch = dropdownFetchThunkCreatorCreator(setObjectsTagsInput, state => state.objectsListUI.tagsInput.inputText);
+export const tagsFilterDropdownFetch = dropdownFetchThunkCreatorCreator(setTagsFilterInput, state => state.objectsListUI.tagsFilterInput.inputText);
 
 
 /**
@@ -175,7 +175,7 @@ export function onObjectsTagsUpdateFetch() {
 
         // Run fetch
         dispatch(setObjectsFetch(true, ""));
-        const objUI = state.objectsUI;
+        const objUI = state.objectsListUI;
         const result = await dispatch(objectsTagsUpdateFetch(objUI.selectedObjectIDs, objUI.addedTags, objUI.removedTagIDs));
 
         // Handle fetch errors

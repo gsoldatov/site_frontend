@@ -38,8 +38,8 @@ const AddANewObject = () => {
 
 
 const EditObject = () => {
-    const isActive = useSelector(state => state.objectsUI.selectedObjectIDs.length === 1 && !isFetchingOrShowingDeleteDialogObjects(state));
-    const URL = useSelector(state => `/objects/edit/${state.objectsUI.selectedObjectIDs[0]}`);
+    const isActive = useSelector(state => state.objectsListUI.selectedObjectIDs.length === 1 && !isFetchingOrShowingDeleteDialogObjects(state));
+    const URL = useSelector(state => `/objects/edit/${state.objectsListUI.selectedObjectIDs[0]}`);
     const isVisible = useSelector(state => !isObjectsTagsEditActive(state));
     
     if (!isVisible) return null;
@@ -49,8 +49,8 @@ const EditObject = () => {
 
 const Delete = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => !isFetchingOrShowingDeleteDialogObjects(state) && state.objectsUI.selectedObjectIDs.length > 0);
-    const isVisible = useSelector(state => !state.objectsUI.showDeleteDialog && !isObjectsTagsEditActive(state));
+    const isActive = useSelector(state => !isFetchingOrShowingDeleteDialogObjects(state) && state.objectsListUI.selectedObjectIDs.length > 0);
+    const isVisible = useSelector(state => !state.objectsListUI.showDeleteDialog && !isObjectsTagsEditActive(state));
     const onClick = useMemo(() => () => dispatch(setShowDeleteDialogObjects(true)), []);
 
     if (!isVisible) return null;
@@ -60,8 +60,8 @@ const Delete = () => {
 
 const DeleteDialog = () => {
     const dispatch = useDispatch();
-    const isVisible = useSelector(state => state.objectsUI.showDeleteDialog && !isFetchingObjects(state));
-    const isCheckboxVisible = useSelector(state => state.objectsUI.selectedObjectIDs.some(objectID => state.objects[objectID].object_type === "composite"));
+    const isVisible = useSelector(state => state.objectsListUI.showDeleteDialog && !isFetchingObjects(state));
+    const isCheckboxVisible = useSelector(state => state.objectsListUI.selectedObjectIDs.some(objectID => state.objects[objectID].object_type === "composite"));
 
     const yesOnClick = useMemo(() => deleteSubobjects => dispatch(onDeleteFetch(deleteSubobjects)), []);
     const noOnClick = useMemo(() => () => dispatch(setShowDeleteDialogObjects(false)), []);
