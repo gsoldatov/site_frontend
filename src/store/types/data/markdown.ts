@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { positiveInt } from "../../../util/types/common";
+import { positiveIntIndex } from "../../../util/types/common";
 
 
 /** A single markdown object's data schema. */
@@ -9,4 +9,4 @@ export const markdown = z.object({
 });
 
 /** Markdown objects' data store schema. */
-export const markdownStore = z.record(positiveInt, markdown);
+export const markdownStore = z.record(positiveIntIndex, markdown);

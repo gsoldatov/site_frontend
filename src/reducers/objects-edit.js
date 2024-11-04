@@ -8,8 +8,9 @@ import { deepCopy, deepMerge } from "../util/copy";
 import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
 import { getCurrentObject } from "../store/state-util/ui-objects-edit";
 
-import { getDefaultEditedObjectState, getStateWithResetEditedObjects, getStateWithResetEditedExistingSubobjects, getStateWithDeletedEditedNewSubobjects, 
+import { getStateWithResetEditedObjects, getStateWithResetEditedExistingSubobjects, getStateWithDeletedEditedNewSubobjects, 
     getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects} from "./helpers/object";
+import { getEditedObjectState } from "../store/types/data/edited-objects";
 import { getUpdatedToDoList } from "./helpers/object-to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
@@ -20,7 +21,7 @@ function loadNewObjectPage(state, action) {
     let editedObjects = state.editedObjects;
     if (editedObjects[0] === undefined) {
         editedObjects = deepCopy(editedObjects);
-        editedObjects[0] = getDefaultEditedObjectState({ object_id: 0, display_in_feed: true, owner_id: state.auth.user_id });
+        editedObjects[0] = getEditedObjectState({ object_id: 0, display_in_feed: true, owner_id: state.auth.user_id });
     }
 
     return {
@@ -175,7 +176,7 @@ function setEditedObject(state, action) {
     if ("compositeUpdate" in action.object) return getStateWithCompositeUpdate(state, objectID, action.object.compositeUpdate);
     else if ("composite" in action.object) {
         newComposite = { ...newComposite };
-        for (let attr of Object.keys(getDefaultEditedObjectState().composite))
+        for (let attr of Object.keys(getEditedObjectState().composite))
             if (action.object.composite[attr] !== undefined) newComposite[attr] = action.object.composite[attr];
     }
 

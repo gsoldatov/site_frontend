@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { nameString, positiveInt, timestampString } from "../../../util/types/common";
+import { nameString, positiveInt, positiveIntIndex, timestampString } from "../../../util/types/common";
 import { UserLevels } from "./auth";
 
 
@@ -16,6 +16,8 @@ export const userFull = userMin.extend({
     can_edit_objects: z.boolean()
 });
 
+/** User schema. */
 export const user = userMin.or(userFull);
 
-export const users = z.record(positiveInt, user);
+/** Users' store schema. */
+export const users = z.record(positiveIntIndex, user);

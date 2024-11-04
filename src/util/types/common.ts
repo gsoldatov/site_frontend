@@ -1,10 +1,18 @@
 import { z } from "zod";
 
 
+// Integers
 export const int = z.number().int();
 export const positiveInt = int.min(1);
 export const nonNegativeInt = int.min(0);
 
+// Integer index types (can be an integer or an integer-containing string)
+const stringInt = z.coerce.number().int();
+export const intIndex = int.or(stringInt);
+export const positiveIntIndex = positiveInt.or(stringInt.min(1));
+export const nonNegativeIntIndex = nonNegativeInt.or(stringInt.min(0));
+
+// Integer arrays
 export const intArray = int.array();
 export const positiveIntArray = positiveInt.array();
 export const nonNegativeIntArray = nonNegativeInt.array();

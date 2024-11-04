@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { int, nonNegativeInt, positiveInt } from "../../../util/types/common";
+import { int, nonNegativeInt, positiveIntIndex } from "../../../util/types/common";
 
 
 export enum SubobjectDeleteModes {
@@ -28,7 +28,7 @@ export const composite = z.object({
 
 
 /** Composite objects' data store schema. */
-export const compositeStore = z.record(positiveInt, composite);
+export const compositeStore = z.record(positiveIntIndex, composite);
 
 
 /** Returns default state of a composite subobject. */

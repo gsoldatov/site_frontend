@@ -1,6 +1,6 @@
 import { getDefaultSubobject } from "../../store/types/data/composite";
-import { objectAttributes, defaultEditedObjectState } from "../../store/state-templates/edited-object";
-import { deepCopy } from "../../util/copy";
+import { objectAttributes } from "../../store/state-templates/edited-object";
+import { getEditedObjectState } from "../../store/types/data/edited-objects";
 
 
 /**
@@ -36,21 +36,21 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
     for (let od of objectData){
         switch (od["object_type"]) {
             case "link":
-                const link = deepCopy(defaultEditedObjectState.link);
+                const { link } = getEditedObjectState();
                 for (let attr of Object.keys(link))
                     if (attr in od.object_data) link[attr] = od.object_data[attr];
                 newLinks[od.object_id] = link;
                 break;
             
             case "markdown":
-                const markdown = deepCopy(defaultEditedObjectState.markdown);
+                const { markdown } = getEditedObjectState();
                 for (let attr of Object.keys(markdown))
                     if (attr in od.object_data) markdown[attr] = od.object_data[attr];
                 newMarkdown[od.object_id] = markdown;
                 break;
             
             case "to_do_list":
-                const toDoList = deepCopy(defaultEditedObjectState.toDoList);
+                const { toDoList } = getEditedObjectState();
 
                 let itemOrder = [], items = {};
                 od["object_data"].items.forEach((item, index) => {
@@ -67,7 +67,7 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
                 break;
             
             case "composite":
-                const composite = deepCopy(defaultEditedObjectState.composite);
+                const { composite } = getEditedObjectState();
                 for (let attr of Object.keys(composite))
                     if (attr in od.object_data && attr !== "subobjects") composite[attr] = od.object_data[attr];
                 

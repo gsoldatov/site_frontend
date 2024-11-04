@@ -3,7 +3,7 @@ import { deepEqual } from "../../util/equality-checks";
 import { serializedCompositeObjectDataProps } from "../state-templates/composite-subobjects";
 import { SubobjectDeleteModes } from "../types/data/composite";
 import { getSubobjectDisplayOrder } from "./composite";
-import { getDefaultEditedObjectState } from "../../reducers/helpers/object";
+import { getEditedObjectState } from "../../store/types/data/edited-objects";
 import { compositeSubobjectObjectAttributes, addedObjectAttributes, updatedObjectAttributes } from "../state-templates/edited-object";
 import { UserLevels } from "../../store/types/data/auth";
 
@@ -301,7 +301,7 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
  */
  export const objectHasNoChanges = (state, objectID, defaultReturnValue) => {
     // New edited object
-    if (objectID === 0) return deepEqual(state.editedObjects[objectID], getDefaultEditedObjectState({ object_id: 0, display_in_feed: true, owner_id: state.auth.user_id }));
+    if (objectID === 0) return deepEqual(state.editedObjects[objectID], getEditedObjectState({ object_id: 0, display_in_feed: true, owner_id: state.auth.user_id }));
 
     // Existing edited object
     // Return default value if objectID is missing is editedObjects or attribute / tag / data storages

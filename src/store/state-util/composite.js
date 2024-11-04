@@ -8,8 +8,7 @@ import { getObjectDataFromStore, validateNonCompositeObject } from "./objects";
 import { isFetchingObject } from "./ui-objects-edit";
 
 import { subobjectAttributesCheckedForModification } from "../state-templates/composite-subobjects";
-import { defaultEditedObjectState } from "../state-templates/edited-object";
-
+import { getEditedObjectState } from "../types/data/edited-objects";
 
 /**
  *  Returns an available object_id value for a new subobject.
@@ -145,15 +144,7 @@ export const isMultiColumnCompositeDataDisplayed = (state, objectID) => {
  * If `newProps` is an object, its attributes are passed into returned object. 
  */
 export const serializeObjectForUpdate = (state, objectID, newProps = {}) => {
-    let result = deepMerge(defaultEditedObjectState, state.objects[objectID]);
+    let result = getEditedObjectState(state.objects[objectID]);
     result = deepMerge(result, getObjectDataFromStore(state, objectID, true));
     return deepMerge(result, newProps);
 };
-
-
-// /**
-//  * Accepts current `state`, `objectID` and `toDoList` object with a to-do list object data and returns an object with attributes and data serialized for update fetch.
-//  */
-// export const getToDoListUpdateFetchBody = (state, objectID, toDoList) => {
-//     // return { ...defaultEditedObjectState, ...state.objects[objectID], toDoList };
-// };

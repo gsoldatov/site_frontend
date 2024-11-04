@@ -1,4 +1,4 @@
-import { defaultEditedObjectState } from "../state-templates/edited-object";
+import { getEditedObjectState } from "../types/data/edited-objects";
 import { getEditedOrDefaultObjectSelector, isFetchingObject } from "./ui-objects-edit";
 /*
     Functions for checking/getting data and UI state for to-do lists.
@@ -200,5 +200,5 @@ export const getIsTDLDragAndDropEnabledSelector = objectID => state => !isFetchi
  * Accepts current `state`, `objectID` and `toDoList` object with a to-do list object data and returns an object with attributes and data serialized for update fetch.
  */
 export const getToDoListUpdateFetchBody = (state, objectID, toDoList) => {
-    return { ...defaultEditedObjectState, ...state.objects[objectID], toDoList };
+    return getEditedObjectState({...state.objects[objectID], toDoList});
 };

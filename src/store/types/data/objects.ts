@@ -1,12 +1,13 @@
 import { z } from "zod";
-import { nameString, positiveInt, timestampOrEmptyString, timestampString } from "../../../util/types/common";
+import { nameString, positiveInt, positiveIntIndex, timestampOrEmptyString, timestampString } from "../../../util/types/common";
 
 
+/** state.objects schema for object attributes. */
 export const object = z.object({
     object_id: positiveInt,
     object_type: z.enum(["link", "markdown", "to_do_list", "composite"]),
     created_at: timestampString,
-    modifiat_at: timestampString,
+    modified_at: timestampString,
     object_name: nameString,
     object_description: z.string(),
     is_published: z.boolean(),
@@ -17,4 +18,5 @@ export const object = z.object({
 });
 
 
-export const objects = z.record(positiveInt, object);
+/** Objects' attributes store schema. */
+export const objects = z.record(positiveIntIndex, object);

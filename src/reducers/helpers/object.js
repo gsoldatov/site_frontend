@@ -1,22 +1,7 @@
 import { deepCopy } from "../../util/copy";
-import { defaultEditedObjectState } from "../../store/state-templates/edited-object";
 import { getObjectDataFromStore, objectHasNoChanges } from "../../store/state-util/objects";
 import { getEditedObjectAndSubobjectIDs } from "../../store/state-util/ui-objects-edit";
-
-
-/**
- * Returns a deep copy of default edited object state.
- * Sets `object_id`, `display_in_feed` and `owner_id` in the returned object if they are provided as `overrideValues` attributes.
- */
-export const getDefaultEditedObjectState = (overrideValues = {}) => {
-    const overridableAttributes = ["object_id", "display_in_feed", "owner_id"];
-
-    const defaultState = deepCopy(defaultEditedObjectState);
-    for (let attr of overridableAttributes)
-        if (attr in overrideValues) defaultState[attr] = overrideValues[attr];
-    
-    return defaultState;
-};
+import { getEditedObjectState } from "../../store/types/data/edited-objects";
 
 
 /** 
@@ -38,9 +23,10 @@ export const getStateWithResetEditedObjects = (state, objectIDs, { allowResetToD
 
     const newEditedObjects = {...state.editedObjects};
     objectIDs.forEach(objectID => {
-        const overrideValues = { object_id: objectID };
+        const object_id = parseInt(objectID);
+        const overrideValues = { object_id };
         if (defaultDisplayInFeed !== undefined) overrideValues.display_in_feed = defaultDisplayInFeed;
-        let stateAfterReset = getDefaultEditedObjectState(overrideValues);
+        let stateAfterReset = getEditedObjectState(overrideValues);
 
         // Set object attributes
         const attributes = state.objects[objectID];

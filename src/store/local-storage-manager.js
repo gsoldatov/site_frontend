@@ -1,5 +1,5 @@
 import getInitialState from "./state-templates/initial-state";
-import { defaultEditedObjectState } from "./state-templates/edited-object";
+import { getEditedObjectState } from "./types/data/edited-objects";
 import { getDefaultAuthState } from "./types/data/auth";
 
 import debounce from "../util/debounce";
@@ -106,7 +106,7 @@ export class LocalStorageManager {
                     editedObject = deserializeData(editedObject);
 
                     try {
-                        validateState(defaultEditedObjectState, editedObject);
+                        validateState(getEditedObjectState(), editedObject);
                         loadedEditedObjects[objectID] = editedObject;
                     } catch(e) {
                         this.log(`Validation fail for object "${objectID}":\n` + e);

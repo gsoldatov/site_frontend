@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-import { positiveInt, positiveIntArray } from "../../../util/types/common";
+import { positiveIntArray, positiveIntIndex } from "../../../util/types/common";
 
 
-export const objectsTags = z.record(positiveInt, positiveIntArray);
+/** Objects' tags store schema. */
+export const objectsTags = z.record(positiveIntIndex, positiveIntArray);
