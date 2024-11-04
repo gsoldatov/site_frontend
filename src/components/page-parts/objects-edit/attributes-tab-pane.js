@@ -35,7 +35,7 @@ export const AttributesTabPane = ({ objectID }) => {
 const ObjectTimestamps = () => {
     const createdAt = useSelector(state => getCurrentObject(state).created_at);
     const modifiedAt = useSelector(state => getCurrentObject(state).modified_at);
-    const isDisplayed = useSelector(state => state.objectUI.currentObjectID > 0);
+    const isDisplayed = useSelector(state => state.objectsEditUI.currentObjectID > 0);
 
     if (!isDisplayed) return null;
 
@@ -96,7 +96,7 @@ const AddedTags = () => {
 
 const NewTagInput = () => {
     const dispatch = useDispatch();
-    const inputState = useSelector(state => state.objectUI.tagsInput);
+    const inputState = useSelector(state => state.objectsEditUI.tagsInput);
     
     const setInputState = useMemo(() => newState => dispatch(setObjectTagsInput(newState)), []);
     const setItem = useMemo(() => params => dispatch(setEditedObjectTags(params)), []);

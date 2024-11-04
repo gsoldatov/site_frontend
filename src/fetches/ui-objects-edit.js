@@ -131,7 +131,7 @@ export const editObjectOnLoadFetch = object_id => {
         }
 
         // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
-        if (setEditedObjects) dispatch(resetEditedObjects({}));  // object_id is taken from state.objectUI.currentObjectID (which was set by loadEditObjectPage)
+        if (setEditedObjects) dispatch(resetEditedObjects({}));  // object_id is taken from state.objectsEditUI.currentObjectID (which was set by loadEditObjectPage)
 
         // Get non-cached added existing tag information
         const addedExistingTagIDs = getState().editedObjects[object_id].addedTags.filter(tag => typeof(tag) === "number");
@@ -202,7 +202,7 @@ export const editObjectOnDeleteFetch = deleteSubobjects => {
 
         // Run fetch & delete object data from state
         dispatch(setObjectOnSaveFetchState(true, ""));
-        const result = await dispatch(deleteObjectsFetch( [state.objectUI.currentObjectID], deleteSubobjects ));
+        const result = await dispatch(deleteObjectsFetch( [state.objectsEditUI.currentObjectID], deleteSubobjects ));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
@@ -224,13 +224,13 @@ export const editObjectOnDeleteFetch = deleteSubobjects => {
 export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
     return async (dispatch, getState) => {
         // Input text at the start of the query
-        const inputText = getState().objectUI.tagsInput.inputText;
+        const inputText = getState().objectsEditUI.tagsInput.inputText;
 
         // Run fetch & update matching tags
         const result = await dispatch(tagsSearchFetch({queryText, existingIDs}));
 
         if (getResponseErrorType(result) === enumResponseErrorType.none) {
-            const currentInputText = getState().objectUI.tagsInput.inputText;
+            const currentInputText = getState().objectsEditUI.tagsInput.inputText;
 
             // Reset matching IDs if an item was added before the fetch start
             if (inputText.length === 0) {
@@ -251,7 +251,7 @@ export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
 export const compositeSubobjectDropdownFetch = ({queryText, existingIDs}) => {
     return async (dispatch, getState) => {
         // Exit fetch if an item was added before the start of the fetch
-        const inputText = getState().objectUI.addCompositeSubobjectMenu.inputText;
+        const inputText = getState().objectsEditUI.addCompositeSubobjectMenu.inputText;
         if (inputText.length === 0) return;
 
         // Run fetch & update matching tags
@@ -259,7 +259,7 @@ export const compositeSubobjectDropdownFetch = ({queryText, existingIDs}) => {
 
         if (getResponseErrorType(result) === enumResponseErrorType.none) {
             // Update matching tags if input text didn't change during fetch
-            if (inputText === getState().objectUI.addCompositeSubobjectMenu.inputText) dispatch(setAddCompositeSubobjectMenu({ matchingIDs: result }));
+            if (inputText === getState().objectsEditUI.addCompositeSubobjectMenu.inputText) dispatch(setAddCompositeSubobjectMenu({ matchingIDs: result }));
         }
     };
 }

@@ -18,7 +18,7 @@ import { getEditedObjectState } from "../../store/types/data/edited-objects";
  * 
  * Another option is to refactor all selectors dependant on the `getCurrentObject` function to use default value when the function returns `undefined`.
  */
-export const getCurrentObject = state => state.editedObjects[state.objectUI.currentObjectID] || getEditedObjectState();
+export const getCurrentObject = state => state.editedObjects[state.objectsEditUI.currentObjectID] || getEditedObjectState();
 
 
 /**
@@ -30,13 +30,13 @@ export const getEditedOrDefaultObjectSelector = objectID => state => state.edite
 /**
  * Returns true if any of object page fetches are being performed.
  */
-export const isFetchingObject = state => state.objectUI.objectOnLoadFetch.isFetching || state.objectUI.objectOnSaveFetch.isFetching;
+export const isFetchingObject = state => state.objectsEditUI.objectOnLoadFetch.isFetching || state.objectsEditUI.objectOnSaveFetch.isFetching;
 
 
 /**
  * Returns true if any of object page fetches are being performed or on load fetch failed.
  */
-export const isFetchingOrOnLoadFetchFailed = state => isFetchingObject(state) || state.objectUI.objectOnLoadFetch.fetchError;
+export const isFetchingOrOnLoadFetchFailed = state => isFetchingObject(state) || state.objectsEditUI.objectOnLoadFetch.fetchError;
 
 
 /**
@@ -70,7 +70,7 @@ export const existingTagIDsSelector = createSelector(
  * Returns an object, which maps current matching tag IDs to their names for the new tag input dropdown option list.
  */
 export const matchingTagIDsNames = createSelector(
-    state => state.objectUI.tagsInput.matchingIDs,
+    state => state.objectsEditUI.tagsInput.matchingIDs,
     state => state.tags,
     (matchingTagIDs, tagsStore) => matchingTagIDs.reduce((result, tagID) => {
         result[tagID] = tagsStore[tagID].tag_name;

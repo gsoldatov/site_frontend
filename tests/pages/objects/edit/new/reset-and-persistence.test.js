@@ -228,7 +228,7 @@ describe("Persist new object state", () => {
         await waitForEditObjectPageLoad(container, store);
 
         historyManager.push("/objects/edit/new");
-        await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
+        await waitFor(() => expect(store.getState().objectsEditUI.currentObjectID).toEqual(0));
         clickGeneralTabButton(container);
         objectNameInput = getByPlaceholderText(container, "Object name");
         await waitFor(() => expect(objectNameInput.value).toEqual(objectNameValue));
@@ -264,7 +264,7 @@ describe("Persist new object state", () => {
         await waitForEditObjectPageLoad(container, store);
 
         historyManager.push("/objects/edit/new");
-        await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
+        await waitFor(() => expect(store.getState().objectsEditUI.currentObjectID).toEqual(0));
         clickDataTabButton(container);
         await waitFor(() => expect(getByPlaceholderText(container, "Enter text here...").value).toEqual(rawText));
     });
@@ -293,7 +293,7 @@ describe("Persist new object state", () => {
         await waitForEditObjectPageLoad(container, store);
 
         historyManager.push("/objects/edit/new");
-        await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
+        await waitFor(() => expect(store.getState().objectsEditUI.currentObjectID).toEqual(0));
 
         clickDataTabButton(container);
         getByText(container.querySelector(".to-do-list-container"), newItemText);
@@ -329,7 +329,7 @@ describe("Persist new object state", () => {
         await waitForEditObjectPageLoad(container, store);
 
         historyManager.push("/objects/edit/new");
-        await waitFor(() => expect(store.getState().objectUI.currentObjectID).toEqual(0));
+        await waitFor(() => expect(store.getState().objectsEditUI.currentObjectID).toEqual(0));
         clickDataTabButton(container);
 
         expect(store.getState().editedObjects).toHaveProperty(firstSubobjectID);

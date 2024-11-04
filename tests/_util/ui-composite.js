@@ -38,17 +38,17 @@ export const addANewSubobject = (container, column = 0) => {
  * If `waitForObjectLoad` is true, waits for the data of the new subobject to appear in state.editedObjects.
  */
 export const addAnExistingSubobject = async (container, column = 0, objectName, store, { waitForObjectLoad } = {}) => {
-    const currentObjectID = store.getState().objectUI.currentObjectID;
+    const currentObjectID = store.getState().objectsEditUI.currentObjectID;
     const existingSubobjectIDs = Object.keys(store.getState().editedObjects[currentObjectID].composite.subobjects);
     const { addSubobjectMenuContainer, addExistingButton } = getAddSubobjectMenu(container, column);
     fireEvent.click(addExistingButton);
     
     // Enter object name and await seach results
     const { dropdownInput } = getAddSubobjectMenuDropdown(addSubobjectMenuContainer);
-    const oldMatchingIDs = store.getState().objectUI.addCompositeSubobjectMenu.matchingIDs;
+    const oldMatchingIDs = store.getState().objectsEditUI.addCompositeSubobjectMenu.matchingIDs;
     fireEvent.change(dropdownInput, { target: { value: objectName } });
-    await waitFor(() => expect(oldMatchingIDs).not.toBe(store.getState().objectUI.addCompositeSubobjectMenu.matchingIDs));  // matching IDs are updated
-    const objectID = store.getState().objectUI.addCompositeSubobjectMenu.matchingIDs[0];
+    await waitFor(() => expect(oldMatchingIDs).not.toBe(store.getState().objectsEditUI.addCompositeSubobjectMenu.matchingIDs));  // matching IDs are updated
+    const objectID = store.getState().objectsEditUI.addCompositeSubobjectMenu.matchingIDs[0];
     await waitFor(() => expect(store.getState().objects).toHaveProperty(objectID.toString()));     // found object attributes are fetched
 
     // Select found object

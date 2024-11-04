@@ -53,7 +53,7 @@ const TDLItems = ({ objectID, toDoList, updateCallback, canDrag }) => {
 
     // Check if to-do list items should be rerendered to match the state of object
     // (currently used on /objects/edit/:id page whenever an object is reset or saved)
-    const updateInnerHTMLRequired = useSelector(state => state.objectUI.toDoListRerenderPending);
+    const updateInnerHTMLRequired = useSelector(state => state.objectsEditUI.toDoListRerenderPending);
 
     // Focus item specified in setFocusOnID
     useEffect(() => {

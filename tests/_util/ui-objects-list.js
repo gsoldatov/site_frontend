@@ -123,7 +123,7 @@ export const addAndRemoveTags = async (container, store) => {
 
 
     fireEvent.change(input, { target: { value: "new tag" } });
-    await waitFor(() => expect(store.getState().objectUI.tagsInput.matchingIDs.length).toEqual(10));
+    await waitFor(() => expect(store.getState().objectsEditUI.tagsInput.matchingIDs.length).toEqual(10));
     let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
     expect(dropdown).toBeTruthy();
     fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option

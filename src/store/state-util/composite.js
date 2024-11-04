@@ -114,7 +114,7 @@ export const getNonCompositeSubobjectValidationError = editedObject => {
 
 
 /**
- * Accepts current `state` and, optionally, `objectID` (if the latter is not provided, uses state.objectUI.currentObjectID instead).
+ * Accepts current `state` and, optionally, `objectID` (if the latter is not provided, uses state.objectsEditUI.currentObjectID instead).
  * 
  * Returns true if:
  * - data tab is being displayed on the /objects/edit/:id page;
@@ -123,10 +123,10 @@ export const getNonCompositeSubobjectValidationError = editedObject => {
  */
 export const isMultiColumnCompositeDataDisplayed = (state, objectID) => {
     // Check if data tab is displayed
-    if (state.objectUI.selectedTab !== 1) return false;
+    if (state.objectsEditUI.selectedTab !== 1) return false;
 
     // Check if current edited object is loaded and has `composite` object_type
-    objectID = objectID !== undefined ? objectID : state.objectUI.currentObjectID;
+    objectID = objectID !== undefined ? objectID : state.objectsEditUI.currentObjectID;
     const editedObject = state.editedObjects[objectID];
     if (editedObject === undefined || editedObject.object_type !== "composite") return false;
 

@@ -27,13 +27,13 @@ export const ObjectsEdit = ({ header, sideMenu, onLoad, objectID }) => {
     }, [objectID]);
 
     // Set edited to-do list rerender to false, whenever it was toggled (flag is handled here to avoid multiple dispatch calls)
-    const toDoListRerenderPending = useSelector(state => state.objectUI.toDoListRerenderPending);
+    const toDoListRerenderPending = useSelector(state => state.objectsEditUI.toDoListRerenderPending);
     useEffect(() => {
         if (toDoListRerenderPending) dispatch(setToDoListRerenderPending(false));
     }, [toDoListRerenderPending]);
 
     // Render loader/error or body
-    const { isFetching, fetchError } = useSelector(state => state.objectUI.objectOnLoadFetch);
+    const { isFetching, fetchError } = useSelector(state => state.objectsEditUI.objectOnLoadFetch);
 
     const body = isFetching || fetchError ?
         <LoadIndicatorAndError isFetching={isFetching} fetchError={fetchError} />
@@ -69,7 +69,7 @@ const ObjectTabPanes = memo(({ objectID }) => {
         ];
     }, [objectID]);
 
-    const activeIndex = useSelector(state => state.objectUI.selectedTab);
+    const activeIndex = useSelector(state => state.objectsEditUI.selectedTab);
     const dispatch = useDispatch();
     const onTabChange = useRef((e, data) => {
         dispatch(setSelectedTab(data.activeIndex));
@@ -83,6 +83,6 @@ const ObjectTabPanes = memo(({ objectID }) => {
  * Save fetch error message
  * */
 const ObjectSaveError = () => {
-    const fetchSelector = useMemo(() => state => state.objectUI.objectOnSaveFetch, []);
+    const fetchSelector = useMemo(() => state => state.objectsEditUI.objectOnSaveFetch, []);
     return <SaveError fetchSelector={fetchSelector} />;
 };

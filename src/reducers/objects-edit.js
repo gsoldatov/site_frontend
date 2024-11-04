@@ -29,8 +29,8 @@ function loadNewObjectPage(state, action) {
 
         editedObjects,
 
-        objectUI: {
-            ...state.objectUI,
+        objectsEditUI: {
+            ...state.objectsEditUI,
 
             currentObjectID: 0,
             
@@ -67,8 +67,8 @@ function loadNewObjectPage(state, action) {
 function loadEditObjectPage(state, action) {
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
+        objectsEditUI: {
+            ...state.objectsEditUI,
 
             currentObjectID: action.currentObjectID,
             
@@ -112,7 +112,7 @@ function loadEditObjectPage(state, action) {
 */
 function resetEditedObjects(state, action) {
     const { hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed } = action;
-    const objectIDs = action.objectIDs || [state.objectUI.currentObjectID];
+    const objectIDs = action.objectIDs || [state.objectsEditUI.currentObjectID];
     let newState = state;
 
     // Remove all new subobjects of composite objects
@@ -128,8 +128,8 @@ function resetEditedObjects(state, action) {
     if (hideObjectResetDialog)
         newState = {
             ...newState,
-            objectUI: {
-                ...state.objectUI,
+            objectsEditUI: {
+                ...state.objectsEditUI,
                 showResetDialog: false  // hide reset dialog on the /object/:id page
             }
         }
@@ -161,13 +161,13 @@ function removeEditedObjects(state, action) {
 /*
     Updates an object in state.editedObjects store with attributes/data passed in `action.object` prop.
     
-    If `action.objectID` is provided, updates the object with the provided ID, otherwise updates the object with ID == state.objectUI.currentObjectID.
+    If `action.objectID` is provided, updates the object with the provided ID, otherwise updates the object with ID == state.objectsEditUI.currentObjectID.
 
     To-do lists can be updated with commands specified in `getUpdatedToDoList` function by passing an `action.object.toDoListItemUpdate` prop.
     Composite objects can be updated with commands specified in `action.object.compositeUpdate` prop.
 */
 function setEditedObject(state, action) {
-    const objectID = action.objectID !== undefined ? action.objectID : state.objectUI.currentObjectID;
+    const objectID = action.objectID !== undefined ? action.objectID : state.objectsEditUI.currentObjectID;
     const oldObject = state.editedObjects[objectID];
     if (oldObject === undefined) return state;      // don't update non-existing objects (i.e. when saving new Markdown object & redirecting to its page before it's data was parsed after last update)
     
@@ -248,11 +248,11 @@ function clearUnsavedCurrentEditedObject(state, action) {
 
 
 function setObjectTagsInput(state, action) {
-    const oldTagsInput = state.objectUI.tagsInput;
+    const oldTagsInput = state.objectsEditUI.tagsInput;
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
+        objectsEditUI: {
+            ...state.objectsEditUI,
             tagsInput: {
                 isDisplayed: action.tagsInput.isDisplayed !== undefined ? action.tagsInput.isDisplayed : oldTagsInput.isDisplayed,
                 inputText: action.tagsInput.inputText !== undefined ? action.tagsInput.inputText : oldTagsInput.inputText,
@@ -330,7 +330,7 @@ function setEditedObjectTags(state, action) {
         ...state,
         editedObjects: {
             ...state.editedObjects,
-            [state.objectUI.currentObjectID]: newObject
+            [state.objectsEditUI.currentObjectID]: newObject
         }
     };
 }
@@ -365,8 +365,8 @@ function resetEditedObjectsTags(state, action) {
 function setSelectedTab(state, action) {
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
+        objectsEditUI: {
+            ...state.objectsEditUI,
             selectedTab: action.selectedTab
         }
     }
@@ -376,8 +376,8 @@ function setSelectedTab(state, action) {
 function setShowResetDialogObject(state, action) {
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
+        objectsEditUI: {
+            ...state.objectsEditUI,
             showResetDialog: action.showResetDialog,
             showDeleteDialog: false
         }
@@ -388,8 +388,8 @@ function setShowResetDialogObject(state, action) {
 function setShowDeleteDialogObject(state, action) {
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
+        objectsEditUI: {
+            ...state.objectsEditUI,
             showDeleteDialog: action.showDeleteDialog,
             showResetDialog: false
         }
@@ -399,20 +399,20 @@ function setShowDeleteDialogObject(state, action) {
 
 const setToDoListRerenderPending = (state, action) => {
     const { toDoListRerenderPending } = action;
-    return { ...state, objectUI: { ...state.objectUI, toDoListRerenderPending }};
+    return { ...state, objectsEditUI: { ...state.objectsEditUI, toDoListRerenderPending }};
 };
 
 
 function setAddCompositeSubobjectMenu(state, action) {
-    const oldAddCompositeSubobjectMenu = state.objectUI.addCompositeSubobjectMenu;
+    const oldAddCompositeSubobjectMenu = state.objectsEditUI.addCompositeSubobjectMenu;
     const newAddCompositeSubobjectMenu = {};
     ["row", "column", "inputText", "matchingIDs"].forEach(attr => {
         if (action.addCompositeSubobjectMenu[attr] !== undefined) newAddCompositeSubobjectMenu[attr] = action.addCompositeSubobjectMenu[attr];
     });
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
+        objectsEditUI: {
+            ...state.objectsEditUI,
             addCompositeSubobjectMenu: {
                 ...oldAddCompositeSubobjectMenu,
                 ...newAddCompositeSubobjectMenu
@@ -431,7 +431,7 @@ const preSaveEditedObjectsUpdate = (state, action) => {
     let newState = state;
 
     // Get object IDs of to-do lists, which are being saved
-    const objectID = newState.objectUI.currentObjectID;
+    const objectID = newState.objectsEditUI.currentObjectID;
     const currentObjectType = newState.editedObjects[objectID].object_type;
     let toDoListObjectIDs = currentObjectType === "to_do_list" ? [objectID]
         : currentObjectType === "composite" ? 
@@ -457,8 +457,8 @@ const preSaveEditedObjectsUpdate = (state, action) => {
 function setObjectOnLoadFetchState(state, action) {
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
+        objectsEditUI: {
+            ...state.objectsEditUI,
             objectOnLoadFetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError
@@ -471,8 +471,8 @@ function setObjectOnLoadFetchState(state, action) {
 function setObjectOnSaveFetchState(state, action) {
     return {
         ...state,
-        objectUI: {
-            ...state.objectUI,
+        objectsEditUI: {
+            ...state.objectsEditUI,
             objectOnSaveFetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError

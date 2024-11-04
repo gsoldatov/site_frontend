@@ -86,7 +86,7 @@ const Reset = () => {
         ? !isFetchingObject(state)
         : !isFetchingOrOnLoadFetchFailed(state)
     );
-    const isVisible = useSelector(state => !state.objectUI.showResetDialog);
+    const isVisible = useSelector(state => !state.objectsEditUI.showResetDialog);
     const onClick = useMemo(() => () => dispatch(setShowResetDialogObject(true)), []);
 
     if (!isVisible) return null;    
@@ -97,7 +97,7 @@ const Reset = () => {
 const ResetDialog = () => {
     const dispatch = useDispatch();
     const { id } = useParams(); // undefined for new object page
-    const isVisible = useSelector(state => state.objectUI.showResetDialog);
+    const isVisible = useSelector(state => state.objectsEditUI.showResetDialog);
     const isCheckboxVisible = useSelector(state => getCurrentObject(state).object_type === "composite");
 
     const yesOnClick = useMemo(() => resetCompositeSubobjects => {
@@ -127,7 +127,7 @@ const ResetDialog = () => {
 const Delete = () => {
     const dispatch = useDispatch();
     const isActive = useSelector(state => !isFetchingOrOnLoadFetchFailed(state));
-    const isVisible = useSelector(state => !state.objectUI.showDeleteDialog);
+    const isVisible = useSelector(state => !state.objectsEditUI.showDeleteDialog);
     const onClick = useMemo(() => () => dispatch(setShowDeleteDialogObject(true)), []);
 
     if (!isVisible) return null;
@@ -137,7 +137,7 @@ const Delete = () => {
 
 const DeleteDialog = () => {
     const dispatch = useDispatch();
-    const isVisible = useSelector(state => state.objectUI.showDeleteDialog);
+    const isVisible = useSelector(state => state.objectsEditUI.showDeleteDialog);
     const isCheckboxVisible = useSelector(state => getCurrentObject(state).object_type === "composite");
 
     const yesOnClick = useMemo(() => deleteSubobjects => dispatch(editObjectOnDeleteFetch(deleteSubobjects)), []);

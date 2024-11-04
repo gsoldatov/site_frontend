@@ -82,7 +82,7 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
     const dispatch = useDispatch();
 
     // Input state & dropdown options
-    const inputState = useSelector(state=> state.objectUI.addCompositeSubobjectMenu);
+    const inputState = useSelector(state=> state.objectsEditUI.addCompositeSubobjectMenu);
     const objectsStore = useSelector(state => state.objects);
     const options = inputState.matchingIDs.map(id => ({ key: id, text: objectsStore[id].object_name, value: id }));
     

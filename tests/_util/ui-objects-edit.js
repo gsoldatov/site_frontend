@@ -6,15 +6,15 @@ import { selectDate } from "./ui-react-datetime";
 import { addAnExistingSubobject } from "./ui-composite";
 
 
-export const getCurrentObject = state => state.editedObjects[state.objectUI.currentObjectID];
+export const getCurrentObject = state => state.editedObjects[state.objectsEditUI.currentObjectID];
 
 
 /**
  * Wait for existing page to be loaded
  */
 export const waitForEditObjectPageLoad = async (container, store) => {
-    await waitFor(() => expect(store.getState().objectUI.objectOnLoadFetch.isFetching).toBeTruthy());
-    await waitFor(() => expect(store.getState().objectUI.objectOnLoadFetch.isFetching).toBeFalsy());
+    await waitFor(() => expect(store.getState().objectsEditUI.objectOnLoadFetch.isFetching).toBeTruthy());
+    await waitFor(() => expect(store.getState().objectsEditUI.objectOnLoadFetch.isFetching).toBeFalsy());
     await waitFor(() => getByText(container, "Object Information"));
 };
 

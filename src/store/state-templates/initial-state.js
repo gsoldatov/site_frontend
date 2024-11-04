@@ -79,7 +79,7 @@ const initialState = {
     editedObjects: {},
 
     // /objects/edit/:id page UI controllers
-    objectUI: {
+    objectsEditUI: {
         currentObjectID: -1,
 
         tagsInput: {

@@ -55,7 +55,7 @@ test("Check tag input elements", async () => {
 
     // Change input value
     fireEvent.change(input, { target: { value: "some text" } });
-    expect(store.getState().objectUI.tagsInput.inputText).toEqual("some text");
+    expect(store.getState().objectsEditUI.tagsInput.inputText).toEqual("some text");
 
     // Click Escape & check if input is not rendered
     fireEvent.keyDown(input, { key: "Escape", code: "Escape" });
@@ -79,7 +79,7 @@ test("Check input dropdown", async () => {
 
     // Check if filtered options appeared
     await waitFor(() => {
-        expect(store.getState().objectUI.tagsInput.matchingIDs.length).toEqual(10);
+        expect(store.getState().objectsEditUI.tagsInput.matchingIDs.length).toEqual(10);
         let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "some text" });
         expect(dropdown).toBeTruthy();
         // expect(dropdown.childNodes.length).toEqual(11); // add new + 10 existing tags    // dropdown list <div> tags are not rendered in tests, despite the options being passed into Dropdown component
@@ -111,7 +111,7 @@ test("Add & remove tags", async () => {
     
     // Add and remove a new tag
     fireEvent.change(input, { target: { value: "new tag" } });
-    await waitFor(() => expect(store.getState().objectUI.tagsInput.matchingIDs.length).toEqual(10));
+    await waitFor(() => expect(store.getState().objectsEditUI.tagsInput.matchingIDs.length).toEqual(10));
     let dropdown = getDropdownOptionsContainer({ container, currentQueryText: "new tag" });
     expect(dropdown).toBeTruthy();
     fireEvent.click(dropdown.childNodes[0]);    // click on "Add new tag" option
