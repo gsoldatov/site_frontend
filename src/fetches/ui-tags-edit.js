@@ -22,7 +22,7 @@ export const addTagOnSaveFetch = () => {
         // Run fetch & add tag
         dispatch(setTagOnSaveFetchState(true, ""));
         const tag = {};
-        addedTagAttributes.forEach(attr => { tag[attr] = state.tagUI.currentTag[attr]; });
+        addedTagAttributes.forEach(attr => { tag[attr] = state.tagsEditUI.currentTag[attr]; });
         const result = await dispatch(addTagFetch(tag));
 
         // Handle fetch errors
@@ -94,7 +94,7 @@ export const editTagOnSaveFetch = () => {
         dispatch(setTagOnSaveFetchState(true, ""));
         
         const tag = {};
-        updatedTagAttributes.forEach(attr => { tag[attr] = state.tagUI.currentTag[attr]; });
+        updatedTagAttributes.forEach(attr => { tag[attr] = state.tagsEditUI.currentTag[attr]; });
         const result = await dispatch(updateTagFetch(tag));
 
         // Handle fetch errors
@@ -126,7 +126,7 @@ export const editTagOnDeleteFetch = () => {
 
         // Run fetch & delete tag data from state
         dispatch(setTagOnSaveFetchState(true, ""));
-        const result = await dispatch(deleteTagsFetch( [state.tagUI.currentTag.tag_id] ));
+        const result = await dispatch(deleteTagsFetch( [state.tagsEditUI.currentTag.tag_id] ));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);

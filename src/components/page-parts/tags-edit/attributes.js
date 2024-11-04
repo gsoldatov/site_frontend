@@ -10,9 +10,9 @@ import { setCurrentTag } from "../../../actions/tags-edit";
  * Created at & modified at timestamps
  */
 export const TagTimestamps = () => {
-    const createdAt = useSelector(state => state.tagUI.currentTag.created_at);
-    const modifiedAt = useSelector(state => state.tagUI.currentTag.modified_at);
-    const isDisplayed = useSelector(state => state.tagUI.currentTag.tag_id > 0);
+    const createdAt = useSelector(state => state.tagsEditUI.currentTag.created_at);
+    const modifiedAt = useSelector(state => state.tagsEditUI.currentTag.modified_at);
+    const isDisplayed = useSelector(state => state.tagsEditUI.currentTag.tag_id > 0);
 
     if (!isDisplayed) return null;
 
@@ -25,8 +25,8 @@ export const TagTimestamps = () => {
  */
 export const TagNameDescription = () => {
     const dispatch = useDispatch();
-    const name = useSelector(state => state.tagUI.currentTag.tag_name);
-    const description = useSelector(state => state.tagUI.currentTag.tag_description);
+    const name = useSelector(state => state.tagsEditUI.currentTag.tag_name);
+    const description = useSelector(state => state.tagsEditUI.currentTag.tag_description);
 
     const nameOnChange = useRef(tag_name => {
         dispatch(setCurrentTag({ tag_name }));

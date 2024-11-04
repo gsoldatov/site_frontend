@@ -11,7 +11,7 @@ export const checkIfTagNameExists = (state, tag) => {
     let loweredName = tag.tag_name.toLowerCase();
 
     for (let i in tags) {
-        if (loweredName === tags[i].tag_name.toLowerCase() && state.tagUI.currentTag.tag_id !== tags[i].tag_id) return true;
+        if (loweredName === tags[i].tag_name.toLowerCase() && state.tagsEditUI.currentTag.tag_id !== tags[i].tag_id) return true;
     }
     return false;
 };

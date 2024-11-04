@@ -6,8 +6,8 @@ import { getDefaultCurrentTagState, tagAttributes } from "../store/state-templat
 function loadNewTagPage(state, action) {
     return {
         ...state,
-        tagUI: {
-            ...state.tagUI,
+        tagsEditUI: {
+            ...state.tagsEditUI,
             currentTag: getDefaultCurrentTagState(),
 
             tagOnLoadFetch: {
@@ -26,8 +26,8 @@ function loadNewTagPage(state, action) {
 function loadEditTagPage(state, action) {
     return {
         ...state,
-        tagUI: {
-            ...state.tagUI,
+        tagsEditUI: {
+            ...state.tagsEditUI,
             currentTag: getDefaultCurrentTagState(),
 
             tagOnLoadFetch: {
@@ -46,15 +46,15 @@ function loadEditTagPage(state, action) {
 }
 
 function setCurrentTag(state, action) {
-    let newCurrentTag = { ...state.tagUI.currentTag };
+    let newCurrentTag = { ...state.tagsEditUI.currentTag };
     tagAttributes.forEach(attr => { 
         if (attr in action.tag) newCurrentTag[attr] = action.tag[attr];
     });
 
     return {
         ...state,
-        tagUI: {
-            ...state.tagUI,
+        tagsEditUI: {
+            ...state.tagsEditUI,
             currentTag: newCurrentTag
         }
     };
@@ -63,8 +63,8 @@ function setCurrentTag(state, action) {
 function setTagOnLoadFetchState(state, action) {
     return {
         ...state,
-        tagUI: {
-            ...state.tagUI,
+        tagsEditUI: {
+            ...state.tagsEditUI,
             tagOnLoadFetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError
@@ -76,8 +76,8 @@ function setTagOnLoadFetchState(state, action) {
 function setTagOnSaveFetchState(state, action) {
     return {
         ...state,
-        tagUI: {
-            ...state.tagUI,
+        tagsEditUI: {
+            ...state.tagsEditUI,
             tagOnSaveFetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError
@@ -89,8 +89,8 @@ function setTagOnSaveFetchState(state, action) {
 function setShowDeleteDialogTag(state, action) {
     return {
         ...state,
-        tagUI: {
-            ...state.tagUI,
+        tagsEditUI: {
+            ...state.tagsEditUI,
             showDeleteDialog: action.showDeleteDialog
         }
     }

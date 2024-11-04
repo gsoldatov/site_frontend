@@ -29,7 +29,7 @@ const initialState = {
     tags: {},
 
     // /tags/edit/:id page UI controllers
-    tagUI: {
+    tagsEditUI: {
         currentTag: getDefaultCurrentTagState(),       // current state of the tag being added/edited
 
         tagOnLoadFetch: {

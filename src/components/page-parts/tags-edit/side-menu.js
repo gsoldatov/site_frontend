@@ -58,7 +58,7 @@ const ViewTag = () => {
 
 const Save = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => !isFetchingTag(state) && state.tagUI.currentTag.tag_name.length >= 1 && state.tagUI.currentTag.tag_name.length <= 255);
+    const isActive = useSelector(state => !isFetchingTag(state) && state.tagsEditUI.currentTag.tag_name.length >= 1 && state.tagsEditUI.currentTag.tag_name.length <= 255);
     const { id } = useParams(); // undefined for new tag page
     const onClick = useMemo(() => () => {
         const onSave = id === undefined ? addTagOnSaveFetch : editTagOnSaveFetch;
@@ -71,8 +71,8 @@ const Save = () => {
 
 const Delete = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => !isFetchinOrShowingDialogTag(state) && state.tagUI.currentTag.tag_id !== 0);
-    const isVisible = useSelector(state => !state.tagUI.showDeleteDialog);
+    const isActive = useSelector(state => !isFetchinOrShowingDialogTag(state) && state.tagsEditUI.currentTag.tag_id !== 0);
+    const isVisible = useSelector(state => !state.tagsEditUI.showDeleteDialog);
     const onClick = useMemo(() => () => dispatch(setShowDeleteDialogTag(true)), []);
 
     if (!isVisible) return null;
@@ -82,7 +82,7 @@ const Delete = () => {
 
 const DeleteDialog = () => {
     const dispatch = useDispatch();
-    const isVisible = useSelector(state => state.tagUI.showDeleteDialog);
+    const isVisible = useSelector(state => state.tagsEditUI.showDeleteDialog);
 
     const yesOnClick = useMemo(() => () => dispatch(editTagOnDeleteFetch()), []);
     const noOnClick = useMemo(() => () => dispatch(setShowDeleteDialogTag(false)), []);

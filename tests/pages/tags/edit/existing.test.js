@@ -251,7 +251,7 @@ describe("Edit & save ", () => {
         // Set description and check if it was rendered
         setMarkdownRawText(tagDescription.editMarkdownInput, "# Some text");
         await waitForMarkdownHeaderRender({ editorContainer: tagDescription.editorContainer, text: "Some text" });
-        expect(store.getState().tagUI.currentTag.tag_description).toBe("# Some text");
+        expect(store.getState().tagsEditUI.currentTag.tag_description).toBe("# Some text");
     
         // Click and check `view` mode
         fireEvent.click(tagDescription.displayModeMenu.viewModeButton);
@@ -378,7 +378,7 @@ describe("Edit & save ", () => {
         expect(elements.publishTagCheckbox.checked).toBeTruthy();
         for (let i = 0; i < 3; i++) {
             fireEvent.click(elements.publishTagCheckbox);
-            expect(store.getState().tagUI.currentTag.is_published).toEqual(Boolean(i % 2));
+            expect(store.getState().tagsEditUI.currentTag.is_published).toEqual(Boolean(i % 2));
             expect(elements.publishTagCheckbox.checked).toEqual(Boolean(i % 2));
         }
 

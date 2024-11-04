@@ -24,7 +24,7 @@ export const TagDisplayContainer = () => {
 export const IsPublished = () => {
     const dispatch = useDispatch();
 
-    const isPublished = useSelector(state => state.tagUI.currentTag.is_published);
+    const isPublished = useSelector(state => state.tagsEditUI.currentTag.is_published);
     const onClick = useMemo(() => () => dispatch(setCurrentTag({ is_published: !isPublished })), [isPublished]);
 
     return (

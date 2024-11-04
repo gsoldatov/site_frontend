@@ -99,7 +99,7 @@ describe("Edit & save", () => {
         // Check if input is updating the state
         const { tagNameInput } = getTagsEditElements(container);
         fireEvent.change(tagNameInput, { target: { value: "existing tag_name" } });
-        expect(store.getState().tagUI.currentTag.tag_name).toBe("existing tag_name");
+        expect(store.getState().tagsEditUI.currentTag.tag_name).toBe("existing tag_name");
 
         // Check if existing tag_name (in store) is not added
         store.dispatch(addTags([{ tag_id: 1, tag_name: "existing tag_name", tag_description: "", created_at: new Date(), modified_at: new Date() }]));
@@ -124,7 +124,7 @@ describe("Edit & save", () => {
         // Set description and check if it was rendered
         setMarkdownRawText(tagDescription.editMarkdownInput, "# Some text");
         await waitForMarkdownHeaderRender({ editorContainer: tagDescription.editorContainer, text: "Some text" });
-        expect(store.getState().tagUI.currentTag.tag_description).toBe("# Some text");
+        expect(store.getState().tagsEditUI.currentTag.tag_description).toBe("# Some text");
     
         // Click and check `view` mode
         fireEvent.click(tagDescription.displayModeMenu.viewModeButton);
@@ -157,7 +157,7 @@ describe("Edit & save", () => {
         // Check if existing tag_name (on backend) is not added
         const elements = getTagsEditElements(container);
         fireEvent.change(elements.tagNameInput, { target: { value: "existing tag_name" } });
-        await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("existing tag_name"));  // wait for tag_name to be updated in state
+        await waitFor(() => expect(store.getState().tagsEditUI.currentTag.tag_name).toBe("existing tag_name"));  // wait for tag_name to be updated in state
         fireEvent.click(elements.sideMenu.saveButton);
         await waitFor(() => {
             const { tagSaveError } = getTagsEditElements(container);
@@ -174,7 +174,7 @@ describe("Edit & save", () => {
         // Check if an error message is displayed and tag is not added to the state
         const elements = getTagsEditElements(container);
         fireEvent.change(elements.tagNameInput, { target: { value: "some name" } });
-        await waitFor(() => expect(store.getState().tagUI.currentTag.tag_name).toBe("some name"));  // wait for tag_name to be updated in state
+        await waitFor(() => expect(store.getState().tagsEditUI.currentTag.tag_name).toBe("some name"));  // wait for tag_name to be updated in state
         setFetchFail(true);
 
         fireEvent.click(elements.sideMenu.saveButton);
@@ -196,12 +196,12 @@ describe("Edit & save", () => {
 
         // Modify tag name
         fireEvent.change(elements.tagNameInput, { target: { value: "new tag" } });
-        expect(store.getState().tagUI.currentTag.tag_name).toBe("new tag");
+        expect(store.getState().tagsEditUI.currentTag.tag_name).toBe("new tag");
 
         // Click save and check if redirect to saved tag's edit page occured
         fireEvent.click(elements.sideMenu.saveButton);
-        await waitFor(() => expect(store.getState().tagUI.currentTag.tag_id).toBeGreaterThan(0));
-        let tag_id = store.getState().tagUI.currentTag.tag_id;
+        await waitFor(() => expect(store.getState().tagsEditUI.currentTag.tag_id).toBeGreaterThan(0));
+        let tag_id = store.getState().tagsEditUI.currentTag.tag_id;
         historyManager.ensureCurrentURL(`/tags/edit/${tag_id}`);
         elements = getTagsEditElements(container);
         expect(elements.tagNameInput.value).toEqual(store.getState().tags[tag_id].tag_name);
@@ -217,16 +217,16 @@ describe("Edit & save", () => {
 
         // Modify tag name & description
         fireEvent.change(elements.tagNameInput, { target: { value: "new tag" } });
-        expect(store.getState().tagUI.currentTag.tag_name).toBe("new tag");
+        expect(store.getState().tagsEditUI.currentTag.tag_name).toBe("new tag");
 
         setMarkdownRawText(elements.tagDescription.editMarkdownInput, "# Some text");
         await waitForMarkdownHeaderRender({ editorContainer: elements.tagDescription.editorContainer, text: "Some text" });
-        expect(store.getState().tagUI.currentTag.tag_description).toBe("# Some text");
+        expect(store.getState().tagsEditUI.currentTag.tag_description).toBe("# Some text");
 
         // Click save and check if redirect to saved tag's edit page occured
         fireEvent.click(elements.sideMenu.saveButton);
-        await waitFor(() => expect(store.getState().tagUI.currentTag.tag_id).toBeGreaterThan(0));
-        let tag_id = store.getState().tagUI.currentTag.tag_id;
+        await waitFor(() => expect(store.getState().tagsEditUI.currentTag.tag_id).toBeGreaterThan(0));
+        let tag_id = store.getState().tagsEditUI.currentTag.tag_id;
         historyManager.ensureCurrentURL(`/tags/edit/${tag_id}`);
         elements = getTagsEditElements(container);
         expect(elements.tagDescription.editMarkdownInput.value).toEqual(store.getState().tags[tag_id].tag_description);
@@ -242,22 +242,22 @@ describe("Edit & save", () => {
 
         // Modify tag name & is_published
         fireEvent.change(elements.tagNameInput, { target: { value: "new tag" } });
-        expect(store.getState().tagUI.currentTag.tag_name).toBe("new tag");
+        expect(store.getState().tagsEditUI.currentTag.tag_name).toBe("new tag");
 
         expect(elements.publishTagCheckbox.checked).toBeTruthy();
         for (let i = 0; i < 3; i++) {
             fireEvent.click(elements.publishTagCheckbox);
-            expect(store.getState().tagUI.currentTag.is_published).toEqual(Boolean(i % 2));
+            expect(store.getState().tagsEditUI.currentTag.is_published).toEqual(Boolean(i % 2));
             expect(elements.publishTagCheckbox.checked).toEqual(Boolean(i % 2));
         }
 
         // Click save and check if redirect to saved tag's edit page occured
         fireEvent.click(elements.sideMenu.saveButton);
-        await waitFor(() => expect(store.getState().tagUI.currentTag.tag_id).toBeGreaterThan(0));
-        let tag_id = store.getState().tagUI.currentTag.tag_id;
+        await waitFor(() => expect(store.getState().tagsEditUI.currentTag.tag_id).toBeGreaterThan(0));
+        let tag_id = store.getState().tagsEditUI.currentTag.tag_id;
         historyManager.ensureCurrentURL(`/tags/edit/${tag_id}`);
         elements = getTagsEditElements(container);
-        expect(store.getState().tagUI.currentTag.is_published).toBeFalsy();
+        expect(store.getState().tagsEditUI.currentTag.is_published).toBeFalsy();
         expect(elements.publishTagCheckbox.checked).toBeFalsy();
     });
 });
