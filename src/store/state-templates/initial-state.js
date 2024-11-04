@@ -148,7 +148,7 @@ const initialState = {
     },
 
     // /objects/edited page UI controllers
-    editedObjectsUI: {
+    objectsEditedUI: {
         selectedObjectIDs: new Set()
     },
 

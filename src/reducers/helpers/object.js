@@ -235,15 +235,15 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID, { exclude
 
 
 /**
- * Returns the state with non-existant edited objects being removed from state.editedObjectsUI.selectedObjectIds.
+ * Returns the state with non-existant edited objects being removed from state.objectsEditedUI.selectedObjectIds.
  */
 export const deselectNonExistantEditedObjects = (state) => {
-    const newSelectedObjectIDs = new Set([...state.editedObjectsUI.selectedObjectIDs].filter(objectID => objectID in state.editedObjects));
+    const newSelectedObjectIDs = new Set([...state.objectsEditedUI.selectedObjectIDs].filter(objectID => objectID in state.editedObjects));
     
     return {
         ...state,
-        editedObjectsUI: {
-            ...state.editedObjectsUI,
+        objectsEditedUI: {
+            ...state.objectsEditedUI,
             selectedObjectIDs: newSelectedObjectIDs
         }
     };

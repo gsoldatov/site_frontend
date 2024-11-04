@@ -50,8 +50,8 @@ const ObjectsEditedTableHeader = ({ setConfirmState }) => {
     const dispatch = useDispatch();
     
     // Toggle all selection checkbox
-    const isChecked = useSelector(state => state.editedObjectsUI.selectedObjectIDs.size === Object.keys(state.editedObjects).length);
-    const isIndeterminate = useSelector(state => state.editedObjectsUI.selectedObjectIDs.size < Object.keys(state.editedObjects).length && state.editedObjectsUI.selectedObjectIDs.size > 0);
+    const isChecked = useSelector(state => state.objectsEditedUI.selectedObjectIDs.size === Object.keys(state.editedObjects).length);
+    const isIndeterminate = useSelector(state => state.objectsEditedUI.selectedObjectIDs.size < Object.keys(state.editedObjects).length && state.objectsEditedUI.selectedObjectIDs.size > 0);
     const checkBoxOnClick = useMemo(() => () => dispatch(toggleAllObjectsSelection()), []);
     const checkbox = <Checkbox checked={isChecked} indeterminate={isIndeterminate} onClick={checkBoxOnClick} />;
 
@@ -85,7 +85,7 @@ const EditedObjectItem = memo(({ objectID, parentObjects = [], parentNames = [],
     const editedObject = useSelector(state => state.editedObjects[objectID]);
 
     // Checkbox
-    const isChecked = useSelector(state => state.editedObjectsUI.selectedObjectIDs.has(strObjectID));
+    const isChecked = useSelector(state => state.objectsEditedUI.selectedObjectIDs.has(strObjectID));
     const checkBoxOnClick = useMemo(() => () => dispatch(toggleEditedObjectSelection(strObjectID)), [objectID]);
     const checkbox = <Checkbox checked={isChecked} onClick={checkBoxOnClick} />;
     
@@ -250,7 +250,7 @@ const EditedSubobjectsIndicator = ({ objectID }) => {
  */
  const SelectedEditedObjectControls = ({ setConfirmState }) => {
     const dispatch = useDispatch();
-    const selectedEditedObjectIDs = useSelector(state => state.editedObjectsUI.selectedObjectIDs);
+    const selectedEditedObjectIDs = useSelector(state => state.objectsEditedUI.selectedObjectIDs);
 
     const deleteAllCallback = useMemo(() => () => setConfirmState({
         open: true,

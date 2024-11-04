@@ -4,8 +4,8 @@ import { LOAD_OBJECTS_EDITED_PAGE, TOGGLE_EDITED_OBJECT_SELECTION, TOGGLE_ALL_OB
 function loadObjectsEditedPage(state, action) {
     return {
         ...state,
-        editedObjectsUI: {
-            ...state.editedObjectsUI,
+        objectsEditedUI: {
+            ...state.objectsEditedUI,
             selectedObjectIDs: new Set()
         }
     };
@@ -14,7 +14,7 @@ function loadObjectsEditedPage(state, action) {
 
 function toggleEditedObjectSelection(state, action) {
     const { objectID } = action;
-    let newSelectedObjectIDs = new Set(state.editedObjectsUI.selectedObjectIDs);
+    let newSelectedObjectIDs = new Set(state.objectsEditedUI.selectedObjectIDs);
     if (newSelectedObjectIDs.has(objectID))
         newSelectedObjectIDs.delete(objectID);
     else
@@ -22,8 +22,8 @@ function toggleEditedObjectSelection(state, action) {
     
     return {
         ...state,
-        editedObjectsUI: {
-            ...state.editedObjectsUI,
+        objectsEditedUI: {
+            ...state.objectsEditedUI,
             selectedObjectIDs: newSelectedObjectIDs
         }
     };
@@ -32,12 +32,12 @@ function toggleEditedObjectSelection(state, action) {
 
 function toggleAllObjectsSelection(state, action) {
     const editedObjectIDs = Object.keys(state.editedObjects);
-    const newSelectedObjectIDs = state.editedObjectsUI.selectedObjectIDs.size < editedObjectIDs.length ? new Set(editedObjectIDs) : new Set();
+    const newSelectedObjectIDs = state.objectsEditedUI.selectedObjectIDs.size < editedObjectIDs.length ? new Set(editedObjectIDs) : new Set();
     
     return {
         ...state,
-        editedObjectsUI: {
-            ...state.editedObjectsUI,
+        objectsEditedUI: {
+            ...state.objectsEditedUI,
             selectedObjectIDs: newSelectedObjectIDs
         }
     };
