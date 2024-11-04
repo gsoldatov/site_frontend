@@ -32,7 +32,8 @@
         /* Code checks */
         "strict": true,
         "allowUnreachableCode": false,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "exactOptionalPropertyTypes": true     // forbid passing undefined as function arguments, unless it's explicitly permitted
 
     },
 

@@ -28,7 +28,7 @@ export class SettingsRouteHandlers {
                     // Filter returned settings to exclude not fetched
                     const setting_names = body.setting_names as SettingsNames[];
                     settings = setting_names.reduce((result: Partial<Settings>, settingName): Partial<Settings> => {
-                        if (settingName in settings) result[settingName] = settings[settingName];
+                        if (settings[settingName] !== undefined) result[settingName] = settings[settingName];
                         return result;
                     }, {});
                 }
