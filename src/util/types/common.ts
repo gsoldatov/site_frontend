@@ -30,15 +30,14 @@ export const timestampOrEmptyString = timestampString.or(z.string().max(0));
 export const nameString = z.string().min(1).max(255);
 
 
-/**
- * Makes type from `T` with attributes specified in `K` optional.
- */
+/** Makes type from `T` with attributes specified in `K` optional. */
 export type PickPartial<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-/**
- * Makes type from `T` with attributes not specified in `K` optional.
- */
+/** Makes type from `T` with attributes not specified in `K` optional. */
 export type PartialExcept<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
+
+/** Returns a type based on `T` with its props recursively marked as optional. */
+export type DeepPartial<T> = { [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]; };
 
 // export type PositiveInteger<T extends number> = `${T}` extends "0" | `-${any}` | `${any}.${any}` ? never : T;   // does not work
 // export type NonnegativeInteger<T extends number> = `${T}` extends `-${any}` | `${any}.${any}` ? never : T;

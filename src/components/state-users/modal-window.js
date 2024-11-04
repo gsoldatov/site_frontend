@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Image, Modal, ModalContent } from "semantic-ui-react";
 
 import { setModalImage } from "../../actions/modal";
-import { getDefaultModalState } from "../../store/state-templates/modal";
+import { getModalUIState } from "../../store/types/ui/modal";
 
 import StyleModalWindow from "../../styles/modules/modal-window.css";
 
@@ -17,8 +17,8 @@ import StyleModalWindow from "../../styles/modules/modal-window.css";
  */
 export const ModalWindow = () => {
     const modalRef = useRef();
-    const URL = useSelector(state => state.modal.image.URL);
-    const isExpanded = useSelector(state => state.modal.image.isExpanded);
+    const URL = useSelector(state => state.modalUI.image.URL);
+    const isExpanded = useSelector(state => state.modalUI.image.isExpanded);
     const open = URL.length > 0;
 
     // onClick handlers
@@ -31,7 +31,7 @@ export const ModalWindow = () => {
         dispatch(setModalImage({ isExpanded: !isExpanded }));
     }, [isExpanded]);
     const modalOnClose = useMemo(() => () => {
-        dispatch(setModalImage(getDefaultModalState().image));
+        dispatch(setModalImage(getModalUIState().image));
     }, [URL]);
 
     // mount node & CSS classname

@@ -1,7 +1,7 @@
 import { deepCopy } from "../../util/copy";
 
 import { getDefaultAuthState } from "../types/data/auth";
-import { getDefaultModalState } from "./modal";
+import { getModalUIState } from "../types/ui/modal";
 import { getDefaultCurrentTagState } from "./tags";
 
 
@@ -153,7 +153,7 @@ const initialState = {
     },
 
     // Modal window state
-    modal: getDefaultModalState()
+    modalUI: getModalUIState()
 };
 
 

@@ -6,9 +6,9 @@ const setModalImage = (state, action) => {
 
     return {
         ...state,
-        modal: {
-            ...state.modal,
-            image: { ...state.modal.image, ...image }
+        modalUI: {
+            ...state.modalUI,
+            image: { ...state.modalUI.image, ...image }
         }
     }
 };
