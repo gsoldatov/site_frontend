@@ -1,4 +1,26 @@
-const LOGGING_ORDER = ["auth", "modal", "tagsEditUI", "tagsListUI", "objectsEditUI", "objectsListUI", "objectsEditedUI", "tags", "objects", "links", "markdown", "toDoLists", "composite"];
+const LOGGING_ORDER = [
+    "auth",
+    "users",
+    "tags",
+    
+    "objects",
+    "objectsTags",
+    "links",
+    "markdown",
+    "toDoLists",
+    "composite",
+
+    "editedObjects",
+
+    "tagsEditUI",
+    "tagsListUI",
+    "objectsEditedUI",
+    "objectsListUI",
+    "objectsEditUI",
+    
+    "modalUI",
+    "navigationUI"
+];
 
 
 /**
