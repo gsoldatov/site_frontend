@@ -48,7 +48,7 @@ export const pageFetch = currentPage => {
         }
 
         // Is fetch is successful, fetch missing tag data
-        result = await dispatch(getNonCachedTags(getState().tagsUI.paginationInfo.currentPageTagIDs));
+        result = await dispatch(getNonCachedTags(getState().tagsListUI.paginationInfo.currentPageTagIDs));
         dispatch(setTagsFetch(false, getResponseErrorType(result) === enumResponseErrorType.general ? result.error : ""));
     };
 };
@@ -59,7 +59,7 @@ export const pageFetch = currentPage => {
  */
 const getPageTagIDs = () => {
     return async (dispatch, getState) => {
-        const pI = getState().tagsUI.paginationInfo;
+        const pI = getState().tagsListUI.paginationInfo;
 
         // Exit with error if filter text is too long
         if (pI.filterText.length > 255) return { error: "Tag name filter text is too long."};
@@ -104,7 +104,7 @@ export const onDeleteFetch = () => {
 
         // Run delete fetch & delete tags data
         dispatch(setTagsFetch(true, ""));
-        const result = await dispatch(deleteTagsFetch(state.tagsUI.selectedTagIDs));
+        const result = await dispatch(deleteTagsFetch(state.tagsListUI.selectedTagIDs));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
@@ -115,7 +115,7 @@ export const onDeleteFetch = () => {
         }
 
         // Handle successful fetch end
-        dispatch(setTagsPaginationInfo({ currentPageTagIDs: state.tagsUI.paginationInfo.currentPageTagIDs.filter(id => !result.includes(id)) }));  // delete from current page
+        dispatch(setTagsPaginationInfo({ currentPageTagIDs: state.tagsListUI.paginationInfo.currentPageTagIDs.filter(id => !result.includes(id)) }));  // delete from current page
         dispatch(setTagsFetch(false, ""));
     };
 };

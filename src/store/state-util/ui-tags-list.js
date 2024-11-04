@@ -6,10 +6,10 @@
 /**
  * Returns true if any of tags page fetches are being performed.
  */
-export const isFetchingTags = state => state.tagsUI.fetch.isFetching;
+export const isFetchingTags = state => state.tagsListUI.fetch.isFetching;
 
 
 /**
  * Returns true if any of tags page fetches are being performed or a confirmation dialog is being displayed.
  */
-export const isFetchinOrShowingDialogTags = state => isFetchingTags(state) || state.tagsUI.showDeleteDialog;
+export const isFetchinOrShowingDialogTags = state => isFetchingTags(state) || state.tagsListUI.showDeleteDialog;

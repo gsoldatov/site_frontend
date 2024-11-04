@@ -11,7 +11,7 @@ import { pageFetch } from "../../../fetches/ui-tags-list";
  */
 export const TagsListPagination = () => {
     const dispatch = useDispatch();
-    const { currentPage, totalItems, itemsPerPage } = useSelector(state => state.tagsUI.paginationInfo);
+    const { currentPage, totalItems, itemsPerPage } = useSelector(state => state.tagsListUI.paginationInfo);
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const onPageChange = useMemo(() => (e, props) => {

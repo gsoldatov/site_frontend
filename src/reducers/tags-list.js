@@ -5,9 +5,9 @@ import { SELECT_TAGS, TOGGLE_TAG_SELECTION, DESELECT_TAGS, CLEAR_SELECTED_TAGS, 
 function selectTags(state, action) {
     return {
         ...state,
-        tagsUI: {
-            ...state.tagsUI,
-            selectedTagIDs: [...(new Set(state.tagsUI.selectedTagIDs.concat(action.tag_ids)))]
+        tagsListUI: {
+            ...state.tagsListUI,
+            selectedTagIDs: [...(new Set(state.tagsListUI.selectedTagIDs.concat(action.tag_ids)))]
         }
     }
 }
@@ -15,11 +15,11 @@ function selectTags(state, action) {
 function toggleTagSelection(state, action) {
     return {
         ...state,
-        tagsUI: {
-            ...state.tagsUI,
-            selectedTagIDs: state.tagsUI.selectedTagIDs.includes(action.tag_id) 
-                            ? state.tagsUI.selectedTagIDs.filter(tag_id => tag_id !== action.tag_id)
-                            : state.tagsUI.selectedTagIDs.concat(action.tag_id)
+        tagsListUI: {
+            ...state.tagsListUI,
+            selectedTagIDs: state.tagsListUI.selectedTagIDs.includes(action.tag_id) 
+                            ? state.tagsListUI.selectedTagIDs.filter(tag_id => tag_id !== action.tag_id)
+                            : state.tagsListUI.selectedTagIDs.concat(action.tag_id)
         }
     };
 }
@@ -27,9 +27,9 @@ function toggleTagSelection(state, action) {
 function deselectTags(state, action) {
     return {
         ...state,
-        tagsUI: {
-            ...state.tagsUI,
-            selectedTagIDs: state.tagsUI.selectedTagIDs.filter(tag_id => !action.tag_ids.includes(tag_id))
+        tagsListUI: {
+            ...state.tagsListUI,
+            selectedTagIDs: state.tagsListUI.selectedTagIDs.filter(tag_id => !action.tag_ids.includes(tag_id))
         }
     };
 }
@@ -37,20 +37,20 @@ function deselectTags(state, action) {
 function clearSelectedTags(state, action) {
     return {
         ...state,
-        tagsUI: {
-            ...state.tagsUI,
+        tagsListUI: {
+            ...state.tagsListUI,
             selectedTagIDs: []
         }
     };
 }
 
 function setTagsPaginationInfo(state, action) {
-    let oPI = state.tagsUI.paginationInfo;
+    let oPI = state.tagsListUI.paginationInfo;
     let pI = action.paginationInfo;
     return {
         ...state,
-        tagsUI: {
-            ...state.tagsUI,
+        tagsListUI: {
+            ...state.tagsListUI,
             paginationInfo: {
                     currentPage: pI.currentPage !== undefined ? pI.currentPage : oPI.currentPage,
                     itemsPerPage: pI.itemsPerPage !== undefined ? pI.itemsPerPage : oPI.itemsPerPage,
@@ -67,8 +67,8 @@ function setTagsPaginationInfo(state, action) {
 function setShowDeleteDialogTags(state, action) {
     return {
         ...state,
-        tagsUI: {
-            ...state.tagsUI,
+        tagsListUI: {
+            ...state.tagsListUI,
             showDeleteDialog: action.showDeleteDialog
         }
     }
@@ -77,8 +77,8 @@ function setShowDeleteDialogTags(state, action) {
 function setTagsFetch(state, action) {
     return {
         ...state,
-        tagsUI: {
-            ...state.tagsUI,
+        tagsListUI: {
+            ...state.tagsListUI,
             fetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError

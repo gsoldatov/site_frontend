@@ -41,16 +41,16 @@ const AddANewTag = () => {
 
 
 const EditTag = () => {
-    const isActive = useSelector(state => state.tagsUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state));
-    const URL = useSelector(state => `/tags/edit/${state.tagsUI.selectedTagIDs[0]}`);
+    const isActive = useSelector(state => state.tagsListUI.selectedTagIDs.length === 1 && !isFetchinOrShowingDialogTags(state));
+    const URL = useSelector(state => `/tags/edit/${state.tagsListUI.selectedTagIDs[0]}`);
     return <SideMenuLink text="Edit Tag" icon="edit outline" isActive={isActive} URL={URL} />;
 };
 
 
 const Delete = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => !isFetchinOrShowingDialogTags(state) && state.tagsUI.selectedTagIDs.length > 0);
-    const isVisible = useSelector(state => !state.tagsUI.showDeleteDialog);
+    const isActive = useSelector(state => !isFetchinOrShowingDialogTags(state) && state.tagsListUI.selectedTagIDs.length > 0);
+    const isVisible = useSelector(state => !state.tagsListUI.showDeleteDialog);
     const onClick = useMemo(() => () => dispatch(setShowDeleteDialogTags(true)), []);
 
     if (!isVisible) return null;
@@ -61,7 +61,7 @@ const Delete = () => {
 
 const DeleteDialog = () => {
     const dispatch = useDispatch();
-    const isVisible = useSelector(state => state.tagsUI.showDeleteDialog && !isFetchingTags(state));
+    const isVisible = useSelector(state => state.tagsListUI.showDeleteDialog && !isFetchingTags(state));
 
     const yesOnClick = useMemo(() => () => dispatch(onDeleteFetch()), []);
     const noOnClick = useMemo(() => () => dispatch(setShowDeleteDialogTags(false)), []);

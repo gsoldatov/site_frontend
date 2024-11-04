@@ -46,7 +46,7 @@ const initialState = {
     },
 
     // /tags/list page UI controllers
-    tagsUI: {
+    tagsListUI: {
         paginationInfo: {
             currentPage: 1,
             itemsPerPage: 100,

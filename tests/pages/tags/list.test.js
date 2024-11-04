@@ -150,7 +150,7 @@ describe("Page load, tag link and pagination", () => {
 
         // Check if no pagination is rendered during fetch
         await waitFor(() => expect(
-            store.getState().tagsUI.fetch.isFetching === true
+            store.getState().tagsListUI.fetch.isFetching === true
             && container.querySelector(".pagination") === null
         ).toBeTruthy());
 
@@ -305,7 +305,7 @@ describe("Side menu", () => {
 
         // Check if buttons can't be clicked during fetch
         await waitFor(() => expect(
-            store.getState().tagsUI.fetch.isFetching === true
+            store.getState().tagsListUI.fetch.isFetching === true
             && addTagButton.classList.contains("disabled") // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
             && editTagButton.classList.contains("disabled")
             && deleteTagButton.classList.contains("disabled")
@@ -360,13 +360,13 @@ describe("Side menu", () => {
         // Select two tags and check if edit button is disabled
         fireEvent.click(firstTagCheckbox);
         fireEvent.click(secondTagCheckbox);
-        await waitFor(() => expect(store.getState().tagsUI.selectedTagIDs).toEqual(expect.arrayContaining([1, 2])));
+        await waitFor(() => expect(store.getState().tagsListUI.selectedTagIDs).toEqual(expect.arrayContaining([1, 2])));
         fireEvent.click(editTagButton);     // editTagButton.onclick is not null after handler is added, although the button is not clickable, so checking onclick prop on being null is not viable
         historyManager.ensureCurrentURL("/tags/list");
 
         // Deselect a tag, click edit tag button and check if it redirected to /tags/edit/:id
         fireEvent.click(secondTagCheckbox);
-        await waitFor(() => expect(store.getState().tagsUI.selectedTagIDs).toEqual(expect.arrayContaining([1])));
+        await waitFor(() => expect(store.getState().tagsListUI.selectedTagIDs).toEqual(expect.arrayContaining([1])));
         editTagButton = getSideMenuItem(container, "Edit Tag");   // get the element again to properly click it
         fireEvent.click(editTagButton);
         await historyManager.waitForCurrentURLToBe("/tags/edit/1");
@@ -595,14 +595,14 @@ describe("Delete a tag", () => {
 
 async function waitForFetch(store) {
     // wait to fetch to start and end
-    await waitFor(() => expect(store.getState().tagsUI.fetch.isFetching).toBeTruthy());
-    await waitFor(() => expect(store.getState().tagsUI.fetch.isFetching).toBeFalsy());
+    await waitFor(() => expect(store.getState().tagsListUI.fetch.isFetching).toBeTruthy());
+    await waitFor(() => expect(store.getState().tagsListUI.fetch.isFetching).toBeFalsy());
 }
 
 
 function getPageTagIDsFromMock(store) {
     // get tag IDs which are returned by mock fetch handler
-    const pI = store.getState().tagsUI.paginationInfo;
+    const pI = store.getState().tagsListUI.paginationInfo;
     return getMockedPageTagIDs({
         page: pI.currentPage,
         items_per_page: pI.itemsPerPage,

@@ -21,7 +21,7 @@ export const TagsListHorizontalMenu = () => {
     const isDisabled = useSelector(state => isFetchingTags(state));
     
     // Select all tags button
-    const currentPageTagIDs = useSelector(state => state.tagsUI.paginationInfo.currentPageTagIDs);
+    const currentPageTagIDs = useSelector(state => state.tagsListUI.paginationInfo.currentPageTagIDs);
     const selectAllOnClick = useMemo(() => () => dispatch(selectTags(currentPageTagIDs)), [currentPageTagIDs]);
     const selectAllButton = isLoggedInAsAdmin && 
         <HorizontalMenuButton icon="check" title="Select all tags on page" onClick={selectAllOnClick} isDisabled={isDisabled} />;
@@ -33,22 +33,22 @@ export const TagsListHorizontalMenu = () => {
 
     // Sort asc button
     const sortAscOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortOrder: "asc" })), []);
-    const sortAscIsActive = useSelector(state => state.tagsUI.paginationInfo.sortOrder === "asc");
+    const sortAscIsActive = useSelector(state => state.tagsListUI.paginationInfo.sortOrder === "asc");
 
     // Sort desc button
     const sortDescOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortOrder: "desc" })), []);
-    const sortDescIsActive = useSelector(state => state.tagsUI.paginationInfo.sortOrder === "desc");
+    const sortDescIsActive = useSelector(state => state.tagsListUI.paginationInfo.sortOrder === "desc");
 
     // Sort by name button
     const sortByNameOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortField: "tag_name" })), []);
-    const sortByNameIsActive = useSelector(state => state.tagsUI.paginationInfo.sortField === "tag_name");
+    const sortByNameIsActive = useSelector(state => state.tagsListUI.paginationInfo.sortField === "tag_name");
 
     // Sort by modify time button
     const sortByModifyTimeOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortField: "modified_at" })), []);
-    const sortByModifyTimeIsActive = useSelector(state => state.tagsUI.paginationInfo.sortField === "modified_at");
+    const sortByModifyTimeIsActive = useSelector(state => state.tagsListUI.paginationInfo.sortField === "modified_at");
 
     // Tag name filter
-    const tagNameFilterValue = useSelector(state => state.tagsUI.paginationInfo.filterText);
+    const tagNameFilterValue = useSelector(state => state.tagsListUI.paginationInfo.filterText);
     const tagNameFilterOnChange = useMemo(() => value => dispatch(setTagsPaginationInfo({ filterText: value })), []);
     const tagNameFilterOnChangeDelayed = useMemo(() => value => dispatch(setTagsPaginationInfoAndFetchPage({ filterText: value })), []);
 

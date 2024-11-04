@@ -18,8 +18,8 @@ import { UserLevels } from "../../../store/types/data/auth";
  */
 export const TagsListFieldBody = () => {
     const dispatch = useDispatch();
-    const currentPage = useSelector(state => state.tagsUI.paginationInfo.currentPage);
-    const { isFetching, fetchError } = useSelector(state => state.tagsUI.fetch);
+    const currentPage = useSelector(state => state.tagsListUI.paginationInfo.currentPage);
+    const { isFetching, fetchError } = useSelector(state => state.tagsListUI.fetch);
 
     // On load action
     useEffect(() => {
@@ -43,7 +43,7 @@ export const TagsListFieldBody = () => {
  * Selected tags field item list.
  */
 const SelectedTags = () => {
-    const itemIDs = useSelector(state => state.tagsUI.selectedTagIDs);
+    const itemIDs = useSelector(state => state.tagsListUI.selectedTagIDs);
 
     return (    // 67px = header + 1 line with borders
         <ExpandableContainer maxCollapsedHeight={67}>
@@ -57,7 +57,7 @@ const SelectedTags = () => {
  * Current page tags field item list.
  */
 const PageTags = () => {
-    const itemIDs = useSelector(state => state.tagsUI.paginationInfo.currentPageTagIDs);
+    const itemIDs = useSelector(state => state.tagsListUI.paginationInfo.currentPageTagIDs);
     return <FieldItemList itemIDs={itemIDs} ItemComponent={TagsListFieldItem} />;
 };
 
@@ -72,7 +72,7 @@ const TagsListFieldItem = memo(({ id }) => {
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     const URL = `/tags/view?tagIDs=${id}`;
     const onChange = useMemo(() => isLoggedInAsAdmin ? () => dispatch(toggleTagSelection(id)) : undefined, [id, isLoggedInAsAdmin]);
-    const isChecked = useSelector(state => state.tagsUI.selectedTagIDs.includes(id));
+    const isChecked = useSelector(state => state.tagsListUI.selectedTagIDs.includes(id));
     
     return <FieldItem text={text} URL={URL} onChange={onChange} isChecked={isChecked} />;
 });
