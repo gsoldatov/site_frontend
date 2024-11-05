@@ -4,7 +4,7 @@ import dataTags from "./data-tags";
 import dataObjects from "./data-objects";
 import dataUsers from "./data-users";
 
-import auth from "./auth";
+import { authReducer as auth } from "./data/auth";
 import common from "./common";
 import modal from "./modal";
 import navigation from "./navigation";

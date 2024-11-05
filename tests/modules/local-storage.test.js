@@ -19,8 +19,7 @@ import { getDefaultAuthState } from "../../src/store/types/data/auth";
 
 import { getConfig, setConfig } from "../../src/config";
 
-import { setAuthInformation } from "../../src/actions/auth";
-
+import { setAuthInformation } from "../../src/reducers/data/auth";
 
 
 /*
@@ -347,7 +346,7 @@ describe("Auth information", () => {
         let authInfo = getDefaultAuthState();
 
         // Modify each attribute in auth info and check if it's saved to the local storage
-        for (let [k, v] of [["access_token", "some value"], ["access_token_expiration_time", "some value"], ["user_id", 50], ["numeric_user_level", 20]]) {
+        for (let [k, v] of [["access_token", "some value"], ["access_token_expiration_time", (new Date()).toISOString()], ["user_id", 50], ["numeric_user_level", 20]]) {
             authInfo[k] = v;
             store.dispatch(setAuthInformation(authInfo));
             await waitForAuthInfoToBeSavedIntoLocalStorage(authInfo);

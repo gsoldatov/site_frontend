@@ -46,6 +46,10 @@ const state = z.object({
 });
 
 
+/** App's state type. */
+export type State = z.infer<typeof state>;
+
+
 /** Returns a copy of app's initial state */
 export const getInitialState = () => state.parse({
     // Data stores, auth & users

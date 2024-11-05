@@ -1,8 +1,10 @@
-import { setAuthInformation } from "../../../../src/actions/auth";
+import { setAuthInformation } from "../../../../src/reducers/data/auth";
 
 import type { Store } from "redux";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 import type { AuthData } from "../../../_mock-data/modules/auth";
+import { AuthTransformer } from "../../../../src/store/transformers/data/auth";
+
 
 /**
  * Performs operations with `state.auth` part of the state.
@@ -24,7 +26,8 @@ export class AuthStoreManager {
      */
     addAuthData(customValues?: Partial<AuthData>): AuthData {
         const { auth } = this.generator.auth.login({ auth: customValues || {} });
-        this.store.dispatch(setAuthInformation(auth));
+        const authState = AuthTransformer.fromBackendResponse(auth);
+        this.store.dispatch(setAuthInformation(authState));
         return auth;
     }
 }

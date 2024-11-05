@@ -25,6 +25,9 @@ export const auth = z.object({
     numeric_user_level: z.nativeEnum(UserLevels)
 });
 
+/** State auth data type. */
+export type Auth = z.infer<typeof auth>;
+
 
 /** Returns default auth data object. */
 export const getDefaultAuthState = () => {

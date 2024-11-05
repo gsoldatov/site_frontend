@@ -7,7 +7,7 @@ import { renderWithWrappers } from "../_util/render";
 
 import { App, isAnonymousCondition, isAuthenticatedCondition } from "../../src/components/app";
 import { ProtectedRoute } from "../../src/components/modules/wrappers/protected-route";
-import { setAuthInformation } from "../../src/actions/auth";
+import { setAuthInformation } from "../../src/reducers/data/auth";
 
 import { deepEqual } from "../../src/util/equality-checks";
 import { getDefaultAuthState } from "../../src/store/types/data/auth";

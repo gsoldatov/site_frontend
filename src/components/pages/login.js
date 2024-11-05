@@ -6,7 +6,8 @@ import { Button, Message, Form } from "semantic-ui-react";
 import { Layout } from "../modules/layout/layout";
 
 import { loginFetch } from "../../fetches/auth";
-import { setAuthInformation } from "../../actions/auth";
+import { setAuthInformation } from "../../reducers/data/auth";
+import { AuthTransformer } from "../../store/transformers/data/auth";
 
 import StyleAuth from "../../styles/pages/auth.css";
 
@@ -67,8 +68,9 @@ export const LoginPage = () => {
 
         // Handle successful login
         const redirectPath = (new URLSearchParams(location.search)).get("from") || "/";
-        const decodedPath = decodeURIComponent(redirectPath);   // Deocde URL-encoded string        
-        dispatch(setAuthInformation(result, { redirectOnRender: decodedPath }));    // Set auth auth info & `redirectOnRender` to avoid double redirect
+        const decodedPath = decodeURIComponent(redirectPath);   // Deocde URL-encoded string
+        const stateAuth = AuthTransformer.fromBackendResponse(result);
+        dispatch(setAuthInformation(stateAuth, { redirectOnRender: decodedPath }));    // Set auth auth info & `redirectOnRender` to avoid double redirect
     };
 
     const body = (

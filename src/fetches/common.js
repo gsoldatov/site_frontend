@@ -1,4 +1,4 @@
-import { setAuthInformation } from "../actions/auth";
+import { setAuthInformation } from "../reducers/data/auth";
 import { getDefaultAuthState } from "../store/types/data/auth";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
