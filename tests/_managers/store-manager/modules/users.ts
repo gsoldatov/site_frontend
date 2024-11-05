@@ -1,6 +1,6 @@
 import { addUsers } from "../../../../src/actions/data-users";
 
-import type { Store } from "redux";
+import type { AppStore } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 import type { User } from "../../../_mock-data/modules/users";
 
@@ -8,10 +8,10 @@ import type { User } from "../../../_mock-data/modules/users";
  * Performs operations with `state.users` part of the state.
  */
 export class UsersStoreManager {
-    store: Store
+    store: AppStore
     generator: DataGenerator
 
-    constructor(store: Store, generator: DataGenerator) {
+    constructor(store: AppStore, generator: DataGenerator) {
         this.store = store;
         this.generator = generator;
     }

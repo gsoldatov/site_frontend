@@ -1,6 +1,6 @@
 import { setAuthInformation } from "../../../../src/reducers/data/auth";
 
-import type { Store } from "redux";
+import type { AppStore } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 import type { AuthData } from "../../../_mock-data/modules/auth";
 import { AuthTransformer } from "../../../../src/store/transformers/data/auth";
@@ -10,10 +10,10 @@ import { AuthTransformer } from "../../../../src/store/transformers/data/auth";
  * Performs operations with `state.auth` part of the state.
  */
 export class AuthStoreManager {
-    store: Store
+    store: AppStore
     generator: DataGenerator
 
-    constructor(store: Store, generator: DataGenerator) {
+    constructor(store: AppStore, generator: DataGenerator) {
         this.store = store;
         this.generator = generator;
     }

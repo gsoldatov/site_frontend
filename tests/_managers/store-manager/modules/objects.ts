@@ -1,6 +1,6 @@
 import { addObjectData, addObjects, updateObjects, updateObjectData } from "../../../../src/actions/data-objects";
 
-import type { Store } from "redux";
+import type { AppStore } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 import type { ObjectType, ObjectAttributes, PartialObjectData, ObjectData } from "../../../_mock-data/modules/objects";
 import type { PickPartial } from "../../../../src/util/types/common";
@@ -11,10 +11,10 @@ import type { PickPartial } from "../../../../src/util/types/common";
  * Performs operations with objects' attributes, tags and data stores in the state.
  */
 export class ObjectsStoreManager {
-    store: Store
+    store: AppStore
     generator: DataGenerator
 
-    constructor(store: Store, generator: DataGenerator) {
+    constructor(store: AppStore, generator: DataGenerator) {
         this.store = store;
         this.generator = generator;
     }

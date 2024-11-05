@@ -1,6 +1,6 @@
 import { resetEditedObjects } from "../../../../src/actions/objects-edit";
 
-import type { Store } from "redux";
+import type { AppStore } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 
 
@@ -8,10 +8,10 @@ import type { DataGenerator } from "../../../_mock-data/data-generator";
  * Performs operations with edited objects' store
  */
 export class EditedObjectsStoreManager {
-    store: Store
+    store: AppStore
     generator: DataGenerator
 
-    constructor(store: Store, generator: DataGenerator) {
+    constructor(store: AppStore, generator: DataGenerator) {
         this.store = store;
         this.generator = generator;
     }

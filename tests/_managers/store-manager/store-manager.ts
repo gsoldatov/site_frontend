@@ -5,14 +5,14 @@ import { EditedObjectsStoreManager } from "./modules/edited-objects";
 import { ObjectsStoreManager } from "./modules/objects";
 import { UsersStoreManager } from "./modules/users";
 
-import type { Store } from "redux";
+import type { AppStore } from "../../../src/util/types/common";
 
 
 /**
  * Wrapper over test Redux store for performing operations with it.
  */
 export class StoreManager {
-    store: Store
+    store: AppStore
     generator: DataGenerator
 
     auth: AuthStoreManager
@@ -20,7 +20,7 @@ export class StoreManager {
     objects: ObjectsStoreManager
     editedObjects: EditedObjectsStoreManager
     
-    constructor(store: Store) {
+    constructor(store: AppStore) {
         this.store = store;
         this.generator = new DataGenerator();
 

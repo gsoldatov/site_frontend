@@ -1,4 +1,4 @@
-import type { Store } from "redux";
+import type { AppStore } from "./types/common";
 import type { AppConfig } from "./types/config";
 
 
@@ -7,9 +7,9 @@ import type { AppConfig } from "./types/config";
  ***************************************************/
 
 
-type DocumentApp = {
+export type DocumentApp = {
     config: AppConfig,
-    store: Store,
+    store: AppStore,
     updateConfig: (newProps: Partial<AppConfig>) => void        // config.ts -> `updateConfig` function signature
 }
 

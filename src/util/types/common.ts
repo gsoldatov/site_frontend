@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+import type { Store } from "redux";
+import type { State } from "../../store/types/state";
+
 
 // Integers
 export const int = z.number().int();
@@ -41,3 +44,7 @@ export type DeepPartial<T> = { [P in keyof T]?: T[P] extends object ? DeepPartia
 
 // export type PositiveInteger<T extends number> = `${T}` extends "0" | `-${any}` | `${any}.${any}` ? never : T;   // does not work
 // export type NonnegativeInteger<T extends number> = `${T}` extends `-${any}` | `${any}.${any}` ? never : T;
+
+
+// TODO move into create-store when its made
+export type AppStore = Store<State, any>;
