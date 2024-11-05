@@ -1,4 +1,4 @@
-import getInitialState from "./state-templates/initial-state";
+import { getInitialState } from "./types/state";
 import { getEditedObjectState } from "./types/data/edited-objects";
 import { getDefaultAuthState } from "./types/data/auth";
 

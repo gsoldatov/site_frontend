@@ -72,7 +72,7 @@ export const getObjectsEditUI = (customValues: Partial<ObjectsEditUI> = {}) => o
             column: -1,
             inputText: "",
             matchingIDs: []
-        }
+        },
 
     ...customValues
 });

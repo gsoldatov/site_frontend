@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { nonNegativeInt, positiveInt, positiveIntArray } from "../../../util/types/common";
-import { objectTypes } from "../data/objects";
+import { objectType } from "../data/objects";
 
 
 /** /objects/list page UI state schema. */
@@ -13,8 +13,8 @@ export const objectsListUI = z.object({
         sortField: z.enum(["object_name", "modified_at"]),
         sortOrder: z.enum(["asc", "desc"]),
         filterText: z.string(),
-        objectTypes,
-        tagsFilter: positiveInt,
+        objectTypes: objectType.array(),
+        tagsFilter: positiveIntArray,
         currentPageObjectIDs: positiveIntArray
     }),
     selectedObjectIDs: positiveIntArray,

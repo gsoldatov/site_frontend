@@ -1,6 +1,6 @@
 import { SET_NEW_STATE, SET_REDIRECT_ON_RENDER, RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS } from "../actions/common";
+import { getInitialState } from "../store/types/state";
 import { getStateAfterObjectPageLeave } from "./helpers/object";
-import getInitialState from "../store/state-templates/initial-state";
 
 
 /**

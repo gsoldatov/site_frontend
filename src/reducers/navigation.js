@@ -1,5 +1,5 @@
 import { SET_NAVIGATION_UI } from "../actions/navigation";
-import getInitialState from "../store/state-templates/initial-state";
+import { getInitialState } from "../store/types/state";
 
 
 function setNavigationUI (state, action) {
