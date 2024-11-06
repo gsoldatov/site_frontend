@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import createStore from "../store/create-store";
+import { setDocumentApp } from "../util/document-app";
 
 import { WindowWidthProvider } from "./modules/wrappers/window-width-provider";
 import { LocationManagerWrapper } from "./state-users/location-manager-wrapper";
@@ -128,8 +129,7 @@ export const App = () => {
 
 export const WrappedApp = () => {
     const store = createStore();
-    if (!document.app) document.app = {};
-    document.app.store = store;
+    setDocumentApp({ store });
 
     return (
         <Provider store={store}>
