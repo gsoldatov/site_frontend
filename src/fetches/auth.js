@@ -8,7 +8,7 @@ import { resetStateExceptForEditedObjects } from "../reducers/common";
 import { validateLoginCredentials, validateRegisterCredentials } from "../store/state-util/auth";
 import { UserLevels } from "../store/types/data/auth";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
-import { setNavigationUI } from "../actions/navigation";
+import { setNavigationUI } from "../reducers/ui/navigation";
 
 
 const backendURL = getConfig().backendURL;
