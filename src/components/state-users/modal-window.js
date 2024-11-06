@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Image, Modal, ModalContent } from "semantic-ui-react";
 
-import { setModalImage } from "../../actions/modal";
+import { setModalImage } from "../../reducers/ui/modal";
 import { getModalUIState } from "../../store/types/ui/modal";
 
 import StyleModalWindow from "../../styles/modules/modal-window.css";

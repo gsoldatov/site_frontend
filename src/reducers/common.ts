@@ -62,7 +62,7 @@ function _resetStateExceptForEditedObjects(state: State, action: { options: Rese
 }
 
 
-export const commonReducer = {
+export const commonRoot = {
     "SET_NEW_STATE": _setNewState,
     "SET_REDIRECT_ON_RENDER": _setRedirectOnRender,
     "RESET_STATE_EXCEPT_FOR_EDITED_OBJECTS": _resetStateExceptForEditedObjects

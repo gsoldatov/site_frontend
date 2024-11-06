@@ -4,7 +4,7 @@ import { Redirect, useLocation } from "react-router";
 
 import { setRedirectOnRender } from "../../reducers/common";
 import { clearUnsavedCurrentEditedObject } from "../../actions/objects-edit";
-import { setModalImage } from "../../actions/modal";
+import { setModalImage } from "../../reducers/ui/modal";
 
 import { getModalUIState } from "../../store/types/ui/modal";
 

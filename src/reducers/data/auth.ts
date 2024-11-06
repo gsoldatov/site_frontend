@@ -22,7 +22,7 @@ const _setAuthInformation = (state: State, action: SetAuthInformationAction): St
 }
 
 
-export const authReducer = {
+export const authRoot = {
     "SET_AUTH_INFORMATION": _setAuthInformation
 };
 

@@ -1,4 +1,4 @@
-import { SET_MODAL_IMAGE } from "../../actions/modal";
+import { setModalImage } from "../../reducers/ui/modal";
 import { getFromDocumentApp } from "../document-app";
 
 
@@ -18,5 +18,5 @@ export const addImageOnClickHandlers = (container: HTMLElement) => {
  * Sets app's modal window state to display image from `event` target.
  */
 const imageOnClick = (e: MouseEvent) => {
-    getFromDocumentApp("store").dispatch({ type: SET_MODAL_IMAGE, image: { URL: (e.target as HTMLImageElement).src } });
+    getFromDocumentApp("store").dispatch(setModalImage({ URL: (e.target as HTMLImageElement).src } ));
 };

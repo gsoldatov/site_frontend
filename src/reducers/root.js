@@ -1,12 +1,12 @@
 import logState from "../store/log-state";
 
-import { authReducer as auth } from "./data/auth";
+import { authRoot } from "./data/auth";
 import dataTags from "./data-tags";
 import dataObjects from "./data-objects";
 import dataUsers from "./data-users";
 
-import { commonReducer as common } from "./common";
-import modal from "./modal";
+import { commonRoot } from "./common";
+import { modalRoot } from "./ui/modal";
 import navigation from "./navigation";
 import tag from "./tags-edit";
 import tags from "./tags-list";
@@ -37,7 +37,21 @@ function getActionHandlers(rootObjects) {
 }
 
 
-const ACTION_HANDLERS = getActionHandlers({ dataTags, dataObjects, dataUsers, auth, common, modal, navigation, tag, tags, objectEdit, objectsList, objectsEdited });
+const ACTION_HANDLERS = getActionHandlers({ 
+    authRoot,
+    dataTags,
+    dataObjects,
+    dataUsers, 
+    
+    commonRoot, 
+    modalRoot,
+    navigation,
+    tag,
+    tags,
+    objectEdit,
+    objectsList,
+    objectsEdited 
+});
 
 
 export default function getRootReducer() {

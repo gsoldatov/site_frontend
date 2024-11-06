@@ -12,9 +12,6 @@ export const modalUI = z.object({
     })
 });
 
-/** Modal window UI state type. */
-type ModalUI = z.infer<typeof modalUI>;
-
 
 /** 
  * Returns a modal UI state with default values being replaced `customValues` (can be deep partial).
@@ -34,3 +31,9 @@ export const getModalUIState = (customValues: DeepPartial<ModalUI> = {}) => {
     return modalUI.parse(result);
 
 };
+
+
+/** Modal window UI state type. */
+type ModalUI = z.infer<typeof modalUI>;
+/** Modal window image state type. */
+export type ModalImageUI = ModalUI["image"];
