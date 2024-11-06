@@ -18,8 +18,10 @@ export type RouteHandlerResponse = z.infer<typeof routeHandlerResponse>;
 /** Response type returned by mock fetch */
 export type Response = RouteHandlerResponse & {
     headers: {
-        get: (header: string) => string | undefined
-    }
+        get: (header: string) => string | null
+    },
     clone: () => Response,
-    json?: () => Promise<Record<string, any>>
+
+    text: () => Promise<string>,
+    json: () => Promise<Record<string, any>>
 }

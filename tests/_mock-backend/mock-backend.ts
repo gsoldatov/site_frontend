@@ -91,10 +91,16 @@ export class MockBackend {
             headers: { 
                 get: header => {
                     if (header === "content-type") return "body" in response ? "application/json" : "";
-                    return undefined;
+                    return null;
                 }
             },
-            clone: () => ({ ...result })
+            clone: () => ({ ...result }),
+
+            text: () => Promise.resolve(JSON.stringify(result.body || "")),
+            json: () => {
+                if (!result.body) throw TypeError("Attempted to get JSON from a response without a body.");
+                return Promise.resolve(result.body as Record<string, any>);
+            }
         };
 
         // Add auth data (new token expiration time)
@@ -104,8 +110,6 @@ export class MockBackend {
             expirationTime.setDate(expirationTime.getDate() + 10);
             result.body.auth = { access_token_expiration_time: expirationTime.toISOString() };
         }
-
-        if (result.body !== undefined) result.json = () => Promise.resolve(result.body as Record<string, any>);
         
         return result;
     }
