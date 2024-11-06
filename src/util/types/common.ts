@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-import type { Store } from "redux";
+import type { AnyAction, Store } from "redux";
 import type { State } from "../../store/types/state";
+import type { ThunkDispatch } from "redux-thunk";
 
 
 // Integers
@@ -48,3 +49,7 @@ export type DeepPartial<T> = { [P in keyof T]?: T[P] extends object ? DeepPartia
 
 // TODO move into create-store when its made
 export type AppStore = Store<State, any>;
+// export type Dispatch = AppStore["dispatch"];
+/** Extended version of dispatch type, which can propagate return types of dispatched thunks. */
+export type Dispatch = ThunkDispatch<State, unknown, AnyAction>;
+export type GetState = AppStore["getState"];

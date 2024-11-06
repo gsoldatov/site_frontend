@@ -14,32 +14,6 @@ import { setNavigationUI } from "../reducers/ui/navigation";
 const backendURL = getConfig().backendURL;
 
 
-/**
- * Fetches backend to check if non-admin registration is allowed.
- * Returns boolean from response or `false` in case of errors.
- */
-export const registrationStatusFetch = () => {
-    return async (dispatch, getState) => {
-        let response = await dispatch(runFetch(`${backendURL}/settings/view`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                setting_names: ["non_admin_registration_allowed"]
-            })
-        },
-        { useAccessToken: false }
-        ));
-
-        switch (response.status) {
-            case 200:
-                let json = await response.json();
-                return json.settings.non_admin_registration_allowed;
-            default:
-                return false;
-        }
-    };
-};
-
 
 /**
  * Fetches backend to register a user with provided credentials.

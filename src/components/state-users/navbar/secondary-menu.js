@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Loader, Menu } from "semantic-ui-react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 
-import { registrationStatusFetch, logoutFetch, getCurrentUserData } from "../../../fetches/auth";
+import { logoutFetch, getCurrentUserData } from "../../../fetches/auth";
+import { registrationStatusFetch } from "../../../fetches/data/settings";
 
 import { UserLevels } from "../../../store/types/data/auth";
 import { useMountedState } from "../../../util/hooks/use-mounted-state";

@@ -4,7 +4,9 @@ import { Button, Message, Form } from "semantic-ui-react";
 
 import { Layout } from "../modules/layout/layout";
 
-import { registerFetch, registrationStatusFetch } from "../../fetches/auth";
+import { registerFetch } from "../../fetches/auth";
+import { registrationStatusFetch } from "../../fetches/data/settings";
+
 import { setRedirectOnRender } from "../../reducers/common";
 
 import StyleAuth from "../../styles/pages/auth.css";
