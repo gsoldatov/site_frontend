@@ -1,7 +1,7 @@
 import { getResponseErrorType } from "./common";
 import { addTagFetch, viewTagsFetch, updateTagFetch, deleteTagsFetch } from "./data-tags";
 
-import { setRedirectOnRender } from "../actions/common";
+import { setRedirectOnRender } from "../reducers/common";
 import { loadEditTagPage, setTagOnLoadFetchState, setTagOnSaveFetchState, setShowDeleteDialogTag, setCurrentTag } from "../actions/tags-edit";
 
 import { isFetchingTag } from "../store/state-util/ui-tags-edit";

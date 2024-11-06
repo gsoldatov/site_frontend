@@ -10,7 +10,7 @@ import { getSideMenuItem } from "../../../../_util/ui-common";
 import { getCurrentObject, getObjectTypeSwitchElements, clickGeneralTabButton, clickDataTabButton } from "../../../../_util/ui-objects-edit";
 import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRender } from "../../../../_util/ui-markdown-editor";
 
-import { setNewState } from "../../../../../src/actions/common";
+import { setNewState } from "../../../../../src/reducers/common";
 import { resetEditedObjects } from "../../../../../src/actions/objects-edit";
 
 import { App } from "../../../../../src/components/app";

@@ -3,7 +3,7 @@ import { getConfig } from "../config";
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { getNonCachedUsers } from "./data-users";
 
-import { resetStateExceptForEditedObjects } from "../actions/common";
+import { resetStateExceptForEditedObjects } from "../reducers/common";
 
 import { validateLoginCredentials, validateRegisterCredentials } from "../store/state-util/auth";
 import { UserLevels } from "../store/types/data/auth";

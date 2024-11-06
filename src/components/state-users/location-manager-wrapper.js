@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, useLocation } from "react-router";
 
-import { setRedirectOnRender } from "../../actions/common";
+import { setRedirectOnRender } from "../../reducers/common";
 import { clearUnsavedCurrentEditedObject } from "../../actions/objects-edit";
 import { setModalImage } from "../../actions/modal";
 

@@ -2,7 +2,7 @@ import { getResponseErrorType } from "./common";
 import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch, objectsSearchFetch } from "./data-objects";
 import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
 
-import { setRedirectOnRender } from "../actions/common";
+import { setRedirectOnRender } from "../reducers/common";
 import { loadNewObjectPage, loadEditObjectPage, setEditedObject, resetEditedObjects, setEditedObjectTags,
     setObjectOnLoadFetchState, setObjectOnSaveFetchState, setShowDeleteDialogObject,  
     setObjectTagsInput, setAddCompositeSubobjectMenu,
