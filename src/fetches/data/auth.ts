@@ -1,22 +1,33 @@
 import { FetchRunner } from "../fetch-runner";
 
-import type { Dispatch, GetState } from "../../util/types/common";
-import { getRegisterFetchDataValidationErrors, registerFetchData, registerFetchValidationErrors } from "../types/data/auth";
+import { getNonCachedUsers } from "../data-users";
 
-import type { RegisterFetchValidationErrors } from "../types/data/auth";
+import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErrors,
+    loginFetchData, backendAuth
+} from "../types/data/auth";
+import { UserLevels } from "../../store/types/data/auth";
+import { getResponseErrorType } from "../common";
+import { enumResponseErrorType } from "../../util/enums/enum-response-error-type";
+import { timestampString } from "../../util/types/common";
+
+import type {Dispatch, GetState } from "../../util/types/common";
+import type { AuthFetchValidationErrors, BackendAuth } from "../types/data/auth";
 
 
+
+
+/** Runs a register fetch with the provided user data. Returns any validation or fetch errors or an emtpy object. */
 export const registerFetch = (login: string, password: string, password_repeat: string, username: string) => {
-    return async (dispatch: Dispatch, getState: GetState): Promise<RegisterFetchValidationErrors> => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<AuthFetchValidationErrors> => {
         // Validate user data
         const parseResult = registerFetchData.safeParse({ login, password, password_repeat, username });
-        if (!parseResult.success) return getRegisterFetchDataValidationErrors(parseResult.error);
+        if (!parseResult.success) return getAuthFetchValidationErrors(parseResult.error);
 
         // Fetch backend
-        const runner = new FetchRunner("/auth/register", {
-            method: "POST",
-            body: JSON.stringify(parseResult.data)
-        });
+        const runner = new FetchRunner("/auth/register", 
+            { method: "POST", body: JSON.stringify(parseResult.data) },
+            { useAccessToken: false }
+        );
         let result = await runner.run();
 
         // Handle response
@@ -29,7 +40,59 @@ export const registerFetch = (login: string, password: string, password_repeat: 
                 const match = result.error!.match(/Submitted (\w+) already exists./);
                 if (match && ["login", "username"].includes(match[1])) errors[match[1]] = match[0];
                 else errors.form = result.error;
-                return registerFetchValidationErrors.parse({ errors });
+                return authFetchValidationErrors.parse({ errors });
+        }
+    };
+};
+
+
+/**
+ * Fetches provided `login` and `password` to acquire an access token, if there is none.
+ * Returns an object with auth information in case of success or any occured errors.
+ */
+export const loginFetch = (login: string, password: string) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<BackendAuth | AuthFetchValidationErrors> => {
+        // Exit if logged in
+        if (getState().auth.numeric_user_level > UserLevels.anonymous) return { errors: { form: "You are already logged in." }};
+
+        // Validate user data
+        const parseResult = loginFetchData.safeParse({ login, password });
+        if (!parseResult.success) return getAuthFetchValidationErrors(parseResult.error);
+
+        // Fetch backend
+        const runner = new FetchRunner("/auth/login", 
+            { method: "POST", body: JSON.stringify(parseResult.data) },
+            { useAccessToken: false }
+        );
+        let result = await runner.run();
+        
+        // Handle response
+        switch (result.status) {
+            case 200:
+                const auth = backendAuth.parse(result.json?.auth);
+
+                // Fetch missing user data
+                let nonCachedUsersResult = await dispatch(getNonCachedUsers([auth.user_id], false));            
+
+                // Handle fetch errors
+                const responseErrorType = getResponseErrorType(nonCachedUsersResult);
+                if (responseErrorType > enumResponseErrorType.none) return { errors: { form: "Failed to fetch user information." }};
+
+                // Handle successful request ending
+                // dispatch(setAuthInformation(auth));      // NOTE: auth information is set simultaneously with redirectOnRender later in login form onSubmit handler;
+                return auth;                                // this is done to avoid double redirect (first to "/", then to specified in URL params for login page route),
+                                                            // which is caused by having a <ProtectedRoute> wrapper over /auth/login route, which redirects auth'd users to index page.
+
+            case 429:
+                const retryAfterString = timestampString.parse(result.headers.get("Retry-After"));
+                const retryAfter = parseInt(retryAfterString);
+                const retryAfterDate = new Date();
+                retryAfterDate.setSeconds(retryAfterDate.getSeconds() + retryAfter);
+                return { errors: { form: `Too many login attempts performed. Retry after ${retryAfterDate.toLocaleString()}.` }};
+
+            default:
+                // const errorJSON = await getErrorFromResponse(response);
+                return { errors: { form: result.error }};
         }
     };
 };

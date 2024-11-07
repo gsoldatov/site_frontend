@@ -5,7 +5,7 @@ import { Button, Message, Form } from "semantic-ui-react";
 
 import { Layout } from "../modules/layout/layout";
 
-import { loginFetch } from "../../fetches/auth";
+import { loginFetch } from "../../fetches/data/auth";
 import { setAuthInformation } from "../../reducers/data/auth";
 import { AuthTransformer } from "../../store/transformers/data/auth";
 
