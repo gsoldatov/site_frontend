@@ -9,7 +9,9 @@ export const addUsers = (users: User[]) => ({ type: "ADD_USERS", users });
 
 const _addUsers = (state: State, action: { users: User[] }): State => {
     let newUsers = action.users.reduce((result, user) => {
-        result[user.user_id] = user;
+        // Add user data if it has the same of bigger set of attributes in it
+        if ("user_level" in user || !("user_level" in (state.users[user.user_id] || {}))) result[user.user_id] = user;
+        
         return result;
     }, {} as Users);
     return { ...state, users: { ...state.users, ...newUsers }};
