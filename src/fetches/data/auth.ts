@@ -1,10 +1,9 @@
 import { FetchRunner } from "../fetch-runner";
 
 import { getNonCachedUsers } from "../data-users";
+import { resetStateExceptForEditedObjects } from "../../reducers/common";
 
-import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErrors,
-    loginFetchData, backendAuth
-} from "../types/data/auth";
+import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErrors, loginFetchData, backendAuth } from "../types/data/auth";
 import { UserLevels } from "../../store/types/data/auth";
 import { getResponseErrorType } from "../common";
 import { enumResponseErrorType } from "../../util/enums/enum-response-error-type";
@@ -12,8 +11,6 @@ import { timestampString } from "../../util/types/common";
 
 import type {Dispatch, GetState } from "../../util/types/common";
 import type { AuthFetchValidationErrors, BackendAuth } from "../types/data/auth";
-
-
 
 
 /** Runs a register fetch with the provided user data. Returns any validation or fetch errors or an emtpy object. */
@@ -94,5 +91,29 @@ export const loginFetch = (login: string, password: string) => {
                 // const errorJSON = await getErrorFromResponse(response);
                 return { errors: { form: result.error }};
         }
+    };
+};
+
+
+/**
+ * Fetches backend to invalidate current access token.
+ * If successful, clears current state, except for current objects and redirects to index page.
+ */
+export const logoutFetch = () => {
+    return async (dispatch: Dispatch, getState: GetState) => {
+        // Fetch backend
+        const runner = new FetchRunner("/auth/login", 
+            { method: "POST" }
+        );
+        let result = await runner.run();
+        
+        switch (result.status) {
+            case 200:
+                dispatch(resetStateExceptForEditedObjects({ redirectOnRender: "/" }));
+                return;
+            default:
+                return;
+        }
+
     };
 };

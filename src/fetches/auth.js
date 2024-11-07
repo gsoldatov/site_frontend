@@ -1,9 +1,7 @@
 import { getConfig } from "../config";
 
-import { runFetch, getResponseErrorType } from "./common";
+import { getResponseErrorType } from "./common";
 import { getNonCachedUsers } from "./data-users";
-
-import { resetStateExceptForEditedObjects } from "../reducers/common";
 
 import { UserLevels } from "../store/types/data/auth";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
@@ -11,29 +9,6 @@ import { setNavigationUI } from "../reducers/ui/navigation";
 
 
 const backendURL = getConfig().backendURL;
-
-
-/**
- * Fetches backend to invalidate current access token.
- * If successful, clears current state, except for current objects and redirects to index page.
- */
-export const logoutFetch = () => {
-    return async (dispatch, getState) => {
-        let response = await dispatch(runFetch(`${backendURL}/auth/logout`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-        }));
-
-        switch (response.status) {
-            case 200:
-                dispatch(resetStateExceptForEditedObjects({ redirectOnRender: "/" }));
-                return;
-            default:
-                return;
-        }
-
-    };
-};
 
 
 /**
