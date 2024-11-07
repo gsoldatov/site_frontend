@@ -22,7 +22,7 @@ export class FetchRunner {
     useAccessToken: boolean
 
 
-    constructor(URL: string, init: RequestInit = {}, options: FetchRunnerOptions = {}) {
+    constructor(URL: string, init: RequestInitWithObjectBody = {}, options: FetchRunnerOptions = {}) {
         const {
             useAccessToken = true,
             contentTypeJSON = true,
@@ -31,7 +31,9 @@ export class FetchRunner {
 
         this.URL = `${URLPrefix}${URL}`;
 
-        this.init = init;
+        // NOTE: this might need a rework, if permitted by fetch spec objects are passed a body (https://developer.mozilla.org/en-US/docs/Web/API/RequestInit)
+        if (init.body instanceof Object) this.init = { ...init, body: JSON.stringify(init.body) };
+        else this.init = init as RequestInit;
 
         if (contentTypeJSON) {
             // Add content type header (currently set for all backend fetches)
@@ -69,6 +71,7 @@ export class FetchRunner {
 
         try {
             // Send request
+            if (this.init.body && typeof(this.init.body) === "object") this.init.body = JSON.stringify(this.init.body);
             const response = await fetch(this.URL, this.init);
             const result = await FetchResult.fromResponse(response);
 
@@ -196,3 +199,5 @@ const fetchResultArgs = z.object({
 
 /** FetchResult constructor args type. */
 type FetchResultArgs = z.infer<typeof fetchResultArgs>;
+/** RequestInit type with `body` capable of being an object (JSON.stringify is applied to it in that case). */
+type RequestInitWithObjectBody = Omit<RequestInit, "body"> & { body?: BodyInit | null | object };

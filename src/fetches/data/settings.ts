@@ -8,7 +8,7 @@ import type { Dispatch, GetState } from "../../util/types/common";
 export const settingsViewFetch = (setting_names: SettingNames[], useAccessToken: boolean) => {
     return async (dispatch: Dispatch, getState: GetState) => {
         const runner = new FetchRunner("/settings/view", 
-            { method: "POST", body: JSON.stringify({ setting_names })},
+            { method: "POST", body: { setting_names }},
             { useAccessToken }
         );
         return await runner.run();
@@ -26,5 +26,3 @@ export const registrationStatusFetch = () => {
         return non_admin_registration_allowed;
     };
 };
-
-

@@ -22,7 +22,7 @@ export const registerFetch = (login: string, password: string, password_repeat: 
 
         // Fetch backend
         const runner = new FetchRunner("/auth/register", 
-            { method: "POST", body: JSON.stringify(parseResult.data) },
+            { method: "POST", body: parseResult.data },
             { useAccessToken: false }
         );
         let result = await runner.run();
@@ -58,7 +58,7 @@ export const loginFetch = (login: string, password: string) => {
 
         // Fetch backend
         const runner = new FetchRunner("/auth/login", 
-            { method: "POST", body: JSON.stringify(parseResult.data) },
+            { method: "POST", body: parseResult.data },
             { useAccessToken: false }
         );
         let result = await runner.run();
