@@ -1,12 +1,10 @@
 import { FetchRunner } from "../fetch-runner";
 
-import { getNonCachedUsers } from "../data-users";
+import { getNonCachedUsers } from "../data/users";
 import { resetStateExceptForEditedObjects } from "../../reducers/common";
 
 import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErrors, loginFetchData, backendAuth } from "../types/data/auth";
 import { UserLevels } from "../../store/types/data/auth";
-import { getResponseErrorType } from "../common";
-import { enumResponseErrorType } from "../../util/enums/enum-response-error-type";
 import { timestampString } from "../../util/types/common";
 
 import type {Dispatch, GetState } from "../../util/types/common";
@@ -72,8 +70,7 @@ export const loginFetch = (login: string, password: string) => {
                 let nonCachedUsersResult = await dispatch(getNonCachedUsers([auth.user_id], false));            
 
                 // Handle fetch errors
-                const responseErrorType = getResponseErrorType(nonCachedUsersResult);
-                if (responseErrorType > enumResponseErrorType.none) return { errors: { form: "Failed to fetch user information." }};
+                if (nonCachedUsersResult.failed) return { errors: { form: "Failed to fetch user information." }};
 
                 // Handle successful request ending
                 // dispatch(setAuthInformation(auth));      // NOTE: auth information is set simultaneously with redirectOnRender later in login form onSubmit handler;

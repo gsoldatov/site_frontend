@@ -1,7 +1,7 @@
 import { getConfig } from "../config";
 
 import { getResponseErrorType } from "./common";
-import { getNonCachedUsers } from "./data-users";
+import { getNonCachedUsers } from "./data/users";
 
 import { UserLevels } from "../store/types/data/auth";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";

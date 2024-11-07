@@ -151,6 +151,11 @@ export class FetchResult {
 
         return new FetchResult({ status, headers, text, json, error, errorType });
     }
+
+    /** Generates a FetchResult indicating that a fetch was not run. */
+    static fetchNotRun(errorType: FetchErrorType = FetchErrorType.none) {
+        return new FetchResult({ status: "Not run", errorType });
+    }
 }
 
 

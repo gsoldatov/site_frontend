@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { Button, Message, Loader, Header } from "semantic-ui-react";
 
-import { getNonCachedUsers } from "../../../fetches/data-users";
+import { getNonCachedUsers } from "../../../fetches/data/users";
 import { UserLevels } from "../../../store/types/data/auth";
 
 
@@ -29,7 +29,7 @@ export const ViewUser = ({ setIsEditMode }) => {
         const fetchData = async () => {
             setIsFetching(true);
             const result = await dispatch(getNonCachedUsers([id], fullViewMode));
-            if ("error" in result) setError(result.error);
+            if (result.error !== undefined) setError(result.error);
             setIsFetching(false);
         };
         
