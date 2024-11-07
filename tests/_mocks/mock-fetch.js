@@ -45,7 +45,7 @@ export function mockFetch(URL, {
     }}
 
     response.clone = () => ({...response});
-    response.text = () => Promise.resolve(JSON.stringify(response.body || ""));
+    response.text = () => Promise.resolve("body" in response ? JSON.stringify(response.body) : ""),
     response.json = () => {
         if (!response.body) throw TypeError("Attempted to get JSON from a response without a body.");
         return Promise.resolve(response.body);

@@ -96,7 +96,7 @@ export class MockBackend {
             },
             clone: () => ({ ...result }),
 
-            text: () => Promise.resolve(JSON.stringify(result.body || "")),
+            text: () => Promise.resolve("body" in result ? JSON.stringify(result.body) : ""),
             json: () => {
                 if (!result.body) throw TypeError("Attempted to get JSON from a response without a body.");
                 return Promise.resolve(result.body as Record<string, any>);
