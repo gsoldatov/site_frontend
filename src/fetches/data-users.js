@@ -1,7 +1,7 @@
 import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
-import { addUsers, updateUser } from "../actions/data-users";
+import { addUsers, updateUser } from "../reducers/data/users";
 import { basicViewModeUserAttributes, fullviewModeUserAttributes } from "../store/state-templates/users";
 import { validateUserUpdates, getUpdatedUserValues } from "../store/state-util/users";
 

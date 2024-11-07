@@ -3,7 +3,7 @@ import logState from "../store/log-state";
 import { authRoot } from "./data/auth";
 import dataTags from "./data-tags";
 import dataObjects from "./data-objects";
-import dataUsers from "./data-users";
+import { usersRoot } from "./data/users";
 
 import { commonRoot } from "./common";
 import { modalRoot } from "./ui/modal";
@@ -41,7 +41,7 @@ const ACTION_HANDLERS = getActionHandlers({
     authRoot,
     dataTags,
     dataObjects,
-    dataUsers, 
+    usersRoot, 
     
     commonRoot, 
     modalRoot,

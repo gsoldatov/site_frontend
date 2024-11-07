@@ -16,8 +16,12 @@ export const userFull = userMin.extend({
     can_edit_objects: z.boolean()
 });
 
-/** User schema. */
+/** User data schema. */
 export const user = userMin.or(userFull);
+/** User data type. */
+export type User = z.infer<typeof user>;
 
 /** Users' store schema. */
 export const users = z.record(positiveIntIndex, user);
+/** Users' store type. */
+export type Users = z.infer<typeof users>;

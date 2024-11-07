@@ -1,4 +1,4 @@
-import { addUsers } from "../../../../src/actions/data-users";
+import { addUsers } from "../../../../src/reducers/data/users";
 
 import type { AppStore } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
