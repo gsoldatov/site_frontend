@@ -4,7 +4,7 @@ import { Button, Message, Form } from "semantic-ui-react";
 
 import { Layout } from "../modules/layout/layout";
 
-import { registerFetch } from "../../fetches/auth";
+import { registerFetch } from "../../fetches/data/auth";
 import { registrationStatusFetch } from "../../fetches/data/settings";
 
 import { setRedirectOnRender } from "../../reducers/common";
@@ -12,7 +12,7 @@ import { setRedirectOnRender } from "../../reducers/common";
 import StyleAuth from "../../styles/pages/auth.css";
 
 
-const getDefaultErrors = () => ({ login: "", password: "", passwordRepeat: "", username: "", form: "" });
+const getDefaultErrors = () => ({ login: "", password: "", password_repeat: "", username: "", form: "" });
 
 /**
  * Register page component.
@@ -24,7 +24,7 @@ export const RegisterPage = () => {
     const [isDisabled, setIsDisabled] = useState(true);
 
     // Form input state
-    const [formValues, setFormValues] = useState({ login: "", password: "", passwordRepeat: "", username: "" });
+    const [formValues, setFormValues] = useState({ login: "", password: "", password_repeat: "", username: "" });
     const handleFormChange = e => {
         setFormValues({ ...formValues, [e.target.name]: e.target.value });
     };
@@ -33,7 +33,7 @@ export const RegisterPage = () => {
     const [errors, setErrors] = useState(getDefaultErrors());
     const loginError = errors.login.length > 0 ? { content: errors.login, pointing: "above" } : undefined;
     const passwordError = errors.password.length > 0 ? { content: errors.password, pointing: "above" } : undefined;
-    const passwordRepeatError = errors.passwordRepeat.length > 0 ? { content: errors.passwordRepeat, pointing: "above" } : undefined;
+    const passwordRepeatError = errors.password_repeat.length > 0 ? { content: errors.password_repeat, pointing: "above" } : undefined;
     const usernameError = errors.username.length > 0 ? { content: errors.username, pointing: "above" } : undefined;
     const formHasError = errors.form.length > 0;
 
@@ -45,7 +45,7 @@ export const RegisterPage = () => {
         setIsDisabled(true);
 
         // Submit credentials
-        const result = await dispatch(registerFetch(formValues.login, formValues.password, formValues.passwordRepeat, formValues.username));
+        const result = await dispatch(registerFetch(formValues.login, formValues.password, formValues.password_repeat, formValues.username));
         
         // Handle errors
         if ("errors" in result) {
@@ -74,7 +74,7 @@ export const RegisterPage = () => {
                 <Message error content={errors.form} />
                 <Form.Input error={loginError} name="login" label="Login" disabled={isDisabled} value={formValues.login} onChange={handleFormChange} />
                 <Form.Input error={passwordError} name="password" label="Password" type="password" disabled={isDisabled} value={formValues.password} onChange={handleFormChange} />
-                <Form.Input error={passwordRepeatError} name="passwordRepeat" label="Repeat password" type="password" disabled={isDisabled} value={formValues.passwordRepeat} onChange={handleFormChange} />
+                <Form.Input error={passwordRepeatError} name="password_repeat" label="Repeat password" type="password" disabled={isDisabled} value={formValues.password_repeat} onChange={handleFormChange} />
                 <Form.Input error={usernameError} name="username" label="Username" disabled={isDisabled} value={formValues.username} onChange={handleFormChange} />
                 <div className="auth-form-submit-button-container">
                     <Button type="submit" color="blue" disabled={isDisabled}>Register</Button>

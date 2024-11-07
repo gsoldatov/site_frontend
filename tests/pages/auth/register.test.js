@@ -46,7 +46,7 @@ test("Load register page with disabled admin registration", async () => {
     const { inputs, submitButton } = getRegistrationFormElements(container);
     expect(inputs.login.disabled).toBeTruthy();
     expect(inputs.password.disabled).toBeTruthy();
-    expect(inputs.passwordRepeat.disabled).toBeTruthy();
+    expect(inputs.password_repeat.disabled).toBeTruthy();
     expect(inputs.username.disabled).toBeTruthy();
     expect(submitButton.disabled).toBeTruthy();
 });
@@ -79,22 +79,22 @@ test("Check validation error display", async () => {
     // Enter & sumit form data with a too short password
     enterValidFormData(container, "register");
     fireEvent.change(inputs.password, { target: { value: "a".repeat(7) } });
-    fireEvent.change(inputs.passwordRepeat, { target: { value: "a".repeat(7) } });
+    fireEvent.change(inputs.password_repeat, { target: { value: "a".repeat(7) } });
     fireEvent.click(submitButton);
     await checkValidInputErrorDisplay(container, "register", "password", "Password is too short.");
 
     // Enter & submit form data with a too long password
     enterValidFormData(container, "register");
     fireEvent.change(inputs.password, { target: { value: "a".repeat(73) } });
-    fireEvent.change(inputs.passwordRepeat, { target: { value: "a".repeat(73) } });
+    fireEvent.change(inputs.password_repeat, { target: { value: "a".repeat(73) } });
     fireEvent.click(submitButton);
     await checkValidInputErrorDisplay(container, "register", "password", "Password is too long.");
 
     // Enter & submit form data with a password not repeated correctly
     enterValidFormData(container, "register");
-    fireEvent.change(inputs.passwordRepeat, { target: { value: "Another password" } });
+    fireEvent.change(inputs.password_repeat, { target: { value: "Another password" } });
     fireEvent.click(submitButton);
-    await checkValidInputErrorDisplay(container, "register", "passwordRepeat", "Password must be repeated correctly.");
+    await checkValidInputErrorDisplay(container, "register", "password_repeat", "Password must be repeated correctly.");
 
     // Enter & submit form data with omitted username
     enterValidFormData(container, "register");

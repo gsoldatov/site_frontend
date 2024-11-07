@@ -11,14 +11,14 @@ export const getRegistrationFormElements = container => {
     let inputs = {};
     inputs.login = getByText(formContainer, "Login").parentNode.querySelector("input");
     inputs.password = getByText(formContainer, "Password").parentNode.querySelector("input");
-    inputs.passwordRepeat = getByText(formContainer, "Repeat password").parentNode.querySelector("input");
+    inputs.password_repeat = getByText(formContainer, "Repeat password").parentNode.querySelector("input");
     inputs.username = getByText(formContainer, "Username").parentNode.querySelector("input");
 
     let errors = {};
     errors.form = formContainer.querySelector("div.error.message div.content p");
     errors.login = getByText(formContainer, "Login").parentNode.querySelector("div.prompt");
     errors.password = getByText(formContainer, "Password").parentNode.querySelector("div.prompt");
-    errors.passwordRepeat = getByText(formContainer, "Repeat password").parentNode.querySelector("div.prompt");
+    errors.password_repeat = getByText(formContainer, "Repeat password").parentNode.querySelector("div.prompt");
     errors.username = getByText(formContainer, "Username").parentNode.querySelector("div.prompt");
 
     let submitButton = formContainer.querySelector(".auth-form-submit-button-container button");
@@ -72,7 +72,7 @@ export const enterValidFormData = (container, formType) => {
     fireEvent.change(inputs.password, { target: { value: "Correct password" } });
 
     if (formType === "register") {
-        fireEvent.change(inputs.passwordRepeat, { target: { value: "Correct password" } });
+        fireEvent.change(inputs.password_repeat, { target: { value: "Correct password" } });
         fireEvent.change(inputs.username, { target: { value: "Correct username" } });
     }
 };
