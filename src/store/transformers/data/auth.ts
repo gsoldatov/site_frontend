@@ -1,4 +1,4 @@
-import { BackendAuth } from "../../../fetches/types"
+import { BackendAuth } from "../../../fetches/types/data/auth"
 import { Auth, auth, UserLevels } from "../../types/data/auth"
 
 

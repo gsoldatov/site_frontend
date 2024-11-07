@@ -1,9 +1,9 @@
 import { FetchRunner } from "../fetch-runner";
 
 import type { Dispatch, GetState } from "../../util/types/common";
-import { getRegisterFetchDataValidationErrors, registerFetchData, registerFetchValidationErrors } from "../util/data/auth";
+import { getRegisterFetchDataValidationErrors, registerFetchData, registerFetchValidationErrors } from "../types/data/auth";
 
-import type { RegisterFetchValidationErrors } from "../util/data/auth";
+import type { RegisterFetchValidationErrors } from "../types/data/auth";
 
 
 export const registerFetch = (login: string, password: string, password_repeat: string, username: string) => {

@@ -1,7 +1,6 @@
-import { z } from "zod";
-
 import { FetchRunner } from "../fetch-runner";
 
+import  { settingsViewResponseBody, type SettingNames } from "../types/data/settings";
 import type { Dispatch, GetState } from "../../util/types/common";
 
 
@@ -29,12 +28,3 @@ export const registrationStatusFetch = () => {
 };
 
 
-/** /settings/view response body schema */
-export const settingsViewResponseBody = z.object({
-    settings: z.object({
-        non_admin_registration_allowed: z.boolean().optional()
-    })
-});
-
-/** Possible settings names, which can be fetched via `settingsViewFetch` thunk. */
-type SettingNames = keyof z.infer<typeof settingsViewResponseBody>["settings"];
