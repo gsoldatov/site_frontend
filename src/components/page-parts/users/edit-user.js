@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { Button, Message, Form, Header } from "semantic-ui-react";
 
 import { updateUsersFetch } from "../../../fetches/data/users";
-import { UserLevels, userLevelInfo } from "../../../store/types/data/auth";
+import { NumericUserLevel, userLevelInfo } from "../../../store/types/data/auth";
 
 
 const getDefaultErrors = () => ({ login: "", password: "", password_repeat: "", username: "", token_owner_password: "" });
@@ -16,7 +16,7 @@ const getDefaultErrors = () => ({ login: "", password: "", password_repeat: "", 
 export const EditUser = ({ setIsEditMode }) => {
     const dispatch = useDispatch();
     const { id } = useParams();
-    const fullViewMode = useSelector(state => state.auth.numeric_user_level === UserLevels.admin);
+    const fullViewMode = useSelector(state => state.auth.numeric_user_level === NumericUserLevel.admin);
     const user = useSelector(state => state.users[id]) || {};   // empty object is required to avoid errors when component is rendered after a logout was performed
 
     // Form disable control

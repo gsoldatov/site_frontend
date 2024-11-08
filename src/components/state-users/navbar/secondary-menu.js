@@ -7,7 +7,7 @@ import { getCurrentUserData } from "../../../fetches/ui/navbar";
 import { logoutFetch } from "../../../fetches/data/auth";
 import { registrationStatusFetch } from "../../../fetches/data/settings";
 
-import { UserLevels } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../store/types/data/auth";
 import { useMountedState } from "../../../util/hooks/use-mounted-state";
 
 
@@ -15,7 +15,7 @@ import { useMountedState } from "../../../util/hooks/use-mounted-state";
  * Navigation bar's secondary menu component with auth controls.
  */
 export const NavbarSecondaryMenu = ({ isStacked, isExpanded }) => {
-    const isUserLoggedIn = useSelector(state => state.auth.numeric_user_level > UserLevels.anonymous);
+    const isUserLoggedIn = useSelector(state => state.auth.numeric_user_level > NumericUserLevel.anonymous);
 
     const location = useLocation();
     const isMenuDisplayed = (!isStacked || isExpanded) && location.pathname.startsWith("/auth/") === false;

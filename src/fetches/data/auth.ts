@@ -4,7 +4,7 @@ import { getNonCachedUsers } from "../data/users";
 import { resetStateExceptForEditedObjects } from "../../reducers/common";
 
 import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErrors, loginFetchData, backendAuth } from "../types/data/auth";
-import { UserLevels } from "../../store/types/data/auth";
+import { NumericUserLevel } from "../../store/types/data/auth";
 import { timestampString } from "../../util/types/common";
 
 import type {Dispatch, GetState } from "../../util/types/common";
@@ -48,7 +48,7 @@ export const registerFetch = (login: string, password: string, password_repeat: 
 export const loginFetch = (login: string, password: string) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<BackendAuth | AuthFetchValidationErrors> => {
         // Exit if logged in
-        if (getState().auth.numeric_user_level > UserLevels.anonymous) return { errors: { form: "You are already logged in." }};
+        if (getState().auth.numeric_user_level > NumericUserLevel.anonymous) return { errors: { form: "You are already logged in." }};
 
         // Validate user data
         const parseResult = loginFetchData.safeParse({ login, password });

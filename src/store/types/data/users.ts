@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { nameString, positiveInt, positiveIntIndex, timestampString } from "../../../util/types/common";
-import { UserLevels } from "./auth";
+import { NumericUserLevel } from "./auth";
 
 
 /** Minimal set of user attributes schema. */
@@ -11,14 +11,14 @@ export const userMin = z.object({
 });
 
 
-const _registeredUserLevels = Object.keys(UserLevels).filter(k => isNaN(k as any) && k != "anonymous") as [string, ...string[]];
+const _registeredUserLevel = Object.keys(NumericUserLevel).filter(k => isNaN(k as any) && k != "anonymous") as [string, ...string[]];
 /** "admin" | "user" */
-export const registeredUserLevels = z.enum(_registeredUserLevels);
+export const registeredUserLevel = z.enum(_registeredUserLevel);
 
 
 /** Full set of user attributes schema. */
 export const userFull = userMin.extend({
-    user_level: registeredUserLevels,
+    user_level: registeredUserLevel,
     can_login: z.boolean(),
     can_edit_objects: z.boolean()
 });

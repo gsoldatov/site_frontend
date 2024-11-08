@@ -1,5 +1,5 @@
 import { BackendAuth } from "../../../fetches/types/data/auth"
-import { Auth, auth, UserLevels } from "../../types/data/auth"
+import { Auth, auth, NumericUserLevel } from "../../types/data/auth"
 
 
 export class AuthTransformer {
@@ -7,7 +7,7 @@ export class AuthTransformer {
     static fromBackendResponse(backendAuth: BackendAuth): Auth {
         return auth.parse({
             ...backendAuth,
-            numeric_user_level: UserLevels[backendAuth.user_level]
+            numeric_user_level: NumericUserLevel[backendAuth.user_level]
         })
     }
 }

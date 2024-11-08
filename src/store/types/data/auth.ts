@@ -3,7 +3,7 @@ import { nonNegativeInt, timestampOrEmptyString } from "../../../util/types/comm
 
 
 /** User privilege level enumeration. */
-export enum UserLevels {
+export enum NumericUserLevel {
     anonymous = 0,
     user = 10,
     admin = 20
@@ -22,7 +22,7 @@ export const auth = z.object({
     access_token: z.string(),
     access_token_expiration_time: timestampOrEmptyString,
     user_id: nonNegativeInt,
-    numeric_user_level: z.nativeEnum(UserLevels)
+    numeric_user_level: z.nativeEnum(NumericUserLevel)
 });
 
 /** State auth data type. */
@@ -35,7 +35,7 @@ export const getDefaultAuthState = () => {
         access_token: "",
         access_token_expiration_time: "",
         user_id: 0,
-        numeric_user_level: UserLevels.anonymous
+        numeric_user_level: NumericUserLevel.anonymous
     };
 
     return auth.parse(state);

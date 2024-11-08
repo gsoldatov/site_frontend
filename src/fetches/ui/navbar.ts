@@ -1,7 +1,7 @@
 import { setNavigationUI } from "../../reducers/ui/navigation";
 import { getNonCachedUsers } from "../data/users";
 
-import { UserLevels } from "../../store/types/data/auth";
+import { NumericUserLevel } from "../../store/types/data/auth";
 import type { Dispatch, GetState } from "../../util/types/common";
 
 
@@ -12,7 +12,7 @@ import type { Dispatch, GetState } from "../../util/types/common";
  export const getCurrentUserData = () => {
     return async (dispatch: Dispatch, getState: GetState) => {
         const user_id = getState().auth.user_id;
-        const fullViewMode = getState().auth.numeric_user_level === UserLevels.admin;
+        const fullViewMode = getState().auth.numeric_user_level === NumericUserLevel.admin;
 
         dispatch(setNavigationUI({ isFetching: true }));
         await dispatch(getNonCachedUsers([user_id], fullViewMode));

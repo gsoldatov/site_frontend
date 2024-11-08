@@ -9,7 +9,7 @@ import { toDoListObjectUpdateFetch } from "../../../../fetches/ui-objects-view";
 import { getUpdatedToDoList } from "../../../../reducers/helpers/object-to-do-lists";
 import { deepCopy } from "../../../../util/copy";
 import debounce from "../../../../util/debounce";
-import { UserLevels } from "../../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../../store/types/data/auth";
 
 
 /**
@@ -19,7 +19,7 @@ export const ToDoList = ({ objectID }) => {
     const dispatch = useDispatch();
 
     // Readonly state
-    const isReadonly = useSelector(state => state.auth.numeric_user_level !== UserLevels.admin && state.auth.user_id !== (state.objects[objectID] || {}).owner_id);
+    const isReadonly = useSelector(state => state.auth.numeric_user_level !== NumericUserLevel.admin && state.auth.user_id !== (state.objects[objectID] || {}).owner_id);
 
     // Error state
     const [error, setError] = useState("");

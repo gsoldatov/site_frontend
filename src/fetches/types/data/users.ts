@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userMin, userFull, registeredUserLevels } from "../../../store/types/data/users";
+import { userMin, userFull, registeredUserLevel } from "../../../store/types/data/users";
 import { intIndex } from "../../../util/types/common";
 
 
@@ -38,7 +38,7 @@ export const updateUsersFetchData = z.object({
     password: optionalPassword,
     password_repeat: z.string(),    //.min(8).max(72),
     username: optionalUsername,
-    user_level: registeredUserLevels,
+    user_level: registeredUserLevel,
     can_login: z.boolean(),
     can_edit_objects: z.boolean(),
     token_owner_password: password

@@ -1,4 +1,4 @@
-import type { UserLevel } from "../../../src/util/types/users";
+export type UserLevel = "admin" | "user" | "anonymous";
 
 
 export interface UserMin {

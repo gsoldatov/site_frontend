@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Button, Header } from "semantic-ui-react";
 
-import { UserLevels } from "../../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../../store/types/data/auth";
 
 
 /**
@@ -33,7 +33,7 @@ export const Header_ = ({ objectID, headerProps = {} }) => {
     if (wrapHeaderInLink) header = <Link className="objects-view-header-text-link" to={`/objects/view/${objectID}`}>{header}</Link>;
 
     // Edit button
-    const renderEditButton = useSelector(state => displayEditButton && (state.auth.numeric_user_level === UserLevels.admin || state.auth.user_id === (state.objects[objectID] || {}).owner_id));
+    const renderEditButton = useSelector(state => displayEditButton && (state.auth.numeric_user_level === NumericUserLevel.admin || state.auth.user_id === (state.objects[objectID] || {}).owner_id));
 
     const editButton = renderEditButton && (
         <Link className="objects-view-header-button-container" to={`/objects/edit/${objectID}`} title="Edit object">
@@ -42,7 +42,7 @@ export const Header_ = ({ objectID, headerProps = {} }) => {
     );
 
     // View button
-    const renderViewButton = useSelector(state => displayViewButton && (state.auth.numeric_user_level === UserLevels.admin || (state.objects[objectID] || {}).is_published));
+    const renderViewButton = useSelector(state => displayViewButton && (state.auth.numeric_user_level === NumericUserLevel.admin || (state.objects[objectID] || {}).is_published));
 
     const viewButton = renderViewButton && (
         <Link className="objects-view-header-button-container" to={`/objects/view/${objectID}`} title="View object">

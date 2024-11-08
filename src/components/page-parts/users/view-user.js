@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { Button, Message, Loader, Header } from "semantic-ui-react";
 
 import { getNonCachedUsers } from "../../../fetches/data/users";
-import { UserLevels } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../store/types/data/auth";
 
 
 /**
@@ -13,7 +13,7 @@ import { UserLevels } from "../../../store/types/data/auth";
 export const ViewUser = ({ setIsEditMode }) => {
     const dispatch = useDispatch();
     const { id } = useParams();
-    const fullViewMode = useSelector(state => state.auth.numeric_user_level === UserLevels.admin);
+    const fullViewMode = useSelector(state => state.auth.numeric_user_level === NumericUserLevel.admin);
     const canEdit = useSelector(state => fullViewMode || state.auth.user_id === id);
     const user = useSelector(state => state.users[id]);
 

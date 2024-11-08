@@ -7,7 +7,7 @@ import { selectTags, clearSelectedTags, setTagsPaginationInfo } from "../../../a
 import { setTagsPaginationInfoAndFetchPage } from "../../../fetches/ui-tags-list";
 import { isFetchingTags } from "../../../store/state-util/ui-tags-list";
 
-import { UserLevels } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../store/types/data/auth";
 
 
 /**
@@ -17,7 +17,7 @@ export const TagsListHorizontalMenu = () => {
     const dispatch = useDispatch();
 
     // Common props
-    const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === UserLevels.admin);
+    const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === NumericUserLevel.admin);
     const isDisabled = useSelector(state => isFetchingTags(state));
     
     // Select all tags button

@@ -1,4 +1,4 @@
-import type { UserLevel } from "../../../src/util/types/users";
+import type { UserLevel } from "./users";
 
 
 export interface AuthData {

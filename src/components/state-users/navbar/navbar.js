@@ -9,7 +9,7 @@ import { NavbarSubmenu, NavbarSubmenuItem } from "./submenu";
 import { NavbarSearch } from "./search";
 
 import { WindowWidthContext } from "../../modules/wrappers/window-width-provider";
-import { UserLevels } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../store/types/data/auth";
 
 import StyleNavigation from "../../../styles/modules/navigation.css";
 
@@ -37,8 +37,8 @@ export const Navbar = memo(({ usePlaceholder }) => {
     const mainMenuClassname = "navigation-bar" + (isStacked ? " is-stacked" : "");
 
     // Menu items props
-    const isLoggedIn = useSelector(state => state.auth.numeric_user_level > UserLevels.anonymous);
-    const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === UserLevels.admin);
+    const isLoggedIn = useSelector(state => state.auth.numeric_user_level > NumericUserLevel.anonymous);
+    const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === NumericUserLevel.admin);
     const menuItemsAreVisible = !isStacked || isExpanded;
     const loggedInAndVisible = menuItemsAreVisible && isLoggedIn;
     const loggedInAsAdminAndVisible = menuItemsAreVisible && isLoggedInAsAdmin;
