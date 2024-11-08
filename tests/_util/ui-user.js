@@ -93,15 +93,17 @@ export const getUserPageEditModeElements = container => {
 
 
 /**
- * Checks if a user update form inside `container` properly displays `errorText` for the input with the provided `inputName`, 
- * while other input errors are not displayed.
+ * Checks if a user update form inside `container` properly displays `errorText` for the input with the provided `inputName`.
  */
  export const checkValidInputErrorDisplay = async (container, inputName, errorText) => {
     await waitFor(() => {
         const { errors } = getUserPageEditModeElements(container);
         Object.keys(errors).forEach(name => {
-            if (name === inputName) expect(errors[name].textContent).toEqual(errorText);
-            else expect(errors[name]).toBeNull();
+            if (name === inputName) {
+                if (errors[name]?.textContent !== errorText) throw Error(`Expected  input '${inputName}' to have error '${errorText}', found ${errors?.textContent}`);
+            }
+            // if (name === inputName) expect(errors[name].textContent).toEqual(errorText);
+            // else expect(errors[name]).toBeNull();    // zod validator may return multiple errors => partially filled form will contain multiple errors
         });
     });
 };

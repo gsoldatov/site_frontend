@@ -1,10 +1,13 @@
-import { z } from "zod";
+import { z, ZodType } from "zod";
 
 import type { AnyAction, Store } from "redux";
 import type { State } from "../../store/types/state";
 import type { ThunkDispatch } from "redux-thunk";
 
 
+/***********************
+ * Integers & int arrays
+ ***********************/
 // Integers
 export const int = z.number().int();
 export const positiveInt = int.min(1);
@@ -25,6 +28,10 @@ export const nonEmptyIntArray = intArray.min(1);
 export const nonEmptyPositiveIntArray = positiveIntArray.min(1);
 export const nonEmptyNonNegativeIntArray = nonNegativeIntArray.min(1);
 
+
+/***********************
+ * Strings & timestamps
+ ***********************/
 /** ISO timestamp string with timezone */
 export const timestampString = z.string().datetime({ offset: true });
 /** ISO timestamp string with timezone or an empty string */
@@ -34,6 +41,9 @@ export const timestampOrEmptyString = timestampString.or(z.string().max(0));
 export const nameString = z.string().min(1).max(255);
 
 
+/***********************
+ *    Partial types
+ ***********************/
 /** Makes type from `T` with attributes specified in `K` optional. */
 export type PickPartial<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
@@ -47,9 +57,28 @@ export type DeepPartial<T> = { [P in keyof T]?: T[P] extends object ? DeepPartia
 // export type NonnegativeInteger<T extends number> = `${T}` extends `-${any}` | `${any}.${any}` ? never : T;
 
 
+/***********************
+ *     Redux types
+ ***********************/
 // TODO move into create-store when its made
 export type AppStore = Store<State, any>;
 // export type Dispatch = AppStore["dispatch"];
 /** Extended version of dispatch type, which can propagate return types of dispatched thunks. */
 export type Dispatch = ThunkDispatch<State, unknown, AnyAction>;
 export type GetState = AppStore["getState"];
+
+
+/***********************
+ *    Zod util types
+ ***********************/
+type DeepNonNullable<T> = T extends (infer U)[]
+  ? DeepNonNullable<U>[]
+  : T extends object
+  ? { [K in keyof T]: DeepNonNullable<T[K]> }
+  : NonNullable<T>;
+
+/**
+ * Workaround for using `partial()` method of zod types without inferring `undefined` as a possible type.
+ * https://github.com/colinhacks/zod/discussions/2314
+ */
+export type InferNonNullablePartial<T extends ZodType> = DeepNonNullable<z.infer<T>>;

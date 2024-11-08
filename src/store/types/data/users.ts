@@ -3,6 +3,7 @@ import { nameString, positiveInt, positiveIntIndex, timestampString } from "../.
 import { UserLevels } from "./auth";
 
 
+/** Minimal set of user attributes schema. */
 export const userMin = z.object({
     user_id: positiveInt,
     registered_at: timestampString,
@@ -10,14 +11,21 @@ export const userMin = z.object({
 });
 
 
-const registeredUserLevels = Object.keys(UserLevels).filter(k => isNaN(k as any) && k != "anonymous") as [string, ...string[]];
+const _registeredUserLevels = Object.keys(UserLevels).filter(k => isNaN(k as any) && k != "anonymous") as [string, ...string[]];
+/** "admin" | "user" */
+export const registeredUserLevels = z.enum(_registeredUserLevels);
 
 
+/** Full set of user attributes schema. */
 export const userFull = userMin.extend({
-    user_level: z.enum(registeredUserLevels),
+    user_level: registeredUserLevels,
     can_login: z.boolean(),
     can_edit_objects: z.boolean()
 });
+
+
+/** Schema of partial user attributes with a required `user_id`. */
+export const partialUserExceptID = userFull.omit({ user_id: true }).partial().extend({ user_id: positiveInt });
 
 
 /** User data schema. */

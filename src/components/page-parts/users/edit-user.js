@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { Button, Message, Form, Header } from "semantic-ui-react";
 
-import { updateUsersFetch } from "../../../fetches/data-users";
+import { updateUsersFetch } from "../../../fetches/data/users";
 import { UserLevels, userLevelInfo } from "../../../store/types/data/auth";
 
 
-const getDefaultErrors = () => ({ login: "", password: "", passwordRepeat: "", username: "", tokenOwnerPassword: "" });
+const getDefaultErrors = () => ({ login: "", password: "", password_repeat: "", username: "", token_owner_password: "" });
 
 
 /**
@@ -23,8 +23,8 @@ export const EditUser = ({ setIsEditMode }) => {
     const [isDisabled, setIsDisabled] = useState(false);
 
     // Form input state
-    const [formValues, setFormValues] = useState({ login: "", password: "", passwordRepeat: "", username: "", 
-        user_level: user.user_level, can_login: user.can_login, can_edit_objects: user.can_edit_objects, tokenOwnerPassword: "" });
+    const [formValues, setFormValues] = useState({ login: "", password: "", password_repeat: "", username: "", 
+        user_level: user.user_level, can_login: user.can_login, can_edit_objects: user.can_edit_objects, token_owner_password: "" });
     const handleFormChange = (e, data) => {
         const value = ["can_login", "can_edit_objects"].includes(data.name) ? data.checked : data.value;
         setFormValues({ ...formValues, [data.name]: value });
@@ -34,9 +34,9 @@ export const EditUser = ({ setIsEditMode }) => {
     const [errors, setErrors] = useState(getDefaultErrors());
     const loginError = errors.login.length > 0 ? { content: errors.login, pointing: "above" } : undefined;
     const passwordError = errors.password.length > 0 ? { content: errors.password, pointing: "above" } : undefined;
-    const passwordRepeatError = errors.passwordRepeat.length > 0 ? { content: errors.passwordRepeat, pointing: "above" } : undefined;
+    const passwordRepeatError = errors.password_repeat.length > 0 ? { content: errors.password_repeat, pointing: "above" } : undefined;
     const usernameError = errors.username.length > 0 ? { content: errors.username, pointing: "above" } : undefined;
-    const tokenOwnerPasswordError = errors.tokenOwnerPassword.length > 0 ? { content: errors.tokenOwnerPassword, pointing: "above" } : undefined;
+    const tokenOwnerPasswordError = errors.token_owner_password.length > 0 ? { content: errors.token_owner_password, pointing: "above" } : undefined;
 
     // Form message
     const [formMessage, setFormMessage] = useState({ type: "", content: "" });
@@ -93,13 +93,13 @@ export const EditUser = ({ setIsEditMode }) => {
                     <Form.Input error={loginError} name="login" label="New login" disabled={isDisabled} value={formValues.login} onChange={handleFormChange} />
                     <Form.Group widths="equal">
                         <Form.Input error={passwordError} name="password" label="New password" type="password" disabled={isDisabled} value={formValues.password} onChange={handleFormChange} />
-                        <Form.Input error={passwordRepeatError} name="passwordRepeat" label="Repeat new password" type="password" disabled={isDisabled} value={formValues.passwordRepeat} onChange={handleFormChange} />
+                        <Form.Input error={passwordRepeatError} name="password_repeat" label="Repeat new password" type="password" disabled={isDisabled} value={formValues.password_repeat} onChange={handleFormChange} />
                     </Form.Group>
                     <Form.Input error={usernameError} name="username" label="New username" disabled={isDisabled} value={formValues.username} onChange={handleFormChange} />
 
                     {adminFields}
 
-                    <Form.Input error={tokenOwnerPasswordError} name="tokenOwnerPassword" label="Your current password" type="password" disabled={isDisabled} value={formValues.tokenOwnerPassword} onChange={handleFormChange} required />
+                    <Form.Input error={tokenOwnerPasswordError} name="token_owner_password" label="Your current password" type="password" disabled={isDisabled} value={formValues.token_owner_password} onChange={handleFormChange} required />
 
                     <div className="user-page-form-button-container">
                         <Button color="green" disabled={isDisabled} onClick={onUpdate}>Update</Button>
