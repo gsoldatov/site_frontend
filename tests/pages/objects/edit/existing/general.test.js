@@ -17,7 +17,7 @@ import { getTDLByObjectID } from "../../../../_mocks/data-to-do-lists";
 import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject } from "../../../../_mocks/data-composite";
 
 import { App } from "../../../../../src/components/app";
-import { setObjectsTags } from "../../../../../src/actions/data-tags";
+import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
 import { addObjects, addObjectData } from "../../../../../src/actions/data-objects";
 import { SubobjectDeleteModes } from "../../../../../src/store/types/data/composite";
 import { generateObjectAttributes, generateObjectData } from "../../../../_mocks/data-objects";
@@ -195,7 +195,7 @@ describe("Load object from state", () => {
         });
         let objectData = generateObjectData(1, "link", { "link": "https://test.link" });
         store.dispatch(addObjects([object]));
-        store.dispatch(setObjectsTags([object]));
+        store.dispatch(addObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
         
         let { container } = renderWithWrappers(<App />, {
@@ -231,7 +231,7 @@ describe("Load object from state", () => {
         });
         let objectData = generateObjectData(1, "markdown", { "raw_text": "**Test text**" });
         store.dispatch(addObjects([object]));
-        store.dispatch(setObjectsTags([object]));
+        store.dispatch(addObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
         
         let { container } = renderWithWrappers(<App />, {
@@ -282,7 +282,7 @@ describe("Load object from state", () => {
         });
         let objectData = generateObjectData(1, "to_do_list", getTDLByObjectID(2001));
         store.dispatch(addObjects([object]));
-        store.dispatch(setObjectsTags([object]));
+        store.dispatch(addObjectsTags([object]));
         store.dispatch(addObjectData([objectData]));
         
         let { container } = renderWithWrappers(<App />, {
@@ -366,7 +366,7 @@ describe("Load object from backend", () => {
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5]
         });
         store.dispatch(addObjects([object]));
-        store.dispatch(setObjectsTags([object]));
+        store.dispatch(addObjectsTags([object]));
         
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", store
@@ -423,7 +423,7 @@ describe("Load object from backend", () => {
             created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         store.dispatch(addObjects([object]));
-        store.dispatch(setObjectsTags([object]));
+        store.dispatch(addObjectsTags([object]));
         
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1001", store
@@ -464,7 +464,7 @@ describe("Load object from backend", () => {
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         store.dispatch(addObjects([object]));
-        store.dispatch(setObjectsTags([object]));
+        store.dispatch(addObjectsTags([object]));
         
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/2001", store

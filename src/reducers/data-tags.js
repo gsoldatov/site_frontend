@@ -112,8 +112,7 @@ function setObjectsTags(state, action) {
 
 const root = {
     ADD_TAGS: addTags,
-    DELETE_TAGS: deleteTags,
-    SET_OBJECTS_TAGS: setObjectsTags
+    DELETE_TAGS: deleteTags
 };
 
 export default root;

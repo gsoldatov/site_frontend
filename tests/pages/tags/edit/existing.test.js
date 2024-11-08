@@ -15,7 +15,8 @@ import { getTag } from "../../../_mocks/data-tags";
 import { generateObjectAttributes } from "../../../_mocks/data-objects";
 
 import { App } from "../../../../src/components/app";
-import { addTags, setObjectsTags } from "../../../../src/actions/data-tags";
+import { addTags } from "../../../../src/actions/data-tags";
+import { addObjectsTags } from "../../../../src/reducers/data/objects-tags";
 import { addObjects } from "../../../../src/actions/data-objects";
 
 import { getTagsEditElements } from "../../../_util/ui-tags-edit";
@@ -411,7 +412,7 @@ describe("Delete a tag", () => {
         ];
     
         store.dispatch(addObjects(objects));
-        store.dispatch(setObjectsTags(objects));
+        store.dispatch(addObjectsTags(objects));
         
         let { container, historyManager } = renderWithWrappers(<App />, {
             route: "/tags/edit/1", store

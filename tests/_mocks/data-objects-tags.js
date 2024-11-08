@@ -1,5 +1,5 @@
 import { getNonCachedTags } from "../../src/fetches/data-tags";
-import { setObjectsTags } from "../../src/actions/data-tags";
+import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { addObjects } from "../../src/actions/data-objects";
 import { selectObjects } from "../../src/actions/objects-list";
 
@@ -27,7 +27,7 @@ export async function getStoreWithTwoSelectedObjects() {
         })
     ];
     store.dispatch(addObjects(objects));
-    store.dispatch(setObjectsTags(objects));
+    store.dispatch(addObjectsTags(objects));
     store.dispatch(selectObjects([1, 2]));
     for (let object of objects)
         for (let tag_id of object.current_tag_ids)

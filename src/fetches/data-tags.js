@@ -2,7 +2,8 @@ import { getConfig } from "../config";
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
-import { addTags, deleteTags, setObjectsTags } from "../actions/data-tags";
+import { addTags, deleteTags } from "../actions/data-tags";
+import { updateObjectsTags } from "../reducers/data/objects-tags";
 import { addObjects } from "../actions/data-objects";
 import { deselectTags } from "../actions/tags-list";
 import { resetEditedObjectsTags } from "../actions/objects-edit";
@@ -220,13 +221,14 @@ export const objectsTagsUpdateFetch = (object_ids, added_tags, removed_tag_ids) 
                 const json = (await response.json());
 
                 // Update objects tags & query missing tags
-                let objects = object_ids.map(objectID => ({ object_id: objectID, tag_updates: json.tag_updates }));
-                dispatch(setObjectsTags(objects));
+                // let objects = object_ids.map(objectID => ({ object_id: objectID, tag_updates: json.tag_updates }));
+                const { added_tag_ids = [], removed_tag_ids = [] } = json.tag_updates;
+                dispatch(updateObjectsTags(object_ids, added_tag_ids, removed_tag_ids));
 
                 // Update modified_at attributes of the objects
                 let state = getState();
                 const modifiedAt = json.modified_at;
-                objects = [];
+                let objects = [];
                 object_ids.forEach(objectID => {
                     let object = {...state.objects[objectID]};
                     object.modified_at = modifiedAt;

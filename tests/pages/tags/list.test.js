@@ -16,7 +16,7 @@ import { getFeedElements } from "../../_util/ui-index";
 import { App } from "../../../src/components/app";
 import { setTagsPaginationInfo } from "../../../src/actions/tags-list";
 import { addObjects } from "../../../src/actions/data-objects";
-import { setObjectsTags } from "../../../src/actions/data-tags";
+import { addObjectsTags } from "../../../src/reducers/data/objects-tags";
 
 
 /*
@@ -561,7 +561,7 @@ describe("Delete a tag", () => {
         ];
     
         store.dispatch(addObjects(objects));
-        store.dispatch(setObjectsTags(objects));
+        store.dispatch(addObjectsTags(objects));
     
         // Route component is required for matching (getting :id part of the URL in the Tag component)
         let { container } = renderWithWrappers(<App />, {

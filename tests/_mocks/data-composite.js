@@ -1,5 +1,6 @@
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
-import { addTags, setObjectsTags } from "../../src/actions/data-tags";
+import { addTags } from "../../src/actions/data-tags";
+import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { resetEditedObjects } from "../../src/actions/objects-edit";
 import { createTestStore } from "../_util/create-test-store";
 import { generateObjectAttributes, defaultObjectAttributeValueGetters, generateObjectData } from "./data-objects";
@@ -129,7 +130,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
     ];
 
     store.dispatch(addObjects(objects));
-    store.dispatch(setObjectsTags(objects));
+    store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectData(objectData));
 
     return store;
@@ -159,7 +160,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
 
     store.dispatch(addObjects(objects));
-    store.dispatch(setObjectsTags(objects));
+    store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectData(objectData));
     store.dispatch(addTags(tags));
 
@@ -198,7 +199,7 @@ export const getStoreWithModifiedCompositeObject = () => {
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
 
     store.dispatch(addObjects(objects));
-    store.dispatch(setObjectsTags(objects));
+    store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectData(objectData));
     store.dispatch(resetEditedObjects({objectIDs: [1, 2, -1], allowResetToDefaults: true }));
     store.dispatch(addTags(tags));
@@ -252,7 +253,7 @@ export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsN
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
 
     store.dispatch(addObjects(objects));
-    store.dispatch(setObjectsTags(objects));
+    store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectData(objectData));
     store.dispatch(resetEditedObjects({objectIDs: [mainObjectID, linkSubobjectID, markdownSubobjectID, TDLSubobjectID, compositeSubobjectID, 6], allowResetToDefaults: true }));
     store.dispatch(addTags(tags));

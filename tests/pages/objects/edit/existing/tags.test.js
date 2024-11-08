@@ -13,7 +13,7 @@ import { getInlineItem } from "../../../../_util/ui-inline";
 import { getFeedElements } from "../../../../_util/ui-index";
 
 import { App } from "../../../../../src/components/app";
-import { setObjectsTags } from "../../../../../src/actions/data-tags";
+import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
 import { getNonCachedTags } from "../../../../../src/fetches/data-tags";
 import { addObjects, addObjectData } from "../../../../../src/actions/data-objects";
 import { generateObjectAttributes, generateObjectData } from "../../../../_mocks/data-objects";
@@ -46,7 +46,7 @@ test("Load object tags from state", async () => {
     });
     let objectData = generateObjectData(1, "link", { "link": "https://test.link" });
     store.dispatch(addObjects([object]));
-    store.dispatch(setObjectsTags([object]));
+    store.dispatch(addObjectsTags([object]));
     store.dispatch(addObjectData([objectData]));
     for (let tag_id of object.current_tag_ids)
         await store.dispatch(getNonCachedTags([tag_id]));

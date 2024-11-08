@@ -4,7 +4,7 @@ import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 import { getNonCachedTags } from "./data-tags";
 
-import { setObjectsTags } from "../actions/data-tags";
+import { addObjectsTags, updateObjectsTags } from "../reducers/data/objects-tags";
 import { addObjects, addObjectData, deleteObjects } from "../actions/data-objects";
 import { setEditedObject, setObjectOnSaveFetchState } from "../actions/objects-edit";
 
@@ -53,8 +53,9 @@ export const addObjectFetch = obj => {
                 object_data = modifyObjectDataPostSave(payload, object);
 
                 // General updates
-                dispatch(setObjectsTags([object]));     // Set objects tags
                 dispatch(addObjects([object]));         // Add object
+                const { added_tag_ids = [], removed_tag_ids = [] } = object.tag_updates;
+                dispatch(updateObjectsTags([object.object_id], added_tag_ids, removed_tag_ids));    // Set objects tags
                 dispatch(addObjectData([{ object_id: object.object_id, object_type: object.object_type, object_data: object_data }]));
                 return object;
             default:
@@ -102,7 +103,7 @@ export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
                 // Set object attributes & fetch non-cached tags
                 if (data["objects"].length > 0) {
                     dispatch(addObjects(data["objects"]));
-                    dispatch(setObjectsTags(data["objects"]));
+                    dispatch(addObjectsTags(data["objects"]));
                 
                     let allObjectsTags = new Set();
                     data["objects"].forEach(object => object.current_tag_ids.forEach(tagID => allObjectsTags.add(tagID)));
@@ -160,7 +161,8 @@ export const updateObjectFetch = obj => {
 
                 // Set object attributes, tags and data
                 dispatch(addObjects([ object ]));
-                dispatch(setObjectsTags([ object ]));
+                const { added_tag_ids = [], removed_tag_ids = [] } = object.tag_updates;
+                dispatch(updateObjectsTags([object.object_id], added_tag_ids, removed_tag_ids));    // Set objects tags
                 dispatch(addObjectData([{ object_id: object.object_id, object_type: object.object_type, object_data }]));
 
                 // Fetch non-cached tags

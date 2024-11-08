@@ -1,6 +1,6 @@
 import { resetEditedObjects, setEditedObject } from "../../src/actions/objects-edit";
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
-import { setObjectsTags } from "../../src/actions/data-tags";
+import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 
 import { createTestStore } from "../_util/create-test-store";
 import { generateObjectAttributes, generateObjectData } from "./data-objects";
@@ -67,7 +67,7 @@ export const getStoreWithEditedObjects = () => {
     ];
 
     store.dispatch(addObjects(objects));
-    store.dispatch(setObjectsTags(objects));
+    store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectData(objectData));
 
     store.dispatch(resetEditedObjects({ objectIDs: [10, 11] }));
