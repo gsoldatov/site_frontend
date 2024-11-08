@@ -1,7 +1,6 @@
 import logState from "../store/log-state";
 
 import { authRoot } from "./data/auth";
-import dataTags from "./data-tags";
 import { tagsRoot } from "./data/tags";
 import { objectsTagsRoot } from "./data/objects-tags";
 import dataObjects from "./data-objects";
@@ -41,7 +40,6 @@ function getActionHandlers(rootObjects) {
 
 const ACTION_HANDLERS = getActionHandlers({ 
     authRoot,
-    dataTags,
     tagsRoot,
     objectsTagsRoot,
     dataObjects,

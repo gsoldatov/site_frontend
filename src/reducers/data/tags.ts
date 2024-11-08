@@ -1,6 +1,7 @@
 import type { State } from "../../store/types/state";
 import type { Tag, Tags } from "../../store/types/data/tags";
 import type { EditedObjects } from "../../store/types/data/edited-objects";
+import type { ObjectsTags } from "../../store/types/data/objects-tags";
 
 
 /**
@@ -63,6 +64,30 @@ const _addTags = (state: State, action: { tags: Tag[] }): State => {
 };
 
 
+export const deleteTags = (tag_ids: number[]) => ({ type: "DELETE_TAGS", tag_ids: tag_ids });
+
+const _deleteTags = (state: State, action: { tag_ids: number[] }): State => {
+    let tags = {...state.tags};
+    for (let tagID of action.tag_ids) {
+        delete tags[tagID];
+    }
+
+    let objectsTags: ObjectsTags = {};
+    Object.keys(state.objectsTags).forEach(objectID => {
+        const oid = objectID as any as number;
+        let tagIDs = state.objectsTags[oid].filter(id => !action.tag_ids.includes(id));
+        if (tagIDs.length > 0) objectsTags[oid] = tagIDs;
+    });
+
+    return {
+        ...state,
+        tags: tags,
+        objectsTags: objectsTags
+    };
+}
+
+
 export const tagsRoot = {
-    "ADD_TAGS": _addTags
+    "ADD_TAGS": _addTags,
+    "DELETE_TAGS": _deleteTags
 }
