@@ -28,11 +28,16 @@ export const editedObject = object.extend({
     toDoList,
     composite
 });
+
+/** A single edited object's type. */
 export type EditedObject = z.infer<typeof editedObject>;
 
 
 /** Edited objects' store schema. */
 export const editedObjects = z.record(intIndex, editedObject);
+
+/** Edited objects' store type. */
+export type EditedObjects = z.infer<typeof editedObjects>;
 
 
 /** 

@@ -1,5 +1,5 @@
 import { addObjectData, addObjects } from "../../src/actions/data-objects";
-import { addTags } from "../../src/actions/data-tags";
+import { addTags } from "../../src/reducers/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { resetEditedObjects } from "../../src/actions/objects-edit";
 import { createTestStore } from "../_util/create-test-store";

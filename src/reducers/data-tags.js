@@ -111,7 +111,6 @@ function setObjectsTags(state, action) {
 
 
 const root = {
-    ADD_TAGS: addTags,
     DELETE_TAGS: deleteTags
 };
 

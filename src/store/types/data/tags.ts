@@ -3,7 +3,7 @@ import { z } from "zod"
 import { nameString, positiveInt, positiveIntIndex, timestampString } from "../../../util/types/common"
 
 
-/** Tag schema. */
+/** Tag from state.tags schema. */
 export const tag = z.object({
     tag_id: positiveInt,
     created_at: timestampString,
@@ -13,5 +13,12 @@ export const tag = z.object({
     is_published: z.boolean()
 });
 
+/** Tag from state.tags type. */
+export type Tag = z.infer<typeof tag>;
+
+
 /** Tags' store schema. */
 export const tags = z.record(positiveIntIndex, tag);
+
+/** Tags' store type. */
+export type Tags = z.infer<typeof tags>;

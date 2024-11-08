@@ -15,7 +15,7 @@ import { getTag } from "../../../_mocks/data-tags";
 import { generateObjectAttributes } from "../../../_mocks/data-objects";
 
 import { App } from "../../../../src/components/app";
-import { addTags } from "../../../../src/actions/data-tags";
+import { addTags } from "../../../../src/reducers/data/tags";
 import { addObjectsTags } from "../../../../src/reducers/data/objects-tags";
 import { addObjects } from "../../../../src/actions/data-objects";
 

@@ -2,7 +2,8 @@ import { getConfig } from "../config";
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
-import { addTags, deleteTags } from "../actions/data-tags";
+import { deleteTags } from "../actions/data-tags";
+import { addTags } from "../reducers/data/tags";
 import { updateObjectsTags } from "../reducers/data/objects-tags";
 import { addObjects } from "../actions/data-objects";
 import { deselectTags } from "../actions/tags-list";
