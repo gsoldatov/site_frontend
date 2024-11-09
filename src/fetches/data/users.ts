@@ -3,7 +3,7 @@ import { addUsers, updateUser } from "../../reducers/data/users";
 
 import { usersViewMinResponseSchema, usersViewFullResponseSchema, updateUsersFetchData, 
     getUpdateUsersFetchValidationErrors, updateUsersFetchValidationErrors } from "../types/data/users";
-import { getUpdatedUserValues } from "../../store/selectors/data/users";
+import { UsersSelectors } from "../../store/selectors/data/users";
 
 import {  partialUserExceptID, userFull, userMin } from "../../store/types/data/users";
 import type {Dispatch, GetState, InferNonNullablePartial } from "../../util/types/common";
@@ -65,7 +65,7 @@ export const updateUsersFetch = (updates: UpdateUsersFetchData) => {
         if (!parseResult.success) return getUpdateUsersFetchValidationErrors(parseResult.error);
 
         // Get modified values & exit if no updates were made
-        const user = getUpdatedUserValues(getState(), updates);
+        const user = UsersSelectors.getUpdatedUserValues(getState(), updates);
         if (Object.keys(user).length === 0) return { message: { type: "info", content: "Nothing was updated." }};
         user.user_id = parseResult.data.user_id;
         const { token_owner_password } = parseResult.data;
