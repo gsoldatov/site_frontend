@@ -1,6 +1,7 @@
 import { getResponseErrorType } from "./common";
 import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch, objectsSearchFetch } from "./data-objects";
-import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
+import { tagsSearchFetch } from "./data-tags";
+import { getNonCachedTags } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
 import { loadNewObjectPage, loadEditObjectPage, setEditedObject, resetEditedObjects, setEditedObjectTags,
@@ -30,10 +31,8 @@ export const addObjectOnLoad = () => {
         let result = await dispatch(getNonCachedTags(getState().editedObjects[0].addedTags));
 
         // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectOnLoadFetchState(false, errorMessage));
+        if (result.failed) {
+            dispatch(setObjectOnLoadFetchState(false, result.error));
             return;
         }
 
@@ -122,10 +121,8 @@ export const editObjectOnLoadFetch = object_id => {
             let result = await dispatch(getNonCachedTags(state.objectsTags[object_id]));
 
             // Handle fetch errors
-            const responseErrorType = getResponseErrorType(result);
-            if (responseErrorType > enumResponseErrorType.none) {
-                const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-                dispatch(setObjectOnLoadFetchState(false, errorMessage));
+            if (result.failed) {
+                dispatch(setObjectOnLoadFetchState(false, result.error));
                 return;
             }
         }
@@ -136,10 +133,10 @@ export const editObjectOnLoadFetch = object_id => {
         // Get non-cached added existing tag information
         const addedExistingTagIDs = getState().editedObjects[object_id].addedTags.filter(tag => typeof(tag) === "number");
         let result = await dispatch(getNonCachedTags(addedExistingTagIDs));
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectOnLoadFetchState(false, errorMessage));
+
+        // Handle fetch errors
+        if (result.failed) {
+            dispatch(setObjectOnLoadFetchState(false, result.error));
             return;
         }
 

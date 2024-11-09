@@ -1,7 +1,8 @@
 import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
-import { deleteTagsFetch, getNonCachedTags } from "./data-tags";
+import { deleteTagsFetch } from "./data-tags";
+import { getNonCachedTags } from "./data/tags";
 
 import { setTagsListFetch, setTagsListShowDeleteDialog, setTagsListPaginationInfo } from "../reducers/ui/tags-list";
 
@@ -49,7 +50,8 @@ export const pageFetch = currentPage => {
 
         // Is fetch is successful, fetch missing tag data
         result = await dispatch(getNonCachedTags(getState().tagsListUI.paginationInfo.currentPageTagIDs));
-        dispatch(setTagsListFetch({ isFetching: false, fetchError: getResponseErrorType(result) === enumResponseErrorType.general ? result.error : "" }));
+        const fetchError = result.failed ? result.error : "";
+        dispatch(setTagsListFetch({ isFetching: false, fetchError }));
     };
 };
 

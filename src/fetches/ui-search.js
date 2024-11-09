@@ -2,9 +2,10 @@ import { getResponseErrorType } from "./common";
 
 import { search } from "./data-search";
 import { getNonCachedObjects } from "./data-objects";
-import { getNonCachedTags } from "./data-tags";
+import { getNonCachedTags } from "./data/tags";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
+import { FetchResult } from "./fetch-runner";
 
 
 /**
@@ -29,10 +30,15 @@ export const loadSearchPageItems = query => {
 
         // Handle fetch errors
         for (let result of results) {
-            let responseErrorType = getResponseErrorType(result);
-            if (responseErrorType > enumResponseErrorType.none) {
-                const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-                return { error: errorMessage };
+            if (result instanceof FetchResult) {
+                if (result.failed) return { error: result.error };  // TODO return fetch result?
+            } else {
+                // TODO use a single branch when possible
+                let responseErrorType = getResponseErrorType(result);
+                if (responseErrorType > enumResponseErrorType.none) {
+                    const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+                    return { error: errorMessage };
+                }
             }
         }
 

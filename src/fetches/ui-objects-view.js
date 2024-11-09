@@ -2,7 +2,7 @@ import { getConfig } from "../config";
 
 import { getResponseErrorType } from "./common";
 import { updateObjectFetch, viewCompositeHierarchyElementsFetch, viewObjectsFetch } from "./data-objects";
-import { getNonCachedTags } from "./data-tags";
+import { getNonCachedTags } from "./data/tags";
 
 import { canEditObject, objectDataIsInState } from "../store/state-util/objects";
 import { serializeObjectForUpdate } from "../store/state-util/composite";
@@ -46,11 +46,7 @@ const backendURL = getConfig().backendURL;
             let result = await dispatch(getNonCachedTags(state.objectsTags[objectID]));
 
             // Handle fetch errors
-            const responseErrorType = getResponseErrorType(result);
-            if (responseErrorType > enumResponseErrorType.none) {
-                const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-                return { error: errorMessage };
-            }
+            if (result.failed) return { error: result.error };     // TODO return fetch result or nothing?
         }
 
         // End fetch

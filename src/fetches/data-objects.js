@@ -2,7 +2,7 @@ import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
-import { getNonCachedTags } from "./data-tags";
+import { getNonCachedTags } from "./data/tags";
 
 import { addObjectsTags, updateObjectsTags } from "../reducers/data/objects-tags";
 import { addObjects, addObjectData, deleteObjects } from "../actions/data-objects";
@@ -104,11 +104,14 @@ export const viewObjectsFetch = (objectIDs, objectDataIDs) => {
                 if (data["objects"].length > 0) {
                     dispatch(addObjects(data["objects"]));
                     dispatch(addObjectsTags(data["objects"]));
-                
+                    
+                    // Fetch non cached tags
                     let allObjectsTags = new Set();
                     data["objects"].forEach(object => object.current_tag_ids.forEach(tagID => allObjectsTags.add(tagID)));
-                    response = await dispatch(getNonCachedTags([...allObjectsTags]));
-                    if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
+                    const getNonCachedTagsResult = await dispatch(getNonCachedTags([...allObjectsTags]));
+
+                    // Handle tag fetch errors
+                    if (getNonCachedTagsResult.failed) return { error: getNonCachedTagsResult.error };   // TODO return fetch result?
                 }
 
                 return data;
@@ -166,8 +169,10 @@ export const updateObjectFetch = obj => {
                 dispatch(addObjectData([{ object_id: object.object_id, object_type: object.object_type, object_data }]));
 
                 // Fetch non-cached tags
-                response = await dispatch(getNonCachedTags(getState().objectsTags[object.object_id]));
-                if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
+                const getNonCachedTagsResult = await dispatch(getNonCachedTags(getState().objectsTags[object.object_id]));
+
+                // Handle tag fetch errors
+                if (getNonCachedTagsResult.failed) return { error: getNonCachedTagsResult.error };   // TODO return fetch result?
 
                 return object;
             case 404:

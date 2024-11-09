@@ -1,5 +1,6 @@
 import { getResponseErrorType } from "./common";
-import { addTagFetch, viewTagsFetch, updateTagFetch, deleteTagsFetch } from "./data-tags";
+import { updateTagFetch, deleteTagsFetch } from "./data-tags";
+import { getNonCachedTags } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
 import { loadTagsEditExistingPage, setTagsEditOnLoadFetchState, setTagsEditOnSaveFetchState, setShowDeleteDialogTagsEdit, setCurrentTag } from "../reducers/ui/tags-edit";
@@ -7,7 +8,8 @@ import { loadTagsEditExistingPage, setTagsEditOnLoadFetchState, setTagsEditOnSav
 import { isFetchingTag } from "../store/state-util/ui-tags-edit";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
-import { addedTagAttributes, updatedTagAttributes } from "../store/state-templates/tags";
+import { updatedTagAttributes } from "../store/state-templates/tags";
+import { currentTag } from "../store/types/ui/tags-edit";
 
 
 /**
@@ -24,28 +26,20 @@ export const editTagOnLoadFetch = tag_id => {
             dispatch(setTagsEditOnLoadFetchState({ isFetching: false, fetchError: "Object not found." }));
             return;
         }
-
-        // Check local tag storage
-        let state = getState();
-        if (tag_id in state.tags) {
-            dispatch(setCurrentTag({ ...state.tags[tag_id] }));
-            return;
-        }
         
         // Run view fetch & add tag data
         dispatch(setTagsEditOnLoadFetchState({ isFetching: true, fetchError: "" }));
-        const result = await dispatch(viewTagsFetch( [tag_id] ));
+        const result = await dispatch(getNonCachedTags([tag_id]));
 
         // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setTagsEditOnLoadFetchState({ isFetching: false, fetchError: errorMessage }));
+        if (result.failed) {
+            dispatch(setTagsEditOnLoadFetchState({ isFetching: false, fetchError: result.error }));
             return;
         }
 
         // Handle successful fetch end
-        dispatch(setCurrentTag(result[0]));
+        const tag = currentTag.parse(getState().tags[tag_id]);
+        dispatch(setCurrentTag(tag));
         dispatch(setTagsEditOnLoadFetchState({ isFetching: false, fetchError: "" }));
     };
 };

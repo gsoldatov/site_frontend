@@ -1,6 +1,7 @@
 import { getResponseErrorType } from "./common";
 import { getPageObjectIDs, viewObjectsFetch } from "./data-objects";
-import { getNonCachedTags, tagsSearchFetch } from "./data-tags";
+import { tagsSearchFetch } from "./data-tags";
+import { getNonCachedTags } from "./data/tags";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
@@ -10,7 +11,7 @@ import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
  */
 export const tagsViewLoadSelectedTags = tagIDs => {
     return async (dispatch, getState) => {
-        return await dispatch(getNonCachedTags(tagIDs));
+        await dispatch(getNonCachedTags(tagIDs));
     };
 };
 

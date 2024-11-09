@@ -1,4 +1,4 @@
-import { getNonCachedTags } from "../../src/fetches/data-tags";
+import { getNonCachedTags } from "../../src/fetches/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { addObjects } from "../../src/actions/data-objects";
 import { selectObjects } from "../../src/actions/objects-list";

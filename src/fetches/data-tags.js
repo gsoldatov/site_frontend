@@ -9,54 +9,12 @@ import { deselectTags } from "../reducers/ui/tags-list";
 import { resetEditedObjectsTags } from "../actions/objects-edit";
 
 import { checkIfTagNameExists } from "../store/state-util/tags";
+import { getNonCachedTags } from "./data/tags";
 
 
 
 const backendURL = getConfig().backendURL;
 
-
-/**
- * Fetches backend to retrieve tags with provided `tagIDs`.
- * 
- * Adds the tags to the state in case of success.
- * 
- * Returns the array of tag data returned by backend or an object with `error` attribute containing error message in case of failure.
- */
-export const viewTagsFetch = tagIDs => {
-    return async (dispatch, getState) => {
-        let response = await dispatch(runFetch(`${backendURL}/tags/view`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tag_ids: tagIDs.map(id => parseInt(id)) })
-        }));
-
-        switch (response.status) {
-            case 200:
-                let tags = (await response.json())["tags"];
-                dispatch(addTags(tags));
-                return tags;
-            case 404:
-                const error = tagIDs.length > 1 ? "Tags not found." : "Tag not found.";
-                return { error };
-            default:
-                return await getErrorFromResponse(response);
-        }
-    }; 
-};
-
-
-/**
- * Fetches missing data for a list of provided `tagIDs`.
- * Filters out non-numerice IDs (new tag case).
- */
-export const getNonCachedTags = tagIDs => {
-    return async (dispatch, getState) => {
-        let nonCachedTags = tagIDs.filter(id => !(id in getState().tags) && !isNaN(id));
-        if (nonCachedTags.length !== 0) {   // Fetch non-cached tags' data
-            return await dispatch(viewTagsFetch(nonCachedTags));
-        }
-    };
-};
 
 
 /**
@@ -154,8 +112,8 @@ export const tagsSearchFetch = ({queryText, existingIDs}) => {
                 let tagIDs = (await response.json()).tag_ids;
 
                 // Fetch non-cahced tags
-                response = await dispatch(getNonCachedTags(tagIDs));
-                if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
+                const getNonCachedTagsResult = await dispatch(getNonCachedTags(tagIDs));
+                if (getNonCachedTagsResult.failed) return { error: getNonCachedTagsResult.error };  // TODO return fetch result?
                 return tagIDs;
             case 404:
                 return [];
@@ -208,8 +166,9 @@ export const objectsTagsUpdateFetch = (object_ids, added_tags, removed_tag_ids) 
                 dispatch(resetEditedObjectsTags(object_ids, modifiedAt));
 
                 // Fetch non-cahced tags
-                response = await dispatch(getNonCachedTags(json.tag_updates.added_tag_ids));
-                if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
+                const getNonCachedTagsResult = await dispatch(getNonCachedTags(json.tag_updates.added_tag_ids));
+                if (getNonCachedTagsResult.failed) return { error: getNonCachedTagsResult.error };  // TODO return fetch result?
+                
                 return json;
             default:
                 return await getErrorFromResponse(response);

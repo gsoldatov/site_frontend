@@ -14,7 +14,7 @@ import { renderWithWrappers } from "../../../_util/render";
 import { getFeedElements } from "../../../_util/ui-index";
 
 import { App } from "../../../../src/components/app";
-import { getNonCachedTags } from "../../../../src/fetches/data-tags";
+import { getNonCachedTags } from "../../../../src/fetches/data/tags";
 
 
 /*
@@ -416,8 +416,8 @@ test("Check tags update + editedObjects reset", async () => {
     await waitFor(() => expect(getSideMenuItem(container, "Update Tags")).toBeFalsy());
 
     // Check objects tags & modified_at time
-    expect(compareArrays([-1, 2, 3, 7], store.getState().objectsTags[1].sort())).toBeTruthy();
-    expect(compareArrays([-1, 2, 3, 5, 6, 7], store.getState().objectsTags[2].sort())).toBeTruthy();
+    expect(compareArrays([1000000, 2, 3, 7], store.getState().objectsTags[1].sort())).toBeTruthy();
+    expect(compareArrays([1000000, 2, 3, 5, 6, 7], store.getState().objectsTags[2].sort())).toBeTruthy();
     const expectedModifiedAt = (new Date(2001, 0, 1, 12, 30, 0)).toISOString();
     expect(store.getState().objects[1].modified_at).toEqual(expectedModifiedAt);
     expect(store.getState().objects[2].modified_at).toEqual(expectedModifiedAt);

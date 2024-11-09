@@ -14,7 +14,7 @@ import { getFeedElements } from "../../../../_util/ui-index";
 
 import { App } from "../../../../../src/components/app";
 import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
-import { getNonCachedTags } from "../../../../../src/fetches/data-tags";
+import { getNonCachedTags } from "../../../../../src/fetches/data/tags";
 import { addObjects, addObjectData } from "../../../../../src/actions/data-objects";
 import { generateObjectAttributes, generateObjectData } from "../../../../_mocks/data-objects";
 
