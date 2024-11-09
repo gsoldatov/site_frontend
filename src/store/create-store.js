@@ -3,6 +3,7 @@ import thunkMiddleware from "redux-thunk";
 
 import { LocalStorageManager } from "./local-storage-manager";
 import getRootReducer from "../reducers/root";
+import { setDocumentApp } from "../util/document-app";
 
 
 /**
@@ -19,6 +20,8 @@ const createStoreFunc = () => {
     );
 
     store.subscribe(() => manager.saveState(store));
+
+    setDocumentApp({ store });
 
     return store;
 }
