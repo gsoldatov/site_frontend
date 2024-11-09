@@ -10,7 +10,7 @@ import { commonRoot } from "./common";
 import { modalRoot } from "./ui/modal";
 import { navigationRoot } from "./ui/navigation";
 import tag from "./tags-edit";
-import tags from "./tags-list";
+import { tagsListRoot } from "./ui/tags-list";
 import objectEdit from "./objects-edit";
 import objectsList from "./objects-list";
 import objectsEdited from "./objects-edited";
@@ -49,7 +49,7 @@ const ACTION_HANDLERS = getActionHandlers({
     modalRoot,
     navigationRoot,
     tag,
-    tags,
+    tagsListRoot,
     objectEdit,
     objectsList,
     objectsEdited 

@@ -3,7 +3,7 @@ import { getConfig } from "../config";
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { deleteTagsFetch, getNonCachedTags } from "./data-tags";
 
-import { setTagsFetch, setShowDeleteDialogTags, setTagsPaginationInfo } from "../actions/tags-list";
+import { setTagsListFetch, setTagsListShowDeleteDialog, setTagsListPaginationInfo } from "../reducers/ui/tags-list";
 
 import { isFetchingTags } from "../store/state-util/ui-tags-list";
 
@@ -16,10 +16,10 @@ const backendURL = getConfig().backendURL;
 /**
  * Updates pagination info, resets current displayed page to 1 and fetches tags to display on it.
  */
-export const setTagsPaginationInfoAndFetchPage = paginationInfo => {
+export const setTagsListPaginationInfoAndFetchPage = paginationInfo => {
     return async (dispatch, getState) => {
         paginationInfo.currentPage = 1;
-        dispatch(setTagsPaginationInfo(paginationInfo));
+        dispatch(setTagsListPaginationInfo(paginationInfo));
         dispatch(pageFetch(paginationInfo.currentPage));
     };
 };
@@ -33,8 +33,8 @@ export const pageFetch = currentPage => {
         const state = getState();
         if (isFetchingTags(state)) return;
 
-        dispatch(setTagsPaginationInfo({ currentPage }));
-        dispatch(setTagsFetch(true, ""));
+        dispatch(setTagsListPaginationInfo({ currentPage }));
+        dispatch(setTagsListFetch({ isFetching: true, fetchError:"" }));
 
         // Fetch IDs of tags to display on the page
         let result = await dispatch(getPageTagIDs());
@@ -43,13 +43,13 @@ export const pageFetch = currentPage => {
         const responseErrorType = getResponseErrorType(result);
         if (responseErrorType > enumResponseErrorType.none) {
             const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setTagsFetch(false, errorMessage));
+            dispatch(setTagsListFetch({ isFetching: false, fetchError: errorMessage }));
             return;
         }
 
         // Is fetch is successful, fetch missing tag data
         result = await dispatch(getNonCachedTags(getState().tagsListUI.paginationInfo.currentPageTagIDs));
-        dispatch(setTagsFetch(false, getResponseErrorType(result) === enumResponseErrorType.general ? result.error : ""));
+        dispatch(setTagsListFetch({ isFetching: false, fetchError: getResponseErrorType(result) === enumResponseErrorType.general ? result.error : "" }));
     };
 };
 
@@ -81,7 +81,7 @@ const getPageTagIDs = () => {
         switch (response.status) {
             case 200:
                 let json = await response.json();
-                dispatch(setTagsPaginationInfo({ totalItems: json["total_items"], currentPageTagIDs: json["tag_ids"] }));
+                dispatch(setTagsListPaginationInfo({ totalItems: json["total_items"], currentPageTagIDs: json["tag_ids"] }));
                 return json;
             default:
                 return await getErrorFromResponse(response);
@@ -100,22 +100,22 @@ export const onDeleteFetch = () => {
         if (isFetchingTags(state)) return;
 
         // Hide delete dialog
-        dispatch(setShowDeleteDialogTags(false));
+        dispatch(setTagsListShowDeleteDialog(false));
 
         // Run delete fetch & delete tags data
-        dispatch(setTagsFetch(true, ""));
+        dispatch(setTagsListFetch({ isFetching: true, fetchError: "" }));
         const result = await dispatch(deleteTagsFetch(state.tagsListUI.selectedTagIDs));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
         if (responseErrorType > enumResponseErrorType.none) {
             const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setTagsFetch(false, errorMessage));
+            dispatch(setTagsListFetch({ isFetching: false, fetchError: errorMessage }));
             return;
         }
 
         // Handle successful fetch end
-        dispatch(setTagsPaginationInfo({ currentPageTagIDs: state.tagsListUI.paginationInfo.currentPageTagIDs.filter(id => !result.includes(id)) }));  // delete from current page
-        dispatch(setTagsFetch(false, ""));
+        dispatch(setTagsListPaginationInfo({ currentPageTagIDs: state.tagsListUI.paginationInfo.currentPageTagIDs.filter(id => !result.includes(id)) }));  // delete from current page
+        dispatch(setTagsListFetch({ isFetching: false, fetchError: "" }));
     };
 };

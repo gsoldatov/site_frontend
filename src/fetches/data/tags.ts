@@ -7,7 +7,7 @@ import { TagsSelectors } from "../../store/selectors/data/tags";
 import { addTags, deleteTags } from "../../reducers/data/tags";
 import { updateObjectsTags } from "../../reducers/data/objects-tags";
 import { addObjects } from "../../actions/data-objects";
-import { deselectTags } from "../../actions/tags-list";
+import { deselectTags } from "../../reducers/ui/tags-list";
 import { resetEditedObjectsTags } from "../../actions/objects-edit";
 
 import { checkIfTagNameExists } from "../../store/state-util/tags";

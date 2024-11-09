@@ -26,6 +26,10 @@ export const tagsListUI = z.object({
 
 /** /tags/list page UI state type. */
 type TagsListUI = z.infer<typeof tagsListUI>;
+/** /tags/list pagination info type. */
+export type TagsListPaginationInfo = z.infer<typeof tagsListUI.shape.paginationInfo>;
+/** /tags/list fetch state type. */
+export type TagsListFetch = z.infer<typeof tagsListUI.shape.fetch>;
 
 
 /** Returns /tags/list state with default values being replaced `customValues`. */

@@ -7,7 +7,7 @@ import { FieldItemList, FieldItem } from "../../modules/field-item-list";
 import { ExpandableContainer } from "../../modules/expandable-container";
 import { TagsListPagination } from "./tags-list-pagination";
 
-import { toggleTagSelection } from "../../../actions/tags-list";
+import { toggleTagSelection } from "../../../reducers/ui/tags-list";
 import { pageFetch } from "../../../fetches/ui-tags-list";
 
 import { NumericUserLevel } from "../../../store/types/data/auth";

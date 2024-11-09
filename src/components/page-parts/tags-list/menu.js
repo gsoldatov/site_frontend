@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { HorizontalMenu, HorizontalMenuButton, HorizontalMenuFilter, HorizontalMenuGroup } from "../../modules/horizontal-menu";
 
-import { selectTags, clearSelectedTags, setTagsPaginationInfo } from "../../../actions/tags-list";
-import { setTagsPaginationInfoAndFetchPage } from "../../../fetches/ui-tags-list";
+import { selectTags, clearSelectedTags, setTagsListPaginationInfo } from "../../../reducers/ui/tags-list";
+import { setTagsListPaginationInfoAndFetchPage } from "../../../fetches/ui-tags-list";
 import { isFetchingTags } from "../../../store/state-util/ui-tags-list";
 
 import { NumericUserLevel } from "../../../store/types/data/auth";
@@ -32,25 +32,25 @@ export const TagsListHorizontalMenu = () => {
         <HorizontalMenuButton icon="cancel" title="Deselect all tags" onClick={deselectAllOnClick} isDisabled={isDisabled} />
 
     // Sort asc button
-    const sortAscOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortOrder: "asc" })), []);
+    const sortAscOnClick = useMemo(() => () => dispatch(setTagsListPaginationInfoAndFetchPage({ sortOrder: "asc" })), []);
     const sortAscIsActive = useSelector(state => state.tagsListUI.paginationInfo.sortOrder === "asc");
 
     // Sort desc button
-    const sortDescOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortOrder: "desc" })), []);
+    const sortDescOnClick = useMemo(() => () => dispatch(setTagsListPaginationInfoAndFetchPage({ sortOrder: "desc" })), []);
     const sortDescIsActive = useSelector(state => state.tagsListUI.paginationInfo.sortOrder === "desc");
 
     // Sort by name button
-    const sortByNameOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortField: "tag_name" })), []);
+    const sortByNameOnClick = useMemo(() => () => dispatch(setTagsListPaginationInfoAndFetchPage({ sortField: "tag_name" })), []);
     const sortByNameIsActive = useSelector(state => state.tagsListUI.paginationInfo.sortField === "tag_name");
 
     // Sort by modify time button
-    const sortByModifyTimeOnClick = useMemo(() => () => dispatch(setTagsPaginationInfoAndFetchPage({ sortField: "modified_at" })), []);
+    const sortByModifyTimeOnClick = useMemo(() => () => dispatch(setTagsListPaginationInfoAndFetchPage({ sortField: "modified_at" })), []);
     const sortByModifyTimeIsActive = useSelector(state => state.tagsListUI.paginationInfo.sortField === "modified_at");
 
     // Tag name filter
     const tagNameFilterValue = useSelector(state => state.tagsListUI.paginationInfo.filterText);
-    const tagNameFilterOnChange = useMemo(() => value => dispatch(setTagsPaginationInfo({ filterText: value })), []);
-    const tagNameFilterOnChangeDelayed = useMemo(() => value => dispatch(setTagsPaginationInfoAndFetchPage({ filterText: value })), []);
+    const tagNameFilterOnChange = useMemo(() => value => dispatch(setTagsListPaginationInfo({ filterText: value })), []);
+    const tagNameFilterOnChangeDelayed = useMemo(() => value => dispatch(setTagsListPaginationInfoAndFetchPage({ filterText: value })), []);
 
     return (
         <HorizontalMenu>
