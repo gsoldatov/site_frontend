@@ -2,7 +2,7 @@
 import { tagsAddFetch } from "../data/tags";
 
 import { setRedirectOnRender } from "../../reducers/common";
-import { loadEditTagPage, setTagOnLoadFetchState, setTagOnSaveFetchState, setShowDeleteDialogTag, setCurrentTag } from "../../actions/tags-edit";
+import { loadEditTagPage, setTagOnLoadFetchState, setTagOnSaveFetchState, setShowDeleteDialogTag, setCurrentTag } from "../../reducers/ui/tags-edit";
 
 import { isFetchingTag } from "../../store/state-util/ui-tags-edit";
 

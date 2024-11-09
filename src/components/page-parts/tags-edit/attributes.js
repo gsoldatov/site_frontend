@@ -1,9 +1,9 @@
-import React, { useMemo, useRef } from "react";
+import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Timestamps, NameInput, DescriptionEditor } from "../../modules/edit/attributes";
 
-import { setCurrentTag } from "../../../actions/tags-edit";
+import { setCurrentTag } from "../../../reducers/ui/tags-edit";
 
 
 /**

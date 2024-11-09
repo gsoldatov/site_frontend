@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { DisplayControlCheckbox } from "../../modules/edit/display/display-control-checkbox";
 
-import { setCurrentTag } from "../../../actions/tags-edit";
+import { setCurrentTag } from "../../../reducers/ui/tags-edit";
 
 
 /**

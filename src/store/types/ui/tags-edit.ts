@@ -14,7 +14,7 @@ export const currentTag = z.object({
 });
 
 /** Edited tag's type. */
-type CurrentTag = z.infer<typeof currentTag>;
+export type CurrentTag = z.infer<typeof currentTag>;
 
 
 /** Returns the state of an edited tag with default values being replaced `customValues`. */
@@ -49,6 +49,10 @@ export const tagsEditUI = z.object({
 
 /** /tags/edit/:id page UI state type. */
 type TagsEditUI = z.infer<typeof tagsEditUI>;
+/** /tags/edit/:id on load fetch state type. */
+export type TagsEditOnLoadFetch = z.infer<typeof tagsEditUI.shape.tagOnLoadFetch>;
+/** /tags/edit/:id on save fetch state type. */
+export type TagsEditOnSaveFetch = z.infer<typeof tagsEditUI.shape.tagOnSaveFetch>;
 
 
 /** Returns /tags/edit/:id state with default values being replaced `customValues`. */
