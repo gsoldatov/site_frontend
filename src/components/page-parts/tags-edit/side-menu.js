@@ -7,7 +7,7 @@ import { SideMenuItem } from "../../modules/side-menu/side-menu-item";
 import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer } from "../../modules/side-menu/side-menu-dialog";
 
-import { setShowDeleteDialogTag } from "../../../reducers/ui/tags-edit";
+import { setShowDeleteDialogTagsEdit } from "../../../reducers/ui/tags-edit";
 import { editTagOnSaveFetch, editTagOnDeleteFetch } from "../../../fetches/ui-tags-edit";
 import { tagsEditNewSaveFetch } from "../../../fetches/ui/tags-edit";
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../../store/state-util/ui-tags-edit";
@@ -74,7 +74,7 @@ const Delete = () => {
     const dispatch = useDispatch();
     const isActive = useSelector(state => !isFetchinOrShowingDialogTag(state) && state.tagsEditUI.currentTag.tag_id !== 0);
     const isVisible = useSelector(state => !state.tagsEditUI.showDeleteDialog);
-    const onClick = useMemo(() => () => dispatch(setShowDeleteDialogTag(true)), []);
+    const onClick = useMemo(() => () => dispatch(setShowDeleteDialogTagsEdit(true)), []);
 
     if (!isVisible) return null;
     return <SideMenuItem text="Delete" icon="trash alternate" iconColor="red" isActive={isActive} onClick={onClick} />;
@@ -86,7 +86,7 @@ const DeleteDialog = () => {
     const isVisible = useSelector(state => state.tagsEditUI.showDeleteDialog);
 
     const yesOnClick = useMemo(() => () => dispatch(editTagOnDeleteFetch()), []);
-    const noOnClick = useMemo(() => () => dispatch(setShowDeleteDialogTag(false)), []);
+    const noOnClick = useMemo(() => () => dispatch(setShowDeleteDialogTagsEdit(false)), []);
 
     if (!isVisible) return null;
 

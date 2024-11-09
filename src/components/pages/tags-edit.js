@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { TagsEdit } from "../page-parts/tags-edit/tags-edit";
 import { TagsEditNewSideMenu, TagsEditExistingSideMenu } from "../page-parts/tags-edit/side-menu";
 
-import { loadNewTagPage } from "../../reducers/ui/tags-edit";
+import { loadTagsEditNewPage } from "../../reducers/ui/tags-edit";
 import { editTagOnLoadFetch } from "../../fetches/ui-tags-edit";
 
 import StyleTag from "../../styles/pages/tags-edit.css";
@@ -16,7 +16,7 @@ import StyleTag from "../../styles/pages/tags-edit.css";
 export const TagsEditNewPage = () => {
     const sideMenu = <TagsEditNewSideMenu />;
 
-    return <TagsEdit sideMenu={sideMenu} onLoad={loadNewTagPage()} header="Add a New Tag" />;
+    return <TagsEdit sideMenu={sideMenu} onLoad={loadTagsEditNewPage()} header="Add a New Tag" />;
 };
 
 

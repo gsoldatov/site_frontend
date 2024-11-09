@@ -6,7 +6,7 @@
 /**
  * Returns true if any of tag page fetches are being performed.
  */
-export const isFetchingTag = state => state.tagsEditUI.tagOnLoadFetch.isFetching || state.tagsEditUI.tagOnSaveFetch.isFetching;
+export const isFetchingTag = state => state.tagsEditUI.tagsEditOnLoadFetch.isFetching || state.tagsEditUI.tagsEditOnSaveFetch.isFetching;
 
 
 /**
