@@ -153,8 +153,13 @@ export class FetchResult {
     }
 
     /** Generates a FetchResult indicating that a fetch was not run. */
-    static fetchNotRun(errorType: FetchErrorType = FetchErrorType.none) {
-        return new FetchResult({ status: "Not run", errorType });
+    static fetchNotRun(customArgs: Partial<FetchResultArgs> = {}) {
+        const { error, errorType = FetchErrorType.none } = customArgs;
+        
+        const args = { status: "Not run", errorType } as FetchResultArgs;
+        if (error !== undefined) args.error = error;
+
+        return new FetchResult(args);
     }
 }
 
