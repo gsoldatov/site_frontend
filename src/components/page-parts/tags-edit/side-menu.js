@@ -8,7 +8,8 @@ import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer } from "../../modules/side-menu/side-menu-dialog";
 
 import { setShowDeleteDialogTag } from "../../../actions/tags-edit";
-import { addTagOnSaveFetch, editTagOnSaveFetch, editTagOnDeleteFetch } from "../../../fetches/ui-tags-edit";
+import { editTagOnSaveFetch, editTagOnDeleteFetch } from "../../../fetches/ui-tags-edit";
+import { tagsEditNewSaveFetch } from "../../../fetches/ui/tags-edit";
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../../store/state-util/ui-tags-edit";
 
 
@@ -61,7 +62,7 @@ const Save = () => {
     const isActive = useSelector(state => !isFetchingTag(state) && state.tagsEditUI.currentTag.tag_name.length >= 1 && state.tagsEditUI.currentTag.tag_name.length <= 255);
     const { id } = useParams(); // undefined for new tag page
     const onClick = useMemo(() => () => {
-        const onSave = id === undefined ? addTagOnSaveFetch : editTagOnSaveFetch;
+        const onSave = id === undefined ? tagsEditNewSaveFetch : editTagOnSaveFetch;
         dispatch(onSave());
     }, [id]);
     

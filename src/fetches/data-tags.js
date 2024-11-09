@@ -16,38 +16,6 @@ const backendURL = getConfig().backendURL;
 
 
 /**
- * Fetches backend to add provided `tag` as a new tag. 
- * 
- * Adds the tag to the state in case of success.
- * 
- * Returns the object with the tag attributes returned by backend or an object with `error` attribute containing error message in case of failure.
- */
-export const addTagFetch = tag => {
-    return async (dispatch, getState) => {        
-        // Check if tag_name already exists in local storage
-        let state = getState();
-        if (checkIfTagNameExists(state, tag)) return { error: "Tag name already exists." };
-        
-        // Run fetch & handle response
-        let response = await dispatch(runFetch(`${backendURL}/tags/add`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tag })
-        }));
-
-        switch (response.status) {
-            case 200:
-                let tag = (await response.json()).tag;
-                dispatch(addTags([tag]));
-                return tag;
-            default:
-                return await getErrorFromResponse(response);
-        }
-    };
-};
-
-
-/**
  * Fetches backend to retrieve tags with provided `tagIDs`.
  * 
  * Adds the tags to the state in case of success.

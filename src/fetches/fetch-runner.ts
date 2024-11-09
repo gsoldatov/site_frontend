@@ -182,7 +182,7 @@ type FetchRunnerOptions = {
 
 
 /** Type of an error that occured during a fetch run attempt. */
-enum FetchErrorType {
+export enum FetchErrorType {
     none,
     general,
     auth

@@ -11,36 +11,6 @@ import { addedTagAttributes, updatedTagAttributes } from "../store/state-templat
 
 
 /**
- * Handles "Save" button click on new tag page.
- */
-export const addTagOnSaveFetch = () => {
-    return async (dispatch, getState) => {
-        // Exit if already fetching
-        let state = getState();
-        if (isFetchingTag(state)) return;
-
-        // Run fetch & add tag
-        dispatch(setTagOnSaveFetchState(true, ""));
-        const tag = {};
-        addedTagAttributes.forEach(attr => { tag[attr] = state.tagsEditUI.currentTag[attr]; });
-        const result = await dispatch(addTagFetch(tag));
-
-        // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setTagOnSaveFetchState(false, errorMessage));
-            return;
-        }
-
-        // Handle successful fetch end
-        dispatch(setTagOnSaveFetchState(false, ""));
-        dispatch(setRedirectOnRender(`/tags/edit/${result.tag_id}`));
-    };
-};
-
-
-/**
  * Loads tag data on existing tag page.
  */
 export const editTagOnLoadFetch = tag_id => {
