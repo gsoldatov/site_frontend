@@ -104,16 +104,16 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
     let objects = [
         generateObjectAttributes(1, { 
             object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString()
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString()
         }),
         generateObjectAttributes(2, {
             object_type: "link", object_name: "link subobject", object_description: "link subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), 
             current_tag_ids: [] 
         }),
         generateObjectAttributes(3, {
             object_type: "markdown", object_name: "markdown subobject", object_description: "markdown subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), 
             current_tag_ids: [] 
         })
     ];
@@ -145,7 +145,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
     let objects = [
         generateObjectAttributes(1, {
             object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), 
         })
     ];
     let objectData = [
@@ -157,7 +157,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
         })
     ];
     let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
-                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString() }));
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
@@ -177,11 +177,11 @@ export const getStoreWithModifiedCompositeObject = () => {
     let objects = [
         generateObjectAttributes(1, {
             object_type: "composite", object_name: "composite object", object_description: "composite subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), 
         }),
         generateObjectAttributes(2, {
             object_type: "link", object_name: "link subobject", object_description: "link subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(),
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(),
             current_tag_ids: [] 
         })
     ];
@@ -196,7 +196,7 @@ export const getStoreWithModifiedCompositeObject = () => {
         generateObjectData(2, "link", { "link": "https://test.link" })
     ];
     let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
-                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString() }));
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
@@ -250,7 +250,7 @@ export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsN
     ];
 
     let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
-                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString() }));
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString() }));
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));

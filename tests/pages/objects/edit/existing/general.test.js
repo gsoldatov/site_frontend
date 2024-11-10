@@ -191,7 +191,7 @@ describe("Load object from state", () => {
         let { store } = createTestStore();
         let object = generateObjectAttributes(1, {
             object_type: "link", object_name: "object name", object_description: "object description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         let objectData = generateObjectData(1, "link", { "link": "https://test.link" });
         store.dispatch(addObjects([object]));
@@ -227,7 +227,7 @@ describe("Load object from state", () => {
         let { store } = createTestStore();
         let object = generateObjectAttributes(1, {
             object_type: "markdown", object_name: "object name", object_description: "object description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         let objectData = generateObjectData(1, "markdown", { "raw_text": "**Test text**" });
         store.dispatch(addObjects([object]));
@@ -278,7 +278,7 @@ describe("Load object from state", () => {
         let { store } = createTestStore();
         let object = generateObjectAttributes(1, {
             object_type: "to_do_list", object_name: "object name", object_description: "object description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         let objectData = generateObjectData(1, "to_do_list", getTDLByObjectID(2001));
         store.dispatch(addObjects([object]));
@@ -363,7 +363,7 @@ describe("Load object from backend", () => {
         let { store } = createTestStore();
         let object = generateObjectAttributes(1, {
             object_type: "link", object_name: "object name", object_description: "object description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5]
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5]
         });
         store.dispatch(addObjects([object]));
         store.dispatch(addObjectsTags([object]));
@@ -420,7 +420,7 @@ describe("Load object from backend", () => {
         let { store } = createTestStore();
         let object = generateObjectAttributes(1001, {
             object_type: "markdown", object_name: "object name", object_description: "object description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         store.dispatch(addObjects([object]));
         store.dispatch(addObjectsTags([object]));
@@ -461,7 +461,7 @@ describe("Load object from backend", () => {
         let { store } = createTestStore();
         let object = generateObjectAttributes(2001, {
             object_type: "to_do_list", object_name: "object name", object_description: "object description", 
-                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3, 4, 5] 
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         store.dispatch(addObjects([object]));
         store.dispatch(addObjectsTags([object]));

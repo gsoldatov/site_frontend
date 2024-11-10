@@ -399,15 +399,15 @@ describe("Delete a tag", () => {
         let objects = [
             generateObjectAttributes(1, {
                 object_type: "link", object_name: "object one", object_description: "", 
-                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1, 2, 3] 
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3] 
             }),
             generateObjectAttributes(2, {
                 object_type: "link", object_name: "object two", object_description: "", 
-                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [1] 
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1] 
             }),
             generateObjectAttributes(3, {
                 object_type: "link", object_name: "object three", object_description: "", 
-                created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), current_tag_ids: [3, 4, 5] 
+                created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [3, 4, 5] 
             })
         ];
     

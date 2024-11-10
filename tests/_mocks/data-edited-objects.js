@@ -52,12 +52,12 @@ export const getStoreWithEditedObjects = () => {
     let objects = [
         generateObjectAttributes(10, { 
             object_type: "link", object_name: "existing subobject link", object_description: "link subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), 
             is_published: false, owner_id: 1, current_tag_ids: [] 
         }),
         generateObjectAttributes(11, { 
             object_type: "link", object_name: "existing subobject link 2 (name before modification to unnamed)", object_description: "link subobject description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), 
             is_published: false, owner_id: 1, current_tag_ids: [] 
         })
     ];

@@ -17,12 +17,12 @@ export async function getStoreWithTwoSelectedObjects() {
     let objects = [ 
         generateObjectAttributes(1, {
             object_type: "link", object_name: "object #1", object_description: "object description", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), 
             is_published: false, owner_id: 1, current_tag_ids: [1, 2, 3, 4] 
         }),
         generateObjectAttributes(2, {
             object_type: "link", object_name: "object #2", object_description: "object description 2", 
-            created_at: (new Date(Date.now() - 24*60*60*1000)).toUTCString(), modified_at: (new Date()).toUTCString(), 
+            created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), 
             is_published: false, owner_id: 1, current_tag_ids: [1, 2, 5, 6] 
         })
     ];
