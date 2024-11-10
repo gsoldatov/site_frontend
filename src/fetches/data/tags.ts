@@ -126,3 +126,28 @@ export const getNonCachedTags = (tagIDs: (string | number)[]) => {
     };
 };
 
+
+/**
+ * Fetches backend to delete tags with provided `tagIDs`.
+ * 
+ * Deletes the tags from the state in case of success.
+ */
+export const deleteTagsFetch = (tagIDs: (string | number)[]) => {
+    return async (dispatch: Dispatch, getState: GetState) => {
+        const tag_ids = tagIDs.map(id => parseInt(id as string));
+        
+        // Fetch backend
+        const runner = new FetchRunner("/tags/delete", { method: "DELETE", body: { tag_ids }});
+        const result = await runner.run();
+
+        switch (result.status) {
+            case 200:
+            case 404:   // Tags not present in the database should be deleted from state
+                dispatch(deselectTags(tag_ids));
+                dispatch(deleteTags(tag_ids));
+                return result;
+            default:
+                return result;
+        }
+    }; 
+};

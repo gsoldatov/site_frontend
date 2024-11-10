@@ -1,8 +1,7 @@
 import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
-import { deleteTagsFetch } from "./data-tags";
-import { getNonCachedTags } from "./data/tags";
+import { getNonCachedTags, deleteTagsFetch } from "./data/tags";
 
 import { setTagsListFetch, setTagsListShowDeleteDialog, setTagsListPaginationInfo } from "../reducers/ui/tags-list";
 
@@ -106,18 +105,17 @@ export const onDeleteFetch = () => {
 
         // Run delete fetch & delete tags data
         dispatch(setTagsListFetch({ isFetching: true, fetchError: "" }));
+        const { selectedTagIDs } = state.tagsListUI;
         const result = await dispatch(deleteTagsFetch(state.tagsListUI.selectedTagIDs));
 
-        // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setTagsListFetch({ isFetching: false, fetchError: errorMessage }));
+        // Handle fetch errors (consider 404 status as a successful fetch, so that tags are cleared from the state)
+        if (result.failed && result.status !== 404) {
+            dispatch(setTagsListFetch({ isFetching: false, fetchError: result.error }));
             return;
         }
 
         // Handle successful fetch end
-        dispatch(setTagsListPaginationInfo({ currentPageTagIDs: state.tagsListUI.paginationInfo.currentPageTagIDs.filter(id => !result.includes(id)) }));  // delete from current page
+        dispatch(setTagsListPaginationInfo({ currentPageTagIDs: state.tagsListUI.paginationInfo.currentPageTagIDs.filter(id => !selectedTagIDs.includes(id)) }));  // delete from current page
         dispatch(setTagsListFetch({ isFetching: false, fetchError: "" }));
     };
 };

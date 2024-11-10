@@ -18,34 +18,6 @@ const backendURL = getConfig().backendURL;
 
 
 /**
- * Fetches backend to delete tags with provided `tagIDs`.
- * 
- * Deletes the tags from the state in case of success.
- * 
- * Returns the array of deleted tag IDs or an object with `error` attribute containing error message in case of failure.
- */
-export const deleteTagsFetch = tagIDs => {
-    return async (dispatch, getState) => {
-        let response = await dispatch(runFetch(`${backendURL}/tags/delete`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tag_ids: tagIDs.map(id => parseInt(id)) })
-        }));
-
-        switch (response.status) {
-            case 200:
-            case 404:   // Tags not present in the database should be deleted from state
-                dispatch(deselectTags(tagIDs));
-                dispatch(deleteTags(tagIDs));
-                return tagIDs;
-            default:
-                return await getErrorFromResponse(response);
-        }
-    }; 
-};
-
-
-/**
  * Fetches backend to get tags which match provided `queryText` and are not present in `existingIDs`.
  * 
  * Fetches non-cached tags in case of success.

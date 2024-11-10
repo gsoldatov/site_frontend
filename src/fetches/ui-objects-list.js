@@ -112,7 +112,8 @@ export const onDeleteFetch = deleteSubobjects => {
 
         // Run view fetch & delete objects data
         dispatch(setObjectsFetch(true, ""));
-        const result = await dispatch(deleteObjectsFetch(state.objectsListUI.selectedObjectIDs, deleteSubobjects));
+        const { selectedObjectIDs } = state.objectsListUI;
+        const result = await dispatch(deleteObjectsFetch(selectedObjectIDs, deleteSubobjects));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
@@ -123,7 +124,7 @@ export const onDeleteFetch = deleteSubobjects => {
         }
 
         // Handle successful fetch end
-        dispatch(setObjectsPaginationInfo({ currentPageObjectIDs: state.objectsListUI.paginationInfo.currentPageObjectIDs.filter(id => !result.includes(id)) }));  // delete from current page
+        dispatch(setObjectsPaginationInfo({ currentPageObjectIDs: state.objectsListUI.paginationInfo.currentPageObjectIDs.filter(id => !selectedObjectIDs.includes(id)) }));  // delete from current page
         dispatch(setObjectsFetch(false, ""));
     };
 };

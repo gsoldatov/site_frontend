@@ -1,6 +1,5 @@
 import { getResponseErrorType } from "./common";
-import { deleteTagsFetch } from "./data-tags";
-import { updateTagFetch, getNonCachedTags } from "./data/tags";
+import { updateTagFetch, getNonCachedTags, deleteTagsFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
 import { loadTagsEditExistingPage, setTagsEditOnLoadFetchState, setTagsEditOnSaveFetchState, setShowDeleteDialogTagsEdit, setCurrentTag } from "../reducers/ui/tags-edit";
@@ -90,11 +89,9 @@ export const editTagOnDeleteFetch = () => {
         dispatch(setTagsEditOnSaveFetchState({ isFetching: true, fetchError: "" }));
         const result = await dispatch(deleteTagsFetch( [state.tagsEditUI.currentTag.tag_id] ));
 
-        // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setTagsEditOnSaveFetchState({ isFetching: false, fetchError: errorMessage }));
+        // Handle fetch errors (consider 404 status as a successful fetch)
+        if (result.failed && result.status !== 404) {
+            dispatch(setTagsEditOnSaveFetchState({ isFetching: false, fetchError: result.error }));
             return;
         }
 
