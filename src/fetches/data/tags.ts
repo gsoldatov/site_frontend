@@ -12,9 +12,9 @@ import { resetEditedObjectsTags } from "../../actions/objects-edit";
 
 import { checkIfTagNameExists } from "../../store/state-util/tags";
 
-import { addTagsTagSchema, tagsViewResponseSchema } from "../types/data/tags";
+import { tagsAddTagSchema, tagsUpdateTagSchema, tagsViewResponseSchema } from "../types/data/tags";
 
-import type { AddTagsTagSchema } from "../types/data/tags";
+import type { TagsAddTagSchema, TagsUpdateTagSchema } from "../types/data/tags";
 import type { Dispatch, GetState } from "../../util/types/common";
 
 
@@ -23,10 +23,10 @@ import type { Dispatch, GetState } from "../../util/types/common";
  * 
  * Adds the new tag to the state in case of success.
  */
-export const tagsAddFetch = (tagAttributes: AddTagsTagSchema) => {
+export const tagsAddFetch = (tagAttributes: TagsAddTagSchema) => {
     return async (dispatch: Dispatch, getState: GetState) => {
         // Ensure correct tag attributes
-        tagAttributes = addTagsTagSchema.parse(tagAttributes);
+        tagAttributes = tagsAddTagSchema.parse(tagAttributes);
 
         // Check if tag_name already exists in local storage
         if (TagsSelectors.getTagIDByName(getState(), tagAttributes.tag_name) !== undefined)
@@ -41,6 +41,41 @@ export const tagsAddFetch = (tagAttributes: AddTagsTagSchema) => {
             case 200:
                 const tagFromResponse = tag.parse(result.json?.tag);
                 dispatch(addTags([tagFromResponse]));
+                return result;
+            default:
+                return result;
+        }
+    };
+};
+
+
+
+/**
+ * Fetches backend to update provided `tag` data.
+ * 
+ * Updates the tag in the state in case of success.
+ * 
+ */
+export const updateTagFetch = (tagAttributes: TagsUpdateTagSchema) => {
+    return async (dispatch: Dispatch, getState: GetState) => {
+        // Ensure correct tag attributes
+        tagAttributes = tagsUpdateTagSchema.parse(tagAttributes);
+
+        // Check if tag_name already exists in local storage
+        if (TagsSelectors.getTagIDByName(getState(), tagAttributes.tag_name, tagAttributes.tag_id) !== undefined)
+            return FetchResult.fetchNotRun({ error: "Tag name already exists.", errorType: FetchErrorType.general });
+
+        // Fetch backend
+        const runner = new FetchRunner("/tags/update", { method: "PUT", body: { tag: tagAttributes }});
+        const result = await runner.run();
+
+        switch (result.status) {
+            case 200:
+                const tagFromResponse = tag.parse(result.json?.tag);
+                dispatch(addTags([tagFromResponse]));
+                return result;
+            case 404:
+                result.error = "Tag nto found."
                 return result;
             default:
                 return result;
@@ -90,3 +125,4 @@ export const getNonCachedTags = (tagIDs: (string | number)[]) => {
         return FetchResult.fetchNotRun();
     };
 };
+

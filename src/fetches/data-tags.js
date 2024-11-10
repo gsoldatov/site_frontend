@@ -18,40 +18,6 @@ const backendURL = getConfig().backendURL;
 
 
 /**
- * Fetches backend to update provided `tag` data.
- * 
- * Updates the tag in the state in case of success.
- * 
- * Returns the object with the tag attributes returned by backend or an object with `error` attribute containing error message in case of failure.
- */
-export const updateTagFetch = tag => {
-    return async (dispatch, getState) => {        
-        // Check if tag_name already exists in local storage
-        let state = getState();
-        if (checkIfTagNameExists(state, tag)) return { error: "Tag name already exists." };
-        
-        // Run fetch & handle response
-        let response = await dispatch(runFetch(`${backendURL}/tags/update`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tag })
-        }));
-
-        switch (response.status) {
-            case 200:
-                let tag = (await response.json()).tag;
-                dispatch(addTags([tag]));
-                return tag;
-            case 404:
-                return { error: "Tag not found." };
-            default:
-                return await getErrorFromResponse(response);
-        }
-    };
-};
-
-
-/**
  * Fetches backend to delete tags with provided `tagIDs`.
  * 
  * Deletes the tags from the state in case of success.
@@ -168,7 +134,7 @@ export const objectsTagsUpdateFetch = (object_ids, added_tags, removed_tag_ids) 
                 // Fetch non-cahced tags
                 const getNonCachedTagsResult = await dispatch(getNonCachedTags(json.tag_updates.added_tag_ids));
                 if (getNonCachedTagsResult.failed) return { error: getNonCachedTagsResult.error };  // TODO return fetch result?
-                
+
                 return json;
             default:
                 return await getErrorFromResponse(response);
