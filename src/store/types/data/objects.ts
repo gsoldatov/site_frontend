@@ -22,5 +22,11 @@ export const object = z.object({
 });
 
 
+/** state.objects store value type. */
+export type ObjectAttributes = z.infer<typeof object>;
+
 /** Objects' attributes store schema. */
 export const objects = z.record(positiveIntIndex, object);
+
+/** Objects' attributes store type. */
+export type Objects = z.infer<typeof objects>;

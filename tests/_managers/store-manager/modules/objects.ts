@@ -1,6 +1,7 @@
-import { addObjectData, addObjects, updateObjects, updateObjectData } from "../../../../src/actions/data-objects";
+import { addObjectData, addObjects, updateObjectData } from "../../../../src/actions/data-objects";
+import { updateObjects } from "../../../../src/reducers/data/objects";
 
-import type { AppStore } from "../../../../src/util/types/common";
+import type { AppStore, PartialExcept } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 import type { ObjectType, ObjectAttributes, PartialObjectData, ObjectData } from "../../../_mock-data/modules/objects";
 import type { PickPartial } from "../../../../src/util/types/common";
@@ -36,7 +37,8 @@ export class ObjectsStoreManager {
      * 
      * `attributes` must include `object_id` prop.
      */
-    updateAttributes(attributes: Partial<ObjectAttributes>): void {
+    updateAttributes(attributes: PartialExcept<ObjectAttributes, "object_id">): void {
+        if (typeof attributes.object_id === "string") attributes.object_id = parseInt(attributes.object_id);
         this.store.dispatch(updateObjects([ attributes ]));
     }
 
