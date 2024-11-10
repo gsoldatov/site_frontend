@@ -1,19 +1,11 @@
 import { FetchRunner, FetchResult, FetchErrorType } from "../fetch-runner";
 
-import { tag } from "../../store/types/data/tags";
+import { addTags, deleteTags } from "../../reducers/data/tags";
+import { deselectTags } from "../../reducers/ui/tags-list";
 import { TagsSelectors } from "../../store/selectors/data/tags";
 
-
-import { addTags, deleteTags } from "../../reducers/data/tags";
-import { updateObjectsTags } from "../../reducers/data/objects-tags";
-import { addObjects } from "../../actions/data-objects";
-import { deselectTags } from "../../reducers/ui/tags-list";
-import { resetEditedObjectsTags } from "../../actions/objects-edit";
-
-import { checkIfTagNameExists } from "../../store/state-util/tags";
-
+import { tag } from "../../store/types/data/tags";
 import { tagsAddTagSchema, tagsSearchResponseSchema, tagsUpdateTagSchema, tagsViewResponseSchema } from "../types/data/tags";
-
 import type { TagsAddTagSchema, TagsUpdateTagSchema } from "../types/data/tags";
 import type { Dispatch, GetState } from "../../util/types/common";
 import type { TagsAddFetchResult, TagsSearchFetchResult } from "../types/data/tags";
@@ -59,7 +51,7 @@ export const tagsAddFetch = (tagAttributes: TagsAddTagSchema) => {
  * 
  */
 export const updateTagFetch = (tagAttributes: TagsUpdateTagSchema) => {
-    return async (dispatch: Dispatch, getState: GetState) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         // Ensure correct tag attributes
         tagAttributes = tagsUpdateTagSchema.parse(tagAttributes);
 
@@ -92,7 +84,7 @@ export const updateTagFetch = (tagAttributes: TagsUpdateTagSchema) => {
  * Adds the tags to the state in case of success.
  */
 export const viewTagsFetch = (tagIDs: (string | number)[]) => {
-    return async (dispatch: Dispatch, getState: GetState) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         const tag_ids = tagIDs.map(id => parseInt(id as string));
 
         // Fetch backend
@@ -120,7 +112,7 @@ export const viewTagsFetch = (tagIDs: (string | number)[]) => {
  * Filters out non-numeric IDs (new tag case).
  */
 export const getNonCachedTags = (tagIDs: (string | number)[]) => {
-    return async (dispatch: Dispatch, getState: GetState) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         const { tags } = getState();
         const nonCachedTags = tagIDs.filter(id => !(id in tags) && !isNaN(id as number));
         if (nonCachedTags.length !== 0) return await dispatch(viewTagsFetch(nonCachedTags));
@@ -135,7 +127,7 @@ export const getNonCachedTags = (tagIDs: (string | number)[]) => {
  * Deletes the tags from the state in case of success.
  */
 export const deleteTagsFetch = (tagIDs: (string | number)[]) => {
-    return async (dispatch: Dispatch, getState: GetState) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         const tag_ids = tagIDs.map(id => parseInt(id as string));
         
         // Fetch backend

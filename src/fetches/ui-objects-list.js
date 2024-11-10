@@ -1,6 +1,6 @@
 import { getResponseErrorType } from "./common";
 import { viewObjectsFetch, deleteObjectsFetch, getPageObjectIDs } from "./data-objects";
-import { objectsTagsUpdateFetch } from "./data-tags";
+import { objectsTagsUpdateFetch } from "./data/objects-tags";
 import { tagsSearchFetch } from "./data/tags";
 
 import { setObjectsFetch, setObjectsPaginationInfo, setObjectsTagsInput, setCurrentObjectsTags, 
@@ -183,10 +183,8 @@ export function onObjectsTagsUpdateFetch() {
         const result = await dispatch(objectsTagsUpdateFetch(objUI.selectedObjectIDs, objUI.addedTags, objUI.removedTagIDs));
 
         // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectsFetch(false, errorMessage));
+        if (result.failed) {
+            dispatch(setObjectsFetch(false, result.error));
             return;
         }
 
