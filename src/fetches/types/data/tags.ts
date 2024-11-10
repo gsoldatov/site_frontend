@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 import { tag } from "../../../store/types/data/tags";
-import { positiveInt } from "../../../util/types/common";
+import { nonEmptyPositiveIntArray, positiveInt } from "../../../util/types/common";
+
+import type { FetchResult } from "../../fetch-runner";
 
 
 /** Schema of new tag's attributes, which are sent to backend during tags add fetch. */
@@ -33,3 +35,13 @@ export type TagsUpdateTagSchema = z.infer<typeof tagsUpdateTagSchema>;
 export const tagsViewResponseSchema = z.object({
     tags: tag.array()
 });
+
+
+/** /tags/search response schema. */
+export const tagsSearchResponseSchema = z.object({
+    tag_ids: nonEmptyPositiveIntArray
+});
+
+
+/** Result type of `tagsSearchFetch`. */
+export type TagsSearchFetchResult = FetchResult & { tagIDs?: number[] };

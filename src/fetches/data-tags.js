@@ -17,49 +17,6 @@ const backendURL = getConfig().backendURL;
 
 
 
-/**
- * Fetches backend to get tags which match provided `queryText` and are not present in `existingIDs`.
- * 
- * Fetches non-cached tags in case of success.
- * 
- * Returns the array of matching tag IDs or an object with `error` attribute containing error message in case of failure.
- */
-export const tagsSearchFetch = ({queryText, existingIDs}) => {
-    return async (dispatch, getState) => {
-        // Check params
-        if (queryText.length === 0 || queryText.length > 255) return { error: "queryText is empty or too long." };
-        if (existingIDs.length > 1000) return { error: "existingIDs list is too long." };
-
-        // Run fetch & return tag IDs
-        let payload = JSON.stringify({
-            query: {
-                query_text: queryText,
-                maximum_values: 10,
-                existing_ids: existingIDs || []
-            }
-        });
-
-        let response = await dispatch(runFetch(`${backendURL}/tags/search`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: payload
-        }));
-
-        switch (response.status) {
-            case 200:
-                let tagIDs = (await response.json()).tag_ids;
-
-                // Fetch non-cahced tags
-                const getNonCachedTagsResult = await dispatch(getNonCachedTags(tagIDs));
-                if (getNonCachedTagsResult.failed) return { error: getNonCachedTagsResult.error };  // TODO return fetch result?
-                return tagIDs;
-            case 404:
-                return [];
-            default:
-                return await getErrorFromResponse(response);
-        }
-    };
-};
 
 
 /**

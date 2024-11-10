@@ -1,7 +1,6 @@
 import { getResponseErrorType } from "./common";
 import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch, objectsSearchFetch } from "./data-objects";
-import { tagsSearchFetch } from "./data-tags";
-import { getNonCachedTags } from "./data/tags";
+import { getNonCachedTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
 import { loadNewObjectPage, loadEditObjectPage, setEditedObject, resetEditedObjects, setEditedObjectTags,
@@ -223,10 +222,11 @@ export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
         // Input text at the start of the query
         const inputText = getState().objectsEditUI.tagsInput.inputText;
 
-        // Run fetch & update matching tags
+        // Run fetch
         const result = await dispatch(tagsSearchFetch({queryText, existingIDs}));
 
-        if (getResponseErrorType(result) === enumResponseErrorType.none) {
+        // Update matching tags if fetch finished
+        if (result.tagIDs !== undefined) {
             const currentInputText = getState().objectsEditUI.tagsInput.inputText;
 
             // Reset matching IDs if an item was added before the fetch start
@@ -236,7 +236,7 @@ export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
             }
 
             // Update matching tags if input text didn't change during fetch
-            if (inputText === currentInputText) dispatch(setObjectTagsInput({ matchingIDs: result }));
+            if (inputText === currentInputText) dispatch(setObjectTagsInput({ matchingIDs: result.tagIDs }));
         }
     };
 };

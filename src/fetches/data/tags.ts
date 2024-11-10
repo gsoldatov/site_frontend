@@ -12,10 +12,11 @@ import { resetEditedObjectsTags } from "../../actions/objects-edit";
 
 import { checkIfTagNameExists } from "../../store/state-util/tags";
 
-import { tagsAddTagSchema, tagsUpdateTagSchema, tagsViewResponseSchema } from "../types/data/tags";
+import { tagsAddTagSchema, tagsSearchResponseSchema, tagsUpdateTagSchema, tagsViewResponseSchema } from "../types/data/tags";
 
 import type { TagsAddTagSchema, TagsUpdateTagSchema } from "../types/data/tags";
 import type { Dispatch, GetState } from "../../util/types/common";
+import type { TagsSearchFetchResult } from "../types/data/tags";
 
 
 /**
@@ -150,4 +151,44 @@ export const deleteTagsFetch = (tagIDs: (string | number)[]) => {
                 return result;
         }
     }; 
+};
+
+
+
+/**
+ * Fetches backend to get tags which match provided `queryText` and are not present in `existingIDs`.
+ * 
+ * Fetches non-cached tags in case of success.
+ */
+export const tagsSearchFetch = ({ queryText, existingIDs }: { queryText: string, existingIDs: number[] }) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<TagsSearchFetchResult> => {
+        // Check params
+        if (queryText.length === 0 || queryText.length > 255)
+            return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "queryText is empty or too long." });
+        if (existingIDs.length > 1000)
+            return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "existingIDs list is too long." });
+        
+        // Fetch backend
+        const body = { query: { query_text: queryText, existing_ids: existingIDs, maximum_values: 10 }};
+        const runner = new FetchRunner("/tags/search", { method: "POST", body });
+        const result = await runner.run();
+
+        switch (result.status) {
+            case 200:
+                const tagIDs = tagsSearchResponseSchema.parse(result.json).tag_ids;
+
+                // Fetch non-cahced tags
+                const getNonCachedTagsResult = await dispatch(getNonCachedTags(tagIDs));
+                if (getNonCachedTagsResult.failed) return getNonCachedTagsResult;
+
+                // Successfully finish the fetch
+                (result as TagsSearchFetchResult).tagIDs = tagIDs;
+                return result;
+            case 404:
+                (result as TagsSearchFetchResult).tagIDs = [];
+                return result;
+            default:
+                return result;
+        }
+    };
 };

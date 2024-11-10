@@ -45,8 +45,8 @@ export const TagDropdown = () => {
 
         // Update state if component is still mounted (no redirect occured)
         if (isMounted()) {
-            if ("error" in result) setMatchingIDs([]);
-            else setMatchingIDs(result);
+            if (result.failed) setMatchingIDs([]);
+            else setMatchingIDs(result.tagIDs);
         }
     }, 250, "onCall")).current;
 

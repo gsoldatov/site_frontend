@@ -1,7 +1,6 @@
 import { getResponseErrorType } from "./common";
 import { getPageObjectIDs, viewObjectsFetch } from "./data-objects";
-import { tagsSearchFetch } from "./data-tags";
-import { getNonCachedTags } from "./data/tags";
+import { getNonCachedTags, tagsSearchFetch } from "./data/tags";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
