@@ -8,8 +8,7 @@ import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer } from "../../modules/side-menu/side-menu-dialog";
 
 import { setShowDeleteDialogTagsEdit } from "../../../reducers/ui/tags-edit";
-import { editTagOnSaveFetch, editTagOnDeleteFetch } from "../../../fetches/ui-tags-edit";
-import { tagsEditNewSaveFetch } from "../../../fetches/ui/tags-edit";
+import { editTagOnSaveFetch, tagsEditNewSaveFetch, editTagOnDeleteFetch } from "../../../fetches/ui/tags-edit";
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../../store/state-util/ui-tags-edit";
 
 

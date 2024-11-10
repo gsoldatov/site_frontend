@@ -5,7 +5,7 @@ import { TagsEdit } from "../page-parts/tags-edit/tags-edit";
 import { TagsEditNewSideMenu, TagsEditExistingSideMenu } from "../page-parts/tags-edit/side-menu";
 
 import { loadTagsEditNewPage } from "../../reducers/ui/tags-edit";
-import { editTagOnLoadFetch } from "../../fetches/ui-tags-edit";
+import { editTagOnLoadFetch } from "../../fetches/ui/tags-edit";
 
 import StyleTag from "../../styles/pages/tags-edit.css";
 

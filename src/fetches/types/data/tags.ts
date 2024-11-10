@@ -13,13 +13,9 @@ export const tagsAddTagSchema = z.object({
     tag_description: z.string(),
     is_published: z.boolean()
 });
-
-
 /** New tag's attributes, which are sent to backend during tags add fetch. */
 export type TagsAddTagSchema = z.infer<typeof tagsAddTagSchema>;
-
-
-/** Result type of `tagsSearchFetch`. */
+/** Result type of `tagsAddFetch`. */
 export type TagsAddFetchResult = FetchResult & { tag?: Tag };
 
 
@@ -30,10 +26,10 @@ export const tagsUpdateTagSchema = z.object({
     tag_description: z.string(),
     is_published: z.boolean()
 });
-
-
 /** Existing tag's attributes, which are sent to backend during tags update fetch. */
 export type TagsUpdateTagSchema = z.infer<typeof tagsUpdateTagSchema>;
+/** Result type of `tagsUpdateFetch`. */
+export type TagsUpdateFetchResult = TagsAddFetchResult;
 
 
 /** /tags/view response schema. */

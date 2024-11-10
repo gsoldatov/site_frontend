@@ -8,7 +8,7 @@ import { tag } from "../../store/types/data/tags";
 import { tagsAddTagSchema, tagsSearchResponseSchema, tagsUpdateTagSchema, tagsViewResponseSchema } from "../types/data/tags";
 import type { TagsAddTagSchema, TagsUpdateTagSchema } from "../types/data/tags";
 import type { Dispatch, GetState } from "../../util/types/common";
-import type { TagsAddFetchResult, TagsSearchFetchResult } from "../types/data/tags";
+import type { TagsAddFetchResult, TagsUpdateFetchResult, TagsSearchFetchResult } from "../types/data/tags";
 
 
 /**
@@ -43,15 +43,13 @@ export const tagsAddFetch = (tagAttributes: TagsAddTagSchema) => {
 };
 
 
-
 /**
  * Fetches backend to update provided `tag` data.
  * 
  * Updates the tag in the state in case of success.
- * 
  */
 export const updateTagFetch = (tagAttributes: TagsUpdateTagSchema) => {
-    return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<TagsUpdateFetchResult> => {
         // Ensure correct tag attributes
         tagAttributes = tagsUpdateTagSchema.parse(tagAttributes);
 
@@ -67,6 +65,7 @@ export const updateTagFetch = (tagAttributes: TagsUpdateTagSchema) => {
             case 200:
                 const tagFromResponse = tag.parse(result.json?.tag);
                 dispatch(addTags([tagFromResponse]));
+                (result as TagsUpdateFetchResult).tag = tagFromResponse;
                 return result;
             case 404:
                 result.error = "Tag nto found."
