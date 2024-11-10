@@ -31,7 +31,7 @@ export const tagsEditNewSaveFetch = () => {
         }
         
         // Handle successful fetch end
-        const { tag_id } = tag.parse(result.json?.tag);
+        const { tag_id } = result.tag!;
         dispatch(setTagsEditOnSaveFetchState({ isFetching: false, fetchError: "" }));
         dispatch(setRedirectOnRender(`/tags/edit/${tag_id}`));
     };

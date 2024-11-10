@@ -16,7 +16,7 @@ import { tagsAddTagSchema, tagsSearchResponseSchema, tagsUpdateTagSchema, tagsVi
 
 import type { TagsAddTagSchema, TagsUpdateTagSchema } from "../types/data/tags";
 import type { Dispatch, GetState } from "../../util/types/common";
-import type { TagsSearchFetchResult } from "../types/data/tags";
+import type { TagsAddFetchResult, TagsSearchFetchResult } from "../types/data/tags";
 
 
 /**
@@ -25,7 +25,7 @@ import type { TagsSearchFetchResult } from "../types/data/tags";
  * Adds the new tag to the state in case of success.
  */
 export const tagsAddFetch = (tagAttributes: TagsAddTagSchema) => {
-    return async (dispatch: Dispatch, getState: GetState) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<TagsAddFetchResult> => {
         // Ensure correct tag attributes
         tagAttributes = tagsAddTagSchema.parse(tagAttributes);
 
@@ -42,6 +42,7 @@ export const tagsAddFetch = (tagAttributes: TagsAddTagSchema) => {
             case 200:
                 const tagFromResponse = tag.parse(result.json?.tag);
                 dispatch(addTags([tagFromResponse]));
+                (result as TagsAddFetchResult).tag = tagFromResponse;
                 return result;
             default:
                 return result;
