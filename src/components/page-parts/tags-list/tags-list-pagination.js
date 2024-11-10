@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Pagination } from "../../modules/pagination";
 
-import { pageFetch } from "../../../fetches/ui-tags-list";
+import { pageFetch } from "../../../fetches/ui/tags-list";
 
 
 /**

@@ -8,7 +8,7 @@ import { ExpandableContainer } from "../../modules/expandable-container";
 import { TagsListPagination } from "./tags-list-pagination";
 
 import { toggleTagSelection } from "../../../reducers/ui/tags-list";
-import { pageFetch } from "../../../fetches/ui-tags-list";
+import { pageFetch } from "../../../fetches/ui/tags-list";
 
 import { NumericUserLevel } from "../../../store/types/data/auth";
 

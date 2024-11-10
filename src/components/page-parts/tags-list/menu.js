@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { HorizontalMenu, HorizontalMenuButton, HorizontalMenuFilter, HorizontalMenuGroup } from "../../modules/horizontal-menu";
 
 import { selectTags, clearSelectedTags, setTagsListPaginationInfo } from "../../../reducers/ui/tags-list";
-import { setTagsListPaginationInfoAndFetchPage } from "../../../fetches/ui-tags-list";
+import { setTagsListPaginationInfoAndFetchPage } from "../../../fetches/ui/tags-list";
 import { isFetchingTags } from "../../../store/state-util/ui-tags-list";
 
 import { NumericUserLevel } from "../../../store/types/data/auth";
