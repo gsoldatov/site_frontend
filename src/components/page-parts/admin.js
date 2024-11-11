@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Form, Loader, Message } from "semantic-ui-react";
 
-import { settingsViewFetch, settingsUpdateFetch } from "../../fetches/data-settings";
-
+import { settingsUpdateFetch } from "../../fetches/data-settings";
+import { settingsViewAllFetch } from "../../fetches/data/settings";
 
 /**
  * Settings tab pane.
@@ -27,8 +27,8 @@ export const SettingsTabPane = () => {
     // Get settings on component load
     useEffect(() => {
         const viewFetch = async () => {
-            const result = await dispatch(settingsViewFetch());
-            if ("error" in result) {
+            const result = await dispatch(settingsViewAllFetch());
+            if (result.failed) {
                 setMessage({ type: "error", content: result.error });
                 setIsFetching(false);
             } else if ("settings" in result) {
