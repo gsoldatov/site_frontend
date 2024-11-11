@@ -2,7 +2,7 @@ import { FetchRunner } from "../fetch-runner";
 
 import  { settingsViewResponseBody, settingsViewAllResponsebody } from "../types/data/settings";
 
-import type { SettingNames, SettingsViewAllFetchResult } from "../types/data/settings";
+import type { SettingNames, SettingsViewAllFetchResult, Settings } from "../types/data/settings";
 import type { Dispatch, GetState } from "../../util/types/common";
 import type { FetchResult } from "../fetch-runner";
 
@@ -40,11 +40,24 @@ export const settingsViewAllFetch = () => {
 
 /** Fetches current user registration setting value. */
 export const registrationStatusFetch = () => {
-    return async (dispatch: Dispatch, getState: GetState) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<boolean> => {
         const result = await dispatch(settingsViewFetch(["non_admin_registration_allowed"], false));
         if (result.failed) return false;
         const { non_admin_registration_allowed } = settingsViewResponseBody.parse(result.json).settings;
         if (non_admin_registration_allowed === undefined) throw Error("Response does not containe non_admin_registration_allowed setting.");
         return non_admin_registration_allowed;
+    };
+};
+
+
+/**
+ * Updates backend settings with key-value pairs provided in `settings` objects.
+ */
+export const settingsUpdateFetch = (settings: Settings) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
+        const runner = new FetchRunner("/settings/update", 
+            { method: "PUT", body: { settings }}
+        );
+        return await runner.run();
     };
 };

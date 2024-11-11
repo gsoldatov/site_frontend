@@ -18,7 +18,7 @@ export const settingsViewAllResponsebody = z.object({
 
 
 /** Full record with backend settings, returned with `view_all` set to true. */
-type Settings = z.infer<typeof settingsViewAllResponsebody.shape.settings>;
+export type Settings = z.infer<typeof settingsViewAllResponsebody.shape.settings>;
 
 
 /** Return type of `settingsViewAllFetch` */

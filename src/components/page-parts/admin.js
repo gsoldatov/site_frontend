@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Form, Loader, Message } from "semantic-ui-react";
 
-import { settingsUpdateFetch } from "../../fetches/data-settings";
-import { settingsViewAllFetch } from "../../fetches/data/settings";
+import { settingsViewAllFetch, settingsUpdateFetch } from "../../fetches/data/settings";
 
 /**
  * Settings tab pane.
@@ -51,9 +50,9 @@ export const SettingsTabPane = () => {
         const result = await dispatch(settingsUpdateFetch(settings));
         
         // Handle errors & messages and enable form
-        if ("error" in result) setMessage({ type: "error", content: result.error });
-        if ("message" in result) setMessage({ type: "info", content: result.message });
-        if (Object.keys(result).length > 0) setIsDisabled(false);   // don't update form if an empty object was returned (to avoid updating unmounted components)
+        if (result.failed) setMessage({ type: "error", content: result.error });
+        else setMessage({ type: "info", content: "Settings were successfully updated." });
+        setIsDisabled(false);
     };
 
     // Loading placeholder
