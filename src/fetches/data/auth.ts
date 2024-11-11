@@ -99,7 +99,7 @@ export const loginFetch = (login: string, password: string) => {
 export const logoutFetch = () => {
     return async (dispatch: Dispatch, getState: GetState) => {
         // Fetch backend
-        const runner = new FetchRunner("/auth/login", 
+        const runner = new FetchRunner("/auth/logout", 
             { method: "POST" }
         );
         let result = await runner.run();

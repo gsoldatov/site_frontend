@@ -7,27 +7,6 @@ const backendURL = getConfig().backendURL;
 
 
 /**
- * Fetches current backend settings.
- */
-export const settingsViewFetch = () => {
-    return async (dispatch, getState) => {
-        let response = await dispatch(runFetch(`${backendURL}/settings/view`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ view_all: true })
-        }));
-
-        switch (response.status) {
-            case 200:
-                return await response.json();
-            default:
-                return await getErrorFromResponse(response);
-        }
-    };
-};
-
-
-/**
  * Updates backend settings with key-value pairs provided in `settings` objects.
  */
 export const settingsUpdateFetch = settings => {
