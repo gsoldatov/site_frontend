@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { removeEditedObjects } from "../../../actions/objects-edit";
-import { toggleEditedObjectSelection, toggleAllObjectsSelection } from "../../../actions/objects-edited";
+import { toggleObjectsEditedSelection, toggleObjectsEditedSelectAll } from "../../../actions/objects-edited";
 import { enumObjectTypes } from "../../../util/enums/enum-object-types";
 
 
@@ -52,7 +52,7 @@ const ObjectsEditedTableHeader = ({ setConfirmState }) => {
     // Toggle all selection checkbox
     const isChecked = useSelector(state => state.objectsEditedUI.selectedObjectIDs.size === Object.keys(state.editedObjects).length);
     const isIndeterminate = useSelector(state => state.objectsEditedUI.selectedObjectIDs.size < Object.keys(state.editedObjects).length && state.objectsEditedUI.selectedObjectIDs.size > 0);
-    const checkBoxOnClick = useMemo(() => () => dispatch(toggleAllObjectsSelection()), []);
+    const checkBoxOnClick = useMemo(() => () => dispatch(toggleObjectsEditedSelectAll()), []);
     const checkbox = <Checkbox checked={isChecked} indeterminate={isIndeterminate} onClick={checkBoxOnClick} />;
 
     // Selected edited objects controls
@@ -86,7 +86,7 @@ const EditedObjectItem = memo(({ objectID, parentObjects = [], parentNames = [],
 
     // Checkbox
     const isChecked = useSelector(state => state.objectsEditedUI.selectedObjectIDs.has(strObjectID));
-    const checkBoxOnClick = useMemo(() => () => dispatch(toggleEditedObjectSelection(strObjectID)), [objectID]);
+    const checkBoxOnClick = useMemo(() => () => dispatch(toggleObjectsEditedSelection(strObjectID)), [objectID]);
     const checkbox = <Checkbox checked={isChecked} onClick={checkBoxOnClick} />;
     
     // Is new icon

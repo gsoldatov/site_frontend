@@ -10,8 +10,8 @@ import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
 
 import { getCurrentObject, existingTagIDsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-edit";
-import { setEditedObject, setEditedObjectTags, setObjectTagsInput } from "../../../actions/objects-edit";
-import { objectTagsDropdownFetch } from "../../../fetches/ui-objects-edit";
+import { setEditedObject, setEditedObjectTags, setObjectsEditTagsInput } from "../../../actions/objects-edit";
+import { objectsEditTagsDropdownFetch } from "../../../fetches/ui-objects-edit";
 
 
 /**
@@ -98,9 +98,9 @@ const NewTagInput = () => {
     const dispatch = useDispatch();
     const inputState = useSelector(state => state.objectsEditUI.tagsInput);
     
-    const setInputState = useMemo(() => newState => dispatch(setObjectTagsInput(newState)), []);
+    const setInputState = useMemo(() => newState => dispatch(setObjectsEditTagsInput(newState)), []);
     const setItem = useMemo(() => params => dispatch(setEditedObjectTags(params)), []);
-    const onSearchChangeDelayed = useMemo(() => params => dispatch(objectTagsDropdownFetch(params)), []);
+    const onSearchChangeDelayed = useMemo(() => params => dispatch(objectsEditTagsDropdownFetch(params)), []);
 
     const existingIDs = useSelector(existingTagIDsSelector);
     const matchingIDsText = useSelector(matchingTagIDsNames);

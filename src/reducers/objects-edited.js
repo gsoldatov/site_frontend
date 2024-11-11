@@ -1,4 +1,4 @@
-import { LOAD_OBJECTS_EDITED_PAGE, TOGGLE_EDITED_OBJECT_SELECTION, TOGGLE_ALL_OBJECTS_SELECTION } from "../actions/objects-edited";
+import { LOAD_OBJECTS_EDITED_PAGE, TOGGLE_OBJECTS_EDITED_SELECTION, TOGGLE_OBJECTS_EDITED_SELECT_ALL } from "../actions/objects-edited";
 
 
 function loadObjectsEditedPage(state, action) {
@@ -12,7 +12,7 @@ function loadObjectsEditedPage(state, action) {
 }
 
 
-function toggleEditedObjectSelection(state, action) {
+function toggleObjectsEditedSelection(state, action) {
     const { objectID } = action;
     let newSelectedObjectIDs = new Set(state.objectsEditedUI.selectedObjectIDs);
     if (newSelectedObjectIDs.has(objectID))
@@ -30,7 +30,7 @@ function toggleEditedObjectSelection(state, action) {
 }
 
 
-function toggleAllObjectsSelection(state, action) {
+function toggleObjectsEditedSelectAll(state, action) {
     const editedObjectIDs = Object.keys(state.editedObjects);
     const newSelectedObjectIDs = state.objectsEditedUI.selectedObjectIDs.size < editedObjectIDs.length ? new Set(editedObjectIDs) : new Set();
     
@@ -46,8 +46,8 @@ function toggleAllObjectsSelection(state, action) {
 
 const root = {
     LOAD_OBJECTS_EDITED_PAGE: loadObjectsEditedPage,
-    TOGGLE_EDITED_OBJECT_SELECTION: toggleEditedObjectSelection,
-    TOGGLE_ALL_OBJECTS_SELECTION: toggleAllObjectsSelection
+    TOGGLE_OBJECTS_EDITED_SELECTION: toggleObjectsEditedSelection,
+    TOGGLE_OBJECTS_EDITED_SELECT_ALL: toggleObjectsEditedSelectAll
 };
 
 export default root;

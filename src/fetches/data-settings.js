@@ -9,7 +9,7 @@ const backendURL = getConfig().backendURL;
 /**
  * Fetches current backend settings.
  */
-export const viewSettingsFetch = () => {
+export const settingsViewFetch = () => {
     return async (dispatch, getState) => {
         let response = await dispatch(runFetch(`${backendURL}/settings/view`, {
             method: "POST",
@@ -30,7 +30,7 @@ export const viewSettingsFetch = () => {
 /**
  * Updates backend settings with key-value pairs provided in `settings` objects.
  */
-export const updateSettingsFetch = settings => {
+export const settingsUpdateFetch = settings => {
     return async (dispatch, getState) => {
         let response = await dispatch(runFetch(`${backendURL}/settings/update`, {
             method: "PUT",

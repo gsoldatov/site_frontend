@@ -5,8 +5,8 @@ import { createSelector } from "reselect";
 import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton, 
     HorizontalMenuFilter, HorizontalMenuDropdown, HorizontalMenuUpdatableDropdown } from "../../modules/horizontal-menu";
 
-import { selectObjects, clearSelectedObjects, setObjectsPaginationInfo, setTagsFilterInput  } from "../../../actions/objects-list";
-import { setObjectsPaginationInfoAndFetchPage, setTagsFilterAndFetchPage, tagsFilterDropdownFetch, } from "../../../fetches/ui-objects-list";
+import { selectObjects, clearSelectedObjects, setObjectsListPaginationInfo, setObjectsListTagsFilterInput  } from "../../../actions/objects-list";
+import { setObjectsListPaginationInfoAndFetchPage, setObjectsListTagsFilterAndFetchPage, objectsListTagsFilterDropdownFetch, } from "../../../fetches/ui-objects-list";
 import { isFetchingObjects } from "../../../store/state-util/ui-objects-list";
 import { enumObjectTypes } from "../../../util/enums/enum-object-types";
 
@@ -28,30 +28,30 @@ export const ObjectsListHorizontalMenu = () => {
     const deselectAllOnClick = useMemo(() => () => dispatch(clearSelectedObjects()), []);
 
     // Sort asc button
-    const sortAscOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortOrder: "asc" })), []);
+    const sortAscOnClick = useMemo(() => () => dispatch(setObjectsListPaginationInfoAndFetchPage({ sortOrder: "asc" })), []);
     const sortAscIsActive = useSelector(state => state.objectsListUI.paginationInfo.sortOrder === "asc");
 
     // Sort desc button
-    const sortDescOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortOrder: "desc" })), []);
+    const sortDescOnClick = useMemo(() => () => dispatch(setObjectsListPaginationInfoAndFetchPage({ sortOrder: "desc" })), []);
     const sortDescIsActive = useSelector(state => state.objectsListUI.paginationInfo.sortOrder === "desc");
 
     // Sort by name button
-    const sortByNameOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortField: "object_name" })), []);
+    const sortByNameOnClick = useMemo(() => () => dispatch(setObjectsListPaginationInfoAndFetchPage({ sortField: "object_name" })), []);
     const sortByNameIsActive = useSelector(state => state.objectsListUI.paginationInfo.sortField === "object_name");
 
     // Sort by modify time button
-    const sortByModifyTimeOnClick = useMemo(() => () => dispatch(setObjectsPaginationInfoAndFetchPage({ sortField: "modified_at" })), []);
+    const sortByModifyTimeOnClick = useMemo(() => () => dispatch(setObjectsListPaginationInfoAndFetchPage({ sortField: "modified_at" })), []);
     const sortByModifyTimeIsActive = useSelector(state => state.objectsListUI.paginationInfo.sortField === "modified_at");
 
     // Object name filter
     const objectNameFilterValue = useSelector(state => state.objectsListUI.paginationInfo.filterText);
-    const objectNameFilterOnChange = useMemo(() => value => dispatch(setObjectsPaginationInfo({ filterText: value })), []);
-    const objectNameFilterOnChangeDelayed = useMemo(() => value => dispatch(setObjectsPaginationInfoAndFetchPage({ filterText: value })), []);
+    const objectNameFilterOnChange = useMemo(() => value => dispatch(setObjectsListPaginationInfo({ filterText: value })), []);
+    const objectNameFilterOnChangeDelayed = useMemo(() => value => dispatch(setObjectsListPaginationInfoAndFetchPage({ filterText: value })), []);
 
     // Object type dropdown
     const objectTypesDefaultValue = useSelector(state => state.objectsListUI.paginationInfo.objectTypes);
     const objectTypesOptions = useMemo(() => Object.values(enumObjectTypes).map((t, k) => ({ key: k, text: t.multipleName, value: t.type })), []);
-    const objectTypesOnChange = useMemo(() => (e, data) => dispatch(setObjectsPaginationInfoAndFetchPage({ objectTypes: data.value })), []);
+    const objectTypesOnChange = useMemo(() => (e, data) => dispatch(setObjectsListPaginationInfoAndFetchPage({ objectTypes: data.value })), []);
 
     // Tags filter dropdown
     const tagsFilterInputState = useSelector(state => state.objectsListUI.tagsFilterInput);
@@ -67,12 +67,12 @@ export const ObjectsListHorizontalMenu = () => {
     ), []);
     const tagsFilterOptions = useSelector(tagsFilterOptionsSelector);
     
-    const tagsFilterOnSearchChange = useMemo(() => inputParams => dispatch(setTagsFilterInput(inputParams)), []);
-    const tagsFilterOnSearchChangeDelayed = useMemo(() => inputParams => dispatch(tagsFilterDropdownFetch(inputParams)), []);
-    const tagsFilterOnChange = useMemo(() => values => dispatch(setTagsFilterAndFetchPage(values)), []);
+    const tagsFilterOnSearchChange = useMemo(() => inputParams => dispatch(setObjectsListTagsFilterInput(inputParams)), []);
+    const tagsFilterOnSearchChangeDelayed = useMemo(() => inputParams => dispatch(objectsListTagsFilterDropdownFetch(inputParams)), []);
+    const tagsFilterOnChange = useMemo(() => values => dispatch(setObjectsListTagsFilterAndFetchPage(values)), []);
 
     // Tags filter clear button
-    const tagsFilterClearOnClick = useMemo(() => () => dispatch(setTagsFilterAndFetchPage()), []);
+    const tagsFilterClearOnClick = useMemo(() => () => dispatch(setObjectsListTagsFilterAndFetchPage()), []);
     const tagsFilterClearIsDisabled = useSelector(state => isFetchingObjects(state) || state.objectsListUI.paginationInfo.tagsFilter.length == 0);
 
     return (

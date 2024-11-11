@@ -1,8 +1,8 @@
 import { getResponseErrorType } from "./common";
 
-import { search } from "./data-search";
-import { getNonCachedObjects } from "./data-objects";
-import { getNonCachedTags } from "./data/tags";
+import { searchFetch } from "./data-search";
+import { fetchMissingObjects } from "./data-objects";
+import { fetchMissingTags } from "./data/tags";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 import { FetchResult } from "./fetch-runner";
@@ -11,9 +11,9 @@ import { FetchResult } from "./fetch-runner";
 /**
  * Fetches IDs of tag and objects, matching the provided `query`, then fetches missing tag and object data.
  */
-export const loadSearchPageItems = query => {
+export const searchPageOnLoad = query => {
     return async (dispatch, getState) => {
-        let response = await dispatch(search(query));
+        let response = await dispatch(searchFetch(query));
 
         // Handle fetch errors
         let responseErrorType = getResponseErrorType(response);
@@ -26,7 +26,7 @@ export const loadSearchPageItems = query => {
         const tagIDs = response.items.filter(item => item.item_type === "tag").map(item => item.item_id);
         const objectIDs = response.items.filter(item => item.item_type === "object").map(item => item.item_id);
 
-        let results = await Promise.all([dispatch(getNonCachedTags(tagIDs)), dispatch(getNonCachedObjects(objectIDs, { attributes: true, tags: true }))]);
+        let results = await Promise.all([dispatch(fetchMissingTags(tagIDs)), dispatch(fetchMissingObjects(objectIDs, { attributes: true, tags: true }))]);
 
         // Handle fetch errors
         for (let result of results) {

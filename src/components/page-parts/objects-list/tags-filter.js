@@ -5,7 +5,7 @@ import { InlineBlock, InlineItemListContainer } from "../../modules/inline/inlin
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 
-import { setTagsFilterAndFetchPage } from "../../../fetches/ui-objects-list";
+import { setObjectsListTagsFilterAndFetchPage } from "../../../fetches/ui-objects-list";
 
 
 /**
@@ -34,7 +34,7 @@ const TagsFilterItem = memo(({ id }) => {
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     const className = "filter";
     const URL = `/tags/view?tagIDs=${id}`;
-    const icons = useMemo(() => [{ name: "remove", title: "Remove tag", onClick: () => { dispatch(setTagsFilterAndFetchPage(id)) }}], [id]);
+    const icons = useMemo(() => [{ name: "remove", title: "Remove tag", onClick: () => { dispatch(setObjectsListTagsFilterAndFetchPage(id)) }}], [id]);
 
     return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
 });

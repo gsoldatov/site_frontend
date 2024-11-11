@@ -62,7 +62,7 @@ const _setTagsListShowDeleteDialog = (state: State, action: { showDeleteDialog: 
     return { ...state, tagsListUI: { ...state.tagsListUI, showDeleteDialog }};
 };
 
-/** [Reducer file](../reducers/tags-list.js) */
+/** Sets fetch state of the /tags/list page. */
 export const setTagsListFetch = (fetch: Partial<TagsListFetch>) => ({ type: "SET_TAGS_LIST_FETCH", fetch });
 
 const _setTagsListFetch = (state: State, action: { fetch: Partial<TagsListFetch> }): State => {

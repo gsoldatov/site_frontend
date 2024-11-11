@@ -1,6 +1,6 @@
 import { getResponseErrorType } from "./common";
-import { getPageObjectIDs, viewObjectsFetch } from "./data-objects";
-import { getNonCachedTags, tagsSearchFetch } from "./data/tags";
+import { objectsGetPageObjectIDs, objectsViewFetch } from "./data-objects";
+import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
@@ -10,7 +10,7 @@ import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
  */
 export const tagsViewLoadSelectedTags = tagIDs => {
     return async (dispatch, getState) => {
-        await dispatch(getNonCachedTags(tagIDs));
+        await dispatch(fetchMissingTags(tagIDs));
     };
 };
 
@@ -20,7 +20,7 @@ export const tagsViewLoadSelectedTags = tagIDs => {
  */
  export const tagsViewLoadPageObjects = paginationInfo => {
     return async (dispatch, getState) => {
-        let response = await dispatch(getPageObjectIDs(paginationInfo));
+        let response = await dispatch(objectsGetPageObjectIDs(paginationInfo));
 
         // Handle fetch errors
         let responseErrorType = getResponseErrorType(response);
@@ -34,7 +34,7 @@ export const tagsViewLoadSelectedTags = tagIDs => {
 
         let nonCachedObjects = result["object_ids"].filter(object_id => !(object_id in getState().objects));
         if (nonCachedObjects.length !== 0) {
-            response = await dispatch(viewObjectsFetch(nonCachedObjects));
+            response = await dispatch(objectsViewFetch(nonCachedObjects));
             
             // Handle errors
             responseErrorType = getResponseErrorType(response);

@@ -7,13 +7,13 @@ import { intIndex } from "../../../util/types/common";
  * /users/view types
  *******************/
 
-/**`viewUsersFetch` response body schema without `full_view_mode`. */
+/**`usersViewFetch` response body schema without `full_view_mode`. */
 export const usersViewMinResponseSchema = z.object({
     users: userMin.array()
 });
 
 
-/**`viewUsersFetch` response body schema with `full_view_mode`. */
+/**`usersViewFetch` response body schema with `full_view_mode`. */
 export const usersViewFullResponseSchema = z.object({
     users: userFull.array()
 });
@@ -31,8 +31,8 @@ const optionalPassword = password.or(z.string().max(0));
 const optionalUsername = username.or(z.string().max(0));
 
 
-/** `updateUsersFetch` request data schema. */
-export const updateUsersFetchData = z.object({
+/** `usersUpdateFetch` request data schema. */
+export const usersUpdateFetchData = z.object({
     user_id: intIndex,
     login: optionalLogin,
     password: optionalPassword,
@@ -45,8 +45,8 @@ export const updateUsersFetchData = z.object({
 }).refine(data => data.password === data.password_repeat, { path: ["password_repeat"], message: "Password must be repeated correctly." });
 
 
-/** Schema of errors returned by `updateUsersFetch`. */
-export const updateUsersFetchValidationErrors = z.object({
+/** Schema of errors returned by `usersUpdateFetch`. */
+export const usersUpdateFetchValidationErrors = z.object({
     message: z.object({
         type: z.string(),
         content: z.string()
@@ -63,16 +63,16 @@ export const updateUsersFetchValidationErrors = z.object({
 
 
 /** Processes validation errors of update users fetch into error data for the user update page component. */
-export const getUpdateUsersFetchValidationErrors = (e: z.ZodError): UpdateUsersFetchValidationErrors => {
+export const getUsersUpdateFetchValidationErrors = (e: z.ZodError): UsersUpdateFetchValidationErrors => {
     const errors = {} as any;
     for (let issue of e.issues) {
         const field = issue.path[0];
         errors[field] = issue.message;
     }
     
-    return updateUsersFetchValidationErrors.parse({ errors });
+    return usersUpdateFetchValidationErrors.parse({ errors });
 };
 
 
-export type UpdateUsersFetchData = z.infer<typeof updateUsersFetchData>;
-export type UpdateUsersFetchValidationErrors = z.infer<typeof updateUsersFetchValidationErrors>;
+export type UsersUpdateFetchData = z.infer<typeof usersUpdateFetchData>;
+export type UsersUpdateFetchValidationErrors = z.infer<typeof usersUpdateFetchValidationErrors>;

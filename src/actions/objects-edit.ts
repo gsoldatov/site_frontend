@@ -1,26 +1,26 @@
-export const LOAD_ADD_OBJECT_PAGE = "LOAD_ADD_OBJECT_PAGE";
-export const LOAD_EDIT_OBJECT_PAGE = "LOAD_EDIT_OBJECT_PAGE";
+export const LOAD_OBJECTS_EDIT_NEW_PAGE = "LOAD_OBJECTS_EDIT_NEW_PAGE";
+export const LOAD_OBJECTS_EDIT_EXISTING_PAGE = "LOAD_OBJECTS_EDIT_EXISTING_PAGE";
 export const RESET_EDITED_OBJECTS = "RESET_EDITED_OBJECTS";
 export const REMOVE_EDITED_OBJECTS = "REMOVE_EDITED_OBJECTS";
 export const SET_EDITED_OBJECT = "SET_EDITED_OBJECT";
 export const CLEAR_UNSAVED_CURRENT_EDITED_OBJECT = "CLEAR_UNSAVED_CURRENT_EDITED_OBJECT";
-export const SET_OBJECT_TAGS_INPUT = "SET_OBJECT_TAGS_INPUT";
+export const SET_OBJECTS_EDIT_TAGS_INPUT = "SET_OBJECTS_EDIT_TAGS_INPUT";
 export const SET_EDITED_OBJECT_TAGS = "SET_EDITED_OBJECT_TAGS";
 export const RESET_EDITED_OBJECTS_TAGS = "RESET_EDITED_OBJECTS_TAGS";
-export const SET_SELECTED_TAB = "SET_SELECTED_TAB";
-export const SET_SHOW_RESET_DIALOG_OBJECT = "SET_SHOW_RESET_DIALOG_OBJECT";
-export const SET_SHOW_DELETE_DIALOG_OBJECT = "SET_SHOW_DELETE_DIALOG_OBJECT";
+export const SET_OBJECTS_EDIT_SELECT_TAB = "SET_OBJECTS_EDIT_SELECT_TAB";
+export const SET_OBJECTS_EDIT_SHOW_RESET_DIALOG = "SET_OBJECTS_EDIT_SHOW_RESET_DIALOG";
+export const SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG = "SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG";
 export const SET_TO_DO_LIST_RERENDER_PENDING = "SET_TO_DO_LIST_RERENDER_PENDING";
 export const SET_ADD_COMPOSITE_SUBOBJECT_MENU = "SET_ADD_COMPOSITE_SUBOBJECT_MENU";
 export const PRE_SAVE_EDITED_OBJECTS_UPDATE = "PRE_SAVE_EDITED_OBJECTS_UPDATE";
-export const SET_OBJECT_ON_LOAD_FETCH_STATE = "SET_OBJECT_ON_LOAD_FETCH_STATE";
-export const SET_OBJECT_ON_SAVE_FETCH_STATE = "SET_OBJECT_ON_SAVE_FETCH_STATE";
+export const SET_OBJECTS_EDIT_LOAD_FETCH_STATE = "SET_OBJECTS_EDIT_LOAD_FETCH_STATE";
+export const SET_OBJECTS_EDIT_SAVE_FETCH_STATE = "SET_OBJECTS_EDIT_SAVE_FETCH_STATE";
 
 
 /** [Reducer file](../reducers/objects-edit.js) */
-export const loadNewObjectPage               = () => ({ type: LOAD_ADD_OBJECT_PAGE });
+export const loadObjectsEditNewPage               = () => ({ type: LOAD_OBJECTS_EDIT_NEW_PAGE });
 /** [Reducer file](../reducers/objects-edit.js) */
-export const loadEditObjectPage              = (currentObjectID: any) => ({ type: LOAD_EDIT_OBJECT_PAGE, currentObjectID });
+export const loadObjectsEditExistingPage              = (currentObjectID: any) => ({ type: LOAD_OBJECTS_EDIT_EXISTING_PAGE, currentObjectID });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const resetEditedObjects              = ({ objectIDs, hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed }: 
                                                 { objectIDs: number[], hideObjectResetDialog?: boolean, resetCompositeSubobjects?: boolean, 
@@ -36,17 +36,17 @@ export const setEditedObject                 = (object: any, objectID: any) => (
 export const clearUnsavedCurrentEditedObject = ({ deleteNewObject, editedObjectID, excludedObjectID }: { deleteNewObject: any, editedObjectID: any, excludedObjectID: any }) => 
                                                 ({ type: CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, deleteNewObject, editedObjectID, excludedObjectID });
 /** [Reducer file](../reducers/objects-edit.js) */
-export const setObjectTagsInput              = (inputState: any) => ({ type: SET_OBJECT_TAGS_INPUT, tagsInput: inputState });
+export const setObjectsEditTagsInput              = (inputState: any) => ({ type: SET_OBJECTS_EDIT_TAGS_INPUT, tagsInput: inputState });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const setEditedObjectTags             = (tagUpdates: any) => ({ type: SET_EDITED_OBJECT_TAGS, tagUpdates });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const resetEditedObjectsTags          = (objectIDs: any, modified_at: any) => ({ type: RESET_EDITED_OBJECTS_TAGS, objectIDs, modified_at });
 /** [Reducer file](../reducers/objects-edit.js) */
-export const setSelectedTab                  = (selectedTab: number) => ({ type: SET_SELECTED_TAB, selectedTab });
+export const setObjectsEditSelectedTab                  = (selectedTab: number) => ({ type: SET_OBJECTS_EDIT_SELECT_TAB, selectedTab });
 /** [Reducer file](../reducers/objects-edit.js) */
-export const setShowResetDialogObject        = (showResetDialog: boolean = false) => ({ type: SET_SHOW_RESET_DIALOG_OBJECT, showResetDialog });
+export const setObjectsEditShowResetDialog        = (showResetDialog: boolean = false) => ({ type: SET_OBJECTS_EDIT_SHOW_RESET_DIALOG, showResetDialog });
 /** [Reducer file](../reducers/objects-edit.js) */
-export const setShowDeleteDialogObject       = (showDeleteDialog: boolean = false) => ({ type: SET_SHOW_DELETE_DIALOG_OBJECT, showDeleteDialog });
+export const setObjectsEditShowDeleteDialog       = (showDeleteDialog: boolean = false) => ({ type: SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG, showDeleteDialog });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const setToDoListRerenderPending      = (toDoListRerenderPending: boolean = false) => ({ type: SET_TO_DO_LIST_RERENDER_PENDING, toDoListRerenderPending });
 /** [Reducer file](../reducers/objects-edit.js) */
@@ -56,18 +56,18 @@ export const setAddCompositeSubobjectMenu    = (addCompositeSubobjectMenu: any) 
 export const preSaveEditedObjectsUpdate      = () => ({ type: PRE_SAVE_EDITED_OBJECTS_UPDATE });
 
 /** [Reducer file](../reducers/objects-edit.js) */
-export const setObjectOnLoadFetchState = (isFetching: boolean = false, fetchError: string = "") => {
+export const setObjectsEditLoadFetchState = (isFetching: boolean = false, fetchError: string = "") => {
     return {
-        type: SET_OBJECT_ON_LOAD_FETCH_STATE,
+        type: SET_OBJECTS_EDIT_LOAD_FETCH_STATE,
         isFetching: isFetching,
         fetchError: fetchError
     };
 };
 
 /** [Reducer file](../reducers/objects-edit.js) */
-export const setObjectOnSaveFetchState = (isFetching: boolean = false, fetchError: string = "") => {
+export const setObjectsEditSaveFetchState = (isFetching: boolean = false, fetchError: string = "") => {
     return {
-        type: SET_OBJECT_ON_SAVE_FETCH_STATE,
+        type: SET_OBJECTS_EDIT_SAVE_FETCH_STATE,
         isFetching: isFetching,
         fetchError: fetchError
     };

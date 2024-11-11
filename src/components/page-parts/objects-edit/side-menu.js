@@ -9,8 +9,8 @@ import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer, S
 
 import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../../../store/state-util/ui-objects-edit";
 import { isMultiColumnCompositeDataDisplayed } from "../../../store/state-util/composite";
-import { resetEditedObjects, setShowResetDialogObject, setShowDeleteDialogObject, setToDoListRerenderPending } from "../../../actions/objects-edit";
-import { addObjectOnSaveFetch, editObjectOnSaveFetch, editObjectOnDeleteFetch } from "../../../fetches/ui-objects-edit";
+import { resetEditedObjects, setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog, setToDoListRerenderPending } from "../../../actions/objects-edit";
+import { objectsEditNewSaveFetch, objectsEditExistingSaveFetch, objectsEditExistingDeleteFetch } from "../../../fetches/ui-objects-edit";
 
 
 /**
@@ -71,7 +71,7 @@ const Save = () => {
         !isFetchingObject(state) && getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255);
     const { id } = useParams(); // undefined for new object page
     const onClick = useMemo(() => () => {
-        const onSave = id === undefined ? addObjectOnSaveFetch : editObjectOnSaveFetch;
+        const onSave = id === undefined ? objectsEditNewSaveFetch : objectsEditExistingSaveFetch;
         dispatch(onSave());
     }, [id]);
     
@@ -87,7 +87,7 @@ const Reset = () => {
         : !isFetchingOrOnLoadFetchFailed(state)
     );
     const isVisible = useSelector(state => !state.objectsEditUI.showResetDialog);
-    const onClick = useMemo(() => () => dispatch(setShowResetDialogObject(true)), []);
+    const onClick = useMemo(() => () => dispatch(setObjectsEditShowResetDialog(true)), []);
 
     if (!isVisible) return null;    
     return <SideMenuItem text="Reset" icon="undo" isActive={isActive} onClick={onClick} />;
@@ -106,7 +106,7 @@ const ResetDialog = () => {
         dispatch(resetEditedObjects(params));
         dispatch(setToDoListRerenderPending(true)); // toggle rerender of content editable inputs with reset values
     }, [id]);
-    const noOnClick = useMemo(() => () => dispatch(setShowResetDialogObject(false)), []);
+    const noOnClick = useMemo(() => () => dispatch(setObjectsEditShowResetDialog(false)), []);
 
     if (!isVisible) return null;
 
@@ -128,7 +128,7 @@ const Delete = () => {
     const dispatch = useDispatch();
     const isActive = useSelector(state => !isFetchingOrOnLoadFetchFailed(state));
     const isVisible = useSelector(state => !state.objectsEditUI.showDeleteDialog);
-    const onClick = useMemo(() => () => dispatch(setShowDeleteDialogObject(true)), []);
+    const onClick = useMemo(() => () => dispatch(setObjectsEditShowDeleteDialog(true)), []);
 
     if (!isVisible) return null;
     return <SideMenuItem text="Delete" icon="trash alternate" iconColor="red" isActive={isActive} onClick={onClick} />;
@@ -140,8 +140,8 @@ const DeleteDialog = () => {
     const isVisible = useSelector(state => state.objectsEditUI.showDeleteDialog);
     const isCheckboxVisible = useSelector(state => getCurrentObject(state).object_type === "composite");
 
-    const yesOnClick = useMemo(() => deleteSubobjects => dispatch(editObjectOnDeleteFetch(deleteSubobjects)), []);
-    const noOnClick = useMemo(() => () => dispatch(setShowDeleteDialogObject(false)), []);
+    const yesOnClick = useMemo(() => deleteSubobjects => dispatch(objectsEditExistingDeleteFetch(deleteSubobjects)), []);
+    const noOnClick = useMemo(() => () => dispatch(setObjectsEditShowDeleteDialog(false)), []);
 
     if (!isVisible) return null;
 

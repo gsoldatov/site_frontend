@@ -1,6 +1,6 @@
 import { FetchRunner } from "../fetch-runner";
 
-import { getNonCachedUsers } from "../data/users";
+import { fetchMissingUsers } from "../data/users";
 import { resetStateExceptForEditedObjects } from "../../reducers/common";
 
 import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErrors, loginFetchData, backendAuth } from "../types/data/auth";
@@ -67,7 +67,7 @@ export const loginFetch = (login: string, password: string) => {
                 const auth = backendAuth.parse(result.json?.auth);
 
                 // Fetch missing user data
-                let nonCachedUsersResult = await dispatch(getNonCachedUsers([auth.user_id], false));            
+                let nonCachedUsersResult = await dispatch(fetchMissingUsers([auth.user_id], false));            
 
                 // Handle fetch errors
                 if (nonCachedUsersResult.failed) return { errors: { form: "Failed to fetch user information." }};

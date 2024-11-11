@@ -4,7 +4,7 @@ import { Message } from "semantic-ui-react";
 
 import { TDLContainer } from "../../../state-users/objects-edit/data/to-do-list/to-do-list";
 
-import { toDoListObjectUpdateFetch } from "../../../../fetches/ui-objects-view";
+import { objectsViewToDoListObjectUpdateFetch } from "../../../../fetches/ui-objects-view";
 
 import { getUpdatedToDoList } from "../../../../reducers/helpers/object-to-do-lists";
 import { deepCopy } from "../../../../util/copy";
@@ -45,7 +45,7 @@ export const ToDoList = ({ objectID }) => {
         setError("");
 
         if (!isReadonly) {
-            const result = await dispatch(toDoListObjectUpdateFetch(objectID, toDoList));
+            const result = await dispatch(objectsViewToDoListObjectUpdateFetch(objectID, toDoList));
             if ("error" in result) setError(result.error);
         }
     }, 1000, "onCall")), [isReadonly]);

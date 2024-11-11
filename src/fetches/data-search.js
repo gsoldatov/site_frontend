@@ -11,7 +11,7 @@ const backendURL = getConfig().backendURL;
  * 
  * Returns current query params, list of matching `items` { item_id, item_type } and `total_items` number.
  */
- export const search = query => {
+ export const searchFetch = query => {
     return async (dispatch, getState) => {
         let response = await dispatch(runFetch(`${backendURL}/search`, {
             method: "POST",

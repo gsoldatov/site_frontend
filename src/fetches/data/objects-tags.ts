@@ -1,6 +1,6 @@
 import { FetchRunner, FetchResult } from "../fetch-runner";
 
-import { getNonCachedTags } from "./tags";
+import { fetchMissingTags } from "./tags";
 
 import { updateObjectsTags } from "../../reducers/data/objects-tags";
 import { updateObjects } from "../../reducers/data/objects";
@@ -41,8 +41,8 @@ export const objectsTagsUpdateFetch = (object_ids: number[], added_tags: (string
                 dispatch(resetEditedObjectsTags(object_ids, modified_at));
 
                 // Fetch non-cahced tags
-                const getNonCachedTagsResult = await dispatch(getNonCachedTags(tag_updates.added_tag_ids || []));
-                if (getNonCachedTagsResult.failed) return getNonCachedTagsResult;
+                const fetchMissingTagsResult = await dispatch(fetchMissingTags(tag_updates.added_tag_ids || []));
+                if (fetchMissingTagsResult.failed) return fetchMissingTagsResult;
 
                 // Successfully end fetch
                 return result;

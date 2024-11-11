@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { ObjectsEdit } from "../page-parts/objects-edit/objects-edit";
 import { ObjectsEditNewSideMenu, ObjectsEditExistingSideMenu } from "../page-parts/objects-edit/side-menu";
 
-import { addObjectOnLoad, editObjectOnLoadFetch } from "../../fetches/ui-objects-edit";
+import { objectsEditNewOnLoad, objectsEditExistingOnLoad } from "../../fetches/ui-objects-edit";
 
 import StyleObjectsEdit from "../../styles/pages/objects-edit.css";
 
@@ -15,7 +15,7 @@ import StyleObjectsEdit from "../../styles/pages/objects-edit.css";
 */
 export const ObjectsEditNewPage = () => {
     const sideMenu = <ObjectsEditNewSideMenu />;
-    return <ObjectsEdit sideMenu={sideMenu} objectID={0} onLoad={addObjectOnLoad()} header="Add a New Object" />;
+    return <ObjectsEdit sideMenu={sideMenu} objectID={0} onLoad={objectsEditNewOnLoad()} header="Add a New Object" />;
 };
 
 
@@ -28,5 +28,5 @@ export const ObjectsEditExistingPage = () => {
 
     const sideMenu = <ObjectsEditExistingSideMenu />;    
 
-    return <ObjectsEdit sideMenu={sideMenu} objectID={id} onLoad={editObjectOnLoadFetch(id)} header="Object Information" />;
+    return <ObjectsEdit sideMenu={sideMenu} objectID={id} onLoad={objectsEditExistingOnLoad(id)} header="Object Information" />;
 };

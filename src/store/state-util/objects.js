@@ -269,7 +269,7 @@ export const objectDataIsInState = (state, objectID) => {
 
 
 /**
- * Modifies object_data in add/update object fetches to prepare it for adding to the respective storage with addObjectData action.
+ * Modifies object_data in add/update object fetches to prepare it for adding to the respective storage with addObjectsData action.
  * `requestPayload` is the body of the request sent to backend.
  * `responseObject` is the `object` attribute of the JSON parsed from response body.
  */

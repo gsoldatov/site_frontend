@@ -3,7 +3,7 @@ import { DropTarget } from "react-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown } from "semantic-ui-react";
 
-import { compositeSubobjectDropdownFetch, loadCompositeSubobjectsFetch } from "../../../../../fetches/ui-objects-edit";
+import { objectsEditCompositeSubobjectDropdownFetch, objectsEditLoadCompositeSubobjectsFetch } from "../../../../../fetches/ui-objects-edit";
 
 import debounce from "../../../../../util/debounce";
 
@@ -113,7 +113,7 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
     };
 
     // Search text change handlers (updates state & runs a delayed fetch to get dropdown items)
-    const _onSearchChangeDelayed = useRef(debounce(params => dispatch(compositeSubobjectDropdownFetch(params))
+    const _onSearchChangeDelayed = useRef(debounce(params => dispatch(objectsEditCompositeSubobjectDropdownFetch(params))
                                     , 250, "onCall")).current;
     const handleSearchChange = (e, data) => {
         setAddMenuCallback({ inputText: data.searchQuery });
@@ -127,7 +127,7 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
         // Add subobject
         updateCallback({ compositeUpdate: { command: "addExisting", subobjectID: data.value, row, column }});
         // Fetch subobject data & add it to state.editedObjects
-        dispatch(loadCompositeSubobjectsFetch(objectID));
+        dispatch(objectsEditLoadCompositeSubobjectsFetch(objectID));
     };
 
     // Focus the input after it's rendered

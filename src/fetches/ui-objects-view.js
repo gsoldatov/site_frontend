@@ -1,8 +1,8 @@
 import { getConfig } from "../config";
 
 import { getResponseErrorType } from "./common";
-import { updateObjectFetch, viewCompositeHierarchyElementsFetch, viewObjectsFetch } from "./data-objects";
-import { getNonCachedTags } from "./data/tags";
+import { objectsUpdateFetch, objectsViewCompositeHierarchyElements, objectsViewFetch } from "./data-objects";
+import { fetchMissingTags } from "./data/tags";
 
 import { canEditObject, objectDataIsInState } from "../store/state-util/objects";
 import { serializeObjectForUpdate } from "../store/state-util/composite";
@@ -33,7 +33,7 @@ const backendURL = getConfig().backendURL;
         if (fetchAttributesAndTags || fetchData) {
             let objectIDs = fetchAttributesAndTags ? [objectID] : undefined;
             let objectDataIDs = fetchData ? [objectID] : undefined;
-            let result = await dispatch(viewObjectsFetch(objectIDs, objectDataIDs));
+            let result = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
 
             // Handle fetch errors
             const responseErrorType = getResponseErrorType(result);
@@ -43,7 +43,7 @@ const backendURL = getConfig().backendURL;
             }
         } else {
             // Fetch missing tags if object attributes, tags & data are present in the state
-            let result = await dispatch(getNonCachedTags(state.objectsTags[objectID]));
+            let result = await dispatch(fetchMissingTags(state.objectsTags[objectID]));
 
             // Handle fetch errors
             if (result.failed) return { error: result.error };     // TODO return fetch result or nothing?
@@ -58,10 +58,10 @@ const backendURL = getConfig().backendURL;
 /**
  * Runs to-do list object update fetch, which saves changes made to to-do list data on the /objects/view/:id page
  */
-export const toDoListObjectUpdateFetch = (objectID, toDoList) => {
+export const objectsViewToDoListObjectUpdateFetch = (objectID, toDoList) => {
     return async (dispatch, getState) => {
         const obj = getToDoListUpdateFetchBody(getState(), objectID, toDoList);
-        return await dispatch(updateObjectFetch(obj));
+        return await dispatch(objectsUpdateFetch(obj));
     };
 };
 
@@ -71,7 +71,7 @@ export const toDoListObjectUpdateFetch = (objectID, toDoList) => {
  * 
  * NOTE: should use patched update, because paraller fetch calls can lead to data inconsistency.
  */
-export const multicolumnExpandToggleUpdateFetch = (objectID, subobjectID, is_expanded) => {
+export const objectsViewMulticolumnExpandToggleUpdateFetch = (objectID, subobjectID, is_expanded) => {
     return async (dispatch, getState) => {
         // Check if current user can update the object
         const state = getState();
@@ -81,7 +81,7 @@ export const multicolumnExpandToggleUpdateFetch = (objectID, subobjectID, is_exp
 
         const object = serializeObjectForUpdate(state, objectID, newProps);
         
-        return await dispatch(updateObjectFetch(object));
+        return await dispatch(objectsUpdateFetch(object));
     };
 };
 
@@ -89,7 +89,7 @@ export const multicolumnExpandToggleUpdateFetch = (objectID, subobjectID, is_exp
 /**
  * Fetches missing attributes and data of a composite subobject displayed in <ObjectDataCompositeGroupedLinks> component.
  */
-export const groupedLinksOnLoad = objectID => {
+export const objectsViewGroupedLinksOnLoad = objectID => {
     return async (dispatch, getState) => {
         const state = getState();
         const subobjectIDs = Object.keys(state.composite[objectID].subobjects);
@@ -98,7 +98,7 @@ export const groupedLinksOnLoad = objectID => {
 
         // Fetch missing subobject attributes and data
         if (subobjectIDsWithNonCachedAttributes.length > 0 || subobjectIDsWithNonCachedData.length > 0) {
-            let result = await dispatch(viewObjectsFetch(subobjectIDsWithNonCachedAttributes, subobjectIDsWithNonCachedData));
+            let result = await dispatch(objectsViewFetch(subobjectIDsWithNonCachedAttributes, subobjectIDsWithNonCachedData));
 
             // Handle fetch errors
             const responseErrorType = getResponseErrorType(result);
@@ -117,14 +117,14 @@ export const groupedLinksOnLoad = objectID => {
 /**
  * Fetches objects in the composite hierarchy with root object ID `rootObjectID`, then fetches missing attributes, tags & data for objects in the hierarchy.
  */
-export const compositeChaptersOnLoadFetch = rootObjectID => {
+export const objectsViewCompositeChaptersOnLoad = rootObjectID => {
     return async (dispatch, getState) => {
         // Exit if rootObjectID is not valid
         rootObjectID = parseInt(rootObjectID);
         if (!(rootObjectID > 0)) return { error: "Object not found." };
 
         // Get composite & non-composite objects in the hierarchy
-        let result = await dispatch(viewCompositeHierarchyElementsFetch(rootObjectID));
+        let result = await dispatch(objectsViewCompositeHierarchyElements(rootObjectID));
 
         // Handle fetch errors
         let responseErrorType = getResponseErrorType(result);
@@ -139,7 +139,7 @@ export const compositeChaptersOnLoadFetch = rootObjectID => {
         const objectIDs = result.non_composite.concat(result.composite).filter(objectID => !(objectID in state.objects && objectID in state.objectsTags));
         const objectDataIDs = result.composite.filter(objectID => !objectDataIsInState(state, objectID));
 
-        result = await dispatch(viewObjectsFetch(objectIDs, objectDataIDs));
+        result = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
 
         // Handle fetch errors
         responseErrorType = getResponseErrorType(result);

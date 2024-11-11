@@ -14,8 +14,8 @@ import { getFeedElements } from "../../../../_util/ui-index";
 
 import { App } from "../../../../../src/components/app";
 import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
-import { getNonCachedTags } from "../../../../../src/fetches/data/tags";
-import { addObjects, addObjectData } from "../../../../../src/actions/data-objects";
+import { fetchMissingTags } from "../../../../../src/fetches/data/tags";
+import { addObjects, addObjectsData } from "../../../../../src/actions/data-objects";
 import { generateObjectAttributes, generateObjectData } from "../../../../_mocks/data-objects";
 
 
@@ -47,9 +47,9 @@ test("Load object tags from state", async () => {
     let objectData = generateObjectData(1, "link", { "link": "https://test.link" });
     store.dispatch(addObjects([object]));
     store.dispatch(addObjectsTags([object]));
-    store.dispatch(addObjectData([objectData]));
+    store.dispatch(addObjectsData([objectData]));
     for (let tag_id of object.current_tag_ids)
-        await store.dispatch(getNonCachedTags([tag_id]));
+        await store.dispatch(fetchMissingTags([tag_id]));
     
     let { container } = renderWithWrappers(<App />, {
         route: "/objects/edit/1", store

@@ -4,7 +4,7 @@ import { Link, Redirect, useLocation } from "react-router-dom";
 import { Loader, Message } from "semantic-ui-react";
 
 import { useConfigState } from "../../../../../config";
-import { compositeChaptersOnLoadFetch } from "../../../../../fetches/ui-objects-view";
+import { objectsViewCompositeChaptersOnLoad } from "../../../../../fetches/ui-objects-view";
 import { getChaptersHierarchySelector, getHierarchyElements } from "../../../../../store/state-util/ui-objects-view";
 import { TableOfContents } from "./table-of-contents";
 import { ChapterObject } from "./chapter-object";
@@ -25,7 +25,7 @@ export const CompositeChapters = ({ objectID }) => {
     useEffect(() => {
         const fetchData = async () => {
             setIsFetching(true);
-            const result = await dispatch(compositeChaptersOnLoadFetch(objectID));
+            const result = await dispatch(objectsViewCompositeChaptersOnLoad(objectID));
 
             if ("error" in result) setError(result.error);
             setIsFetching(false);

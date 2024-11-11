@@ -48,7 +48,7 @@ export const tagsAddFetch = (tagAttributes: TagsAddTagSchema) => {
  * 
  * Updates the tag in the state in case of success.
  */
-export const updateTagFetch = (tagAttributes: TagsUpdateTagSchema) => {
+export const tagsUpdateFetch = (tagAttributes: TagsUpdateTagSchema) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<TagsUpdateFetchResult> => {
         // Ensure correct tag attributes
         tagAttributes = tagsUpdateTagSchema.parse(tagAttributes);
@@ -82,7 +82,7 @@ export const updateTagFetch = (tagAttributes: TagsUpdateTagSchema) => {
  * 
  * Adds the tags to the state in case of success.
  */
-export const viewTagsFetch = (tagIDs: (string | number)[]) => {
+export const tagsViewFetch = (tagIDs: (string | number)[]) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         const tag_ids = tagIDs.map(id => parseInt(id as string));
 
@@ -110,11 +110,11 @@ export const viewTagsFetch = (tagIDs: (string | number)[]) => {
  * Fetches missing tags, ids of which are listed in `tagIDs`.
  * Filters out non-numeric IDs (new tag case).
  */
-export const getNonCachedTags = (tagIDs: (string | number)[]) => {
+export const fetchMissingTags = (tagIDs: (string | number)[]) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         const { tags } = getState();
         const nonCachedTags = tagIDs.filter(id => !(id in tags) && !isNaN(id as number));
-        if (nonCachedTags.length !== 0) return await dispatch(viewTagsFetch(nonCachedTags));
+        if (nonCachedTags.length !== 0) return await dispatch(tagsViewFetch(nonCachedTags));
         return FetchResult.fetchNotRun();
     };
 };
@@ -125,7 +125,7 @@ export const getNonCachedTags = (tagIDs: (string | number)[]) => {
  * 
  * Deletes the tags from the state in case of success.
  */
-export const deleteTagsFetch = (tagIDs: (string | number)[]) => {
+export const tagsDeleteFetch = (tagIDs: (string | number)[]) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         const tag_ids = tagIDs.map(id => parseInt(id as string));
         
@@ -144,7 +144,6 @@ export const deleteTagsFetch = (tagIDs: (string | number)[]) => {
         }
     }; 
 };
-
 
 
 /**
@@ -170,8 +169,8 @@ export const tagsSearchFetch = ({ queryText, existingIDs }: { queryText: string,
                 const tagIDs = tagsSearchResponseSchema.parse(result.json).tag_ids;
 
                 // Fetch non-cahced tags
-                const getNonCachedTagsResult = await dispatch(getNonCachedTags(tagIDs));
-                if (getNonCachedTagsResult.failed) return getNonCachedTagsResult;
+                const fetchMissingTagsResult = await dispatch(fetchMissingTags(tagIDs));
+                if (fetchMissingTagsResult.failed) return fetchMissingTagsResult;
 
                 // Successfully finish the fetch
                 (result as TagsSearchFetchResult).tagIDs = tagIDs;

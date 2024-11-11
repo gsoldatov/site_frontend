@@ -8,7 +8,7 @@ import { AttributesTabPane } from "./attributes-tab-pane";
 import { ObjectDataSwitch } from "../../state-users/objects-edit/data/object-data-switch";
 import { DisplayTab } from "../../state-users/objects-edit/display/display-tab";
 
-import { setSelectedTab, setToDoListRerenderPending } from "../../../actions/objects-edit";
+import { setObjectsEditSelectedTab, setToDoListRerenderPending } from "../../../actions/objects-edit";
 import { isMultiColumnCompositeDataDisplayed } from "../../../store/state-util/composite";
 import { enumLayoutTypes } from "../../../util/enums/enum-layout-types";
 
@@ -72,7 +72,7 @@ const ObjectTabPanes = memo(({ objectID }) => {
     const activeIndex = useSelector(state => state.objectsEditUI.selectedTab);
     const dispatch = useDispatch();
     const onTabChange = useRef((e, data) => {
-        dispatch(setSelectedTab(data.activeIndex));
+        dispatch(setObjectsEditSelectedTab(data.activeIndex));
     }).current;
 
     return <Tab panes={tabPanes} activeIndex={activeIndex} onTabChange={onTabChange} />;

@@ -1,5 +1,5 @@
 import { resetEditedObjects, setEditedObject } from "../../src/actions/objects-edit";
-import { addObjectData, addObjects } from "../../src/actions/data-objects";
+import { addObjectsData, addObjects } from "../../src/actions/data-objects";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 
 import { createTestStore } from "../_util/create-test-store";
@@ -68,7 +68,7 @@ export const getStoreWithEditedObjects = () => {
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
-    store.dispatch(addObjectData(objectData));
+    store.dispatch(addObjectsData(objectData));
 
     store.dispatch(resetEditedObjects({ objectIDs: [10, 11] }));
     store.dispatch(setEditedObject({ object_name: "" }, 11));     // unnamed subobject

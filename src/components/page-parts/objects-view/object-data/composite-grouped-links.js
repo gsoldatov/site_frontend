@@ -6,7 +6,7 @@ import { Loader, Message, Header, Table } from "semantic-ui-react";
 
 import { RenderedMarkdown } from "../../../modules/markdown/rendered-markdown";
 
-import { groupedLinksOnLoad } from "../../../../fetches/ui-objects-view";
+import { objectsViewGroupedLinksOnLoad } from "../../../../fetches/ui-objects-view";
 import { getSingleColumnSubobjectDisplayOrder } from "../../../../store/state-util/composite";
 import { useMountedState } from "../../../../util/hooks/use-mounted-state";
 import { useParsedMarkdownState } from "../../../../util/hooks/use-parsed-markdown-state";
@@ -32,7 +32,7 @@ export const CompositeGroupedLinks = ({ objectID }) => {
     useEffect(() => {
         const fetchData = async () => {
             setIsFetching(true);
-            const result = await dispatch(groupedLinksOnLoad(objectID));
+            const result = await dispatch(objectsViewGroupedLinksOnLoad(objectID));
 
             if ("error" in result) setError(result.error);
             if (isMounted()) setIsFetching(false);

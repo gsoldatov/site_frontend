@@ -18,7 +18,7 @@ import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject }
 
 import { App } from "../../../../../src/components/app";
 import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
-import { addObjects, addObjectData } from "../../../../../src/actions/data-objects";
+import { addObjects, addObjectsData } from "../../../../../src/actions/data-objects";
 import { SubobjectDeleteModes } from "../../../../../src/store/types/data/composite";
 import { generateObjectAttributes, generateObjectData } from "../../../../_mocks/data-objects";
 
@@ -196,7 +196,7 @@ describe("Load object from state", () => {
         let objectData = generateObjectData(1, "link", { "link": "https://test.link" });
         store.dispatch(addObjects([object]));
         store.dispatch(addObjectsTags([object]));
-        store.dispatch(addObjectData([objectData]));
+        store.dispatch(addObjectsData([objectData]));
         
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", store
@@ -232,7 +232,7 @@ describe("Load object from state", () => {
         let objectData = generateObjectData(1, "markdown", { "raw_text": "**Test text**" });
         store.dispatch(addObjects([object]));
         store.dispatch(addObjectsTags([object]));
-        store.dispatch(addObjectData([objectData]));
+        store.dispatch(addObjectsData([objectData]));
         
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", store
@@ -283,7 +283,7 @@ describe("Load object from state", () => {
         let objectData = generateObjectData(1, "to_do_list", getTDLByObjectID(2001));
         store.dispatch(addObjects([object]));
         store.dispatch(addObjectsTags([object]));
-        store.dispatch(addObjectData([objectData]));
+        store.dispatch(addObjectsData([objectData]));
         
         let { container } = renderWithWrappers(<App />, {
             route: "/objects/edit/1", store

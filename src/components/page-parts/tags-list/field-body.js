@@ -8,7 +8,7 @@ import { ExpandableContainer } from "../../modules/expandable-container";
 import { TagsListPagination } from "./tags-list-pagination";
 
 import { toggleTagSelection } from "../../../reducers/ui/tags-list";
-import { pageFetch } from "../../../fetches/ui/tags-list";
+import { tagsListPageFetch } from "../../../fetches/ui/tags-list";
 
 import { NumericUserLevel } from "../../../store/types/data/auth";
 
@@ -23,7 +23,7 @@ export const TagsListFieldBody = () => {
 
     // On load action
     useEffect(() => {
-        dispatch(pageFetch(currentPage));
+        dispatch(tagsListPageFetch(currentPage));
     }, []);
 
     if (isFetching) return <Loader active inline="centered">Loading tags...</Loader>;

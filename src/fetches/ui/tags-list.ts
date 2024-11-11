@@ -1,5 +1,5 @@
 import { FetchRunner, FetchResult, FetchErrorType } from "../fetch-runner";
-import { getNonCachedTags, deleteTagsFetch } from "../data/tags";
+import { fetchMissingTags, tagsDeleteFetch } from "../data/tags";
 
 import { setTagsListFetch, setTagsListShowDeleteDialog, setTagsListPaginationInfo } from "../../reducers/ui/tags-list";
 
@@ -17,7 +17,7 @@ export const setTagsListPaginationInfoAndFetchPage = (paginationInfo: Partial<Ta
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         paginationInfo.currentPage = 1;
         dispatch(setTagsListPaginationInfo(paginationInfo));
-        dispatch(pageFetch(paginationInfo.currentPage));
+        dispatch(tagsListPageFetch(paginationInfo.currentPage));
     };
 };
 
@@ -25,7 +25,7 @@ export const setTagsListPaginationInfoAndFetchPage = (paginationInfo: Partial<Ta
 /**
  * Fetches tags to display on provided `currentPage`.
  */
-export const pageFetch = (currentPage: number) => {
+export const tagsListPageFetch = (currentPage: number) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         const state = getState();
         if (isFetchingTags(state)) return;
@@ -34,7 +34,7 @@ export const pageFetch = (currentPage: number) => {
         dispatch(setTagsListFetch({ isFetching: true, fetchError:"" }));
 
         // Fetch IDs of tags to display on the page
-        let result = await dispatch(getPageTagIDs());
+        let result = await dispatch(tagsGetPageTagIDs());
 
         // Handle fetch errors
         if (result.failed) {
@@ -43,7 +43,7 @@ export const pageFetch = (currentPage: number) => {
         }
 
         // Is fetch is successful, fetch missing tag data
-        result = await dispatch(getNonCachedTags(getState().tagsListUI.paginationInfo.currentPageTagIDs));
+        result = await dispatch(fetchMissingTags(getState().tagsListUI.paginationInfo.currentPageTagIDs));
         const fetchError = result.failed ? result.error! : "";
         dispatch(setTagsListFetch({ isFetching: false, fetchError }));
     };
@@ -53,7 +53,7 @@ export const pageFetch = (currentPage: number) => {
 /**
  * Fetches backend and sets tag IDs of the current page based on the current pagination info settings.
  */
-const getPageTagIDs = () => {
+const tagsGetPageTagIDs = () => {
     return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         const pI = getState().tagsListUI.paginationInfo;
 
@@ -86,7 +86,7 @@ const getPageTagIDs = () => {
 /**
  * Delete selected tags from state and stop displaying them on the current page.
  */
-export const onDeleteFetch = () => {
+export const tagsListDeleteFetch = () => {
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         // Exit if already fetching
         let state = getState();
@@ -98,7 +98,7 @@ export const onDeleteFetch = () => {
         // Run delete fetch & delete tags data
         dispatch(setTagsListFetch({ isFetching: true, fetchError: "" }));
         const { selectedTagIDs } = state.tagsListUI;
-        const result = await dispatch(deleteTagsFetch(state.tagsListUI.selectedTagIDs));
+        const result = await dispatch(tagsDeleteFetch(state.tagsListUI.selectedTagIDs));
 
         // Handle fetch errors (consider 404 status as a successful fetch, so that tags are cleared from the state)
         if (result.failed && result.status !== 404) {

@@ -1,4 +1,4 @@
-import { addObjectData, addObjects } from "../../src/actions/data-objects";
+import { addObjectsData, addObjects } from "../../src/actions/data-objects";
 import { addTags } from "../../src/reducers/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { resetEditedObjects } from "../../src/actions/objects-edit";
@@ -131,7 +131,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
-    store.dispatch(addObjectData(objectData));
+    store.dispatch(addObjectsData(objectData));
 
     return store;
 };
@@ -161,7 +161,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
-    store.dispatch(addObjectData(objectData));
+    store.dispatch(addObjectsData(objectData));
     store.dispatch(addTags(tags));
 
     return store;
@@ -200,7 +200,7 @@ export const getStoreWithModifiedCompositeObject = () => {
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
-    store.dispatch(addObjectData(objectData));
+    store.dispatch(addObjectsData(objectData));
     store.dispatch(resetEditedObjects({objectIDs: [1, 2, -1], allowResetToDefaults: true }));
     store.dispatch(addTags(tags));
 
@@ -254,7 +254,7 @@ export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsN
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
-    store.dispatch(addObjectData(objectData));
+    store.dispatch(addObjectsData(objectData));
     store.dispatch(resetEditedObjects({objectIDs: [mainObjectID, linkSubobjectID, markdownSubobjectID, TDLSubobjectID, compositeSubobjectID, 6], allowResetToDefaults: true }));
     store.dispatch(addTags(tags));
 

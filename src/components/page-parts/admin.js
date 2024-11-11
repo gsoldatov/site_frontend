@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Form, Loader, Message } from "semantic-ui-react";
 
-import { viewSettingsFetch, updateSettingsFetch } from "../../fetches/data-settings";
+import { settingsViewFetch, settingsUpdateFetch } from "../../fetches/data-settings";
 
 
 /**
@@ -27,7 +27,7 @@ export const SettingsTabPane = () => {
     // Get settings on component load
     useEffect(() => {
         const viewFetch = async () => {
-            const result = await dispatch(viewSettingsFetch());
+            const result = await dispatch(settingsViewFetch());
             if ("error" in result) {
                 setMessage({ type: "error", content: result.error });
                 setIsFetching(false);
@@ -48,7 +48,7 @@ export const SettingsTabPane = () => {
         setIsDisabled(true);
 
         // Run update fetch
-        const result = await dispatch(updateSettingsFetch(settings));
+        const result = await dispatch(settingsUpdateFetch(settings));
         
         // Handle errors & messages and enable form
         if ("error" in result) setMessage({ type: "error", content: result.error });

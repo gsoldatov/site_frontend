@@ -7,8 +7,8 @@ import { SideMenuItem } from "../../modules/side-menu/side-menu-item";
 import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer } from "../../modules/side-menu/side-menu-dialog";
 
-import { setShowDeleteDialogTagsEdit } from "../../../reducers/ui/tags-edit";
-import { editTagOnSaveFetch, tagsEditNewSaveFetch, editTagOnDeleteFetch } from "../../../fetches/ui/tags-edit";
+import { setTagsEditShowDeleteDialog } from "../../../reducers/ui/tags-edit";
+import { tagsEditExistingSaveFetch, tagsEditNewSaveFetch, tagsEditExistingDeleteFetch } from "../../../fetches/ui/tags-edit";
 import { isFetchingTag, isFetchinOrShowingDialogTag } from "../../../store/state-util/ui-tags-edit";
 
 
@@ -61,7 +61,7 @@ const Save = () => {
     const isActive = useSelector(state => !isFetchingTag(state) && state.tagsEditUI.currentTag.tag_name.length >= 1 && state.tagsEditUI.currentTag.tag_name.length <= 255);
     const { id } = useParams(); // undefined for new tag page
     const onClick = useMemo(() => () => {
-        const onSave = id === undefined ? tagsEditNewSaveFetch : editTagOnSaveFetch;
+        const onSave = id === undefined ? tagsEditNewSaveFetch : tagsEditExistingSaveFetch;
         dispatch(onSave());
     }, [id]);
     
@@ -73,7 +73,7 @@ const Delete = () => {
     const dispatch = useDispatch();
     const isActive = useSelector(state => !isFetchinOrShowingDialogTag(state) && state.tagsEditUI.currentTag.tag_id !== 0);
     const isVisible = useSelector(state => !state.tagsEditUI.showDeleteDialog);
-    const onClick = useMemo(() => () => dispatch(setShowDeleteDialogTagsEdit(true)), []);
+    const onClick = useMemo(() => () => dispatch(setTagsEditShowDeleteDialog(true)), []);
 
     if (!isVisible) return null;
     return <SideMenuItem text="Delete" icon="trash alternate" iconColor="red" isActive={isActive} onClick={onClick} />;
@@ -84,8 +84,8 @@ const DeleteDialog = () => {
     const dispatch = useDispatch();
     const isVisible = useSelector(state => state.tagsEditUI.showDeleteDialog);
 
-    const yesOnClick = useMemo(() => () => dispatch(editTagOnDeleteFetch()), []);
-    const noOnClick = useMemo(() => () => dispatch(setShowDeleteDialogTagsEdit(false)), []);
+    const yesOnClick = useMemo(() => () => dispatch(tagsEditExistingDeleteFetch()), []);
+    const noOnClick = useMemo(() => () => dispatch(setTagsEditShowDeleteDialog(false)), []);
 
     if (!isVisible) return null;
 

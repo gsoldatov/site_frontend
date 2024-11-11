@@ -9,7 +9,7 @@ import { ExpandableContainer } from "../../modules/expandable-container";
 import { ObjectsListPagination } from "./objects-list-pagination";
 
 import { toggleObjectSelection } from "../../../actions/objects-list";
-import { objectsOnLoadFetch } from "../../../fetches/ui-objects-list";
+import { objectsListOnLoadFetch } from "../../../fetches/ui-objects-list";
 
 
 /**
@@ -21,7 +21,7 @@ export const ObjectsListFieldBody = () => {
 
     // On load action
     useEffect(() => {
-        dispatch(objectsOnLoadFetch());
+        dispatch(objectsListOnLoadFetch());
     }, []);
 
     if (isFetching) return <Loader active inline="centered">Loading tags...</Loader>;

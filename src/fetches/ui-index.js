@@ -1,5 +1,5 @@
 import { getResponseErrorType } from "./common";
-import { viewObjectsFetch, getPageObjectIDs } from "./data-objects";
+import { objectsViewFetch, objectsGetPageObjectIDs } from "./data-objects";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
@@ -9,7 +9,7 @@ import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
  */
 export const loadIndexPageObjects = paginationInfo => {
     return async (dispatch, getState) => {
-        let response = await dispatch(getPageObjectIDs(paginationInfo));
+        let response = await dispatch(objectsGetPageObjectIDs(paginationInfo));
 
         // Handle fetch errors
         let responseErrorType = getResponseErrorType(response);
@@ -23,7 +23,7 @@ export const loadIndexPageObjects = paginationInfo => {
 
         let nonCachedObjects = result["object_ids"].filter(object_id => !(object_id in getState().objects));
         if (nonCachedObjects.length !== 0) {
-            response = await dispatch(viewObjectsFetch(nonCachedObjects));
+            response = await dispatch(objectsViewFetch(nonCachedObjects));
             
             // Handle errors
             responseErrorType = getResponseErrorType(response);

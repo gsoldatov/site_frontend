@@ -1,4 +1,4 @@
-import { addObjectData, addObjects, updateObjectData } from "../../../../src/actions/data-objects";
+import { addObjectsData, addObjects, updateObjectsData } from "../../../../src/actions/data-objects";
 import { updateObjects } from "../../../../src/reducers/data/objects";
 
 import type { AppStore, PartialExcept } from "../../../../src/util/types/common";
@@ -49,7 +49,7 @@ export class ObjectsStoreManager {
      */
     addData<T extends ObjectType>(object_id: number, object_type: T, object_data: PartialObjectData<T>): ObjectData<T> {
         const objectData = this.generator.object.data(object_id, object_type, object_data);
-        this.store.dispatch(addObjectData([{ object_id, object_type, object_data: objectData }]));
+        this.store.dispatch(addObjectsData([{ object_id, object_type, object_data: objectData }]));
         return objectData;
     }
 
@@ -59,7 +59,7 @@ export class ObjectsStoreManager {
      * `attributes` must include `object_id` prop.
      */
     updateData(object_id: number, object_type: ObjectType, object_data: any): void {
-        this.store.dispatch(updateObjectData([{ object_id, object_type, object_data }]));
+        this.store.dispatch(updateObjectsData([{ object_id, object_type, object_data }]));
     }
 
     /**

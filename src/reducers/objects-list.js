@@ -1,11 +1,11 @@
-import { SET_OBJECTS_TAGS_INPUT, SET_CURRENT_OBJECTS_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
-    SET_OBJECTS_PAGINATION_INFO, SET_TAGS_FILTER, SET_TAGS_FILTER_INPUT, SET_SHOW_DELETE_DIALOG_OBJECTS, SET_OBJECTS_FETCH } from "../actions/objects-list";
+import { SET_OBJECTS_LIST_TAGS_INPUT, SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
+    SET_OBJECTS_LIST_PAGINATION_INFO, SET_OBJECTS_LIST_TAGS_FILTER, SET_OBJECTS_LIST_TAGS_FILTER_INPUT, SET_OBJECTS_LIST_SHOW_DELETE_DIALOG, SET_OBJECTS_LIST_FETCH } from "../actions/objects-list";
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
 import { commonTagIDsSelector } from "../store/state-util/ui-objects-list";
 
 
-function setObjectsTagsInput(state, action) {
+function setObjectsListTagsInput(state, action) {
     return {
         ...state,
         objectsListUI: {
@@ -28,7 +28,7 @@ function setObjectsTagsInput(state, action) {
     removedTagIDs can be reset to an empty list (if an empty list is passed as value) or updated with with a list of values.
     Existing values passed via action are removed from the new list.
 */
-function setCurrentObjectsTags(state, action) {
+function setObjectsListCurrentTags(state, action) {
     let newAddedTags, newRemovedTagIDs, addedExistingTagIDs;
 
     if (action.tagUpdates.added instanceof Array && action.tagUpdates.added.length === 0) { // handle reset case
@@ -121,7 +121,7 @@ function clearSelectedObjects(state, action) {
     };
 }
 
-function setObjectsPaginationInfo(state, action) {
+function setObjectsListPaginationInfo(state, action) {
     let oPI = state.objectsListUI.paginationInfo;
     let pI = action.paginationInfo;
     return {
@@ -136,7 +136,7 @@ function setObjectsPaginationInfo(state, action) {
                     sortOrder: pI.sortOrder !== undefined ? pI.sortOrder : oPI.sortOrder,
                     filterText: pI.filterText !== undefined ? pI.filterText : oPI.filterText,
                     objectTypes: pI.objectTypes !== undefined ? pI.objectTypes: oPI.objectTypes,
-                    tagsFilter: oPI.tagsFilter,     // tags filter is set in setTagsFilter action
+                    tagsFilter: oPI.tagsFilter,     // tags filter is set in setObjectsListTagsFilter action
                     currentPageObjectIDs: pI.currentPageObjectIDs !== undefined ? pI.currentPageObjectIDs : oPI.currentPageObjectIDs
             }
         }
@@ -147,7 +147,7 @@ function setObjectsPaginationInfo(state, action) {
     Adds/removes provided tag ID to/from objectsListUI.paginationInfo.tagsFilter list.
     Clears the list if no tag ID is provided.
 */
-function setTagsFilter(state, action) {
+function setObjectsListTagsFilter(state, action) {
     let tagsFilter, oldTagsFilter = state.objectsListUI.paginationInfo.tagsFilter;
     if (!action.tagID) tagsFilter = [];    // clear case
     else {  // add/remove case
@@ -170,7 +170,7 @@ function setTagsFilter(state, action) {
     };
 }
 
-function setTagsFilterInput(state, action) {
+function setObjectsListTagsFilterInput(state, action) {
     const { inputText, matchingIDs } = action.tagsFilterInput;
     return {
         ...state,
@@ -194,7 +194,7 @@ function setShowDeleteDialogObjects(state, action) {
     }
 }
 
-function setObjectsFetch(state, action) {
+function setObjectsListFetch(state, action) {
     return {
         ...state,
         objectsListUI: {
@@ -209,16 +209,16 @@ function setObjectsFetch(state, action) {
 
 
 const root = {
-    SET_OBJECTS_TAGS_INPUT: setObjectsTagsInput,
-    SET_CURRENT_OBJECTS_TAGS: setCurrentObjectsTags,
+    SET_OBJECTS_LIST_TAGS_INPUT: setObjectsListTagsInput,
+    SET_OBJECTS_LIST_CURRENT_TAGS: setObjectsListCurrentTags,
     SELECT_OBJECTS: selectObjects,
     TOGGLE_OBJECT_SELECTION: toggleObjectSelection,
     CLEAR_SELECTED_OBJECTS: clearSelectedObjects,
-    SET_OBJECTS_PAGINATION_INFO: setObjectsPaginationInfo,
-    SET_TAGS_FILTER: setTagsFilter,
-    SET_TAGS_FILTER_INPUT: setTagsFilterInput,
-    SET_SHOW_DELETE_DIALOG_OBJECTS: setShowDeleteDialogObjects,
-    SET_OBJECTS_FETCH: setObjectsFetch
+    SET_OBJECTS_LIST_PAGINATION_INFO: setObjectsListPaginationInfo,
+    SET_OBJECTS_LIST_TAGS_FILTER: setObjectsListTagsFilter,
+    SET_OBJECTS_LIST_TAGS_FILTER_INPUT: setObjectsListTagsFilterInput,
+    SET_OBJECTS_LIST_SHOW_DELETE_DIALOG: setShowDeleteDialogObjects,
+    SET_OBJECTS_LIST_FETCH: setObjectsListFetch
 };
 
 export default root;

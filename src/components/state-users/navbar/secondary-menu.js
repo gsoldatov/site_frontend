@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Loader, Menu } from "semantic-ui-react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 
-import { getCurrentUserData } from "../../../fetches/ui/navbar";
+import { fetchCurrentUserData } from "../../../fetches/ui/navbar";
 import { logoutFetch } from "../../../fetches/data/auth";
 import { registrationStatusFetch } from "../../../fetches/data/settings";
 
@@ -89,7 +89,7 @@ const LoggedInSecondaryMenu = () => {
 
     // Ensure user information is in the state
     useEffect(() => {
-        dispatch(getCurrentUserData());
+        dispatch(fetchCurrentUserData());
     }, []);
 
     // User params

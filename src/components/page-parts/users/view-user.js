@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { Button, Message, Loader, Header } from "semantic-ui-react";
 
-import { getNonCachedUsers } from "../../../fetches/data/users";
+import { fetchMissingUsers } from "../../../fetches/data/users";
 import { NumericUserLevel } from "../../../store/types/data/auth";
 
 
@@ -28,7 +28,7 @@ export const ViewUser = ({ setIsEditMode }) => {
     useEffect(() => {
         const fetchData = async () => {
             setIsFetching(true);
-            const result = await dispatch(getNonCachedUsers([id], fullViewMode));
+            const result = await dispatch(fetchMissingUsers([id], fullViewMode));
             if (result.error !== undefined) setError(result.error);
             setIsFetching(false);
         };

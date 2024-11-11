@@ -1,4 +1,4 @@
-import { ADD_OBJECTS, ADD_OBJECT_DATA, DELETE_OBJECTS, UPDATE_OBJECT_DATA } from "../actions/data-objects";
+import { ADD_OBJECTS, ADD_OBJECTS_DATA, DELETE_OBJECTS, UPDATE_OBJECTS_DATA } from "../actions/data-objects";
 import { deepMerge } from "../util/copy";
 
 import { getStateWithAddedObjects, getStateWithAddedObjectsData, getStateWithDeletedObjects } from "./helpers/data-objects";
@@ -8,11 +8,11 @@ const addObjects = (state, action) => {
     return getStateWithAddedObjects(state, action.objects);
 };
 
-const addObjectData = (state, action) => {
+const addObjectsData = (state, action) => {
     return getStateWithAddedObjectsData(state, action.objectData);
 }
 
-const updateObjectData = (state, action) => {
+const updateObjectsData = (state, action) => {
     const { objectData } = action;
     let newLinks = {}, newMarkdown = {}, newTDL = {}, newComposite = {};
 
@@ -41,8 +41,8 @@ const deleteObjects = (state, action) => {
 
 const root = {
     ADD_OBJECTS: addObjects,
-    ADD_OBJECT_DATA: addObjectData,
-    UPDATE_OBJECT_DATA: updateObjectData,
+    ADD_OBJECTS_DATA: addObjectsData,
+    UPDATE_OBJECTS_DATA: updateObjectsData,
     DELETE_OBJECTS: deleteObjects
 };
 

@@ -14,7 +14,7 @@ import { renderWithWrappers } from "../../../_util/render";
 import { getFeedElements } from "../../../_util/ui-index";
 
 import { App } from "../../../../src/components/app";
-import { getNonCachedTags } from "../../../../src/fetches/data/tags";
+import { fetchMissingTags } from "../../../../src/fetches/data/tags";
 
 
 /*
@@ -188,7 +188,7 @@ test("Check tag links", async () => {
 
 test("Check tags input & added tags", async () => {
     let store = await getStoreWithTwoSelectedObjects();
-    await store.dispatch(getNonCachedTags([7]));    // additional tags is required to test adding of an existing tag
+    await store.dispatch(fetchMissingTags([7]));    // additional tags is required to test adding of an existing tag
 
     // Route component is required for matching (getting :id part of the URL in the Object component)
     let { container } = renderWithWrappers(<App />, {
@@ -366,7 +366,7 @@ test("Check side menu", async () => {
 
 test("Check tags update + editedObjects reset", async () => {
     let store = await getStoreWithTwoSelectedObjects();
-    await store.dispatch(getNonCachedTags([7]));    // additional tags is required to test adding of an existing tag
+    await store.dispatch(fetchMissingTags([7]));    // additional tags is required to test adding of an existing tag
 
     // Add & remove tags for two objects on the /objects/edit/:id page without saving the changes
     let {container, historyManager } = renderWithWrappers(<App />, {

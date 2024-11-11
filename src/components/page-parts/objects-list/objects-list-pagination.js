@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Pagination } from "../../modules/pagination";
 
-import { pageFetch } from "../../../fetches/ui-objects-list";
+import { objectsListPageFetch } from "../../../fetches/ui-objects-list";
 
 
 /**
@@ -15,7 +15,7 @@ export const ObjectsListPagination = () => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const onPageChange = useMemo(() => (e, props) => {
-        dispatch(pageFetch(props.activePage));
+        dispatch(objectsListPageFetch(props.activePage));
     }, []);
 
     return <Pagination activePage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />;

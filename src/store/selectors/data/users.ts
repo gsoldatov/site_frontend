@@ -1,4 +1,4 @@
-import type { UpdateUsersFetchData } from "../../../fetches/types/data/users";
+import type { UsersUpdateFetchData } from "../../../fetches/types/data/users";
 import type { State } from "../../types/state";
 
 
@@ -12,8 +12,8 @@ export class UsersSelectors {
      * 
      * (NOTE: some attributes are not directly compared to their current values.)
      */
-    static getUpdatedUserValues(state: State, updates: UpdateUsersFetchData & Record<string, any>): Partial<UpdateUsersFetchData> {
-        const result: Partial<UpdateUsersFetchData> & Record<string, any> = {};
+    static getUpdatedUserValues(state: State, updates: UsersUpdateFetchData & Record<string, any>): Partial<UsersUpdateFetchData> {
+        const result: Partial<UsersUpdateFetchData> & Record<string, any> = {};
         const currentUserData = state.users[updates.user_id];
     
         if (updates.login.length > 0) result.login = updates.login;

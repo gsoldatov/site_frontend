@@ -6,8 +6,8 @@ import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
 
-import { setCurrentObjectsTags, setObjectsTagsInput  } from "../../../actions/objects-list";
-import { objectsTagsDropdownFetch } from "../../../fetches/ui-objects-list";
+import { setObjectsListCurrentTags, setObjectsListTagsInput  } from "../../../actions/objects-list";
+import { objectsListTagsDropdownFetch } from "../../../fetches/ui-objects-list";
 import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingTagIDsSelector, addedTagsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-list";
 
 
@@ -60,9 +60,9 @@ const NewTagInput = () => {
     const dispatch = useDispatch();
     const inputState = useSelector(state => state.objectsListUI.tagsInput);
     
-    const setInputState = useMemo(() => newState => dispatch(setObjectsTagsInput(newState)), []);
-    const setItem = useMemo(() => params => dispatch(setCurrentObjectsTags(params)), []);
-    const onSearchChangeDelayed = useMemo(() => params => dispatch(objectsTagsDropdownFetch(params)), []);
+    const setInputState = useMemo(() => newState => dispatch(setObjectsListTagsInput(newState)), []);
+    const setItem = useMemo(() => params => dispatch(setObjectsListCurrentTags(params)), []);
+    const onSearchChangeDelayed = useMemo(() => params => dispatch(objectsListTagsDropdownFetch(params)), []);
 
     const existingIDs = useSelector(existingTagIDsSelector);
     const matchingIDsText = useSelector(matchingTagIDsNames);
@@ -100,7 +100,7 @@ const CommonCurrentTagItem = memo(({ id }) => {
         [{ 
             name: isRemoved ? "undo" : "remove", 
             title: isRemoved ? "Restore tag" : "Remove tag", 
-            onClick: () => { dispatch(setCurrentObjectsTags({ removed: [id] })) } 
+            onClick: () => { dispatch(setObjectsListCurrentTags({ removed: [id] })) } 
         }]
     , [id, isRemoved]);
 
@@ -115,7 +115,7 @@ const AddedTagItem = memo(({ id }) => {
     const className = typeof(id) === "number" ? "existing" : "new";
     const URL = typeof(id) === "number" ? `/tags/view?tagIDs=${id}` : undefined;
     const icons = useMemo(() => 
-        [{ name: "remove", title: "Remove tag", onClick: () => { dispatch(setCurrentObjectsTags({ added: [id] })) }}]
+        [{ name: "remove", title: "Remove tag", onClick: () => { dispatch(setObjectsListCurrentTags({ added: [id] })) }}]
     , [id]);
 
     return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
@@ -134,9 +134,9 @@ const PartiallyAppliedTagItem = memo(({ id }) => {
         [{ 
             name: isAdded ? "remove" : isRemoved ? "undo" : "plus",
             title: isAdded ? "Remove tag from all objects" : isRemoved ? "Restore tag" : "Tag all objects",
-            onClick: isAdded ? () => dispatch(setCurrentObjectsTags({ added: [id], removed: [id] }))
-                : isRemoved ? () => dispatch(setCurrentObjectsTags({ removed: [id] }))
-                : () => dispatch(setCurrentObjectsTags({ added: [id] }))
+            onClick: isAdded ? () => dispatch(setObjectsListCurrentTags({ added: [id], removed: [id] }))
+                : isRemoved ? () => dispatch(setObjectsListCurrentTags({ removed: [id] }))
+                : () => dispatch(setObjectsListCurrentTags({ added: [id] }))
         }]
     , [id, isAdded, isRemoved]);
 

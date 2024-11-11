@@ -1,7 +1,7 @@
-import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
-    SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_OBJECT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_SELECTED_TAB, 
-    SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_TO_DO_LIST_RERENDER_PENDING, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
-    PRE_SAVE_EDITED_OBJECTS_UPDATE, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
+import { LOAD_OBJECTS_EDIT_NEW_PAGE, LOAD_OBJECTS_EDIT_EXISTING_PAGE, RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
+    SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_OBJECTS_EDIT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_OBJECTS_EDIT_SELECT_TAB, 
+    SET_OBJECTS_EDIT_SHOW_RESET_DIALOG, SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG, SET_TO_DO_LIST_RERENDER_PENDING, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
+    PRE_SAVE_EDITED_OBJECTS_UPDATE, SET_OBJECTS_EDIT_LOAD_FETCH_STATE, SET_OBJECTS_EDIT_SAVE_FETCH_STATE
     } from "../actions/objects-edit";
 import { deepCopy } from "../util/copy";
 
@@ -17,7 +17,7 @@ import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
 
 
-function loadNewObjectPage(state, action) {
+function loadObjectsEditNewPage(state, action) {
     // Add a new edited object if it's missing
     let editedObjects = state.editedObjects;
     if (editedObjects[0] === undefined) {
@@ -65,7 +65,7 @@ function loadNewObjectPage(state, action) {
 }
 
 
-function loadEditObjectPage(state, action) {
+function loadObjectsEditExistingPage(state, action) {
     return {
         ...state,
         objectsEditUI: {
@@ -248,7 +248,7 @@ function clearUnsavedCurrentEditedObject(state, action) {
 }
 
 
-function setObjectTagsInput(state, action) {
+function setObjectsEditTagsInput(state, action) {
     const oldTagsInput = state.objectsEditUI.tagsInput;
     return {
         ...state,
@@ -363,7 +363,7 @@ function resetEditedObjectsTags(state, action) {
 }
 
 
-function setSelectedTab(state, action) {
+function setObjectsEditSelectedTab(state, action) {
     return {
         ...state,
         objectsEditUI: {
@@ -374,7 +374,7 @@ function setSelectedTab(state, action) {
 }
 
 
-function setShowResetDialogObject(state, action) {
+function setObjectsEditShowResetDialog(state, action) {
     return {
         ...state,
         objectsEditUI: {
@@ -386,7 +386,7 @@ function setShowResetDialogObject(state, action) {
 }
 
 
-function setShowDeleteDialogObject(state, action) {
+function setObjectsEditShowDeleteDialog(state, action) {
     return {
         ...state,
         objectsEditUI: {
@@ -455,7 +455,7 @@ const preSaveEditedObjectsUpdate = (state, action) => {
 };
 
 
-function setObjectOnLoadFetchState(state, action) {
+function setObjectsEditLoadFetchState(state, action) {
     return {
         ...state,
         objectsEditUI: {
@@ -469,7 +469,7 @@ function setObjectOnLoadFetchState(state, action) {
 }
 
 
-function setObjectOnSaveFetchState(state, action) {
+function setObjectsEditSaveFetchState(state, action) {
     return {
         ...state,
         objectsEditUI: {
@@ -484,23 +484,23 @@ function setObjectOnSaveFetchState(state, action) {
 
 
 const root = {
-    LOAD_ADD_OBJECT_PAGE: loadNewObjectPage,
-    LOAD_EDIT_OBJECT_PAGE: loadEditObjectPage,
+    LOAD_OBJECTS_EDIT_NEW_PAGE: loadObjectsEditNewPage,
+    LOAD_OBJECTS_EDIT_EXISTING_PAGE: loadObjectsEditExistingPage,
     RESET_EDITED_OBJECTS: resetEditedObjects,
     REMOVE_EDITED_OBJECTS: removeEditedObjects,
     SET_EDITED_OBJECT: setEditedObject,
     CLEAR_UNSAVED_CURRENT_EDITED_OBJECT: clearUnsavedCurrentEditedObject,
-    SET_OBJECT_TAGS_INPUT: setObjectTagsInput,
+    SET_OBJECTS_EDIT_TAGS_INPUT: setObjectsEditTagsInput,
     SET_EDITED_OBJECT_TAGS: setEditedObjectTags,
     RESET_EDITED_OBJECTS_TAGS: resetEditedObjectsTags,
-    SET_SELECTED_TAB: setSelectedTab,
-    SET_SHOW_RESET_DIALOG_OBJECT: setShowResetDialogObject,
-    SET_SHOW_DELETE_DIALOG_OBJECT: setShowDeleteDialogObject,
+    SET_OBJECTS_EDIT_SELECT_TAB: setObjectsEditSelectedTab,
+    SET_OBJECTS_EDIT_SHOW_RESET_DIALOG: setObjectsEditShowResetDialog,
+    SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG: setObjectsEditShowDeleteDialog,
     SET_TO_DO_LIST_RERENDER_PENDING: setToDoListRerenderPending,
     SET_ADD_COMPOSITE_SUBOBJECT_MENU: setAddCompositeSubobjectMenu,
     PRE_SAVE_EDITED_OBJECTS_UPDATE: preSaveEditedObjectsUpdate,
-    SET_OBJECT_ON_LOAD_FETCH_STATE: setObjectOnLoadFetchState,
-    SET_OBJECT_ON_SAVE_FETCH_STATE: setObjectOnSaveFetchState
+    SET_OBJECTS_EDIT_LOAD_FETCH_STATE: setObjectsEditLoadFetchState,
+    SET_OBJECTS_EDIT_SAVE_FETCH_STATE: setObjectsEditSaveFetchState
 };
 
 export default root;

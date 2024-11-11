@@ -1,11 +1,11 @@
 import { getResponseErrorType } from "./common";
-import { addObjectFetch, viewObjectsFetch, updateObjectFetch, deleteObjectsFetch, objectsSearchFetch } from "./data-objects";
-import { getNonCachedTags, tagsSearchFetch } from "./data/tags";
+import { objectsAddFetch, objectsViewFetch, objectsUpdateFetch, objectsDeleteFetch, objectsSearchFetch } from "./data-objects";
+import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { loadNewObjectPage, loadEditObjectPage, setEditedObject, resetEditedObjects, setEditedObjectTags,
-    setObjectOnLoadFetchState, setObjectOnSaveFetchState, setShowDeleteDialogObject,  
-    setObjectTagsInput, setAddCompositeSubobjectMenu,
+import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setEditedObject, resetEditedObjects, setEditedObjectTags,
+    setObjectsEditLoadFetchState, setObjectsEditSaveFetchState, setObjectsEditShowDeleteDialog,  
+    setObjectsEditTagsInput, setAddCompositeSubobjectMenu,
     preSaveEditedObjectsUpdate, setToDoListRerenderPending } from "../actions/objects-edit";
 
 import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-objects-edit";
@@ -17,29 +17,29 @@ import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 /**
  * Loads default state of /objects/edit/new page & loads composite object's subobject data.
  */
-export const addObjectOnLoad = () => {
+export const objectsEditNewOnLoad = () => {
     return async (dispatch, getState) => {
         // Load initial page state and start loading composite subobjects
-        dispatch(loadNewObjectPage());
+        dispatch(loadObjectsEditNewPage());
 
         // Fetch tag data of added tags, if it's missing
         // Update fetch status
-        dispatch(setObjectOnLoadFetchState(true, ""));
+        dispatch(setObjectsEditLoadFetchState(true, ""));
 
         // Fetch missing tags if object attributes, tags & data are present in the state
-        let result = await dispatch(getNonCachedTags(getState().editedObjects[0].addedTags));
+        let result = await dispatch(fetchMissingTags(getState().editedObjects[0].addedTags));
 
         // Handle fetch errors
         if (result.failed) {
-            dispatch(setObjectOnLoadFetchState(false, result.error));
+            dispatch(setObjectsEditLoadFetchState(false, result.error));
             return;
         }
 
         // Update fetch status
-        dispatch(setObjectOnLoadFetchState(false, ""));
+        dispatch(setObjectsEditLoadFetchState(false, ""));
 
         // Start loading composite objects
-        dispatch(loadCompositeSubobjectsFetch(0));
+        dispatch(objectsEditLoadCompositeSubobjectsFetch(0));
     };
 };
 
@@ -47,7 +47,7 @@ export const addObjectOnLoad = () => {
 /**
  * Handles "Save" button click on new object page.
  */
-export const addObjectOnSaveFetch = () => {
+export const objectsEditNewSaveFetch = () => {
     return async (dispatch, getState) => {
         let state = getState();
 
@@ -59,19 +59,19 @@ export const addObjectOnSaveFetch = () => {
         dispatch(setToDoListRerenderPending(true));
 
         // Run fetch & add object
-        dispatch(setObjectOnSaveFetchState(true, ""));
-        const result = await dispatch(addObjectFetch(getCurrentObject(state)));
+        dispatch(setObjectsEditSaveFetchState(true, ""));
+        const result = await dispatch(objectsAddFetch(getCurrentObject(state)));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
         if (responseErrorType > enumResponseErrorType.none) {
             const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectOnSaveFetchState(false, errorMessage));
+            dispatch(setObjectsEditSaveFetchState(false, errorMessage));
             return;
         }
 
         // Handle successful fetch end
-        dispatch(setObjectOnSaveFetchState(false, ""));
+        dispatch(setObjectsEditSaveFetchState(false, ""));
         dispatch(setRedirectOnRender(`/objects/edit/${result.object_id}`, { deleteNewObject: true }));
     };
 };
@@ -80,20 +80,20 @@ export const addObjectOnSaveFetch = () => {
 /**
  * Fetches attributes, tags and data of an existing object with the provided `object_id` and adds them to state.editedObjects, if the object was not already edited.
  */
-export const editObjectOnLoadFetch = object_id => {
+export const objectsEditExistingOnLoad = object_id => {
     return async (dispatch, getState) => {
         // Set initial page state
-        dispatch(loadEditObjectPage(object_id));
+        dispatch(loadObjectsEditExistingPage(object_id));
 
         // Exit if object_id is not valid
         object_id = parseInt(object_id);
         if (!(object_id > 0)) {
-            dispatch(setObjectOnLoadFetchState(false, "Object not found."));
+            dispatch(setObjectsEditLoadFetchState(false, "Object not found."));
             return;
         }
 
         // Update fetch status
-        dispatch(setObjectOnLoadFetchState(true, ""));
+        dispatch(setObjectsEditLoadFetchState(true, ""));
         
         // Check if object attributes, tags and data should be fetched and/or added to state.editedObjects
         let state = getState();
@@ -106,44 +106,44 @@ export const editObjectOnLoadFetch = object_id => {
         if (fetchAttributesAndTags || fetchData) {
             let objectIDs = fetchAttributesAndTags ? [object_id] : undefined;
             let objectDataIDs = fetchData ? [object_id] : undefined;
-            let result = await dispatch(viewObjectsFetch(objectIDs, objectDataIDs));
+            let result = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
 
             // Handle fetch errors
             const responseErrorType = getResponseErrorType(result);
             if (responseErrorType > enumResponseErrorType.none) {
                 const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-                dispatch(setObjectOnLoadFetchState(false, errorMessage));
+                dispatch(setObjectsEditLoadFetchState(false, errorMessage));
                 return;
             }
         } else {
             // Fetch missing tags if object attributes, tags & data are present in the state
-            let result = await dispatch(getNonCachedTags(state.objectsTags[object_id]));
+            let result = await dispatch(fetchMissingTags(state.objectsTags[object_id]));
 
             // Handle fetch errors
             if (result.failed) {
-                dispatch(setObjectOnLoadFetchState(false, result.error));
+                dispatch(setObjectsEditLoadFetchState(false, result.error));
                 return;
             }
         }
 
         // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
-        if (setEditedObjects) dispatch(resetEditedObjects({}));  // object_id is taken from state.objectsEditUI.currentObjectID (which was set by loadEditObjectPage)
+        if (setEditedObjects) dispatch(resetEditedObjects({}));  // object_id is taken from state.objectsEditUI.currentObjectID (which was set by loadObjectsEditExistingPage)
 
         // Get non-cached added existing tag information
         const addedExistingTagIDs = getState().editedObjects[object_id].addedTags.filter(tag => typeof(tag) === "number");
-        let result = await dispatch(getNonCachedTags(addedExistingTagIDs));
+        let result = await dispatch(fetchMissingTags(addedExistingTagIDs));
 
         // Handle fetch errors
         if (result.failed) {
-            dispatch(setObjectOnLoadFetchState(false, result.error));
+            dispatch(setObjectsEditLoadFetchState(false, result.error));
             return;
         }
 
         // Run composite object's subobject data load without awaiting it
-        dispatch(loadCompositeSubobjectsFetch(object_id));
+        dispatch(objectsEditLoadCompositeSubobjectsFetch(object_id));
 
         // End fetch
-        dispatch(setObjectOnLoadFetchState(false, ""));
+        dispatch(setObjectsEditLoadFetchState(false, ""));
     };
 };
 
@@ -151,7 +151,7 @@ export const editObjectOnLoadFetch = object_id => {
 /**
  * Handles "Save" button click on existing object page.
  */
-export const editObjectOnSaveFetch = () => {
+export const objectsEditExistingSaveFetch = () => {
     return async (dispatch, getState) => {
         let state = getState();
 
@@ -163,21 +163,21 @@ export const editObjectOnSaveFetch = () => {
         dispatch(setToDoListRerenderPending(true));
 
         // Run fetch & update object
-        dispatch(setObjectOnSaveFetchState(true, ""));
-        const result = await dispatch(updateObjectFetch(getCurrentObject(state)));
+        dispatch(setObjectsEditSaveFetchState(true, ""));
+        const result = await dispatch(objectsUpdateFetch(getCurrentObject(state)));
         
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
         if (responseErrorType > enumResponseErrorType.none) {
             const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectOnSaveFetchState(false, errorMessage));
+            dispatch(setObjectsEditSaveFetchState(false, errorMessage));
             return;
         }
 
         // Handle successful fetch end
         dispatch(setEditedObjectTags({ currentTagIDs: getState().objectsTags[result.object_id], added: [], removed: [] }));
         dispatch(setEditedObject(result));
-        dispatch(setObjectOnSaveFetchState(false, ""));
+        dispatch(setObjectsEditSaveFetchState(false, ""));
     };        
 };
 
@@ -187,24 +187,24 @@ export const editObjectOnSaveFetch = () => {
  * 
  * If `deleteSubobjects` is true, deletes all subobjects along with the composite object.
  */
-export const editObjectOnDeleteFetch = deleteSubobjects => {
+export const objectsEditExistingDeleteFetch = deleteSubobjects => {
     return async (dispatch, getState) => {
         // Exit if already fetching
         let state = getState();
         if (isFetchingObject(state)) return;
 
         // Hide delete dialog
-        dispatch(setShowDeleteDialogObject(false));
+        dispatch(setObjectsEditShowDeleteDialog(false));
 
         // Run fetch & delete object data from state
-        dispatch(setObjectOnSaveFetchState(true, ""));
-        const result = await dispatch(deleteObjectsFetch( [state.objectsEditUI.currentObjectID], deleteSubobjects ));
+        dispatch(setObjectsEditSaveFetchState(true, ""));
+        const result = await dispatch(objectsDeleteFetch( [state.objectsEditUI.currentObjectID], deleteSubobjects ));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
         if (responseErrorType > enumResponseErrorType.none) {
             const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectOnSaveFetchState(false, errorMessage));
+            dispatch(setObjectsEditSaveFetchState(false, errorMessage));
             return;
         }
 
@@ -217,7 +217,7 @@ export const editObjectOnDeleteFetch = deleteSubobjects => {
 /**
  * Handles objects tags dropdown with matching tags update.
  */
-export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
+export const objectsEditTagsDropdownFetch = ({queryText, existingIDs}) => {
     return async (dispatch, getState) => {
         // Input text at the start of the query
         const inputText = getState().objectsEditUI.tagsInput.inputText;
@@ -231,12 +231,12 @@ export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
 
             // Reset matching IDs if an item was added before the fetch start
             if (inputText.length === 0) {
-                dispatch(setObjectTagsInput({ matchingIDs: [] }));
+                dispatch(setObjectsEditTagsInput({ matchingIDs: [] }));
                 return;
             }
 
             // Update matching tags if input text didn't change during fetch
-            if (inputText === currentInputText) dispatch(setObjectTagsInput({ matchingIDs: result.tagIDs }));
+            if (inputText === currentInputText) dispatch(setObjectsEditTagsInput({ matchingIDs: result.tagIDs }));
         }
     };
 };
@@ -245,7 +245,7 @@ export const objectTagsDropdownFetch = ({queryText, existingIDs}) => {
 /**
  * Handles composite object add subobject dropdown values update.
  */
-export const compositeSubobjectDropdownFetch = ({queryText, existingIDs}) => {
+export const objectsEditCompositeSubobjectDropdownFetch = ({queryText, existingIDs}) => {
     return async (dispatch, getState) => {
         // Exit fetch if an item was added before the start of the fetch
         const inputText = getState().objectsEditUI.addCompositeSubobjectMenu.inputText;
@@ -267,7 +267,7 @@ export const compositeSubobjectDropdownFetch = ({queryText, existingIDs}) => {
  * 
  * Does nothing if the object is not composite.
  */
-export const loadCompositeSubobjectsFetch = objectID => {
+export const objectsEditLoadCompositeSubobjectsFetch = objectID => {
     return async (dispatch, getState) => {
         let state = getState();
         
@@ -286,7 +286,7 @@ export const loadCompositeSubobjectsFetch = objectID => {
             dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "", subobjectIDs: nonCachedSubobjectIDs }}, objectID));
             
             // Fetch subobjects from backend
-            let result = await dispatch(viewObjectsFetch(subobjectIDsWithMissingAttributesOrTags, subobjectIDsWithMissingData));
+            let result = await dispatch(objectsViewFetch(subobjectIDsWithMissingAttributesOrTags, subobjectIDsWithMissingData));
 
             // Handle fetch error
             if (getResponseErrorType(result) !== enumResponseErrorType.none) {

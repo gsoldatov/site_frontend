@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { Button, Message, Form, Header } from "semantic-ui-react";
 
-import { updateUsersFetch } from "../../../fetches/data/users";
+import { usersUpdateFetch } from "../../../fetches/data/users";
 import { NumericUserLevel, userLevelInfo } from "../../../store/types/data/auth";
 
 
@@ -51,7 +51,7 @@ export const EditUser = ({ setIsEditMode }) => {
 
         // Run fetch to update user data
         const updates = { ...formValues, user_id: id };
-        const result = await dispatch(updateUsersFetch(updates));
+        const result = await dispatch(usersUpdateFetch(updates));
         
         // Handle errors & messages and enable form
         if ("errors" in result) setErrors({ ...getDefaultErrors(), ...result.errors });        

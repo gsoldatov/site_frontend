@@ -7,7 +7,7 @@ import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogButtonsContainer, SideMenuDialogButton } from "../../modules/side-menu/side-menu-dialog";
 
 import { setTagsListShowDeleteDialog } from "../../../reducers/ui/tags-list";
-import { onDeleteFetch } from "../../../fetches/ui/tags-list";
+import { tagsListDeleteFetch } from "../../../fetches/ui/tags-list";
 import { isFetchingTags, isFetchinOrShowingDialogTags } from "../../../store/state-util/ui-tags-list";
 
 import { NumericUserLevel } from "../../../store/types/data/auth";
@@ -63,7 +63,7 @@ const DeleteDialog = () => {
     const dispatch = useDispatch();
     const isVisible = useSelector(state => state.tagsListUI.showDeleteDialog && !isFetchingTags(state));
 
-    const yesOnClick = useMemo(() => () => dispatch(onDeleteFetch()), []);
+    const yesOnClick = useMemo(() => () => dispatch(tagsListDeleteFetch()), []);
     const noOnClick = useMemo(() => () => dispatch(setTagsListShowDeleteDialog(false)), []);
 
     if (!isVisible) return null;

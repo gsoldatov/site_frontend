@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Pagination } from "../../modules/pagination";
 
-import { pageFetch } from "../../../fetches/ui/tags-list";
+import { tagsListPageFetch } from "../../../fetches/ui/tags-list";
 
 
 /**
@@ -15,7 +15,7 @@ export const TagsListPagination = () => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const onPageChange = useMemo(() => (e, props) => {
-        dispatch(pageFetch(props.activePage));
+        dispatch(tagsListPageFetch(props.activePage));
     }, []);
 
     return <Pagination activePage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />;    
