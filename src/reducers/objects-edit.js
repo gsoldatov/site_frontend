@@ -3,9 +3,10 @@ import { LOAD_ADD_OBJECT_PAGE, LOAD_EDIT_OBJECT_PAGE, RESET_EDITED_OBJECTS, REMO
     SET_SHOW_RESET_DIALOG_OBJECT, SET_SHOW_DELETE_DIALOG_OBJECT, SET_TO_DO_LIST_RERENDER_PENDING, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
     PRE_SAVE_EDITED_OBJECTS_UPDATE, SET_OBJECT_ON_LOAD_FETCH_STATE, SET_OBJECT_ON_SAVE_FETCH_STATE
     } from "../actions/objects-edit";
-import { deepCopy, deepMerge } from "../util/copy";
+import { deepCopy } from "../util/copy";
 
-import { getTagIDByName, getLowerCaseTagNameOrID } from "../store/state-util/tags";
+import { TagsSelectors } from "../store/selectors/data/tags";
+import { TagsTransformer } from "../store/transformers/data/tags";
 import { getCurrentObject } from "../store/state-util/ui-objects-edit";
 
 import { getStateWithResetEditedObjects, getStateWithResetEditedExistingSubobjects, getStateWithDeletedEditedNewSubobjects, 
@@ -280,20 +281,20 @@ function setEditedObjectTags(state, action) {
     if (action.tagUpdates.added instanceof Array && action.tagUpdates.added.length === 0) { // handle reset case
         newAddedTags = [];
     } else {    // handle general update case
-        const lowerCaseOldAddedTags = oldObject.addedTags.map(t => getLowerCaseTagNameOrID(t));
+        const lowerCaseOldAddedTags = oldObject.addedTags.map(t => TagsTransformer.getLowerCaseTagNameOrID(t));
         const at = (action.tagUpdates.added || []).map(tag => {     // replace tag names by ids if there is a match in local state
             if (typeof(tag) === "number") {
-                if (lowerCaseOldAddedTags.includes(getLowerCaseTagNameOrID(state.tags[tag].tag_name))) return state.tags[tag].tag_name;    // If existing tag was added by tag_name, add it by tag name a second time
+                if (lowerCaseOldAddedTags.includes(TagsTransformer.getLowerCaseTagNameOrID(state.tags[tag].tag_name))) return state.tags[tag].tag_name;    // If existing tag was added by tag_name, add it by tag name a second time
                 return tag;
             }
-            if (lowerCaseOldAddedTags.includes(getLowerCaseTagNameOrID(tag))) return tag;   // If existing tag was added by tag_name, add it by tag name a second time
-            return getTagIDByName(state, tag) || tag;
+            if (lowerCaseOldAddedTags.includes(TagsTransformer.getLowerCaseTagNameOrID(tag))) return tag;   // If existing tag was added by tag_name, add it by tag name a second time
+            return TagsSelectors.getTagIDByName(state, tag) || tag;
         });
         if (at) {
-            const lowerCaseAT = at.map(t => getLowerCaseTagNameOrID(t));
+            const lowerCaseAT = at.map(t => TagsTransformer.getLowerCaseTagNameOrID(t));
             newAddedTags = oldObject.addedTags.slice();
-            newAddedTags = newAddedTags.filter(t => !lowerCaseAT.includes(getLowerCaseTagNameOrID(t)));
-            newAddedTags = newAddedTags.concat(at.filter(t => !lowerCaseOldAddedTags.includes(getLowerCaseTagNameOrID(t))));
+            newAddedTags = newAddedTags.filter(t => !lowerCaseAT.includes(TagsTransformer.getLowerCaseTagNameOrID(t)));
+            newAddedTags = newAddedTags.concat(at.filter(t => !lowerCaseOldAddedTags.includes(TagsTransformer.getLowerCaseTagNameOrID(t))));
 
             addedExistingTagIDs = newAddedTags.filter(t => oldObject.currentTagIDs.includes(t));  // move added tag IDs which are already present in the current tags into removed
             newAddedTags = newAddedTags.filter(t => !addedExistingTagIDs.includes(t));
