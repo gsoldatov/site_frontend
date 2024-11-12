@@ -7,7 +7,7 @@ import { Loader, Message, Header, Table } from "semantic-ui-react";
 import { RenderedMarkdown } from "../../../modules/markdown/rendered-markdown";
 
 import { objectsViewGroupedLinksOnLoad } from "../../../../fetches/ui-objects-view";
-import { getSingleColumnSubobjectDisplayOrder } from "../../../../store/state-util/composite";
+import { CompositeSelectors } from "../../../../store/selectors/data/objects/composite";
 import { useMountedState } from "../../../../util/hooks/use-mounted-state";
 import { useParsedMarkdownState } from "../../../../util/hooks/use-parsed-markdown-state";
 
@@ -72,7 +72,7 @@ const GroupedLinksOther = ({ objectID }) => {
     const nonLinkSubobjectIDsSelector = useMemo(() => createSelector(
         state => state.composite[objectID],
         state => state.objects,
-        (composite, objects) => getSingleColumnSubobjectDisplayOrder(composite)
+        (composite, objects) => CompositeSelectors.getSingleColumnSubobjectDisplayOrder(composite)
                                 .filter(subobjectID => objects[subobjectID] !== undefined && objects[subobjectID].object_type !== "link")
     ), [objectID]);
     const nonLinkSubobjectIDs = useSelector(nonLinkSubobjectIDsSelector);
@@ -93,7 +93,7 @@ const GroupedLinksCard = ({ objectID }) => {
     const linkSubobjectIDsSelector = createSelector(
         state => state.composite[objectID],
         state => state.objects,
-        (composite, objects) => getSingleColumnSubobjectDisplayOrder(composite)
+        (composite, objects) => CompositeSelectors.getSingleColumnSubobjectDisplayOrder(composite)
                                 .filter(subobjectID => (objects[subobjectID] || {}).object_type === "link")
     );
     const linkSubobjectIDs = useSelector(linkSubobjectIDsSelector);

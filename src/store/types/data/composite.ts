@@ -27,6 +27,12 @@ export const composite = z.object({
 });
 
 
+/** Composite object data type. */
+export type Composite = z.infer<typeof composite>;
+/** Composite object data or its part containing `subobjects` record. */
+export type CompositeSubobjects = Pick<Composite, "subobjects">;
+
+
 /** Composite objects' data store schema. */
 export const compositeStore = z.record(positiveIntIndex, composite);
 

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
 import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified, getObjectDataFromStore } from "../../../../../../store/state-util/objects";
-import { subobjectStateIsModified, nonCompositeSubobjectIsValid, getNonCompositeSubobjectValidationError } from "../../../../../../store/state-util/composite";
+import { CompositeSelectors } from "../../../../../../store/selectors/data/objects/composite";
 import { SubobjectDeleteModes } from "../../../../../../store/types/data/composite";
 import { enumObjectTypes } from "../../../../../../util/enums/enum-object-types";
 
@@ -97,11 +97,11 @@ const Indicators = ({ objectID, subobjectID }) => {
         // Non-composite validation error & composite selectors
         const validationErrorTitleTextSelector = createSelector(
             state => state.editedObjects[subobjectID],
-            editedObject => getNonCompositeSubobjectValidationError(editedObject)
+            editedObject => CompositeSelectors.getNonCompositeSubobjectValidationError(editedObject)
         );
         const validationErrorIsDisplayedSelector = createSelector(
             state => state.editedObjects[subobjectID],
-            editedObject => !nonCompositeSubobjectIsValid(editedObject)
+            editedObject => !CompositeSelectors.nonCompositeSubobjectIsValid(editedObject)
         );
 
         // Existing modifed selectors
@@ -123,7 +123,7 @@ const Indicators = ({ objectID, subobjectID }) => {
         const subobjectParamsModifiedIsDisplayedSelector = createSelector(
             state => (state.composite[objectID] || {subobjects: {}}).subobjects[subobjectID],
             state => (state.editedObjects[objectID] || {composite: {subobjects: {}}}).composite.subobjects[subobjectID],
-            (stateInObjectData, stateInEditedObject) => subobjectStateIsModified(stateInObjectData, stateInEditedObject)
+            (stateInObjectData, stateInEditedObject) => CompositeSelectors.subobjectStateIsModified(stateInObjectData, stateInEditedObject)
         );
 
 

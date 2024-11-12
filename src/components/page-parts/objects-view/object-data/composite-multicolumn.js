@@ -7,7 +7,7 @@ import { SubobjectObjectsViewCard } from "../objects-view-card";
 
 import { objectsViewMulticolumnExpandToggleUpdateFetch } from "../../../../fetches/ui-objects-view";
 
-import { getSubobjectDisplayOrder } from "../../../../store/state-util/composite";
+import { CompositeSelectors } from "../../../../store/selectors/data/objects/composite";
 import debounce from "../../../../util/debounce";
 
 import StyleCompositeMulticolumn from "../../../../styles/pages/objects-view/composite-multicolumn.css";
@@ -18,7 +18,7 @@ import StyleCompositeMulticolumn from "../../../../styles/pages/objects-view/com
  */
 export const CompositeMulticolumn = ({ objectID }) => {
     const composite = useSelector(state => state.composite[objectID]);
-    const subobjectOrder = getSubobjectDisplayOrder(composite);
+    const subobjectOrder = CompositeSelectors.getSubobjectDisplayOrder(composite);
     
     const columns = subobjectOrder.map((columnSubobjectIDs, k) => <Column key={k} objectID={objectID} subobjectIDs={columnSubobjectIDs} />);
 

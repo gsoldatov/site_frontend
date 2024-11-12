@@ -2,7 +2,7 @@ import { getStateWithAddedObjects, getStateWithAddedObjectsData, getStateWithDel
 import { getStateWithDeletedEditedNewSubobjects, getStateWithResetEditedObjects } from "./object";
 
 import { SubobjectDeleteModes, getDefaultSubobject } from "../../store/types/data/composite";
-import { getNewSubobjectID } from "../../store/state-util/composite";
+import { CompositeSelectors } from "../../store/selectors/data/objects/composite";
 import { objectHasNoChanges } from "../../store/state-util/objects";
 import { deepCopy } from "../../util/copy";
 
@@ -16,7 +16,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
     // Adds a new subobject with default state to state.editedObjects & composite object data.
     if (command === "addNew") {
         // Add a new edited object
-        const newID = update.subobjectID !== undefined ? update.subobjectID : getNewSubobjectID(state);     // take existing subobjectID if it's passed
+        const newID = update.subobjectID !== undefined ? update.subobjectID : CompositeSelectors.getNewSubobjectID(state);     // take existing subobjectID if it's passed
         let newState = getStateWithResetEditedObjects(state, [newID], { allowResetToDefaults: true });
 
         // Set new object's `is_published` to its parents' value

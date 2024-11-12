@@ -5,7 +5,7 @@ import { objectsUpdateFetch, objectsViewCompositeHierarchyElements, objectsViewF
 import { fetchMissingTags } from "./data/tags";
 
 import { canEditObject, objectDataIsInState } from "../store/state-util/objects";
-import { serializeObjectForUpdate } from "../store/state-util/composite";
+import { CompositeSelectors } from "../store/selectors/data/objects/composite";
 import { getToDoListUpdateFetchBody } from "../store/state-util/to-do-lists";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
@@ -79,7 +79,7 @@ export const objectsViewMulticolumnExpandToggleUpdateFetch = (objectID, subobjec
 
         const newProps = { composite: { subobjects: { [subobjectID]: { is_expanded }}}};
 
-        const object = serializeObjectForUpdate(state, objectID, newProps);
+        const object = CompositeSelectors.serializeObjectForUpdate(state, objectID, newProps);
         
         return await dispatch(objectsUpdateFetch(object));
     };

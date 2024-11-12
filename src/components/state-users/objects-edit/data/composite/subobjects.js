@@ -6,7 +6,7 @@ import { DroppableAddSubobjectMenu } from "./add-subobject-menu";
 import { NewSubobjectGridColumn } from "./new-subobject-grid-column";
 
 import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../../../actions/objects-edit";
-import { getSubobjectDisplayOrder, isCompositeDragAndDropEnabledSelector } from "../../../../../store/state-util/composite";
+import { CompositeSelectors } from "../../../../../store/selectors/data/objects/composite";
 import { SubobjectDeleteModes } from "../../../../../store/types/data/composite";
 
 import StyleCompositeSubobjects from "../../../../../styles/modules/edit/composite-subobjects.css";
@@ -27,9 +27,9 @@ export const SubobjectsContainer = ({ objectID }) => {
 
     const editedObjects = useSelector(state => state.editedObjects);
     const composite = useSelector(state => state.editedObjects[objectID].composite);
-    const subobjectOrder = getSubobjectDisplayOrder(composite);
+    const subobjectOrder = CompositeSelectors.getSubobjectDisplayOrder(composite);
     
-    const canDrag = useSelector(isCompositeDragAndDropEnabledSelector);
+    const canDrag = useSelector(CompositeSelectors.isCompositeDragAndDropEnabledSelector);
     const existingObjectInputRow = useSelector(state => state.objectsEditUI.addCompositeSubobjectMenu.row);
     const existingObjectInputColumn = useSelector(state => state.objectsEditUI.addCompositeSubobjectMenu.column);
     

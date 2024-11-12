@@ -2,7 +2,7 @@ import { deepCopy } from "../../util/copy";
 import { deepEqual } from "../../util/equality-checks";
 import { serializedCompositeObjectDataProps } from "../state-templates/composite-subobjects";
 import { SubobjectDeleteModes } from "../types/data/composite";
-import { getSubobjectDisplayOrder } from "./composite";
+import { CompositeSelectors } from "../selectors/data/objects/composite";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
 import { compositeSubobjectObjectAttributes, addedObjectAttributes, updatedObjectAttributes } from "../state-templates/edited-object";
 import { NumericUserLevel } from "../../store/types/data/auth";
@@ -68,6 +68,8 @@ export const validateObject = (state, obj) => {
  * Validates a single non-composite edited object `obj` and returns true if its valid.
  */
 export const validateNonCompositeObject = obj => {
+    // TODO move to edited objects selectors?
+    // TODO replace with zod validation?
     // Object name
     if (obj.object_name.length === 0) throw Error("Object name is required.");
 
@@ -152,7 +154,7 @@ export const serializeObjectData = (state, obj) => {
             }
             
             // Adjust non-deleted objects' positions
-            const nonDeletedSubobjectsOrder = getSubobjectDisplayOrder({ subobjects: nonDeletedSubobjects }, true);
+            const nonDeletedSubobjectsOrder = CompositeSelectors.getSubobjectDisplayOrder({ subobjects: nonDeletedSubobjects }, true);
             for (let column of nonDeletedSubobjectsOrder) {
                 for (let i = 0; i < column.length; i++) {
                     const subobjectID = column[i];

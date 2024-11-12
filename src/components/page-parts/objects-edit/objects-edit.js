@@ -9,7 +9,7 @@ import { ObjectDataSwitch } from "../../state-users/objects-edit/data/object-dat
 import { DisplayTab } from "../../state-users/objects-edit/display/display-tab";
 
 import { setObjectsEditSelectedTab, setToDoListRerenderPending } from "../../../actions/objects-edit";
-import { isMultiColumnCompositeDataDisplayed } from "../../../store/state-util/composite";
+import { CompositeSelectors } from "../../../store/selectors/data/objects/composite";
 import { enumLayoutTypes } from "../../../util/enums/enum-layout-types";
 
 
@@ -19,7 +19,7 @@ import { enumLayoutTypes } from "../../../util/enums/enum-layout-types";
 export const ObjectsEdit = ({ header, sideMenu, onLoad, objectID }) => {
     const dispatch = useDispatch();
     
-    const enableStylesForMulticolumnCompositeObjectData = useSelector(isMultiColumnCompositeDataDisplayed);
+    const enableStylesForMulticolumnCompositeObjectData = useSelector(CompositeSelectors.isMultiColumnCompositeDataDisplayed);
 
     // On load action (also triggers when object ids change)
     useEffect(() => {
