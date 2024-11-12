@@ -2,7 +2,7 @@ import { SET_OBJECTS_LIST_TAGS_INPUT, SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJE
     SET_OBJECTS_LIST_PAGINATION_INFO, SET_OBJECTS_LIST_TAGS_FILTER, SET_OBJECTS_LIST_TAGS_FILTER_INPUT, SET_OBJECTS_LIST_SHOW_DELETE_DIALOG, SET_OBJECTS_LIST_FETCH } from "../actions/objects-list";
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
-import { commonTagIDsSelector } from "../store/state-util/ui-objects-list";
+import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
 
 function setObjectsListTagsInput(state, action) {
@@ -49,7 +49,7 @@ function setObjectsListCurrentTags(state, action) {
             newAddedTags = newAddedTags.filter(t => !lowerCaseAT.includes(TagsTransformer.getLowerCaseTagNameOrID(t)));
             newAddedTags = newAddedTags.concat(at.filter(t => !lowerCaseOldAddedTags.includes(TagsTransformer.getLowerCaseTagNameOrID(t))));
 
-            addedExistingTagIDs = newAddedTags.filter(t => commonTagIDsSelector(state).includes(t));  // move added tag IDs which are already present in the common tags into removed
+            addedExistingTagIDs = newAddedTags.filter(t => ObjectsListSelectors.commonTagIDs(state).includes(t));  // move added tag IDs which are already present in the common tags into removed
             newAddedTags = newAddedTags.filter(t => !addedExistingTagIDs.includes(t));
         }
     }

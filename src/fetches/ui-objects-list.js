@@ -6,7 +6,7 @@ import { tagsSearchFetch } from "./data/tags";
 import { setObjectsListFetch, setObjectsListPaginationInfo, setObjectsListTagsInput, setObjectsListCurrentTags, 
         setShowDeleteDialogObjects, setObjectsListTagsFilterInput, setObjectsListTagsFilter } from "../actions/objects-list";
 
-import { isFetchingObjects } from "../store/state-util/ui-objects-list";
+import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
@@ -54,7 +54,7 @@ export const setObjectsListTagsFilterAndFetchPage = tagID => {
 export const objectsListPageFetch = currentPage => {
     return async (dispatch, getState) => {
         const state = getState();
-        if (isFetchingObjects(state)) return;
+        if (ObjectsListSelectors.isFetching(state)) return;
 
         dispatch(setObjectsListPaginationInfo({ currentPage }));
         dispatch(setObjectsListFetch(true, ""));
@@ -106,7 +106,7 @@ export const objectsListDeleteFetch = deleteSubobjects => {
     return async (dispatch, getState) => {
         // Exit if already fetching
         let state = getState();
-        if (isFetchingObjects(state)) return;
+        if (ObjectsListSelectors.isFetching(state)) return;
 
         // Hide delete dialog
         dispatch(setShowDeleteDialogObjects(false));
@@ -172,7 +172,7 @@ export function objectsListUpdateTagsFetch() {
     return async (dispatch, getState) => {
         // Exit if already fetching data
         let state = getState();
-        if (isFetchingObjects(state)) return;
+        if (ObjectsListSelectors.isFetching(state)) return;
 
         // Reset tag input
         dispatch(setObjectsListTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));

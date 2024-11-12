@@ -8,14 +8,14 @@ import { InlineInput } from "../../modules/inline/inline-input";
 
 import { setObjectsListCurrentTags, setObjectsListTagsInput  } from "../../../actions/objects-list";
 import { objectsListTagsDropdownFetch } from "../../../fetches/ui-objects-list";
-import { commonTagIDsSelector, partiallyAppliedTagIDsSelector, existingTagIDsSelector, addedTagsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-list";
+import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
 
 
 /**
  * Common, added & partially applied tags for selected objects on the /objects/list page.
  */
 export const SelectedObjectsTags = () => {
-    const isVisible = useSelector(state => state.objectsListUI.selectedObjectIDs.length > 0 || partiallyAppliedTagIDsSelector(state).length > 0);
+    const isVisible = useSelector(state => state.objectsListUI.selectedObjectIDs.length > 0 || ObjectsListSelectors.partiallyAppliedTagIDs(state).length > 0);
     if (!isVisible) return null;
 
     return (
@@ -45,13 +45,13 @@ const CommonTags = () => {
 
 
 const ExistingTagsList = () => {
-    const itemIDs = useSelector(commonTagIDsSelector);
+    const itemIDs = useSelector(ObjectsListSelectors.commonTagIDs);
     return <InlineItemList itemIDs={itemIDs} ItemComponent={CommonCurrentTagItem} />
 };
 
 
 const AddedTagsList = () => {
-    const itemIDs = useSelector(addedTagsSelector);
+    const itemIDs = useSelector(ObjectsListSelectors.addedTags);
     return <InlineItemList itemIDs={itemIDs} ItemComponent={AddedTagItem} />;
 };
 
@@ -64,8 +64,8 @@ const NewTagInput = () => {
     const setItem = useMemo(() => params => dispatch(setObjectsListCurrentTags(params)), []);
     const onSearchChangeDelayed = useMemo(() => params => dispatch(objectsListTagsDropdownFetch(params)), []);
 
-    const existingIDs = useSelector(existingTagIDsSelector);
-    const matchingIDsText = useSelector(matchingTagIDsNames);
+    const existingIDs = useSelector(ObjectsListSelectors.existingTagIDs);
+    const matchingIDsText = useSelector(ObjectsListSelectors.matchingTagIDsNames);
 
     return <InlineInput placeholder="Enter tag name..." inputState={inputState} setInputState={setInputState} setItem={setItem}
         existingIDs={existingIDs} matchingIDsText={matchingIDsText} onSearchChangeDelayed={onSearchChangeDelayed} />;
@@ -76,8 +76,8 @@ const NewTagInput = () => {
  * Common existing & added tags inline item lists.
  */
 const PartiallyAppliedTags = () => {
-    const isVisible = useSelector(state => partiallyAppliedTagIDsSelector(state).length > 0);
-    const itemIDs = useSelector(partiallyAppliedTagIDsSelector);
+    const isVisible = useSelector(state => ObjectsListSelectors.partiallyAppliedTagIDs(state).length > 0);
+    const itemIDs = useSelector(ObjectsListSelectors.partiallyAppliedTagIDs);
     
     if (!isVisible) return null;
 

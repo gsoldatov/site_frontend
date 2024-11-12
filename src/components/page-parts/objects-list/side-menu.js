@@ -8,7 +8,7 @@ import { SideMenuDialog, SideMenuDialogCheckbox, SideMenuDialogButtonsContainer,
 
 import { setShowDeleteDialogObjects, setObjectsListCurrentTags } from "../../../actions/objects-list";
 import { objectsListDeleteFetch, objectsListUpdateTagsFetch } from "../../../fetches/ui-objects-list";
-import { isFetchingObjects, isFetchingOrShowingDeleteDialogObjects, isObjectsTagsEditActive } from "../../../store/state-util/ui-objects-list";
+import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
 
 
 /**
@@ -29,8 +29,8 @@ export const ObjectsListSideMenu = () => {
 
 
 const AddANewObject = () => {
-    const isActive = useSelector(state => !isFetchingOrShowingDeleteDialogObjects(state));
-    const isVisible = useSelector(state => !isObjectsTagsEditActive(state));
+    const isActive = !(useSelector(ObjectsListSelectors.isFetchingOrShowingDeleteDialog));
+    const isVisible = !(useSelector(ObjectsListSelectors.isObjectsTagsEditActive));
     
     if (!isVisible) return null;
     return <SideMenuLink text="Add a New Object" icon="add" iconColor="green" isActive={isActive} URL="/objects/edit/new" />;
@@ -38,9 +38,9 @@ const AddANewObject = () => {
 
 
 const EditObject = () => {
-    const isActive = useSelector(state => state.objectsListUI.selectedObjectIDs.length === 1 && !isFetchingOrShowingDeleteDialogObjects(state));
+    const isActive = useSelector(state => state.objectsListUI.selectedObjectIDs.length === 1 && !ObjectsListSelectors.isFetchingOrShowingDeleteDialog(state));
     const URL = useSelector(state => `/objects/edit/${state.objectsListUI.selectedObjectIDs[0]}`);
-    const isVisible = useSelector(state => !isObjectsTagsEditActive(state));
+    const isVisible = !(useSelector(ObjectsListSelectors.isObjectsTagsEditActive));
     
     if (!isVisible) return null;
     return <SideMenuLink text="Edit Object" icon="edit outline" isActive={isActive} URL={URL} />;
@@ -49,8 +49,8 @@ const EditObject = () => {
 
 const Delete = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => !isFetchingOrShowingDeleteDialogObjects(state) && state.objectsListUI.selectedObjectIDs.length > 0);
-    const isVisible = useSelector(state => !state.objectsListUI.showDeleteDialog && !isObjectsTagsEditActive(state));
+    const isActive = useSelector(state => !ObjectsListSelectors.isFetchingOrShowingDeleteDialog(state) && state.objectsListUI.selectedObjectIDs.length > 0);
+    const isVisible = useSelector(state => !state.objectsListUI.showDeleteDialog && !ObjectsListSelectors.isObjectsTagsEditActive(state));
     const onClick = useMemo(() => () => dispatch(setShowDeleteDialogObjects(true)), []);
 
     if (!isVisible) return null;
@@ -60,7 +60,7 @@ const Delete = () => {
 
 const DeleteDialog = () => {
     const dispatch = useDispatch();
-    const isVisible = useSelector(state => state.objectsListUI.showDeleteDialog && !isFetchingObjects(state));
+    const isVisible = useSelector(state => state.objectsListUI.showDeleteDialog && !ObjectsListSelectors.isFetching(state));
     const isCheckboxVisible = useSelector(state => state.objectsListUI.selectedObjectIDs.some(objectID => state.objects[objectID].object_type === "composite"));
 
     const yesOnClick = useMemo(() => deleteSubobjects => dispatch(objectsListDeleteFetch(deleteSubobjects)), []);
@@ -84,8 +84,8 @@ const DeleteDialog = () => {
 
 const UpdateTags = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => !isFetchingObjects(state));
-    const isVisible = useSelector(state => isObjectsTagsEditActive(state));
+    const isActive = !(useSelector(ObjectsListSelectors.isFetching));
+    const isVisible = useSelector(ObjectsListSelectors.isObjectsTagsEditActive);
     const onClick = useMemo(() => () => dispatch(objectsListUpdateTagsFetch()), []);
 
     if (!isVisible) return null;
@@ -95,8 +95,8 @@ const UpdateTags = () => {
 
 const CancelTagUpdate = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => !isFetchingObjects(state));
-    const isVisible = useSelector(state => isObjectsTagsEditActive(state));
+    const isActive = !(useSelector(ObjectsListSelectors.isFetching));
+    const isVisible = useSelector(ObjectsListSelectors.isObjectsTagsEditActive);
     const onClick = useMemo(() => () => dispatch(setObjectsListCurrentTags({ added: [], removed: [] })), []);
 
     if (!isVisible) return null;

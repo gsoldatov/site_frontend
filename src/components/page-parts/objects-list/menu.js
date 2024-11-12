@@ -7,7 +7,7 @@ import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton,
 
 import { selectObjects, clearSelectedObjects, setObjectsListPaginationInfo, setObjectsListTagsFilterInput  } from "../../../actions/objects-list";
 import { setObjectsListPaginationInfoAndFetchPage, setObjectsListTagsFilterAndFetchPage, objectsListTagsFilterDropdownFetch, } from "../../../fetches/ui-objects-list";
-import { isFetchingObjects } from "../../../store/state-util/ui-objects-list";
+import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
 import { enumObjectTypes } from "../../../util/enums/enum-object-types";
 
 
@@ -18,7 +18,7 @@ export const ObjectsListHorizontalMenu = () => {
     const dispatch = useDispatch();
 
     // Common props
-    const isDisabled = useSelector(state => isFetchingObjects(state));
+    const isDisabled = useSelector(ObjectsListSelectors.isFetching);
     
     // Select all objects button
     const currentPageObjectIDs = useSelector(state => state.objectsListUI.paginationInfo.currentPageObjectIDs);
@@ -73,7 +73,7 @@ export const ObjectsListHorizontalMenu = () => {
 
     // Tags filter clear button
     const tagsFilterClearOnClick = useMemo(() => () => dispatch(setObjectsListTagsFilterAndFetchPage()), []);
-    const tagsFilterClearIsDisabled = useSelector(state => isFetchingObjects(state) || state.objectsListUI.paginationInfo.tagsFilter.length == 0);
+    const tagsFilterClearIsDisabled = useSelector(state => ObjectsListSelectors.isFetching(state) || state.objectsListUI.paginationInfo.tagsFilter.length == 0);
 
     return (
         <HorizontalMenu>
