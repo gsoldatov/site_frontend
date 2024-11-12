@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { removeEditedObjects } from "../../../actions/objects-edit";
-import { toggleObjectsEditedSelection, toggleObjectsEditedSelectAll } from "../../../actions/objects-edited";
+import { toggleObjectsEditedSelection, toggleObjectsEditedSelectAll } from "../../../reducers/ui/objects-edited";
 import { enumObjectTypes } from "../../../util/enums/enum-object-types";
 
 
@@ -79,14 +79,13 @@ const ObjectsEditedTableHeader = ({ setConfirmState }) => {
  */
 const EditedObjectItem = memo(({ objectID, parentObjects = [], parentNames = [], setConfirmState }) => {
     const dispatch = useDispatch();
-    const strObjectID = objectID;
     objectID = parseInt(objectID);
     
     const editedObject = useSelector(state => state.editedObjects[objectID]);
 
     // Checkbox
-    const isChecked = useSelector(state => state.objectsEditedUI.selectedObjectIDs.has(strObjectID));
-    const checkBoxOnClick = useMemo(() => () => dispatch(toggleObjectsEditedSelection(strObjectID)), [objectID]);
+    const isChecked = useSelector(state => state.objectsEditedUI.selectedObjectIDs.has(objectID));
+    const checkBoxOnClick = useMemo(() => () => dispatch(toggleObjectsEditedSelection(objectID)), [objectID]);
     const checkbox = <Checkbox checked={isChecked} onClick={checkBoxOnClick} />;
     
     // Is new icon

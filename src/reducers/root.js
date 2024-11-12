@@ -14,7 +14,7 @@ import { tagsEditRoot } from "./ui/tags-edit";
 import { tagsListRoot } from "./ui/tags-list";
 import objectEdit from "./objects-edit";
 import objectsList from "./objects-list";
-import objectsEdited from "./objects-edited";
+import { objectsEditedRoot } from "./ui/objects-edited";
 
 import { getConfig } from "../config";
 
@@ -54,7 +54,7 @@ const ACTION_HANDLERS = getActionHandlers({
     tagsEditRoot,
     objectEdit,
     objectsList,
-    objectsEdited 
+    objectsEditedRoot 
 });
 
 

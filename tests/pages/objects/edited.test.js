@@ -279,7 +279,7 @@ test("Checkbox selection/deselection", () => {
     // Select object
     const existingLinkRow = getEditedObjectItemRow(container, "existing link");
     clickCheckbox(existingLinkRow.checkboxCell);
-    expect(store.getState().objectsEditedUI.selectedObjectIDs.has("21")).toBeTruthy();    
+    expect(store.getState().objectsEditedUI.selectedObjectIDs.has(21)).toBeTruthy();    
 
     // Deselect object
     clickCheckbox(existingLinkRow.checkboxCell);
@@ -289,7 +289,7 @@ test("Checkbox selection/deselection", () => {
 
 test("Select/deselect all objects", () => {
     const checkIfAllAreSelected = () => {
-        for (let objectID of ["0", "1", "-1", "10", "11", "21", "22", "23"])
+        for (let objectID of [0, 1, -1, 10, 11, 21, 22, 23])
             expect(store.getState().objectsEditedUI.selectedObjectIDs.has(objectID)).toBeTruthy(); 
     };
 
@@ -313,7 +313,7 @@ test("Select/deselect all objects", () => {
     // Select object
     const existingLinkRow = getEditedObjectItemRow(container, "existing link");
     clickCheckbox(existingLinkRow.checkboxCell);
-    expect(store.getState().objectsEditedUI.selectedObjectIDs.has("21")).toBeTruthy();    
+    expect(store.getState().objectsEditedUI.selectedObjectIDs.has(21)).toBeTruthy();    
 
     // Select all then deselect all
     clickCheckbox(headerCells.checkboxCell);
