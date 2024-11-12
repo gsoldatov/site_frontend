@@ -5,7 +5,7 @@ import { HorizontalMenu, HorizontalMenuButton, HorizontalMenuFilter, HorizontalM
 
 import { selectTags, clearSelectedTags, setTagsListPaginationInfo } from "../../../reducers/ui/tags-list";
 import { setTagsListPaginationInfoAndFetchPage } from "../../../fetches/ui/tags-list";
-import { isFetchingTags } from "../../../store/state-util/ui-tags-list";
+import { TagsListSelectors } from "../../../store/selectors/ui/tags-list";
 
 import { NumericUserLevel } from "../../../store/types/data/auth";
 
@@ -18,7 +18,7 @@ export const TagsListHorizontalMenu = () => {
 
     // Common props
     const isLoggedInAsAdmin = useSelector(state => state.auth.numeric_user_level === NumericUserLevel.admin);
-    const isDisabled = useSelector(state => isFetchingTags(state));
+    const isDisabled = useSelector(TagsListSelectors.isFetching);
     
     // Select all tags button
     const currentPageTagIDs = useSelector(state => state.tagsListUI.paginationInfo.currentPageTagIDs);

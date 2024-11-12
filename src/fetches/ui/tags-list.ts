@@ -3,7 +3,7 @@ import { fetchMissingTags, tagsDeleteFetch } from "../data/tags";
 
 import { setTagsListFetch, setTagsListShowDeleteDialog, setTagsListPaginationInfo } from "../../reducers/ui/tags-list";
 
-import { isFetchingTags } from "../../store/state-util/ui-tags-list";
+import { TagsListSelectors } from "../../store/selectors/ui/tags-list";
 
 import { tagsGetPageTagIDsResponseSchema } from "../types/ui/tags-list";
 import type { Dispatch, GetState } from "../../util/types/common";
@@ -28,7 +28,7 @@ export const setTagsListPaginationInfoAndFetchPage = (paginationInfo: Partial<Ta
 export const tagsListPageFetch = (currentPage: number) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         const state = getState();
-        if (isFetchingTags(state)) return;
+        if (TagsListSelectors.isFetching(state)) return;
 
         dispatch(setTagsListPaginationInfo({ currentPage }));
         dispatch(setTagsListFetch({ isFetching: true, fetchError:"" }));
@@ -90,7 +90,7 @@ export const tagsListDeleteFetch = () => {
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         // Exit if already fetching
         let state = getState();
-        if (isFetchingTags(state)) return;
+        if (TagsListSelectors.isFetching(state)) return;
 
         // Hide delete dialog
         dispatch(setTagsListShowDeleteDialog(false));
