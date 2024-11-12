@@ -3,10 +3,9 @@ import { tagsDeleteFetch, fetchMissingTags, tagsAddFetch, tagsUpdateFetch } from
 import { setRedirectOnRender } from "../../reducers/common";
 import { loadTagsEditExistingPage, setTagsEditLoadFetchState, setTagsEditSaveFetchState, setTagsEditShowDeleteDialog, setCurrentTag } from "../../reducers/ui/tags-edit";
 
-import { isFetchingTag } from "../../store/state-util/ui-tags-edit";
+import { TagsEditSelectors } from "../../store/selectors/ui/tags-edit";
 
 import { currentTag } from "../../store/types/ui/tags-edit";
-
 import type { Dispatch, GetState } from "../../util/types/common";
 
 
@@ -17,7 +16,7 @@ export const tagsEditNewSaveFetch = () => {
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         // Exit if already fetching
         let state = getState();
-        if (isFetchingTag(state)) return;
+        if (TagsEditSelectors.isFetching(state)) return;
 
         // Run fetch & add tag
         dispatch(setTagsEditSaveFetchState({ isFetching: true, fetchError: "" }));
@@ -77,7 +76,7 @@ export const tagsEditExistingSaveFetch = () => {
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         // Exit if already fetching
         let state = getState();
-        if (isFetchingTag(state)) return;
+        if (TagsEditSelectors.isFetching(state)) return;
 
         // Run fetch & update tag
         dispatch(setTagsEditSaveFetchState({ isFetching: true, fetchError: "" }));
@@ -104,7 +103,7 @@ export const tagsEditExistingDeleteFetch = () => {
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         // Exit if already fetching
         let state = getState();
-        if (isFetchingTag(state)) return;
+        if (TagsEditSelectors.isFetching(state)) return;
 
         // Hide delete dialog
         dispatch(setTagsEditShowDeleteDialog(false));
