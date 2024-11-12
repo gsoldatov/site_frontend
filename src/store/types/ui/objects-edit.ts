@@ -13,12 +13,12 @@ export const objectsEditUI = z.object({
         matchingIDs: positiveIntArray
     }),
 
-    objectOnLoadFetch: z.object({
+    loadFetch: z.object({
         isFetching: z.boolean(),
         fetchError: z.string()
     }),
     
-    objectOnSaveFetch: z.object({
+    saveFetch: z.object({
         isFetching: z.boolean(),
         fetchError: z.string()
     }),
@@ -51,12 +51,12 @@ export const getObjectsEditUI = (customValues: Partial<ObjectsEditUI> = {}) => o
             matchingIDs: []
         },
 
-        objectOnLoadFetch: {
+        loadFetch: {
             isFetching: false,
             fetchError: ""
         },
 
-        objectOnSaveFetch: {
+        saveFetch: {
             isFetching: false,
             fetchError: ""
         },

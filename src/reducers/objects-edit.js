@@ -41,12 +41,12 @@ function loadObjectsEditNewPage(state, action) {
                 matchingIDs: []
             },
 
-            objectOnLoadFetch: {
+            loadFetch: {
                 isFetching: false,
                 fetchError: ""
             },
 
-            objectOnSaveFetch: {
+            saveFetch: {
                 isFetching: false,
                 fetchError: ""
             },
@@ -79,12 +79,12 @@ function loadObjectsEditExistingPage(state, action) {
                 matchingIDs: []
             },
 
-            objectOnLoadFetch: {
+            loadFetch: {
                 isFetching: false,
                 fetchError: ""
             },
 
-            objectOnSaveFetch: {
+            saveFetch: {
                 isFetching: false,
                 fetchError: ""
             },
@@ -460,7 +460,7 @@ function setObjectsEditLoadFetchState(state, action) {
         ...state,
         objectsEditUI: {
             ...state.objectsEditUI,
-            objectOnLoadFetch: {
+            loadFetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError
             }
@@ -474,7 +474,7 @@ function setObjectsEditSaveFetchState(state, action) {
         ...state,
         objectsEditUI: {
             ...state.objectsEditUI,
-            objectOnSaveFetch: {
+            saveFetch: {
                 isFetching: action.isFetching,
                 fetchError: action.fetchError
             }

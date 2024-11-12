@@ -13,8 +13,8 @@ export const getCurrentObject = state => state.editedObjects[state.objectsEditUI
  * Wait for existing page to be loaded
  */
 export const waitForEditObjectPageLoad = async (container, store) => {
-    await waitFor(() => expect(store.getState().objectsEditUI.objectOnLoadFetch.isFetching).toBeTruthy());
-    await waitFor(() => expect(store.getState().objectsEditUI.objectOnLoadFetch.isFetching).toBeFalsy());
+    await waitFor(() => expect(store.getState().objectsEditUI.loadFetch.isFetching).toBeTruthy());
+    await waitFor(() => expect(store.getState().objectsEditUI.loadFetch.isFetching).toBeFalsy());
     await waitFor(() => getByText(container, "Object Information"));
 };
 

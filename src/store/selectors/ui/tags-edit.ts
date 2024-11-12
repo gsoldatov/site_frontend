@@ -6,7 +6,7 @@ export class TagsEditSelectors {
      * Returns true if any of /tags/edit/:id page fetches are being performed.
      */
     static isFetching(state: State) {
-        return state.tagsEditUI.tagsEditOnLoadFetch.isFetching || state.tagsEditUI.tagsEditOnSaveFetch.isFetching;
+        return state.tagsEditUI.loadFetch.isFetching || state.tagsEditUI.saveFetch.isFetching;
     }
 
 

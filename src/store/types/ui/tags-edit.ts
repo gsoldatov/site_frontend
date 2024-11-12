@@ -34,12 +34,12 @@ export const getCurrentTagState = (customValues: Partial<CurrentTag> = {}) => cu
 export const tagsEditUI = z.object({
     currentTag,
 
-    tagsEditOnLoadFetch: z.object({
+    loadFetch: z.object({
         isFetching: z.boolean(),
         fetchError: z.string()
     }),
     
-    tagsEditOnSaveFetch: z.object({
+    saveFetch: z.object({
         isFetching: z.boolean(),
         fetchError: z.string()
     }),
@@ -50,21 +50,21 @@ export const tagsEditUI = z.object({
 /** /tags/edit/:id page UI state type. */
 type TagsEditUI = z.infer<typeof tagsEditUI>;
 /** /tags/edit/:id on load fetch state type. */
-export type TagsEditOnLoadFetch = z.infer<typeof tagsEditUI.shape.tagsEditOnLoadFetch>;
+export type TagsEditLoadFetch = z.infer<typeof tagsEditUI.shape.loadFetch>;
 /** /tags/edit/:id on save fetch state type. */
-export type TagsEditOnSaveFetch = z.infer<typeof tagsEditUI.shape.tagsEditOnSaveFetch>;
+export type TagsEditSaveFetch = z.infer<typeof tagsEditUI.shape.saveFetch>;
 
 
 /** Returns /tags/edit/:id state with default values being replaced `customValues`. */
 export const getTagsEditUI = (customValues: Partial<TagsEditUI> = {}) => tagsEditUI.parse({
     currentTag: getCurrentTagState(),
 
-    tagsEditOnLoadFetch: {
+    loadFetch: {
         isFetching: false,
         fetchError: ""
     },
 
-    tagsEditOnSaveFetch: {
+    saveFetch: {
         isFetching: false,
         fetchError: ""
     },

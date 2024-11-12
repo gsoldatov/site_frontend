@@ -33,7 +33,7 @@ export const ObjectsEdit = ({ header, sideMenu, onLoad, objectID }) => {
     }, [toDoListRerenderPending]);
 
     // Render loader/error or body
-    const { isFetching, fetchError } = useSelector(state => state.objectsEditUI.objectOnLoadFetch);
+    const { isFetching, fetchError } = useSelector(state => state.objectsEditUI.loadFetch);
 
     const body = isFetching || fetchError ?
         <LoadIndicatorAndError isFetching={isFetching} fetchError={fetchError} />
@@ -83,6 +83,6 @@ const ObjectTabPanes = memo(({ objectID }) => {
  * Save fetch error message
  * */
 const ObjectSaveError = () => {
-    const fetchSelector = useMemo(() => state => state.objectsEditUI.objectOnSaveFetch, []);
+    const fetchSelector = useMemo(() => state => state.objectsEditUI.saveFetch, []);
     return <SaveError fetchSelector={fetchSelector} />;
 };

@@ -1,7 +1,7 @@
 import { getCurrentTagState } from "../../store/types/ui/tags-edit";
 
 import type { State } from "../../store/types/state";
-import type { CurrentTag, TagsEditOnLoadFetch, TagsEditOnSaveFetch } from "../../store/types/ui/tags-edit";
+import type { CurrentTag, TagsEditLoadFetch, TagsEditSaveFetch } from "../../store/types/ui/tags-edit";
 
 
 /** Sets default state of a /tags/edit/:id page for a new tag. */
@@ -13,8 +13,8 @@ const _loadTagsEditNewPage = (state: State, action: any): State => {
         tagsEditUI: {
             ...state.tagsEditUI,
             currentTag: getCurrentTagState(),
-            tagsEditOnLoadFetch: { isFetching: false, fetchError: "" },
-            tagsEditOnSaveFetch: { isFetching: false, fetchError: ""}
+            loadFetch: { isFetching: false, fetchError: "" },
+            saveFetch: { isFetching: false, fetchError: ""}
         }
     };
 }
@@ -28,8 +28,8 @@ const _loadTagsEditExistingPage = (state: State, action: any): State => {
         tagsEditUI: {
             ...state.tagsEditUI,
             currentTag: getCurrentTagState(),
-            tagsEditOnLoadFetch: { isFetching: false, fetchError: "" },
-            tagsEditOnSaveFetch: { isFetching: false, fetchError: "" },
+            loadFetch: { isFetching: false, fetchError: "" },
+            saveFetch: { isFetching: false, fetchError: "" },
             showDeleteDialog: false
         }
     };
@@ -54,19 +54,19 @@ const _setTagsEditShowDeleteDialog = (state: State, action: { showDeleteDialog: 
 
 
 /** Sets /tags/edit/:id on load fetch state. */
-export const setTagsEditLoadFetchState = (fetch: Partial<TagsEditOnLoadFetch>) => ({ type: "SET_TAGS_EDIT_LOAD_FETCH_STATE", fetch });
+export const setTagsEditLoadFetchState = (fetch: Partial<TagsEditLoadFetch>) => ({ type: "SET_TAGS_EDIT_LOAD_FETCH_STATE", fetch });
 
-const _setTagsEditLoadFetchState = (state: State, action: { fetch: Partial<TagsEditOnLoadFetch> }): State => {
-    const tagsEditOnLoadFetch = { ...state.tagsEditUI.tagsEditOnLoadFetch, ...action.fetch };
-    return { ...state, tagsEditUI: { ...state.tagsEditUI, tagsEditOnLoadFetch }};
+const _setTagsEditLoadFetchState = (state: State, action: { fetch: Partial<TagsEditLoadFetch> }): State => {
+    const loadFetch = { ...state.tagsEditUI.loadFetch, ...action.fetch };
+    return { ...state, tagsEditUI: { ...state.tagsEditUI, loadFetch }};
 }
 
 /** Sets /tags/edit/:id on save fetch state. */
-export const setTagsEditSaveFetchState = (fetch: Partial<TagsEditOnSaveFetch>) => ({ type: "SET_TAGS_EDIT_SAVE_FETCH_STATE", fetch });
+export const setTagsEditSaveFetchState = (fetch: Partial<TagsEditSaveFetch>) => ({ type: "SET_TAGS_EDIT_SAVE_FETCH_STATE", fetch });
 
-const _setTagsEditSaveFetchState = (state: State, action: { fetch: Partial<TagsEditOnSaveFetch> }): State => {
-    const tagsEditOnSaveFetch = { ...state.tagsEditUI.tagsEditOnSaveFetch, ...action.fetch };
-    return { ...state, tagsEditUI: { ...state.tagsEditUI, tagsEditOnSaveFetch }};
+const _setTagsEditSaveFetchState = (state: State, action: { fetch: Partial<TagsEditSaveFetch> }): State => {
+    const saveFetch = { ...state.tagsEditUI.saveFetch, ...action.fetch };
+    return { ...state, tagsEditUI: { ...state.tagsEditUI, saveFetch }};
 }
 
 

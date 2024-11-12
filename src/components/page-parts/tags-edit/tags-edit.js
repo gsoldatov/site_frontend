@@ -22,8 +22,8 @@ export const TagsEdit = ({ header, sideMenu, onLoad }) => {
     }, [id]);
 
     // Render loader/error or body
-    const isFetching = useSelector(state => state.tagsEditUI.tagsEditOnLoadFetch.isFetching);
-    const fetchError = useSelector(state => state.tagsEditUI.tagsEditOnLoadFetch.fetchError);
+    const isFetching = useSelector(state => state.tagsEditUI.loadFetch.isFetching);
+    const fetchError = useSelector(state => state.tagsEditUI.loadFetch.fetchError);
 
     let body = isFetching || fetchError ?
         <LoadIndicatorAndError isFetching={isFetching} fetchError={fetchError} />
@@ -51,7 +51,7 @@ export const TagsEdit = ({ header, sideMenu, onLoad }) => {
  * Save fetch error message
  * */
 const TagSaveError = () => {
-    const fetchSelector = useMemo(() => state => state.tagsEditUI.tagsEditOnSaveFetch, []);
+    const fetchSelector = useMemo(() => state => state.tagsEditUI.saveFetch, []);
     return <SaveError fetchSelector={fetchSelector} />;
 };
 

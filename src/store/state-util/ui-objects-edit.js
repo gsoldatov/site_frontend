@@ -30,13 +30,13 @@ export const getEditedOrDefaultObjectSelector = objectID => state => state.edite
 /**
  * Returns true if any of object page fetches are being performed.
  */
-export const isFetchingObject = state => state.objectsEditUI.objectOnLoadFetch.isFetching || state.objectsEditUI.objectOnSaveFetch.isFetching;
+export const isFetchingObject = state => state.objectsEditUI.loadFetch.isFetching || state.objectsEditUI.saveFetch.isFetching;
 
 
 /**
  * Returns true if any of object page fetches are being performed or on load fetch failed.
  */
-export const isFetchingOrOnLoadFetchFailed = state => isFetchingObject(state) || state.objectsEditUI.objectOnLoadFetch.fetchError;
+export const isFetchingOrOnLoadFetchFailed = state => isFetchingObject(state) || state.objectsEditUI.loadFetch.fetchError;
 
 
 /**
