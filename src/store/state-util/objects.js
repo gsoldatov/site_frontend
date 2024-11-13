@@ -5,7 +5,6 @@ import { SubobjectDeleteModes } from "../types/data/composite";
 import { CompositeSelectors } from "../selectors/data/objects/composite";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
 import { compositeSubobjectObjectAttributes, addedObjectAttributes, updatedObjectAttributes } from "../state-templates/edited-object";
-import { NumericUserLevel } from "../../store/types/data/auth";
 import { ObjectsSelectors } from "../selectors/data/objects/objects";
 
 /*
@@ -325,18 +324,4 @@ export const objectDataIsModified = (objectData, editedObject) => {
         default:
             throw Error(`objectDataIsModified received an unexpected object type ${editedObject.object_type} when checking object ${editedObject.objectID}`);
     }
-};
-
-
-/**
- * Checks if current user can update object with the specified `objectID`
- */
-export const canEditObject = (state, objectID) => {
-    // TODO move to /objects/view selectors
-    // Exit early, if data is absent
-    if (!objectID in state.objects) return false;
-    if (!ObjectsSelectors.dataIsPresent(state, objectID)) return false;
-
-    return state.auth.numeric_user_level === NumericUserLevel.admin
-        || (state.auth.numeric_user_level > NumericUserLevel.anonymous && state.objects[objectID].owner_id === state.auth.user_id);
 };

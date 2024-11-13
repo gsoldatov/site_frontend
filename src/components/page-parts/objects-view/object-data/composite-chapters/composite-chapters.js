@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Redirect, useLocation } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 import { Loader, Message } from "semantic-ui-react";
 
 import { useConfigState } from "../../../../../config";
 import { objectsViewCompositeChaptersOnLoad } from "../../../../../fetches/ui-objects-view";
-import { getChaptersHierarchySelector, getHierarchyElements } from "../../../../../store/state-util/ui-objects-view";
+import { ObjectsViewSelectors } from "../../../../../store/selectors/ui/objects-view";
 import { TableOfContents } from "./table-of-contents";
 import { ChapterObject } from "./chapter-object";
 
@@ -38,12 +38,11 @@ export const CompositeChapters = ({ objectID }) => {
     // Chapter hierarchy selector
     const maxHierarchyDepthSelector = useMemo(() => config => config.compositeChapters.maxHierarchyDepth, []);
     const maxHierarchyDepth = useConfigState(maxHierarchyDepthSelector);
-    const chaptersHierarchySelector = useMemo(() => getChaptersHierarchySelector(objectID, maxHierarchyDepth), [objectID, maxHierarchyDepth]);
-    const hierarchy = useSelector(chaptersHierarchySelector);
+    const hierarchy = useSelector(state => ObjectsViewSelectors.buildCompositeChaptersHierarchy(state, objectID, maxHierarchyDepth));
 
     // Get current chapter, corresponding object ID and type of component which should be displayed for it.
     const ch = (new URLSearchParams(useLocation().search)).get("ch");
-    const hierarchyElements = getHierarchyElements(hierarchy, ch);
+    const hierarchyElements = ObjectsViewSelectors.getHierarchyElements(hierarchy, ch);
 
     // Error message
     if (error.length > 0) return (

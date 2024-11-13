@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { ObjectAttributes } from "../../object-attributes/object-attributes";
 import { HierarchyNavigation } from "./hierarchy-navigation";
 
-import { getSubobjectShowDescriptionSelector } from "../../../../../store/state-util/ui-objects-view";
+import { ObjectsViewSelectors } from "../../../../../store/selectors/ui/objects-view";
 
 import StyleCompositeChapters from "../../../../../styles/pages/objects-view/composite-chapters.css";
 
@@ -23,7 +23,7 @@ export const TableOfContents = ({ hierarchyElements }) => {
     
     // Current object attributes
     const parentID = (hierarchyElements.parent || {}).objectID;
-    const showDescriptionSelector = isNaN(parentID) ? undefined : getSubobjectShowDescriptionSelector(parentID, objectID);
+    const showDescriptionSelector = isNaN(parentID) ? undefined : state => ObjectsViewSelectors.showSubobjectDescription(state, parentID, objectID);
 
     const attributeProps = {
         timestampProps: { displayTimestamp: parseInt(rootObjectID) === parseInt(objectID) },

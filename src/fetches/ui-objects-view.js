@@ -4,7 +4,7 @@ import { getResponseErrorType } from "./common";
 import { objectsUpdateFetch, objectsViewCompositeHierarchyElements, objectsViewFetch } from "./data-objects";
 import { fetchMissingTags } from "./data/tags";
 
-import { canEditObject } from "../store/state-util/objects";
+import { ObjectsViewSelectors } from "../store/selectors/ui/objects-view";
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 import { CompositeSelectors } from "../store/selectors/data/objects/composite";
 import { getToDoListUpdateFetchBody } from "../store/state-util/to-do-lists";
@@ -75,7 +75,7 @@ export const objectsViewMulticolumnExpandToggleUpdateFetch = (objectID, subobjec
     return async (dispatch, getState) => {
         // Check if current user can update the object
         const state = getState();
-        if (!canEditObject(state, objectID)) return;
+        if (!ObjectsViewSelectors.canEditObject(state, objectID)) return;
 
         const newProps = { composite: { subobjects: { [subobjectID]: { is_expanded }}}};
 

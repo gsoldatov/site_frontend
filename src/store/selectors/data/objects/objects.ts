@@ -96,8 +96,17 @@ export class ObjectsSelectors {
 
 
 /*
- TODO check if `objectHasNoChanges`, `objectAttributesAreModified`, `objectTagsAreModified` & `objectDataIsModified` can be refactored to accept state & objectID only
- - list use cases & how `defaultReturnValue` is used
+ TODO 
+ - `objectHasNoChanges`, `objectAttributesAreModified`, `objectTagsAreModified` & `objectDataIsModified`:
+    - move to editedObjects selectors;
+    - check if possible & refactor to accept state & objectID only:
+        +- `objectAttributesAreModified`;
+        +- `objectTagsAreModified`;
+        +- `objectDataIsModified`;
+    - objectHasNoChanges:
+        - refactor to `isModified` version (reverse true & false results);
+        ? refactor to remove default param (use another func to chech for presence?);
+
 
  */
 
@@ -191,18 +200,4 @@ export class ObjectsSelectors {
 //         default:
 //             throw Error(`objectDataIsModified received an unexpected object type ${editedObject.object_type} when checking object ${editedObject.objectID}`);
 //     }
-// };
-
-
-// /**
-//  * Checks if current user can update object with the specified `objectID`
-//  */
-// export const canEditObject = (state, objectID) => {
-//     // TODO move to /objects/view selectors
-//     // Exit early, if data is absent
-//     if (!objectID in state.objects) return false;
-//     if (!dataIsPresent(state, objectID)) return false;
-
-//     return state.auth.numeric_user_level === NumericUserLevel.admin
-//         || (state.auth.numeric_user_level > NumericUserLevel.anonymous && state.objects[objectID].owner_id === state.auth.user_id);
 // };

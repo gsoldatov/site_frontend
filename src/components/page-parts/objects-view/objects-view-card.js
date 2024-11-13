@@ -8,7 +8,7 @@ import { ObjectAttributes } from "./object-attributes/object-attributes";
 import { ObjectsViewTagList } from "./object-tags";
 import { ObjectData, SubobjectDataSwitch } from "./object-data/object-data";
 
-import { getSubobjectShowDescriptionAsLinkSelector, getSubobjectShowDescriptionSelector } from "../../../store/state-util/ui-objects-view";
+import { ObjectsViewSelectors } from "../../../store/selectors/ui/objects-view";
 import { useMountedState } from "../../../util/hooks/use-mounted-state";
 
 import StyleObjectsViewCommon from "../../../styles/pages/objects-view/common.css";
@@ -84,7 +84,7 @@ export const ObjectsViewCard = ({ objectID, classNames, attributeProps, dataProp
         // Smaller header
         headerProps: { headerTag: "h2" },
         // Custom selector for subobject description display condition
-        descriptionProps: { showDescriptionSelector: getSubobjectShowDescriptionSelector(objectID, subobjectID) }
+        descriptionProps: { showDescriptionSelector: state => ObjectsViewSelectors.showSubobjectDescription(state, objectID, subobjectID) }
     };
 
     const dataProps = {
@@ -92,7 +92,7 @@ export const ObjectsViewCard = ({ objectID, classNames, attributeProps, dataProp
         DataSwitchComponent: SubobjectDataSwitch,
 
         // Custom selector for link data and description merge
-        showDescriptionAsLinkSelector: getSubobjectShowDescriptionAsLinkSelector(objectID, subobjectID)
+        showDescriptionAsLinkSelector: state => ObjectsViewSelectors.showSubobjectDescriptionAsLink(state, objectID, subobjectID)
     };
 
     // Tags are not displayed

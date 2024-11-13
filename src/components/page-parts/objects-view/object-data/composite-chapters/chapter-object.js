@@ -3,7 +3,7 @@ import React from "react";
 import { HierarchyNavigation } from "./hierarchy-navigation";
 import { ObjectsViewCard } from "../../objects-view-card";
 import { ChaptersDataSwitch } from "../object-data";
-import { getSubobjectShowDescriptionSelector, getSubobjectShowDescriptionAsLinkSelector } from "../../../../../store/state-util/ui-objects-view";
+import { ObjectsViewSelectors } from "../../../../../store/selectors/ui/objects-view";
 
 
 /**
@@ -27,8 +27,8 @@ const ChapterObjectsViewCard = ({ hierarchyElements }) => {
 
     // Get subobject's show description selector for current object
     const parentID = (hierarchyElements.parent || {}).objectID;
-    const showDescriptionSelector = isNaN(parentID) ? undefined : getSubobjectShowDescriptionSelector(parentID, objectID);
-    const showDescriptionAsLinkSelector = isNaN(parentID) ? undefined : getSubobjectShowDescriptionAsLinkSelector(parentID, objectID);
+    const showDescriptionSelector = isNaN(parentID) ? undefined : state => ObjectsViewSelectors.showSubobjectDescription(state, parentID, objectID);
+    const showDescriptionAsLinkSelector = isNaN(parentID) ? undefined : state => ObjectsViewSelectors.showSubobjectDescriptionAsLink(state, parentID, objectID);
 
     const attributeProps = {
         timestampProps: { displayTimestamp: false },
