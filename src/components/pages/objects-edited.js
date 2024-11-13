@@ -7,7 +7,7 @@ import { ObjectsEditedConfirm } from "../page-parts/objects-edited/confirm";
 import { ObjectsEditedTable } from "../page-parts/objects-edited/table";
 
 import { loadObjectsEditedPage } from "../../reducers/ui/objects-edited";
-import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
+import { LayoutType } from "../../store/types/ui/general/layout-type";
 
 import StyleObjectsEdited from "../../styles/pages/objects-edited.css";
 
@@ -42,5 +42,5 @@ export const ObjectsEditedPage = () => {
         <Message info>No edited objects found.</Message>
     )
 
-    return <Layout body={body} layoutType={enumLayoutTypes.shortWidth} />;
+    return <Layout body={body} layoutType={LayoutType.shortWidth} />;
 };

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Button, Message } from "semantic-ui-react";
 
-import { SubobjectDeleteModes } from "../../../../../../../store/types/data/composite";
+import { SubobjectDeleteMode } from "../../../../../../../store/types/data/composite";
 
 
 /**
@@ -14,7 +14,7 @@ import { SubobjectDeleteModes } from "../../../../../../../store/types/data/comp
         compositeUpdate: { 
             command: "updateSubobject", 
             subobjectID, 
-            deleteMode: isSubobjectDeleted ? SubobjectDeleteModes.none : SubobjectDeleteModes.subobjectOnly 
+            deleteMode: isSubobjectDeleted ? SubobjectDeleteMode.none : SubobjectDeleteMode.subobjectOnly 
     }}), [isSubobjectDeleted]);
 
     const headerText = isSubobjectDeleted ? "Object is unavailable and is set for deletion." : "Object is unavailable.";

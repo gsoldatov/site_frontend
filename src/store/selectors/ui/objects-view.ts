@@ -1,4 +1,3 @@
-import { enumCompositeObjectDisplayModes } from "../../../util/enums/enum-composite-object-display-modes";
 import { ObjectsSelectors } from "../data/objects/objects";
 import { CompositeSelectors } from "../data/objects/composite";
 
@@ -101,7 +100,7 @@ export class ObjectsViewSelectors {
             const objectType = (state.objects[elementObjectID] || {}).object_type;
             const displayMode = (state.composite[elementObjectID] || {}).display_mode;
             const numerateChapters = (state.composite[elementObjectID] || {}).numerate_chapters;
-            const isLeaf = objectType !== "composite" || displayMode !== enumCompositeObjectDisplayModes.chapters.value || currentDepth > maxHierarchyDepth;
+            const isLeaf = objectType !== "composite" || displayMode !== "chapters" || currentDepth > maxHierarchyDepth;
 
             const element: CompositeChaptersHierarchyElement = { 
                 objectID: elementObjectID, depthLevel: currentDepth, 

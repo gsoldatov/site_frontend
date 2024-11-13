@@ -2,8 +2,10 @@ import { z } from "zod";
 import { nameString, positiveInt, positiveIntIndex, timestampOrEmptyString, timestampString } from "../../../util/types/common";
 
 
+export const objectTypeValues: [string, ...string[]] = ["link", "markdown", "to_do_list", "composite"];
+
 /** Object type enum schema */
-export const objectType = z.enum(["link", "markdown", "to_do_list", "composite"]);
+export const objectType = z.enum(objectTypeValues);
 
 
 /** state.objects schema for object attributes. */

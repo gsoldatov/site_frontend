@@ -19,7 +19,7 @@ import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject }
 import { App } from "../../../../../src/components/app";
 import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
 import { addObjects, addObjectsData } from "../../../../../src/actions/data-objects";
-import { SubobjectDeleteModes } from "../../../../../src/store/types/data/composite";
+import { SubobjectDeleteMode } from "../../../../../src/store/types/data/composite";
 import { generateObjectAttributes, generateObjectData } from "../../../../_mocks/data-objects";
 
 
@@ -138,10 +138,10 @@ describe("Load object errors & UI checks", () => {
 
         // Delete and restore unaviable subobject
         fireEvent.click(getByText(cards[0][0], "Delete"));
-        expect(store.getState().editedObjects[1].composite.subobjects[2].deleteMode).toEqual(SubobjectDeleteModes.subobjectOnly);
+        expect(store.getState().editedObjects[1].composite.subobjects[2].deleteMode).toEqual(SubobjectDeleteMode.subobjectOnly);
 
         fireEvent.click(getByText(cards[0][0], "Restore"));
-        expect(store.getState().editedObjects[1].composite.subobjects[2].deleteMode).toEqual(SubobjectDeleteModes.none);
+        expect(store.getState().editedObjects[1].composite.subobjects[2].deleteMode).toEqual(SubobjectDeleteMode.none);
     });
 
 

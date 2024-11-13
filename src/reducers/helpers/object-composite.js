@@ -1,7 +1,7 @@
 import { getStateWithAddedObjects, getStateWithAddedObjectsData, getStateWithDeletedObjects } from "./data-objects";
 import { getStateWithDeletedEditedNewSubobjects, getStateWithResetEditedObjects } from "./object";
 
-import { SubobjectDeleteModes, getDefaultSubobject } from "../../store/types/data/composite";
+import { SubobjectDeleteMode, getDefaultSubobject } from "../../store/types/data/composite";
 import { CompositeSelectors } from "../../store/selectors/data/objects/composite";
 import { objectHasNoChanges } from "../../store/state-util/objects";
 import { deepCopy } from "../../util/copy";
@@ -140,13 +140,13 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         // Remove new and unchanged (non-fully) deleted existing objects from state
         let subobjectIDs = Object.keys(newState.editedObjects[objectID].composite.subobjects);
         let deletedSubobjectIDs = subobjectIDs.filter(subobjectID => 
-                                                    newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.subobjectOnly
+                                                    newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteMode.subobjectOnly
                                                     && objectHasNoChanges(newState, subobjectID));
         newState = getStateWithDeletedObjects(newState, deletedSubobjectIDs);
         
         // Remove fully deleted existing objectsfrom state
         let fullyDeletedExistingSubobjectIDs = subobjectIDs.filter(subobjectID => {
-            return parseInt(subobjectID) > 0 && newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.full
+            return parseInt(subobjectID) > 0 && newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteMode.full
         });
         newState = getStateWithDeletedObjects(newState, fullyDeletedExistingSubobjectIDs);
 

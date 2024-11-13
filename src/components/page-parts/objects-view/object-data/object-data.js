@@ -10,7 +10,6 @@ import { CompositeGroupedLinks } from "./composite-grouped-links";
 import { CompositeMulticolumn } from "./composite-multicolumn";
 import { CompositeChapters } from "./composite-chapters/composite-chapters";
 
-import { enumCompositeObjectDisplayModes } from "../../../../util/enums/enum-composite-object-display-modes";
 import { ObjectsSelectors } from "../../../../store/selectors/data/objects/objects";
 
 
@@ -44,13 +43,13 @@ const DefaultObjectDataSwitch = ({ objectID }) => {
             return <ToDoList objectID={objectID} />;
         case "composite":
             switch (compositeDisplayMode) {
-                case enumCompositeObjectDisplayModes.basic.value:
+                case "basic":
                     return <CompositeBasic objectID={objectID} />;
-                case enumCompositeObjectDisplayModes.groupedLinks.value:
+                case "grouped_links":
                     return <CompositeGroupedLinks objectID={objectID} />;
-                case enumCompositeObjectDisplayModes.multicolumn.value:
+                case "multicolumn":
                     return <CompositeMulticolumn objectID={objectID} />;
-                case enumCompositeObjectDisplayModes.chapters.value:
+                case "chapters":
                     return <CompositeChapters objectID={objectID} />;
                 default:
                     throw Error(`Received unknown displayMode '${compositeDisplayMode}' for composite object '${objectID}'`)
@@ -107,12 +106,12 @@ export const ChaptersDataSwitch = ({ objectID, dataProps = {} }) => {
             return <ToDoList objectID={objectID} />;
         case "composite":
             switch (compositeDisplayMode) {
-                case enumCompositeObjectDisplayModes.groupedLinks.value:
+                case "grouped_links":
                     return <CompositeGroupedLinks objectID={objectID} />;
 
-                case enumCompositeObjectDisplayModes.basic.value:
-                case enumCompositeObjectDisplayModes.multicolumn.value:
-                case enumCompositeObjectDisplayModes.chapters.value:
+                case "basic":
+                case "multicolumn":
+                case "chapters":
                     return <CompositeBasic objectID={objectID} />;
                 default:
                     throw Error(`Received unknown displayMode '${compositeDisplayMode}' for composite object '${objectID}'`)

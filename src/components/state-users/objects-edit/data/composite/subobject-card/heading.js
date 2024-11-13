@@ -6,8 +6,8 @@ import { createSelector } from "reselect";
 import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified } from "../../../../../../store/state-util/objects";
 import { ObjectsSelectors } from "../../../../../../store/selectors/data/objects/objects";
 import { CompositeSelectors } from "../../../../../../store/selectors/data/objects/composite";
-import { SubobjectDeleteModes } from "../../../../../../store/types/data/composite";
-import { enumObjectTypes } from "../../../../../../util/enums/enum-object-types";
+import { SubobjectDeleteMode } from "../../../../../../store/types/data/composite";
+import { objectTypeOptions } from "../../../../../../store/types/ui/general/object-type";
 
 
 /**
@@ -82,8 +82,8 @@ const HeadingLeft = ({ objectID, subobjectID, updateCallback, isHoveredOver, onE
     return (
         <>
             {expandButton}
-            <div className="composite-subobject-card-heading-object-type-icon" title={enumObjectTypes[objectType].name}>
-                <Icon name={enumObjectTypes[objectType].icon} />
+            <div className="composite-subobject-card-heading-object-type-icon" title={objectTypeOptions[objectType].name}>
+                <Icon name={objectTypeOptions[objectType].icon} />
             </div>
             <div className={headingTextClassName} title={headingText}>
                 {headingText}
@@ -149,9 +149,9 @@ const Indicators = ({ objectID, subobjectID }) => {
             
             // Deleted
             { name: "trash alternate", color: "black", title: "Subobject is marked for deletion", 
-                isDisplayedSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.subobjectOnly },
+                isDisplayedSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteMode.subobjectOnly },
             { name: "trash alternate", color: "red", title: "Subobject is marked for full deletion", 
-                isDisplayedSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteModes.full }
+                isDisplayedSelector: state => state.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteMode.full }
         ]
     }, [objectID, subobjectID]);
 

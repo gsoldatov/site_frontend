@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
-import { enumObjectTypes } from "../../../../util/enums/enum-object-types";
+import { objectTypeOptions } from "../../../../store/types/ui/general/object-type";
 
 
 /**
@@ -14,7 +14,7 @@ export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
     const dispatch = useDispatch();
 
     // Dropdown options
-    const objectTypeDropdownOptions = useMemo(() => Object.values(enumObjectTypes).map((t, k) => ({ key: k, text: t.name, value: t.type, icon: t.icon })), []);
+    const objectTypeDropdownOptions = useMemo(() => Object.values(objectTypeOptions).map((t, k) => ({ key: k, text: t.name, value: t.type, icon: t.icon })), []);
     const newSubobjectDropdownOptions = useMemo(() => objectTypeDropdownOptions.filter(option => option.value !== "composite"), []);
 
     const isDisabled = objectID > 0;

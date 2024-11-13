@@ -1,16 +1,3 @@
-import { deepCopy } from "../../util/copy";
-
-
-/**
- * Possible options for display of composite subobject's description & and link object data.
- */
-export const enumShowDescriptionComposite = {
-    yes: { name: "Yes", value: "yes" },
-    no: { name: "No", value: "no" },
-    inherit: { name: "Inherit", value: "inherit" }
-};
-
-
 /**
  * Composite object's subobject default state.
  * 
@@ -24,15 +11,10 @@ const subobjectDefaults = {
     is_expanded: true,
     deleteMode: 0,  // NOTE: change to using enum, if not deleted
     fetchError: "",
-    show_description_composite: enumShowDescriptionComposite.inherit.value,
-    show_description_as_link_composite: enumShowDescriptionComposite.inherit.value
+    show_description_composite: "inherit",      // NOTE: change to using enum, if not deleted
+    show_description_as_link_composite: "inherit"   // NOTE: change to using enum, if not deleted
 };
 
-
-/**
- * Composite subobject state, which is checked for modification.
- */
-export const subobjectAttributesCheckedForModification = ["row", "column", "selected_tab", "is_expanded", "show_description_composite", "show_description_as_link_composite"];
 
 
 /**

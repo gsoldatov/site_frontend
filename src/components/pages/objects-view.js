@@ -2,12 +2,10 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router";
 
-import { enumCompositeObjectDisplayModes } from "../../util/enums/enum-composite-object-display-modes";
-
 import { Layout } from "../modules/layout/layout";
 import { ObjectsViewRootCard } from "../page-parts/objects-view/objects-view-root-card";
 
-import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
+import { LayoutType } from "../../store/types/ui/general/layout-type";
 
 
 /**
@@ -16,7 +14,7 @@ import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
 export const ObjectsViewPage = () => {
     const { id } = useParams();
 
-    const multicolumnLayout = useSelector(state => (state.composite[id] || {}).display_mode === enumCompositeObjectDisplayModes.multicolumn.value);
+    const multicolumnLayout = useSelector(state => (state.composite[id] || {}).display_mode === "multicolumn");
 
     const body = (
         <div className="objects-view-container">
@@ -25,7 +23,7 @@ export const ObjectsViewPage = () => {
     );
 
     // Set unlimited width for layout when displaying multicolumn composite objects
-    const layoutType = multicolumnLayout ? enumLayoutTypes.unlimitedWidth : enumLayoutTypes.shortWidth;
+    const layoutType = multicolumnLayout ? LayoutType.unlimitedWidth : LayoutType.shortWidth;
 
     return <Layout body={body} layoutType={layoutType} />;
 };

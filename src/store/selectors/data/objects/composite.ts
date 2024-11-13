@@ -4,8 +4,8 @@ import { validateNonCompositeObject } from "../../../state-util/objects";
 import { ObjectsSelectors } from "./objects";
 import { isFetchingObject } from "../../../state-util/ui-objects-edit";
 
-import { subobjectAttributesCheckedForModification } from "../../../state-templates/composite-subobjects";
 import { getEditedObjectState } from "../../../types/data/edited-objects";
+import { compositeSubobject } from "../../../types/data/composite";
 
 import type { State } from "../../../types/state";
 import type { EditedObject } from "../../../types/data/edited-objects";
@@ -79,8 +79,10 @@ export class CompositeSelectors {
      */
     static subobjectStateIsModified(stateInObjectData: Composite | undefined, stateInEditedObject: Composite | undefined) {
         if (stateInObjectData === undefined || stateInEditedObject === undefined) return false;
+        const excludedAttributes = new Set(["deleteMode", "fetchError"]);
+        const checkedAttributes = Object.keys(compositeSubobject.shape).filter(k => !excludedAttributes.has(k));
 
-        for (let attr of subobjectAttributesCheckedForModification) {
+        for (let attr of checkedAttributes) {
             if (!deepEqual(
                 (stateInObjectData as Record<string, any>)[attr],
                 (stateInEditedObject as Record<string, any>)[attr])) {

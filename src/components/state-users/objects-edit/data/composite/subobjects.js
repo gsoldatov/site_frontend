@@ -7,7 +7,7 @@ import { NewSubobjectGridColumn } from "./new-subobject-grid-column";
 
 import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../../../actions/objects-edit";
 import { CompositeSelectors } from "../../../../../store/selectors/data/objects/composite";
-import { SubobjectDeleteModes } from "../../../../../store/types/data/composite";
+import { SubobjectDeleteMode } from "../../../../../store/types/data/composite";
 
 import StyleCompositeSubobjects from "../../../../../styles/modules/edit/composite-subobjects.css";
 
@@ -45,7 +45,7 @@ export const SubobjectsContainer = ({ objectID }) => {
             let selectedTab = composite.subobjects[subobjectID].selected_tab;
             let isExpanded = composite.subobjects[subobjectID].is_expanded;
             let isSubobjectEdited = editedObjects[subobjectID] !== undefined;
-            let isSubobjectDeleted = composite.subobjects[subobjectID].deleteMode !== SubobjectDeleteModes.none;
+            let isSubobjectDeleted = composite.subobjects[subobjectID].deleteMode !== SubobjectDeleteMode.none;
 
             columnItems.push(<DraggableSubobjectCard key={subobjectID} objectID={objectID} subobjectID={subobjectID} updateCallback={updateCallback}
                 selectedTab={selectedTab} isExpanded={isExpanded} isSubobjectEdited={isSubobjectEdited} fetchError={fetchError} isSubobjectDeleted={isSubobjectDeleted} 

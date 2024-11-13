@@ -8,7 +8,7 @@ import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineTextItem } from "../../modules/inline/inline-text-item";
 import { InlineItem } from "../../modules/inline/inline-item";
 
-import { enumObjectTypes } from "../../../util/enums/enum-object-types";
+import { objectTypeOptions } from "../../../store/types/ui/general/object-type";
 
 
 /**
@@ -28,8 +28,8 @@ export const ObjectFeedCard = ({ objectID }) => {
     });
     
     const objectType = useSelector(state => (state.objects[objectID] || {}).object_type);
-    const headerIcon = (enumObjectTypes[objectType] || {}).icon;
-    const headerIconTitle = (enumObjectTypes[objectType] || {}).name;
+    const headerIcon = (objectTypeOptions[objectType] || {}).icon;
+    const headerIconTitle = (objectTypeOptions[objectType] || {}).name;
 
     return (
         <FeedCard>

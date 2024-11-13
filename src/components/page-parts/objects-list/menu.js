@@ -8,7 +8,7 @@ import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton,
 import { selectObjects, clearSelectedObjects, setObjectsListPaginationInfo, setObjectsListTagsFilterInput  } from "../../../actions/objects-list";
 import { setObjectsListPaginationInfoAndFetchPage, setObjectsListTagsFilterAndFetchPage, objectsListTagsFilterDropdownFetch, } from "../../../fetches/ui-objects-list";
 import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
-import { enumObjectTypes } from "../../../util/enums/enum-object-types";
+import { objectTypeOptions } from "../../../store/types/ui/general/object-type";
 
 
 /**
@@ -50,7 +50,7 @@ export const ObjectsListHorizontalMenu = () => {
 
     // Object type dropdown
     const objectTypesDefaultValue = useSelector(state => state.objectsListUI.paginationInfo.objectTypes);
-    const objectTypesOptions = useMemo(() => Object.values(enumObjectTypes).map((t, k) => ({ key: k, text: t.multipleName, value: t.type })), []);
+    const objectTypesOptions = useMemo(() => Object.values(objectTypeOptions).map((t, k) => ({ key: k, text: t.multipleName, value: t.type })), []);
     const objectTypesOnChange = useMemo(() => (e, data) => dispatch(setObjectsListPaginationInfoAndFetchPage({ objectTypes: data.value })), []);
 
     // Tags filter dropdown

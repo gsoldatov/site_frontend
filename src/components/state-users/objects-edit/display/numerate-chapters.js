@@ -5,7 +5,6 @@ import { DisplayControlCheckbox } from "../../../modules/edit/display/display-co
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
-import { enumCompositeObjectDisplayModes } from "../../../../util/enums/enum-composite-object-display-modes";
 
 
 /**
@@ -16,7 +15,7 @@ import { enumCompositeObjectDisplayModes } from "../../../../util/enums/enum-com
 
     const isRendered = useSelector(state => {
         const editedObject = getEditedOrDefaultObjectSelector(objectID)(state);
-        return editedObject.object_type === "composite" && editedObject.composite.display_mode === enumCompositeObjectDisplayModes.chapters.value;
+        return editedObject.object_type === "composite" && editedObject.composite.display_mode === "chapters";
     });
 
     const numerateChapters = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).composite.numerate_chapters);

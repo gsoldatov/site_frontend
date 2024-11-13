@@ -1,8 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { enumCompositeObjectDisplayModes } from "../../../util/enums/enum-composite-object-display-modes";
-
 import { ObjectsViewCard } from "./objects-view-card";
 
 import StyleObjectsViewRootCard from "../../../styles/pages/objects-view/root-card.css";
@@ -16,11 +14,11 @@ export const ObjectsViewRootCard = ({ objectID }) => {
 
     // Add card borders if object is not a multicolumn composite
     const classNames = ["root"];
-    if (compositeDisplayMode !== enumCompositeObjectDisplayModes.multicolumn.value) classNames.push("bordered");
+    if (compositeDisplayMode !== "multicolumn") classNames.push("bordered");
 
     const attributeProps = {
         // Don't display attributes for composite with "chapters" display mode
-        displayAttributes: compositeDisplayMode !== enumCompositeObjectDisplayModes.chapters.value,
+        displayAttributes: compositeDisplayMode !== "chapters",
 
         // Don't display "View Object" button
         headerProps: {

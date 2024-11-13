@@ -4,7 +4,7 @@ import { Redirect, useParams } from "react-router";
 import { Layout } from "../modules/layout/layout";
 import { ObjectsFeed } from "../page-parts/index/objects-feed";
 
-import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
+import { LayoutType } from "../../store/types/ui/general/layout-type";
 
 
 /**
@@ -21,5 +21,5 @@ export const IndexPage = () => {
 
     const body = <ObjectsFeed page={page} />;
 
-    return <Layout body={body} layoutType={enumLayoutTypes.shortWidth} />;
+    return <Layout body={body} layoutType={LayoutType.shortWidth} />;
 };

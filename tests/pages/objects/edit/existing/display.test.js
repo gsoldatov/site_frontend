@@ -15,7 +15,7 @@ import { getReactDatetimeElements } from "../../../../_util/ui-react-datetime";
 
 import { App } from "../../../../../src/components/app";
 import { setEditedObject } from "../../../../../src/actions/objects-edit";
-import { enumCompositeObjectDisplayModes } from "../../../../../src/util/enums/enum-composite-object-display-modes";
+import { compositeDisplayModeOptions } from "../../../../../src/store/types/ui/general/composite-display-mode";
 
 
 /*
@@ -446,10 +446,10 @@ describe("Object display properties", () => {
             expect(getObjectDisplayControls(container).displayMode.selected.textContent).toEqual("Basic");
 
             // Select each display mode, except for `basic`
-            for (let k of Object.keys(enumCompositeObjectDisplayModes)) {
-                const mode = enumCompositeObjectDisplayModes[k].value;
+            for (let k of Object.keys(compositeDisplayModeOptions)) {
+                const mode = compositeDisplayModeOptions[k].value;
 
-                if (mode !== enumCompositeObjectDisplayModes.basic.value) {
+                if (mode !== compositeDisplayModeOptions.basic.value) {
                     fireEvent.click(displayModeControls.selected);
                     fireEvent.click(displayModeControls.options[mode]);
                     expect(store.getState().editedObjects[3001].composite.display_mode).toEqual(mode);
@@ -495,8 +495,8 @@ describe("Object display properties", () => {
             await waitFor(() => getByText(container, "Object Information"));
             clickDisplayTabButton(container);
 
-            for (let mode of Object.keys(enumCompositeObjectDisplayModes)) {
-                mode = enumCompositeObjectDisplayModes[mode].value
+            for (let mode of Object.keys(compositeDisplayModeOptions)) {
+                mode = compositeDisplayModeOptions[mode].value
                 if (mode !== "chapters") {
                     const displayModeControls = getObjectDisplayControls(container).displayMode;
 

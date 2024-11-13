@@ -6,9 +6,10 @@ import { TagDropdown } from "../page-parts/tags-view/tag-dropdown";
 import { SelectPrompt } from "../page-parts/tags-view/select-prompt";
 import { SelectedTags } from "../page-parts/tags-view/selected-tags";
 import { TagInformation } from "../page-parts/tags-view/tag-information";
-
-import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
 import { TagPageObjectsFeed } from "../page-parts/tags-view/tag-page-objects-feed";
+
+import { LayoutType } from "../../store/types/ui/general/layout-type";
+
 
 import StyleTagsView from "../../styles/pages/tags-view.css";
 
@@ -32,5 +33,5 @@ export const TagsViewPage = () => {
         </div>
     );
     
-    return <Layout body={body} layoutType={enumLayoutTypes.shortWidth} />;
+    return <Layout body={body} layoutType={LayoutType.shortWidth} />;
 };

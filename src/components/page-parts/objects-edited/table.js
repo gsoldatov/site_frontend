@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { removeEditedObjects } from "../../../actions/objects-edit";
 import { toggleObjectsEditedSelection, toggleObjectsEditedSelectAll } from "../../../reducers/ui/objects-edited";
-import { enumObjectTypes } from "../../../util/enums/enum-object-types";
+import { objectTypeOptions } from "../../../store/types/ui/general/object-type";
 
 
 /**
@@ -98,7 +98,7 @@ const EditedObjectItem = memo(({ objectID, parentObjects = [], parentNames = [],
     ) : null;
 
     // Object type icon
-    const typeEnum = enumObjectTypes[editedObject.object_type];
+    const typeEnum = objectTypeOptions[editedObject.object_type];
     const objectTypeIcon = (
         <div className="edited-objects-item-object-type-icon-container" title={typeEnum.name}>
             <Icon name={typeEnum.icon} />

@@ -4,7 +4,7 @@ import { Header } from "semantic-ui-react";
 
 import { Layout } from "../modules/layout/layout";
 
-import { enumLayoutTypes } from "../../util/enums/enum-layout-types";
+import { LayoutType } from "../../store/types/ui/general/layout-type";
 
 
 /**
@@ -22,5 +22,5 @@ export const NotFoundPage = () => {
         </div>
     );
 
-    return <Layout body={body} layoutType={enumLayoutTypes.shortWidth} />;
+    return <Layout body={body} layoutType={LayoutType.shortWidth} />;
 };

@@ -10,7 +10,7 @@ import { DisplayTab } from "../../state-users/objects-edit/display/display-tab";
 
 import { setObjectsEditSelectedTab, setToDoListRerenderPending } from "../../../actions/objects-edit";
 import { CompositeSelectors } from "../../../store/selectors/data/objects/composite";
-import { enumLayoutTypes } from "../../../util/enums/enum-layout-types";
+import { LayoutType } from "../../../store/types/ui/general/layout-type";
 
 
 /**
@@ -46,7 +46,7 @@ export const ObjectsEdit = ({ header, sideMenu, onLoad, objectID }) => {
     );
 
     // Layout type (unlimited width for multicolumn object data)
-    const layoutType = enableStylesForMulticolumnCompositeObjectData ? enumLayoutTypes.unlimitedWidth : enumLayoutTypes.default;
+    const layoutType = enableStylesForMulticolumnCompositeObjectData ? LayoutType.unlimitedWidth : LayoutType.default;
 
     return <Layout sideMenu={sideMenu} body={body} layoutType={layoutType} />;;
 };

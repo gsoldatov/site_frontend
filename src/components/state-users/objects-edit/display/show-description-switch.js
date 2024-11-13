@@ -6,7 +6,7 @@ import { DisplayControlDropdown } from "../../../modules/edit/display/display-co
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
-import { enumShowDescriptionComposite } from "../../../../store/state-templates/composite-subobjects";
+import { showDescriptionCompositeOptions } from "../../../../store/types/ui/general/show-description-composite";
 
 
 /**
@@ -23,7 +23,7 @@ import { enumShowDescriptionComposite } from "../../../../store/state-templates/
 };
 
 
-const showDescriptionDropdownOptions = Object.values(enumShowDescriptionComposite).map((t, k) => ({ key: k, text: t.name, value: t.value }));
+const showDescriptionDropdownOptions = Object.values(showDescriptionCompositeOptions).map((t, k) => ({ key: k, text: t.name, value: t.value }));
 
 /**
  * Component for switching `show_description_composite` setting of a composite object's subobject.

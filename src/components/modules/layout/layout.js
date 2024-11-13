@@ -5,7 +5,7 @@ import { WindowWidthContext } from "../wrappers/window-width-provider";
 import { Navbar } from "../../state-users/navbar/navbar";
 import { ModalWindow } from "../../state-users/modal-window";
 
-import { enumLayoutTypes } from "../../../util/enums/enum-layout-types";
+import { LayoutType } from "../../../store/types/ui/general/layout-type";
 
 import StyleLayout from "../../../styles/modules/layout.css";
 
@@ -13,7 +13,7 @@ import StyleLayout from "../../../styles/modules/layout.css";
 /**
  * Page layout with navigation, side menu and main content (body).
  */
-export const Layout = ({ sideMenu, body, layoutType = enumLayoutTypes.default }) => {
+export const Layout = ({ sideMenu, body, layoutType = LayoutType.default }) => {
     const isStacked = useContext(WindowWidthContext) === 0;
 
     // Grid column numbers & widths
@@ -31,7 +31,7 @@ export const Layout = ({ sideMenu, body, layoutType = enumLayoutTypes.default })
     const mainContentColumnClassName = "layout-grid-main-content-column" + layoutTypePostfix + stackedClassNamePostfix;
 
     // Navbar props
-    const usePlaceholder = layoutType === enumLayoutTypes.unlimitedWidth;
+    const usePlaceholder = layoutType === LayoutType.unlimitedWidth;
     
     // Side menu
     const sideMenuColumn = sideMenu && (
