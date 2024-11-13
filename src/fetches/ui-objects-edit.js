@@ -9,7 +9,7 @@ import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setEditedObject, r
     preSaveEditedObjectsUpdate, setToDoListRerenderPending } from "../actions/objects-edit";
 
 import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-objects-edit";
-import { objectDataIsInState } from "../store/state-util/objects";
+import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
@@ -100,7 +100,7 @@ export const objectsEditExistingOnLoad = object_id => {
         let setEditedObjects = true, fetchAttributesAndTags = true, fetchData = true;
         if (object_id in state.editedObjects) setEditedObjects = false;
         if (object_id in state.objects && object_id in state.objectsTags) fetchAttributesAndTags = false;
-        if (objectDataIsInState(state, object_id)) fetchData = false;
+        if (ObjectsSelectors.dataIsPresent(state, object_id)) fetchData = false;
 
         // Fetch object attributes, tags and/or data if they are missing
         if (fetchAttributesAndTags || fetchData) {
@@ -277,7 +277,7 @@ export const objectsEditLoadCompositeSubobjectsFetch = objectID => {
         // Get subobjects, which should be fetched
         let existingSubobjectIDs = Object.keys(state.editedObjects[objectID].composite.subobjects).map(objID => parseInt(objID)).filter(objID => objID > 0);
         let subobjectIDsWithMissingAttributesOrTags = existingSubobjectIDs.filter(objID => !(objID in state.objects && objID in state.objectsTags));
-        let subobjectIDsWithMissingData = existingSubobjectIDs.filter(objID => !objectDataIsInState(state, objID));
+        let subobjectIDsWithMissingData = existingSubobjectIDs.filter(objID => !ObjectsSelectors.dataIsPresent(state, objID));
 
         // Fetch missing attributes/tags/data
         if (subobjectIDsWithMissingAttributesOrTags.length > 0 || subobjectIDsWithMissingData.length > 0) {
@@ -305,7 +305,7 @@ export const objectsEditLoadCompositeSubobjectsFetch = objectID => {
 
         // Set which objects should be added to state.editedObjects (successfully fetched & not already present there)
         state = getState();
-        let subobjectIDsToAddToEditedObjects = existingSubobjectIDs.filter(objID => objID in state.objects && objID in state.objectsTags && objectDataIsInState(state, objID)
+        let subobjectIDsToAddToEditedObjects = existingSubobjectIDs.filter(objID => objID in state.objects && objID in state.objectsTags && ObjectsSelectors.dataIsPresent(state, objID)
             && !(objID in state.editedObjects));
 
         // Add objects to state.editedObjects

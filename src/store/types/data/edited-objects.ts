@@ -29,16 +29,9 @@ export const editedObject = object.extend({
     composite
 });
 
-/** A single edited object's type. */
-export type EditedObject = z.infer<typeof editedObject>;
-
 
 /** Edited objects' store schema. */
 export const editedObjects = z.record(intIndex, editedObject);
-
-/** Edited objects' store type. */
-export type EditedObjects = z.infer<typeof editedObjects>;
-
 
 /** 
  * Returns an edited object with optional `customValues` replacing the defaults.
@@ -94,3 +87,20 @@ export const getEditedObjectState = (customValues: Partial<EditedObject> = {}) =
     // Overriden values
     ...customValues
 });
+
+
+/** A single edited object's type. */
+export type EditedObject = z.infer<typeof editedObject>;
+/** Edited objects' store type. */
+export type EditedObjects = z.infer<typeof editedObjects>;
+
+/** Edited objects' type part containing link data. */
+type EditedObjectLinkPart = Pick<EditedObject, "link">;
+/** Edited objects' type part containing markdown data. */
+type EditedObjectMarkdownPart = Pick<EditedObject, "markdown">;
+/** Edited objects' type part containing to-do list data. */
+type EditedObjectToDoListPart = Pick<EditedObject, "toDoList">;
+/** Edited objects' type part containing composite data. */
+type EditedObjectCompositePart = Pick<EditedObject, "composite">;
+/** Type for one of data parts of an edited object. */
+export type EditedObjectDataPart = EditedObjectLinkPart | EditedObjectMarkdownPart | EditedObjectToDoListPart | EditedObjectCompositePart;

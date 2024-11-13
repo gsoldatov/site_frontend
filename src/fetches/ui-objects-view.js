@@ -4,11 +4,11 @@ import { getResponseErrorType } from "./common";
 import { objectsUpdateFetch, objectsViewCompositeHierarchyElements, objectsViewFetch } from "./data-objects";
 import { fetchMissingTags } from "./data/tags";
 
-import { canEditObject, objectDataIsInState } from "../store/state-util/objects";
+import { canEditObject } from "../store/state-util/objects";
+import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 import { CompositeSelectors } from "../store/selectors/data/objects/composite";
 import { getToDoListUpdateFetchBody } from "../store/state-util/to-do-lists";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
-
 
 
 const backendURL = getConfig().backendURL;
@@ -27,7 +27,7 @@ const backendURL = getConfig().backendURL;
         let state = getState();
         let fetchAttributesAndTags = true, fetchData = true;
         if (objectID in state.objects && objectID in state.objectsTags) fetchAttributesAndTags = false;
-        if (objectDataIsInState(state, objectID)) fetchData = false;
+        if (ObjectsSelectors.dataIsPresent(state, objectID)) fetchData = false;
 
         // Fetch object attributes, tags and/or data if they are missing
         if (fetchAttributesAndTags || fetchData) {
@@ -94,7 +94,7 @@ export const objectsViewGroupedLinksOnLoad = objectID => {
         const state = getState();
         const subobjectIDs = Object.keys(state.composite[objectID].subobjects);
         const subobjectIDsWithNonCachedAttributes = subobjectIDs.filter(suobbjectID => !(suobbjectID in state.objects) || !(suobbjectID in state.objectsTags));
-        const subobjectIDsWithNonCachedData = subobjectIDs.filter(subobjectID => !objectDataIsInState(state, subobjectID));
+        const subobjectIDsWithNonCachedData = subobjectIDs.filter(subobjectID => !ObjectsSelectors.dataIsPresent(state, subobjectID));
 
         // Fetch missing subobject attributes and data
         if (subobjectIDsWithNonCachedAttributes.length > 0 || subobjectIDsWithNonCachedData.length > 0) {
@@ -137,7 +137,7 @@ export const objectsViewCompositeChaptersOnLoad = rootObjectID => {
         // Also, get missing data of the current object
         const state = getState();
         const objectIDs = result.non_composite.concat(result.composite).filter(objectID => !(objectID in state.objects && objectID in state.objectsTags));
-        const objectDataIDs = result.composite.filter(objectID => !objectDataIsInState(state, objectID));
+        const objectDataIDs = result.composite.filter(objectID => !ObjectsSelectors.dataIsPresent(state, objectID));
 
         result = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
 

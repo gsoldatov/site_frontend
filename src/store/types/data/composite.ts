@@ -19,7 +19,7 @@ export const compositeSubobject = z.object({
     show_description_as_link_composite: z.enum(["yes", "no", "inherit"]),
 });
 
-/** A single composite object's data schema. */
+/** Composite object's data schema for state.toDoLists & state.editedObjects. */
 export const composite = z.object({
     subobjects: z.record(int, compositeSubobject),
     display_mode: z.enum(["basic", "grouped_links", "multicolumn", "chapters"]),
@@ -27,13 +27,13 @@ export const composite = z.object({
 });
 
 
-/** Composite object data type. */
+/** Composite object's data type for state.toDoLists & state.editedObjects. */
 export type Composite = z.infer<typeof composite>;
 /** Composite object data or its part containing `subobjects` record. */
 export type CompositeSubobjects = Pick<Composite, "subobjects">;
 
 
-/** Composite objects' data store schema. */
+/** state.composite data store schema. */
 export const compositeStore = z.record(positiveIntIndex, composite);
 
 

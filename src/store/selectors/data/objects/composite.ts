@@ -1,6 +1,7 @@
 import { deepEqual } from "../../../../util/equality-checks";
 import { deepMerge } from "../../../../util/copy";
-import { getObjectDataFromStore, validateNonCompositeObject } from "../../../state-util/objects";
+import { validateNonCompositeObject } from "../../../state-util/objects";
+import { ObjectsSelectors } from "./objects";
 import { isFetchingObject } from "../../../state-util/ui-objects-edit";
 
 import { subobjectAttributesCheckedForModification } from "../../../state-templates/composite-subobjects";
@@ -11,9 +12,11 @@ import type { EditedObject } from "../../../types/data/edited-objects";
 import type { Composite, CompositeSubobjects } from "../../../types/data/composite";
 
 
+/** Composite object's data state selectors. */
 export class CompositeSelectors {
     /**
      *  Returns an available `object_id` value for a new subobject.
+     *  TODO move to edited objects selectors
      */
     static getNewSubobjectID(state: State) {
         let minObjectID = 0;
@@ -29,7 +32,7 @@ export class CompositeSelectors {
      * Returns a list of subobject IDs sorted by their column and rows in the ascending order.
      */
     static getSingleColumnSubobjectDisplayOrder (composite: Composite) {
-        return Object.keys(composite.subobjects).map(parseInt).sort((a, b) => {
+        return Object.keys(composite.subobjects).map(k => parseInt(k)).sort((a, b) => {
             const { subobjects } = composite;
             if (subobjects[a].column < subobjects[b].column) return -1;
             if (subobjects[a].column === subobjects[b].column && subobjects[a].row < subobjects[b].row) return -1;
@@ -92,9 +95,10 @@ export class CompositeSelectors {
      * Returns true if non-composite subobject attributes/data of `editedObject` are valid.
      * 
      * Always returns true for subobjects with composite object type or not present in the state.
+     * 
+     * TODO move to edited object's selectors?
      */
     static nonCompositeSubobjectIsValid(editedObject: EditedObject) {
-        // TODO move to edited object's selectors?
         return CompositeSelectors.getNonCompositeSubobjectValidationError(editedObject) === undefined;
     };
 
@@ -102,9 +106,10 @@ export class CompositeSelectors {
      * Returns validation error text for a non-composite edited object `editedObject`, if it's not valid.
      * 
      * If object is valid, has "composite" object type or not being edited, returns undefined.
+     * 
+     * TODO move to edited object's selectors?
      */
     static getNonCompositeSubobjectValidationError(editedObject: EditedObject | undefined) {
-        // TODO move to edited object's selectors?
         if (editedObject === undefined || editedObject.object_type === "composite") return undefined;
 
         try {
@@ -160,7 +165,7 @@ export class CompositeSelectors {
      */
     static serializeObjectForUpdate = (state: State, objectID: number, newProps = {}) => {
         let result = getEditedObjectState(state.objects[objectID]);
-        result = deepMerge(result, getObjectDataFromStore(state, objectID, true));
+        result = deepMerge(result, ObjectsSelectors.editedObjectData(state, objectID));
         return deepMerge(result, newProps);
     };
 }

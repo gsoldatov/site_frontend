@@ -3,7 +3,8 @@ import { Button, Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
-import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified, getObjectDataFromStore } from "../../../../../../store/state-util/objects";
+import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified } from "../../../../../../store/state-util/objects";
+import { ObjectsSelectors } from "../../../../../../store/selectors/data/objects/objects";
 import { CompositeSelectors } from "../../../../../../store/selectors/data/objects/composite";
 import { SubobjectDeleteModes } from "../../../../../../store/types/data/composite";
 import { enumObjectTypes } from "../../../../../../util/enums/enum-object-types";
@@ -116,7 +117,7 @@ const Indicators = ({ objectID, subobjectID }) => {
             (objectTags, editedObject) => objectTagsAreModified(objectTags, editedObject)
         );
         const dataModifiedIsDisplayedSelector = createSelector(
-            state => getObjectDataFromStore(state, subobjectID),
+            state => ObjectsSelectors.data(state, subobjectID),
             state => state.editedObjects[subobjectID],
             (objectData, editedObject) => objectDataIsModified(objectData, editedObject)
         )

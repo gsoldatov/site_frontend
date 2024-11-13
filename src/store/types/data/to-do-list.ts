@@ -2,7 +2,7 @@ import { z } from "zod";
 import { int, nonNegativeInt, nonNegativeIntArray, nonNegativeIntIndex, positiveInt } from "../../../util/types/common";
 
 
-/** A single to-do list item in state.toDoLists & state.editedObjects schema. */
+/** To-do list item's schema for state.toDoLists & state.editedObjects. */
 const toDoListItem = z.object({
     item_state: z.enum(["active", "optional", "completed", "cancelled"]),
     item_text: z.string(),
@@ -28,7 +28,7 @@ export const toDoList = z.object({
 });
 
 
-/** To-do list objects' data store schema. */
+/** state.toDoLists data store schema. */
 export const toDoLists = z.record(positiveInt, toDoList);
 
 
@@ -40,3 +40,7 @@ export const getDefaultToDoListItem = () => toDoListItem.parse({
     indent: 0, 
     is_expanded: true
 });
+
+
+/** To-do list object's data type for state.toDoLists & state.editedObjects. */
+export type ToDoList = z.infer<typeof toDoList>;

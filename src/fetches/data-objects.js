@@ -9,7 +9,8 @@ import { addObjects, addObjectsData, deleteObjects } from "../actions/data-objec
 import { setEditedObject, setObjectsEditSaveFetchState } from "../actions/objects-edit";
 
 import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeObjectAttributesAndTagsForUpdateFetch,
-    serializeObjectData, modifyObjectDataPostSave, objectDataIsInState } from "../store/state-util/objects";
+    serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
+import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 
 
 const backendURL = getConfig().backendURL;
@@ -278,7 +279,7 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
 
         // Get objects with missing data
         let objectIDsWithNonCachedData = [];
-        if (data) objectIDsWithNonCachedData = objectIDs.filter(objectID => !objectDataIsInState(state, objectID));
+        if (data) objectIDsWithNonCachedData = objectIDs.filter(objectID => !ObjectsSelectors.dataIsPresent(state, objectID));
 
         // Fetch missing information
         return await dispatch(objectsViewFetch(objectIDsWithNonCachedAttributesOrTags, objectIDsWithNonCachedData));

@@ -1,5 +1,6 @@
 import { deepCopy } from "../../util/copy";
-import { getObjectDataFromStore, objectHasNoChanges } from "../../store/state-util/objects";
+import { objectHasNoChanges } from "../../store/state-util/objects";
+import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { getEditedObjectAndSubobjectIDs } from "../../store/state-util/ui-objects-edit";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
 
@@ -48,7 +49,7 @@ export const getStateWithResetEditedObjects = (state, objectIDs, { allowResetToD
         };
         
         // Set object data
-        const data = getObjectDataFromStore(state, objectID, true);
+        const data = ObjectsSelectors.editedObjectData(state, objectID);    // TODO if refactored, so that undefined is not returned here, make `editedObjectData` throw when data is missing
         throwIfDataIsMissing(data, `Failed to reset object ${objectID}: data is missing.`);
         stateAfterReset = {
             ...stateAfterReset,

@@ -6,6 +6,7 @@ import { CompositeSelectors } from "../selectors/data/objects/composite";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
 import { compositeSubobjectObjectAttributes, addedObjectAttributes, updatedObjectAttributes } from "../state-templates/edited-object";
 import { NumericUserLevel } from "../../store/types/data/auth";
+import { ObjectsSelectors } from "../selectors/data/objects/objects";
 
 /*
     Functions for checking/getting objects state.
@@ -13,24 +14,9 @@ import { NumericUserLevel } from "../../store/types/data/auth";
 
 
 /**
- *  Returns true if object_name of `obj` is already taken by another object, which is present in the local storage, or false otherwise.
- */
-export const checkIfObjectNameExists = (state, obj) => {
-    const objects = state.objects;
-    const loweredName = obj.object_name.toLowerCase();
-
-    for (let i in objects) {
-        if (loweredName === objects[i].object_name.toLowerCase() && obj.object_id !== objects[i].object_id) {
-            return true;
-        }
-    }
-
-    return false;
-};
-
-
-/**
  * Returns true is state of an edited object `obj` is valid or throws an error if not.
+ * 
+ * TODO replace with zod validation & return first validation error occured
  */
 export const validateObject = (state, obj) => {
     switch (obj.object_type) {
@@ -66,10 +52,12 @@ export const validateObject = (state, obj) => {
 
 /**
  * Validates a single non-composite edited object `obj` and returns true if its valid.
+ * 
+ * 
+ * // TODO move to edited objects selectors?
+ * // TODO replace with zod validation? throw the first zod validation error upstream
  */
 export const validateNonCompositeObject = obj => {
-    // TODO move to edited objects selectors?
-    // TODO replace with zod validation?
     // Object name
     if (obj.object_name.length === 0) throw Error("Object name is required.");
 
@@ -100,6 +88,8 @@ export const validateNonCompositeObject = obj => {
 
 /**
  * Accepts an edited object `obj` and returns an object with its attributes and tags serialized for /objects/add fetch.
+ * 
+ * TODO replace with zod validation
  */
 export const serializeObjectAttributesAndTagsForAddFetch = obj => {
     let result = { added_tags: obj.addedTags };
@@ -115,6 +105,8 @@ export const serializeObjectAttributesAndTagsForAddFetch = obj => {
 
 /**
  * Accepts an edited object `obj` and returns an object with its attributes and tags serialized for /objects/update fetch.
+ * 
+ * TODO replace with zod validation
  */
  export const serializeObjectAttributesAndTagsForUpdateFetch = obj => {
     let result = { added_tags: obj.addedTags, removed_tag_ids: obj.removedTagIDs };
@@ -130,6 +122,8 @@ export const serializeObjectAttributesAndTagsForAddFetch = obj => {
 
 /**
  * Returns `obj` object data serialized into a format required by backed API.
+ * 
+ * TODO replace with zod validation
  */
 export const serializeObjectData = (state, obj) => {
     // Function must return a copy of the object if its data is mutable;
@@ -214,66 +208,12 @@ export const serializeObjectData = (state, obj) => {
 
 
 /**
- * Returns object data from `state` storage for the provided `objectID`.
- * 
- * If `formatAsEditedObjectProps` is true, returns a deep copy of data formatted to be inserted into an edited object,
- * otherwise returns the reference to the original object in the storage.
- * 
- * If object data or attributes (object type is required) are not present, returns `undefined`.
- */
-export const getObjectDataFromStore = (state, objectID, formatAsEditedObjectProps) => {
-    if (!objectDataIsInState(state, objectID)) return undefined;
-
-    const objectType = state.objects[objectID].object_type;
-    switch (objectType) {
-        case "link":
-            return formatAsEditedObjectProps
-                ? { link: deepCopy(state.links[objectID]) }
-                : state.links[objectID];
-        case "markdown":
-            return formatAsEditedObjectProps
-                ? (state.markdown[objectID] ? { markdown: { raw_text: state.markdown[objectID].raw_text, parsed: "" }} : undefined)
-                : state.markdown[objectID];
-        case "to_do_list":
-            return formatAsEditedObjectProps
-                ? { toDoList: deepCopy(state.toDoLists[objectID]) }
-                : state.toDoLists[objectID];
-        case "composite":
-            return formatAsEditedObjectProps
-                ? { composite: deepCopy(state.composite[objectID]) }
-                : state.composite[objectID];
-        default:
-            return undefined;
-    }
-};
-
-
-/**
- * Returns true if object data for the provided `objectID` exists in `state` or false otherwise.
- */
-export const objectDataIsInState = (state, objectID) => {
-    if (!state.objects[objectID]) return false;
-    const objectType = state.objects[objectID].object_type;
-
-    switch (objectType) {
-        case "link":
-            return objectID in state.links;
-        case "markdown":
-            return objectID in state.markdown;
-        case "to_do_list":
-            return objectID in state.toDoLists;
-        case "composite":
-            return objectID in state.composite;
-        default:
-            return false;
-    }
-};
-
-
-/**
  * Modifies object_data in add/update object fetches to prepare it for adding to the respective storage with addObjectsData action.
  * `requestPayload` is the body of the request sent to backend.
  * `responseObject` is the `object` attribute of the JSON parsed from response body.
+ * 
+ * TODO implement via fetch response types or util functions?
+ * TODO implement via response -> store transformers?
  */
 export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
     const { object_type } = responseObject;
@@ -308,10 +248,11 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
     // Existing edited object
     // Return default value if objectID is missing is editedObjects or attribute / tag / data storages
     defaultReturnValue = defaultReturnValue !== undefined ? defaultReturnValue : true;
-    if (!state.editedObjects.hasOwnProperty(objectID) || !state.objects.hasOwnProperty(objectID) || !state.objectsTags.hasOwnProperty(objectID) || !objectDataIsInState(state, objectID)) 
+    if (!state.editedObjects.hasOwnProperty(objectID) || !state.objects.hasOwnProperty(objectID) 
+        || !state.objectsTags.hasOwnProperty(objectID) || !ObjectsSelectors.dataIsPresent(state, objectID)) 
         return defaultReturnValue;
     
-    const object = state.objects[objectID], objectTags = state.objectsTags[objectID], objectData = getObjectDataFromStore(state, objectID),
+    const object = state.objects[objectID], objectTags = state.objectsTags[objectID], objectData = ObjectsSelectors.data(state, objectID),
         editedObject = state.editedObjects[objectID];
     
     // Check object attributes
@@ -391,9 +332,10 @@ export const objectDataIsModified = (objectData, editedObject) => {
  * Checks if current user can update object with the specified `objectID`
  */
 export const canEditObject = (state, objectID) => {
+    // TODO move to /objects/view selectors
     // Exit early, if data is absent
     if (!objectID in state.objects) return false;
-    if (!objectDataIsInState(state, objectID)) return false;
+    if (!ObjectsSelectors.dataIsPresent(state, objectID)) return false;
 
     return state.auth.numeric_user_level === NumericUserLevel.admin
         || (state.auth.numeric_user_level > NumericUserLevel.anonymous && state.objects[objectID].owner_id === state.auth.user_id);

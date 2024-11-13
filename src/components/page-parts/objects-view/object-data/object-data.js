@@ -11,7 +11,7 @@ import { CompositeMulticolumn } from "./composite-multicolumn";
 import { CompositeChapters } from "./composite-chapters/composite-chapters";
 
 import { enumCompositeObjectDisplayModes } from "../../../../util/enums/enum-composite-object-display-modes";
-import { objectDataIsInState } from "../../../../store/state-util/objects";
+import { ObjectsSelectors } from "../../../../store/selectors/data/objects/objects";
 
 
 /**
@@ -28,7 +28,7 @@ export const ObjectData = ({ objectID, dataProps = {} }) => {
  * Default data switch component for rendering data of the root object.
  */
 const DefaultObjectDataSwitch = ({ objectID }) => {
-    const isRendered = useSelector(state => objectDataIsInState(state, objectID));
+    const isRendered = useSelector(state => ObjectsSelectors.dataIsPresent(state, objectID));
     const objectType = useSelector(state => (state.objects[objectID] || {}).object_type);
     const compositeDisplayMode = useSelector(state => (state.composite[objectID] || {}).display_mode);
 
@@ -66,7 +66,7 @@ const DefaultObjectDataSwitch = ({ objectID }) => {
  * Data switch component which does not recursively render composite subobjects' data.
  */
 export const SubobjectDataSwitch = ({ objectID, dataProps = {} }) => {
-    const isRendered = useSelector(state => objectDataIsInState(state, objectID));
+    const isRendered = useSelector(state => ObjectsSelectors.dataIsPresent(state, objectID));
     const objectType = useSelector(state => (state.objects[objectID] || {}).object_type);
 
     // Don't render if object attributes are not present in the local state (to avoid errors after logout)
@@ -91,7 +91,7 @@ export const SubobjectDataSwitch = ({ objectID, dataProps = {} }) => {
  * Data switch component for object chapter. Displays composite objects in `basic` or `grouped_links` modes.
  */
 export const ChaptersDataSwitch = ({ objectID, dataProps = {} }) => {
-    const isRendered = useSelector(state => objectDataIsInState(state, objectID));
+    const isRendered = useSelector(state => ObjectsSelectors.dataIsPresent(state, objectID));
     const objectType = useSelector(state => (state.objects[objectID] || {}).object_type);
     const compositeDisplayMode = useSelector(state => (state.composite[objectID] || {}).display_mode);
 
