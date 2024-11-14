@@ -8,7 +8,8 @@ export enum SubobjectDeleteMode {
     full
 };
 
-export const compositeShowDescriptionValues: [string, ...string[]] = ["yes", "no", "inherit"];
+const compositeShowDescription = z.enum(["yes", "no", "inherit"]);
+export const compositeShowDescriptionValues = compositeShowDescription.options;
 
 export const compositeSubobject = z.object({
     row: int,
@@ -17,16 +18,17 @@ export const compositeSubobject = z.object({
     is_expanded: z.boolean(),
     deleteMode: z.nativeEnum(SubobjectDeleteMode),
     fetchError: z.string(),
-    show_description_composite: z.enum(compositeShowDescriptionValues),
-    show_description_as_link_composite: z.enum(compositeShowDescriptionValues),
+    show_description_composite: compositeShowDescription,
+    show_description_as_link_composite: compositeShowDescription
 });
 
-export const compositeDisplayModesValues: [string, ...string[]] = ["basic", "grouped_links", "multicolumn", "chapters"];
+const compositeDisplayMode = z.enum(["basic", "grouped_links", "multicolumn", "chapters"]);
+export const compositeDisplayModeValues = compositeDisplayMode.options;
 
 /** Composite object's data schema for state.toDoLists & state.editedObjects. */
 export const composite = z.object({
     subobjects: z.record(int, compositeSubobject),
-    display_mode: z.enum(compositeDisplayModesValues),
+    display_mode: z.enum(compositeDisplayModeValues),
     numerate_chapters: z.boolean()
 });
 

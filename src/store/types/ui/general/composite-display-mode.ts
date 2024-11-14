@@ -1,4 +1,4 @@
-import { compositeDisplayModesValues } from "../../data/composite";
+import { compositeDisplayModeValues } from "../../data/composite";
 
 
 /**
@@ -15,8 +15,8 @@ export const compositeDisplayModeOptions: Record<string, { name: string, value: 
 // Check if options object is properly defined
 let optionsValues = Object.values(compositeDisplayModeOptions).map(v => v.value);
 
-let missingOptions = compositeDisplayModesValues.filter(k => !optionsValues.includes(k));
+let missingOptions = compositeDisplayModeValues.filter(k => !optionsValues.includes(k));
 if (missingOptions.length > 0) throw Error(`Missing display modes option values: ${missingOptions}`);
 
-let invalidOptions = optionsValues.filter(k => !compositeDisplayModesValues.includes(k));
+let invalidOptions = optionsValues.filter(k => !compositeDisplayModeValues.includes(k as any));
 if (invalidOptions.length > 0) throw Error(`Invalid display modes option values: ${invalidOptions}`);

@@ -2,10 +2,9 @@ import { z } from "zod";
 import { nameString, positiveInt, positiveIntIndex, timestampOrEmptyString, timestampString } from "../../../util/types/common";
 
 
-export const objectTypeValues: [string, ...string[]] = ["link", "markdown", "to_do_list", "composite"];
-
 /** Object type enum schema */
-export const objectType = z.enum(objectTypeValues);
+export const objectType = z.enum(["link", "markdown", "to_do_list", "composite"]);
+export const objectTypeValues = objectType.options;
 
 
 /** state.objects schema for object attributes. */
@@ -23,6 +22,9 @@ export const object = z.object({
     owner_id: positiveInt
 });
 
+
+/** object types type. */
+export type ObjectType = z.infer<typeof objectType>;
 
 /** state.objects store value type. */
 export type ObjectAttributes = z.infer<typeof object>;

@@ -18,5 +18,5 @@ let optionsKeys = Object.keys(objectTypeOptions);
 let missingOptions = objectTypeValues.filter(k => !optionsKeys.includes(k));
 if (missingOptions.length > 0) throw Error(`Missing object type options: ${missingOptions}`);
 
-let invalidOptions = optionsKeys.filter(k => !objectTypeValues.includes(k));
+let invalidOptions = optionsKeys.filter(k => !objectTypeValues.includes(k as any));
 if (invalidOptions.length > 0) throw Error(`Invalid object type options: ${invalidOptions}`);
