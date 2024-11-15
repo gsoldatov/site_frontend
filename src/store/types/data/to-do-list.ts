@@ -32,18 +32,22 @@ export const toDoList = z.object({
 export const toDoLists = z.record(positiveInt, toDoList);
 
 
-/** Returns default to-do list item state. */
-export const getDefaultToDoListItem = () => toDoListItem.parse({
+/** To-do list item type for state.toDoLists & state.editedObjects. */
+export type ToDoListItem = z.infer<typeof toDoListItem>;
+/** To-do list object's data type for state.toDoLists & state.editedObjects. */
+export type ToDoList = z.infer<typeof toDoList>;
+
+
+/** Returns default to-do list item state with default or optional `customValues` set into it. */
+export const getToDoListItem = (customValues: Partial<ToDoListItem> = {}): ToDoListItem => toDoListItem.parse({
     item_state: "active", 
     item_text: "", 
     commentary: "", 
     indent: 0, 
-    is_expanded: true
+    is_expanded: true,
+    
+    ...customValues
 });
-
-
-/** To-do list object's data type for state.toDoLists & state.editedObjects. */
-export type ToDoList = z.infer<typeof toDoList>;
 
 
 /** Returns a to-do list object data with default or optional `customValues` set into it. */
