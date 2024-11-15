@@ -110,6 +110,8 @@ function loadObjectsEditExistingPage(state, action) {
     Does not reset new subobjects (with `objectID` < 0).
 
     If `hideObjectResetDialog` is true, hides reset dialog on /objects/edit/:id page.
+
+    TODO split into "reset existing object from stores" & "load new object with optional custom props"
 */
 function resetEditedObjects(state, action) {
     const { hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed } = action;
