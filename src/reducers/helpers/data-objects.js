@@ -1,4 +1,4 @@
-import { getDefaultSubobject } from "../../store/types/data/composite";
+import { getCompositeSubobject } from "../../store/types/data/composite";
 import { objectAttributes } from "../../store/state-templates/edited-object";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
 
@@ -73,7 +73,7 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
                 
                 composite.subobjects = {};
                 od.object_data.subobjects.forEach(so => {
-                    const subobject = getDefaultSubobject();
+                    const subobject = getCompositeSubobject();
                     for (let attr of Object.keys(subobject))
                         if (attr in so) subobject[attr] = so[attr];
                     composite.subobjects[so.object_id] = subobject;
@@ -109,10 +109,12 @@ export const getStateWithAddedObjectsData = (state, objectData) => {
 };
 
 
-/**
- *  Returns state with provided list of object data `objectIDs` removed from the storages and selections.
+/** 
+ * Returns state with provided list of object data `objectIDs` removed from the storages and selections.
  * 
- *  If `deleteSubobjects` is true, also deleted all subobjects of composite objects in `objectIDs`.
+ * If `deleteSubobjects` is true, also deleted all subobjects of composite objects in `objectIDs`.
+ * 
+ * TODO move into edited objects updaters; make separate getters for direct subobjects & for new subobjects
  */
 export const getStateWithDeletedObjects = (state, objectIDs, deleteSubobjects) => {
     if (objectIDs.length === 0) return state;

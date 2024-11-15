@@ -33,6 +33,8 @@ export const composite = z.object({
 });
 
 
+/** Composite subobject's type for state.toDoLists & state.editedObjects. */
+export type CompositeSubobject = z.infer<typeof compositeSubobject>;
 /** Composite object's data type for state.toDoLists & state.editedObjects. */
 export type Composite = z.infer<typeof composite>;
 /** Composite object data or its part containing `subobjects` record. */
@@ -43,8 +45,8 @@ export type CompositeSubobjects = Pick<Composite, "subobjects">;
 export const compositeStore = z.record(positiveIntIndex, composite);
 
 
-/** Returns default state of a composite subobject. */
-export const getDefaultSubobject = () => compositeSubobject.parse({
+/** Returns state of a composite subobject with default or optional `customValues` set into it. */
+export const getCompositeSubobject = (customValues: Partial<CompositeSubobject> = {}): CompositeSubobject => compositeSubobject.parse({
     row: -1, 
     column: -1, 
     selected_tab: 0, 
@@ -52,7 +54,9 @@ export const getDefaultSubobject = () => compositeSubobject.parse({
     deleteMode: SubobjectDeleteMode.none, 
     fetchError: "",
     show_description_composite: "inherit",
-    show_description_as_link_composite: "inherit"
+    show_description_as_link_composite: "inherit",
+
+    ...customValues
 });
 
 
