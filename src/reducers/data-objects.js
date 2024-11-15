@@ -1,11 +1,12 @@
 import { ADD_OBJECTS, ADD_OBJECTS_DATA, DELETE_OBJECTS, UPDATE_OBJECTS_DATA } from "../actions/data-objects";
 import { deepMerge } from "../util/copy";
 
-import { getStateWithAddedObjects, getStateWithAddedObjectsData, getStateWithDeletedObjects } from "./helpers/data-objects";
+import { getStateWithAddedObjectsData, getStateWithDeletedObjects } from "./helpers/data-objects";
+import { ObjectsUpdaters } from "../store/updaters/data/objects";
 
 
 const addObjects = (state, action) => {
-    return getStateWithAddedObjects(state, action.objects);
+    return ObjectsUpdaters.addObjectsAttributes(state, action.objects);
 };
 
 const addObjectsData = (state, action) => {

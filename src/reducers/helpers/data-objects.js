@@ -1,28 +1,5 @@
 import { getCompositeSubobject } from "../../store/types/data/composite";
-import { objectAttributes } from "../../store/state-templates/edited-object";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
-
-
-/**
- *  Returns state with provided list of object attributes `objects` inserted into state.objects storage.
- */
-export const getStateWithAddedObjects = (state, objects) => {
-    if (!(objects instanceof Array) || objects.length === 0) return state;
-
-    let newObjects = {};
-    objects.forEach(object => {
-        const object_id = object.object_id;
-        newObjects[object_id] = {};
-        objectAttributes.forEach(attr => newObjects[object_id][attr] = object[attr]);
-    });
-    return {
-        ...state,
-        objects: {
-            ...state.objects,
-            ...newObjects
-        }
-    };
-};
 
 
 /**
