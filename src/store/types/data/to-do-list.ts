@@ -3,7 +3,7 @@ import { int, nonNegativeInt, nonNegativeIntArray, nonNegativeIntIndex, positive
 
 
 /** To-do list item's schema for state.toDoLists & state.editedObjects. */
-const toDoListItem = z.object({
+export const toDoListItem = z.object({
     item_state: z.enum(["active", "optional", "completed", "cancelled"]),
     item_text: z.string(),
     commentary: z.string(),
@@ -44,3 +44,21 @@ export const getDefaultToDoListItem = () => toDoListItem.parse({
 
 /** To-do list object's data type for state.toDoLists & state.editedObjects. */
 export type ToDoList = z.infer<typeof toDoList>;
+
+
+/** Returns a to-do list object data with default or optional `customValues` set into it. */
+export const getToDoList = (customValues: Partial<ToDoList> = {}): ToDoList => toDoList.parse({
+    itemOrder: [],
+    setFocusOnID: -1,
+    caretPositionOnFocus: -1,
+    newItemInputIndent: 0,
+    draggedParent: -1,
+    draggedChildren: [],
+    draggedOver: -1,
+    dropIndent: 0,
+
+    sort_type: "default",
+    items: {},
+
+    ...customValues
+});

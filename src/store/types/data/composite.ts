@@ -54,3 +54,12 @@ export const getDefaultSubobject = () => compositeSubobject.parse({
     show_description_composite: "inherit",
     show_description_as_link_composite: "inherit"
 });
+
+
+/** Returns a composite object data with default or optional `customValues` set into it. */
+export const getComposite = (customValues: Partial<Composite> = {}): Composite => composite.parse({
+    subobjects: {},
+    display_mode: "basic",
+    numerate_chapters: false,
+    ...customValues
+});

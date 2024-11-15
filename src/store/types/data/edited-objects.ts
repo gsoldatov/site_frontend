@@ -2,10 +2,10 @@ import { z } from "zod";
 
 import { object } from "./objects";
 import { nameString, positiveInt, positiveIntArray, int, timestampOrEmptyString, nonNegativeInt, intIndex } from "../../../util/types/common";
-import { link } from "./links";
-import { markdown } from "./markdown";
-import { toDoList } from "./to-do-list";
-import { composite } from "./composite";
+import { link, getLink } from "./links";
+import { markdown, getMarkdown } from "./markdown";
+import { toDoList, getToDoList } from "./to-do-list";
+import { composite, getComposite } from "./composite";
 
 
 /** A single edited object's schema. */
@@ -57,32 +57,10 @@ export const getEditedObjectState = (customValues: Partial<EditedObject> = {}) =
     removedTagIDs: [],
 
     // Data
-    link: {
-        link: "",
-        show_description_as_link: false,
-    },
-    markdown: { 
-        raw_text: "", 
-        parsed: "" 
-    },
-    toDoList: {
-        itemOrder: [],
-        setFocusOnID: -1,
-        caretPositionOnFocus: -1,
-        newItemInputIndent: 0,
-        draggedParent: -1,
-        draggedChildren: [],
-        draggedOver: -1,
-        dropIndent: 0,
-
-        sort_type: "default",
-        items: {}
-    },
-    composite: {
-        subobjects: {},
-        display_mode: "basic",
-        numerate_chapters: false
-    },
+    link: getLink(),
+    markdown: getMarkdown(),
+    toDoList: getToDoList(),
+    composite: getComposite(),
 
     // Overriden values
     ...customValues

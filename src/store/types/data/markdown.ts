@@ -14,3 +14,11 @@ export const markdownStore = z.record(positiveIntIndex, markdown);
 
 /** Markdown object's data type for state.markdown & state.editedObjects. */
 export type Markdown = z.infer<typeof markdown>;
+
+
+/** Returns a markdown object data with default or optional `customValues` set into it. */
+export const getMarkdown = (customValues: Partial<Markdown> = {}): Markdown => markdown.parse({
+    raw_text: "",
+    parsed: "",
+    ...customValues
+});
