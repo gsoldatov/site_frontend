@@ -1,11 +1,12 @@
 import logState from "../store/log-state";
 
 import { authRoot } from "./data/auth";
+import { usersRoot } from "./data/users";
 import { tagsRoot } from "./data/tags";
 import { objectsTagsRoot } from "./data/objects-tags";
 import dataObjects from "./data-objects";
 import { objectsRoot } from "./data/objects";
-import { usersRoot } from "./data/users";
+import { editedObjectsRoot } from "./data/edited-objects";
 
 import { commonRoot } from "./common";
 import { modalRoot } from "./ui/modal";
@@ -41,11 +42,12 @@ function getActionHandlers(rootObjects) {
 
 const ACTION_HANDLERS = getActionHandlers({ 
     authRoot,
+    usersRoot,
     tagsRoot,
     objectsTagsRoot,
     dataObjects,
     objectsRoot,
-    usersRoot, 
+    editedObjectsRoot,
     
     commonRoot, 
     modalRoot,

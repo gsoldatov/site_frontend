@@ -2,10 +2,13 @@ import { addObjectsData, addObjects } from "../../src/actions/data-objects";
 import { addTags } from "../../src/reducers/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { resetEditedObjects } from "../../src/actions/objects-edit";
+import { addEditedObjects } from "../../src/reducers/data/edited-objects";
+import { getEditedObjectState } from "../../src/store/types/data/edited-objects";
 import { createTestStore } from "../_util/create-test-store";
 import { generateObjectAttributes, defaultObjectAttributeValueGetters, generateObjectData } from "./data-objects";
 
 import { _cachedObjects, _cachedObjectData } from "./mock-fetch-handlers-objects";
+import { ObjectsTransformers } from "../../src/store/transformers/data/objects";
 
 
 /**
@@ -252,10 +255,24 @@ export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsN
     let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString() }));
 
-    store.dispatch(addObjects(objects));
+    // Add existing objects to state storages
+    store.dispatch(addObjects(objects.filter(o => o.object_id > 0)));
     store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectsData(objectData));
-    store.dispatch(resetEditedObjects({objectIDs: [mainObjectID, linkSubobjectID, markdownSubobjectID, TDLSubobjectID, compositeSubobjectID, 6], allowResetToDefaults: true }));
+
+    // Add new & existing objects to edited objects
+    for (let objectID of [mainObjectID, linkSubobjectID, markdownSubobjectID, TDLSubobjectID, compositeSubobjectID, 6]) {
+        const attributes = objects.filter(o => o.object_id === objectID)[0];
+        const { object_data } = objectData.filter(o => o.object_id === objectID)[0];
+        const editedObjectData = ObjectsTransformers.backendDataToEdited(object_data);
+        const editedObject = getEditedObjectState({ ...attributes, ...editedObjectData });
+        store.dispatch(addEditedObjects([editedObject]));
+    }
+    
+    // Add edited objects (does not work for new objects: they must be added to store first, which is not possible with `addObjectsAttributes` function)
+    // store.dispatch(resetEditedObjects({objectIDs: [mainObjectID, linkSubobjectID, markdownSubobjectID, TDLSubobjectID, compositeSubobjectID, 6], allowResetToDefaults: true }));
+
+    // Add tags
     store.dispatch(addTags(tags));
 
     return store;

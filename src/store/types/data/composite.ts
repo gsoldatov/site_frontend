@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { int, nonNegativeInt, positiveIntIndex } from "../../../util/types/common";
+import { int, intIndex, nonNegativeInt, positiveIntIndex } from "../../../util/types/common";
 
 
 export enum SubobjectDeleteMode {
@@ -27,7 +27,7 @@ export const compositeDisplayModeValues = compositeDisplayMode.options;
 
 /** Composite object's data schema for state.toDoLists & state.editedObjects. */
 export const composite = z.object({
-    subobjects: z.record(int, compositeSubobject),
+    subobjects: z.record(intIndex, compositeSubobject),
     display_mode: z.enum(compositeDisplayModeValues),
     numerate_chapters: z.boolean()
 });
