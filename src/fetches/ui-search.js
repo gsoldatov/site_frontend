@@ -30,16 +30,17 @@ export const searchPageOnLoad = query => {
 
         // Handle fetch errors
         for (let result of results) {
-            if (result instanceof FetchResult) {
-                if (result.failed) return { error: result.error };  // TODO return fetch result?
-            } else {
-                // TODO use a single branch when possible
-                let responseErrorType = getResponseErrorType(result);
-                if (responseErrorType > enumResponseErrorType.none) {
-                    const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-                    return { error: errorMessage };
-                }
-            }
+            if (result.failed) return { error: result.error };  // TODO return fetch result?
+            // if (result instanceof FetchResult) {
+            //     if (result.failed) return { error: result.error };  // TODO return fetch result?
+            // } else {
+            //     // TODO use a single branch when possible
+            //     let responseErrorType = getResponseErrorType(result);
+            //     if (responseErrorType > enumResponseErrorType.none) {
+            //         const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
+            //         return { error: errorMessage };
+            //     }
+            // }
         }
 
         // Return search results

@@ -1,5 +1,6 @@
 import { getResponseErrorType } from "./common";
-import { objectsGetPageObjectIDs, objectsViewFetch } from "./data-objects";
+import { objectsGetPageObjectIDs } from "./data-objects";
+import { objectsViewFetch } from "./data/objects";
 import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
@@ -34,14 +35,10 @@ export const tagsViewLoadSelectedTags = tagIDs => {
 
         let nonCachedObjects = result["object_ids"].filter(object_id => !(object_id in getState().objects));
         if (nonCachedObjects.length !== 0) {
-            response = await dispatch(objectsViewFetch(nonCachedObjects));
+            const objectsViewResult = await dispatch(objectsViewFetch(nonCachedObjects));
             
             // Handle errors
-            responseErrorType = getResponseErrorType(response);
-            if (responseErrorType > enumResponseErrorType.none) {
-                const errorMessage = responseErrorType === enumResponseErrorType.general ? response.error : "";
-                return { error: errorMessage };
-            }
+            if (objectsViewResult.failed) return { error: objectsViewResult.error };    // TODO return FetchResult, when typing is added
         }
 
         // Return object IDs and total number of objects

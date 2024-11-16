@@ -2,6 +2,7 @@ import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
+import { objectsViewFetch } from "./data/objects";
 import { fetchMissingTags } from "./data/tags";
 
 import { addObjectsTags, updateObjectsTags } from "../reducers/data/objects-tags";
@@ -64,66 +65,6 @@ export const objectsAddFetch = obj => {
                 return getErrorFromResponse(response);
         }
     };
-};
-
-
-/**
- * Fetches backend to retrieve objects attributes for provided `objectIDs` and object data for `objectDataIDs`.
- * 
- * Adds the objects and data to the state in case of success.
- * 
- * Fetches non-cached tags, if object attributes were fetched for at least one object.
- * 
- * Returns the arrays of object attributes and data returned by backend or an object with `error` attribute containing error message in case of failure.
- */
-export const objectsViewFetch = (objectIDs, objectDataIDs) => {
-    return async (dispatch, getState) => {
-        const objectIDsLength = (objectIDs || []).length;
-        const objectDataIDsLength = (objectDataIDs || []).length;
-        if (objectIDsLength === 0 && objectDataIDsLength === 0) return {};
-        objectIDs = (objectIDs || []).map(objectID => parseInt(objectID));
-        objectDataIDs = (objectDataIDs || []).map(objectID => parseInt(objectID));
-
-        // Fetch object attributes & data
-        let payload = {};
-        if (objectIDsLength > 0) payload["object_ids"] = objectIDs;
-        if (objectDataIDsLength > 0) payload["object_data_ids"] = objectDataIDs;
-
-        let response = await dispatch(runFetch(`${backendURL}/objects/view`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        }));
-
-        switch (response.status) {
-            case 200:
-                let data = await response.json();
-
-                // Set object data
-                if (data["object_data"].length > 0) dispatch(addObjectsDataFromBackend(data["object_data"]));
-
-                // Set object attributes & fetch non-cached tags
-                if (data["objects"].length > 0) {
-                    dispatch(addObjectsAttributes(data["objects"]));
-                    dispatch(addObjectsTags(data["objects"]));
-                    
-                    // Fetch non cached tags
-                    let allObjectsTags = new Set();
-                    data["objects"].forEach(object => object.current_tag_ids.forEach(tagID => allObjectsTags.add(tagID)));
-                    const fetchMissingTagsResult = await dispatch(fetchMissingTags([...allObjectsTags]));
-
-                    // Handle tag fetch errors
-                    if (fetchMissingTagsResult.failed) return { error: fetchMissingTagsResult.error };   // TODO return fetch result?
-                }
-
-                return data;
-            case 404:
-                const error = Math.max(objectIDs.length, objectDataIDs.length) > 1 ? "Objects not found." : "Object not found.";
-                return { error };
-            default:
-                return await getErrorFromResponse(response);
-        }
-    }; 
 };
 
 
@@ -249,8 +190,8 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
                 let objectIDs = (await response.json()).object_ids;
 
                 // Fetch non-cached objects
-                response = await dispatch(fetchMissingObjects(objectIDs, { attributes: true, tags: true }));
-                if (getResponseErrorType(response) > enumResponseErrorType.none) return response;   // Stop if nested fetch failed
+                const missingObjectsResult = await dispatch(fetchMissingObjects(objectIDs, { attributes: true, tags: true }));
+                if (missingObjectsResult.failed) return missingObjectsResult;   // Stop if nested fetch failed
 
                 return objectIDs;
             case 404:

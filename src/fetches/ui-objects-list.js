@@ -1,5 +1,6 @@
 import { getResponseErrorType } from "./common";
-import { objectsViewFetch, objectsDeleteFetch, objectsGetPageObjectIDs } from "./data-objects";
+import { objectsDeleteFetch, objectsGetPageObjectIDs } from "./data-objects";
+import { objectsViewFetch } from "./data/objects";
 import { objectsTagsUpdateFetch } from "./data/objects-tags";
 import { tagsSearchFetch } from "./data/tags";
 
@@ -90,8 +91,8 @@ export const objectsListPageFetch = currentPage => {
 
         let nonCachedObjects = result["object_ids"].filter(object_id => !(object_id in state.objects));
         if (nonCachedObjects.length !== 0) {
-            result = await dispatch(objectsViewFetch(nonCachedObjects));
-            dispatch(setObjectsListFetch(false, getResponseErrorType(result) === enumResponseErrorType.general ? result.error : ""));
+            const objectsViewResult = await dispatch(objectsViewFetch(nonCachedObjects));
+            dispatch(setObjectsListFetch(false, objectsViewResult.failed ? objectsViewResult.error : ""));
         } else dispatch(setObjectsListFetch(false, ""));
     };
 };

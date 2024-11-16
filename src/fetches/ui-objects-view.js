@@ -1,7 +1,8 @@
 import { getConfig } from "../config";
 
 import { getResponseErrorType } from "./common";
-import { objectsUpdateFetch, objectsViewCompositeHierarchyElements, objectsViewFetch } from "./data-objects";
+import { objectsUpdateFetch, objectsViewCompositeHierarchyElements } from "./data-objects";
+import { objectsViewFetch } from "./data/objects";
 import { fetchMissingTags } from "./data/tags";
 
 import { ObjectsViewSelectors } from "../store/selectors/ui/objects-view";
@@ -33,14 +34,10 @@ const backendURL = getConfig().backendURL;
         if (fetchAttributesAndTags || fetchData) {
             let objectIDs = fetchAttributesAndTags ? [objectID] : undefined;
             let objectDataIDs = fetchData ? [objectID] : undefined;
-            let result = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
+            const objectsViewResult = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
 
             // Handle fetch errors
-            const responseErrorType = getResponseErrorType(result);
-            if (responseErrorType > enumResponseErrorType.none) {
-                const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-                return { error: errorMessage };
-            }
+            if (objectsViewResult.failed) return { error: objectsViewResult.error };    // TODO return FetchResult, when typing is added
         } else {
             // Fetch missing tags if object attributes, tags & data are present in the state
             let result = await dispatch(fetchMissingTags(state.objectsTags[objectID]));
@@ -98,14 +95,10 @@ export const objectsViewGroupedLinksOnLoad = objectID => {
 
         // Fetch missing subobject attributes and data
         if (subobjectIDsWithNonCachedAttributes.length > 0 || subobjectIDsWithNonCachedData.length > 0) {
-            let result = await dispatch(objectsViewFetch(subobjectIDsWithNonCachedAttributes, subobjectIDsWithNonCachedData));
+            const objectsViewResult = await dispatch(objectsViewFetch(subobjectIDsWithNonCachedAttributes, subobjectIDsWithNonCachedData));
 
             // Handle fetch errors
-            const responseErrorType = getResponseErrorType(result);
-            if (responseErrorType > enumResponseErrorType.none) {
-                const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-                return { error: errorMessage };
-            }            
+            if (objectsViewResult.failed) return { error: objectsViewResult.error };    // TODO return FetchResult, when typing is added
         }
 
         // End fetch
@@ -139,14 +132,10 @@ export const objectsViewCompositeChaptersOnLoad = rootObjectID => {
         const objectIDs = result.non_composite.concat(result.composite).filter(objectID => !(objectID in state.objects && objectID in state.objectsTags));
         const objectDataIDs = result.composite.filter(objectID => !ObjectsSelectors.dataIsPresent(state, objectID));
 
-        result = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
+        const objectsViewResult = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
 
         // Handle fetch errors
-        responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            return { error: errorMessage };
-        }
+        if (objectsViewResult.failed) return { error: objectsViewResult.error };    // TODO return FetchResult, when typing is added
 
         // End fetch
         return {};

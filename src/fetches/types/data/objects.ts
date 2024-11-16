@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { type FetchResult } from "../../fetch-runner";
+
 import { object } from "../../../store/types/data/objects";
 import { link } from "../../../store/types/data/links";
 import { markdown } from "../../../store/types/data/markdown";
@@ -53,3 +55,6 @@ export const objectsViewResponseSchema = z.object({
     objects: objectsViewResponseObject.array(),
     object_data: objectsViewResponseObjectData.array()
 });
+
+type ObjectsViewResponseSchema = z.infer<typeof objectsViewResponseSchema>;
+export type ObjectsViewFetchResult = FetchResult & Partial<ObjectsViewResponseSchema>;

@@ -1,5 +1,6 @@
 import { getResponseErrorType } from "./common";
-import { objectsAddFetch, objectsViewFetch, objectsUpdateFetch, objectsDeleteFetch, objectsSearchFetch } from "./data-objects";
+import { objectsAddFetch, objectsUpdateFetch, objectsDeleteFetch, objectsSearchFetch } from "./data-objects";
+import { objectsViewFetch } from "./data/objects";
 import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
@@ -106,13 +107,11 @@ export const objectsEditExistingOnLoad = object_id => {
         if (fetchAttributesAndTags || fetchData) {
             let objectIDs = fetchAttributesAndTags ? [object_id] : undefined;
             let objectDataIDs = fetchData ? [object_id] : undefined;
-            let result = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
+            const objectsViewResult = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
 
-            // Handle fetch errors
-            const responseErrorType = getResponseErrorType(result);
-            if (responseErrorType > enumResponseErrorType.none) {
-                const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-                dispatch(setObjectsEditLoadFetchState(false, errorMessage));
+            // Handle errors
+            if (objectsViewResult.failed) {
+                dispatch(setObjectsEditLoadFetchState(false, objectsViewResult.error));
                 return;
             }
         } else {
@@ -286,18 +285,18 @@ export const objectsEditLoadCompositeSubobjectsFetch = objectID => {
             dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "", subobjectIDs: nonCachedSubobjectIDs }}, objectID));
             
             // Fetch subobjects from backend
-            let result = await dispatch(objectsViewFetch(subobjectIDsWithMissingAttributesOrTags, subobjectIDsWithMissingData));
+            const objectsViewResult = await dispatch(objectsViewFetch(subobjectIDsWithMissingAttributesOrTags, subobjectIDsWithMissingData));
 
-            // Handle fetch error
-            if (getResponseErrorType(result) !== enumResponseErrorType.none) {
+            // Handle errors
+            if (objectsViewResult.failed) {
                 dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "Could not fetch object data.", subobjectIDs: nonCachedSubobjectIDs }}, objectID));
                 return;
             }
 
             // Set fetch error for subobjects which were not fetched
-            let returnedObjectIDs = result["objects"].map(object => object.object_id);
+            let returnedObjectIDs = objectsViewResult["objects"].map(object => object.object_id);
             let notFoundObjectIDs = subobjectIDsWithMissingAttributesOrTags.filter(objectID => returnedObjectIDs.indexOf(objectID) === -1);
-            let returndedObjectDataIDs = result["object_data"].map(object => object.object_id);
+            let returndedObjectDataIDs = objectsViewResult["object_data"].map(object => object.object_id);
             notFoundObjectIDs = notFoundObjectIDs.concat(subobjectIDsWithMissingData.filter(objectID => returndedObjectDataIDs.indexOf(objectID) === -1));
             if (notFoundObjectIDs.length > 0)
                 dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "Could not fetch object data.", subobjectIDs: notFoundObjectIDs }}, objectID));
