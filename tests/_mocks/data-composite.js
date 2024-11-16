@@ -1,5 +1,4 @@
-import { addObjects } from "../../src/actions/data-objects";
-import { addObjectsDataFromBackend } from "../../src/reducers/data/objects";
+import { addObjectsAttributes, addObjectsDataFromBackend } from "../../src/reducers/data/objects";
 import { addTags } from "../../src/reducers/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { resetEditedObjects } from "../../src/actions/objects-edit";
@@ -133,7 +132,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
         generateObjectData(3, "markdown", { "raw_text": "**Test text**" })
     ];
 
-    store.dispatch(addObjects(objects));
+    store.dispatch(addObjectsAttributes(objects));
     store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectsDataFromBackend(objectData));
 
@@ -163,7 +162,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
     let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString() }));
 
-    store.dispatch(addObjects(objects));
+    store.dispatch(addObjectsAttributes(objects));
     store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectsDataFromBackend(objectData));
     store.dispatch(addTags(tags));
@@ -202,7 +201,7 @@ export const getStoreWithModifiedCompositeObject = () => {
     let tags = objects[0].current_tag_ids.map(tag_id => ({ tag_id, tag_name: `tag #${tag_id}`, tag_description: `tag description #${tag_id}`,
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString() }));
 
-    store.dispatch(addObjects(objects));
+    store.dispatch(addObjectsAttributes(objects));
     store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectsDataFromBackend(objectData));
     store.dispatch(resetEditedObjects({objectIDs: [1, 2, -1], allowResetToDefaults: true }));
@@ -257,7 +256,7 @@ export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsN
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString() }));
 
     // Add existing objects to state storages
-    store.dispatch(addObjects(objects.filter(o => o.object_id > 0)));
+    store.dispatch(addObjectsAttributes(objects.filter(o => o.object_id > 0)));
     store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectsDataFromBackend(objectData));
 

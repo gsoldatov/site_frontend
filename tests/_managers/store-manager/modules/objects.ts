@@ -1,5 +1,5 @@
-import { addObjects, updateObjectsData } from "../../../../src/actions/data-objects";
-import { addObjectsDataFromBackend, updateObjectsAttributes } from "../../../../src/reducers/data/objects";
+import { updateObjectsData } from "../../../../src/actions/data-objects";
+import { addObjectsAttributes, updateObjectsAttributes, addObjectsDataFromBackend } from "../../../../src/reducers/data/objects";
 
 import type { AppStore, PartialExcept } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
@@ -28,7 +28,7 @@ export class ObjectsStoreManager {
     addAttributes(object_id: number, attributes?: Partial<ObjectAttributes>): PickPartial<ObjectAttributes, "current_tag_ids"> {
         const objectAttributes = this.generator.object.attributes({ ...(attributes || {}), object_id }) as PickPartial<ObjectAttributes, "current_tag_ids">;
         delete objectAttributes.current_tag_ids;
-        this.store.dispatch(addObjects([ objectAttributes ]));
+        this.store.dispatch(addObjectsAttributes([ objectAttributes ]));
         return objectAttributes;
     }
 

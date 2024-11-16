@@ -18,8 +18,7 @@ import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject }
 
 import { App } from "../../../../../src/components/app";
 import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
-import { addObjects } from "../../../../../src/actions/data-objects";
-import { addObjectsDataFromBackend } from "../../../../../src/reducers/data/objects";
+import { addObjectsAttributes, addObjectsDataFromBackend } from "../../../../../src/reducers/data/objects";
 import { SubobjectDeleteMode } from "../../../../../src/store/types/data/composite";
 import { generateObjectAttributes, generateObjectData } from "../../../../_mocks/data-objects";
 
@@ -195,7 +194,7 @@ describe("Load object from state", () => {
             created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         let objectData = generateObjectData(1, "link", { "link": "https://test.link" });
-        store.dispatch(addObjects([object]));
+        store.dispatch(addObjectsAttributes([object]));
         store.dispatch(addObjectsTags([object]));
         store.dispatch(addObjectsDataFromBackend([objectData]));
         
@@ -231,7 +230,7 @@ describe("Load object from state", () => {
             created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         let objectData = generateObjectData(1, "markdown", { "raw_text": "**Test text**" });
-        store.dispatch(addObjects([object]));
+        store.dispatch(addObjectsAttributes([object]));
         store.dispatch(addObjectsTags([object]));
         store.dispatch(addObjectsDataFromBackend([objectData]));
         
@@ -282,7 +281,7 @@ describe("Load object from state", () => {
             created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
         let objectData = generateObjectData(1, "to_do_list", getTDLByObjectID(2001));
-        store.dispatch(addObjects([object]));
+        store.dispatch(addObjectsAttributes([object]));
         store.dispatch(addObjectsTags([object]));
         store.dispatch(addObjectsDataFromBackend([objectData]));
         
@@ -366,7 +365,7 @@ describe("Load object from backend", () => {
             object_type: "link", object_name: "object name", object_description: "object description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5]
         });
-        store.dispatch(addObjects([object]));
+        store.dispatch(addObjectsAttributes([object]));
         store.dispatch(addObjectsTags([object]));
         
         let { container } = renderWithWrappers(<App />, {
@@ -423,7 +422,7 @@ describe("Load object from backend", () => {
             object_type: "markdown", object_name: "object name", object_description: "object description", 
             created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
-        store.dispatch(addObjects([object]));
+        store.dispatch(addObjectsAttributes([object]));
         store.dispatch(addObjectsTags([object]));
         
         let { container } = renderWithWrappers(<App />, {
@@ -464,7 +463,7 @@ describe("Load object from backend", () => {
             object_type: "to_do_list", object_name: "object name", object_description: "object description", 
                 created_at: (new Date(Date.now() - 24*60*60*1000)).toISOString(), modified_at: (new Date()).toISOString(), current_tag_ids: [1, 2, 3, 4, 5] 
         });
-        store.dispatch(addObjects([object]));
+        store.dispatch(addObjectsAttributes([object]));
         store.dispatch(addObjectsTags([object]));
         
         let { container } = renderWithWrappers(<App />, {

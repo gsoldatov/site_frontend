@@ -1,6 +1,6 @@
 import { fetchMissingTags } from "../../src/fetches/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
-import { addObjects } from "../../src/actions/data-objects";
+import { addObjectsAttributes } from "../../src/reducers/data/objects";
 import { selectObjects } from "../../src/actions/objects-list";
 
 import { generateObjectAttributes } from "./data-objects";
@@ -26,7 +26,7 @@ export async function getStoreWithTwoSelectedObjects() {
             is_published: false, owner_id: 1, current_tag_ids: [1, 2, 5, 6] 
         })
     ];
-    store.dispatch(addObjects(objects));
+    store.dispatch(addObjectsAttributes(objects));
     store.dispatch(addObjectsTags(objects));
     store.dispatch(selectObjects([1, 2]));
     for (let object of objects)

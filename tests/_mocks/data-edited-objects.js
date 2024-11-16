@@ -1,6 +1,5 @@
 import { resetEditedObjects, setEditedObject } from "../../src/actions/objects-edit";
-import { addObjects } from "../../src/actions/data-objects";
-import { addObjectsDataFromBackend } from "../../src/reducers/data/objects";
+import { addObjectsAttributes, addObjectsDataFromBackend } from "../../src/reducers/data/objects";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 
 import { createTestStore } from "../_util/create-test-store";
@@ -67,7 +66,7 @@ export const getStoreWithEditedObjects = () => {
         generateObjectData(11, "link", { "link": "https://test.link" })
     ];
 
-    store.dispatch(addObjects(objects));
+    store.dispatch(addObjectsAttributes(objects));
     store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectsDataFromBackend(objectData));
 

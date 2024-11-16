@@ -14,9 +14,9 @@ import { ObjectsTransformers } from "../../transformers/data/objects";
 /** Contains state updating methods for object attributes, tags & data. */
 export class ObjectsUpdaters {
     /** Returns a new state with `objects` attributes added to state.objects. */
-    static addObjectsAttributes(state: State, objects: ObjectAttributes[]): State {
+    static addObjectsAttributes(state: State, objectsAttributes: ObjectAttributes[]): State {
         const newObjects: Objects = {};
-        objects.forEach(o => { newObjects[o.object_id] = object.parse(o); });
+        objectsAttributes.forEach(oa => { newObjects[oa.object_id] = object.parse(oa); });
 
         return { ...state, objects: { ...state.objects, ...newObjects }};
     }

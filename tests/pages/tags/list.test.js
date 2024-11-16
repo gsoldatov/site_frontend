@@ -15,7 +15,7 @@ import { getFeedElements } from "../../_util/ui-index";
 
 import { App } from "../../../src/components/app";
 import { setTagsListPaginationInfo } from "../../../src/reducers/ui/tags-list";
-import { addObjects } from "../../../src/actions/data-objects";
+import { addObjectsAttributes } from "../../../src/reducers/data/objects";
 import { addObjectsTags } from "../../../src/reducers/data/objects-tags";
 
 
@@ -560,7 +560,7 @@ describe("Delete a tag", () => {
             })
         ];
     
-        store.dispatch(addObjects(objects));
+        store.dispatch(addObjectsAttributes(objects));
         store.dispatch(addObjectsTags(objects));
     
         // Route component is required for matching (getting :id part of the URL in the Tag component)

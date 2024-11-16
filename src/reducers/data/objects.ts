@@ -7,6 +7,14 @@ import type { ObjectAttributes, Objects, ObjectType } from "../../store/types/da
 import { type BackendObjectData } from "../../fetches/types/data/objects";
 
 
+/** Adds objects' attributes from `objects` into state.objects store. */
+export const addObjectsAttributes = (objectsAttributes: ObjectAttributes[]) => ({ type: "ADD_OBJECTS_ATTRIBUTES", objectsAttributes });
+
+const _addObjectsAttributes = (state: State, action: { objectsAttributes: ObjectAttributes[] }): State => {
+    return ObjectsUpdaters.addObjectsAttributes(state, action.objectsAttributes);
+};
+
+
 /** Performs partial update of objects' attributes in `state.objects` with values contained in `objects` array. */
 export const updateObjectsAttributes = (objects: PartialExcept<ObjectAttributes, "object_id">[]) => ({ type: "UPDATE_OBJECTS_ATTRIBUTES", objects });
 
@@ -32,7 +40,9 @@ const _addObjectsDataFromBackend = (state: State, action: { objectsData: { objec
     return ObjectsUpdaters.addObjectsDataFromBackend(state, action.objectsData);
 };
 
+
 export const objectsRoot = {
+    "ADD_OBJECTS_ATTRIBUTES": _addObjectsAttributes,
     "UPDATE_OBJECTS_ATTRIBUTES": _updateObjectsAttributes,
     "ADD_OBJECTS_DATA_FROM_BACKEND": _addObjectsDataFromBackend
 };
