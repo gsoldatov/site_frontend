@@ -2,13 +2,18 @@ import { z } from "zod";
 
 import { type FetchResult } from "../../fetch-runner";
 
-import { object } from "../../../store/types/data/objects";
+import { object, objectType } from "../../../store/types/data/objects";
 import { link } from "../../../store/types/data/links";
 import { markdown } from "../../../store/types/data/markdown";
 import { toDoList, toDoListItem } from "../../../store/types/data/to-do-list";
 import { composite, compositeSubobject } from "../../../store/types/data/composite";
-import { nonNegativeInt, int, positiveIntArray } from "../../../util/types/common";
+import { nonNegativeInt, int, positiveIntArray, positiveInt } from "../../../util/types/common";
 
+
+
+/**********************************************
+ *                  Common
+ *********************************************/
 
 const backendLink = link;
 const backendMarkdown = markdown.pick({ raw_text: true });
@@ -35,6 +40,12 @@ export type BackendToDoListItem = z.infer<typeof backendToDoListItem>;
 export type BackendCompositeSubobject = z.infer<typeof backendCompositeSubobject>;
 
 
+
+/**********************************************
+ *              /objects/view
+ *********************************************/
+
+
 /** /objects/view backend response schema for "object" list items. */
 const objectsViewResponseObject = object.extend({ current_tag_ids: int.array() });
 
@@ -57,8 +68,46 @@ export const objectsViewResponseSchema = z.object({
 });
 
 type ObjectsViewResponseSchema = z.infer<typeof objectsViewResponseSchema>;
-export type ObjectsViewFetchResult = FetchResult & Partial<ObjectsViewResponseSchema>;
+export type ObjectsViewFetchResult = FetchResult | FetchResult & ObjectsViewResponseSchema;
 
+
+
+/**********************************************
+ *      /objects/get_page_object_ids
+ *********************************************/
+/** /objects/get_page_object_ids request pagination info schema. */
+export const objectsPaginationInfo = z.object({
+    page: positiveInt,
+    items_per_page: positiveInt,
+    item_per_page: z.enum(["object_name", "modified_at", "feed_timestamp"]),
+    sort_order: z.enum(["asc", "desc"]),
+    filter_text: z.string().max(255).optional(),
+    object_types: objectType.array().optional(),
+    tags_filter: positiveIntArray.optional(),
+    show_only_displayed_in_feed: z.boolean().optional()
+});
+
+
+/** /objects/get_page_object_ids response body schema. */
+export const objectsGetPageObjectIDsResponseSchema = z.object({
+    pagination_info: objectsPaginationInfo.extend({
+        object_ids: positiveIntArray,
+        total_items: nonNegativeInt
+    })
+});
+
+
+/** /objects/get_page_object_ids request pagination info schema. */
+export type ObjectsPaginationInfo = z.infer<typeof objectsPaginationInfo>;
+type ObjectsGetPageObjectIDsResponseSchema = z.infer<typeof objectsGetPageObjectIDsResponseSchema>;
+export type ObjectsGetPageObjectIDsFetchResult = FetchResult | FetchResult & Pick<ObjectsGetPageObjectIDsResponseSchema["pagination_info"], "object_ids" | "total_items">;
+
+
+
+
+/**********************************************
+ *  /objects/view_composite_hierarchy_elements
+ *********************************************/
 
 /** /objects/view_composite_hierarchy_elements response body schema. */
 export const objectsViewCompositeHierarchyElementsResponseSchema = z.object({

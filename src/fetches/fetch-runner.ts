@@ -161,6 +161,15 @@ export class FetchResult {
 
         return new FetchResult(args);
     }
+
+    /** Returns a copy of this object with `customProps` added to it. */
+    withCustomProps<T extends object>(customProps: T): FetchResult & T {
+        const newFetchResult = new FetchResult(this);
+        for (let k in customProps) (newFetchResult as any)[k] = customProps[k];
+        return newFetchResult as FetchResult & T;
+
+        // return { ...this, ...customProps }; // does not copy methods
+    }
 }
 
 

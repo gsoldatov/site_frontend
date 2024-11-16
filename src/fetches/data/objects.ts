@@ -14,9 +14,11 @@ import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 //     serializeObjectData, modifyObjectDataPostSave } from "../../store/state-util/objects";
 // import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 
-import { objectsViewCompositeHierarchyElementsResponseSchema, objectsViewResponseSchema } from "../types/data/objects";
+import { objectsGetPageObjectIDsResponseSchema, objectsPaginationInfo, objectsViewCompositeHierarchyElementsResponseSchema, 
+    objectsViewResponseSchema } from "../types/data/objects";
 import type { Dispatch, GetState } from "../../util/types/common";
-import type { ObjectsViewFetchResult, ObjectsViewCompositeHierarchyElementsFetchResult } from "../types/data/objects";
+import type { ObjectsViewFetchResult, ObjectsViewCompositeHierarchyElementsFetchResult, 
+    ObjectsGetPageObjectIDsFetchResult, ObjectsPaginationInfo } from "../types/data/objects";
 
 
 /**
@@ -41,14 +43,12 @@ export const objectsViewFetch = (objectIDs: (string | number)[] = [], objectData
         if (objectDataIDsLength > 0) body.object_data_ids = objectDataIDs.map(id => parseInt(id as string));
         
         const runner = new FetchRunner("/objects/view", { method: "POST", body });
-        let result: ObjectsViewFetchResult = await runner.run();
+        const result = await runner.run();
 
         // Handle response
         switch (result.status) {
             case 200:
                 const data = objectsViewResponseSchema.parse(result.json);
-                result.objects = data.objects;
-                result.object_data = data.object_data;
 
                 // Add objects data
                 if (data["object_data"].length > 0) dispatch(addObjectsDataFromBackend(data["object_data"]));
@@ -66,8 +66,9 @@ export const objectsViewFetch = (objectIDs: (string | number)[] = [], objectData
                     // Handle tag fetch errors
                     if (fetchMissingTagsResult.failed) return fetchMissingTagsResult;
                 }
-
-                return result;
+                
+                const { objects, object_data } = data;
+                return result.withCustomProps({ objects, object_data });
             case 404:
                 result.error = Math.max(objectIDs.length, objectDataIDs.length) > 1 ? "Objects not found." : "Object not found.";
                 return result;
@@ -104,6 +105,38 @@ export const fetchMissingObjects = (objectIDs: (string | number)[], storages: { 
 };
 
 
+
+// /**
+//  * Fetches backend for IDs of the objects which correspond to the provided `paginantionInfo` object. 
+//  * Returns the list of objectIDs for the current page and total number of objects matching the query.
+//  */
+// export const objectsGetPageObjectIDs = (pagination_info: ObjectsPaginationInfo) => {
+//     return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsGetPageObjectIDsFetchResult> => {
+//         // Validate pagination_info
+//         pagination_info = objectsPaginationInfo.parse(pagination_info);
+
+//         // Fetch backend
+//         const runner = new FetchRunner("/objects/get_page_object_ids", { method: "POST", body: { pagination_info } });
+//         const result = await runner.run();
+
+//         // Handle response
+//         switch (result.status) {
+//             case 200:
+//                 const { object_ids, total_items } = objectsGetPageObjectIDsResponseSchema.parse(result.json).pagination_info;
+//                 // const resultWithData: ObjectsGetPageObjectIDsFetchResult = { 
+//                 //     ...result, 
+//                 //     object_ids: data.pagination_info.object_ids, 
+//                 //     total_items: data.pagination_info.total_items 
+//                 // };
+//                 return result.withCustomProps({ object_ids, total_items });
+//             default:
+//                 return result;
+//         }
+//     };
+// };
+
+
+
 /**
  * Fetches backend to retrieve composite and non-composite objects in the composite hierarchy for the provided `objectID`.
  * 
@@ -119,8 +152,7 @@ export const objectsViewCompositeHierarchyElements = (object_id: number) => {
         switch (result.status) {
             case 200:
                 const data = objectsViewCompositeHierarchyElementsResponseSchema.parse(result.json);
-                result = { ...result, ...data } as ObjectsViewCompositeHierarchyElementsFetchResult;
-                return result;
+                return result.withCustomProps(data);
             default:
                 return result;
         }
