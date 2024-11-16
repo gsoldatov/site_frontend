@@ -18,11 +18,13 @@ export class ObjectsTransformers {
         
         // to-do list
         if ("items" in data) {
+            const itemOrder: number[] = [];
             const items = data.items.reduce((result, item) => {
                 result[item.item_number] = getToDoListItem(item);
+                itemOrder.push(item.item_number);
                 return result;
             }, {} as ToDoList["items"]);
-            return getToDoList({ ...data, items }) as R;
+            return getToDoList({ ...data, items, itemOrder }) as R;
         }
 
         // composite
