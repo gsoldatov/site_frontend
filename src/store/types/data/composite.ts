@@ -33,16 +33,18 @@ export const composite = z.object({
 });
 
 
+/** state.composite data store schema. */
+export const compositeStore = z.record(positiveIntIndex, composite);
+
+
 /** Composite subobject's type for state.toDoLists & state.editedObjects. */
 export type CompositeSubobject = z.infer<typeof compositeSubobject>;
 /** Composite object's data type for state.toDoLists & state.editedObjects. */
 export type Composite = z.infer<typeof composite>;
 /** Composite object data or its part containing `subobjects` record. */
 export type CompositeSubobjects = Pick<Composite, "subobjects">;
-
-
-/** state.composite data store schema. */
-export const compositeStore = z.record(positiveIntIndex, composite);
+/** state.composite data store type. */
+export type CompositeStore = z.infer<typeof compositeStore>;
 
 
 /** Returns state of a composite subobject with default or optional `customValues` set into it. */

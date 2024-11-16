@@ -1,5 +1,5 @@
 import { addObjectsData, addObjects, updateObjectsData } from "../../../../src/actions/data-objects";
-import { updateObjects } from "../../../../src/reducers/data/objects";
+import { updateObjectsAttributes } from "../../../../src/reducers/data/objects";
 
 import type { AppStore, PartialExcept } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
@@ -39,7 +39,7 @@ export class ObjectsStoreManager {
      */
     updateAttributes(attributes: PartialExcept<ObjectAttributes, "object_id">): void {
         if (typeof attributes.object_id === "string") attributes.object_id = parseInt(attributes.object_id);
-        this.store.dispatch(updateObjects([ attributes ]));
+        this.store.dispatch(updateObjectsAttributes([ attributes ]));
     }
 
     /**

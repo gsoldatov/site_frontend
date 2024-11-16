@@ -36,6 +36,8 @@ export const toDoLists = z.record(positiveInt, toDoList);
 export type ToDoListItem = z.infer<typeof toDoListItem>;
 /** To-do list object's data type for state.toDoLists & state.editedObjects. */
 export type ToDoList = z.infer<typeof toDoList>;
+/** state.toDoLists data store type. */
+export type ToDoLists = z.infer<typeof toDoLists>;
 
 
 /** Returns default to-do list item state with default or optional `customValues` set into it. */

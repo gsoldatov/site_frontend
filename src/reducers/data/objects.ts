@@ -1,14 +1,16 @@
-import { object } from "../../store/types/data/objects";
+import { ObjectsUpdaters } from "../../store/updaters/data/objects";
 
+import { object } from "../../store/types/data/objects";
 import type { PartialExcept } from "../../util/types/common";
 import type { State } from "../../store/types/state";
-import type { ObjectAttributes, Objects } from "../../store/types/data/objects";
+import type { ObjectAttributes, Objects, ObjectType } from "../../store/types/data/objects";
+import { type BackendObjectData } from "../../fetches/types/data/objects";
 
 
 /** Performs partial update of objects' attributes in `state.objects` with values contained in `objects` array. */
-export const updateObjects = (objects: PartialExcept<ObjectAttributes, "object_id">[]) => ({ type: "UPDATE_OBJECTS", objects });
+export const updateObjectsAttributes = (objects: PartialExcept<ObjectAttributes, "object_id">[]) => ({ type: "UPDATE_OBJECTS_ATTRIBUTES", objects });
 
-export const _updateObjects = (state: State, action: { objects: PartialExcept<ObjectAttributes, "object_id">[] }): State => {
+export const _updateObjectsAttributes = (state: State, action: { objects: PartialExcept<ObjectAttributes, "object_id">[] }): State => {
     const updatedObjects = action.objects.reduce((result, attributeUpdates) => {
         const { object_id } = attributeUpdates;
         const currentAttributes = state.objects[object_id];
@@ -21,6 +23,16 @@ export const _updateObjects = (state: State, action: { objects: PartialExcept<Ob
     return { ...state, objects: { ...state.objects, ...updatedObjects } };
 };
 
+
+/** Adds objects data in backend format to the store. */
+export const addObjectsDataFromBackend = (objectsData: { object_id: number, object_type: ObjectType, object_data: BackendObjectData }[]) =>
+    ({ type: "ADD_OBJECTS_DATA_FROM_BACKEND", objectsData });
+
+const _addObjectsDataFromBackend = (state: State, action: { objectsData: { object_id: number, object_type: ObjectType, object_data: BackendObjectData }[] }): State => {
+    return ObjectsUpdaters.addObjectsDataFromBackend(state, action.objectsData);
+};
+
 export const objectsRoot = {
-    "UPDATE_OBJECTS": _updateObjects
+    "UPDATE_OBJECTS_ATTRIBUTES": _updateObjectsAttributes,
+    "ADD_OBJECTS_DATA_FROM_BACKEND": _addObjectsDataFromBackend
 };

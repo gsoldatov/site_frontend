@@ -1,4 +1,4 @@
-import { getStateWithAddedObjectsData, getStateWithDeletedObjects } from "./data-objects";
+import { getStateWithDeletedObjects } from "./data-objects";
 import { ObjectsUpdaters } from "../../store/updaters/data/objects";
 import { getStateWithDeletedEditedNewSubobjects, getStateWithResetEditedObjects } from "./object";
 
@@ -200,7 +200,7 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
 
         // Add new & modified existing attributes & data to state
         newState = ObjectsUpdaters.addObjectsAttributes(newState, subobjectsToAddToState);
-        newState = getStateWithAddedObjectsData(newState, subobjectsToAddToState);
+        newState = ObjectsUpdaters.addObjectsDataFromBackend(newState, subobjectsToAddToState);
         
         // Map subobjectIDs of the composite object and remove deleted subobjects in state.editedObjects[objectID].
         // Update row positions of non-deleted objects.

@@ -14,6 +14,8 @@ export const markdownStore = z.record(positiveIntIndex, markdown);
 
 /** Markdown object's data type for state.markdown & state.editedObjects. */
 export type Markdown = z.infer<typeof markdown>;
+/** state.markdown data store type. */
+export type MarkdownStore = z.infer<typeof markdownStore>;
 
 
 /** Returns a markdown object data with default or optional `customValues` set into it. */

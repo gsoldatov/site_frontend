@@ -15,6 +15,8 @@ export const links = z.record(positiveIntIndex, link);
 
 /** Link object's data type for state.links & state.editedObjects. */
 export type Link = z.infer<typeof link>;
+/** state.links data type. */
+export type Links = z.infer<typeof links>;
 
 
 /** Returns a link object data with default or optional `customValues` set into it. */

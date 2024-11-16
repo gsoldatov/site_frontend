@@ -3,7 +3,7 @@ import { FetchRunner, FetchResult } from "../fetch-runner";
 import { fetchMissingTags } from "./tags";
 
 import { updateObjectsTags } from "../../reducers/data/objects-tags";
-import { updateObjects } from "../../reducers/data/objects";
+import { updateObjectsAttributes } from "../../reducers/data/objects";
 import { resetEditedObjectsTags } from "../../actions/objects-edit";
 
 import { objectsUpdateTagsResponseSchema } from "../types/data/objects-tags";
@@ -30,7 +30,7 @@ export const objectsTagsUpdateFetch = (object_ids: number[], added_tags: (string
 
                 // Update modified_at attributes of the objects
                 const objectUpdates = object_ids.map(object_id => ({ object_id, modified_at }));
-                dispatch(updateObjects(objectUpdates));
+                dispatch(updateObjectsAttributes(objectUpdates));
 
                 // Update objects tags
                 const { added_tag_ids = [], removed_tag_ids = [] } = tag_updates;
