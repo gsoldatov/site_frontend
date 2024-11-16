@@ -1,11 +1,10 @@
 import { getResponseErrorType } from "./common";
 
 import { searchFetch } from "./data-search";
-import { fetchMissingObjects } from "./data-objects";
+import { fetchMissingObjects } from "./data/objects";
 import { fetchMissingTags } from "./data/tags";
 
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
-import { FetchResult } from "./fetch-runner";
 
 
 /**

@@ -1,19 +1,16 @@
 import { getConfig } from "../config";
 
-import { runFetch, getErrorFromResponse, getResponseErrorType } from "./common";
-import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
-import { objectsViewFetch } from "./data/objects";
+import { runFetch, getErrorFromResponse } from "./common";
+import { fetchMissingObjects } from "./data/objects";
 import { fetchMissingTags } from "./data/tags";
 
-import { addObjectsTags, updateObjectsTags } from "../reducers/data/objects-tags";
+import { updateObjectsTags } from "../reducers/data/objects-tags";
 import { deleteObjects } from "../actions/data-objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../reducers/data/objects";
 import { setEditedObject, setObjectsEditSaveFetchState } from "../actions/objects-edit";
 
 import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeObjectAttributesAndTagsForUpdateFetch,
     serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
-import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
-
 
 const backendURL = getConfig().backendURL;
 
@@ -199,32 +196,6 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
             default:
                 return await getErrorFromResponse(response);
         }
-    };
-};
-
-
-/**
- * Fetches missing information for a list of provided `objectIDs`.
- * 
- * Types of missing information (attributes, tags, data) are specified in the `storages` argument.
- */
- export const fetchMissingObjects = (objectIDs, storages = {}) => {
-    return async (dispatch, getState) => {
-        // Set checked storages
-        const { attributes, tags, data } = storages;
-
-        // Get objects with missing attributes or tags
-        const state = getState();
-        let objectIDsWithNonCachedAttributesOrTags = [];
-        if (attributes) objectIDsWithNonCachedAttributesOrTags = objectIDs.filter(objectID => !(objectID in state.objects));
-        if (tags) objectIDsWithNonCachedAttributesOrTags.concat(objectIDs.filter(objectID => !(objectID in state.objectsTags)));
-
-        // Get objects with missing data
-        let objectIDsWithNonCachedData = [];
-        if (data) objectIDsWithNonCachedData = objectIDs.filter(objectID => !ObjectsSelectors.dataIsPresent(state, objectID));
-
-        // Fetch missing information
-        return await dispatch(objectsViewFetch(objectIDsWithNonCachedAttributesOrTags, objectIDsWithNonCachedData));
     };
 };
 
