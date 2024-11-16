@@ -1,4 +1,5 @@
-import { addObjectsData, addObjects } from "../../src/actions/data-objects";
+import { addObjects } from "../../src/actions/data-objects";
+import { addObjectsDataFromBackend } from "../../src/reducers/data/objects";
 import { addTags } from "../../src/reducers/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { resetEditedObjects } from "../../src/actions/objects-edit";
@@ -134,7 +135,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
-    store.dispatch(addObjectsData(objectData));
+    store.dispatch(addObjectsDataFromBackend(objectData));
 
     return store;
 };
@@ -164,7 +165,7 @@ export const getStoreWithCompositeObjectAndSubobjects = () => {
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
-    store.dispatch(addObjectsData(objectData));
+    store.dispatch(addObjectsDataFromBackend(objectData));
     store.dispatch(addTags(tags));
 
     return store;
@@ -203,7 +204,7 @@ export const getStoreWithModifiedCompositeObject = () => {
 
     store.dispatch(addObjects(objects));
     store.dispatch(addObjectsTags(objects));
-    store.dispatch(addObjectsData(objectData));
+    store.dispatch(addObjectsDataFromBackend(objectData));
     store.dispatch(resetEditedObjects({objectIDs: [1, 2, -1], allowResetToDefaults: true }));
     store.dispatch(addTags(tags));
 
@@ -258,7 +259,7 @@ export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsN
     // Add existing objects to state storages
     store.dispatch(addObjects(objects.filter(o => o.object_id > 0)));
     store.dispatch(addObjectsTags(objects));
-    store.dispatch(addObjectsData(objectData));
+    store.dispatch(addObjectsDataFromBackend(objectData));
 
     // Add new & existing objects to edited objects
     for (let objectID of [mainObjectID, linkSubobjectID, markdownSubobjectID, TDLSubobjectID, compositeSubobjectID, 6]) {

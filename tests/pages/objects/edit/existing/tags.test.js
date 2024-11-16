@@ -15,7 +15,8 @@ import { getFeedElements } from "../../../../_util/ui-index";
 import { App } from "../../../../../src/components/app";
 import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
 import { fetchMissingTags } from "../../../../../src/fetches/data/tags";
-import { addObjects, addObjectsData } from "../../../../../src/actions/data-objects";
+import { addObjects } from "../../../../../src/actions/data-objects";
+import { addObjectsDataFromBackend } from "../../../../../src/reducers/data/objects";
 import { generateObjectAttributes, generateObjectData } from "../../../../_mocks/data-objects";
 
 
@@ -47,7 +48,7 @@ test("Load object tags from state", async () => {
     let objectData = generateObjectData(1, "link", { "link": "https://test.link" });
     store.dispatch(addObjects([object]));
     store.dispatch(addObjectsTags([object]));
-    store.dispatch(addObjectsData([objectData]));
+    store.dispatch(addObjectsDataFromBackend([objectData]));
     for (let tag_id of object.current_tag_ids)
         await store.dispatch(fetchMissingTags([tag_id]));
     

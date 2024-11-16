@@ -5,7 +5,8 @@ import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 import { fetchMissingTags } from "./data/tags";
 
 import { addObjectsTags, updateObjectsTags } from "../reducers/data/objects-tags";
-import { addObjects, addObjectsData, deleteObjects } from "../actions/data-objects";
+import { addObjects, deleteObjects } from "../actions/data-objects";
+import { addObjectsDataFromBackend } from "../reducers/data/objects";
 import { setEditedObject, setObjectsEditSaveFetchState } from "../actions/objects-edit";
 
 import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeObjectAttributesAndTagsForUpdateFetch,
@@ -57,7 +58,7 @@ export const objectsAddFetch = obj => {
                 dispatch(addObjects([object]));         // Add object
                 const { added_tag_ids = [], removed_tag_ids = [] } = object.tag_updates;
                 dispatch(updateObjectsTags([object.object_id], added_tag_ids, removed_tag_ids));    // Set objects tags
-                dispatch(addObjectsData([{ object_id: object.object_id, object_type: object.object_type, object_data: object_data }]));
+                dispatch(addObjectsDataFromBackend([{ object_id: object.object_id, object_type: object.object_type, object_data: object_data }]));
                 return object;
             default:
                 return getErrorFromResponse(response);
@@ -99,7 +100,7 @@ export const objectsViewFetch = (objectIDs, objectDataIDs) => {
                 let data = await response.json();
 
                 // Set object data
-                if (data["object_data"].length > 0) dispatch(addObjectsData(data["object_data"]));
+                if (data["object_data"].length > 0) dispatch(addObjectsDataFromBackend(data["object_data"]));
 
                 // Set object attributes & fetch non-cached tags
                 if (data["objects"].length > 0) {
@@ -167,7 +168,7 @@ export const objectsUpdateFetch = obj => {
                 dispatch(addObjects([ object ]));
                 const { added_tag_ids = [], removed_tag_ids = [] } = object.tag_updates;
                 dispatch(updateObjectsTags([object.object_id], added_tag_ids, removed_tag_ids));    // Set objects tags
-                dispatch(addObjectsData([{ object_id: object.object_id, object_type: object.object_type, object_data }]));
+                dispatch(addObjectsDataFromBackend([{ object_id: object.object_id, object_type: object.object_type, object_data }]));
 
                 // Fetch non-cached tags
                 const fetchMissingTagsResult = await dispatch(fetchMissingTags(getState().objectsTags[object.object_id]));

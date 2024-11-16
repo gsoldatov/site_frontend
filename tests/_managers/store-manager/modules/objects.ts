@@ -1,5 +1,5 @@
-import { addObjectsData, addObjects, updateObjectsData } from "../../../../src/actions/data-objects";
-import { updateObjectsAttributes } from "../../../../src/reducers/data/objects";
+import { addObjects, updateObjectsData } from "../../../../src/actions/data-objects";
+import { addObjectsDataFromBackend, updateObjectsAttributes } from "../../../../src/reducers/data/objects";
 
 import type { AppStore, PartialExcept } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
@@ -49,7 +49,7 @@ export class ObjectsStoreManager {
      */
     addData<T extends ObjectType>(object_id: number, object_type: T, object_data: PartialObjectData<T>): ObjectData<T> {
         const objectData = this.generator.object.data(object_id, object_type, object_data);
-        this.store.dispatch(addObjectsData([{ object_id, object_type, object_data: objectData }]));
+        this.store.dispatch(addObjectsDataFromBackend([{ object_id, object_type, object_data: objectData }]));
         return objectData;
     }
 
