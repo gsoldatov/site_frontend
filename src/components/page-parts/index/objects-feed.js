@@ -37,7 +37,7 @@ export const ObjectsFeed = ({ page, items_per_page = 10 }) => {
         const result = await dispatch(loadIndexPageObjects(newPaginationInfo));
         
         // Set object IDs and total number of objects
-        if (!("error" in result)) {
+        if (!result.failed) {
             newPaginationInfo.currentPageObjectIDs = result["object_ids"];
             newPaginationInfo.totalItems = result["total_items"];
             setPaginationInfo(newPaginationInfo);

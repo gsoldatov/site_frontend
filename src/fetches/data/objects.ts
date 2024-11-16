@@ -105,36 +105,30 @@ export const fetchMissingObjects = (objectIDs: (string | number)[], storages: { 
 };
 
 
+/**
+ * Fetches backend for IDs of the objects which correspond to the provided `paginantionInfo` object.
+ * 
+ * Returns the list of `object_ids` for the current page and `total_items` number of objects matching the query.
+ */
+export const objectsGetPageObjectIDs = (pagination_info: ObjectsPaginationInfo) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsGetPageObjectIDsFetchResult> => {
+        // Validate pagination_info
+        pagination_info = objectsPaginationInfo.parse(pagination_info);
 
-// /**
-//  * Fetches backend for IDs of the objects which correspond to the provided `paginantionInfo` object. 
-//  * Returns the list of objectIDs for the current page and total number of objects matching the query.
-//  */
-// export const objectsGetPageObjectIDs = (pagination_info: ObjectsPaginationInfo) => {
-//     return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsGetPageObjectIDsFetchResult> => {
-//         // Validate pagination_info
-//         pagination_info = objectsPaginationInfo.parse(pagination_info);
+        // Fetch backend
+        const runner = new FetchRunner("/objects/get_page_object_ids", { method: "POST", body: { pagination_info } });
+        const result = await runner.run();
 
-//         // Fetch backend
-//         const runner = new FetchRunner("/objects/get_page_object_ids", { method: "POST", body: { pagination_info } });
-//         const result = await runner.run();
-
-//         // Handle response
-//         switch (result.status) {
-//             case 200:
-//                 const { object_ids, total_items } = objectsGetPageObjectIDsResponseSchema.parse(result.json).pagination_info;
-//                 // const resultWithData: ObjectsGetPageObjectIDsFetchResult = { 
-//                 //     ...result, 
-//                 //     object_ids: data.pagination_info.object_ids, 
-//                 //     total_items: data.pagination_info.total_items 
-//                 // };
-//                 return result.withCustomProps({ object_ids, total_items });
-//             default:
-//                 return result;
-//         }
-//     };
-// };
-
+        // Handle response
+        switch (result.status) {
+            case 200:
+                const { object_ids, total_items } = objectsGetPageObjectIDsResponseSchema.parse(result.json).pagination_info;
+                return result.withCustomProps({ object_ids, total_items });
+            default:
+                return result;
+        }
+    };
+};
 
 
 /**

@@ -79,7 +79,7 @@ export type ObjectsViewFetchResult = FetchResult | FetchResult & ObjectsViewResp
 export const objectsPaginationInfo = z.object({
     page: positiveInt,
     items_per_page: positiveInt,
-    item_per_page: z.enum(["object_name", "modified_at", "feed_timestamp"]),
+    order_by: z.enum(["object_name", "modified_at", "feed_timestamp"]),
     sort_order: z.enum(["asc", "desc"]),
     filter_text: z.string().max(255).optional(),
     object_types: objectType.array().optional(),

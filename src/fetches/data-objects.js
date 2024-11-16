@@ -199,25 +199,3 @@ export const objectsSearchFetch = ({queryText, existingIDs}) => {
     };
 };
 
-
-/**
- * Fetches backend for IDs of the objects which correspond to the provided `paginantionInfo` object. 
- * Returns the list of objectIDs for the current page and total number of objects matching the query.
- */
-export const objectsGetPageObjectIDs = pagination_info => {
-    return async (dispatch, getState) => {
-        let response = await dispatch(runFetch(`${backendURL}/objects/get_page_object_ids`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pagination_info })
-        }));
-
-        switch (response.status) {
-            case 200:
-                const result = await response.json();
-                return result.pagination_info;
-            default:
-                return await getErrorFromResponse(response);
-        }
-    };
-}

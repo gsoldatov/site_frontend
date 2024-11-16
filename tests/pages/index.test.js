@@ -119,7 +119,16 @@ describe("Feed pagination", () => {
     test("Single page", async () => {
         // Add a mock response
         const pageObjectIDs = [25, 100, 225, 300, 500];
-        addCustomRouteResponse("/objects/get_page_object_ids", "POST", { status: 200, body: { pagination_info: { object_ids: pageObjectIDs, total_items: pageObjectIDs.length }}});
+        addCustomRouteResponse("/objects/get_page_object_ids", "POST", { status: 200, body: { 
+            pagination_info: { 
+                object_ids: pageObjectIDs, 
+                total_items: pageObjectIDs.length,
+
+                page: 1,        // random values for passing response body validation
+                items_per_page: 100,
+                order_by: "modified_at",
+                sort_order: "desc"
+            }}});
 
         let { container } = renderWithWrappers(<App />, {
             route: "/"

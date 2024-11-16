@@ -1,8 +1,4 @@
-import { getResponseErrorType } from "./common";
-import { objectsGetPageObjectIDs } from "./data-objects";
-import { objectsViewFetch } from "./data/objects";
-
-import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
+import { objectsGetPageObjectIDs, objectsViewFetch } from "./data/objects";
 
 
 /**
@@ -10,27 +6,21 @@ import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
  */
 export const loadIndexPageObjects = paginationInfo => {
     return async (dispatch, getState) => {
-        let response = await dispatch(objectsGetPageObjectIDs(paginationInfo));
+        const pageObjectIDsResult = await dispatch(objectsGetPageObjectIDs(paginationInfo));
 
         // Handle fetch errors
-        let responseErrorType = getResponseErrorType(response);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? response.error : "";
-            return { error: errorMessage };
-        }
+        if (pageObjectIDsResult.failed) return pageObjectIDsResult;
 
-        // Is fetch is successful, fetch missing object data
-        const result = response;
-
-        let nonCachedObjects = result["object_ids"].filter(object_id => !(object_id in getState().objects));
+        // If fetch is successful, load missing object data
+        const nonCachedObjects = pageObjectIDsResult["object_ids"].filter(object_id => !(object_id in getState().objects));
         if (nonCachedObjects.length !== 0) {
             const objectsViewResult = await dispatch(objectsViewFetch(nonCachedObjects));
             
-            // Handle errors
-            if (objectsViewResult.failed) return { error: objectsViewResult.error };    // TODO return FetchResult, when typing is added
+            // Handle fetch errors
+            if (objectsViewResult.failed) return objectsViewResult;
         }
 
         // Return object IDs and total number of objects
-        return result;
+        return pageObjectIDsResult;
     };
 };

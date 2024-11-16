@@ -1,6 +1,6 @@
 import { getResponseErrorType } from "./common";
-import { objectsDeleteFetch, objectsGetPageObjectIDs } from "./data-objects";
-import { objectsViewFetch } from "./data/objects";
+import { objectsDeleteFetch } from "./data-objects";
+import { objectsGetPageObjectIDs, objectsViewFetch } from "./data/objects";
 import { objectsTagsUpdateFetch } from "./data/objects-tags";
 import { tagsSearchFetch } from "./data/tags";
 
@@ -68,7 +68,7 @@ export const objectsListPageFetch = currentPage => {
         }
 
         // Fetch IDs of objects to display on the page
-        let result = await dispatch(objectsGetPageObjectIDs({
+        const pageObjectIDsResult = await dispatch(objectsGetPageObjectIDs({
             page: pI.currentPage,
             items_per_page: pI.itemsPerPage,
             order_by: pI.sortField,
@@ -79,17 +79,15 @@ export const objectsListPageFetch = currentPage => {
         }));
 
         // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectsListFetch(false, errorMessage));
+        if (pageObjectIDsResult.failed) {
+            dispatch(setObjectsListFetch(false, pageObjectIDsResult.error));
             return;
         }
 
-        // Is fetch is successful, update paginantion info and fetch missing object data
-        dispatch(setObjectsListPaginationInfo({ totalItems: result["total_items"], currentPageObjectIDs: result["object_ids"] }));
+        // If fetch is successful, update paginantion info and fetch missing object data
+        dispatch(setObjectsListPaginationInfo({ totalItems: pageObjectIDsResult["total_items"], currentPageObjectIDs: pageObjectIDsResult["object_ids"] }));
 
-        let nonCachedObjects = result["object_ids"].filter(object_id => !(object_id in state.objects));
+        let nonCachedObjects = pageObjectIDsResult["object_ids"].filter(object_id => !(object_id in state.objects));
         if (nonCachedObjects.length !== 0) {
             const objectsViewResult = await dispatch(objectsViewFetch(nonCachedObjects));
             dispatch(setObjectsListFetch(false, objectsViewResult.failed ? objectsViewResult.error : ""));
