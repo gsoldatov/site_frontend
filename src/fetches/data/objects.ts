@@ -14,9 +14,9 @@ import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 //     serializeObjectData, modifyObjectDataPostSave } from "../../store/state-util/objects";
 // import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 
-import { objectsViewResponseSchema } from "../types/data/objects";
+import { objectsViewCompositeHierarchyElementsResponseSchema, objectsViewResponseSchema } from "../types/data/objects";
 import type { Dispatch, GetState } from "../../util/types/common";
-import type { ObjectsViewFetchResult } from "../types/data/objects";
+import type { ObjectsViewFetchResult, ObjectsViewCompositeHierarchyElementsFetchResult } from "../types/data/objects";
 
 
 /**
@@ -101,4 +101,28 @@ export const fetchMissingObjects = (objectIDs: (string | number)[], storages: { 
         // Fetch missing information
         return await dispatch(objectsViewFetch(objectIDsWithNonCachedAttributesOrTags, objectIDsWithNonCachedData));
     };
+};
+
+
+/**
+ * Fetches backend to retrieve composite and non-composite objects in the composite hierarchy for the provided `objectID`.
+ * 
+ * Returns the arrays of composite & non-composite object IDs in the hierarchy, if successful.
+ */
+export const objectsViewCompositeHierarchyElements = (object_id: number) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsViewCompositeHierarchyElementsFetchResult> => {
+        // Fetch backend
+        const runner = new FetchRunner("/objects/view_composite_hierarchy_elements", { method: "POST", body: { object_id } });
+        let result = await runner.run();
+
+        // Handle response
+        switch (result.status) {
+            case 200:
+                const data = objectsViewCompositeHierarchyElementsResponseSchema.parse(result.json);
+                result = { ...result, ...data } as ObjectsViewCompositeHierarchyElementsFetchResult;
+                return result;
+            default:
+                return result;
+        }
+    }; 
 };

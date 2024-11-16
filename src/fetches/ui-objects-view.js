@@ -1,8 +1,8 @@
 import { getConfig } from "../config";
 
 import { getResponseErrorType } from "./common";
-import { objectsUpdateFetch, objectsViewCompositeHierarchyElements } from "./data-objects";
-import { objectsViewFetch } from "./data/objects";
+import { objectsUpdateFetch } from "./data-objects";
+import { objectsViewFetch, objectsViewCompositeHierarchyElements } from "./data/objects";
 import { fetchMissingTags } from "./data/tags";
 
 import { ObjectsViewSelectors } from "../store/selectors/ui/objects-view";
@@ -117,20 +117,17 @@ export const objectsViewCompositeChaptersOnLoad = rootObjectID => {
         if (!(rootObjectID > 0)) return { error: "Object not found." };
 
         // Get composite & non-composite objects in the hierarchy
-        let result = await dispatch(objectsViewCompositeHierarchyElements(rootObjectID));
+        const viewHierarchyResult = await dispatch(objectsViewCompositeHierarchyElements(rootObjectID));
 
         // Handle fetch errors
-        let responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            return { error: errorMessage };
-        }
+        if (viewHierarchyResult.failed) return { error: viewHierarchyResult.error };    // TODO return FetchResult
 
         // Get missing object attributes, tags & data
         // Also, get missing data of the current object
         const state = getState();
-        const objectIDs = result.non_composite.concat(result.composite).filter(objectID => !(objectID in state.objects && objectID in state.objectsTags));
-        const objectDataIDs = result.composite.filter(objectID => !ObjectsSelectors.dataIsPresent(state, objectID));
+        const objectIDs = viewHierarchyResult.non_composite.concat(viewHierarchyResult.composite).filter(
+            objectID => !(objectID in state.objects && objectID in state.objectsTags));
+        const objectDataIDs = viewHierarchyResult.composite.filter(objectID => !ObjectsSelectors.dataIsPresent(state, objectID));
 
         const objectsViewResult = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
 

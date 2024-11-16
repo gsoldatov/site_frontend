@@ -221,29 +221,3 @@ export const objectsGetPageObjectIDs = pagination_info => {
         }
     };
 }
-
-
-/**
- * Fetches backend to retrieve composite and non-composite objects in the composite hierarchy for the provided `objectID`.
- * 
- * Returns the arrays of composite & non-composite object IDs in the hierarchy or an object with `error` attribute containing error message in case of failure.
- */
- export const objectsViewCompositeHierarchyElements = object_id => {
-    return async (dispatch, getState) => {
-        // Fetch object attributes & data
-        let payload = { object_id };
-
-        let response = await dispatch(runFetch(`${backendURL}/objects/view_composite_hierarchy_elements`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        }));
-
-        switch (response.status) {
-            case 200:
-                return await response.json();
-            default:
-                return await getErrorFromResponse(response);
-        }
-    }; 
-};

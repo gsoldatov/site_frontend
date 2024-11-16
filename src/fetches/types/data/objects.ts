@@ -7,7 +7,7 @@ import { link } from "../../../store/types/data/links";
 import { markdown } from "../../../store/types/data/markdown";
 import { toDoList, toDoListItem } from "../../../store/types/data/to-do-list";
 import { composite, compositeSubobject } from "../../../store/types/data/composite";
-import { nonNegativeInt, int } from "../../../util/types/common";
+import { nonNegativeInt, int, positiveIntArray } from "../../../util/types/common";
 
 
 const backendLink = link;
@@ -58,3 +58,13 @@ export const objectsViewResponseSchema = z.object({
 
 type ObjectsViewResponseSchema = z.infer<typeof objectsViewResponseSchema>;
 export type ObjectsViewFetchResult = FetchResult & Partial<ObjectsViewResponseSchema>;
+
+
+/** /objects/view_composite_hierarchy_elements response body schema. */
+export const objectsViewCompositeHierarchyElementsResponseSchema = z.object({
+    composite: positiveIntArray, 
+    non_composite: positiveIntArray 
+});
+
+type ObjectsViewCompositeHierarchyElementsResponseSchema = z.infer<typeof objectsViewCompositeHierarchyElementsResponseSchema>;
+export type ObjectsViewCompositeHierarchyElementsFetchResult = FetchResult | (FetchResult & ObjectsViewCompositeHierarchyElementsResponseSchema);
