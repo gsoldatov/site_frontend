@@ -2,10 +2,7 @@ import { deepCopy } from "../../../../util/copy";
 
 import type { State } from "../../../types/state";
 import type { EditedObjectDataPart } from "../../../types/data/edited-objects";
-import type { Link } from "../../../types/data/links";
-import type { Markdown } from "../../../types/data/markdown";
-import type { ToDoList } from "../../../types/data/to-do-list";
-import type { Composite } from "../../../types/data/composite";
+import { ObjectsTransformers } from "../../../transformers/data/objects";
 
 
 export class ObjectsSelectors {
@@ -44,55 +41,10 @@ export class ObjectsSelectors {
     static editedObjectData(state: State, objectID: number): EditedObjectDataPart | undefined {
         if (!ObjectsSelectors.dataIsPresent(state, objectID)) return undefined;
         const data = deepCopy(ObjectsSelectors.data(state, objectID));
-
-        const { object_type } = state.objects[objectID];
-        switch (object_type) {
-            case "link": return { link: data as Link };
-            case "markdown": return { markdown: data as Markdown };
-            case "to_do_list": return  { toDoList: data as ToDoList };
-            case "composite": return { composite: data as Composite }
-        }
+        return ObjectsTransformers.storeDataToEdited(data);
     }
-
-    
 }
 
-
-// /**
-//  * Returns object data from `state` storage for the provided `objectID`.
-//  * 
-//  * If `formatAsEditedObjectProps` is true, returns a deep copy of data formatted to be inserted into an edited object,
-//  * otherwise returns the reference to the original object in the storage.
-//  * 
-//  * If object data or attributes (object type is required) are not present, returns `undefined`.
-//  * 
-//  * TODO move transformation part to transformers
-//  */
-// export const getObjectDataFromStore = (state, objectID, formatAsEditedObjectProps) => {
-//     if (!dataIsPresent(state, objectID)) return undefined;
-
-//     const objectType = state.objects[objectID].object_type;
-//     switch (objectType) {
-//         case "link":
-//             return formatAsEditedObjectProps
-//                 ? { link: deepCopy(state.links[objectID]) }
-//                 : state.links[objectID];
-//         case "markdown":
-//             return formatAsEditedObjectProps
-//                 ? (state.markdown[objectID] ? { markdown: { raw_text: state.markdown[objectID].raw_text, parsed: "" }} : undefined)
-//                 : state.markdown[objectID];
-//         case "to_do_list":
-//             return formatAsEditedObjectProps
-//                 ? { toDoList: deepCopy(state.toDoLists[objectID]) }
-//                 : state.toDoLists[objectID];
-//         case "composite":
-//             return formatAsEditedObjectProps
-//                 ? { composite: deepCopy(state.composite[objectID]) }
-//                 : state.composite[objectID];
-//         default:
-//             return undefined;
-//     }
-// };
 
 
 /*
