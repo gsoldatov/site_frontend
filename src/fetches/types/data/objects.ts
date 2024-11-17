@@ -71,10 +71,25 @@ type ObjectsViewResponseSchema = z.infer<typeof objectsViewResponseSchema>;
 export type ObjectsViewFetchResult = FetchResult | FetchResult & ObjectsViewResponseSchema;
 
 
+/**********************************************
+ *            /objects/search
+ *********************************************/
+
+
+/** /objects/search response body schema. */
+export const objectsSearchResponseSchema = z.object({
+    object_ids: positiveIntArray
+});
+
+type ObjectsSearchResponseSchema = z.infer<typeof objectsSearchResponseSchema>;
+export type ObjectsSearchFetchResult = FetchResult & Partial<ObjectsSearchResponseSchema>;
+
 
 /**********************************************
  *      /objects/get_page_object_ids
  *********************************************/
+
+
 /** /objects/get_page_object_ids request pagination info schema. */
 export const objectsPaginationInfo = z.object({
     page: positiveInt,
@@ -103,11 +118,10 @@ type ObjectsGetPageObjectIDsResponseSchema = z.infer<typeof objectsGetPageObject
 export type ObjectsGetPageObjectIDsFetchResult = FetchResult | FetchResult & Pick<ObjectsGetPageObjectIDsResponseSchema["pagination_info"], "object_ids" | "total_items">;
 
 
-
-
 /**********************************************
  *  /objects/view_composite_hierarchy_elements
  *********************************************/
+
 
 /** /objects/view_composite_hierarchy_elements response body schema. */
 export const objectsViewCompositeHierarchyElementsResponseSchema = z.object({

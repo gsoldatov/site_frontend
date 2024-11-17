@@ -14,11 +14,13 @@ import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 //     serializeObjectData, modifyObjectDataPostSave } from "../../store/state-util/objects";
 // import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 
-import { objectsGetPageObjectIDsResponseSchema, objectsPaginationInfo, objectsViewCompositeHierarchyElementsResponseSchema, 
+import { objectsGetPageObjectIDsResponseSchema, objectsPaginationInfo, objectsSearchResponseSchema, objectsViewCompositeHierarchyElementsResponseSchema, 
     objectsViewResponseSchema } from "../types/data/objects";
 import type { Dispatch, GetState } from "../../util/types/common";
-import type { ObjectsViewFetchResult, ObjectsViewCompositeHierarchyElementsFetchResult, 
-    ObjectsGetPageObjectIDsFetchResult, ObjectsPaginationInfo } from "../types/data/objects";
+import type { ObjectsViewFetchResult, ObjectsSearchFetchResult, 
+    ObjectsGetPageObjectIDsFetchResult, ObjectsPaginationInfo, 
+    ObjectsViewCompositeHierarchyElementsFetchResult
+} from "../types/data/objects";
 
 
 /**
@@ -101,6 +103,51 @@ export const fetchMissingObjects = (objectIDs: (string | number)[], storages: { 
 
         // Fetch missing information
         return await dispatch(objectsViewFetch(objectIDsWithNonCachedAttributesOrTags, objectIDsWithNonCachedData));
+    };
+};
+
+
+/**
+ * Fetches backend to get objects which match provided `queryText` and are not present in `existingIDs`.
+ * 
+ * Fetches non-cached objects' attributes & tags in case of success.
+ * 
+ * Returns the array of matching object IDs, if successful.
+ */
+export const objectsSearchFetch = ({ queryText, existingIDs }: { queryText: string, existingIDs: number[] }) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsSearchFetchResult> => {
+        // Validate params
+        if (queryText.length === 0 || queryText.length > 255) 
+            return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "Query text is empty or too long." });
+        if (existingIDs.length > 1000) 
+            return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "Existing IDs list is too long." });
+
+        // Fetch backend
+        const runner = new FetchRunner("/objects/search", { method: "POST", body: { 
+            query: {
+                query_text: queryText,
+                maximum_values: 10,
+                existing_ids: existingIDs || []
+        }}});
+        const searchResult = await runner.run();
+        
+        // Handle response
+        switch (searchResult.status) {
+            case 200:
+                const { object_ids } = objectsSearchResponseSchema.parse(searchResult.json);
+
+                // Fetch non-cached objects
+                const missingObjectsResult = await dispatch(fetchMissingObjects(object_ids, { attributes: true, tags: true }));
+                if (missingObjectsResult.failed) return missingObjectsResult;   // Stop if nested fetch failed
+
+                // Successfully end fetch
+                return searchResult.withCustomProps({ object_ids });
+            case 404:
+                // Consider 404 response to be a successful fetch result
+                return searchResult.withCustomProps({ errorType: FetchErrorType.none, object_ids: [] });
+            default:
+                return searchResult;
+        }
     };
 };
 

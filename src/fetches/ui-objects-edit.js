@@ -1,6 +1,6 @@
 import { getResponseErrorType } from "./common";
-import { objectsAddFetch, objectsUpdateFetch, objectsDeleteFetch, objectsSearchFetch } from "./data-objects";
-import { objectsViewFetch } from "./data/objects";
+import { objectsAddFetch, objectsUpdateFetch, objectsDeleteFetch } from "./data-objects";
+import { objectsViewFetch, objectsSearchFetch } from "./data/objects";
 import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
@@ -250,12 +250,12 @@ export const objectsEditCompositeSubobjectDropdownFetch = ({queryText, existingI
         const inputText = getState().objectsEditUI.addCompositeSubobjectMenu.inputText;
         if (inputText.length === 0) return;
 
-        // Run fetch & update matching tags
+        // Run fetch & update matching objects
         const result = await dispatch(objectsSearchFetch({queryText, existingIDs}));
 
-        if (getResponseErrorType(result) === enumResponseErrorType.none) {
+        if (!result.failed) {
             // Update matching tags if input text didn't change during fetch
-            if (inputText === getState().objectsEditUI.addCompositeSubobjectMenu.inputText) dispatch(setAddCompositeSubobjectMenu({ matchingIDs: result }));
+            if (inputText === getState().objectsEditUI.addCompositeSubobjectMenu.inputText) dispatch(setAddCompositeSubobjectMenu({ matchingIDs: result.object_ids }));
         }
     };
 }
