@@ -3,7 +3,7 @@ import { FetchRunner, FetchResult, FetchErrorType } from "../fetch-runner";
 import { fetchMissingTags } from "../data/tags";
 
 import { addObjectsTags, updateObjectsTags } from "../../reducers/data/objects-tags";
-import { deleteObjects } from "../../actions/data-objects";
+import { deleteObjects } from "../../reducers/data/objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../reducers/data/objects";
 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
@@ -105,6 +105,34 @@ export const fetchMissingObjects = (objectIDs: (string | number)[], storages: { 
         return await dispatch(objectsViewFetch(objectIDsWithNonCachedAttributesOrTags, objectIDsWithNonCachedData));
     };
 };
+
+
+/**
+ * Fetches backend to delete objects with provided `object_ids`.
+ * 
+ * Deletes the objects from the state in case of success or if objects are not found.
+ * 
+ * If `delete_subobjects` is true, deletes all subobjects of composite objects in `object_ids` on backend and in local state.
+ */
+export const objectsDeleteFetch = (object_ids: (string | number)[], delete_subobjects: boolean) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
+        // Fetch backend
+        object_ids = object_ids.map(id => parseInt(id as string));
+        const runner = new FetchRunner("/objects/delete", { method: "DELETE", body: { object_ids }});
+        const result = await runner.run();
+
+        // Handle response
+        switch (result.status) {
+            case 200:
+            case 404:   // Objects not present in the database should be deleted from state
+                dispatch(deleteObjects(object_ids as number[], delete_subobjects));
+                return result.withCustomProps({ errorType: FetchErrorType.none });
+            default:
+                return result;
+        }
+    }; 
+};
+
 
 
 /**

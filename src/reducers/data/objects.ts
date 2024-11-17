@@ -41,8 +41,21 @@ const _addObjectsDataFromBackend = (state: State, action: { objectsData: { objec
 };
 
 
+/**
+ * Deletes objects with `objectIDs` and their new subobjects from the state.
+ * 
+ * If `deleteSubobjects` is true, deletes their existing subobjects as well.
+ */
+export const deleteObjects = (objectIDs: number[], deleteExistingSubobjects: boolean) => ({ type: "DELETE_OBJECTS", objectIDs, deleteExistingSubobjects });
+
+const _deleteObjects = (state: State, action: { objectIDs: number[], deleteExistingSubobjects: boolean }): State => {
+    return ObjectsUpdaters.deleteObjects(state, action.objectIDs, action.deleteExistingSubobjects);
+};
+
+
 export const objectsRoot = {
     "ADD_OBJECTS_ATTRIBUTES": _addObjectsAttributes,
     "UPDATE_OBJECTS_ATTRIBUTES": _updateObjectsAttributes,
-    "ADD_OBJECTS_DATA_FROM_BACKEND": _addObjectsDataFromBackend
+    "ADD_OBJECTS_DATA_FROM_BACKEND": _addObjectsDataFromBackend,
+    "DELETE_OBJECTS": _deleteObjects
 };

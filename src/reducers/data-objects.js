@@ -1,7 +1,5 @@
-import { DELETE_OBJECTS, UPDATE_OBJECTS_DATA } from "../actions/data-objects";
+import { UPDATE_OBJECTS_DATA } from "../actions/data-objects";
 import { deepMerge } from "../util/copy";
-
-import { ObjectsUpdaters } from "../store/updaters/data/objects";
 
 
 const updateObjectsData = (state, action) => {
@@ -26,14 +24,9 @@ const updateObjectsData = (state, action) => {
     };
 };
 
-const deleteObjects = (state, action) => {
-    return ObjectsUpdaters.deleteObjects(state, action.objectIDs, action.deleteSubobjects);
-}
-
 
 const root = {
-    UPDATE_OBJECTS_DATA: updateObjectsData,
-    DELETE_OBJECTS: deleteObjects
+    UPDATE_OBJECTS_DATA: updateObjectsData
 };
 
 export default root;

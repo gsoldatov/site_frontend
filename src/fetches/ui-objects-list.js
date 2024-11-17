@@ -1,6 +1,5 @@
 import { getResponseErrorType } from "./common";
-import { objectsDeleteFetch } from "./data-objects";
-import { objectsGetPageObjectIDs, objectsViewFetch } from "./data/objects";
+import { objectsGetPageObjectIDs, objectsViewFetch, objectsDeleteFetch } from "./data/objects";
 import { objectsTagsUpdateFetch } from "./data/objects-tags";
 import { tagsSearchFetch } from "./data/tags";
 
@@ -116,10 +115,8 @@ export const objectsListDeleteFetch = deleteSubobjects => {
         const result = await dispatch(objectsDeleteFetch(selectedObjectIDs, deleteSubobjects));
 
         // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectsListFetch(false, errorMessage));
+        if (result.failed) {
+            dispatch(setObjectsListFetch(false, result.error));
             return;
         }
 

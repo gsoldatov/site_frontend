@@ -1,6 +1,6 @@
 import { getResponseErrorType } from "./common";
-import { objectsAddFetch, objectsUpdateFetch, objectsDeleteFetch } from "./data-objects";
-import { objectsViewFetch, objectsSearchFetch } from "./data/objects";
+import { objectsAddFetch, objectsUpdateFetch } from "./data-objects";
+import { objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "./data/objects";
 import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
@@ -197,13 +197,11 @@ export const objectsEditExistingDeleteFetch = deleteSubobjects => {
 
         // Run fetch & delete object data from state
         dispatch(setObjectsEditSaveFetchState(true, ""));
-        const result = await dispatch(objectsDeleteFetch( [state.objectsEditUI.currentObjectID], deleteSubobjects ));
+        const result = await dispatch(objectsDeleteFetch([state.objectsEditUI.currentObjectID], deleteSubobjects));
 
         // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectsEditSaveFetchState(false, errorMessage));
+        if (result.failed) {
+            dispatch(setObjectsEditSaveFetchState(false, result.error));
             return;
         }
 

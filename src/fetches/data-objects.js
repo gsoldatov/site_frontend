@@ -1,11 +1,9 @@
 import { getConfig } from "../config";
 
 import { runFetch, getErrorFromResponse } from "./common";
-import { fetchMissingObjects } from "./data/objects";
 import { fetchMissingTags } from "./data/tags";
 
 import { updateObjectsTags } from "../reducers/data/objects-tags";
-import { deleteObjects } from "../actions/data-objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../reducers/data/objects";
 import { setEditedObject, setObjectsEditSaveFetchState } from "../actions/objects-edit";
 
@@ -121,34 +119,4 @@ export const objectsUpdateFetch = obj => {
                 return await getErrorFromResponse(response);
         }
     };
-};
-
-
-/**
- * Fetches backend to delete objects with provided `objectIDs`.
- * 
- * Deletes the objects from the state in case of success.
- * 
- * If `deleteSubobjects` is true, deletes all subobjects of composite objects in `objectIDs` on backend and in local state.
- * 
- * Returns the array of deleted object IDs or an object with `error` attribute containing error message in case of failure.
- */
-export const objectsDeleteFetch = (objectIDs, deleteSubobjects) => {
-    return async (dispatch, getState) => {
-        deleteSubobjects = deleteSubobjects || false;
-        let response = await dispatch(runFetch(`${backendURL}/objects/delete`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ object_ids: objectIDs.map(id => parseInt(id)), delete_subobjects: deleteSubobjects })
-        }));
-
-        switch (response.status) {
-            case 200:
-            case 404:   // Objects not present in the database should be deleted from state
-                dispatch(deleteObjects({ objectIDs, deleteSubobjects }));
-                return objectIDs;
-            default:
-                return await getErrorFromResponse(response);
-        }
-    }; 
 };
