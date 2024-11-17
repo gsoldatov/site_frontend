@@ -1,4 +1,3 @@
-import { getStateWithDeletedObjects } from "./data-objects";
 import { ObjectsUpdaters } from "../../store/updaters/data/objects";
 import { getStateWithDeletedEditedNewSubobjects, getStateWithResetEditedObjects } from "./object";
 
@@ -143,13 +142,13 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
         let deletedSubobjectIDs = subobjectIDs.filter(subobjectID => 
                                                     newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteMode.subobjectOnly
                                                     && objectHasNoChanges(newState, subobjectID));
-        newState = getStateWithDeletedObjects(newState, deletedSubobjectIDs);
+        newState = ObjectsUpdaters.deleteObjects(newState, deletedSubobjectIDs);
         
         // Remove fully deleted existing objectsfrom state
         let fullyDeletedExistingSubobjectIDs = subobjectIDs.filter(subobjectID => {
             return parseInt(subobjectID) > 0 && newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteMode.full
         });
-        newState = getStateWithDeletedObjects(newState, fullyDeletedExistingSubobjectIDs);
+        newState = ObjectsUpdaters.deleteObjects(newState, fullyDeletedExistingSubobjectIDs);
 
         // Map new subobject IDs in state.editedObjects and update object_id, created_at & modified_at values
         // Also add empty records in objectsTags storage for new subobjects

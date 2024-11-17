@@ -1,7 +1,6 @@
 import { DELETE_OBJECTS, UPDATE_OBJECTS_DATA } from "../actions/data-objects";
 import { deepMerge } from "../util/copy";
 
-import { getStateWithDeletedObjects } from "./helpers/data-objects";
 import { ObjectsUpdaters } from "../store/updaters/data/objects";
 
 
@@ -28,7 +27,7 @@ const updateObjectsData = (state, action) => {
 };
 
 const deleteObjects = (state, action) => {
-    return getStateWithDeletedObjects(state, action.objectIDs, action.deleteSubobjects);
+    return ObjectsUpdaters.deleteObjects(state, action.objectIDs, action.deleteSubobjects);
 }
 
 

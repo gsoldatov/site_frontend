@@ -43,6 +43,21 @@ export class ObjectsSelectors {
         const data = deepCopy(ObjectsSelectors.data(state, objectID));
         return ObjectsTransformers.storeDataToEdited(data);
     }
+
+    /**
+     * Returns a list of composite subobject IDs stored in `state.composite` for the parent `objectIDs`.
+     */
+    static subobjectIDs(state: State, objectIDs: number[]): number[] {
+        let result: number[] = [];
+        for (let objectID of objectIDs) {
+            if (objectID in state.composite) {
+                result = result.concat(
+                    Object.keys(state.composite[objectID].subobjects).map(id => parseInt(id))
+                );
+            }
+        }
+        return result;
+    }
 }
 
 
