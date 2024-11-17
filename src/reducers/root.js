@@ -4,7 +4,6 @@ import { authRoot } from "./data/auth";
 import { usersRoot } from "./data/users";
 import { tagsRoot } from "./data/tags";
 import { objectsTagsRoot } from "./data/objects-tags";
-import dataObjects from "./data-objects";
 import { objectsRoot } from "./data/objects";
 import { editedObjectsRoot } from "./data/edited-objects";
 
@@ -45,7 +44,6 @@ const ACTION_HANDLERS = getActionHandlers({
     usersRoot,
     tagsRoot,
     objectsTagsRoot,
-    dataObjects,
     objectsRoot,
     editedObjectsRoot,
     

@@ -1,5 +1,4 @@
-import { updateObjectsData } from "../../../../src/actions/data-objects";
-import { addObjectsAttributes, updateObjectsAttributes, addObjectsDataFromBackend } from "../../../../src/reducers/data/objects";
+import { addObjectsAttributes, updateObjectsAttributes, addObjectsDataFromBackend, updateObjectsData } from "../../../../src/reducers/data/objects";
 
 import type { AppStore, PartialExcept } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
