@@ -113,11 +113,11 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
     };
 
     // Search text change handlers (updates state & runs a delayed fetch to get dropdown items)
-    const _onSearchChangeDelayed = useRef(debounce(params => dispatch(objectsEditCompositeSubobjectDropdownFetch(params))
+    const _onSearchChangeDelayed = useRef(debounce((queryText, existingIDs) => dispatch(objectsEditCompositeSubobjectDropdownFetch(queryText, existingIDs))
                                     , 250, "onCall")).current;
     const handleSearchChange = (e, data) => {
         setAddMenuCallback({ inputText: data.searchQuery });
-        _onSearchChangeDelayed({ queryText: data.searchQuery, existingIDs });
+        _onSearchChangeDelayed(data.searchQuery, existingIDs);
     };
 
     // Object selection handler

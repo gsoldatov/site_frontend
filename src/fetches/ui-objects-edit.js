@@ -244,14 +244,14 @@ export const objectsEditTagsDropdownFetch = ({queryText, existingIDs}) => {
 /**
  * Handles composite object add subobject dropdown values update.
  */
-export const objectsEditCompositeSubobjectDropdownFetch = ({queryText, existingIDs}) => {
+export const objectsEditCompositeSubobjectDropdownFetch = (queryText, existingIDs) => {
     return async (dispatch, getState) => {
         // Exit fetch if an item was added before the start of the fetch
         const inputText = getState().objectsEditUI.addCompositeSubobjectMenu.inputText;
         if (inputText.length === 0) return;
 
         // Run fetch & update matching objects
-        const result = await dispatch(objectsSearchFetch({queryText, existingIDs}));
+        const result = await dispatch(objectsSearchFetch(queryText, existingIDs));
 
         if (!result.failed) {
             // Update matching tags if input text didn't change during fetch

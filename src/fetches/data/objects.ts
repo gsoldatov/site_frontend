@@ -108,27 +108,23 @@ export const fetchMissingObjects = (objectIDs: (string | number)[], storages: { 
 
 
 /**
- * Fetches backend to get objects which match provided `queryText` and are not present in `existingIDs`.
+ * Fetches backend to get objects which match provided `query_text` and are not present in `existing_ids`.
  * 
  * Fetches non-cached objects' attributes & tags in case of success.
  * 
  * Returns the array of matching object IDs, if successful.
  */
-export const objectsSearchFetch = ({ queryText, existingIDs }: { queryText: string, existingIDs: number[] }) => {
+export const objectsSearchFetch = (query_text: string, existing_ids: number[]) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsSearchFetchResult> => {
         // Validate params
-        if (queryText.length === 0 || queryText.length > 255) 
+        if (query_text.length === 0 || query_text.length > 255) 
             return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "Query text is empty or too long." });
-        if (existingIDs.length > 1000) 
+        if (existing_ids.length > 1000) 
             return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "Existing IDs list is too long." });
 
         // Fetch backend
-        const runner = new FetchRunner("/objects/search", { method: "POST", body: { 
-            query: {
-                query_text: queryText,
-                maximum_values: 10,
-                existing_ids: existingIDs || []
-        }}});
+        const body = { query: { query_text, existing_ids, maximum_values: 10 }};
+        const runner = new FetchRunner("/objects/search", { method: "POST", body });
         const searchResult = await runner.run();
         
         // Handle response
