@@ -6,7 +6,7 @@ import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton,
     HorizontalMenuFilter, HorizontalMenuDropdown, HorizontalMenuUpdatableDropdown } from "../../modules/horizontal-menu";
 
 import { selectObjects, clearSelectedObjects, setObjectsListPaginationInfo, setObjectsListTagsFilterInput  } from "../../../actions/objects-list";
-import { setObjectsListPaginationInfoAndFetchPage, setObjectsListTagsFilterAndFetchPage, objectsListTagsFilterDropdownFetch, } from "../../../fetches/ui-objects-list";
+import { setObjectsListPaginationInfoAndFetchPage, setObjectsListTagsFilterAndFetchPage, objectsListTagsFilterDropdownFetch } from "../../../fetches/ui-objects-list";
 import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
 import { objectTypeOptions } from "../../../store/types/ui/general/object-type";
 
@@ -68,7 +68,7 @@ export const ObjectsListHorizontalMenu = () => {
     const tagsFilterOptions = useSelector(tagsFilterOptionsSelector);
     
     const tagsFilterOnSearchChange = useMemo(() => inputParams => dispatch(setObjectsListTagsFilterInput(inputParams)), []);
-    const tagsFilterOnSearchChangeDelayed = useMemo(() => inputParams => dispatch(objectsListTagsFilterDropdownFetch(inputParams)), []);
+    const tagsFilterOnSearchChangeDelayed = useMemo(() => (queryText, existingIDs) => dispatch(objectsListTagsFilterDropdownFetch(queryText, existingIDs)), []);
     const tagsFilterOnChange = useMemo(() => values => dispatch(setObjectsListTagsFilterAndFetchPage(values)), []);
 
     // Tags filter clear button

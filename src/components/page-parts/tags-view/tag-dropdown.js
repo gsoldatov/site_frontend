@@ -40,8 +40,8 @@ export const TagDropdown = () => {
     };
     
     // Search text change handlers (updates state, runs a delayed fetch to get dropdown items & updates dropdown items)
-    const onSearchChangeDelayed = useRef(debounce(async params => {
-        const result = await dispatch(tagsViewDropdownOptionsSearch(params));
+    const onSearchChangeDelayed = useRef(debounce(async (queryText, existingIDs) => {
+        const result = await dispatch(tagsViewDropdownOptionsSearch(queryText, existingIDs));
 
         // Update state if component is still mounted (no redirect occured)
         if (isMounted()) {
@@ -52,7 +52,7 @@ export const TagDropdown = () => {
 
     const handleSearchChange = (e, data) => {
         setInputText(data.searchQuery);
-        onSearchChangeDelayed({ queryText: data.searchQuery, existingIDs: tagIDs });
+        onSearchChangeDelayed(data.searchQuery, tagIDs);
     };
 
     // Tag selection handler

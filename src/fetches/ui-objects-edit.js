@@ -216,13 +216,13 @@ export const objectsEditExistingDeleteFetch = deleteSubobjects => {
 /**
  * Handles objects tags dropdown with matching tags update.
  */
-export const objectsEditTagsDropdownFetch = ({queryText, existingIDs}) => {
+export const objectsEditTagsDropdownFetch = (queryText, existingIDs) => {
     return async (dispatch, getState) => {
         // Input text at the start of the query
         const inputText = getState().objectsEditUI.tagsInput.inputText;
 
         // Run fetch
-        const result = await dispatch(tagsSearchFetch({queryText, existingIDs}));
+        const result = await dispatch(tagsSearchFetch(queryText, existingIDs));
 
         // Update matching tags if fetch finished
         if (result.tagIDs !== undefined) {

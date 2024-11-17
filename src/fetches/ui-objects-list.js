@@ -134,13 +134,13 @@ export const objectsListDeleteFetch = deleteSubobjects => {
  * Thunk creator for fetching tags which match the value returned by `inputTextSelector` and updating the state with `actionCreator`.
  */
 const dropdownFetchThunkCreatorCreator = (actionCreator, inputTextSelector) => {
-    return ({queryText, existingIDs}) => {
+    return (queryText, existingIDs) => {
         return async (dispatch, getState) => {
             // Input text at the start of the query
             const inputText = inputTextSelector(getState());
 
             // Run fetch & update matching tags
-            const result = await dispatch(tagsSearchFetch({queryText, existingIDs}));
+            const result = await dispatch(tagsSearchFetch(queryText, existingIDs));
 
             // Update matching tags if fetch finished
             if (result.tagIDs !== undefined) {

@@ -100,7 +100,7 @@ const NewTagInput = () => {
     
     const setInputState = useMemo(() => newState => dispatch(setObjectsEditTagsInput(newState)), []);
     const setItem = useMemo(() => params => dispatch(setEditedObjectTags(params)), []);
-    const onSearchChangeDelayed = useMemo(() => params => dispatch(objectsEditTagsDropdownFetch(params)), []);
+    const onSearchChangeDelayed = useMemo(() => (queryText, existingIDs) => dispatch(objectsEditTagsDropdownFetch(queryText, existingIDs)), []);
 
     const existingIDs = useSelector(existingTagIDsSelector);
     const matchingIDsText = useSelector(matchingTagIDsNames);

@@ -78,9 +78,9 @@ export const InlineInput = memo(({ placeholder, inputState, setInputState, setIt
         250, "onCall")).current;     // wrap onSearchChangeDelayed action to limit its execution frequency and save the wrapped object as a ref
     const handleSearchChange = (e) => {
         setInputState({ inputText: e.target.value });     // inputText is updated immediately after every change
-        abortFetch.current = _onSearchChangeDelayed({     // onSearchChangeDelayed is called after a delay since last input value change (and dispatches a fetch)
-            queryText: e.target.value, existingIDs
-        });
+        abortFetch.current = _onSearchChangeDelayed(      // onSearchChangeDelayed is called after a delay since last input value change (and dispatches a fetch)
+            e.target.value, existingIDs
+        );
     };
 
     // Components

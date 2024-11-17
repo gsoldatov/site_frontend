@@ -62,7 +62,7 @@ const NewTagInput = () => {
     
     const setInputState = useMemo(() => newState => dispatch(setObjectsListTagsInput(newState)), []);
     const setItem = useMemo(() => params => dispatch(setObjectsListCurrentTags(params)), []);
-    const onSearchChangeDelayed = useMemo(() => params => dispatch(objectsListTagsDropdownFetch(params)), []);
+    const onSearchChangeDelayed = useMemo(() => (queryText, existingIDs) => dispatch(objectsListTagsDropdownFetch(queryText, existingIDs)), []);
 
     const existingIDs = useSelector(ObjectsListSelectors.existingTagIDs);
     const matchingIDsText = useSelector(ObjectsListSelectors.matchingTagIDsNames);

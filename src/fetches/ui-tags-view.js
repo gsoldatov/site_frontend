@@ -43,8 +43,8 @@ export const tagsViewLoadSelectedTags = tagIDs => {
 /**
  * Fetch dropdown options for the /tags/view tag dropdown
  */
-export const tagsViewDropdownOptionsSearch = ({queryText, existingIDs}) => {
+export const tagsViewDropdownOptionsSearch = (queryText, existingIDs) => {
     return async (dispatch, getState) => {
-        return await dispatch(tagsSearchFetch({queryText, existingIDs}));
+        return await dispatch(tagsSearchFetch(queryText, existingIDs));
     };
 };

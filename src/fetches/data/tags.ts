@@ -147,20 +147,20 @@ export const tagsDeleteFetch = (tagIDs: (string | number)[]) => {
 
 
 /**
- * Fetches backend to get tags which match provided `queryText` and are not present in `existingIDs`.
+ * Fetches backend to get tags which match provided `query_text` and are not present in `existing_ids`.
  * 
  * Fetches non-cached tags in case of success.
  */
-export const tagsSearchFetch = ({ queryText, existingIDs }: { queryText: string, existingIDs: number[] }) => {
+export const tagsSearchFetch = (query_text: string, existing_ids: number[]) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<TagsSearchFetchResult> => {
         // Check params
-        if (queryText.length === 0 || queryText.length > 255)
-            return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "queryText is empty or too long." });
-        if (existingIDs.length > 1000)
-            return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "existingIDs list is too long." });
+        if (query_text.length === 0 || query_text.length > 255)
+            return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "Query text is empty or too long." });
+        if (existing_ids.length > 1000)
+            return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "Existing IDs list is too long." });
         
         // Fetch backend
-        const body = { query: { query_text: queryText, existing_ids: existingIDs, maximum_values: 10 }};
+        const body = { query: { query_text, existing_ids, maximum_values: 10 }};
         const runner = new FetchRunner("/tags/search", { method: "POST", body });
         const result = await runner.run();
 

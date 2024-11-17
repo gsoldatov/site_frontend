@@ -114,7 +114,7 @@ export const HorizontalMenuUpdatableDropdown = ({ placeholder, isDisabled, input
     const _onSearchChangeDelayed = useRef(debounce(onSearchChangeDelayed , 500, "onCall")).current;
     const handleSearchChange = (e, data) => {
         onSearchChange({ inputText: data.searchQuery });
-        _onSearchChangeDelayed({ queryText: data.searchQuery, existingIDs });
+        _onSearchChangeDelayed(data.searchQuery, existingIDs);
     };
 
     // Item selection handler (dispatches onChange action with selected value as argument & clears the value of the dropdown)
