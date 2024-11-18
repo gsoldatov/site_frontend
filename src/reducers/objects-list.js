@@ -1,37 +1,11 @@
 import { SET_OBJECTS_LIST_TAGS_INPUT, SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
-    SET_OBJECTS_LIST_TAGS_FILTER, SET_OBJECTS_LIST_TAGS_FILTER_INPUT, SET_OBJECTS_LIST_SHOW_DELETE_DIALOG } from "../actions/objects-list";
+    SET_OBJECTS_LIST_TAGS_FILTER_INPUT, SET_OBJECTS_LIST_SHOW_DELETE_DIALOG } from "../actions/objects-list";
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
 
 
-/*
-    Adds/removes provided tag ID to/from objectsListUI.paginationInfo.tagsFilter list.
-    Clears the list if no tag ID is provided.
-*/
-function setObjectsListTagsFilter(state, action) {
-    let tagsFilter, oldTagsFilter = state.objectsListUI.paginationInfo.tagsFilter;
-    if (!action.tagID) tagsFilter = [];    // clear case
-    else {  // add/remove case
-        const i = oldTagsFilter.indexOf(action.tagID);
-        if (i > -1) tagsFilter = oldTagsFilter.slice(0, i).concat(oldTagsFilter.slice(i + 1));
-        else {
-            tagsFilter = oldTagsFilter.slice();
-            tagsFilter.push(action.tagID);
-        }
-    }
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            paginationInfo: {
-                ...state.objectsListUI.paginationInfo,
-                tagsFilter
-            }
-        }
-    };
-}
 
 function setObjectsListTagsFilterInput(state, action) {
     const { inputText, matchingIDs } = action.tagsFilterInput;
@@ -176,7 +150,6 @@ function clearSelectedObjects(state, action) {
 
 
 const root = {
-    SET_OBJECTS_LIST_TAGS_FILTER: setObjectsListTagsFilter,
     SET_OBJECTS_LIST_TAGS_FILTER_INPUT: setObjectsListTagsFilterInput,
     SET_OBJECTS_LIST_SHOW_DELETE_DIALOG: setShowDeleteDialogObjects,
     SET_OBJECTS_LIST_TAGS_INPUT: setObjectsListTagsInput,

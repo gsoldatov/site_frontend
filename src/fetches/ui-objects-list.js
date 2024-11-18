@@ -3,8 +3,10 @@ import { objectsTagsUpdateFetch } from "./data/objects-tags";
 import { tagsSearchFetch } from "./data/tags";
 
 import { setObjectsListTagsInput, setObjectsListCurrentTags, 
-        setShowDeleteDialogObjects, setObjectsListTagsFilterInput, setObjectsListTagsFilter } from "../actions/objects-list";
-import { setObjectsListFetch, setObjectsListPaginationInfo } from "../reducers/ui/objects-list";
+        setShowDeleteDialogObjects, setObjectsListTagsFilterInput } from "../actions/objects-list";
+import {
+    setObjectsListFetch, setObjectsListPaginationInfo, setObjectsListTagsFilter
+} from "../reducers/ui/objects-list";
 
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
