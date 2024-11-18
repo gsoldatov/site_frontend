@@ -48,6 +48,8 @@ export type ObjectsListFetch = z.infer<typeof objectsListUI.shape.fetch>;
 export type ObjectsListPaginationInfo = z.infer<typeof objectsListUI.shape.paginationInfo>;
 /** /objectsListUI/list tags filter input state type. */
 export type ObjectsListTagsFilterInput = z.infer<typeof objectsListUI.shape.tagsFilterInput>;
+/** /objectsListUI/list tags input state type. */
+export type ObjectsListTagsInput = z.infer<typeof objectsListUI.shape.tagsInput>;
 
 
 /** Returns /objects/list state with default values being replaced `customValues`. */

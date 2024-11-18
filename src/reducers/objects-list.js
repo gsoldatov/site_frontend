@@ -1,4 +1,4 @@
-import { SET_OBJECTS_LIST_TAGS_INPUT, SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
+import { SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
     SET_OBJECTS_LIST_SHOW_DELETE_DIALOG } from "../actions/objects-list";
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
@@ -18,20 +18,6 @@ function setShowDeleteDialogObjects(state, action) {
     }
 }
 
-
-function setObjectsListTagsInput(state, action) {
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            tagsInput: {
-                isDisplayed: action.tagsInput.isDisplayed !== undefined ? action.tagsInput.isDisplayed : state.objectsListUI.tagsInput.isDisplayed,
-                inputText: action.tagsInput.inputText !== undefined ? action.tagsInput.inputText : state.objectsListUI.tagsInput.inputText,
-                matchingIDs: action.tagsInput.matchingIDs !== undefined ? action.tagsInput.matchingIDs : state.objectsListUI.tagsInput.matchingIDs
-            }
-        }
-    };
-}
 
 /*
     Updates addedTags & removedTagIDs in objectsListUI state.
@@ -138,7 +124,6 @@ function clearSelectedObjects(state, action) {
 
 const root = {
     SET_OBJECTS_LIST_SHOW_DELETE_DIALOG: setShowDeleteDialogObjects,
-    SET_OBJECTS_LIST_TAGS_INPUT: setObjectsListTagsInput,
     SET_OBJECTS_LIST_CURRENT_TAGS: setObjectsListCurrentTags,
     SELECT_OBJECTS: selectObjects,
     TOGGLE_OBJECT_SELECTION: toggleObjectSelection,

@@ -1,5 +1,7 @@
 import type { State } from "../../store/types/state"
-import { type ObjectsListFetch, type ObjectsListPaginationInfo, type ObjectsListTagsFilterInput } from "../../store/types/ui/objects-list"
+import { 
+    type ObjectsListFetch, type ObjectsListPaginationInfo, type ObjectsListTagsFilterInput, type ObjectsListTagsInput
+} from "../../store/types/ui/objects-list"
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,6 +66,17 @@ const _setObjectsListTagsFilterInput = (state: State, action: { tagsFilterInput:
     return { ...state, objectsListUI: { ...state.objectsListUI, tagsFilterInput }};
 };
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Partially updates state.objectsListUI.tagsInput */
+export const setObjectsListTagsInput = (tagsInput: Partial<ObjectsListTagsInput>) => ({ type: "SET_OBJECTS_LIST_TAGS_INPUT", tagsInput });
+
+const _setObjectsListTagsInput = (state: State, action: { tagsInput: Partial<ObjectsListTagsInput> }): State => {
+    const tagsInput = { ...state.objectsListUI.tagsInput, ...action.tagsInput };
+    return { ...state, objectsListUI: { ...state.objectsListUI, tagsInput }};
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,5 +88,11 @@ export const objectsListRoot = {
     "SET_OBJECTS_LIST_FETCH": _setObjectsListFetch,
     "SET_OBJECTS_LIST_PAGINATION_INFO": _setObjectsListPaginationInfo,
     "SET_OBJECTS_LIST_TAGS_FILTER": _setObjectsListTagsFilter,
-    "SET_OBJECTS_LIST_TAGS_FILTER_INPUT": _setObjectsListTagsFilterInput
+    "SET_OBJECTS_LIST_TAGS_FILTER_INPUT": _setObjectsListTagsFilterInput,
+    "SET_OBJECTS_LIST_TAGS_INPUT": _setObjectsListTagsInput,
+    // "SET_OBJECTS_LIST_SHOW_DELETE_DIALOG": _setShowDeleteDialogObjects,
+    // "SET_OBJECTS_LIST_CURRENT_TAGS": _setObjectsListCurrentTags,
+    // "SELECT_OBJECTS": _selectObjects,
+    // "TOGGLE_OBJECT_SELECTION": _toggleObjectSelection,
+    // "CLEAR_SELECTED_OBJECTS": _clearSelectedObjects
 };
