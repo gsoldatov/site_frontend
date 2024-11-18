@@ -1,12 +1,7 @@
-import { SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION } from "../actions/objects-list";
+import { SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS } from "../actions/objects-list";
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
-
-
-
-
-
 
 
 /*
@@ -83,28 +78,12 @@ function selectObjects(state, action) {
     }
 }
 
-function toggleObjectSelection(state, action) {
-    const newSelectedObjectIDs = state.objectsListUI.selectedObjectIDs.includes(action.object_id) 
-                                ? state.objectsListUI.selectedObjectIDs.filter(object_id => object_id !== action.object_id)
-                                : state.objectsListUI.selectedObjectIDs.concat(action.object_id);
-    
-    const newShowDeleteDialog = newSelectedObjectIDs.length > 0 ? state.objectsListUI.showDeleteDialog : false;     // Reset delete dialog if no objects are selected
-                                
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            selectedObjectIDs: newSelectedObjectIDs,
-            showDeleteDialog: newShowDeleteDialog
-        }
-    };
-}
+
 
 
 const root = {
     SET_OBJECTS_LIST_CURRENT_TAGS: setObjectsListCurrentTags,
-    SELECT_OBJECTS: selectObjects,
-    TOGGLE_OBJECT_SELECTION: toggleObjectSelection
+    SELECT_OBJECTS: selectObjects
 };
 
 export default root;

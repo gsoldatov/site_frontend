@@ -8,7 +8,7 @@ import { FieldItemList, FieldItem } from "../../modules/field-item-list";
 import { ExpandableContainer } from "../../modules/expandable-container";
 import { ObjectsListPagination } from "./objects-list-pagination";
 
-import { toggleObjectSelection } from "../../../actions/objects-list";
+import { toggleObjectSelection } from "../../../reducers/ui/objects-list";
 import { objectsListOnLoadFetch } from "../../../fetches/ui-objects-list";
 
 

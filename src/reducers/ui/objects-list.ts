@@ -89,19 +89,25 @@ const _setShowDeleteDialogObjects = (state: State, action: { showDeleteDialog: b
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Toggles object selection and update delete dialog display on the /objects/list page. */
+export const toggleObjectSelection = (objectID: number) => ({ type: "TOGGLE_OBJECT_SELECTION", objectID });
+
+const _toggleObjectSelection = (state: State, action: { objectID: number }): State => {
+    const { objectID } = action;
+    const soIDs = state.objectsListUI.selectedObjectIDs;
+    const selectedObjectIDs = soIDs.includes(objectID) ? soIDs.filter(id => id !== objectID) : soIDs.concat(objectID);
+    const showDeleteDialog = selectedObjectIDs.length > 0 ? state.objectsListUI.showDeleteDialog : false;     // Reset delete dialog if no objects are selected
+                                
+    return { ...state, objectsListUI: { ...state.objectsListUI, selectedObjectIDs, showDeleteDialog }};
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** Clears selected objects and closes delete dialog on the /objects/list page. */
 export const clearSelectedObjects = () => ({ type: "CLEAR_SELECTED_OBJECTS" });
 
 const _clearSelectedObjects = (state: State, action: any): State => {
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            selectedObjectIDs: [],
-            showDeleteDialog: false
-        }
-    };
+    return { ...state, objectsListUI: { ...state.objectsListUI, selectedObjectIDs: [], showDeleteDialog: false }};
 };
 
 
@@ -114,6 +120,6 @@ export const objectsListRoot = {
     "SET_OBJECTS_LIST_SHOW_DELETE_DIALOG": _setShowDeleteDialogObjects,
     // "SET_OBJECTS_LIST_CURRENT_TAGS": _setObjectsListCurrentTags,
     // "SELECT_OBJECTS": _selectObjects,
-    // "TOGGLE_OBJECT_SELECTION": _toggleObjectSelection,
+    "TOGGLE_OBJECT_SELECTION": _toggleObjectSelection,
     "CLEAR_SELECTED_OBJECTS": _clearSelectedObjects
 };
