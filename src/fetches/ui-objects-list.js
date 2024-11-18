@@ -3,9 +3,9 @@ import { objectsTagsUpdateFetch } from "./data/objects-tags";
 import { tagsSearchFetch } from "./data/tags";
 
 import { setObjectsListTagsInput, setObjectsListCurrentTags, 
-        setShowDeleteDialogObjects, setObjectsListTagsFilterInput } from "../actions/objects-list";
+        setShowDeleteDialogObjects } from "../actions/objects-list";
 import {
-    setObjectsListFetch, setObjectsListPaginationInfo, setObjectsListTagsFilter
+    setObjectsListFetch, setObjectsListPaginationInfo, setObjectsListTagsFilter, setObjectsListTagsFilterInput
 } from "../reducers/ui/objects-list";
 
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";

@@ -1,5 +1,5 @@
 import type { State } from "../../store/types/state"
-import { objectsListUI, type ObjectsListFetch, type ObjectsListPaginationInfo } from "../../store/types/ui/objects-list"
+import { type ObjectsListFetch, type ObjectsListPaginationInfo, type ObjectsListTagsFilterInput } from "../../store/types/ui/objects-list"
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,9 +52,18 @@ const _setObjectsListTagsFilter = (state: State, action: { tagID: number | undef
             }
         }
     };
-}
+};
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Partially updates state.objectsListUI.tagsFilterInput */
+export const setObjectsListTagsFilterInput = (tagsFilterInput: Partial<ObjectsListTagsFilterInput>)  => ({ type: "SET_OBJECTS_LIST_TAGS_FILTER_INPUT", tagsFilterInput });
+
+const _setObjectsListTagsFilterInput = (state: State, action: { tagsFilterInput: Partial<ObjectsListTagsFilterInput> }): State => {
+    const tagsFilterInput = { ...state.objectsListUI.tagsFilterInput, ...action.tagsFilterInput };
+    return { ...state, objectsListUI: { ...state.objectsListUI, tagsFilterInput }};
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,5 +74,6 @@ const _setObjectsListTagsFilter = (state: State, action: { tagID: number | undef
 export const objectsListRoot = {
     "SET_OBJECTS_LIST_FETCH": _setObjectsListFetch,
     "SET_OBJECTS_LIST_PAGINATION_INFO": _setObjectsListPaginationInfo,
-    "SET_OBJECTS_LIST_TAGS_FILTER": _setObjectsListTagsFilter
+    "SET_OBJECTS_LIST_TAGS_FILTER": _setObjectsListTagsFilter,
+    "SET_OBJECTS_LIST_TAGS_FILTER_INPUT": _setObjectsListTagsFilterInput
 };
