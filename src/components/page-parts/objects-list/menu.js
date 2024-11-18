@@ -5,8 +5,7 @@ import { createSelector } from "reselect";
 import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton, 
     HorizontalMenuFilter, HorizontalMenuDropdown, HorizontalMenuUpdatableDropdown } from "../../modules/horizontal-menu";
 
-import { selectObjects } from "../../../actions/objects-list";
-import { setObjectsListPaginationInfo, setObjectsListTagsFilterInput, clearSelectedObjects } from "../../../reducers/ui/objects-list";
+import { setObjectsListPaginationInfo, setObjectsListTagsFilterInput, selectObjects, clearSelectedObjects } from "../../../reducers/ui/objects-list";
 import { setObjectsListPaginationInfoAndFetchPage, setObjectsListTagsFilterAndFetchPage, objectsListTagsFilterDropdownFetch } from "../../../fetches/ui-objects-list";
 import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
 import { objectTypeOptions } from "../../../store/types/ui/general/object-type";

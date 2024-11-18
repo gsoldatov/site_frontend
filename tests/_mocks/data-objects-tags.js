@@ -1,7 +1,7 @@
 import { fetchMissingTags } from "../../src/fetches/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { addObjectsAttributes } from "../../src/reducers/data/objects";
-import { selectObjects } from "../../src/actions/objects-list";
+import { selectObjects } from "../../src/reducers/ui/objects-list";
 
 import { generateObjectAttributes } from "./data-objects";
 import { createTestStore } from "../_util/create-test-store";

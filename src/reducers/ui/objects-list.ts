@@ -88,6 +88,15 @@ const _setShowDeleteDialogObjects = (state: State, action: { showDeleteDialog: b
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Selects objects with `objectIDs` on the /objects/list page. */
+export const selectObjects = (objectIDs: number[]) => ({ type: "SELECT_OBJECTS", objectIDs });
+
+const _selectObjects = (state: State, action: { objectIDs: number[] }): State => {
+    const selectedObjectIDs = [ ...new Set(state.objectsListUI.selectedObjectIDs.concat(action.objectIDs) )];
+    return { ...state, objectsListUI: { ...state.objectsListUI, selectedObjectIDs }};
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** Toggles object selection and update delete dialog display on the /objects/list page. */
 export const toggleObjectSelection = (objectID: number) => ({ type: "TOGGLE_OBJECT_SELECTION", objectID });
@@ -119,7 +128,7 @@ export const objectsListRoot = {
     "SET_OBJECTS_LIST_TAGS_INPUT": _setObjectsListTagsInput,
     "SET_OBJECTS_LIST_SHOW_DELETE_DIALOG": _setShowDeleteDialogObjects,
     // "SET_OBJECTS_LIST_CURRENT_TAGS": _setObjectsListCurrentTags,
-    // "SELECT_OBJECTS": _selectObjects,
+    "SELECT_OBJECTS": _selectObjects,
     "TOGGLE_OBJECT_SELECTION": _toggleObjectSelection,
     "CLEAR_SELECTED_OBJECTS": _clearSelectedObjects
 };

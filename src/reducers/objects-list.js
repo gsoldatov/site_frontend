@@ -1,4 +1,4 @@
-import { SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS } from "../actions/objects-list";
+import { SET_OBJECTS_LIST_CURRENT_TAGS } from "../actions/objects-list";
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
@@ -68,22 +68,11 @@ function setObjectsListCurrentTags(state, action) {
     };
 }
 
-function selectObjects(state, action) {
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            selectedObjectIDs: [...(new Set(state.objectsListUI.selectedObjectIDs.concat(action.object_ids)))]
-        }
-    }
-}
-
 
 
 
 const root = {
     SET_OBJECTS_LIST_CURRENT_TAGS: setObjectsListCurrentTags,
-    SELECT_OBJECTS: selectObjects
 };
 
 export default root;
