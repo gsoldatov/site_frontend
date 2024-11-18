@@ -14,12 +14,12 @@ import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 //     serializeObjectData, modifyObjectDataPostSave } from "../../store/state-util/objects";
 // import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 
-import { objectsGetPageObjectIDsResponseSchema, objectsPaginationInfo, objectsSearchResponseSchema, objectsViewCompositeHierarchyElementsResponseSchema, 
-    objectsViewResponseSchema } from "../types/data/objects";
 import type { Dispatch, GetState } from "../../util/types/common";
-import type { ObjectsViewFetchResult, ObjectsSearchFetchResult, 
-    ObjectsGetPageObjectIDsFetchResult, ObjectsPaginationInfo, 
-    ObjectsViewCompositeHierarchyElementsFetchResult
+import {
+    objectsGetPageObjectIDsResponseSchema, objectsPaginationInfo, objectsSearchResponseSchema, 
+    objectsViewCompositeHierarchyElementsResponseSchema, objectsViewResponseSchema, 
+    type ObjectsViewFetchResult, type ObjectsSearchFetchResult, type ObjectsGetPageObjectIDsFetchResult, 
+    type ObjectsPaginationInfo, type ObjectsViewCompositeHierarchyElementsFetchResult
 } from "../types/data/objects";
 
 

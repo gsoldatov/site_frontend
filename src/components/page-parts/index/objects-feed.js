@@ -5,7 +5,7 @@ import { FeedContainer, FeedCardsContainer } from "../../modules/feed/feed-conta
 import { ObjectFeedCard } from "../../state-users/feed/object-feed-card";
 import { FeedPagination } from "../../modules/feed/feed-pagination";
 
-import { loadIndexPageObjects } from "../../../fetches/ui-index";
+import { loadIndexPageObjects } from "../../../fetches/ui/index";
 
 
 /**
