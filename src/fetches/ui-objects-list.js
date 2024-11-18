@@ -2,11 +2,10 @@ import { objectsGetPageObjectIDs, objectsViewFetch, objectsDeleteFetch } from ".
 import { objectsTagsUpdateFetch } from "./data/objects-tags";
 import { tagsSearchFetch } from "./data/tags";
 
-import { setObjectsListCurrentTags, 
-        setShowDeleteDialogObjects } from "../actions/objects-list";
+import { setObjectsListCurrentTags } from "../actions/objects-list";
 import {
     setObjectsListFetch, setObjectsListPaginationInfo, setObjectsListTagsFilter, setObjectsListTagsFilterInput,
-    setObjectsListTagsInput
+    setObjectsListTagsInput, setShowDeleteDialogObjects
 } from "../reducers/ui/objects-list";
 
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";

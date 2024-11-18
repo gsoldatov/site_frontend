@@ -78,6 +78,14 @@ const _setObjectsListTagsInput = (state: State, action: { tagsInput: Partial<Obj
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Sets /objects/list page delete dialog display. */
+export const setShowDeleteDialogObjects = (showDeleteDialog: boolean) => ({ type: "SET_OBJECTS_LIST_SHOW_DELETE_DIALOG", showDeleteDialog });
+
+const _setShowDeleteDialogObjects = (state: State, action: { showDeleteDialog: boolean }): State => {
+    return { ...state, objectsListUI: { ...state.objectsListUI, showDeleteDialog: action.showDeleteDialog }};
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +98,7 @@ export const objectsListRoot = {
     "SET_OBJECTS_LIST_TAGS_FILTER": _setObjectsListTagsFilter,
     "SET_OBJECTS_LIST_TAGS_FILTER_INPUT": _setObjectsListTagsFilterInput,
     "SET_OBJECTS_LIST_TAGS_INPUT": _setObjectsListTagsInput,
-    // "SET_OBJECTS_LIST_SHOW_DELETE_DIALOG": _setShowDeleteDialogObjects,
+    "SET_OBJECTS_LIST_SHOW_DELETE_DIALOG": _setShowDeleteDialogObjects,
     // "SET_OBJECTS_LIST_CURRENT_TAGS": _setObjectsListCurrentTags,
     // "SELECT_OBJECTS": _selectObjects,
     // "TOGGLE_OBJECT_SELECTION": _toggleObjectSelection,

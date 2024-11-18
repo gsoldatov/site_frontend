@@ -6,7 +6,8 @@ import { SideMenuItem } from "../../modules/side-menu/side-menu-item";
 import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogCheckbox, SideMenuDialogButtonsContainer, SideMenuDialogButton } from "../../modules/side-menu/side-menu-dialog";
 
-import { setShowDeleteDialogObjects, setObjectsListCurrentTags } from "../../../actions/objects-list";
+import { setObjectsListCurrentTags } from "../../../actions/objects-list";
+import { setShowDeleteDialogObjects } from "../../../reducers/ui/objects-list";
 import { objectsListDeleteFetch, objectsListUpdateTagsFetch } from "../../../fetches/ui-objects-list";
 import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
 
