@@ -16,43 +16,6 @@ const backendURL = getConfig().backendURL;
 
 
 /**
- * Fetches attributes, tags and data of an existing object with the provided `objectID`.
- */
- export const objectsViewCardOnLoadFetch = objectID => {
-    return async (dispatch, getState) => {
-        // Exit if objectID is not valid
-        objectID = parseInt(objectID);
-        if (!(objectID > 0)) return { error: "Object not found." };
-        
-        // Check if object attributes, tags and data should be fetched
-        let state = getState();
-        let fetchAttributesAndTags = true, fetchData = true;
-        if (objectID in state.objects && objectID in state.objectsTags) fetchAttributesAndTags = false;
-        if (ObjectsSelectors.dataIsPresent(state, objectID)) fetchData = false;
-
-        // Fetch object attributes, tags and/or data if they are missing
-        if (fetchAttributesAndTags || fetchData) {
-            let objectIDs = fetchAttributesAndTags ? [objectID] : undefined;
-            let objectDataIDs = fetchData ? [objectID] : undefined;
-            const objectsViewResult = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
-
-            // Handle fetch errors
-            if (objectsViewResult.failed) return { error: objectsViewResult.error };    // TODO return FetchResult, when typing is added
-        } else {
-            // Fetch missing tags if object attributes, tags & data are present in the state
-            let result = await dispatch(fetchMissingTags(state.objectsTags[objectID]));
-
-            // Handle fetch errors
-            if (result.failed) return { error: result.error };     // TODO return fetch result or nothing?
-        }
-
-        // End fetch
-        return {};
-    };
-};
-
-
-/**
  * Runs to-do list object update fetch, which saves changes made to to-do list data on the /objects/view/:id page
  */
 export const objectsViewToDoListObjectUpdateFetch = (objectID, toDoList) => {
@@ -79,62 +42,5 @@ export const objectsViewMulticolumnExpandToggleUpdateFetch = (objectID, subobjec
         const object = CompositeSelectors.serializeObjectForUpdate(state, objectID, newProps);
         
         return await dispatch(objectsUpdateFetch(object));
-    };
-};
-
-
-/**
- * Fetches missing attributes and data of a composite subobject displayed in <ObjectDataCompositeGroupedLinks> component.
- */
-export const objectsViewGroupedLinksOnLoad = objectID => {
-    return async (dispatch, getState) => {
-        const state = getState();
-        const subobjectIDs = Object.keys(state.composite[objectID].subobjects);
-        const subobjectIDsWithNonCachedAttributes = subobjectIDs.filter(suobbjectID => !(suobbjectID in state.objects) || !(suobbjectID in state.objectsTags));
-        const subobjectIDsWithNonCachedData = subobjectIDs.filter(subobjectID => !ObjectsSelectors.dataIsPresent(state, subobjectID));
-
-        // Fetch missing subobject attributes and data
-        if (subobjectIDsWithNonCachedAttributes.length > 0 || subobjectIDsWithNonCachedData.length > 0) {
-            const objectsViewResult = await dispatch(objectsViewFetch(subobjectIDsWithNonCachedAttributes, subobjectIDsWithNonCachedData));
-
-            // Handle fetch errors
-            if (objectsViewResult.failed) return { error: objectsViewResult.error };    // TODO return FetchResult, when typing is added
-        }
-
-        // End fetch
-        return {};
-    };
-};
-
-
-/**
- * Fetches objects in the composite hierarchy with root object ID `rootObjectID`, then fetches missing attributes, tags & data for objects in the hierarchy.
- */
-export const objectsViewCompositeChaptersOnLoad = rootObjectID => {
-    return async (dispatch, getState) => {
-        // Exit if rootObjectID is not valid
-        rootObjectID = parseInt(rootObjectID);
-        if (!(rootObjectID > 0)) return { error: "Object not found." };
-
-        // Get composite & non-composite objects in the hierarchy
-        const viewHierarchyResult = await dispatch(objectsViewCompositeHierarchyElements(rootObjectID));
-
-        // Handle fetch errors
-        if (viewHierarchyResult.failed) return { error: viewHierarchyResult.error };    // TODO return FetchResult
-
-        // Get missing object attributes, tags & data
-        // Also, get missing data of the current object
-        const state = getState();
-        const objectIDs = viewHierarchyResult.non_composite.concat(viewHierarchyResult.composite).filter(
-            objectID => !(objectID in state.objects && objectID in state.objectsTags));
-        const objectDataIDs = viewHierarchyResult.composite.filter(objectID => !ObjectsSelectors.dataIsPresent(state, objectID));
-
-        const objectsViewResult = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
-
-        // Handle fetch errors
-        if (objectsViewResult.failed) return { error: objectsViewResult.error };    // TODO return FetchResult, when typing is added
-
-        // End fetch
-        return {};
     };
 };

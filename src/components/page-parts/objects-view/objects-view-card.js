@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Loader, Message } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
 
-import { objectsViewCardOnLoadFetch } from "../../../fetches/ui-objects-view";
+import { objectsViewCardOnLoadFetch } from "../../../fetches/ui/objects-view";
 
 import { ObjectAttributes } from "./object-attributes/object-attributes";
 import { ObjectsViewTagList } from "./object-tags";
@@ -29,14 +29,16 @@ export const ObjectsViewCard = ({ objectID, classNames, attributeProps, dataProp
     useEffect(() => {
         const fetchData = async () => {
             setIsFetching(true);
+            setError("");
             const result = await dispatch(objectsViewCardOnLoadFetch(objectID));
 
-            if ("error" in result) setError(result.error);
-            if (isMounted()) setIsFetching(false);
+            if (isMounted()) {
+                if (result.failed) setError(result.error);
+                setIsFetching(false);
+            }
         };
         
-        if (parseInt(objectID) > 0) fetchData();
-        else setError("Object not found.");
+        fetchData();
     }, [objectID]);
 
     // Container classnames

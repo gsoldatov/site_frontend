@@ -6,7 +6,7 @@ import { Loader, Message, Header, Table } from "semantic-ui-react";
 
 import { RenderedMarkdown } from "../../../modules/markdown/rendered-markdown";
 
-import { objectsViewGroupedLinksOnLoad } from "../../../../fetches/ui-objects-view";
+import { objectsViewGroupedLinksOnLoad } from "../../../../fetches/ui/objects-view";
 import { CompositeSelectors } from "../../../../store/selectors/data/objects/composite";
 import { useMountedState } from "../../../../util/hooks/use-mounted-state";
 import { useParsedMarkdownState } from "../../../../util/hooks/use-parsed-markdown-state";
@@ -32,14 +32,16 @@ export const CompositeGroupedLinks = ({ objectID }) => {
     useEffect(() => {
         const fetchData = async () => {
             setIsFetching(true);
+            setError("");
             const result = await dispatch(objectsViewGroupedLinksOnLoad(objectID));
 
-            if ("error" in result) setError(result.error);
-            if (isMounted()) setIsFetching(false);
+            if (isMounted()) {
+                if (result.failed) setError(result.error);
+                setIsFetching(false);
+            }
         };
         
-        if (parseInt(objectID) > 0) fetchData();
-        else setError("Object not found.");
+        fetchData();
     }, [objectID]);
 
     // Error message

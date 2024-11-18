@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { Redirect, useLocation } from "react-router-dom";
 import { Loader, Message } from "semantic-ui-react";
 
-import { useConfigState } from "../../../../../config";
-import { objectsViewCompositeChaptersOnLoad } from "../../../../../fetches/ui-objects-view";
-import { ObjectsViewSelectors } from "../../../../../store/selectors/ui/objects-view";
 import { TableOfContents } from "./table-of-contents";
 import { ChapterObject } from "./chapter-object";
+
+import { useConfigState } from "../../../../../config";
+import { useMountedState } from "../../../../../util/hooks/use-mounted-state";
+
+import { objectsViewCompositeChaptersOnLoad } from "../../../../../fetches/ui/objects-view";
+import { ObjectsViewSelectors } from "../../../../../store/selectors/ui/objects-view";
 
 
 /**
@@ -16,6 +19,7 @@ import { ChapterObject } from "./chapter-object";
  */
 export const CompositeChapters = ({ objectID }) => {
     const dispatch = useDispatch();
+    const isMounted = useMountedState();
 
     // Fetch & error state
     const [isFetching, setIsFetching] = useState(true);
@@ -25,14 +29,16 @@ export const CompositeChapters = ({ objectID }) => {
     useEffect(() => {
         const fetchData = async () => {
             setIsFetching(true);
+            setError("");
             const result = await dispatch(objectsViewCompositeChaptersOnLoad(objectID));
 
-            if ("error" in result) setError(result.error);
-            setIsFetching(false);
+            if (isMounted()) {
+                if (result.failed) setError(result.error);
+                setIsFetching(false);
+            }
         };
         
-        if (parseInt(objectID) > 0) fetchData();
-        else setError("Object not found.");
+        fetchData();
     }, [objectID]);
 
     // Chapter hierarchy selector
