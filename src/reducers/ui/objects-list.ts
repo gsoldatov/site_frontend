@@ -90,6 +90,19 @@ const _setShowDeleteDialogObjects = (state: State, action: { showDeleteDialog: b
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Clears selected objects and closes delete dialog on the /objects/list page. */
+export const clearSelectedObjects = () => ({ type: "CLEAR_SELECTED_OBJECTS" });
+
+const _clearSelectedObjects = (state: State, action: any): State => {
+    return {
+        ...state,
+        objectsListUI: {
+            ...state.objectsListUI,
+            selectedObjectIDs: [],
+            showDeleteDialog: false
+        }
+    };
+};
 
 
 export const objectsListRoot = {
@@ -102,5 +115,5 @@ export const objectsListRoot = {
     // "SET_OBJECTS_LIST_CURRENT_TAGS": _setObjectsListCurrentTags,
     // "SELECT_OBJECTS": _selectObjects,
     // "TOGGLE_OBJECT_SELECTION": _toggleObjectSelection,
-    // "CLEAR_SELECTED_OBJECTS": _clearSelectedObjects
+    "CLEAR_SELECTED_OBJECTS": _clearSelectedObjects
 };

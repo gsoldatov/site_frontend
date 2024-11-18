@@ -1,5 +1,4 @@
-import { SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
-    } from "../actions/objects-list";
+import { SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION } from "../actions/objects-list";
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
@@ -101,23 +100,11 @@ function toggleObjectSelection(state, action) {
     };
 }
 
-function clearSelectedObjects(state, action) {
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            selectedObjectIDs: [],
-            showDeleteDialog: false
-        }
-    };
-}
-
 
 const root = {
     SET_OBJECTS_LIST_CURRENT_TAGS: setObjectsListCurrentTags,
     SELECT_OBJECTS: selectObjects,
-    TOGGLE_OBJECT_SELECTION: toggleObjectSelection,
-    CLEAR_SELECTED_OBJECTS: clearSelectedObjects
+    TOGGLE_OBJECT_SELECTION: toggleObjectSelection
 };
 
 export default root;
