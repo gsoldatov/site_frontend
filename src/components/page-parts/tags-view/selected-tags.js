@@ -6,7 +6,7 @@ import { InlineItemListContainer } from "../../modules/inline/inline-item-list-c
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 
-import { tagsViewLoadSelectedTags } from "../../../fetches/ui-tags-view";
+import { tagsViewLoadSelectedTags } from "../../../fetches/ui/tags-view";
 import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
 
 

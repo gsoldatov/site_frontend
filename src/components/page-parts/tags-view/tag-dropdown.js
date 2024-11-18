@@ -4,7 +4,7 @@ import { useHistory } from "react-router";
 
 import { Dropdown } from "semantic-ui-react";
 
-import { tagsViewDropdownOptionsSearch } from "../../../fetches/ui-tags-view";
+import { tagsViewDropdownOptionsSearch } from "../../../fetches/ui/tags-view";
 
 import debounce from "../../../util/debounce";
 import { useMountedState } from "../../../util/hooks/use-mounted-state";
