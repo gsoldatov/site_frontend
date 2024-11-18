@@ -5,6 +5,7 @@ import { FeedContainer, FeedCardsContainer } from "../../modules/feed/feed-conta
 import { ObjectFeedCard } from "../../state-users/feed/object-feed-card";
 import { FeedPagination } from "../../modules/feed/feed-pagination";
 
+import { FetchResult } from "../../../fetches/fetch-runner";
 import { tagsViewLoadPageObjects } from "../../../fetches/ui/tags-view";
 import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
 
@@ -33,7 +34,7 @@ export const TagPageObjectsFeed = ({ page, items_per_page = 10 }) => {
     // On load fetch
     const onLoad = useMemo(() => async () => {
         // Don't fetch if no tags are selected
-        if (tagIDs.length === 0) return;
+        if (tagIDs.length === 0) return FetchResult.fetchNotRun();
 
         let newPaginationInfo = { page, items_per_page, tags_filter: tagIDs };
         for (let attr of ["order_by", "sort_order", "show_only_displayed_in_feed"])

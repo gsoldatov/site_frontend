@@ -32,8 +32,7 @@ export const FeedContainer = ({ onLoad, children }) => {
             if (!isMounted()) return { error: "Feed was unmounted during on load fetch" };
             
             // Handle fetch errors
-            // if ("error" in result) setError(result["error"]);
-            if (result.error !== undefined) setError(result["error"]);  // TODO change to `result.failed`
+            if (result.failed) setError(result.error);
 
             // End fetch
             setIsFetching(false);

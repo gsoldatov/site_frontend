@@ -6,6 +6,7 @@ import { TagFeedCard } from "../../state-users/feed/tag-feed-card";
 import { ObjectFeedCard } from "../../state-users/feed/object-feed-card";
 import { FeedPagination } from "../../modules/feed/feed-pagination";
 
+import { FetchResult } from "../../../fetches/fetch-runner";
 import { searchPageOnLoad } from "../../../fetches/ui/search";
 
 
@@ -28,7 +29,7 @@ export const SearchFeed = ({ query, page }) => {
         if (!query) {
             setDisplayedItems([]);
             setTotalItems(0);
-            return {};
+            return FetchResult.fetchNotRun();
         }
 
         // Run search fetch
