@@ -13,7 +13,7 @@ import { createTestStore } from "../../../_util/create-test-store";
 import { getStoreWithModifiedCompositeObject } from "../../../_mocks/data-composite";
 
 import { App } from "../../../../src/components/app";
-import { setObjectsListPaginationInfo } from "../../../../src/actions/objects-list";
+import { setObjectsListPaginationInfo } from "../../../../src/reducers/ui/objects-list";
 
 
 /*

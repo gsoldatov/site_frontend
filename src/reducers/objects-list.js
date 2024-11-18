@@ -1,31 +1,10 @@
 import { SET_OBJECTS_LIST_TAGS_INPUT, SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
-    SET_OBJECTS_LIST_PAGINATION_INFO, SET_OBJECTS_LIST_TAGS_FILTER, SET_OBJECTS_LIST_TAGS_FILTER_INPUT, SET_OBJECTS_LIST_SHOW_DELETE_DIALOG } from "../actions/objects-list";
+    SET_OBJECTS_LIST_TAGS_FILTER, SET_OBJECTS_LIST_TAGS_FILTER_INPUT, SET_OBJECTS_LIST_SHOW_DELETE_DIALOG } from "../actions/objects-list";
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
 
-function setObjectsListPaginationInfo(state, action) {
-    let oPI = state.objectsListUI.paginationInfo;
-    let pI = action.paginationInfo;
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            paginationInfo: {
-                    currentPage: pI.currentPage !== undefined ? pI.currentPage : oPI.currentPage,
-                    itemsPerPage: pI.itemsPerPage !== undefined ? pI.itemsPerPage : oPI.itemsPerPage,
-                    totalItems: pI.totalItems !== undefined ? pI.totalItems : oPI.totalItems,
-                    sortField: pI.sortField !== undefined ? pI.sortField : oPI.sortField,
-                    sortOrder: pI.sortOrder !== undefined ? pI.sortOrder : oPI.sortOrder,
-                    filterText: pI.filterText !== undefined ? pI.filterText : oPI.filterText,
-                    objectTypes: pI.objectTypes !== undefined ? pI.objectTypes: oPI.objectTypes,
-                    tagsFilter: oPI.tagsFilter,     // tags filter is set in setObjectsListTagsFilter action
-                    currentPageObjectIDs: pI.currentPageObjectIDs !== undefined ? pI.currentPageObjectIDs : oPI.currentPageObjectIDs
-            }
-        }
-    }
-}
 
 /*
     Adds/removes provided tag ID to/from objectsListUI.paginationInfo.tagsFilter list.
@@ -197,7 +176,6 @@ function clearSelectedObjects(state, action) {
 
 
 const root = {
-    SET_OBJECTS_LIST_PAGINATION_INFO: setObjectsListPaginationInfo,
     SET_OBJECTS_LIST_TAGS_FILTER: setObjectsListTagsFilter,
     SET_OBJECTS_LIST_TAGS_FILTER_INPUT: setObjectsListTagsFilterInput,
     SET_OBJECTS_LIST_SHOW_DELETE_DIALOG: setShowDeleteDialogObjects,

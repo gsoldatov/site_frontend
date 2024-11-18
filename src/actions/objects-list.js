@@ -3,7 +3,6 @@ export const SET_OBJECTS_LIST_CURRENT_TAGS = "SET_OBJECTS_LIST_CURRENT_TAGS";
 export const SELECT_OBJECTS = "SELECT_OBJECTS";
 export const TOGGLE_OBJECT_SELECTION = "TOGGLE_OBJECT_SELECTION";
 export const CLEAR_SELECTED_OBJECTS = "CLEAR_SELECTED_OBJECTS";
-export const SET_OBJECTS_LIST_PAGINATION_INFO = "SET_OBJECTS_LIST_PAGINATION_INFO";
 export const SET_OBJECTS_LIST_TAGS_FILTER = "SET_OBJECTS_LIST_TAGS_FILTER";
 export const SET_OBJECTS_LIST_TAGS_FILTER_INPUT = "SET_OBJECTS_LIST_TAGS_FILTER_INPUT";
 export const SET_OBJECTS_LIST_SHOW_DELETE_DIALOG = "SET_OBJECTS_LIST_SHOW_DELETE_DIALOG";
@@ -19,8 +18,6 @@ export const selectObjects               = object_ids => ({ type: SELECT_OBJECTS
 export const toggleObjectSelection       = object_id => ({ type: TOGGLE_OBJECT_SELECTION, object_id });
 /** [Reducer file](../reducers/objects-list.js) */
 export const clearSelectedObjects        = () => ({ type: CLEAR_SELECTED_OBJECTS });
-/** [Reducer file](../reducers/objects-list.js) */
-export const setObjectsListPaginationInfo    = paginationInfo => ({ type: SET_OBJECTS_LIST_PAGINATION_INFO, paginationInfo });
 /** [Reducer file](../reducers/objects-list.js) */
 export const setObjectsListTagsFilter               = tagID => ({ type: SET_OBJECTS_LIST_TAGS_FILTER, tagID });
 /** [Reducer file](../reducers/objects-list.js) */
