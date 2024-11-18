@@ -6,7 +6,7 @@ import { TagFeedCard } from "../../state-users/feed/tag-feed-card";
 import { ObjectFeedCard } from "../../state-users/feed/object-feed-card";
 import { FeedPagination } from "../../modules/feed/feed-pagination";
 
-import { searchPageOnLoad } from "../../../fetches/ui-search";
+import { searchPageOnLoad } from "../../../fetches/ui/search";
 
 
 /**
@@ -36,7 +36,7 @@ export const SearchFeed = ({ query, page }) => {
         const result = await dispatch(searchPageOnLoad(fetchQuery));
 
         // Set object IDs and total number of objects
-        if (!("error" in result)) {
+        if (!result.failed) {
             setDisplayedItems(result.items);
             setTotalItems(result.total_items);
         }
