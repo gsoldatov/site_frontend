@@ -1,8 +1,82 @@
 import { SET_OBJECTS_LIST_TAGS_INPUT, SET_OBJECTS_LIST_CURRENT_TAGS, SELECT_OBJECTS, TOGGLE_OBJECT_SELECTION, CLEAR_SELECTED_OBJECTS, 
-    SET_OBJECTS_LIST_PAGINATION_INFO, SET_OBJECTS_LIST_TAGS_FILTER, SET_OBJECTS_LIST_TAGS_FILTER_INPUT, SET_OBJECTS_LIST_SHOW_DELETE_DIALOG, SET_OBJECTS_LIST_FETCH } from "../actions/objects-list";
+    SET_OBJECTS_LIST_PAGINATION_INFO, SET_OBJECTS_LIST_TAGS_FILTER, SET_OBJECTS_LIST_TAGS_FILTER_INPUT, SET_OBJECTS_LIST_SHOW_DELETE_DIALOG } from "../actions/objects-list";
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
+
+
+function setObjectsListPaginationInfo(state, action) {
+    let oPI = state.objectsListUI.paginationInfo;
+    let pI = action.paginationInfo;
+    return {
+        ...state,
+        objectsListUI: {
+            ...state.objectsListUI,
+            paginationInfo: {
+                    currentPage: pI.currentPage !== undefined ? pI.currentPage : oPI.currentPage,
+                    itemsPerPage: pI.itemsPerPage !== undefined ? pI.itemsPerPage : oPI.itemsPerPage,
+                    totalItems: pI.totalItems !== undefined ? pI.totalItems : oPI.totalItems,
+                    sortField: pI.sortField !== undefined ? pI.sortField : oPI.sortField,
+                    sortOrder: pI.sortOrder !== undefined ? pI.sortOrder : oPI.sortOrder,
+                    filterText: pI.filterText !== undefined ? pI.filterText : oPI.filterText,
+                    objectTypes: pI.objectTypes !== undefined ? pI.objectTypes: oPI.objectTypes,
+                    tagsFilter: oPI.tagsFilter,     // tags filter is set in setObjectsListTagsFilter action
+                    currentPageObjectIDs: pI.currentPageObjectIDs !== undefined ? pI.currentPageObjectIDs : oPI.currentPageObjectIDs
+            }
+        }
+    }
+}
+
+/*
+    Adds/removes provided tag ID to/from objectsListUI.paginationInfo.tagsFilter list.
+    Clears the list if no tag ID is provided.
+*/
+function setObjectsListTagsFilter(state, action) {
+    let tagsFilter, oldTagsFilter = state.objectsListUI.paginationInfo.tagsFilter;
+    if (!action.tagID) tagsFilter = [];    // clear case
+    else {  // add/remove case
+        const i = oldTagsFilter.indexOf(action.tagID);
+        if (i > -1) tagsFilter = oldTagsFilter.slice(0, i).concat(oldTagsFilter.slice(i + 1));
+        else {
+            tagsFilter = oldTagsFilter.slice();
+            tagsFilter.push(action.tagID);
+        }
+    }
+    return {
+        ...state,
+        objectsListUI: {
+            ...state.objectsListUI,
+            paginationInfo: {
+                ...state.objectsListUI.paginationInfo,
+                tagsFilter
+            }
+        }
+    };
+}
+
+function setObjectsListTagsFilterInput(state, action) {
+    const { inputText, matchingIDs } = action.tagsFilterInput;
+    return {
+        ...state,
+        objectsListUI: {
+            ...state.objectsListUI,
+            tagsFilterInput: {
+                inputText: inputText !== undefined ? inputText : state.objectsListUI.tagsFilterInput.inputText,
+                matchingIDs: matchingIDs !== undefined ? matchingIDs : state.objectsListUI.tagsFilterInput.matchingIDs
+            }
+        }
+    };
+}
+
+function setShowDeleteDialogObjects(state, action) {
+    return {
+        ...state,
+        objectsListUI: {
+            ...state.objectsListUI,
+            showDeleteDialog: action.showDeleteDialog
+        }
+    }
+}
 
 
 function setObjectsListTagsInput(state, action) {
@@ -121,104 +195,17 @@ function clearSelectedObjects(state, action) {
     };
 }
 
-function setObjectsListPaginationInfo(state, action) {
-    let oPI = state.objectsListUI.paginationInfo;
-    let pI = action.paginationInfo;
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            paginationInfo: {
-                    currentPage: pI.currentPage !== undefined ? pI.currentPage : oPI.currentPage,
-                    itemsPerPage: pI.itemsPerPage !== undefined ? pI.itemsPerPage : oPI.itemsPerPage,
-                    totalItems: pI.totalItems !== undefined ? pI.totalItems : oPI.totalItems,
-                    sortField: pI.sortField !== undefined ? pI.sortField : oPI.sortField,
-                    sortOrder: pI.sortOrder !== undefined ? pI.sortOrder : oPI.sortOrder,
-                    filterText: pI.filterText !== undefined ? pI.filterText : oPI.filterText,
-                    objectTypes: pI.objectTypes !== undefined ? pI.objectTypes: oPI.objectTypes,
-                    tagsFilter: oPI.tagsFilter,     // tags filter is set in setObjectsListTagsFilter action
-                    currentPageObjectIDs: pI.currentPageObjectIDs !== undefined ? pI.currentPageObjectIDs : oPI.currentPageObjectIDs
-            }
-        }
-    }
-}
-
-/*
-    Adds/removes provided tag ID to/from objectsListUI.paginationInfo.tagsFilter list.
-    Clears the list if no tag ID is provided.
-*/
-function setObjectsListTagsFilter(state, action) {
-    let tagsFilter, oldTagsFilter = state.objectsListUI.paginationInfo.tagsFilter;
-    if (!action.tagID) tagsFilter = [];    // clear case
-    else {  // add/remove case
-        const i = oldTagsFilter.indexOf(action.tagID);
-        if (i > -1) tagsFilter = oldTagsFilter.slice(0, i).concat(oldTagsFilter.slice(i + 1));
-        else {
-            tagsFilter = oldTagsFilter.slice();
-            tagsFilter.push(action.tagID);
-        }
-    }
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            paginationInfo: {
-                ...state.objectsListUI.paginationInfo,
-                tagsFilter
-            }
-        }
-    };
-}
-
-function setObjectsListTagsFilterInput(state, action) {
-    const { inputText, matchingIDs } = action.tagsFilterInput;
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            tagsFilterInput: {
-                inputText: inputText !== undefined ? inputText : state.objectsListUI.tagsFilterInput.inputText,
-                matchingIDs: matchingIDs !== undefined ? matchingIDs : state.objectsListUI.tagsFilterInput.matchingIDs
-            }
-        }
-    };
-}
-
-function setShowDeleteDialogObjects(state, action) {
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            showDeleteDialog: action.showDeleteDialog
-        }
-    }
-}
-
-function setObjectsListFetch(state, action) {
-    return {
-        ...state,
-        objectsListUI: {
-            ...state.objectsListUI,
-            fetch: {
-                isFetching: action.isFetching,
-                fetchError: action.fetchError
-            }
-        }
-    }
-}
-
 
 const root = {
-    SET_OBJECTS_LIST_TAGS_INPUT: setObjectsListTagsInput,
-    SET_OBJECTS_LIST_CURRENT_TAGS: setObjectsListCurrentTags,
-    SELECT_OBJECTS: selectObjects,
-    TOGGLE_OBJECT_SELECTION: toggleObjectSelection,
-    CLEAR_SELECTED_OBJECTS: clearSelectedObjects,
     SET_OBJECTS_LIST_PAGINATION_INFO: setObjectsListPaginationInfo,
     SET_OBJECTS_LIST_TAGS_FILTER: setObjectsListTagsFilter,
     SET_OBJECTS_LIST_TAGS_FILTER_INPUT: setObjectsListTagsFilterInput,
     SET_OBJECTS_LIST_SHOW_DELETE_DIALOG: setShowDeleteDialogObjects,
-    SET_OBJECTS_LIST_FETCH: setObjectsListFetch
+    SET_OBJECTS_LIST_TAGS_INPUT: setObjectsListTagsInput,
+    SET_OBJECTS_LIST_CURRENT_TAGS: setObjectsListCurrentTags,
+    SELECT_OBJECTS: selectObjects,
+    TOGGLE_OBJECT_SELECTION: toggleObjectSelection,
+    CLEAR_SELECTED_OBJECTS: clearSelectedObjects
 };
 
 export default root;

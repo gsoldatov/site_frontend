@@ -7,7 +7,6 @@ export const SET_OBJECTS_LIST_PAGINATION_INFO = "SET_OBJECTS_LIST_PAGINATION_INF
 export const SET_OBJECTS_LIST_TAGS_FILTER = "SET_OBJECTS_LIST_TAGS_FILTER";
 export const SET_OBJECTS_LIST_TAGS_FILTER_INPUT = "SET_OBJECTS_LIST_TAGS_FILTER_INPUT";
 export const SET_OBJECTS_LIST_SHOW_DELETE_DIALOG = "SET_OBJECTS_LIST_SHOW_DELETE_DIALOG";
-export const SET_OBJECTS_LIST_FETCH = "SET_OBJECTS_LIST_FETCH";
 
 
 /** [Reducer file](../reducers/objects-list.js) */
@@ -28,5 +27,3 @@ export const setObjectsListTagsFilter               = tagID => ({ type: SET_OBJE
 export const setObjectsListTagsFilterInput          = tagsFilterInput => ({ type: SET_OBJECTS_LIST_TAGS_FILTER_INPUT, tagsFilterInput });
 /** [Reducer file](../reducers/objects-list.js) */
 export const setShowDeleteDialogObjects  = (showDeleteDialog = false) => ({ type: SET_OBJECTS_LIST_SHOW_DELETE_DIALOG, showDeleteDialog });
-/** [Reducer file](../reducers/objects-list.js) */
-export const setObjectsListFetch             = (isFetching = false, fetchError = "") => ({ type: SET_OBJECTS_LIST_FETCH, isFetching: isFetching, fetchError: fetchError });

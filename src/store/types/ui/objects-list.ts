@@ -42,6 +42,10 @@ export const objectsListUI = z.object({
 
 /** /objects/list page UI state type. */
 type ObjectsListUI = z.infer<typeof objectsListUI>;
+/** /c/list pagination info type. */
+export type ObjectsListPaginationInfo = z.infer<typeof objectsListUI.shape.paginationInfo>;
+/** /objectsListUI/list fetch state type. */
+export type ObjectsListFetch = z.infer<typeof objectsListUI.shape.fetch>;
 
 
 /** Returns /objects/list state with default values being replaced `customValues`. */

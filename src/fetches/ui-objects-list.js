@@ -1,14 +1,12 @@
-import { getResponseErrorType } from "./common";
 import { objectsGetPageObjectIDs, objectsViewFetch, objectsDeleteFetch } from "./data/objects";
 import { objectsTagsUpdateFetch } from "./data/objects-tags";
 import { tagsSearchFetch } from "./data/tags";
 
-import { setObjectsListFetch, setObjectsListPaginationInfo, setObjectsListTagsInput, setObjectsListCurrentTags, 
+import { setObjectsListPaginationInfo, setObjectsListTagsInput, setObjectsListCurrentTags, 
         setShowDeleteDialogObjects, setObjectsListTagsFilterInput, setObjectsListTagsFilter } from "../actions/objects-list";
+import { setObjectsListFetch } from "../reducers/ui/objects-list";
 
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
-
-import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
 
 /**
@@ -57,12 +55,12 @@ export const objectsListPageFetch = currentPage => {
         if (ObjectsListSelectors.isFetching(state)) return;
 
         dispatch(setObjectsListPaginationInfo({ currentPage }));
-        dispatch(setObjectsListFetch(true, ""));
+        dispatch(setObjectsListFetch({ isFetching: true, fetchError:"" }));
         const pI = getState().objectsListUI.paginationInfo;
 
         // Exit with error if filter text is too long
         if (pI.filterText.length > 255) {
-            dispatch(setObjectsListFetch(false, "Object name filter text is too long."));
+            dispatch(setObjectsListFetch({ isFetching: false, fetchError: "Object name filter text is too long." }));
             return;
         }
 
@@ -79,7 +77,7 @@ export const objectsListPageFetch = currentPage => {
 
         // Handle fetch errors
         if (pageObjectIDsResult.failed) {
-            dispatch(setObjectsListFetch(false, pageObjectIDsResult.error));
+            dispatch(setObjectsListFetch({ isFetching: false, fetchError: pageObjectIDsResult.error }));
             return;
         }
 
@@ -89,8 +87,8 @@ export const objectsListPageFetch = currentPage => {
         let nonCachedObjects = pageObjectIDsResult["object_ids"].filter(object_id => !(object_id in state.objects));
         if (nonCachedObjects.length !== 0) {
             const objectsViewResult = await dispatch(objectsViewFetch(nonCachedObjects));
-            dispatch(setObjectsListFetch(false, objectsViewResult.failed ? objectsViewResult.error : ""));
-        } else dispatch(setObjectsListFetch(false, ""));
+            dispatch(setObjectsListFetch({ isFetching: false, fetchError: objectsViewResult.failed ? objectsViewResult.error : "" }));
+        } else dispatch(setObjectsListFetch({ isFetching: false, fetchError: "" }));
     };
 };
 
@@ -110,19 +108,19 @@ export const objectsListDeleteFetch = deleteSubobjects => {
         dispatch(setShowDeleteDialogObjects(false));
 
         // Run view fetch & delete objects data
-        dispatch(setObjectsListFetch(true, ""));
+        dispatch(setObjectsListFetch({ isFetching: true, fetchError: "" }));
         const { selectedObjectIDs } = state.objectsListUI;
         const result = await dispatch(objectsDeleteFetch(selectedObjectIDs, deleteSubobjects));
 
         // Handle fetch errors
         if (result.failed) {
-            dispatch(setObjectsListFetch(false, result.error));
+            dispatch(setObjectsListFetch({ isFetching: false, fetchError: result.error }));
             return;
         }
 
         // Handle successful fetch end
         dispatch(setObjectsListPaginationInfo({ currentPageObjectIDs: state.objectsListUI.paginationInfo.currentPageObjectIDs.filter(id => !selectedObjectIDs.includes(id)) }));  // delete from current page
-        dispatch(setObjectsListFetch(false, ""));
+        dispatch(setObjectsListFetch({ isFetching: false, fetchError: "" }));
     };
 };
 
@@ -174,19 +172,19 @@ export function objectsListUpdateTagsFetch() {
         dispatch(setObjectsListTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
 
         // Run fetch
-        dispatch(setObjectsListFetch(true, ""));
+        dispatch(setObjectsListFetch({ isFetching: true, fetchError: "" }));
         const objUI = state.objectsListUI;
         const result = await dispatch(objectsTagsUpdateFetch(objUI.selectedObjectIDs, objUI.addedTags, objUI.removedTagIDs));
 
         // Handle fetch errors
         if (result.failed) {
-            dispatch(setObjectsListFetch(false, result.error));
+            dispatch(setObjectsListFetch({ isFetching: false, fetchError: result.error }));
             return;
         }
 
         // Handle successful fetch end
         // Reset added & removed tags
         dispatch(setObjectsListCurrentTags({ added: [], removed: [] }));
-        dispatch(setObjectsListFetch(false, ""));
+        dispatch(setObjectsListFetch({ isFetching: false, fetchError: "" }));
     };
 };
