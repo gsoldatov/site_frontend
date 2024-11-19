@@ -1,5 +1,5 @@
 import { getPreviousItemIndent, 
-        getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
+        getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
 import { ToDoListSelectors } from "../../store/selectors/data/objects/to-do-list";
 import { deepCopy } from "../../util/copy";
 import { getToDoListItem } from "../../store/types/data/to-do-list";
@@ -74,7 +74,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
         delete newItems[id];
 
         // Update children indent or delete them
-        const childrenIDs = getChildrenIDs(toDoList, id);
+        const childrenIDs = ToDoListSelectors.childrenIDs(toDoList, id);
         if (deleteChildren) {
             childrenIDs.forEach(i => { delete newItems[i] });
             newItemOrder = newItemOrder.filter(i => !childrenIDs.includes(i));
@@ -205,7 +205,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
             // Update itemOrder
             const prevID = sortedItemIDs[sortedPosition - 1];
             const newCurrID = ToDoListSelectors.newItemID(toDoList);
-            const itemChildren = getChildrenIDs(toDoList, id);
+            const itemChildren = ToDoListSelectors.childrenIDs(toDoList, id);
             const newItemOrder = toDoList.itemOrder.filter(i => i !== prevID && i !== id && !itemChildren.includes(i));     // delete prev and current items + current item children
             const insertPosition = getMergedItemInsertPosition(toDoList, prevID, id);
             newItemOrder.splice(insertPosition, 0, newCurrID, ...itemChildren);
@@ -224,7 +224,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
 
             // Reduce indent of the item's children, if it indent was > previous item's indent
             if (toDoList.items[prevID].indent < toDoList.items[id].indent) {
-                getChildrenIDs(toDoList, id).forEach(i => {
+                ToDoListSelectors.childrenIDs(toDoList, id).forEach(i => {
                     let indent = toDoList.items[i].indent - 1;
                     newItems[i] = {...toDoList.items[i], indent};
                 });
@@ -266,7 +266,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
             // Update itemOrder
             const nextID = sortedItemIDs[sortedPosition + 1];
             const newCurrID = ToDoListSelectors.newItemID(toDoList);
-            const nextItemChildren = getChildrenIDs(toDoList, nextID);
+            const nextItemChildren = ToDoListSelectors.childrenIDs(toDoList, nextID);
             const newItemOrder = toDoList.itemOrder.filter(i => i !== id && i !== nextID && !nextItemChildren.includes(i));     // delete curr and next items + next item children
             const insertPosition = getMergedItemInsertPosition(toDoList, id, nextID);
             newItemOrder.splice(insertPosition, 0, newCurrID, ...nextItemChildren);
@@ -285,7 +285,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
 
             // Reduce indent of next item's children, if current item's indent was < next item's indent
             if (toDoList.items[id].indent < toDoList.items[nextID].indent) {
-                getChildrenIDs(toDoList, nextID).forEach(i => {
+                ToDoListSelectors.childrenIDs(toDoList, nextID).forEach(i => {
                     let indent = toDoList.items[i].indent - 1;
                     newItems[i] = {...toDoList.items[i], indent};
                 });
@@ -306,8 +306,8 @@ export const getUpdatedToDoList = (toDoList, update) => {
     // Sets toDoList.draggedItems with `id` and its children.
     else if (command === "startDrag") {
         const { id } = update;
-        // const draggedItems = [id].concat(getChildrenIDs(toDoList, id));
-        const draggedChildren = getChildrenIDs(toDoList, id);
+        // const draggedItems = [id].concat(ToDoListSelectors.childrenIDs(toDoList, id));
+        const draggedChildren = ToDoListSelectors.childrenIDs(toDoList, id);
         result = { ...toDoList, draggedParent: id, draggedChildren };
     }
 
@@ -325,7 +325,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
         const { movedID, targetID, targetLastItem } = update;
 
         // Move item and its children
-        const movedChildren = getChildrenIDs(toDoList, movedID);
+        const movedChildren = ToDoListSelectors.childrenIDs(toDoList, movedID);
         const newItemOrder = [...toDoList.itemOrder];
         const movedPosition = newItemOrder.indexOf(movedID);
         newItemOrder.splice(movedPosition, 1 + movedChildren.length);
@@ -379,7 +379,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
                 newItems[id] = {...item, indent};
 
                 const indentDifference = indent - item.indent;      // children
-                getChildrenIDs(toDoList, id).forEach(i => {
+                ToDoListSelectors.childrenIDs(toDoList, id).forEach(i => {
                     let item = toDoList.items[i];
                     let indent = Math.min(Math.max(item.indent + indentDifference, 0), 5);
                     newItems[i] = {...item, indent};

@@ -43,6 +43,18 @@ export class ToDoListSelectors {
 
         return parentIDs;
     };
+
+    /** Returns an array of children item IDs in the `toDoList` for a provided `id`. */
+    static childrenIDs(toDoList: ToDoList, id: number) {
+        let childrenIDs = [];
+        const index = toDoList.itemOrder.indexOf(id);
+        for (let i = index + 1; i < toDoList.itemOrder.length; i++) {
+            const currentID = toDoList.itemOrder[i];
+            if (toDoList.items[currentID].indent <= toDoList.items[id].indent) break;
+            childrenIDs.push(currentID);
+        }
+        return childrenIDs;
+    };
 }
 
 /**

@@ -76,22 +76,6 @@ export const getPreviousItemIndent = (toDoList, id) => {
 };
 
 
-
-/**
- * Returns an array of children item IDs in the `toDoList` for a provided `id`.
- */
-export const getChildrenIDs = (toDoList, id) => {
-    let childrenIDs = [];
-    const index = toDoList.itemOrder.indexOf(id);
-    for (let i = index + 1; i < toDoList.itemOrder.length; i++) {
-        const currentID = toDoList.itemOrder[i];
-        if (toDoList.items[currentID].indent <= toDoList.items[id].indent) break;
-        childrenIDs.push(currentID);
-    }
-    return childrenIDs;
-};
-
-
 /**
  * Returns an insert position in `toDoList.itemOrder` list for an item, resulting in merge of items with ids `first` and `second`.
  */
