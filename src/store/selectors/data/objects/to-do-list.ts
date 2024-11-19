@@ -11,6 +11,14 @@ export class ToDoListSelectors {
         if (toDoList.sort_type === "state") return sortByState(toDoList, toDoList.itemOrder);
         throw Error(`Incorrect sort_type: ${toDoList.sort_type}`);
     };
+    
+    /**
+     * Returns sorted item IDs of visible items (parents of which are not collapsed) of the `toDoList`.
+     */
+    static visibleItemIDs(toDoList: ToDoList) {
+        const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
+        return getVisibleItemIDs(toDoList, sortedItemIDs);
+    };
 }
 
 /**
@@ -55,4 +63,29 @@ const sortByState = (toDoList: ToDoList, items: number[]): number[] => {
 
     // Return sorted list
     return sortedItems;
+};
+
+
+
+/**
+ * Returns a list of visible item IDs of the `toDoList`, which are present in `itemIDs` list.
+ */
+const getVisibleItemIDs = (toDoList: ToDoList, itemIDs: number[]) => {
+    let visibleItems = [];
+    let collapsedParentIndent = NaN;
+    for (let i = 0; i < itemIDs.length; i++) {
+        const id = itemIDs[i];
+        const item = toDoList.items[id];
+        if (isNaN(collapsedParentIndent)) {     // add visible items and check if they are collapsed
+            visibleItems.push(id);
+            if (!item.is_expanded) collapsedParentIndent = item.indent;
+        } else {    // filter children of collapsed parent item
+            if (item.indent <= collapsedParentIndent) {    // if filtered all children of a collapsed item
+                visibleItems.push(id);                                            // add item
+                collapsedParentIndent = item.is_expanded ? NaN : item.indent;     // stop filtering if item is expanded
+            }
+        }
+    }
+
+    return visibleItems;
 }

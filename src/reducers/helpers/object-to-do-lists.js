@@ -1,6 +1,6 @@
-import { getVisibleSortedItemIDs, getNewItemID, getPreviousItemIndent, 
+import { getNewItemID, getPreviousItemIndent, 
         getParentIDs, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
-        import { ToDoListSelectors } from "../../store/selectors/data/objects/to-do-list";
+import { ToDoListSelectors } from "../../store/selectors/data/objects/to-do-list";
 import { deepCopy } from "../../util/copy";
 import { getToDoListItem } from "../../store/types/data/to-do-list";
 
@@ -121,17 +121,17 @@ export const getUpdatedToDoList = (toDoList, update) => {
     //
     // State order is: "active" -> "optional" -> "completed" -> "cancelled".
     else if (command === "focusPrev") {
-        const sortedItemIDs = getVisibleSortedItemIDs(toDoList);
+        const visibleItemIDs = ToDoListSelectors.visibleItemIDs(toDoList);
 
         if (update.focusLastItem) {     // move from new item item to the last existing item
-            if (sortedItemIDs.length === 0) result = toDoList;
-            else result = { ...toDoList, setFocusOnID: sortedItemIDs[sortedItemIDs.length - 1] };
+            if (visibleItemIDs.length === 0) result = toDoList;
+            else result = { ...toDoList, setFocusOnID: visibleItemIDs[visibleItemIDs.length - 1] };
         } 
         else {
-            const position = sortedItemIDs.indexOf(update.id);
+            const position = visibleItemIDs.indexOf(update.id);
             result = {
                 ...toDoList,
-                setFocusOnID: position <= 0 ? sortedItemIDs[0] : sortedItemIDs[position - 1],
+                setFocusOnID: position <= 0 ? visibleItemIDs[0] : visibleItemIDs[position - 1],
                 caretPositionOnFocus: position <= 0
                     ? 0     // If trying to move top from the topmost item, explicitly set caret at its start
                     : (update.caretPositionOnFocus > -1 ? update.caretPositionOnFocus : toDoList.caretPositionOnFocus)
@@ -144,12 +144,12 @@ export const getUpdatedToDoList = (toDoList, update) => {
     //
     // State order is: "active" -> "optional" -> "completed" -> "cancelled".
     else if (command === "focusNext") {
-        const sortedItemIDs = getVisibleSortedItemIDs(toDoList);
-        const position = sortedItemIDs.indexOf(update.id);
+        const visibleItemIDs = ToDoListSelectors.visibleItemIDs(toDoList);
+        const position = visibleItemIDs.indexOf(update.id);
         if (position < 0) result = toDoList;
         else result = {
             ...toDoList,
-            setFocusOnID: position < sortedItemIDs.length - 1 ? sortedItemIDs[position + 1] : "newItem",   // handle item -> item + 1 and item -> newItem cases
+            setFocusOnID: position < visibleItemIDs.length - 1 ? visibleItemIDs[position + 1] : "newItem",   // handle item -> item + 1 and item -> newItem cases
             caretPositionOnFocus: position < toDoList.itemOrder.length - 1 && update.caretPositionOnFocus > -1
                 ? update.caretPositionOnFocus       // update caretPositionOnFocus if it's provided and an existing item is selected
                 : toDoList.caretPositionOnFocus

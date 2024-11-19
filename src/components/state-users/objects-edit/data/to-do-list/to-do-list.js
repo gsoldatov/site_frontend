@@ -5,7 +5,6 @@ import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton } from "../..
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 
-import { getVisibleItemIDs } from "../../../../../store/state-util/to-do-lists";
 import { ToDoListSelectors } from "../../../../../store/selectors/data/objects/to-do-list";
 
 import * as caret from "../../../../../util/caret";   // wrapped into an object to make functions mockable in tests
@@ -76,7 +75,7 @@ const TDLItems = ({ objectID, toDoList, updateCallback, canDrag }) => {
     }, [toDoList.setFocusOnID]);
 
     const sortedItems = ToDoListSelectors.sortedItemIDs(toDoList);
-    const visibleSortedItems = getVisibleItemIDs(toDoList, sortedItems);
+    const visibleSortedItems = ToDoListSelectors.visibleItemIDs(toDoList);
 
     // Existing items
     const itemComponents = visibleSortedItems.map((id, index) => {
