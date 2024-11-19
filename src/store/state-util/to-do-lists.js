@@ -6,9 +6,6 @@ import { getEditedObjectState } from "../types/data/edited-objects";
 */
 
 
-
-
-
 /**
  * Returns a recursively sorted by state `items` of the `toDoList`. Child items are also sorted, but are kept after the same parent.
  */
@@ -52,13 +49,6 @@ const sortByState = (toDoList, items) => {
     // Return sorted list
     return sortedItems;
 }
-
-
-const itemStates = ["active", "optional", "completed", "cancelled"];
-/**
- * Returns a new item `state` based on its current (used for state toggling).
- */
-export const getNewItemState = state => itemStates[(itemStates.indexOf(state) + 1) % 4];
 
 
 /**

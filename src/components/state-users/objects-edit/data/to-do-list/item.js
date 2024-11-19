@@ -7,7 +7,7 @@ import { Comment } from "./comment";
 import { ExpandControl } from "./expand-control";
 import { ItemDropzone } from "./item-dropzone";
 
-import { getNewItemState } from "../../../../../store/state-util/to-do-lists";
+import { ToDoListSelectors } from "../../../../../store/selectors/data/objects/to-do-list";
 import * as caret from "../../../../../util/caret";   // wrapped into an object to make functions mockable in tests
 import { getElementHeightInLines } from "../../../../../util/element-styles";
 
@@ -191,7 +191,7 @@ class TDLItem extends React.PureComponent {
         // On `F1` toggle item state.
         else if (e.key === "F1") {
             e.preventDefault();
-            this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_state: getNewItemState(this.props.item_state) }});
+            this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_state: ToDoListSelectors.nextItemState(this.props.item_state) }});
         }
 
         // On `F2` expand/collapse item.

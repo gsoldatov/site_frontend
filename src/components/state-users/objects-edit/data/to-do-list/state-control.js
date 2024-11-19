@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Icon } from "semantic-ui-react";
 
-import { getNewItemState } from "../../../../../store/state-util/to-do-lists";
+import { ToDoListSelectors } from "../../../../../store/selectors/data/objects/to-do-list";
 
 
 export const stateControlParams = {
@@ -19,7 +19,7 @@ export const StateControl = memo(({ id, state, updateCallback }) => {
     const { icon, title, iconColor } = stateControlParams[state];
 
     const onClick = e => {
-        updateCallback({ toDoListItemUpdate: { command: "update", id, item_state: getNewItemState(state) }});
+        updateCallback({ toDoListItemUpdate: { command: "update", id, item_state: ToDoListSelectors.nextItemState(state) }});
     };
     
     return (

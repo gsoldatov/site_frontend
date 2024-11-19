@@ -1,4 +1,4 @@
-import type { ToDoList } from "../../../types/data/to-do-list";
+import { toDoListItemState, type ToDoListItemState, type ToDoList } from "../../../types/data/to-do-list";
 
 
 /** Contains selectors for to-do list object data. */
@@ -13,13 +13,18 @@ export class ToDoListSelectors {
         if (toDoList.sort_type === "default") return [...toDoList.itemOrder];
         if (toDoList.sort_type === "state") return sortByState(toDoList, toDoList.itemOrder);
         throw Error(`Incorrect sort_type: ${toDoList.sort_type}`);
-    };
+    }
     
     /** Returns sorted item IDs of visible items (parents of which are not collapsed) of the `toDoList`. */
     static visibleItemIDs(toDoList: ToDoList) {
         const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
         return getVisibleItemIDs(toDoList, sortedItemIDs);
-    };
+    }
+
+    /** Returns a next item `state` based on its current (used for state toggling). */
+    static nextItemState(state: ToDoListItemState): ToDoListItemState {
+        return toDoListItemState[(toDoListItemState.indexOf(state) + 1) % 4];
+    }
 }
 
 /**
