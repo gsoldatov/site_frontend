@@ -8,20 +8,6 @@ import { ObjectsEditSelectors } from "../selectors/ui/objects-edit";
 */
 
 
-/**
- * Returns a Set containing provided `objectIDs` and IDs of all their subobjects found in state.editedObjects.
- */
-export const getEditedObjectAndSubobjectIDs = (state, objectIDs) => {
-    const objectAndSubobjectIDs = new Set(objectIDs.map(objectID => parseInt(objectID)));
-    objectAndSubobjectIDs.forEach(objectID => {
-        const editedObject = state.editedObjects[objectID];
-        if (editedObject !== undefined && editedObject.object_type === "composite")
-            Object.keys(editedObject.composite.subobjects).forEach(objectID => objectAndSubobjectIDs.add(parseInt(objectID)));
-    });
-
-    return objectAndSubobjectIDs;
-};
-
 
 /**
  * Returns memoized list with current & added existing tag IDs.
