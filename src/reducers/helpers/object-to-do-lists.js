@@ -1,5 +1,6 @@
-import { getSortedItemIDs, getVisibleSortedItemIDs, getNewItemID, getPreviousItemIndent, 
+import { getVisibleSortedItemIDs, getNewItemID, getPreviousItemIndent, 
         getParentIDs, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
+        import { ToDoListSelectors } from "../../store/selectors/data/objects/to-do-list";
 import { deepCopy } from "../../util/copy";
 import { getToDoListItem } from "../../store/types/data/to-do-list";
 
@@ -195,7 +196,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
     // Expands all parents of the new item.
     else if (command === "mergeWithPrev") {
         const { id } = update;
-        const sortedItemIDs = getSortedItemIDs(toDoList);
+        const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
         const sortedPosition = sortedItemIDs.indexOf(id);
         // Do nothing if first item is focused
         if (sortedPosition === 0) result = toDoList;
@@ -256,7 +257,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
     // New item is focused and caret is placed between at the border of the old items' texts.
     else if (command === "mergeWithNext") {
         const { id } = update;
-        const sortedItemIDs = getSortedItemIDs(toDoList);
+        const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
         const sortedPosition = sortedItemIDs.indexOf(id);
         // Do nothing if last item is focused
         if (sortedPosition === sortedItemIDs.length - 1) result = toDoList;
@@ -416,7 +417,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
  * The update is performed in the original toDoList object.
  */
 const setNewItemInputIndent = toDoList => {
-    const sortedItemIDs = getSortedItemIDs(toDoList);
+    const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
     if (sortedItemIDs.length > 0) {
         const lastItemID = sortedItemIDs[sortedItemIDs.length - 1];
         toDoList.newItemInputIndent = Math.min(toDoList.newItemInputIndent, toDoList.items[lastItemID].indent + 1);

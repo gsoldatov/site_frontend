@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef, memo, useMemo } from "react";
+import React, { useEffect, useRef, memo, useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton } from "../../../../modules/horizontal-menu";
 import { DraggableTDLItem } from "./item";
 import { DroppableNewTDLItem } from "./new-item";
 
-import { getSortedItemIDs, getVisibleItemIDs } from "../../../../../store/state-util/to-do-lists";
+import { getVisibleItemIDs } from "../../../../../store/state-util/to-do-lists";
+import { ToDoListSelectors } from "../../../../../store/selectors/data/objects/to-do-list";
 
 import * as caret from "../../../../../util/caret";   // wrapped into an object to make functions mockable in tests
 
@@ -74,8 +75,8 @@ const TDLItems = ({ objectID, toDoList, updateCallback, canDrag }) => {
 
     }, [toDoList.setFocusOnID]);
 
-    let sortedItems = getSortedItemIDs(toDoList);
-    let visibleSortedItems = getVisibleItemIDs(toDoList, sortedItems);
+    const sortedItems = ToDoListSelectors.sortedItemIDs(toDoList);
+    const visibleSortedItems = getVisibleItemIDs(toDoList, sortedItems);
 
     // Existing items
     const itemComponents = visibleSortedItems.map((id, index) => {

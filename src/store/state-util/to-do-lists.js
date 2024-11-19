@@ -1,3 +1,4 @@
+import { ToDoListSelectors } from "../selectors/data/objects/to-do-list";
 import { ObjectsEditSelectors } from "../selectors/ui/objects-edit";
 import { getEditedObjectState } from "../types/data/edited-objects";
 /*
@@ -5,16 +6,7 @@ import { getEditedObjectState } from "../types/data/edited-objects";
 */
 
 
-/**
- * Accepts a `toDoList` object representing to-do list data and returns the IDs of its items sorted according to its current `sort_type`.
- */
-export const getSortedItemIDs = toDoList => {
-    let sortedItems;
-    if (toDoList.sort_type === "default") sortedItems = [...toDoList.itemOrder];
-    if (toDoList.sort_type === "state") sortedItems = sortByState(toDoList, toDoList.itemOrder);
 
-    return sortedItems;
-};
 
 
 /**
@@ -66,7 +58,7 @@ const sortByState = (toDoList, items) => {
  * Returns sorted item IDs of visible items (parents of which are not collapsed) of the `toDoList`.
  */
 export const getVisibleSortedItemIDs = toDoList => {
-    const sortedItemIDs = getSortedItemIDs(toDoList);
+    const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
     return getVisibleItemIDs(toDoList, sortedItemIDs);
 };
 
@@ -116,7 +108,7 @@ export const getNewItemState = state => itemStates[(itemStates.indexOf(state) + 
  * If item is first in the list, returns -1.
  */
 export const getPreviousItemIndent = (toDoList, id) => {
-    const itemOrder = getSortedItemIDs(toDoList);
+    const itemOrder = ToDoListSelectors.sortedItemIDs(toDoList);
 
     if (id === "newItem"){
         const prevID = itemOrder[itemOrder.length - 1];
