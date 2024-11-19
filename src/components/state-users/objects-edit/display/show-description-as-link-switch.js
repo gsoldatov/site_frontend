@@ -5,7 +5,7 @@ import { DisplayControlCheckbox } from "../../../modules/edit/display/display-co
 import { DisplayControlDropdown } from "../../../modules/edit/display/display-control-dropdown";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 import { showDescriptionCompositeOptions } from "../../../../store/types/ui/general/show-description-composite";
 
 
@@ -15,8 +15,8 @@ import { showDescriptionCompositeOptions } from "../../../../store/types/ui/gene
  export const ShowDescriptionAsLinkSwitch = ({ objectID }) => {
     const dispatch = useDispatch();
 
-    const isLink = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).object_type === "link");
-    const showDescriptionAsLink = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).link.show_description_as_link);
+    const isLink = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).object_type === "link");
+    const showDescriptionAsLink = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).link.show_description_as_link);
 
     const onClick = useMemo(() => () => dispatch(setEditedObject({ link: { show_description_as_link: !showDescriptionAsLink }}, objectID)), [objectID, showDescriptionAsLink]);
 
@@ -34,8 +34,8 @@ const showDescriptionDropdownOptions = Object.values(showDescriptionCompositeOpt
 export const SubobjectShowDescriptionAsLinkSwitch = ({ objectID, subobjectID }) => {
     const dispatch = useDispatch();
 
-    const isLink = useSelector(state => getEditedOrDefaultObjectSelector(subobjectID)(state).object_type === "link");
-    const showDescriptionAsLink = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).composite.subobjects[subobjectID].show_description_as_link_composite);
+    const isLink = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(subobjectID)(state).object_type === "link");
+    const showDescriptionAsLink = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).composite.subobjects[subobjectID].show_description_as_link_composite);
 
     const onChange = useMemo(() => 
         (e, data) => dispatch(setEditedObject({ compositeUpdate: { command: "updateSubobject", subobjectID, show_description_as_link_composite: data.value }}, objectID))

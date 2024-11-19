@@ -9,7 +9,7 @@ import { TDLContainer } from "./to-do-list/to-do-list";
 import { SubobjectsContainer } from "./composite/subobjects";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 import { getIsTDLDragAndDropEnabledSelector } from "../../../../store/state-util/to-do-lists";
 
 
@@ -20,12 +20,12 @@ import { getIsTDLDragAndDropEnabledSelector } from "../../../../store/state-util
  */
 export const ObjectDataSwitch = ({ objectID, subobjectCard = false }) => {
     const dispatch = useDispatch();
-    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
+    const editedOrDefaultObjectSelector = useMemo(() => ObjectsEditSelectors.editedOrDefaultSelector(objectID), [objectID]);
     const objectTypeSelector = useMemo(() => state => editedOrDefaultObjectSelector(state).object_type, [objectID]);
     const objectType = useSelector(objectTypeSelector);
 
     // To-do list props
-    const toDoList = useSelector(getEditedOrDefaultObjectSelector(objectID)).toDoList;
+    const toDoList = useSelector(ObjectsEditSelectors.editedOrDefaultSelector(objectID)).toDoList;
     const canDragToDoList = useSelector(getIsTDLDragAndDropEnabledSelector(objectID));
     const toDoListUpdateCallback = useMemo(
         () => params => dispatch(setEditedObject(params, objectID))

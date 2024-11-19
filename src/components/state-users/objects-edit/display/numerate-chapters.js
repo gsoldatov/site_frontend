@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DisplayControlCheckbox } from "../../../modules/edit/display/display-control-checkbox";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
 /**
@@ -14,11 +14,11 @@ import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/u
     const dispatch = useDispatch();
 
     const isRendered = useSelector(state => {
-        const editedObject = getEditedOrDefaultObjectSelector(objectID)(state);
+        const editedObject = ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state);
         return editedObject.object_type === "composite" && editedObject.composite.display_mode === "chapters";
     });
 
-    const numerateChapters = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).composite.numerate_chapters);
+    const numerateChapters = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).composite.numerate_chapters);
 
     const onClick = useMemo(() => (e, data) => {
         dispatch(setEditedObject({ composite: { numerate_chapters: data.checked }}, objectID));

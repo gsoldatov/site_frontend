@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DisplayControlTimestampSelector } from "../../../modules/edit/display/display-control-timestamp";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
 /**
@@ -13,7 +13,7 @@ import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/u
 export const FeedTimestampSelector = ({ objectID }) => {
     const dispatch = useDispatch()
 
-    const feedTimestamp = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).feed_timestamp);
+    const feedTimestamp = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).feed_timestamp);
 
     // onChange handler
     const onChange = useMemo(() => e => {

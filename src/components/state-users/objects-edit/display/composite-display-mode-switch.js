@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DisplayControlDropdown } from "../../../modules/edit/display/display-control-dropdown";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 import { compositeDisplayModeOptions } from "../../../../store/types/ui/general/composite-display-mode";
 
 
@@ -19,8 +19,8 @@ export const CompositeDisplayModeSwitch = ({ objectID }) => {
     const dispatch = useDispatch();
 
     // Current value
-    const isComposite = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).object_type === "composite");
-    const displayMode = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).composite.display_mode);
+    const isComposite = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).object_type === "composite");
+    const displayMode = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).composite.display_mode);
 
     // On change callback
     const onChange = useMemo(() => (e, data) => {

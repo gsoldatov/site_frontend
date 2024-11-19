@@ -11,4 +11,9 @@ export class ObjectsEditSelectors {
     static currentObject(state: State) {
         return state.editedObjects[state.objectsEditUI.currentObjectID] || getEditedObjectState();
     }
+
+    /** Returns a selector for an edited object's or default state. */
+    static editedOrDefaultSelector(objectID: number) {
+        return (state: State) => state.editedObjects[objectID] || getEditedObjectState();
+    }
 }

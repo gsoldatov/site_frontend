@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DisplayControlCheckbox } from "../../../modules/edit/display/display-control-checkbox";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
 /**
@@ -12,7 +12,7 @@ import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/u
  */
 export const DisplayInFeedSwitch = ({ objectID }) => {
     const dispatch = useDispatch();
-    const displayInFeed = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).display_in_feed);
+    const displayInFeed = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).display_in_feed);
     const onClick = useMemo(() => () => dispatch(setEditedObject({ display_in_feed: !displayInFeed }, objectID)), [objectID, displayInFeed]);
 
     return (

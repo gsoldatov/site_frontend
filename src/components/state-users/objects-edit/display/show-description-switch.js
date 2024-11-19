@@ -5,7 +5,7 @@ import { DisplayControlCheckbox } from "../../../modules/edit/display/display-co
 import { DisplayControlDropdown } from "../../../modules/edit/display/display-control-dropdown";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 import { showDescriptionCompositeOptions } from "../../../../store/types/ui/general/show-description-composite";
 
 
@@ -14,7 +14,7 @@ import { showDescriptionCompositeOptions } from "../../../../store/types/ui/gene
  */
  export const ShowDescriptionSwitch = ({ objectID }) => {
     const dispatch = useDispatch();
-    const showDescription = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).show_description);
+    const showDescription = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).show_description);
     const onClick = useMemo(() => () => dispatch(setEditedObject({ show_description: !showDescription }, objectID)), [objectID, showDescription]);
 
     return (
@@ -32,7 +32,7 @@ export const SubobjectShowDescriptionSwitch = ({ objectID, subobjectID }) => {
     const dispatch = useDispatch();
 
     // Current value
-    const showDescription = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).composite.subobjects[subobjectID].show_description_composite);
+    const showDescription = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).composite.subobjects[subobjectID].show_description_composite);
 
     // On change callback
     const onChange = useMemo(() => 

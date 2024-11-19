@@ -3,7 +3,7 @@ import { Dropdown, Icon } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 import { objectTypeOptions } from "../../../../store/types/ui/general/object-type";
 
 
@@ -18,7 +18,7 @@ export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
     const newSubobjectDropdownOptions = useMemo(() => objectTypeDropdownOptions.filter(option => option.value !== "composite"), []);
 
     const isDisabled = objectID > 0;
-    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
+    const editedOrDefaultObjectSelector = useMemo(() => ObjectsEditSelectors.editedOrDefaultSelector(objectID), [objectID]);
     const objectType = useSelector(state => editedOrDefaultObjectSelector(state).object_type);
 
     // Header style

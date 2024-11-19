@@ -1,18 +1,11 @@
 import { createSelector } from "reselect";
 
-import { getEditedObjectState } from "../../store/types/data/edited-objects";
 import { ObjectsEditSelectors } from "../selectors/ui/objects-edit";
 
 
 /*
     Functions for checking/getting data from a /objects/edit/:id page UI state.
 */
-
-
-/**
- * Returns a selector for the object data from state.editedObjects for the provided `objectID` or default edited object state.
- */
-export const getEditedOrDefaultObjectSelector = objectID => state => state.editedObjects[objectID] || getEditedObjectState();
 
 
 /**

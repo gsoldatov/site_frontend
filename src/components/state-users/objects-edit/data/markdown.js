@@ -2,7 +2,7 @@ import React, { useMemo, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 import { MarkdownEditor } from "../../../modules/markdown/markdown-editor";
 
@@ -13,7 +13,7 @@ import { MarkdownEditor } from "../../../modules/markdown/markdown-editor";
 export const MarkdownDataEditor = memo(({ objectID }) => {
     const dispatch = useDispatch();
 
-    const editedOrDefaultObjectSelector = useMemo(() => getEditedOrDefaultObjectSelector(objectID), [objectID]);
+    const editedOrDefaultObjectSelector = useMemo(() => ObjectsEditSelectors.editedOrDefaultSelector(objectID), [objectID]);
     const rawMarkdown = useSelector(state => editedOrDefaultObjectSelector(state).markdown.raw_text);
     const parsedMarkdown = useSelector(state => editedOrDefaultObjectSelector(state).markdown.parsed);
 

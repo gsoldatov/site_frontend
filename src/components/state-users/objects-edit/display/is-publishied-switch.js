@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DisplayControlCheckbox } from "../../../modules/edit/display/display-control-checkbox";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
-import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
 /**
@@ -12,8 +12,8 @@ import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/u
  */
  export const IsPublishedSwitch = ({ objectID, isSubobject = false }) => {
     const dispatch = useDispatch();
-    const isPublished = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).is_published);
-    const objectType = useSelector(state => getEditedOrDefaultObjectSelector(objectID)(state).object_type);
+    const isPublished = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).is_published);
+    const objectType = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).object_type);
     const onClick = useMemo(() => () => dispatch(setEditedObject({ is_published: !isPublished }, objectID)), [objectID, isPublished]);
 
     // Don't display if subobject is composite
@@ -30,7 +30,7 @@ import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/u
     const dispatch = useDispatch();
     
     const subobjectsIsPublishedState = useSelector(state => {
-        const editedObject = getEditedOrDefaultObjectSelector(objectID)(state);
+        const editedObject = ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state);
         let numberOfSubobjects = 0, numberOfPublishedSubobjects = 0;
 
         Object.keys(editedObject.composite.subobjects).forEach(subobjectID => {
@@ -47,7 +47,7 @@ import { getEditedOrDefaultObjectSelector } from "../../../../store/state-util/u
         dispatch(setEditedObject({ compositeUpdate: { command: "toggleSubobjectsIsPublished", subobjectsIsPublishedState }}, objectID))
     , [objectID, subobjectsIsPublishedState]);
 
-    const objectTypeSelector = useMemo(() => state => getEditedOrDefaultObjectSelector(objectID)(state).object_type, [objectID]);
+    const objectTypeSelector = useMemo(() => state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).object_type, [objectID]);
     const objectType = useSelector(objectTypeSelector);
 
     // Don't display if subobject or non composite
