@@ -6,8 +6,7 @@ import { SideMenuItem } from "../../modules/side-menu/side-menu-item";
 import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogCheckbox, SideMenuDialogButtonsContainer, SideMenuDialogButton } from "../../modules/side-menu/side-menu-dialog";
 
-import { setObjectsListCurrentTags } from "../../../actions/objects-list";
-import { setShowDeleteDialogObjects } from "../../../reducers/ui/objects-list";
+import { setShowDeleteDialogObjects, clearObjectsListTagUpdates } from "../../../reducers/ui/objects-list";
 import { objectsListDeleteFetch, objectsListUpdateTagsFetch } from "../../../fetches/ui-objects-list";
 import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
 
@@ -98,7 +97,7 @@ const CancelTagUpdate = () => {
     const dispatch = useDispatch();
     const isActive = !(useSelector(ObjectsListSelectors.isFetching));
     const isVisible = useSelector(ObjectsListSelectors.isObjectsTagsEditActive);
-    const onClick = useMemo(() => () => dispatch(setObjectsListCurrentTags({ added: [], removed: [] })), []);
+    const onClick = useMemo(() => () => dispatch(clearObjectsListTagUpdates()), []);
 
     if (!isVisible) return null;
     return <SideMenuItem text="Cancel Tag Update" icon="cancel" iconColor="red" isActive={isActive} onClick={onClick} />;

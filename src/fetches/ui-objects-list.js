@@ -2,10 +2,9 @@ import { objectsGetPageObjectIDs, objectsViewFetch, objectsDeleteFetch } from ".
 import { objectsTagsUpdateFetch } from "./data/objects-tags";
 import { tagsSearchFetch } from "./data/tags";
 
-import { setObjectsListCurrentTags } from "../actions/objects-list";
 import {
     setObjectsListFetch, setObjectsListPaginationInfo, setObjectsListTagsFilter, setObjectsListTagsFilterInput,
-    setObjectsListTagsInput, setShowDeleteDialogObjects
+    setObjectsListTagsInput, setShowDeleteDialogObjects, clearObjectsListTagUpdates
 } from "../reducers/ui/objects-list";
 
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
@@ -18,7 +17,7 @@ export const objectsListOnLoadFetch = () => {
     return async (dispatch, getState) => {
         const currentPage = getState().objectsListUI.paginationInfo.currentPage;
         dispatch(setObjectsListTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
-        dispatch(setObjectsListCurrentTags({ added: [], removed: [] }));
+        dispatch(clearObjectsListTagUpdates());
         dispatch(objectsListPageFetch(currentPage));
     };
 };
@@ -186,7 +185,7 @@ export function objectsListUpdateTagsFetch() {
 
         // Handle successful fetch end
         // Reset added & removed tags
-        dispatch(setObjectsListCurrentTags({ added: [], removed: [] }));
+        dispatch(clearObjectsListTagUpdates());
         dispatch(setObjectsListFetch({ isFetching: false, fetchError: "" }));
     };
 };

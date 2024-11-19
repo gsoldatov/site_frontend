@@ -1,3 +1,7 @@
+import { ObjectsListSelectors } from "../../store/selectors/ui/objects-list";
+import { TagsSelectors } from "../../store/selectors/data/tags";
+import { TagsTransformer } from "../../store/transformers/data/tags";
+
 import type { State } from "../../store/types/state"
 import { 
     type ObjectsListFetch, type ObjectsListPaginationInfo, type ObjectsListTagsFilterInput, type ObjectsListTagsInput
@@ -87,7 +91,6 @@ const _setShowDeleteDialogObjects = (state: State, action: { showDeleteDialog: b
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** Selects objects with `objectIDs` on the /objects/list page. */
 export const selectObjects = (objectIDs: number[]) => ({ type: "SELECT_OBJECTS", objectIDs });
 
@@ -120,6 +123,80 @@ const _clearSelectedObjects = (state: State, action: any): State => {
 };
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Toggles presence of tags in `addedTags` & `removedTagIDs` in the corresponding arrays of the /objects/list state:
+ * 
+ * `addedTags`:
+ * - can contain tag names or IDs;
+ * - already present tags are removed from the list;
+ * - not prevously present tags, which are common to all selected objects, are added to the `removedTagIDs` list;
+ * - other not previously present tags are added to the list.
+ * 
+ * `removedTagIDs`:
+ * - can contain only tag IDs;
+ * - already present tags are removed from the list (including common tags passed from `addedTags`);
+ * - not previously present tags are added to the list.
+ */
+export const setObjectsListTagUpdates = (updates: { added?: (string | number)[], removed?: number[] }) => ({
+    type: "SET_OBJECTS_LIST_TAG_UPDATES",
+    addedTags: updates.added || [],
+    removedTagIDs: updates.removed || []
+});
+
+const _setObjectsListTagUpdates = (state: State, action: { addedTags: (string | number)[], removedTagIDs: number[] }) => {
+    const lowerCaseOldAddedTags = state.objectsListUI.addedTags.map(t => TagsTransformer.getLowerCaseTagNameOrID(t));
+
+    // Map added tags to their ID or names, where appropriate
+    const mappedAddedTags = action.addedTags.map(tag => {
+        if (typeof(tag) === "number") {
+            // If a tag added by ID is already added by name, add it by name again
+            if (lowerCaseOldAddedTags.includes(state.tags[tag].tag_name.toLowerCase())) return state.tags[tag].tag_name;
+            return tag;
+        }
+
+        // If a tag added by name is already added by name, add it by name again
+        if (lowerCaseOldAddedTags.includes(tag.toLowerCase())) return tag;
+
+        // Add a tag for the first time by its ID or name
+        return TagsSelectors.getTagIDByName(state, tag) || tag;
+    });
+    
+    // Get a new addedTags list
+    const lowerCaseMappedAddedTags = mappedAddedTags.map(t => TagsTransformer.getLowerCaseTagNameOrID(t));
+    let addedTags = state.objectsListUI.addedTags.slice();
+    addedTags = addedTags.filter(t => !lowerCaseMappedAddedTags.includes(TagsTransformer.getLowerCaseTagNameOrID(t)));
+    addedTags = addedTags.concat(mappedAddedTags.filter(t => !lowerCaseOldAddedTags.includes(TagsTransformer.getLowerCaseTagNameOrID(t))));
+
+    // Filter out common tags, which are added (they will be added to removed tags later)
+    const addedExistingTagIDs = addedTags.filter(t => ObjectsListSelectors.commonTagIDs(state).includes(t as number));
+    addedTags = addedTags.filter(t => !addedExistingTagIDs.includes(t));
+
+    // Stop removing tags passed for the second time or added common tags already being removed
+    let removedTagIDs = state.objectsListUI.removedTagIDs.slice();
+    const removedExistingTagIDs = (addedExistingTagIDs as number[]).filter(t => !removedTagIDs.includes(t as number));
+    removedTagIDs = removedTagIDs.filter(t => !action.removedTagIDs.includes(t) && !addedExistingTagIDs.includes(t));
+        
+    // Remove tags passed for the first time or added common tags, which were not being removed
+    removedTagIDs = removedTagIDs.concat(action.removedTagIDs.filter(t => !state.objectsListUI.removedTagIDs.includes(t)));
+    removedTagIDs = removedTagIDs.concat(
+        removedExistingTagIDs.filter(t => !removedTagIDs.includes(t as number))
+    );
+
+    return { ...state, objectsListUI: { ...state.objectsListUI, addedTags,  removedTagIDs }};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Clears added & removed tags on the /objects/list page. */
+export const clearObjectsListTagUpdates = () => ({ type: "CLEAR_OBJECTS_LIST_TAG_UPDATES" });
+
+const _clearObjectsListTagUpdates = (state: State, action: any): State => {
+    return { ...state, objectsListUI: { ...state.objectsListUI, addedTags: [], removedTagIDs: [] }};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const objectsListRoot = {
     "SET_OBJECTS_LIST_FETCH": _setObjectsListFetch,
     "SET_OBJECTS_LIST_PAGINATION_INFO": _setObjectsListPaginationInfo,
@@ -127,8 +204,11 @@ export const objectsListRoot = {
     "SET_OBJECTS_LIST_TAGS_FILTER_INPUT": _setObjectsListTagsFilterInput,
     "SET_OBJECTS_LIST_TAGS_INPUT": _setObjectsListTagsInput,
     "SET_OBJECTS_LIST_SHOW_DELETE_DIALOG": _setShowDeleteDialogObjects,
-    // "SET_OBJECTS_LIST_CURRENT_TAGS": _setObjectsListCurrentTags,
+    
     "SELECT_OBJECTS": _selectObjects,
     "TOGGLE_OBJECT_SELECTION": _toggleObjectSelection,
-    "CLEAR_SELECTED_OBJECTS": _clearSelectedObjects
+    "CLEAR_SELECTED_OBJECTS": _clearSelectedObjects,
+
+    "SET_OBJECTS_LIST_TAG_UPDATES": _setObjectsListTagUpdates,
+    "CLEAR_OBJECTS_LIST_TAG_UPDATES": _clearObjectsListTagUpdates
 };
