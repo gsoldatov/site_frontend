@@ -9,7 +9,6 @@ import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setEditedObject, r
     setObjectsEditTagsInput, setAddCompositeSubobjectMenu,
     preSaveEditedObjectsUpdate, setToDoListRerenderPending } from "../actions/objects-edit";
 
-import { isFetchingObject } from "../store/state-util/ui-objects-edit";
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
@@ -53,7 +52,7 @@ export const objectsEditNewSaveFetch = () => {
         let state = getState();
 
         // Exit if already fetching
-        if (isFetchingObject(state)) return;
+        if (ObjectsEditSelectors.isFetching(state)) return;
 
         // Prepare edited objects for fetch & trigger to-do list rerender (required due to ponential reassignment of item IDs)
         dispatch(preSaveEditedObjectsUpdate());
@@ -155,7 +154,7 @@ export const objectsEditExistingSaveFetch = () => {
         let state = getState();
 
         // Exit if already fetching
-        if (isFetchingObject(state)) return;
+        if (ObjectsEditSelectors.isFetching(state)) return;
 
         // Prepare edited objects for fetch & trigger to-do list rerender (required due to ponential reassignment of item IDs)
         dispatch(preSaveEditedObjectsUpdate());
@@ -190,7 +189,7 @@ export const objectsEditExistingDeleteFetch = deleteSubobjects => {
     return async (dispatch, getState) => {
         // Exit if already fetching
         let state = getState();
-        if (isFetchingObject(state)) return;
+        if (ObjectsEditSelectors.isFetching(state)) return;
 
         // Hide delete dialog
         dispatch(setObjectsEditShowDeleteDialog(false));

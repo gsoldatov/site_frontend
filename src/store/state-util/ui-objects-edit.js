@@ -9,18 +9,6 @@ import { ObjectsEditSelectors } from "../selectors/ui/objects-edit";
 
 
 /**
- * Returns true if any of object page fetches are being performed.
- */
-export const isFetchingObject = state => state.objectsEditUI.loadFetch.isFetching || state.objectsEditUI.saveFetch.isFetching;
-
-
-/**
- * Returns true if any of object page fetches are being performed or on load fetch failed.
- */
-export const isFetchingOrOnLoadFetchFailed = state => isFetchingObject(state) || state.objectsEditUI.loadFetch.fetchError;
-
-
-/**
  * Returns a Set containing provided `objectIDs` and IDs of all their subobjects found in state.editedObjects.
  */
 export const getEditedObjectAndSubobjectIDs = (state, objectIDs) => {

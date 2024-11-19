@@ -7,7 +7,6 @@ import { SideMenuItem } from "../../modules/side-menu/side-menu-item";
 import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer, SideMenuDialogCheckbox } from "../../modules/side-menu/side-menu-dialog";
 
-import { isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../../../store/state-util/ui-objects-edit";
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
 import { CompositeSelectors } from "../../../store/selectors/data/objects/composite";
 import { resetEditedObjects, setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog, setToDoListRerenderPending } from "../../../actions/objects-edit";
@@ -53,13 +52,13 @@ export const ObjectsEditExistingSideMenu = () => {
 
 
 const AddANewObject = () => {
-    const isActive = useSelector(state => !isFetchingObject(state));
+    const isActive = useSelector(state => !ObjectsEditSelectors.isFetching(state));
     return <SideMenuLink text="Add a New Object" icon="add" iconColor="green" isActive={isActive} URL="/objects/edit/new" />;
 };
 
 
 const ViewObject = () => {
-    const isActive = useSelector(state => !isFetchingObject(state));
+    const isActive = useSelector(state => !ObjectsEditSelectors.isFetching(state));
     const { id } = useParams();
     const URL = `/objects/view/${id}`;
     return <SideMenuLink text="View Object" icon="eye" iconColor="black" isActive={isActive} URL={URL} />;
@@ -69,8 +68,8 @@ const ViewObject = () => {
 const Save = () => {
     const dispatch = useDispatch();
     const isActive = useSelector(state => 
-        !isFetchingObject(state) && ObjectsEditSelectors.currentObject(state).object_name.length >= 1 
-                                 && ObjectsEditSelectors.currentObject(state).object_name.length <= 255);
+        !ObjectsEditSelectors.isFetching(state) && ObjectsEditSelectors.currentObject(state).object_name.length >= 1 
+                                                && ObjectsEditSelectors.currentObject(state).object_name.length <= 255);
     const { id } = useParams(); // undefined for new object page
     const onClick = useMemo(() => () => {
         const onSave = id === undefined ? objectsEditNewSaveFetch : objectsEditExistingSaveFetch;
@@ -85,8 +84,8 @@ const Reset = () => {
     const dispatch = useDispatch();
     const { id } = useParams(); // undefined for new object page
     const isActive = useSelector(state => id === undefined
-        ? !isFetchingObject(state)
-        : !isFetchingOrOnLoadFetchFailed(state)
+        ? !ObjectsEditSelectors.isFetching(state)
+        : !ObjectsEditSelectors.isFetchingOrLoadFailed(state)
     );
     const isVisible = useSelector(state => !state.objectsEditUI.showResetDialog);
     const onClick = useMemo(() => () => dispatch(setObjectsEditShowResetDialog(true)), []);
@@ -128,7 +127,7 @@ const ResetDialog = () => {
 
 const Delete = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => !isFetchingOrOnLoadFetchFailed(state));
+    const isActive = useSelector(state => !ObjectsEditSelectors.isFetchingOrLoadFailed(state));
     const isVisible = useSelector(state => !state.objectsEditUI.showDeleteDialog);
     const onClick = useMemo(() => () => dispatch(setObjectsEditShowDeleteDialog(true)), []);
 
@@ -162,6 +161,6 @@ const DeleteDialog = () => {
 
 
 const Cancel = () => {
-    const isActive = useSelector(state => !isFetchingObject(state));
+    const isActive = useSelector(state => !ObjectsEditSelectors.isFetching(state));
     return <SideMenuLink text="Cancel" icon="sign-out" iconFlipped="horizontally" isActive={isActive} URL="/objects/list" />;
 };

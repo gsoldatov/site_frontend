@@ -1,6 +1,5 @@
 import { ObjectsEditSelectors } from "../selectors/ui/objects-edit";
 import { getEditedObjectState } from "../types/data/edited-objects";
-import { isFetchingObject } from "./ui-objects-edit";
 /*
     Functions for checking/getting data and UI state for to-do lists.
 */
@@ -194,7 +193,8 @@ export const getMergedItemInsertPosition = (toDoList, first, second) => {
 /**
  * Returns a selector for checking if to-do list drag and drop functionality is enabled.
  */
-export const getIsTDLDragAndDropEnabledSelector = objectID => state => !isFetchingObject(state) && ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).toDoList.sort_type === "default";
+export const getIsTDLDragAndDropEnabledSelector = objectID => state => !ObjectsEditSelectors.isFetching(state) 
+    && ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).toDoList.sort_type === "default";
 
 
 /**

@@ -2,7 +2,7 @@ import { deepEqual } from "../../../../util/equality-checks";
 import { deepMerge } from "../../../../util/copy";
 import { validateNonCompositeObject } from "../../../state-util/objects";
 import { ObjectsSelectors } from "./objects";
-import { isFetchingObject } from "../../../state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../ui/objects-edit";
 
 import { getEditedObjectState } from "../../../types/data/edited-objects";
 import { compositeSubobject } from "../../../types/data/composite";
@@ -129,7 +129,7 @@ export class CompositeSelectors {
      * TODO move to /objects/edit selectors
      */
     static isCompositeDragAndDropEnabledSelector(state: State) {
-        return !isFetchingObject(state);
+        return !ObjectsEditSelectors.isFetching(state);
     }
 
     /**

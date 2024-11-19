@@ -16,4 +16,14 @@ export class ObjectsEditSelectors {
     static editedOrDefaultSelector(objectID: number) {
         return (state: State) => state.editedObjects[objectID] || getEditedObjectState();
     }
+
+    /** Returns a boolean indicating if there is an ongoing fetch. */
+    static isFetching(state: State) {
+        return state.objectsEditUI.loadFetch.isFetching || state.objectsEditUI.saveFetch.isFetching;
+    }
+
+    /** Returns a boolean indicating if there is an ongoing fetch, or a load fetch failed. */
+    static isFetchingOrLoadFailed(state: State) {
+        return ObjectsEditSelectors.isFetching(state) || state.objectsEditUI.loadFetch.fetchError;
+    }
 }
