@@ -10,7 +10,6 @@ import { SubobjectsContainer } from "./composite/subobjects";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
-import { getIsTDLDragAndDropEnabledSelector } from "../../../../store/state-util/to-do-lists";
 
 
 /**
@@ -26,7 +25,7 @@ export const ObjectDataSwitch = ({ objectID, subobjectCard = false }) => {
 
     // To-do list props
     const toDoList = useSelector(ObjectsEditSelectors.editedOrDefaultSelector(objectID)).toDoList;
-    const canDragToDoList = useSelector(getIsTDLDragAndDropEnabledSelector(objectID));
+    const canDragToDoList = useSelector(state => ObjectsEditSelectors.toDoListDragAndDropEnabled(state, objectID));
     const toDoListUpdateCallback = useMemo(
         () => params => dispatch(setEditedObject(params, objectID))
     , [objectID]);

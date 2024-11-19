@@ -50,6 +50,12 @@ export class ObjectsEditSelectors {
     static matchingTagIDsName(state: State) {
         return matchingTagIDsNames(state);
     }
+
+    /** Returns a boolean indicating if drag and drop is enabled for an edited to-do list with `objectID`. */
+    static toDoListDragAndDropEnabled(state: State, objectID: number) {
+        return !ObjectsEditSelectors.isFetching(state) 
+            && ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).toDoList.sort_type === "default";
+    }
 }
 
 
