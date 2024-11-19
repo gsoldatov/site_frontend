@@ -25,6 +25,24 @@ export class ToDoListSelectors {
     static nextItemState(state: ToDoListItemState): ToDoListItemState {
         return toDoListItemState[(toDoListItemState.indexOf(state) + 1) % 4];
     }
+    
+    /** Returns an array of parent item IDs in the `toDoList` for a provided `id`. */
+    static parentIDs(toDoList: ToDoList, id: number) {
+        let parentIDs = [];
+        let currentIndent = toDoList.items[id].indent;
+        let i = toDoList.itemOrder.indexOf(id);
+        while (currentIndent > 0 && i >= 0) {
+            let itemID = toDoList.itemOrder[i];
+            let itemIndent = toDoList.items[itemID].indent;
+            if (itemIndent < currentIndent) {
+                parentIDs.push(itemID);
+                currentIndent = itemIndent;
+            }
+            i--;
+        }
+
+        return parentIDs;
+    };
 }
 
 /**
@@ -70,7 +88,6 @@ const sortByState = (toDoList: ToDoList, items: number[]): number[] => {
     // Return sorted list
     return sortedItems;
 };
-
 
 
 /**

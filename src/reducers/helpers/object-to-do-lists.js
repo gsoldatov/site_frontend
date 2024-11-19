@@ -1,5 +1,5 @@
 import { getPreviousItemIndent, 
-        getParentIDs, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
+        getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
 import { ToDoListSelectors } from "../../store/selectors/data/objects/to-do-list";
 import { deepCopy } from "../../util/copy";
 import { getToDoListItem } from "../../store/types/data/to-do-list";
@@ -432,7 +432,7 @@ const setNewItemInputIndent = toDoList => {
  * The update is performed in the original toDoList object.
  */
 const expandParents = (toDoList, id) => {
-    const parentIDs = getParentIDs(toDoList, id);
+    const parentIDs = ToDoListSelectors.parentIDs(toDoList, id);
     parentIDs.forEach(id => {
         toDoList.items[id].is_expanded = true;
     });
