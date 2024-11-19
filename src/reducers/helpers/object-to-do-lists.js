@@ -1,4 +1,4 @@
-import { getPreviousItemIndent, 
+import {  
         getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
 import { ToDoListSelectors } from "../../store/selectors/data/objects/to-do-list";
 import { deepCopy } from "../../util/copy";
@@ -365,7 +365,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
                 if (increase) indent = toDoList.newItemInputIndent + 1;
                 else if (decrease) indent = toDoList.newItemInputIndent - 1;
                 indent = Math.min(Math.max(indent, 0), 5);
-                indent = Math.min(indent, getPreviousItemIndent(toDoList, id) + 1);
+                indent = Math.min(indent, ToDoListSelectors.previousItemIndent(toDoList, id) + 1);
                 result = { ...toDoList, newItemInputIndent: indent };
             } 
             else {
@@ -375,7 +375,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
                 if (increase) indent = item.indent + 1;
                 else if (decrease) indent = item.indent - 1;
                 indent = Math.min(Math.max(indent, 0), 5);
-                indent = Math.min(indent, getPreviousItemIndent(toDoList, id) + 1);
+                indent = Math.min(indent, ToDoListSelectors.previousItemIndent(toDoList, id) + 1);
                 newItems[id] = {...item, indent};
 
                 const indentDifference = indent - item.indent;      // children

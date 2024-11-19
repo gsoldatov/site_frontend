@@ -55,6 +55,32 @@ export class ToDoListSelectors {
         }
         return childrenIDs;
     };
+
+    /**
+     * Returns the indent of the `toDoList` item, previous to the item with provided `id`.
+     * 
+     * If `id` = "newItem", returns the indent of the last item in the list.
+     * 
+     * If item is first in the list, returns -1.
+     */
+    static previousItemIndent(toDoList: ToDoList, id: number | string) {
+        const itemOrder = ToDoListSelectors.sortedItemIDs(toDoList);
+
+        if (id === "newItem"){
+            const prevID = itemOrder[itemOrder.length - 1];
+            if (prevID === undefined) return -1;
+            return toDoList.items[prevID].indent;
+        }
+        
+        if (typeof id === "string") throw Error(`Incorrect id value: '${id}'`);
+        const index = itemOrder.indexOf(id);
+        if (index === 0) return -1;
+        else {
+            const prevID = itemOrder[index - 1];
+            return toDoList.items[prevID].indent;
+        }
+    };
+
 }
 
 /**
