@@ -3,18 +3,19 @@ import type { ToDoList } from "../../../types/data/to-do-list";
 
 /** Contains selectors for to-do list object data. */
 export class ToDoListSelectors {
-    /**
-     * Returns item IDs of a `toDoList` sorted according its current `sort_type`.
-     */
+    /** Returns an `item_id` for a new item in `toDoList`. */
+    static newItemID(toDoList: ToDoList) {
+        return toDoList.itemOrder.length > 0 ? Math.max(...toDoList.itemOrder) + 1 : 0;
+    }
+
+    /** Returns item IDs of a `toDoList` sorted according its current `sort_type`. */
     static sortedItemIDs(toDoList: ToDoList) {
         if (toDoList.sort_type === "default") return [...toDoList.itemOrder];
         if (toDoList.sort_type === "state") return sortByState(toDoList, toDoList.itemOrder);
         throw Error(`Incorrect sort_type: ${toDoList.sort_type}`);
     };
     
-    /**
-     * Returns sorted item IDs of visible items (parents of which are not collapsed) of the `toDoList`.
-     */
+    /** Returns sorted item IDs of visible items (parents of which are not collapsed) of the `toDoList`. */
     static visibleItemIDs(toDoList: ToDoList) {
         const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
         return getVisibleItemIDs(toDoList, sortedItemIDs);

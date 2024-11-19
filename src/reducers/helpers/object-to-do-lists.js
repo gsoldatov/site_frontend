@@ -1,4 +1,4 @@
-import { getNewItemID, getPreviousItemIndent, 
+import { getPreviousItemIndent, 
         getParentIDs, getChildrenIDs, getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
 import { ToDoListSelectors } from "../../store/selectors/data/objects/to-do-list";
 import { deepCopy } from "../../util/copy";
@@ -33,7 +33,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
         });
 
         if (position === undefined) position = toDoList.itemOrder.indexOf(id) + 1;
-        if (newItemID === undefined) newItemID = getNewItemID(toDoList);
+        if (newItemID === undefined) newItemID = ToDoListSelectors.newItemID(toDoList);
         const newItemOrder = [...toDoList.itemOrder];
         newItemOrder.splice(position, 0, newItemID);
         const newItems = deepCopy(toDoList.items);
@@ -106,7 +106,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
 
         // Add an empty item, if no items are present in to-do list after deletes
         if ([...Object.keys(result.items)].length === 0) {
-            const newItemID = getNewItemID(toDoList);   // get an ID for the new item which did not previously exist, so that deleted item components get unmounted
+            const newItemID = ToDoListSelectors.newItemID(toDoList);   // get an ID for the new item which did not previously exist, so that deleted item components get unmounted
             result = getUpdatedToDoList(result, { command: "add", position: 0, indent: 0, newItemID });
         };
 
@@ -162,7 +162,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
     //
     // Focuses the second new item and places the caret at its beginning.
     else if (command === "split") {
-        const newCurrID = getNewItemID(toDoList);
+        const newCurrID = ToDoListSelectors.newItemID(toDoList);
         const newItemOrder = [...toDoList.itemOrder];
         const position = newItemOrder.indexOf(update.id);
         newItemOrder.splice(position, 1, newCurrID, newCurrID + 1);
@@ -204,7 +204,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
         else {
             // Update itemOrder
             const prevID = sortedItemIDs[sortedPosition - 1];
-            const newCurrID = getNewItemID(toDoList);
+            const newCurrID = ToDoListSelectors.newItemID(toDoList);
             const itemChildren = getChildrenIDs(toDoList, id);
             const newItemOrder = toDoList.itemOrder.filter(i => i !== prevID && i !== id && !itemChildren.includes(i));     // delete prev and current items + current item children
             const insertPosition = getMergedItemInsertPosition(toDoList, prevID, id);
@@ -265,7 +265,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
         else {
             // Update itemOrder
             const nextID = sortedItemIDs[sortedPosition + 1];
-            const newCurrID = getNewItemID(toDoList);
+            const newCurrID = ToDoListSelectors.newItemID(toDoList);
             const nextItemChildren = getChildrenIDs(toDoList, nextID);
             const newItemOrder = toDoList.itemOrder.filter(i => i !== id && i !== nextID && !nextItemChildren.includes(i));     // delete curr and next items + next item children
             const insertPosition = getMergedItemInsertPosition(toDoList, id, nextID);

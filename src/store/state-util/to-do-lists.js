@@ -54,12 +54,6 @@ const sortByState = (toDoList, items) => {
 }
 
 
-/**
- * Returns a new value to use as an item id for a new item in `toDoList`.
- */
-export const getNewItemID = toDoList => toDoList.itemOrder.length > 0 ? Math.max(...toDoList.itemOrder) + 1 : 0;
-
-
 const itemStates = ["active", "optional", "completed", "cancelled"];
 /**
  * Returns a new item `state` based on its current (used for state toggling).
