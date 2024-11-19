@@ -81,6 +81,24 @@ export class ToDoListSelectors {
         }
     };
 
+    /** Returns an insert position in `toDoList.itemOrder` list for an item, resulting in merge of items with ids `first` and `second`. */
+    static mergedItemInsertPosition(toDoList: ToDoList, first: number, second: number) {
+        // For default sort always insert at the position of `first`
+        if (toDoList.sort_type === "default") return toDoList.itemOrder.indexOf(first);
+
+        if (toDoList.sort_type === "state") {
+            const posFirst = toDoList.itemOrder.indexOf(first), posSecond = toDoList.itemOrder.indexOf(second);
+
+            // If `first` is before `second`, insert at the position of `first`
+            if (posFirst < posSecond) return posFirst;
+
+            // If `first` is after `second`, insert at the position of `first` and move if left, 
+            // because `second` will be removed and there'll be one item less before insertPosition in the new itemOrder
+            else return posFirst - 1;
+        }
+
+        throw Error(`Incorrect sort_type: '${toDoList.sort_type}'`);
+    };
 }
 
 /**

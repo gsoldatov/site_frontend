@@ -1,8 +1,6 @@
-import {  
-        getMergedItemInsertPosition } from "../../store/state-util/to-do-lists";
 import { ToDoListSelectors } from "../../store/selectors/data/objects/to-do-list";
-import { deepCopy } from "../../util/copy";
 import { getToDoListItem } from "../../store/types/data/to-do-list";
+import { deepCopy } from "../../util/copy";
 
 
 /*
@@ -207,7 +205,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
             const newCurrID = ToDoListSelectors.newItemID(toDoList);
             const itemChildren = ToDoListSelectors.childrenIDs(toDoList, id);
             const newItemOrder = toDoList.itemOrder.filter(i => i !== prevID && i !== id && !itemChildren.includes(i));     // delete prev and current items + current item children
-            const insertPosition = getMergedItemInsertPosition(toDoList, prevID, id);
+            const insertPosition = ToDoListSelectors.mergedItemInsertPosition(toDoList, prevID, id);
             newItemOrder.splice(insertPosition, 0, newCurrID, ...itemChildren);
 
             // Replace merged items with a new one
@@ -268,7 +266,7 @@ export const getUpdatedToDoList = (toDoList, update) => {
             const newCurrID = ToDoListSelectors.newItemID(toDoList);
             const nextItemChildren = ToDoListSelectors.childrenIDs(toDoList, nextID);
             const newItemOrder = toDoList.itemOrder.filter(i => i !== id && i !== nextID && !nextItemChildren.includes(i));     // delete curr and next items + next item children
-            const insertPosition = getMergedItemInsertPosition(toDoList, id, nextID);
+            const insertPosition = ToDoListSelectors.mergedItemInsertPosition(toDoList, id, nextID);
             newItemOrder.splice(insertPosition, 0, newCurrID, ...nextItemChildren);
 
             // Replace merged items with a new one
