@@ -40,4 +40,39 @@ export class ObjectsEditSelectors {
     
         return objectAndSubobjectIDs;
     };
+
+    /** Returns a list with current & added existing tag IDs. */
+    static existingTagIDs(state: State) {
+        return existingTagIDsSelector(state);
+    }
+
+    /** Returns a map between matching tag IDs and their names. */
+    static matchingTagIDsName(state: State) {
+        return matchingTagIDsNames(state);
+    }
 }
+
+
+/**
+ * Returns memoized list with current & added existing tag IDs.
+ */
+export const existingTagIDsSelector = createSelector(
+    (state: State) => ObjectsEditSelectors.currentObject(state).currentTagIDs,
+    (state: State) => ObjectsEditSelectors.currentObject(state).addedTags,
+    (currentTagIDs, addedTags) => currentTagIDs.concat(
+        addedTags.filter(tag => typeof(tag) === "number")
+    )
+);
+
+
+/**
+ * Returns an object, which maps current matching tag IDs to their names for the new tag input dropdown option list.
+ */
+export const matchingTagIDsNames = createSelector(
+    (state: State) => state.objectsEditUI.tagsInput.matchingIDs,
+    (state: State) => state.tags,
+    (matchingTagIDs, tagsStore) => matchingTagIDs.reduce((result, tagID) => {
+        result[tagID] = tagsStore[tagID].tag_name;
+        return result; 
+    }, {} as Record<number, string>)
+);
