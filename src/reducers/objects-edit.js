@@ -7,7 +7,7 @@ import { deepCopy } from "../util/copy";
 
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
-import { getCurrentObject } from "../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
 
 import { getStateWithResetEditedObjects, getStateWithResetEditedExistingSubobjects, getStateWithDeletedEditedNewSubobjects, 
     getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects} from "./helpers/object";
@@ -277,7 +277,7 @@ function setObjectsEditTagsInput(state, action) {
     Existing values passed via action are removed from the new list.
 */
 function setEditedObjectTags(state, action) {
-    let oldObject = getCurrentObject(state);
+    let oldObject = ObjectsEditSelectors.currentObject(state);
     let newAddedTags, newRemovedTagIDs, addedExistingTagIDs;
 
     if (action.tagUpdates.added instanceof Array && action.tagUpdates.added.length === 0) { // handle reset case

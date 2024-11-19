@@ -7,7 +7,8 @@ import { SideMenuItem } from "../../modules/side-menu/side-menu-item";
 import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer, SideMenuDialogCheckbox } from "../../modules/side-menu/side-menu-dialog";
 
-import { getCurrentObject, isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../../../store/state-util/ui-objects-edit";
+import { isFetchingObject, isFetchingOrOnLoadFetchFailed } from "../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
 import { CompositeSelectors } from "../../../store/selectors/data/objects/composite";
 import { resetEditedObjects, setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog, setToDoListRerenderPending } from "../../../actions/objects-edit";
 import { objectsEditNewSaveFetch, objectsEditExistingSaveFetch, objectsEditExistingDeleteFetch } from "../../../fetches/ui-objects-edit";
@@ -68,7 +69,8 @@ const ViewObject = () => {
 const Save = () => {
     const dispatch = useDispatch();
     const isActive = useSelector(state => 
-        !isFetchingObject(state) && getCurrentObject(state).object_name.length >= 1 && getCurrentObject(state).object_name.length <= 255);
+        !isFetchingObject(state) && ObjectsEditSelectors.currentObject(state).object_name.length >= 1 
+                                 && ObjectsEditSelectors.currentObject(state).object_name.length <= 255);
     const { id } = useParams(); // undefined for new object page
     const onClick = useMemo(() => () => {
         const onSave = id === undefined ? objectsEditNewSaveFetch : objectsEditExistingSaveFetch;
@@ -98,7 +100,7 @@ const ResetDialog = () => {
     const dispatch = useDispatch();
     const { id } = useParams(); // undefined for new object page
     const isVisible = useSelector(state => state.objectsEditUI.showResetDialog);
-    const isCheckboxVisible = useSelector(state => getCurrentObject(state).object_type === "composite");
+    const isCheckboxVisible = useSelector(state => ObjectsEditSelectors.currentObject(state).object_type === "composite");
 
     const yesOnClick = useMemo(() => resetCompositeSubobjects => {
         let params = { hideObjectResetDialog: true, resetCompositeSubobjects };
@@ -138,7 +140,7 @@ const Delete = () => {
 const DeleteDialog = () => {
     const dispatch = useDispatch();
     const isVisible = useSelector(state => state.objectsEditUI.showDeleteDialog);
-    const isCheckboxVisible = useSelector(state => getCurrentObject(state).object_type === "composite");
+    const isCheckboxVisible = useSelector(state => ObjectsEditSelectors.currentObject(state).object_type === "composite");
 
     const yesOnClick = useMemo(() => deleteSubobjects => dispatch(objectsEditExistingDeleteFetch(deleteSubobjects)), []);
     const noOnClick = useMemo(() => () => dispatch(setObjectsEditShowDeleteDialog(false)), []);

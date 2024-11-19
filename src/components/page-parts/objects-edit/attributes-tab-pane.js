@@ -9,7 +9,8 @@ import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
 
-import { getCurrentObject, existingTagIDsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-edit";
+import { existingTagIDsSelector, matchingTagIDsNames } from "../../../store/state-util/ui-objects-edit";
+import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
 import { setEditedObject, setEditedObjectTags, setObjectsEditTagsInput } from "../../../actions/objects-edit";
 import { objectsEditTagsDropdownFetch } from "../../../fetches/ui-objects-edit";
 
@@ -33,8 +34,8 @@ export const AttributesTabPane = ({ objectID }) => {
  * Created at & modified at timestamps
  */
 const ObjectTimestamps = () => {
-    const createdAt = useSelector(state => getCurrentObject(state).created_at);
-    const modifiedAt = useSelector(state => getCurrentObject(state).modified_at);
+    const createdAt = useSelector(state => ObjectsEditSelectors.currentObject(state).created_at);
+    const modifiedAt = useSelector(state => ObjectsEditSelectors.currentObject(state).modified_at);
     const isDisplayed = useSelector(state => state.objectsEditUI.currentObjectID > 0);
 
     if (!isDisplayed) return null;
@@ -48,8 +49,8 @@ const ObjectTimestamps = () => {
  */
 const ObjectNameDescription = () => {
     const dispatch = useDispatch();
-    const name = useSelector(state => getCurrentObject(state).object_name);
-    const description = useSelector(state => getCurrentObject(state).object_description);
+    const name = useSelector(state => ObjectsEditSelectors.currentObject(state).object_name);
+    const description = useSelector(state => ObjectsEditSelectors.currentObject(state).object_description);
 
     const nameOnChange = useRef(object_name => {
         dispatch(setEditedObject({ object_name }));
@@ -83,13 +84,13 @@ const ObjectTags = () => {
 
 
 const CurrentTags = () => {
-    const itemIDs = useSelector(state => getCurrentObject(state).currentTagIDs);
+    const itemIDs = useSelector(state => ObjectsEditSelectors.currentObject(state).currentTagIDs);
     return <InlineItemList itemIDs={itemIDs} ItemComponent={CurrentTagItem} />;
 };
 
 
 const AddedTags = () => {
-    const itemIDs = useSelector(state => getCurrentObject(state).addedTags);
+    const itemIDs = useSelector(state => ObjectsEditSelectors.currentObject(state).addedTags);
     return <InlineItemList itemIDs={itemIDs} ItemComponent={AddedTagItem} />;
 };
 
@@ -114,7 +115,7 @@ const CurrentTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
 
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
-    const isRemoved = useSelector(state => getCurrentObject(state).removedTagIDs.includes(id));
+    const isRemoved = useSelector(state => ObjectsEditSelectors.currentObject(state).removedTagIDs.includes(id));
     const className = isRemoved ? "deleted" : undefined;
     const URL = `/tags/view?tagIDs=${id}`;
     const icons = useMemo(() =>

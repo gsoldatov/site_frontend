@@ -9,9 +9,9 @@ import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setEditedObject, r
     setObjectsEditTagsInput, setAddCompositeSubobjectMenu,
     preSaveEditedObjectsUpdate, setToDoListRerenderPending } from "../actions/objects-edit";
 
-import { getCurrentObject, isFetchingObject } from "../store/state-util/ui-objects-edit";
+import { isFetchingObject } from "../store/state-util/ui-objects-edit";
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
-
+import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
 
@@ -61,7 +61,7 @@ export const objectsEditNewSaveFetch = () => {
 
         // Run fetch & add object
         dispatch(setObjectsEditSaveFetchState(true, ""));
-        const result = await dispatch(objectsAddFetch(getCurrentObject(state)));
+        const result = await dispatch(objectsAddFetch(ObjectsEditSelectors.currentObject(state)));
 
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
@@ -163,7 +163,7 @@ export const objectsEditExistingSaveFetch = () => {
 
         // Run fetch & update object
         dispatch(setObjectsEditSaveFetchState(true, ""));
-        const result = await dispatch(objectsUpdateFetch(getCurrentObject(state)));
+        const result = await dispatch(objectsUpdateFetch(ObjectsEditSelectors.currentObject(state)));
         
         // Handle fetch errors
         const responseErrorType = getResponseErrorType(result);
