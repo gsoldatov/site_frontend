@@ -39,8 +39,8 @@ class NewTDLItem extends React.PureComponent {
         // On `Tab`/ `Shift + Tab` increase/decrease indent of the item and its children by 1.
         else if (e.key === "Tab") {
             e.preventDefault();
-            if (e.shiftKey) this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: "newItem", decrease: true }});
-            else this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: "newItem", increase: true }});
+            if (e.shiftKey) this.props.updateCallback({ toDoListItemUpdate: { command: "setItemIndent", itemID: "newItem", decrease: true }});
+            else this.props.updateCallback({ toDoListItemUpdate: { command: "setItemIndent", itemID: "newItem", increase: true }});
         }
     };
     

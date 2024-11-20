@@ -184,8 +184,8 @@ class TDLItem extends React.PureComponent {
         // On `Tab`/ `Shift + Tab` increase/decrease indent of the item and its children by 1.
         else if (e.key === "Tab") {
             e.preventDefault();
-            if (e.shiftKey) this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: this.props.id, decrease: true }});
-            else this.props.updateCallback({ toDoListItemUpdate: { command: "setIndent", id: this.props.id, increase: true }});
+            if (e.shiftKey) this.props.updateCallback({ toDoListItemUpdate: { command: "setItemIndent", itemID: this.props.id, decrease: true }});
+            else this.props.updateCallback({ toDoListItemUpdate: { command: "setItemIndent", itemID: this.props.id, increase: true }});
         }
 
         // On `F1` toggle item state.

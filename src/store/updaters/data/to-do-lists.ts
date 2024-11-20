@@ -1,7 +1,7 @@
 import { deepCopy } from "../../../util/copy";
 
 import { ToDoListSelectors } from "../../selectors/data/objects/to-do-list";
-import { getToDoListItem, type ToDoListItem, type ToDoList, type ToDoListSetFocusOnID } from "../../types/data/to-do-list";
+import { getToDoListItem, type ToDoListItem, type ToDoList, type ToDoListNewOrExistingItemNumber } from "../../types/data/to-do-list";
 
 
 export class ToDoListUpdaters {
@@ -71,7 +71,7 @@ export class ToDoListUpdaters {
         
 
         // Set focus (for Delete & Backspace key press handling)
-        let setFocusOnID: ToDoListSetFocusOnID = toDoList.setFocusOnID;
+        let setFocusOnID: ToDoListNewOrExistingItemNumber = toDoList.setFocusOnID;
         if (setFocus !== undefined) {
             if (toDoList.itemOrder.length > 1) {
                 const deletedPosition = toDoList.itemOrder.indexOf(itemID);
@@ -348,6 +348,59 @@ export class ToDoListUpdaters {
         expandParents(result, movedItemID);
         return result;
     }
+    
+    /**
+     * Updates indent of the item with provided `id` and its children.
+     * If `itemID` = "newItem", sets indent of new item input.
+     * Accepts `increase`/`decrease` boolean arguments to increase/decrease indent by 1 or a new value passed in `indent` argument.
+     * 
+     * Supports only the default sort_type of the list.
+     * 
+     * Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
+     */
+    static setItemIndent(toDoList: ToDoList, update: ToDoListUpdateParamsSetItemIndent): ToDoList {
+        if (toDoList.sort_type !== "default") return toDoList;
+        else {
+            let { itemID, increase, decrease, indent } = update;
+            if (!increase && !decrease && indent === undefined) throw Error("`increase`, `decrease` or `indent` must be specified.");
+
+            // Update new item indent
+            if (itemID === "newItem") {
+                if (increase) indent = toDoList.newItemInputIndent + 1;
+                else if (decrease) indent = toDoList.newItemInputIndent - 1;
+                indent = Math.min(Math.max(indent!, 0), 5);
+                indent = Math.min(indent, ToDoListSelectors.previousItemIndent(toDoList, itemID) + 1);
+                return { ...toDoList, newItemInputIndent: indent };
+            } 
+            else {
+                // Update existing items
+                const newItems = {...toDoList.items};   // item
+                let item = toDoList.items[itemID];
+                if (increase) indent = item.indent + 1;
+                else if (decrease) indent = item.indent - 1;
+                indent = Math.min(Math.max(indent!, 0), 5);
+                indent = Math.min(indent, ToDoListSelectors.previousItemIndent(toDoList, itemID) + 1);
+                newItems[itemID] = {...item, indent};
+
+                const indentDifference = indent - item.indent;      // children
+                ToDoListSelectors.childrenIDs(toDoList, itemID).forEach(i => {
+                    let item = toDoList.items[i];
+                    let indent = Math.min(Math.max(item.indent + indentDifference, 0), 5);
+                    newItems[i] = {...item, indent};
+                });
+
+                // Update new item input's indent
+                const result = { ...toDoList, items: newItems };
+                setNewItemInputIndent(result);
+
+                // Expand parents 
+                // (if indent was increased, and a new parent is collapsed, 
+                // this will cause current item to disappear, which is not convenient)
+                expandParents(result, itemID);
+                return result;
+            }
+        }
+    }
 
     // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
     // TODO make all methods return a new to-do list?
@@ -365,9 +418,14 @@ type ToDoListUpdateParamsMergeItemWithNext = { command: "mergeItemWithNext", ite
 type ToDoListUpdateParamsStartItemDrag = { command: "startItemDrag", itemID: number };
 type ToDoListUpdateParamsEndItemDrag = { command: "endItemDrag" };
 type ToDoListUpdateParamsMoveItems = { command: "moveItems", movedItemID: number, targetItemID: number, targetLastItem: boolean };
+type ToDoListUpdateParamsSetItemIndent = { command: "setItemIndent",
+    itemID: ToDoListNewOrExistingItemNumber, increase?: boolean, decrease?: boolean, indent?: number
+};
+
 export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
     ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem | ToDoListUpdateParamsSplitItem | ToDoListUpdateParamsMergeItemWithPrev |
-    ToDoListUpdateParamsMergeItemWithNext | ToDoListUpdateParamsStartItemDrag | ToDoListUpdateParamsEndItemDrag | ToDoListUpdateParamsMoveItems;
+    ToDoListUpdateParamsMergeItemWithNext | ToDoListUpdateParamsStartItemDrag | ToDoListUpdateParamsEndItemDrag | ToDoListUpdateParamsMoveItems |
+    ToDoListUpdateParamsSetItemIndent;
 
 /**
  * Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
@@ -386,57 +444,13 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
     if (command === "mergeItemWithNext") return ToDoListUpdaters.mergeItemWithNext(toDoList, update);
     if (command === "startItemDrag") return ToDoListUpdaters.startItemDrag(toDoList, update);
     if (command === "endItemDrag") return ToDoListUpdaters.endItemDrag(toDoList, update);
+    if (command === "moveItems") return ToDoListUpdaters.moveItems(toDoList, update);
+    if (command === "setItemIndent") return ToDoListUpdaters.setItemIndent(toDoList, update);
+
     throw Error(`Command '${command}' handler not implemented.`);
     
 
-    // // Updates indent of the item with provided `id` and its children.
-    // // If `id` = "newItem", sets indent of new item input.
-    // // Accepts `increase`/`decrease` boolean arguments to increase/decrease indent by 1 or a new value passed in `indent` argument.
-    // //
-    // // Supports only the default sort_type of the list.
-    // //
-    // // Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
-    // else if (command === "setIndent") {
-    //     if (toDoList.sort_type !== "default") result = toDoList;
-    //     else {
-    //         let { id, increase, decrease, indent } = update;
-
-    //         // Update new item indent
-    //         if (id === "newItem") {
-    //             if (increase) indent = toDoList.newItemInputIndent + 1;
-    //             else if (decrease) indent = toDoList.newItemInputIndent - 1;
-    //             indent = Math.min(Math.max(indent, 0), 5);
-    //             indent = Math.min(indent, ToDoListSelectors.previousItemIndent(toDoList, id) + 1);
-    //             result = { ...toDoList, newItemInputIndent: indent };
-    //         } 
-    //         else {
-    //             // Update existing items
-    //             const newItems = {...toDoList.items};   // item
-    //             let item = toDoList.items[id];
-    //             if (increase) indent = item.indent + 1;
-    //             else if (decrease) indent = item.indent - 1;
-    //             indent = Math.min(Math.max(indent, 0), 5);
-    //             indent = Math.min(indent, ToDoListSelectors.previousItemIndent(toDoList, id) + 1);
-    //             newItems[id] = {...item, indent};
-
-    //             const indentDifference = indent - item.indent;      // children
-    //             ToDoListSelectors.childrenIDs(toDoList, id).forEach(i => {
-    //                 let item = toDoList.items[i];
-    //                 let indent = Math.min(Math.max(item.indent + indentDifference, 0), 5);
-    //                 newItems[i] = {...item, indent};
-    //             });
-
-    //             // Update new item input's indent
-    //             result = { ...toDoList, items: newItems };
-    //             setNewItemInputIndent(result);
-
-    //             // Expand parents 
-    //             // (if indent was increased, and a new parent is collapsed, 
-    //             // this will cause current item to disappear, which is not convenient)
-    //             expandParents(result, id);
-    //         }
-    //     }
-    // }
+    
     
     // // Returns a new to-do list with its items being numerated continiously
     // else if (command === "normalizeItemIDs") {

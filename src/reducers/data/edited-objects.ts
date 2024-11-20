@@ -26,7 +26,7 @@ const _updateEditedToDoList = (state: State, action: { objectID: number, update:
     const { objectID, update } = action;
     const toDoList = ["addItem", "updateItem", "deleteItem", "focusPrevItem",
         "focusNextItem", "splitItem", "mergeItemWithPrev", "mergeItemWithNext", "startItemDrag",
-        "endItemDrag", "moveItems"
+        "endItemDrag", "moveItems", "setItemIndent"
     ].includes(update.command)
         ? getUpdatedToDoList(state.editedObjects[objectID].toDoList, update)
         : OLD_getUpdatedToDoList(state.editedObjects[objectID].toDoList, update);    // TODO remove old version when possible
