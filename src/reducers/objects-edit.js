@@ -12,7 +12,7 @@ import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
 import { getStateWithResetEditedObjects, getStateWithResetEditedExistingSubobjects, getStateWithDeletedEditedNewSubobjects, 
     getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects} from "./helpers/object";
 import { getEditedObjectState } from "../store/types/data/edited-objects";
-import { getUpdatedToDoList } from "./helpers/object-to-do-lists";
+import { getUpdatedToDoList } from "../store/updaters/data/to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
 
@@ -201,9 +201,9 @@ function setEditedObject(state, action) {
 
     // To-do lists
     let newToDoList = oldObject.toDoList;
-    if ("toDoListItemUpdate" in action.object) {
+    /*if ("toDoListItemUpdate" in action.object) {              // TODO remove commented
         newToDoList = getUpdatedToDoList(oldObject.toDoList, action.object.toDoListItemUpdate);
-    } else if ("toDoList" in action.object) {
+    } else */ if ("toDoList" in action.object) {
         const aTDL = action.object.toDoList;
         
         newToDoList = {

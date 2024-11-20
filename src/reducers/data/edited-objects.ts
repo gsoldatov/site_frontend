@@ -3,7 +3,6 @@ import { EditedObjectsUpdaters } from "../../store/updaters/data/edited-objects"
 import type { State } from "../../store/types/state";
 import { type EditedObject } from "../../store/types/data/edited-objects";
 import { getUpdatedToDoList, type ToDoListUpdateParams } from "../../store/updaters/data/to-do-lists";
-import { getUpdatedToDoList as OLD_getUpdatedToDoList } from "../helpers/object-to-do-lists";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,12 +23,7 @@ export const updateEditedToDoList = (objectID: number, update: ToDoListUpdatePar
 
 const _updateEditedToDoList = (state: State, action: { objectID: number, update: ToDoListUpdateParams }): State => {
     const { objectID, update } = action;
-    const toDoList = ["addItem", "updateItem", "deleteItem", "focusPrevItem",
-        "focusNextItem", "splitItem", "mergeItemWithPrev", "mergeItemWithNext", "startItemDrag",
-        "endItemDrag", "moveItems", "setItemIndent"
-    ].includes(update.command)
-        ? getUpdatedToDoList(state.editedObjects[objectID].toDoList, update)
-        : OLD_getUpdatedToDoList(state.editedObjects[objectID].toDoList, update);    // TODO remove old version when possible
+    const toDoList = getUpdatedToDoList(state.editedObjects[objectID].toDoList, update)
     const newEditedObject = { ...state.editedObjects[objectID], toDoList };
     return { ...state, editedObjects: { ...state.editedObjects, [objectID]: newEditedObject }};
 };

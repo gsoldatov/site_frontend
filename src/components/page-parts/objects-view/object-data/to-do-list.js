@@ -6,7 +6,7 @@ import { TDLContainer } from "../../../state-users/objects-edit/data/to-do-list/
 
 import { objectsViewToDoListObjectUpdateFetch } from "../../../../fetches/ui-objects-view";
 
-import { getUpdatedToDoList } from "../../../../reducers/helpers/object-to-do-lists";
+import { getUpdatedToDoList } from "../../../../store/updaters/data/to-do-lists";
 import { deepCopy } from "../../../../util/copy";
 import debounce from "../../../../util/debounce";
 import { NumericUserLevel } from "../../../../store/types/data/auth";
