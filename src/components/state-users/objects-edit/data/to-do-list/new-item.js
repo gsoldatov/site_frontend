@@ -33,7 +33,7 @@ class NewTDLItem extends React.PureComponent {
 
         // On `ArrowUp` keypress, focus last existing item
         else if (e.key === "ArrowUp") {
-            this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", focusLastItem: true }});
+            this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrevItem", focusLastItem: true }});
         }
 
         // On `Tab`/ `Shift + Tab` increase/decrease indent of the item and its children by 1.

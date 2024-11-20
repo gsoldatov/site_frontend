@@ -104,6 +104,33 @@ export class ToDoListUpdaters {
         return result;
     }
 
+    /**
+     * Focuses the closest visible item before the item with provided `itemID` and puts caret on `caretPositionOnFocus`.
+     * Previous item is calculated based on the current sort_type.
+     * 
+     * If `focusLastItem` is set to true, focuses the last item of the list instead.
+     * 
+     * State order is: "active" -> "optional" -> "completed" -> "cancelled".
+     */
+    static focusPrevItem(toDoList: ToDoList, update: ToDoListUpdateParamsFocusPrevItem): ToDoList {
+        const visibleItemIDs = ToDoListSelectors.visibleItemIDs(toDoList);
+
+        if ("focusLastItem" in update) {     // move from new item item to the last existing item
+            if (visibleItemIDs.length === 0) return toDoList;
+            else return { ...toDoList, setFocusOnID: visibleItemIDs[visibleItemIDs.length - 1] };
+        } 
+        else {
+            const position = visibleItemIDs.indexOf(update.itemID);
+            return {
+                ...toDoList,
+                setFocusOnID: position <= 0 ? visibleItemIDs[0] : visibleItemIDs[position - 1],
+                caretPositionOnFocus: position <= 0
+                    ? 0     // If trying to move top from the topmost item, explicitly set caret at its start
+                    : (update.caretPositionOnFocus > -1 ? update.caretPositionOnFocus : toDoList.caretPositionOnFocus)
+            };
+        }
+    }
+
     // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
     // TODO make all methods return a new to-do list?
     // TODO change command names: add -> addItem, update -> updateItem, delete -> deleteItem
@@ -112,7 +139,9 @@ export class ToDoListUpdaters {
 type ToDoListUpdateParamsAddItem = { command: "addItem", previousItemID?: number, position?: number, newItemID?: number } & Partial<ToDoListItem>;
 type ToDoListUpdateParamsUpdateItem = { command: "updateItem", itemID: number } & Partial<ToDoListItem>;
 type ToDoListUpdateParamsDeleteItem = { command: "deleteItem", itemID: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
-export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem;
+type ToDoListUpdateParamsFocusPrevItem = { command: "focusPrevItem" } & ({ focusLastItem: true } | { itemID: number, caretPositionOnFocus: number });
+export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
+    ToDoListUpdateParamsFocusPrevItem;
 
 /**
  * Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
@@ -124,36 +153,10 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
     if (command === "addItem") return ToDoListUpdaters.addItem(toDoList, update);
     if (command === "updateItem") return ToDoListUpdaters.updateItem(toDoList, update);
     if (command === "deleteItem") return ToDoListUpdaters.deleteItem(toDoList, update);
+    if (command === "focusPrevItem") return ToDoListUpdaters.focusPrevItem(toDoList, update);
     throw Error(`Command '${command}' handler not implemented.`);
 
-   
-
     
-
-    // // Focuses the next visible item before the item with provided `id`.
-    // // Previous item is calculated based on the current sort_type.
-    // //
-    // // If `focusLastItem` is set to true, focuses the last item of the list instead.
-    // //
-    // // State order is: "active" -> "optional" -> "completed" -> "cancelled".
-    // else if (command === "focusPrev") {
-    //     const visibleItemIDs = ToDoListSelectors.visibleItemIDs(toDoList);
-
-    //     if (update.focusLastItem) {     // move from new item item to the last existing item
-    //         if (visibleItemIDs.length === 0) result = toDoList;
-    //         else result = { ...toDoList, setFocusOnID: visibleItemIDs[visibleItemIDs.length - 1] };
-    //     } 
-    //     else {
-    //         const position = visibleItemIDs.indexOf(update.id);
-    //         result = {
-    //             ...toDoList,
-    //             setFocusOnID: position <= 0 ? visibleItemIDs[0] : visibleItemIDs[position - 1],
-    //             caretPositionOnFocus: position <= 0
-    //                 ? 0     // If trying to move top from the topmost item, explicitly set caret at its start
-    //                 : (update.caretPositionOnFocus > -1 ? update.caretPositionOnFocus : toDoList.caretPositionOnFocus)
-    //         };
-    //     }
-    // }
 
     // // Focuses the next visible item after the item with provided `id`.
     // // Next item is calculated based on the current sort_type.

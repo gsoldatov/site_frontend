@@ -116,7 +116,7 @@ class TDLItem extends React.PureComponent {
                 if (line === 0 || line === -1) {
                     e.preventDefault();
                     // Always move to the last position in the previous item (moving to the same position would require to calculate the correct position in the last row)
-                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrev", id: this.props.id, caretPositionOnFocus: Number.MAX_SAFE_INTEGER }});
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusPrevItem", itemID: this.props.id, caretPositionOnFocus: Number.MAX_SAFE_INTEGER }});
                 }
             }
         }
