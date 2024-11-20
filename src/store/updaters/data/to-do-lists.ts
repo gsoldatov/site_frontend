@@ -131,6 +131,25 @@ export class ToDoListUpdaters {
         }
     }
 
+    /**
+     * Focuses the closest visible item after the item with provided `itemID` and puts caret on `caretPositionOnFocus`.
+     * Next item is calculated based on the current sort_type.
+     * 
+     * State order is: "active" -> "optional" -> "completed" -> "cancelled".
+     */
+    static focusNextItem(toDoList: ToDoList, update: ToDoListUpdateParamsFocusNextItem): ToDoList {
+        const visibleItemIDs = ToDoListSelectors.visibleItemIDs(toDoList);
+        const position = visibleItemIDs.indexOf(update.itemID);
+        if (position < 0) return toDoList;
+        else return {
+            ...toDoList,
+            setFocusOnID: position < visibleItemIDs.length - 1 ? visibleItemIDs[position + 1] : "newItem",   // handle item -> item + 1 and item -> newItem cases
+            caretPositionOnFocus: position < toDoList.itemOrder.length - 1 && update.caretPositionOnFocus > -1
+                ? update.caretPositionOnFocus       // update caretPositionOnFocus if it's provided and an existing item is selected
+                : toDoList.caretPositionOnFocus
+        };
+    }
+
     // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
     // TODO make all methods return a new to-do list?
     // TODO change command names: add -> addItem, update -> updateItem, delete -> deleteItem
@@ -140,8 +159,9 @@ type ToDoListUpdateParamsAddItem = { command: "addItem", previousItemID?: number
 type ToDoListUpdateParamsUpdateItem = { command: "updateItem", itemID: number } & Partial<ToDoListItem>;
 type ToDoListUpdateParamsDeleteItem = { command: "deleteItem", itemID: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
 type ToDoListUpdateParamsFocusPrevItem = { command: "focusPrevItem" } & ({ focusLastItem: true } | { itemID: number, caretPositionOnFocus: number });
+type ToDoListUpdateParamsFocusNextItem = { command: "focusNextItem", itemID: number, caretPositionOnFocus: number };
 export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
-    ToDoListUpdateParamsFocusPrevItem;
+    ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem;
 
 /**
  * Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
@@ -154,26 +174,12 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
     if (command === "updateItem") return ToDoListUpdaters.updateItem(toDoList, update);
     if (command === "deleteItem") return ToDoListUpdaters.deleteItem(toDoList, update);
     if (command === "focusPrevItem") return ToDoListUpdaters.focusPrevItem(toDoList, update);
+    if (command === "focusNextItem") return ToDoListUpdaters.focusNextItem(toDoList, update);
     throw Error(`Command '${command}' handler not implemented.`);
 
     
 
-    // // Focuses the next visible item after the item with provided `id`.
-    // // Next item is calculated based on the current sort_type.
-    // //
-    // // State order is: "active" -> "optional" -> "completed" -> "cancelled".
-    // else if (command === "focusNext") {
-    //     const visibleItemIDs = ToDoListSelectors.visibleItemIDs(toDoList);
-    //     const position = visibleItemIDs.indexOf(update.id);
-    //     if (position < 0) result = toDoList;
-    //     else result = {
-    //         ...toDoList,
-    //         setFocusOnID: position < visibleItemIDs.length - 1 ? visibleItemIDs[position + 1] : "newItem",   // handle item -> item + 1 and item -> newItem cases
-    //         caretPositionOnFocus: position < toDoList.itemOrder.length - 1 && update.caretPositionOnFocus > -1
-    //             ? update.caretPositionOnFocus       // update caretPositionOnFocus if it's provided and an existing item is selected
-    //             : toDoList.caretPositionOnFocus
-    //     };
-    // }
+    
 
     // // Replaces item with the provided `id` by two new items.
     // // New items receive the texts contained in `before` and `after` (which should contain the text before and after the caret in the replaced item).

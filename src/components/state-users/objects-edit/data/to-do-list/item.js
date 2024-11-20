@@ -130,7 +130,7 @@ class TDLItem extends React.PureComponent {
                 const [line, offset] = caret.getCaretPositionData(this.inputRef.current);
                 if (line >= getElementHeightInLines(this.inputRef.current) - 1 || line === -1) {
                     e.preventDefault();
-                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusNext", id: this.props.id, caretPositionOnFocus: offset /*0*/ }});
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "focusNextItem", itemID: this.props.id, caretPositionOnFocus: offset /*0*/ }});
                 }
             }
         }
