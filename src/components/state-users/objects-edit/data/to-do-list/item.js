@@ -146,7 +146,7 @@ class TDLItem extends React.PureComponent {
             const splitText = caret.getSplitText(this.inputRef.current);
             if (splitText !== null) {   // merge item with previous
                 if (splitText.before.length === 0) {
-                    this.props.updateCallback({ toDoListItemUpdate: { command: "mergeWithPrev", id: this.props.id }});
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "mergeItemWithPrev", itemID: this.props.id }});
                     e.preventDefault();     // backspace key press default handlers are run after this event
                 }
             }
