@@ -309,48 +309,10 @@ export class ToDoListUpdaters {
         return { ...toDoList, draggedParent: itemID, draggedChildren };
     }
 
-    // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
-    // TODO make all methods return a new to-do list?
-    // TODO change command names: add -> addItem, update -> updateItem, delete -> deleteItem
-}
-
-type ToDoListUpdateParamsAddItem = { command: "addItem", previousItemID?: number, position?: number, newItemID?: number } & Partial<ToDoListItem>;
-type ToDoListUpdateParamsUpdateItem = { command: "updateItem", itemID: number } & Partial<ToDoListItem>;
-type ToDoListUpdateParamsDeleteItem = { command: "deleteItem", itemID: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
-type ToDoListUpdateParamsFocusPrevItem = { command: "focusPrevItem" } & ({ focusLastItem: true } | { itemID: number, caretPositionOnFocus: number });
-type ToDoListUpdateParamsFocusNextItem = { command: "focusNextItem", itemID: number, caretPositionOnFocus: number };
-type ToDoListUpdateParamsSplitItem = { command: "splitItem", itemID: number, before: string, after: string };
-type ToDoListUpdateParamsMergeItemWithPrev = { command: "mergeItemWithPrev", itemID: number };
-type ToDoListUpdateParamsMergeItemWithNext = { command: "mergeItemWithNext", itemID: number };
-type ToDoListUpdateParamsStartItemDrag = { command: "startItemDrag", itemID: number };
-export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
-    ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem | ToDoListUpdateParamsSplitItem | ToDoListUpdateParamsMergeItemWithPrev |
-    ToDoListUpdateParamsMergeItemWithNext | ToDoListUpdateParamsStartItemDrag;
-
-/**
- * Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
- * 
- * `update` is an object with `command` prop with the type of update to perform, as well as additional props specifying the update.
- */
-export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdateParams): ToDoList => {
-    const { command } = update;
-    if (command === "addItem") return ToDoListUpdaters.addItem(toDoList, update);
-    if (command === "updateItem") return ToDoListUpdaters.updateItem(toDoList, update);
-    if (command === "deleteItem") return ToDoListUpdaters.deleteItem(toDoList, update);
-    if (command === "focusPrevItem") return ToDoListUpdaters.focusPrevItem(toDoList, update);
-    if (command === "focusNextItem") return ToDoListUpdaters.focusNextItem(toDoList, update);
-    if (command === "splitItem") return ToDoListUpdaters.splitItem(toDoList, update);
-    if (command === "mergeItemWithPrev") return ToDoListUpdaters.mergeItemWithPrev(toDoList, update);
-    if (command === "mergeItemWithNext") return ToDoListUpdaters.mergeItemWithNext(toDoList, update);
-    if (command === "startItemDrag") return ToDoListUpdaters.startItemDrag(toDoList, update);
-    throw Error(`Command '${command}' handler not implemented.`);
-    
-
-
-    // // Clears toDoList.draggedItems.
-    // else if (command === "endDrag") {
-    //     result = { ...toDoList, draggedParent: -1, draggedChildren: [], draggedOver: -1 };
-    // }
+    /** Clears toDoList drag state. */
+    static endItemDrag(toDoList: ToDoList, update: ToDoListUpdateParamsEndItemDrag): ToDoList {
+        return { ...toDoList, draggedParent: -1, draggedChildren: [], draggedOver: -1 };
+    }
 
     // // Moves the item with id = `movedID` and its children before the item with id = `targetID`.
     // // If `targetLastItem` == true, moves the item to the end of the item list (has a higher priority than `targetID`).
@@ -383,6 +345,45 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
     //     // Expand parent of the new item
     //     expandParents(result, movedID);
     // }
+
+    // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
+    // TODO make all methods return a new to-do list?
+    // TODO change command names: add -> addItem, update -> updateItem, delete -> deleteItem
+}
+
+type ToDoListUpdateParamsAddItem = { command: "addItem", previousItemID?: number, position?: number, newItemID?: number } & Partial<ToDoListItem>;
+type ToDoListUpdateParamsUpdateItem = { command: "updateItem", itemID: number } & Partial<ToDoListItem>;
+type ToDoListUpdateParamsDeleteItem = { command: "deleteItem", itemID: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
+type ToDoListUpdateParamsFocusPrevItem = { command: "focusPrevItem" } & ({ focusLastItem: true } | { itemID: number, caretPositionOnFocus: number });
+type ToDoListUpdateParamsFocusNextItem = { command: "focusNextItem", itemID: number, caretPositionOnFocus: number };
+type ToDoListUpdateParamsSplitItem = { command: "splitItem", itemID: number, before: string, after: string };
+type ToDoListUpdateParamsMergeItemWithPrev = { command: "mergeItemWithPrev", itemID: number };
+type ToDoListUpdateParamsMergeItemWithNext = { command: "mergeItemWithNext", itemID: number };
+type ToDoListUpdateParamsStartItemDrag = { command: "startItemDrag", itemID: number };
+type ToDoListUpdateParamsEndItemDrag = { command: "endItemDrag" };
+export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
+    ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem | ToDoListUpdateParamsSplitItem | ToDoListUpdateParamsMergeItemWithPrev |
+    ToDoListUpdateParamsMergeItemWithNext | ToDoListUpdateParamsStartItemDrag;
+
+/**
+ * Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
+ * 
+ * `update` is an object with `command` prop with the type of update to perform, as well as additional props specifying the update.
+ */
+export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdateParams): ToDoList => {
+    const { command } = update;
+    if (command === "addItem") return ToDoListUpdaters.addItem(toDoList, update);
+    if (command === "updateItem") return ToDoListUpdaters.updateItem(toDoList, update);
+    if (command === "deleteItem") return ToDoListUpdaters.deleteItem(toDoList, update);
+    if (command === "focusPrevItem") return ToDoListUpdaters.focusPrevItem(toDoList, update);
+    if (command === "focusNextItem") return ToDoListUpdaters.focusNextItem(toDoList, update);
+    if (command === "splitItem") return ToDoListUpdaters.splitItem(toDoList, update);
+    if (command === "mergeItemWithPrev") return ToDoListUpdaters.mergeItemWithPrev(toDoList, update);
+    if (command === "mergeItemWithNext") return ToDoListUpdaters.mergeItemWithNext(toDoList, update);
+    if (command === "startItemDrag") return ToDoListUpdaters.startItemDrag(toDoList, update);
+    if (command === "endItemDrag") return ToDoListUpdaters.endItemDrag(toDoList, update);
+    throw Error(`Command '${command}' handler not implemented.`);
+    
 
     // // Updates indent of the item with provided `id` and its children.
     // // If `id` = "newItem", sets indent of new item input.

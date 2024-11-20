@@ -308,7 +308,7 @@ const dragSourceSpec = {
         return { objectID: props.objectID, itemID: props.id };
     },
     endDrag: (props, monitor, component) => {
-        props.updateCallback({ toDoListItemUpdate: { command: "endDrag" }});
+        props.updateCallback({ toDoListItemUpdate: { command: "endItemDrag" }});
         component.setState({...component.state, initialItemText: props.item_text });    // inner HTML value must be updated or it will render the item_text passed in the component's constructor
         if (!monitor.didDrop()) return;
 
