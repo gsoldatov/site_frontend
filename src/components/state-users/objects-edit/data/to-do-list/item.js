@@ -304,7 +304,7 @@ export const indentClassNames = {
 // Drag & drop specifications, collecting functions and wrapping
 const dragSourceSpec = {
     beginDrag: props => {
-        props.updateCallback({ toDoListItemUpdate: { command: "startDrag", id: props.id }});
+        props.updateCallback({ toDoListItemUpdate: { command: "startItemDrag", itemID: props.id }});
         return { objectID: props.objectID, itemID: props.id };
     },
     endDrag: (props, monitor, component) => {

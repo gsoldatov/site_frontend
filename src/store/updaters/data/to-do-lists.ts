@@ -301,6 +301,14 @@ export class ToDoListUpdaters {
         }
     }
 
+    /** Sets toDoList.draggedItems to `itemID` and `draggedChildren` to its children. */
+    static startItemDrag(toDoList: ToDoList, update: ToDoListUpdateParamsStartItemDrag): ToDoList {
+        const { itemID } = update;
+        // const draggedItems = [itemID].concat(ToDoListSelectors.childrenIDs(toDoList, itemID));
+        const draggedChildren = ToDoListSelectors.childrenIDs(toDoList, itemID);
+        return { ...toDoList, draggedParent: itemID, draggedChildren };
+    }
+
     // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
     // TODO make all methods return a new to-do list?
     // TODO change command names: add -> addItem, update -> updateItem, delete -> deleteItem
@@ -313,10 +321,11 @@ type ToDoListUpdateParamsFocusPrevItem = { command: "focusPrevItem" } & ({ focus
 type ToDoListUpdateParamsFocusNextItem = { command: "focusNextItem", itemID: number, caretPositionOnFocus: number };
 type ToDoListUpdateParamsSplitItem = { command: "splitItem", itemID: number, before: string, after: string };
 type ToDoListUpdateParamsMergeItemWithPrev = { command: "mergeItemWithPrev", itemID: number };
-type ToDoListUpdateParamsMergeItemWithNext = { command: "mergeItemWithPrev", itemID: number };
+type ToDoListUpdateParamsMergeItemWithNext = { command: "mergeItemWithNext", itemID: number };
+type ToDoListUpdateParamsStartItemDrag = { command: "startItemDrag", itemID: number };
 export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
     ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem | ToDoListUpdateParamsSplitItem | ToDoListUpdateParamsMergeItemWithPrev |
-    ToDoListUpdateParamsMergeItemWithNext;
+    ToDoListUpdateParamsMergeItemWithNext | ToDoListUpdateParamsStartItemDrag;
 
 /**
  * Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
@@ -333,16 +342,10 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
     if (command === "splitItem") return ToDoListUpdaters.splitItem(toDoList, update);
     if (command === "mergeItemWithPrev") return ToDoListUpdaters.mergeItemWithPrev(toDoList, update);
     if (command === "mergeItemWithNext") return ToDoListUpdaters.mergeItemWithNext(toDoList, update);
+    if (command === "startItemDrag") return ToDoListUpdaters.startItemDrag(toDoList, update);
     throw Error(`Command '${command}' handler not implemented.`);
     
 
-    // // Sets toDoList.draggedItems with `id` and its children.
-    // else if (command === "startDrag") {
-    //     const { id } = update;
-    //     // const draggedItems = [id].concat(ToDoListSelectors.childrenIDs(toDoList, id));
-    //     const draggedChildren = ToDoListSelectors.childrenIDs(toDoList, id);
-    //     result = { ...toDoList, draggedParent: id, draggedChildren };
-    // }
 
     // // Clears toDoList.draggedItems.
     // else if (command === "endDrag") {
