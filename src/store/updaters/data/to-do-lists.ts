@@ -314,37 +314,40 @@ export class ToDoListUpdaters {
         return { ...toDoList, draggedParent: -1, draggedChildren: [], draggedOver: -1 };
     }
 
-    // // Moves the item with id = `movedID` and its children before the item with id = `targetID`.
-    // // If `targetLastItem` == true, moves the item to the end of the item list (has a higher priority than `targetID`).
-    // // Expands new parents of the moved item (to avoid errors caused by React DnD trying to update state of an unmounted component).
-    // //
-    // // Supports only the default sort_type of the list.
-    // else if (command === "moveItems") {
-    //     const { movedID, targetID, targetLastItem } = update;
+    /**
+     * Moves the item with id = `movedItemID` and its children before the item with id = `targetItemID`.
+     * If `targetLastItem` == true, moves the item to the end of the item list (has a higher priority than `targetItemID`).
+     * Expands new parents of the moved item (to avoid errors caused by React DnD trying to update state of an unmounted component).
+     * 
+     * Supports only the default sort_type of the list.
+     */
+    static moveItems(toDoList: ToDoList, update: ToDoListUpdateParamsMoveItems): ToDoList {
+        const { movedItemID, targetItemID, targetLastItem } = update;
 
-    //     // Move item and its children
-    //     const movedChildren = ToDoListSelectors.childrenIDs(toDoList, movedID);
-    //     const newItemOrder = [...toDoList.itemOrder];
-    //     const movedPosition = newItemOrder.indexOf(movedID);
-    //     newItemOrder.splice(movedPosition, 1 + movedChildren.length);
-    //     const targetPosition = targetLastItem ? newItemOrder.length : newItemOrder.indexOf(targetID);
-    //     newItemOrder.splice(targetPosition, 0, movedID, ...movedChildren);
+        // Move item and its children
+        const movedChildren = ToDoListSelectors.childrenIDs(toDoList, movedItemID);
+        const newItemOrder = [...toDoList.itemOrder];
+        const movedPosition = newItemOrder.indexOf(movedItemID);
+        newItemOrder.splice(movedPosition, 1 + movedChildren.length);
+        const targetPosition = targetLastItem ? newItemOrder.length : newItemOrder.indexOf(targetItemID);
+        newItemOrder.splice(targetPosition, 0, movedItemID, ...movedChildren);
 
-    //     // Update indent of item and children
-    //     const newItems = deepCopy(toDoList.items);
-    //     newItems[movedID].indent = toDoList.dropIndent;
-    //     const indentDifference = toDoList.dropIndent - toDoList.items[movedID].indent;
-    //     movedChildren.forEach(i => {
-    //         newItems[i].indent = Math.min(Math.max(newItems[i].indent + indentDifference, 0), 5);
-    //     });
+        // Update indent of item and children
+        const newItems = deepCopy(toDoList.items);
+        newItems[movedItemID].indent = toDoList.dropIndent;
+        const indentDifference = toDoList.dropIndent - toDoList.items[movedItemID].indent;
+        movedChildren.forEach(i => {
+            newItems[i].indent = Math.min(Math.max(newItems[i].indent + indentDifference, 0), 5);
+        });
         
-    //     // Update new item input's indent
-    //     result = { ...toDoList, itemOrder: newItemOrder, items: newItems };
-    //     setNewItemInputIndent(result);
+        // Update new item input's indent
+        const result = { ...toDoList, itemOrder: newItemOrder, items: newItems };
+        setNewItemInputIndent(result);
 
-    //     // Expand parent of the new item
-    //     expandParents(result, movedID);
-    // }
+        // Expand parent of the new item
+        expandParents(result, movedItemID);
+        return result;
+    }
 
     // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
     // TODO make all methods return a new to-do list?
@@ -361,9 +364,10 @@ type ToDoListUpdateParamsMergeItemWithPrev = { command: "mergeItemWithPrev", ite
 type ToDoListUpdateParamsMergeItemWithNext = { command: "mergeItemWithNext", itemID: number };
 type ToDoListUpdateParamsStartItemDrag = { command: "startItemDrag", itemID: number };
 type ToDoListUpdateParamsEndItemDrag = { command: "endItemDrag" };
+type ToDoListUpdateParamsMoveItems = { command: "moveItems", movedItemID: number, targetItemID: number, targetLastItem: boolean };
 export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
     ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem | ToDoListUpdateParamsSplitItem | ToDoListUpdateParamsMergeItemWithPrev |
-    ToDoListUpdateParamsMergeItemWithNext | ToDoListUpdateParamsStartItemDrag;
+    ToDoListUpdateParamsMergeItemWithNext | ToDoListUpdateParamsStartItemDrag | ToDoListUpdateParamsEndItemDrag | ToDoListUpdateParamsMoveItems;
 
 /**
  * Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.

@@ -313,7 +313,8 @@ const dragSourceSpec = {
         if (!monitor.didDrop()) return;
 
         const dropResult = monitor.getDropResult();
-        props.updateCallback({ toDoListItemUpdate: { command: "moveItems", movedID: props.id, targetID: dropResult.itemID, targetLastItem: dropResult.targetLastItem }});
+        props.updateCallback({ toDoListItemUpdate: { command: "moveItems", 
+            movedItemID: props.id, targetItemID: dropResult.itemID, targetLastItem: dropResult.targetLastItem }});
     },
     canDrag: props => props.canDrag
 };
