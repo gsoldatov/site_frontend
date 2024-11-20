@@ -38,10 +38,11 @@ export class ToDoListUpdaters {
         return result;
     }
 
-    /** Updates the properties of the item with provided `id` to values passed in the props. */
+    /** Updates the properties of the item with provided `itemID` to values passed in the props of `update`. */
     static updateItem(toDoList: ToDoList, update: ToDoListUpdateParamsUpdateItem): ToDoList {
-        const updatedItem = getToDoListItem({ ...toDoList.items[update.id], ...update });
-        return { ...toDoList, items: { ...toDoList.items, [update.id]: updatedItem } };
+        const { itemID } = update;
+        const updatedItem = getToDoListItem({ ...toDoList.items[itemID], ...update });
+        return { ...toDoList, items: { ...toDoList.items, [itemID]: updatedItem } };
     }
 
     // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
@@ -50,7 +51,7 @@ export class ToDoListUpdaters {
 }
 
 type ToDoListUpdateParamsAddItem = { command: "addItem", previousItemID?: number, position?: number, newItemID?: number } & Partial<ToDoListItem>;
-type ToDoListUpdateParamsUpdateItem = { command: "update", id: number } & Partial<ToDoListItem>;
+type ToDoListUpdateParamsUpdateItem = { command: "updateItem", itemID: number } & Partial<ToDoListItem>;
 type ToDoListUpdateParamsDeleteItem = { command: "delete", id: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
 export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem;
 
@@ -62,7 +63,7 @@ export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateP
 export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdateParams): ToDoList => {
     const { command } = update;
     if (command === "addItem") return ToDoListUpdaters.addItem(toDoList, update);
-    // if (command === "updateItem") return ToDoListUpdaters.updateItem(toDoList, update);
+    if (command === "updateItem") return ToDoListUpdaters.updateItem(toDoList, update);
     throw Error(`Command '${command}' handler not implemented.`);
 
    

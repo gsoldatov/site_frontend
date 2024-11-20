@@ -19,7 +19,7 @@ export const StateControl = memo(({ id, state, updateCallback }) => {
     const { icon, title, iconColor } = stateControlParams[state];
 
     const onClick = e => {
-        updateCallback({ toDoListItemUpdate: { command: "update", id, item_state: ToDoListSelectors.nextItemState(state) }});
+        updateCallback({ toDoListItemUpdate: { command: "updateItem", itemID: id, item_state: ToDoListSelectors.nextItemState(state) }});
     };
     
     return (

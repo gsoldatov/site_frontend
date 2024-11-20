@@ -19,7 +19,7 @@ export const Comment = ({ id, commentary, updateCallback, updateInnerHTMLRequire
     , []);
 
     const handleInputChange = useMemo(
-        () => e => updateCallback({ toDoListItemUpdate: { command: "update", id, commentary: e.currentTarget.textContent }})
+        () => e => updateCallback({ toDoListItemUpdate: { command: "updateItem", itemID: id, commentary: e.currentTarget.textContent }})
     , []);
 
     const iconClassName = "to-do-list-item-button comment" + (commentary.length > 0 ? " has-comment" : "");

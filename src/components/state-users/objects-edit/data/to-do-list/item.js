@@ -91,7 +91,7 @@ class TDLItem extends React.PureComponent {
         // }
 
         // Update state
-        this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_text: e.currentTarget.textContent }}); 
+        this.props.updateCallback({ toDoListItemUpdate: { command: "updateItem", itemID: this.props.id, item_text: e.currentTarget.textContent }}); 
     };
 
     handleKeyDown(e) {
@@ -191,13 +191,14 @@ class TDLItem extends React.PureComponent {
         // On `F1` toggle item state.
         else if (e.key === "F1") {
             e.preventDefault();
-            this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, item_state: ToDoListSelectors.nextItemState(this.props.item_state) }});
+            this.props.updateCallback({ toDoListItemUpdate: { command: "updateItem", itemID: this.props.id, 
+                item_state: ToDoListSelectors.nextItemState(this.props.item_state) }});
         }
 
         // On `F2` expand/collapse item.
         else if (e.key === "F2") {
             e.preventDefault();
-            this.props.updateCallback({ toDoListItemUpdate: { command: "update", id: this.props.id, is_expanded: !this.props.is_expanded }});
+            this.props.updateCallback({ toDoListItemUpdate: { command: "updateItem", itemID: this.props.id, is_expanded: !this.props.is_expanded }});
         }
     };
 
