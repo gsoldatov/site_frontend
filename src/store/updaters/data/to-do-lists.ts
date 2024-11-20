@@ -150,6 +150,30 @@ export class ToDoListUpdaters {
         };
     }
 
+    /**
+     * Replaces item with the provided `itemID` by two new items.
+     * New items receive the texts contained in `before` and `after` (which should contain the text before and after the caret in the replaced item).
+     * 
+     * New items have the same state, commentary and indent as the replaced item.
+     *
+     * Focuses the second new item and places the caret at its beginning.
+     */
+    static splitItem(toDoList: ToDoList, update: ToDoListUpdateParamsSplitItem): ToDoList {
+        const { itemID, before, after } = update;
+        const newCurrID = ToDoListSelectors.newItemID(toDoList);
+        const itemOrder = [...toDoList.itemOrder];
+        const position = itemOrder.indexOf(itemID);
+        itemOrder.splice(position, 1, newCurrID, newCurrID + 1);
+        
+        const items = deepCopy(toDoList.items);
+        delete items[itemID];
+        const { item_state, commentary, indent } = toDoList.items[itemID];
+        items[newCurrID] = getToDoListItem({ item_text: before, item_state, commentary, indent });
+        items[newCurrID + 1] = getToDoListItem({ item_text: after, item_state, commentary, indent });
+
+        return { ...toDoList, setFocusOnID: newCurrID + 1, caretPositionOnFocus: 0, itemOrder, items };
+    }
+
     // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
     // TODO make all methods return a new to-do list?
     // TODO change command names: add -> addItem, update -> updateItem, delete -> deleteItem
@@ -160,6 +184,7 @@ type ToDoListUpdateParamsUpdateItem = { command: "updateItem", itemID: number } 
 type ToDoListUpdateParamsDeleteItem = { command: "deleteItem", itemID: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
 type ToDoListUpdateParamsFocusPrevItem = { command: "focusPrevItem" } & ({ focusLastItem: true } | { itemID: number, caretPositionOnFocus: number });
 type ToDoListUpdateParamsFocusNextItem = { command: "focusNextItem", itemID: number, caretPositionOnFocus: number };
+type ToDoListUpdateParamsSplitItem = { command: "splitItem", itemID: number, before: string, after: string };
 export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
     ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem;
 
@@ -175,37 +200,14 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
     if (command === "deleteItem") return ToDoListUpdaters.deleteItem(toDoList, update);
     if (command === "focusPrevItem") return ToDoListUpdaters.focusPrevItem(toDoList, update);
     if (command === "focusNextItem") return ToDoListUpdaters.focusNextItem(toDoList, update);
+    if (command === "splitItem") return ToDoListUpdaters.splitItem(toDoList, update);
     throw Error(`Command '${command}' handler not implemented.`);
 
     
 
     
 
-    // // Replaces item with the provided `id` by two new items.
-    // // New items receive the texts contained in `before` and `after` (which should contain the text before and after the caret in the replaced item).
-    // // New items have the same state, commentary and indent as the replaced item.
-    // //
-    // // Focuses the second new item and places the caret at its beginning.
-    // else if (command === "split") {
-    //     const newCurrID = ToDoListSelectors.newItemID(toDoList);
-    //     const newItemOrder = [...toDoList.itemOrder];
-    //     const position = newItemOrder.indexOf(update.id);
-    //     newItemOrder.splice(position, 1, newCurrID, newCurrID + 1);
-        
-    //     const newItems = deepCopy(toDoList.items);
-    //     delete newItems[update.id];
-    //     const { item_state, commentary, indent } = toDoList.items[update.id];
-    //     newItems[newCurrID] = getToDoListItem({ item_text: update.before, item_state, commentary, indent });
-    //     newItems[newCurrID + 1] = getToDoListItem({ item_text: update.after, item_state, commentary, indent });
-
-    //     result = {
-    //         ...toDoList,
-    //         setFocusOnID: newCurrID + 1,
-    //         caretPositionOnFocus: 0,
-    //         itemOrder: newItemOrder,
-    //         items: newItems
-    //     };
-    // }
+    
 
     // // Replaces the item with provided `id` and the item before it with a new item.
     // // Which item is before the item with `id` depends on the current sort_type.

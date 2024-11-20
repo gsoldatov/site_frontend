@@ -100,7 +100,7 @@ class TDLItem extends React.PureComponent {
             e.preventDefault(); // disable adding new lines
             const splitText = caret.getSplitText(this.inputRef.current);
             if (typeof(splitText) === "object") 
-                this.props.updateCallback({ toDoListItemUpdate: { command: "split", id: this.props.id, ...splitText }});
+                this.props.updateCallback({ toDoListItemUpdate: { command: "splitItem", itemID: this.props.id, ...splitText }});
             else 
                 this.props.updateCallback({ toDoListItemUpdate: { command: "addItem", previousItemID: this.props.id }});
         }
