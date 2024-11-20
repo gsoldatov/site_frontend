@@ -169,7 +169,7 @@ class TDLItem extends React.PureComponent {
             const splitText = caret.getSplitText(this.inputRef.current);
             if (splitText !== null) {   // merge item with next
                 if (splitText.after.length === 0) {
-                    this.props.updateCallback({ toDoListItemUpdate: { command: "mergeWithNext", id: this.props.id }});
+                    this.props.updateCallback({ toDoListItemUpdate: { command: "mergeItemWithNext", itemID: this.props.id }});
                     e.preventDefault();
                 }
             }

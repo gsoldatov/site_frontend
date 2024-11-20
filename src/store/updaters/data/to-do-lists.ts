@@ -240,6 +240,67 @@ export class ToDoListUpdaters {
         }
     }
 
+    /**
+     * Replaces the item with provided `itemID` and the item after it with a new item.
+     * Which item is after the item with `itemID` depends on the current sort_type.
+     * 
+     * New item text contains the merged texts of the replaced items.
+     * New item state, commentary and indent are the same as the state of replaced item with the `itemID`.
+     * 
+     * Reduces the indent of second merged item's children by 1, if it was > the indent of item with the `itemID`.
+     * Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
+     * 
+     * New item is focused and caret is placed between at the border of the old items' texts.
+     */
+    static mergeItemWithNext(toDoList: ToDoList, update: ToDoListUpdateParamsMergeItemWithNext): ToDoList {
+        const { itemID } = update;
+        const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
+        const sortedPosition = sortedItemIDs.indexOf(itemID);
+        // Do nothing if last item is focused
+        if (sortedPosition === sortedItemIDs.length - 1) return toDoList;
+
+        else {
+            // Update itemOrder
+            const nextID = sortedItemIDs[sortedPosition + 1];
+            const newCurrID = ToDoListSelectors.newItemID(toDoList);
+            const nextItemChildren = ToDoListSelectors.childrenIDs(toDoList, nextID);
+            const newItemOrder = toDoList.itemOrder.filter(i => i !== itemID && i !== nextID && !nextItemChildren.includes(i));     // delete curr and next items + next item children
+            const insertPosition = ToDoListSelectors.mergedItemInsertPosition(toDoList, itemID, nextID);
+            newItemOrder.splice(insertPosition, 0, newCurrID, ...nextItemChildren);
+
+            // Replace merged items with a new one
+            const newItem = getToDoListItem({
+                item_text: toDoList.items[itemID].item_text + toDoList.items[nextID].item_text,
+                item_state: toDoList.items[itemID].item_state,
+                commentary: toDoList.items[itemID].commentary,
+                indent: toDoList.items[itemID].indent
+            });
+            const newItems = deepCopy(toDoList.items);
+            newItems[newCurrID] = newItem;
+            delete newItems[itemID];
+            delete newItems[nextID];
+
+            // Reduce indent of next item's children, if current item's indent was < next item's indent
+            if (toDoList.items[itemID].indent < toDoList.items[nextID].indent) {
+                ToDoListSelectors.childrenIDs(toDoList, nextID).forEach(i => {
+                    let indent = toDoList.items[i].indent - 1;
+                    newItems[i] = {...toDoList.items[i], indent};
+                });
+            }
+
+            // Update new item input's indent
+            const result = {
+                ...toDoList,
+                setFocusOnID: newCurrID,
+                caretPositionOnFocus: toDoList.items[itemID].item_text.length,
+                itemOrder: newItemOrder,
+                items: newItems
+            };
+            setNewItemInputIndent(result);
+            return result;
+        }
+    }
+
     // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
     // TODO make all methods return a new to-do list?
     // TODO change command names: add -> addItem, update -> updateItem, delete -> deleteItem
@@ -252,8 +313,10 @@ type ToDoListUpdateParamsFocusPrevItem = { command: "focusPrevItem" } & ({ focus
 type ToDoListUpdateParamsFocusNextItem = { command: "focusNextItem", itemID: number, caretPositionOnFocus: number };
 type ToDoListUpdateParamsSplitItem = { command: "splitItem", itemID: number, before: string, after: string };
 type ToDoListUpdateParamsMergeItemWithPrev = { command: "mergeItemWithPrev", itemID: number };
+type ToDoListUpdateParamsMergeItemWithNext = { command: "mergeItemWithPrev", itemID: number };
 export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
-    ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem | ToDoListUpdateParamsSplitItem | ToDoListUpdateParamsMergeItemWithPrev;
+    ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem | ToDoListUpdateParamsSplitItem | ToDoListUpdateParamsMergeItemWithPrev |
+    ToDoListUpdateParamsMergeItemWithNext;
 
 /**
  * Performs an update on items and other props of provided `toDoList` and returns a new to-do list object.
@@ -269,73 +332,9 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
     if (command === "focusNextItem") return ToDoListUpdaters.focusNextItem(toDoList, update);
     if (command === "splitItem") return ToDoListUpdaters.splitItem(toDoList, update);
     if (command === "mergeItemWithPrev") return ToDoListUpdaters.mergeItemWithPrev(toDoList, update);
+    if (command === "mergeItemWithNext") return ToDoListUpdaters.mergeItemWithNext(toDoList, update);
     throw Error(`Command '${command}' handler not implemented.`);
-
     
-
-    
-
-    
-
-    
-
-    // // Replaces the item with provided `id` and the item after it with a new item.
-    // // Which item is after the item with `id` depends on the current sort_type.
-    // //
-    // // New item text contains the merged texts of the replaced items.
-    // // New item state, commentary and indent are the same as the state of replaced item with the `id`.
-    // //
-    // // Reduces the indent of second merged item's children by 1, if it was > the indent of item with the `id`.
-    // // Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
-    // //
-    // // New item is focused and caret is placed between at the border of the old items' texts.
-    // else if (command === "mergeWithNext") {
-    //     const { id } = update;
-    //     const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
-    //     const sortedPosition = sortedItemIDs.indexOf(id);
-    //     // Do nothing if last item is focused
-    //     if (sortedPosition === sortedItemIDs.length - 1) result = toDoList;
-
-    //     else {
-    //         // Update itemOrder
-    //         const nextID = sortedItemIDs[sortedPosition + 1];
-    //         const newCurrID = ToDoListSelectors.newItemID(toDoList);
-    //         const nextItemChildren = ToDoListSelectors.childrenIDs(toDoList, nextID);
-    //         const newItemOrder = toDoList.itemOrder.filter(i => i !== id && i !== nextID && !nextItemChildren.includes(i));     // delete curr and next items + next item children
-    //         const insertPosition = ToDoListSelectors.mergedItemInsertPosition(toDoList, id, nextID);
-    //         newItemOrder.splice(insertPosition, 0, newCurrID, ...nextItemChildren);
-
-    //         // Replace merged items with a new one
-    //         const newItem = getToDoListItem({
-    //             item_text: toDoList.items[id].item_text + toDoList.items[nextID].item_text,
-    //             item_state: toDoList.items[id].item_state,
-    //             commentary: toDoList.items[id].commentary,
-    //             indent: toDoList.items[id].indent
-    //         });
-    //         const newItems = deepCopy(toDoList.items);
-    //         newItems[newCurrID] = newItem;
-    //         delete newItems[id];
-    //         delete newItems[nextID];
-
-    //         // Reduce indent of next item's children, if current item's indent was < next item's indent
-    //         if (toDoList.items[id].indent < toDoList.items[nextID].indent) {
-    //             ToDoListSelectors.childrenIDs(toDoList, nextID).forEach(i => {
-    //                 let indent = toDoList.items[i].indent - 1;
-    //                 newItems[i] = {...toDoList.items[i], indent};
-    //             });
-    //         }
-
-    //         // Update new item input's indent
-    //         result = {
-    //             ...toDoList,
-    //             setFocusOnID: newCurrID,
-    //             caretPositionOnFocus: toDoList.items[id].item_text.length,
-    //             itemOrder: newItemOrder,
-    //             items: newItems
-    //         };
-    //         setNewItemInputIndent(result);
-    //     }
-    // }
 
     // // Sets toDoList.draggedItems with `id` and its children.
     // else if (command === "startDrag") {
