@@ -102,7 +102,7 @@ class TDLItem extends React.PureComponent {
             if (typeof(splitText) === "object") 
                 this.props.updateCallback({ toDoListItemUpdate: { command: "split", id: this.props.id, ...splitText }});
             else 
-                this.props.updateCallback({ toDoListItemUpdate: { command: "add", id: this.props.id }});
+                this.props.updateCallback({ toDoListItemUpdate: { command: "addItem", previousItemID: this.props.id }});
         }
 
         // On `ArrowUp` move caret to a previous line in the item

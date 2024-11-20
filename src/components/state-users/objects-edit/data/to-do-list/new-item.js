@@ -22,7 +22,8 @@ class NewTDLItem extends React.PureComponent {
     setDropIndent(newIndent) { this.props.updateCallback({ toDoList: { draggedOver: "newItem", dropIndent: newIndent }}); }
 
     handleInputChange(e) {
-        this.props.updateCallback({ toDoListItemUpdate: { command: "add", position: this.props.position, item_text: e.currentTarget.textContent, indent: this.props.indent }})
+        this.props.updateCallback({ toDoListItemUpdate: { command: "addItem", position: this.props.position, 
+            item_text: e.currentTarget.textContent, indent: this.props.indent }});
         e.currentTarget.textContent = "";
     };
 

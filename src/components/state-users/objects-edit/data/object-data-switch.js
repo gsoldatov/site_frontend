@@ -9,6 +9,7 @@ import { TDLContainer } from "./to-do-list/to-do-list";
 import { SubobjectsContainer } from "./composite/subobjects";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
+import { updateEditedToDoList } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
@@ -26,8 +27,13 @@ export const ObjectDataSwitch = ({ objectID, subobjectCard = false }) => {
     // To-do list props
     const toDoList = useSelector(ObjectsEditSelectors.editedOrDefaultSelector(objectID)).toDoList;
     const canDragToDoList = useSelector(state => ObjectsEditSelectors.toDoListDragAndDropEnabled(state, objectID));
-    const toDoListUpdateCallback = useMemo(
-        () => params => dispatch(setEditedObject(params, objectID))
+    const toDoListUpdateCallback = useMemo(() => params => {
+        if ("toDoListItemUpdate" in params) {
+            dispatch(updateEditedToDoList(objectID, params.toDoListItemUpdate));
+        } else if ("toDoList" in params) {
+            dispatch(setEditedObject(params, objectID));
+        } else throw Error("Received incorrect `params` value in to-do list update callback.");
+    }
     , [objectID]);
 
     switch (objectType) {
