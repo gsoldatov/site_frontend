@@ -1,7 +1,7 @@
 import { deepCopy } from "../../../util/copy";
 
 import { ToDoListSelectors } from "../../selectors/data/objects/to-do-list";
-import { getToDoListItem, type ToDoListItem, type ToDoList } from "../../types/data/to-do-list";
+import { getToDoListItem, type ToDoListItem, type ToDoList, type ToDoListSetFocusOnID } from "../../types/data/to-do-list";
 
 
 export class ToDoListUpdaters {
@@ -45,6 +45,65 @@ export class ToDoListUpdaters {
         return { ...toDoList, items: { ...toDoList.items, [itemID]: updatedItem } };
     }
 
+    /**
+     * Deletes the item with provided `id`.
+     * If `setFocus` is set to "prev" or "next", focuses the item before or after the deleted and places caret at the end of it.
+     * If `deleteChildren` = true, deletes the children of the item.
+     * 
+     * Reduces the indent of deleted item's children by 1 (if they are not deleted).
+     * 
+     * Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
+     */
+    static deleteItem(toDoList: ToDoList, update: ToDoListUpdateParamsDeleteItem): ToDoList {
+        const { itemID, setFocus, deleteChildren } = update;
+        let newItemOrder = toDoList.itemOrder.filter(i => i !== itemID);
+        const newItems = deepCopy(toDoList.items);
+        delete newItems[itemID];
+
+        // Update children indent or delete them
+        const childrenIDs = ToDoListSelectors.childrenIDs(toDoList, itemID);
+        if (deleteChildren) {
+            childrenIDs.forEach(i => { delete newItems[i] });
+            newItemOrder = newItemOrder.filter(i => !childrenIDs.includes(i));
+        }
+        else 
+            childrenIDs.forEach(i => { newItems[i].indent -= 1 });
+        
+
+        // Set focus (for Delete & Backspace key press handling)
+        let setFocusOnID: ToDoListSetFocusOnID = toDoList.setFocusOnID;
+        if (setFocus !== undefined) {
+            if (toDoList.itemOrder.length > 1) {
+                const deletedPosition = toDoList.itemOrder.indexOf(itemID);
+                const focusedPosition = setFocus === "prev"                         // position to focus after item is deleted
+                    ? Math.max(deletedPosition - 1, 0)                              // prev: 0 => 0, i => i - 1, max => max - 1
+                    : Math.min(deletedPosition, toDoList.itemOrder.length - 2);     // next: 0 => 0, i => i, max => max - 1 (-2 in a new list)
+                setFocusOnID = newItemOrder[focusedPosition];
+            } else {
+                setFocusOnID = "newItem";   // if no items remain, focus new item input
+            }
+        }
+
+        let result = {
+            ...toDoList,
+            setFocusOnID,
+            itemOrder: newItemOrder,
+            items: newItems
+        };
+
+        // Add an empty item, if no items are present in to-do list after deletes
+        if ([...Object.keys(result.items)].length === 0) {
+            // Get an ID for the new item which did not previously exist, so that deleted item components get unmounted
+            const newItemID = ToDoListSelectors.newItemID(toDoList);
+            result = ToDoListUpdaters.addItem(result, { command: "addItem", position: 0, indent: 0, newItemID });
+        };
+
+        // Update new item input's indent
+        setNewItemInputIndent(result);
+        
+        return result;
+    }
+
     // TODO move methods here & keep `getUpdatedToDoList` as a dispatching function
     // TODO make all methods return a new to-do list?
     // TODO change command names: add -> addItem, update -> updateItem, delete -> deleteItem
@@ -52,7 +111,7 @@ export class ToDoListUpdaters {
 
 type ToDoListUpdateParamsAddItem = { command: "addItem", previousItemID?: number, position?: number, newItemID?: number } & Partial<ToDoListItem>;
 type ToDoListUpdateParamsUpdateItem = { command: "updateItem", itemID: number } & Partial<ToDoListItem>;
-type ToDoListUpdateParamsDeleteItem = { command: "delete", id: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
+type ToDoListUpdateParamsDeleteItem = { command: "deleteItem", itemID: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
 export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem;
 
 /**
@@ -64,63 +123,12 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
     const { command } = update;
     if (command === "addItem") return ToDoListUpdaters.addItem(toDoList, update);
     if (command === "updateItem") return ToDoListUpdaters.updateItem(toDoList, update);
+    if (command === "deleteItem") return ToDoListUpdaters.deleteItem(toDoList, update);
     throw Error(`Command '${command}' handler not implemented.`);
 
    
 
-    // // Deletes the item with provided `id`.
-    // // If `setFocus` is set to "prev" or "next", focuses the item before or after the deleted and places caret at the end of it.
-    // // If `deleteChildren` = true, deletes the children of the item.
-    // //
-    // // Reduces the indent of deleted item's children by 1 (if they are not deleted).
-    // //
-    // // Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
-    // else if (command === "delete") {
-    //     const { id, setFocus, deleteChildren } = update;
-    //     let newItemOrder = toDoList.itemOrder.filter(i => i !== id);
-    //     const newItems = deepCopy(toDoList.items);
-    //     delete newItems[id];
-
-    //     // Update children indent or delete them
-    //     const childrenIDs = ToDoListSelectors.childrenIDs(toDoList, id);
-    //     if (deleteChildren) {
-    //         childrenIDs.forEach(i => { delete newItems[i] });
-    //         newItemOrder = newItemOrder.filter(i => !childrenIDs.includes(i));
-    //     }
-    //     else 
-    //         childrenIDs.forEach(i => { newItems[i].indent -= 1 });
-        
-
-    //     // Set focus (for Delete & Backspace key press handling)
-    //     let setFocusOnID = toDoList.setFocusOnID;
-    //     if (["prev", "next"].includes(setFocus)) {
-    //         if (toDoList.itemOrder.length > 1) {
-    //             const deletedPosition = toDoList.itemOrder.indexOf(id);
-    //             const focusedPosition = setFocus === "prev"                         // position to focus after item is deleted
-    //                 ? Math.max(deletedPosition - 1, 0)                              // prev: 0 => 0, i => i - 1, max => max - 1
-    //                 : Math.min(deletedPosition, toDoList.itemOrder.length - 2);     // next: 0 => 0, i => i, max => max - 1 (-2 in a new list)
-    //             setFocusOnID = newItemOrder[focusedPosition];
-    //         } else {
-    //             setFocusOnID = "newItem";   // if no items remain, focus new item input
-    //         }
-    //     }
-
-    //     result = {
-    //         ...toDoList,
-    //         setFocusOnID,
-    //         itemOrder: newItemOrder,
-    //         items: newItems
-    //     };
-
-    //     // Add an empty item, if no items are present in to-do list after deletes
-    //     if ([...Object.keys(result.items)].length === 0) {
-    //         const newItemID = ToDoListSelectors.newItemID(toDoList);   // get an ID for the new item which did not previously exist, so that deleted item components get unmounted
-    //         result = getUpdatedToDoList(result, { command: "addItem", position: 0, indent: 0, newItemID });
-    //     };
-
-    //     // Update new item input's indent
-    //     setNewItemInputIndent(result);
-    // }
+    
 
     // // Focuses the next visible item before the item with provided `id`.
     // // Previous item is calculated based on the current sort_type.
@@ -418,20 +426,20 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
 };
 
 
-// /**
-//  * Updates the new item input's indent in the provided `toDoList`, based on the current indent of the last item in the list.
-//  * New item input's indent can't be > than last item's indent + 1.
-//  *
-//  * The update is performed in the original toDoList object.
-//  */
-// const setNewItemInputIndent = toDoList => {
-//     const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
-//     if (sortedItemIDs.length > 0) {
-//         const lastItemID = sortedItemIDs[sortedItemIDs.length - 1];
-//         toDoList.newItemInputIndent = Math.min(toDoList.newItemInputIndent, toDoList.items[lastItemID].indent + 1);
-//     } else
-//         toDoList.newItemInputIndent = 0;
-// };
+/**
+ * Updates the new item input's indent in the provided `toDoList`, based on the current indent of the last item in the list.
+ * New item input's indent can't be > than last item's indent + 1.
+ *
+ * The update is performed in the original toDoList object.
+ */
+const setNewItemInputIndent = (toDoList: ToDoList) => {
+    const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
+    if (sortedItemIDs.length > 0) {
+        const lastItemID = sortedItemIDs[sortedItemIDs.length - 1];
+        toDoList.newItemInputIndent = Math.min(toDoList.newItemInputIndent, toDoList.items[lastItemID].indent + 1);
+    } else
+        toDoList.newItemInputIndent = 0;
+};
 
 
 /** 

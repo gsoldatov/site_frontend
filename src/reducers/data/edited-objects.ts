@@ -24,7 +24,7 @@ export const updateEditedToDoList = (objectID: number, update: ToDoListUpdatePar
 
 const _updateEditedToDoList = (state: State, action: { objectID: number, update: ToDoListUpdateParams }): State => {
     const { objectID, update } = action;
-    const toDoList = ["addItem", "updateItem"].includes(update.command)
+    const toDoList = ["addItem", "updateItem", "deleteItem"].includes(update.command)
         ? getUpdatedToDoList(state.editedObjects[objectID].toDoList, update)
         : OLD_getUpdatedToDoList(state.editedObjects[objectID].toDoList, update);    // TODO remove old version when possible
     const newEditedObject = { ...state.editedObjects[objectID], toDoList };

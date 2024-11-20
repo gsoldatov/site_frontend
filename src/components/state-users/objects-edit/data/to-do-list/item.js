@@ -43,8 +43,8 @@ class TDLItem extends React.PureComponent {
         };
     }
 
-    deleteItem(setFocus) { this.props.updateCallback({ toDoListItemUpdate: { command: "delete", id: this.props.id, setFocus }}); }
-    deleteItemWithChildren() { this.props.updateCallback({ toDoListItemUpdate: { command: "delete", id: this.props.id, deleteChildren: true }}); }
+    deleteItem(setFocus) { this.props.updateCallback({ toDoListItemUpdate: { command: "deleteItem", itemID: this.props.id, setFocus }}); }
+    deleteItemWithChildren() { this.props.updateCallback({ toDoListItemUpdate: { command: "deleteItem", itemID: this.props.id, deleteChildren: true }}); }
     setDropIndent(newIndent) { this.props.updateCallback({ toDoList: { draggedOver: this.props.id, dropIndent: newIndent }}); }
 
     // Container event handlers

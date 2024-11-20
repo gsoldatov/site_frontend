@@ -18,7 +18,7 @@ export const toDoList = z.object({
     items: z.record(nonNegativeIntIndex, toDoListItem),
 
     itemOrder: nonNegativeIntArray,
-    setFocusOnID: int,
+    setFocusOnID: int.or(z.literal("newItem")),
     caretPositionOnFocus: int,
     newItemInputIndent: nonNegativeInt.max(5),
     draggedParent: int,
@@ -32,12 +32,16 @@ export const toDoListItemState = toDoListItem.shape.item_state.options;
 /** state.toDoLists data store schema. */
 export const toDoLists = z.record(positiveInt, toDoList);
 
-/** To-do list item state type. */
-export type ToDoListItemState = z.infer<typeof toDoListItem.shape.item_state>;
 /** To-do list item type for state.toDoLists & state.editedObjects. */
 export type ToDoListItem = z.infer<typeof toDoListItem>;
+/** To-do list item state type. */
+export type ToDoListItemState = z.infer<typeof toDoListItem.shape.item_state>;
+
 /** To-do list object's data type for state.toDoLists & state.editedObjects. */
 export type ToDoList = z.infer<typeof toDoList>;
+/** To-do list `setFocusOnID` prop type. */
+export type ToDoListSetFocusOnID = z.infer<typeof toDoList.shape.setFocusOnID>;
+
 /** state.toDoLists data store type. */
 export type ToDoLists = z.infer<typeof toDoLists>;
 
