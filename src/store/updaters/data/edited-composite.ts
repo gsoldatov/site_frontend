@@ -1,4 +1,4 @@
-import { getStateWithResetEditedObjects } from "../../../reducers/helpers/object";
+import { getStateWithResetEditedObjects, getStateWithDeletedEditedNewSubobjects } from "../../../reducers/helpers/object";
 import { CompositeSelectors } from "../../selectors/data/objects/composite";
 import { getCompositeSubobject } from "../../types/data/composite";
 import { getEditedObjectState } from "../../types/data/edited-objects";
@@ -30,15 +30,48 @@ export class EditedCompositeUpdaters {
         const editedObject = { ...state.editedObjects[objectID], composite };
         return { ...newState, editedObjects: { ...newState.editedObjects, [objectID]: editedObject }};
     }
+
+
+    // Adds an existing subobject to the composite object.
+    // If `resetEditedObject` is set to true, resets the object in state.editedObjects (for composite objects also deletes all of their new subobjects).
+    static addExistingSubobject(state: State, objectID: number, update: GetUpdatedEditedCompositeParamsAddExistingSubobject): State {
+        const { resetEditedObject, subobjectID, row, column } = update;
+        let newState = state;
+
+        if (resetEditedObject) {
+            newState = getStateWithDeletedEditedNewSubobjects(newState, [subobjectID]);
+            newState = getStateWithResetEditedObjects(newState, [subobjectID]);
+        }
+        const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };
+        newSubobjects[subobjectID] = getCompositeSubobject({ row, column });
+        
+        return {
+            ...newState,
+            editedObjects: {
+                ...newState.editedObjects,
+                [objectID]: {
+                    ...newState.editedObjects[objectID],
+                    composite: {
+                        ...newState.editedObjects[objectID].composite,
+                        subobjects: newSubobjects
+                    }
+                }
+            }
+        };
+    }
 }
 
 
 type GetUpdatedEditedCompositeParamsAddNewSubobject = { command: "addNewSubobject", subobjectID?: number, row: number, column: number };
-export type GetUpdatedEditedCompositeParams = GetUpdatedEditedCompositeParamsAddNewSubobject;
+type GetUpdatedEditedCompositeParamsAddExistingSubobject = { command: "addExistingSubobject", 
+    subobjectID: number, row: number, column: number, resetEditedObject?: boolean
+};
+export type GetUpdatedEditedCompositeParams = GetUpdatedEditedCompositeParamsAddNewSubobject | GetUpdatedEditedCompositeParamsAddExistingSubobject;
 
 export const getUpdatedEditedComposite = (state: State, objectID: number, update: GetUpdatedEditedCompositeParams): State => {
     const { command } = update;
     if (command === "addNewSubobject") return EditedCompositeUpdaters.addNewSubobject(state, objectID, update);
+    if (command === "addExistingSubobject") return EditedCompositeUpdaters.addExistingSubobject(state, objectID, update);
     throw Error(`Command '${command}' handler not implemented.`);
 };
 
@@ -46,35 +79,6 @@ export const getUpdatedEditedComposite = (state: State, objectID: number, update
 // export const getStateWithCompositeUpdate = (state, objectID, update) => {
 //     const { command } = update;
 
-
-
-//     // Adds an existing subobject to the composite object.
-//     // If `resetEditedObject` is set to true, resets the object in state.editedObjects (for composite objects also deletes all of their new subobjects).
-//     if (command === "addExisting") {
-//         const { resetEditedObject, subobjectID, row, column } = update;
-//         let newState = state;
-
-//         if (resetEditedObject) {
-//             newState = getStateWithDeletedEditedNewSubobjects(newState, [subobjectID]);
-//             newState = getStateWithResetEditedObjects(newState, [subobjectID]);
-//         }
-//         const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };
-//         newSubobjects[subobjectID] = getCompositeSubobject({ row, column });
-        
-//         return {
-//             ...newState,
-//             editedObjects: {
-//                 ...newState.editedObjects,
-//                 [objectID]: {
-//                     ...newState.editedObjects[objectID],
-//                     composite: {
-//                         ...newState.editedObjects[objectID].composite,
-//                         subobjects: newSubobjects
-//                     }
-//                 }
-//             }
-//         };
-//     }
 
 //     // Updates the state of the provided `subobjectID` with the provided attribute values
 //     if (command === "updateSubobject") {

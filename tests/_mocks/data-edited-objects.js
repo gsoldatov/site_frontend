@@ -27,13 +27,13 @@ export const getStoreWithEditedObjects = () => {
     // 0: new composite with [-1, 10, 11] as children;
     store.dispatch(setEditedObject({ object_name: "new composite", object_type: "composite" }, 0));
     store.dispatch(updateEditedComposite(0, { command: "addNewSubobject", subobjectID: -1, column: 0, row: 0 }));
-    store.dispatch(setEditedObject({ compositeUpdate: { command: "addExisting", subobjectID: 10, column: 0, row: 1 }}, 0));
-    store.dispatch(setEditedObject({ compositeUpdate: { command: "addExisting", subobjectID: 11, column: 0, row: 2 }}, 0));
+    store.dispatch(updateEditedComposite(0, { command: "addExistingSubobject", subobjectID: 10, column: 0, row: 1 }));
+    store.dispatch(updateEditedComposite(0, { command: "addExistingSubobject", subobjectID: 11, column: 0, row: 2 }));
     
     // 1: existing composite with [10, 12] as children;
     store.dispatch(setEditedObject({ object_name: "existing composite", object_type: "composite" }, 1));
-    store.dispatch(setEditedObject({ compositeUpdate: { command: "addExisting", subobjectID: 10, column: 0, row: 1 }}, 1));
-    store.dispatch(setEditedObject({ compositeUpdate: { command: "addExisting", subobjectID: 12, column: 0, row: 2 }}, 1));
+    store.dispatch(updateEditedComposite(1, { command: "addExistingSubobject", subobjectID: 10, column: 0, row: 1 }));
+    store.dispatch(updateEditedComposite(1, { command: "addExistingSubobject", subobjectID: 12, column: 0, row: 2 }));
 
     // -1: new subobject link;
     store.dispatch(setEditedObject({ object_name: "new subobject" }, -1));

@@ -125,7 +125,7 @@ const NewObjectDropdown = ({ objectID, setAddMenuCallback, updateCallback, row, 
         // Reset input
         closeAndResetInput();
         // Add subobject
-        updateCallback({ compositeUpdate: { command: "addExisting", subobjectID: data.value, row, column }});
+        updateCallback({ compositeUpdate: { command: "addExistingSubobject", subobjectID: data.value, row, column }});
         // Fetch subobject data & add it to state.editedObjects
         dispatch(objectsEditLoadCompositeSubobjectsFetch(objectID));
     };
