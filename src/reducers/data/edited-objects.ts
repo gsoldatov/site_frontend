@@ -36,7 +36,7 @@ export const updateEditedComposite = (objectID: number, update: GetUpdatedEdited
 
 const _updateEditedComposite = (state: State, action: {objectID: number, update: GetUpdatedEditedCompositeParams }): State => {
     const { objectID, update } = action;
-    if (["addNewSubobject", "addExistingSubobject"].includes(update.command)) return getUpdatedEditedComposite(state, objectID, update);
+    if (["addNewSubobject", "addExistingSubobject", "updateSubobject"].includes(update.command)) return getUpdatedEditedComposite(state, objectID, update);
     return OLD_getStateWithCompositeUpdate(state, objectID, update);
 }
 
