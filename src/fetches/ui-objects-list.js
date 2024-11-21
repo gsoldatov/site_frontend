@@ -13,53 +13,6 @@ import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
 
 /**
- * Fetches objects to display on provided `currentPage`.
- */
-export const objectsListPageFetch = currentPage => {
-    return async (dispatch, getState) => {
-        const state = getState();
-        if (ObjectsListSelectors.isFetching(state)) return;
-
-        dispatch(setObjectsListPaginationInfo({ currentPage }));
-        dispatch(setObjectsListFetch({ isFetching: true, fetchError:"" }));
-        const pI = getState().objectsListUI.paginationInfo;
-
-        // Exit with error if filter text is too long
-        if (pI.filterText.length > 255) {
-            dispatch(setObjectsListFetch({ isFetching: false, fetchError: "Object name filter text is too long." }));
-            return;
-        }
-
-        // Fetch IDs of objects to display on the page
-        const pageObjectIDsResult = await dispatch(objectsGetPageObjectIDs({
-            page: pI.currentPage,
-            items_per_page: pI.itemsPerPage,
-            order_by: pI.sortField,
-            sort_order: pI.sortOrder,
-            filter_text: pI.filterText,
-            object_types: pI.objectTypes,
-            tags_filter: pI.tagsFilter
-        }));
-
-        // Handle fetch errors
-        if (pageObjectIDsResult.failed) {
-            dispatch(setObjectsListFetch({ isFetching: false, fetchError: pageObjectIDsResult.error }));
-            return;
-        }
-
-        // If fetch is successful, update paginantion info and fetch missing object data
-        dispatch(setObjectsListPaginationInfo({ totalItems: pageObjectIDsResult["total_items"], currentPageObjectIDs: pageObjectIDsResult["object_ids"] }));
-
-        let nonCachedObjects = pageObjectIDsResult["object_ids"].filter(object_id => !(object_id in state.objects));
-        if (nonCachedObjects.length !== 0) {
-            const objectsViewResult = await dispatch(objectsViewFetch(nonCachedObjects));
-            dispatch(setObjectsListFetch({ isFetching: false, fetchError: objectsViewResult.failed ? objectsViewResult.error : "" }));
-        } else dispatch(setObjectsListFetch({ isFetching: false, fetchError: "" }));
-    };
-};
-
-
-/**
  * Delete selected objects from state and stop displaying them on the current page.
  * 
  * If `deleteSubobjects` is true, deleted all subobjects of selected composite objects.

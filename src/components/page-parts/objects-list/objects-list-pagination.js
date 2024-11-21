@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Pagination } from "../../modules/pagination";
 
-import { objectsListPageFetch } from "../../../fetches/ui-objects-list";
+import { objectsListPageFetch } from "../../../fetches/ui/objects-list";
 
 
 /**
