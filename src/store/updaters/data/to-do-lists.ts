@@ -15,7 +15,7 @@ export class ToDoListUpdaters {
      * 
      * Expands all parents of the new item.
      */    
-    static addItem(toDoList: ToDoList, update: ToDoListUpdateParamsAddItem): ToDoList {
+    static addItem(toDoList: ToDoList, update: ParamsAddItem): ToDoList {
         let { previousItemID, position, newItemID } = update;
         if (previousItemID === undefined && position === undefined) throw Error(`'previousItemID' or 'position' must be specified.`);
         const newItem = getToDoListItem(update);
@@ -39,7 +39,7 @@ export class ToDoListUpdaters {
     }
 
     /** Updates the properties of the item with provided `itemID` to values passed in the props of `update`. */
-    static updateItem(toDoList: ToDoList, update: ToDoListUpdateParamsUpdateItem): ToDoList {
+    static updateItem(toDoList: ToDoList, update: ParamsUpdateItem): ToDoList {
         const { itemID } = update;
         const updatedItem = getToDoListItem({ ...toDoList.items[itemID], ...update });
         return { ...toDoList, items: { ...toDoList.items, [itemID]: updatedItem } };
@@ -54,7 +54,7 @@ export class ToDoListUpdaters {
      * 
      * Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
      */
-    static deleteItem(toDoList: ToDoList, update: ToDoListUpdateParamsDeleteItem): ToDoList {
+    static deleteItem(toDoList: ToDoList, update: ParamsDeleteItem): ToDoList {
         const { itemID, setFocus, deleteChildren } = update;
         let newItemOrder = toDoList.itemOrder.filter(i => i !== itemID);
         const newItems = deepCopy(toDoList.items);
@@ -112,7 +112,7 @@ export class ToDoListUpdaters {
      * 
      * State order is: "active" -> "optional" -> "completed" -> "cancelled".
      */
-    static focusPrevItem(toDoList: ToDoList, update: ToDoListUpdateParamsFocusPrevItem): ToDoList {
+    static focusPrevItem(toDoList: ToDoList, update: ParamsFocusPrevItem): ToDoList {
         const visibleItemIDs = ToDoListSelectors.visibleItemIDs(toDoList);
 
         if ("focusLastItem" in update) {     // move from new item item to the last existing item
@@ -137,7 +137,7 @@ export class ToDoListUpdaters {
      * 
      * State order is: "active" -> "optional" -> "completed" -> "cancelled".
      */
-    static focusNextItem(toDoList: ToDoList, update: ToDoListUpdateParamsFocusNextItem): ToDoList {
+    static focusNextItem(toDoList: ToDoList, update: ParamsFocusNextItem): ToDoList {
         const visibleItemIDs = ToDoListSelectors.visibleItemIDs(toDoList);
         const position = visibleItemIDs.indexOf(update.itemID);
         if (position < 0) return toDoList;
@@ -158,7 +158,7 @@ export class ToDoListUpdaters {
      *
      * Focuses the second new item and places the caret at its beginning.
      */
-    static splitItem(toDoList: ToDoList, update: ToDoListUpdateParamsSplitItem): ToDoList {
+    static splitItem(toDoList: ToDoList, update: ParamsSplitItem): ToDoList {
         const { itemID, before, after } = update;
         const newCurrID = ToDoListSelectors.newItemID(toDoList);
         const itemOrder = [...toDoList.itemOrder];
@@ -188,7 +188,7 @@ export class ToDoListUpdaters {
      * 
      * Expands all parents of the new item.
      */
-    static mergeItemWithPrev(toDoList: ToDoList, update: ToDoListUpdateParamsMergeItemWithPrev): ToDoList {
+    static mergeItemWithPrev(toDoList: ToDoList, update: ParamsMergeItemWithPrev): ToDoList {
         const { itemID } = update;
         const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
         const sortedPosition = sortedItemIDs.indexOf(itemID);
@@ -252,7 +252,7 @@ export class ToDoListUpdaters {
      * 
      * New item is focused and caret is placed between at the border of the old items' texts.
      */
-    static mergeItemWithNext(toDoList: ToDoList, update: ToDoListUpdateParamsMergeItemWithNext): ToDoList {
+    static mergeItemWithNext(toDoList: ToDoList, update: ParamsMergeItemWithNext): ToDoList {
         const { itemID } = update;
         const sortedItemIDs = ToDoListSelectors.sortedItemIDs(toDoList);
         const sortedPosition = sortedItemIDs.indexOf(itemID);
@@ -302,7 +302,7 @@ export class ToDoListUpdaters {
     }
 
     /** Sets toDoList.draggedItems to `itemID` and `draggedChildren` to its children. */
-    static startItemDrag(toDoList: ToDoList, update: ToDoListUpdateParamsStartItemDrag): ToDoList {
+    static startItemDrag(toDoList: ToDoList, update: ParamsStartItemDrag): ToDoList {
         const { itemID } = update;
         // const draggedItems = [itemID].concat(ToDoListSelectors.childrenIDs(toDoList, itemID));
         const draggedChildren = ToDoListSelectors.childrenIDs(toDoList, itemID);
@@ -310,7 +310,7 @@ export class ToDoListUpdaters {
     }
 
     /** Clears toDoList drag state. */
-    static endItemDrag(toDoList: ToDoList, update: ToDoListUpdateParamsEndItemDrag): ToDoList {
+    static endItemDrag(toDoList: ToDoList, update: ParamsEndItemDrag): ToDoList {
         return { ...toDoList, draggedParent: -1, draggedChildren: [], draggedOver: -1 };
     }
 
@@ -321,7 +321,7 @@ export class ToDoListUpdaters {
      * 
      * Supports only the default sort_type of the list.
      */
-    static moveItems(toDoList: ToDoList, update: ToDoListUpdateParamsMoveItems): ToDoList {
+    static moveItems(toDoList: ToDoList, update: ParamsMoveItems): ToDoList {
         const { movedItemID, targetItemID, targetLastItem } = update;
 
         // Move item and its children
@@ -358,7 +358,7 @@ export class ToDoListUpdaters {
      * 
      * Adjusts new item input's indent, so it can't be greater than new last item' indent + 1.
      */
-    static setItemIndent(toDoList: ToDoList, update: ToDoListUpdateParamsSetItemIndent): ToDoList {
+    static setItemIndent(toDoList: ToDoList, update: ParamsSetItemIndent): ToDoList {
         if (toDoList.sort_type !== "default") return toDoList;
         else {
             let { itemID, increase, decrease, indent } = update;
@@ -404,7 +404,7 @@ export class ToDoListUpdaters {
 
 
     /** Returns a new to-do list with its items being numerated continiously. */
-    static normalizeItemIDs(toDoList: ToDoList, update: ToDoListUpdateParamsNormalizeItemIDs): ToDoList {
+    static normalizeItemIDs(toDoList: ToDoList, update: ParamsNormalizeItemIDs): ToDoList {
         return getToDoListWithNormalizedItemIDs(toDoList);
     }
 }
@@ -490,22 +490,21 @@ const getToDoListWithNormalizedItemIDs = (toDoList: ToDoList) => {
 };
 
 
-type ToDoListUpdateParamsAddItem = { command: "addItem", previousItemID?: number, position?: number, newItemID?: number } & Partial<ToDoListItem>;
-type ToDoListUpdateParamsUpdateItem = { command: "updateItem", itemID: number } & Partial<ToDoListItem>;
-type ToDoListUpdateParamsDeleteItem = { command: "deleteItem", itemID: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
-type ToDoListUpdateParamsFocusPrevItem = { command: "focusPrevItem" } & ({ focusLastItem: true } | { itemID: number, caretPositionOnFocus: number });
-type ToDoListUpdateParamsFocusNextItem = { command: "focusNextItem", itemID: number, caretPositionOnFocus: number };
-type ToDoListUpdateParamsSplitItem = { command: "splitItem", itemID: number, before: string, after: string };
-type ToDoListUpdateParamsMergeItemWithPrev = { command: "mergeItemWithPrev", itemID: number };
-type ToDoListUpdateParamsMergeItemWithNext = { command: "mergeItemWithNext", itemID: number };
-type ToDoListUpdateParamsStartItemDrag = { command: "startItemDrag", itemID: number };
-type ToDoListUpdateParamsEndItemDrag = { command: "endItemDrag" };
-type ToDoListUpdateParamsMoveItems = { command: "moveItems", movedItemID: number, targetItemID: number, targetLastItem: boolean };
-type ToDoListUpdateParamsSetItemIndent = { command: "setItemIndent",
+type ParamsAddItem = { command: "addItem", previousItemID?: number, position?: number, newItemID?: number } & Partial<ToDoListItem>;
+type ParamsUpdateItem = { command: "updateItem", itemID: number } & Partial<ToDoListItem>;
+type ParamsDeleteItem = { command: "deleteItem", itemID: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
+type ParamsFocusPrevItem = { command: "focusPrevItem" } & ({ focusLastItem: true } | { itemID: number, caretPositionOnFocus: number });
+type ParamsFocusNextItem = { command: "focusNextItem", itemID: number, caretPositionOnFocus: number };
+type ParamsSplitItem = { command: "splitItem", itemID: number, before: string, after: string };
+type ParamsMergeItemWithPrev = { command: "mergeItemWithPrev", itemID: number };
+type ParamsMergeItemWithNext = { command: "mergeItemWithNext", itemID: number };
+type ParamsStartItemDrag = { command: "startItemDrag", itemID: number };
+type ParamsEndItemDrag = { command: "endItemDrag" };
+type ParamsMoveItems = { command: "moveItems", movedItemID: number, targetItemID: number, targetLastItem: boolean };
+type ParamsSetItemIndent = { command: "setItemIndent",
     itemID: ToDoListNewOrExistingItemNumber, increase?: boolean, decrease?: boolean, indent?: number
 };
-type ToDoListUpdateParamsNormalizeItemIDs = { command: "normalizeItemIDs" };
-export type ToDoListUpdateParams = ToDoListUpdateParamsAddItem | ToDoListUpdateParamsUpdateItem | ToDoListUpdateParamsDeleteItem |
-    ToDoListUpdateParamsFocusPrevItem | ToDoListUpdateParamsFocusNextItem | ToDoListUpdateParamsSplitItem | ToDoListUpdateParamsMergeItemWithPrev |
-    ToDoListUpdateParamsMergeItemWithNext | ToDoListUpdateParamsStartItemDrag | ToDoListUpdateParamsEndItemDrag | ToDoListUpdateParamsMoveItems |
-    ToDoListUpdateParamsSetItemIndent | ToDoListUpdateParamsNormalizeItemIDs;
+type ParamsNormalizeItemIDs = { command: "normalizeItemIDs" };
+export type ToDoListUpdateParams = ParamsAddItem | ParamsUpdateItem | ParamsDeleteItem | ParamsFocusPrevItem | 
+    ParamsFocusNextItem | ParamsSplitItem | ParamsMergeItemWithPrev | ParamsMergeItemWithNext | 
+    ParamsStartItemDrag | ParamsEndItemDrag | ParamsMoveItems | ParamsSetItemIndent | ParamsNormalizeItemIDs;
