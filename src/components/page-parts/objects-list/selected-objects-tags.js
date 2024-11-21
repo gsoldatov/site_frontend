@@ -7,7 +7,7 @@ import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
 
 import { setObjectsListTagsInput, setObjectsListTagUpdates } from "../../../reducers/ui/objects-list";
-import { objectsListTagsDropdownFetch } from "../../../fetches/ui-objects-list";
+import { objectsListTagsDropdownFetch } from "../../../fetches/ui/objects-list";
 import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
 
 
