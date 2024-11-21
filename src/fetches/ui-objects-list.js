@@ -11,17 +11,6 @@ import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
 
 
-/**
- * Updates tags filter for displayed objects, resets current displayed page to 1 and fetches objects to display on it.
- */
-export const setObjectsListTagsFilterAndFetchPage = tagID => {
-    return async (dispatch, getState) => {
-        dispatch(setObjectsListPaginationInfo({ currentPage: 1 }));
-        dispatch(setObjectsListTagsFilter(tagID));
-        dispatch(objectsListPageFetch(1));
-    };
-};
-
 
 /**
  * Fetches objects to display on provided `currentPage`.

@@ -1,4 +1,4 @@
-import { clearObjectsListTagUpdates, setObjectsListPaginationInfo, setObjectsListTagsInput } from "../../reducers/ui/objects-list";
+import { clearObjectsListTagUpdates, setObjectsListPaginationInfo, setObjectsListTagsFilter, setObjectsListTagsInput } from "../../reducers/ui/objects-list";
 import { objectsListPageFetch } from "../ui-objects-list";
 
 import type { Dispatch, GetState } from "../../util/types/common";
@@ -26,5 +26,17 @@ export const setObjectsListPaginationInfoAndFetchPage = (paginationInfo: Objects
         paginationInfo.currentPage = 1;
         dispatch(setObjectsListPaginationInfo(paginationInfo));
         dispatch(objectsListPageFetch(paginationInfo.currentPage));
+    };
+};
+
+
+/**
+ * Updates tags filter for displayed objects, resets current displayed page to 1 and fetches objects to display on it.
+ */
+export const setObjectsListTagsFilterAndFetchPage = (tagID: number) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
+        dispatch(setObjectsListPaginationInfo({ currentPage: 1 }));
+        dispatch(setObjectsListTagsFilter(tagID));
+        dispatch(objectsListPageFetch(1));
     };
 };

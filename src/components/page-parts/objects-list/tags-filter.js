@@ -5,7 +5,7 @@ import { InlineBlock, InlineItemListContainer } from "../../modules/inline/inlin
 import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineItem } from "../../modules/inline/inline-item";
 
-import { setObjectsListTagsFilterAndFetchPage } from "../../../fetches/ui-objects-list";
+import { setObjectsListTagsFilterAndFetchPage } from "../../../fetches/ui/objects-list";
 
 
 /**
