@@ -3,7 +3,8 @@ import { EditedObjectsUpdaters } from "../../store/updaters/data/edited-objects"
 import type { State } from "../../store/types/state";
 import { type EditedObject } from "../../store/types/data/edited-objects";
 import { getUpdatedToDoList, type ToDoListUpdateParams } from "../../store/updaters/data/to-do-lists";
-
+import { getStateWithCompositeUpdate as OLD_getStateWithCompositeUpdate } from "../helpers/object-composite";
+import { getUpdatedEditedComposite, type GetUpdatedEditedCompositeParams } from "../../store/updaters/data/edited-composite";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -30,7 +31,19 @@ const _updateEditedToDoList = (state: State, action: { objectID: number, update:
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Performs an `update` command on an edited composite object & related data (edited subobjects, etc). */
+export const updateEditedComposite = (objectID: number, update: GetUpdatedEditedCompositeParams) => ({ type: "UPDATE_EDITED_COMPOSITE", objectID, update });
+
+const _updateEditedComposite = (state: State, action: {objectID: number, update: GetUpdatedEditedCompositeParams }): State => {
+    const { objectID, update } = action;
+    if (["addNewSubobject"].includes(update.command)) return getUpdatedEditedComposite(state, objectID, update);
+    return OLD_getStateWithCompositeUpdate(state, objectID, update);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const editedObjectsRoot = {
     "ADD_EDITED_OBJECTS": _addEditedObjects,
-    "UPDATE_EDITED_TO_DO_LIST": _updateEditedToDoList
+    "UPDATE_EDITED_TO_DO_LIST": _updateEditedToDoList,
+    "UPDATE_EDITED_COMPOSITE": _updateEditedComposite
 };

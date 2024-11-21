@@ -14,7 +14,7 @@ export const ResetSubobjectDialog = ({ objectID, subobjectID, updateCallback, se
         setIsResetDialogDisplayed(false);
         if (subobjectID < 0)
             // Reset new subobject (add default state to state.editedObjects & reset composite subobject state, except for subobjectID, row & column)
-            updateCallback({ compositeUpdate: { command: "addNew", subobjectID, row, column }});
+            updateCallback({ compositeUpdate: { command: "addNewSubobject", subobjectID, row, column }});
         else
             // Reset edited subobject (reset state.editedObjects to the last saved state & reset composite subobject state, except for subobjectID, row & column)
             updateCallback({ compositeUpdate: { command: "addExisting", resetEditedObject: true, subobjectID, row, column }});

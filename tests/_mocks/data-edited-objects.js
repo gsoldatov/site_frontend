@@ -1,4 +1,5 @@
 import { resetEditedObjects, setEditedObject } from "../../src/actions/objects-edit";
+import { updateEditedComposite } from "../../src/reducers/data/edited-objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../src/reducers/data/objects";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 
@@ -25,7 +26,7 @@ export const getStoreWithEditedObjects = () => {
 
     // 0: new composite with [-1, 10, 11] as children;
     store.dispatch(setEditedObject({ object_name: "new composite", object_type: "composite" }, 0));
-    store.dispatch(setEditedObject({ compositeUpdate: { command: "addNew", subobjectID: -1, column: 0, row: 0 }}, 0));
+    store.dispatch(updateEditedComposite(0, { command: "addNewSubobject", subobjectID: -1, column: 0, row: 0 }));
     store.dispatch(setEditedObject({ compositeUpdate: { command: "addExisting", subobjectID: 10, column: 0, row: 1 }}, 0));
     store.dispatch(setEditedObject({ compositeUpdate: { command: "addExisting", subobjectID: 11, column: 0, row: 2 }}, 0));
     

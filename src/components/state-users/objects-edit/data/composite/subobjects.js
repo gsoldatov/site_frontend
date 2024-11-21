@@ -5,11 +5,12 @@ import { DraggableSubobjectCard } from "./subobject-card/subobject-card";
 import { DroppableAddSubobjectMenu } from "./add-subobject-menu";
 import { NewSubobjectGridColumn } from "./new-subobject-grid-column";
 
-import { setEditedObject, setAddCompositeSubobjectMenu } from "../../../../../actions/objects-edit";
+import { setAddCompositeSubobjectMenu } from "../../../../../actions/objects-edit";
 import { CompositeSelectors } from "../../../../../store/selectors/data/objects/composite";
 import { SubobjectDeleteMode } from "../../../../../store/types/data/composite";
 
 import StyleCompositeSubobjects from "../../../../../styles/modules/edit/composite-subobjects.css";
+import { updateEditedComposite } from "../../../../../reducers/data/edited-objects";
 
 
 /**
@@ -18,12 +19,11 @@ import StyleCompositeSubobjects from "../../../../../styles/modules/edit/composi
 export const SubobjectsContainer = ({ objectID }) => {
     const dispatch = useDispatch();
     const updateCallback = useMemo(
-        () => params => dispatch(setEditedObject(params, objectID))
+        () => params => dispatch(updateEditedComposite(objectID, params.compositeUpdate))
     , [objectID]);
     const setAddMenuCallback = useMemo(
         () => addCompositeSubobjectMenu => dispatch(setAddCompositeSubobjectMenu(addCompositeSubobjectMenu))
     , []);
-
 
     const editedObjects = useSelector(state => state.editedObjects);
     const composite = useSelector(state => state.editedObjects[objectID].composite);

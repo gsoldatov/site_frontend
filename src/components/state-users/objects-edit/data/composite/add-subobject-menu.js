@@ -20,7 +20,7 @@ class AddSubobjectMenu extends React.PureComponent {
     }
 
     // Button click handlers
-    addNewOnClick() { this.props.updateCallback({ compositeUpdate: { command: "addNew", row: this.props.row, column: this.props.column }}); }
+    addNewOnClick() { this.props.updateCallback({ compositeUpdate: { command: "addNewSubobject", row: this.props.row, column: this.props.column }}); }
     addExistingOnClick() { this.props.setAddMenuCallback({ row: this.props.row, column: this.props.column, inputText: "", matchingIDs: [] }); }
 
     render() {
