@@ -12,18 +12,6 @@ import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
 
 /**
- * Updates `state.objectsListUI.paginationInfo`, resets current displayed page to 1 and fetches objects to display on it.
- */
-export const setObjectsListPaginationInfoAndFetchPage = paginationInfo => {
-    return async (dispatch, getState) => {
-        paginationInfo.currentPage = 1;
-        dispatch(setObjectsListPaginationInfo(paginationInfo));
-        dispatch(objectsListPageFetch(paginationInfo.currentPage));
-    };
-};
-
-
-/**
  * Updates tags filter for displayed objects, resets current displayed page to 1 and fetches objects to display on it.
  */
 export const setObjectsListTagsFilterAndFetchPage = tagID => {

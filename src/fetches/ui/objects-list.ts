@@ -1,6 +1,8 @@
-import { clearObjectsListTagUpdates, setObjectsListTagsInput } from "../../reducers/ui/objects-list";
-import type { Dispatch, GetState } from "../../util/types/common";
+import { clearObjectsListTagUpdates, setObjectsListPaginationInfo, setObjectsListTagsInput } from "../../reducers/ui/objects-list";
 import { objectsListPageFetch } from "../ui-objects-list";
+
+import type { Dispatch, GetState } from "../../util/types/common";
+import type { ObjectsListPaginationInfo } from "../../store/types/ui/objects-list";
 
 
 /**
@@ -12,5 +14,17 @@ export const objectsListOnLoadFetch = () => {
         dispatch(setObjectsListTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
         dispatch(clearObjectsListTagUpdates());
         dispatch(objectsListPageFetch(currentPage));
+    };
+};
+
+
+/**
+ * Updates `state.objectsListUI.paginationInfo`, resets current displayed page to 1 and fetches objects to display on it.
+ */
+export const setObjectsListPaginationInfoAndFetchPage = (paginationInfo: ObjectsListPaginationInfo) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
+        paginationInfo.currentPage = 1;
+        dispatch(setObjectsListPaginationInfo(paginationInfo));
+        dispatch(objectsListPageFetch(paginationInfo.currentPage));
     };
 };
