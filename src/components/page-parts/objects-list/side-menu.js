@@ -6,8 +6,9 @@ import { SideMenuItem } from "../../modules/side-menu/side-menu-item";
 import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogCheckbox, SideMenuDialogButtonsContainer, SideMenuDialogButton } from "../../modules/side-menu/side-menu-dialog";
 
-import { setShowDeleteDialogObjects, clearObjectsListTagUpdates } from "../../../reducers/ui/objects-list";
-import { objectsListDeleteFetch, objectsListUpdateTagsFetch } from "../../../fetches/ui-objects-list";
+import { setObjectsListShowDeleteDialog, clearObjectsListTagUpdates } from "../../../reducers/ui/objects-list";
+import { objectsListUpdateTagsFetch } from "../../../fetches/ui-objects-list";
+import { objectsListDeleteFetch } from "../../../fetches/ui/objects-list";
 import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
 
 
@@ -51,7 +52,7 @@ const Delete = () => {
     const dispatch = useDispatch();
     const isActive = useSelector(state => !ObjectsListSelectors.isFetchingOrShowingDeleteDialog(state) && state.objectsListUI.selectedObjectIDs.length > 0);
     const isVisible = useSelector(state => !state.objectsListUI.showDeleteDialog && !ObjectsListSelectors.isObjectsTagsEditActive(state));
-    const onClick = useMemo(() => () => dispatch(setShowDeleteDialogObjects(true)), []);
+    const onClick = useMemo(() => () => dispatch(setObjectsListShowDeleteDialog(true)), []);
 
     if (!isVisible) return null;
     return <SideMenuItem text="Delete" icon="trash alternate" iconColor="red" isActive={isActive} onClick={onClick} />;
@@ -64,7 +65,7 @@ const DeleteDialog = () => {
     const isCheckboxVisible = useSelector(state => state.objectsListUI.selectedObjectIDs.some(objectID => state.objects[objectID].object_type === "composite"));
 
     const yesOnClick = useMemo(() => deleteSubobjects => dispatch(objectsListDeleteFetch(deleteSubobjects)), []);
-    const noOnClick = useMemo(() => () => dispatch(setShowDeleteDialogObjects(false)), []);
+    const noOnClick = useMemo(() => () => dispatch(setObjectsListShowDeleteDialog(false)), []);
 
     if (!isVisible) return null;
 
