@@ -1,10 +1,9 @@
-
 import { EditedObjectsUpdaters } from "./edited-objects";
 import { CompositeSelectors } from "../../selectors/data/objects/composite";
 import { getStateWithResetEditedObjects, getStateWithDeletedEditedNewSubobjects } from "../../../reducers/helpers/object";
 
-import { compositeSubobject, CompositeSubobject, getCompositeSubobject } from "../../types/data/composite";
-import { getEditedObjectState } from "../../types/data/edited-objects";
+import { compositeSubobject, getCompositeSubobject, type CompositeSubobject } from "../../types/data/composite";
+import { getEditedObjectState, type EditedObjects } from "../../types/data/edited-objects";
 import type { State } from "../../types/state"
 
 
@@ -72,6 +71,26 @@ export class EditedCompositeUpdaters {
         const editedObject = { ...state.editedObjects[objectID], composite };
         return { ...state, editedObjects: { ...state.editedObjects, [objectID]: editedObject }};
     }
+
+    /**
+     * Toggles `is_published` prop of of all edited objects, which are subobjects of a composite object `objectID`,
+     * based on the provided `subobjectsIsPublishedState` value.
+     * If `subobjectsIsPublishedState` == "yes", sets `is_published` values to false, otherwise - to true.
+     */
+    static toggleSubobjectsIsPublished(state: State, objectID: number, update: GetUpdatedEditedCompositeParamsToggleSubobjectsIsPublished): State {
+        const editedObject = state.editedObjects[objectID];
+        if (editedObject.object_type !== "composite") return state;
+
+        const { subobjectsIsPublishedState } = update;
+        const is_published = subobjectsIsPublishedState !== "yes";
+
+        const newEditedObjects: EditedObjects = {};
+        Object.keys(editedObject.composite.subobjects).map(id => parseInt(id)).forEach(subobjectID => {
+            if (subobjectID in state.editedObjects) newEditedObjects[subobjectID] = { ...state.editedObjects[subobjectID], is_published };
+        });
+
+        return { ...state, editedObjects: { ...state.editedObjects, ...newEditedObjects }};
+    }
 }
 
 
@@ -80,14 +99,16 @@ type GetUpdatedEditedCompositeParamsAddExistingSubobject = { command: "addExisti
     subobjectID: number, row: number, column: number, resetEditedObject?: boolean
 };
 type GetUpdatedEditedCompositeParamsUpdateSubobject = { command: "updateSubobject", subobjectID: number } & Partial<CompositeSubobject>;
+type GetUpdatedEditedCompositeParamsToggleSubobjectsIsPublished = { command: "toggleSubobjectsIsPublished", subobjectsIsPublishedState: "yes" | "partially" | "no" };
 export type GetUpdatedEditedCompositeParams = GetUpdatedEditedCompositeParamsAddNewSubobject | GetUpdatedEditedCompositeParamsAddExistingSubobject |
-    GetUpdatedEditedCompositeParamsUpdateSubobject;
+    GetUpdatedEditedCompositeParamsUpdateSubobject | GetUpdatedEditedCompositeParamsToggleSubobjectsIsPublished;
 
 export const getUpdatedEditedComposite = (state: State, objectID: number, update: GetUpdatedEditedCompositeParams): State => {
     const { command } = update;
     if (command === "addNewSubobject") return EditedCompositeUpdaters.addNewSubobject(state, objectID, update);
     if (command === "addExistingSubobject") return EditedCompositeUpdaters.addExistingSubobject(state, objectID, update);
     if (command === "updateSubobject") return EditedCompositeUpdaters.updateSubobject(state, objectID, update);
+    if (command === "toggleSubobjectsIsPublished") return EditedCompositeUpdaters.toggleSubobjectsIsPublished(state, objectID, update);    
     throw Error(`Command '${command}' handler not implemented.`);
 };
 
@@ -344,21 +365,5 @@ export const getUpdatedEditedComposite = (state: State, objectID: number, update
 //         };
 //     }
 
-//     // Toggles `is_published` of all subobjects based on the provided `subobjectsIsPublishedState` value.
-//     // If `subobjectsIsPublishedState` == "yes", sets `is_published` values to false, otherwise - to true.
-//     if (command === "toggleSubobjectsIsPublished") {
-//         const editedObject = state.editedObjects[objectID];
-//         if (editedObject.object_type !== "composite") return state;
 
-//         const { subobjectsIsPublishedState } = update;
-//         const newIsPublished = subobjectsIsPublishedState !== "yes";
-
-//         const newEditedObjects = {};
-//         Object.keys(editedObject.composite.subobjects).forEach(subobjectID => {
-//             if (subobjectID in state.editedObjects)
-//                 newEditedObjects[subobjectID] = { ...state.editedObjects[subobjectID], is_published: newIsPublished };
-//         })
-
-//         return { ...state, editedObjects: { ...state.editedObjects, ...newEditedObjects }};
-//     }
 // }

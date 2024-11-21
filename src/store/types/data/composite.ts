@@ -37,6 +37,8 @@ export const composite = z.object({
 export const compositeStore = z.record(positiveIntIndex, composite);
 
 
+/** Enum for `show_description` props of a composite subobject. */
+export type CompositeShowDescription = z.infer<typeof compositeShowDescription>;
 /** Composite subobject's type for state.toDoLists & state.editedObjects. */
 export type CompositeSubobject = z.infer<typeof compositeSubobject>;
 /** Composite object's data type for state.toDoLists & state.editedObjects. */
