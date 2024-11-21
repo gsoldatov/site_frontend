@@ -1,8 +1,10 @@
 import { objectsViewFetch, objectsDeleteFetch, objectsGetPageObjectIDs } from "../data/objects";
+import { objectsTagsUpdateFetch } from "../data/objects-tags";
 
 import { clearObjectsListTagUpdates, setObjectsListPaginationInfo, setObjectsListTagsFilter, setObjectsListTagsInput,
-    setObjectsListFetch, setObjectsListShowDeleteDialog
+    setObjectsListFetch, setObjectsListShowDeleteDialog,
 } from "../../reducers/ui/objects-list";
+
 import { ObjectsListSelectors } from "../../store/selectors/ui/objects-list";
 
 import type { Dispatch, GetState } from "../../util/types/common";
@@ -121,6 +123,36 @@ export const objectsListDeleteFetch = (deleteSubobjects?: boolean) => {
 
         // Handle successful fetch end
         dispatch(setObjectsListPaginationInfo({ currentPageObjectIDs: state.objectsListUI.paginationInfo.currentPageObjectIDs.filter(id => !selectedObjectIDs.includes(id)) }));  // delete from current page
+        dispatch(setObjectsListFetch({ isFetching: false, fetchError: "" }));
+    };
+};
+
+
+/**
+ * Handles "Update Tags" button click.
+ */
+export function objectsListUpdateTagsFetch() {
+    return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
+        // Exit if already fetching data
+        let state = getState();
+        if (ObjectsListSelectors.isFetching(state)) return;
+
+        // Reset tag input
+        dispatch(setObjectsListTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
+
+        // Run fetch
+        dispatch(setObjectsListFetch({ isFetching: true, fetchError: "" }));
+        const objUI = state.objectsListUI;
+        const result = await dispatch(objectsTagsUpdateFetch(objUI.selectedObjectIDs, objUI.addedTags, objUI.removedTagIDs));
+
+        // Handle fetch errors
+        if (result.failed) {
+            dispatch(setObjectsListFetch({ isFetching: false, fetchError: result.error! }));
+            return;
+        }
+
+        // Reset added & removed tags
+        dispatch(clearObjectsListTagUpdates());
         dispatch(setObjectsListFetch({ isFetching: false, fetchError: "" }));
     };
 };

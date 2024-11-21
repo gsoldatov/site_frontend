@@ -11,7 +11,6 @@ import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
 
 
-
 /**
  * Thunk creator for fetching tags which match the value returned by `inputTextSelector` and updating the state with `actionCreator`.
  */
@@ -44,34 +43,3 @@ const dropdownFetchThunkCreatorCreator = (actionCreator, inputTextSelector) => {
 // Thunks for fetching tags created by `dropdownFetchThunkCreatorCreator`
 export const objectsListTagsDropdownFetch = dropdownFetchThunkCreatorCreator(setObjectsListTagsInput, state => state.objectsListUI.tagsInput.inputText);
 export const objectsListTagsFilterDropdownFetch = dropdownFetchThunkCreatorCreator(setObjectsListTagsFilterInput, state => state.objectsListUI.tagsFilterInput.inputText);
-
-
-/**
- * Handles "Update Tags" button click.
- */
-export function objectsListUpdateTagsFetch() {
-    return async (dispatch, getState) => {
-        // Exit if already fetching data
-        let state = getState();
-        if (ObjectsListSelectors.isFetching(state)) return;
-
-        // Reset tag input
-        dispatch(setObjectsListTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
-
-        // Run fetch
-        dispatch(setObjectsListFetch({ isFetching: true, fetchError: "" }));
-        const objUI = state.objectsListUI;
-        const result = await dispatch(objectsTagsUpdateFetch(objUI.selectedObjectIDs, objUI.addedTags, objUI.removedTagIDs));
-
-        // Handle fetch errors
-        if (result.failed) {
-            dispatch(setObjectsListFetch({ isFetching: false, fetchError: result.error }));
-            return;
-        }
-
-        // Handle successful fetch end
-        // Reset added & removed tags
-        dispatch(clearObjectsListTagUpdates());
-        dispatch(setObjectsListFetch({ isFetching: false, fetchError: "" }));
-    };
-};
