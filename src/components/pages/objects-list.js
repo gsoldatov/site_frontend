@@ -7,7 +7,7 @@ import { ObjectsListHorizontalMenu } from "../page-parts/objects-list/menu";
 import { TagsFilter } from "../page-parts/objects-list/tags-filter";
 import { ObjectsListFieldBody } from "../page-parts/objects-list/field-body";
 
-import { objectsListOnLoadFetch } from "../../fetches/ui-objects-list";
+import { objectsListOnLoadFetch } from "../../fetches/ui/objects-list";
 
 
 /**

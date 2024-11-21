@@ -10,18 +10,6 @@ import {
 import { ObjectsListSelectors } from "../store/selectors/ui/objects-list";
 
 
-/**
- * On load UI reset & current page fetch.
- */
-export const objectsListOnLoadFetch = () => {
-    return async (dispatch, getState) => {
-        const currentPage = getState().objectsListUI.paginationInfo.currentPage;
-        dispatch(setObjectsListTagsInput({ isDisplayed: false, inputText: "", matchingIDs: [] }));
-        dispatch(clearObjectsListTagUpdates());
-        dispatch(objectsListPageFetch(currentPage));
-    };
-};
-
 
 /**
  * Updates `state.objectsListUI.paginationInfo`, resets current displayed page to 1 and fetches objects to display on it.

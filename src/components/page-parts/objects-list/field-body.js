@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "semantic-ui-react";
 
@@ -9,21 +9,14 @@ import { ExpandableContainer } from "../../modules/expandable-container";
 import { ObjectsListPagination } from "./objects-list-pagination";
 
 import { toggleObjectSelection } from "../../../reducers/ui/objects-list";
-import { objectsListOnLoadFetch } from "../../../fetches/ui-objects-list";
+
 
 
 /**
  * /objects/list field body.
  */
 export const ObjectsListFieldBody = () => {
-    const dispatch = useDispatch();
     const { isFetching, fetchError } = useSelector(state => state.objectsListUI.fetch);
-
-    // On load action
-    useEffect(() => {
-        dispatch(objectsListOnLoadFetch());
-    }, []);
-
     if (isFetching) return <Loader active inline="centered">Loading tags...</Loader>;
     if (fetchError) return  <ErrorMessage text={fetchError}/>;
 
