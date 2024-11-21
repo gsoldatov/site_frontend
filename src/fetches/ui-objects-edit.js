@@ -8,6 +8,7 @@ import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setEditedObject, r
     setObjectsEditLoadFetchState, setObjectsEditSaveFetchState, setObjectsEditShowDeleteDialog,  
     setObjectsEditTagsInput, setAddCompositeSubobjectMenu,
     preSaveEditedObjectsUpdate, setToDoListRerenderPending } from "../actions/objects-edit";
+    import { updateEditedComposite } from "../reducers/data/edited-objects";
 
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
@@ -279,14 +280,15 @@ export const objectsEditLoadCompositeSubobjectsFetch = objectID => {
         if (subobjectIDsWithMissingAttributesOrTags.length > 0 || subobjectIDsWithMissingData.length > 0) {
             // Update fetch status
             let nonCachedSubobjectIDs = new Set(subobjectIDsWithMissingAttributesOrTags.concat(subobjectIDsWithMissingData));
-            dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "", subobjectIDs: nonCachedSubobjectIDs }}, objectID));
+            dispatch(updateEditedComposite(objectID, { command: "setSubobjectsFetchError", fetchError: "", subobjectIDs: nonCachedSubobjectIDs }));
             
             // Fetch subobjects from backend
             const objectsViewResult = await dispatch(objectsViewFetch(subobjectIDsWithMissingAttributesOrTags, subobjectIDsWithMissingData));
 
             // Handle errors
             if (objectsViewResult.failed) {
-                dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "Could not fetch object data.", subobjectIDs: nonCachedSubobjectIDs }}, objectID));
+                dispatch(updateEditedComposite(objectID, { command: "setSubobjectsFetchError", 
+                    fetchError: "Could not fetch object data.", subobjectIDs: nonCachedSubobjectIDs }));
                 return;
             }
 
@@ -296,7 +298,8 @@ export const objectsEditLoadCompositeSubobjectsFetch = objectID => {
             let returndedObjectDataIDs = objectsViewResult["object_data"].map(object => object.object_id);
             notFoundObjectIDs = notFoundObjectIDs.concat(subobjectIDsWithMissingData.filter(objectID => returndedObjectDataIDs.indexOf(objectID) === -1));
             if (notFoundObjectIDs.length > 0)
-                dispatch(setEditedObject({ compositeUpdate: { command: "setFetchError", fetchError: "Could not fetch object data.", subobjectIDs: notFoundObjectIDs }}, objectID));
+                dispatch(updateEditedComposite(objectID, { command: "setSubobjectsFetchError", 
+                    fetchError: "Could not fetch object data.", subobjectIDs: notFoundObjectIDs }));
         }
 
         // Set which objects should be added to state.editedObjects (successfully fetched & not already present there)
