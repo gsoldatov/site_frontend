@@ -1,5 +1,5 @@
 import { RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
-    SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_OBJECTS_EDIT_SELECT_TAB, 
+    SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, 
     SET_OBJECTS_EDIT_SHOW_RESET_DIALOG, SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG, SET_TO_DO_LIST_RERENDER_PENDING, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
     PRE_SAVE_EDITED_OBJECTS_UPDATE
     } from "../actions/objects-edit";
@@ -265,17 +265,6 @@ function resetEditedObjectsTags(state, action) {
 }
 
 
-function setObjectsEditSelectedTab(state, action) {
-    return {
-        ...state,
-        objectsEditUI: {
-            ...state.objectsEditUI,
-            selectedTab: action.selectedTab
-        }
-    }
-}
-
-
 function setObjectsEditShowResetDialog(state, action) {
     return {
         ...state,
@@ -366,7 +355,6 @@ const root = {
     CLEAR_UNSAVED_CURRENT_EDITED_OBJECT: clearUnsavedCurrentEditedObject,
     SET_EDITED_OBJECT_TAGS: setEditedObjectTags,
     RESET_EDITED_OBJECTS_TAGS: resetEditedObjectsTags,
-    SET_OBJECTS_EDIT_SELECT_TAB: setObjectsEditSelectedTab,
     SET_OBJECTS_EDIT_SHOW_RESET_DIALOG: setObjectsEditShowResetDialog,
     SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG: setObjectsEditShowDeleteDialog,
     SET_TO_DO_LIST_RERENDER_PENDING: setToDoListRerenderPending,

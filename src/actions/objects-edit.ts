@@ -4,7 +4,6 @@ export const SET_EDITED_OBJECT = "SET_EDITED_OBJECT";
 export const CLEAR_UNSAVED_CURRENT_EDITED_OBJECT = "CLEAR_UNSAVED_CURRENT_EDITED_OBJECT";
 export const SET_EDITED_OBJECT_TAGS = "SET_EDITED_OBJECT_TAGS";
 export const RESET_EDITED_OBJECTS_TAGS = "RESET_EDITED_OBJECTS_TAGS";
-export const SET_OBJECTS_EDIT_SELECT_TAB = "SET_OBJECTS_EDIT_SELECT_TAB";
 export const SET_OBJECTS_EDIT_SHOW_RESET_DIALOG = "SET_OBJECTS_EDIT_SHOW_RESET_DIALOG";
 export const SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG = "SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG";
 export const SET_TO_DO_LIST_RERENDER_PENDING = "SET_TO_DO_LIST_RERENDER_PENDING";
@@ -31,8 +30,6 @@ export const clearUnsavedCurrentEditedObject = ({ deleteNewObject, editedObjectI
 export const setEditedObjectTags             = (tagUpdates: any) => ({ type: SET_EDITED_OBJECT_TAGS, tagUpdates });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const resetEditedObjectsTags          = (objectIDs: any, modified_at: any) => ({ type: RESET_EDITED_OBJECTS_TAGS, objectIDs, modified_at });
-/** [Reducer file](../reducers/objects-edit.js) */
-export const setObjectsEditSelectedTab                  = (selectedTab: number) => ({ type: SET_OBJECTS_EDIT_SELECT_TAB, selectedTab });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const setObjectsEditShowResetDialog        = (showResetDialog: boolean = false) => ({ type: SET_OBJECTS_EDIT_SHOW_RESET_DIALOG, showResetDialog });
 /** [Reducer file](../reducers/objects-edit.js) */
