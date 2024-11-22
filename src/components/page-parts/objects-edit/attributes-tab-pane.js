@@ -10,7 +10,8 @@ import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
 
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
-import { setEditedObject, setEditedObjectTags, setObjectsEditTagsInput } from "../../../actions/objects-edit";
+import { setEditedObject, setEditedObjectTags } from "../../../actions/objects-edit";
+import { setObjectsEditTagsInput } from "../../../reducers/ui/objects-edit";
 import { objectsEditTagsDropdownFetch } from "../../../fetches/ui-objects-edit";
 
 

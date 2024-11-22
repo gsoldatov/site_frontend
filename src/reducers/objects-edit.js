@@ -1,5 +1,5 @@
 import { RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
-    SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_OBJECTS_EDIT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_OBJECTS_EDIT_SELECT_TAB, 
+    SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_OBJECTS_EDIT_SELECT_TAB, 
     SET_OBJECTS_EDIT_SHOW_RESET_DIALOG, SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG, SET_TO_DO_LIST_RERENDER_PENDING, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
     PRE_SAVE_EDITED_OBJECTS_UPDATE, SET_OBJECTS_EDIT_LOAD_FETCH_STATE, SET_OBJECTS_EDIT_SAVE_FETCH_STATE
     } from "../actions/objects-edit";
@@ -164,21 +164,6 @@ function clearUnsavedCurrentEditedObject(state, action) {
     return getStateAfterObjectPageLeave(state, { deleteNewObject, editedObjectID, excludedObjectID });
 }
 
-
-function setObjectsEditTagsInput(state, action) {
-    const oldTagsInput = state.objectsEditUI.tagsInput;
-    return {
-        ...state,
-        objectsEditUI: {
-            ...state.objectsEditUI,
-            tagsInput: {
-                isDisplayed: action.tagsInput.isDisplayed !== undefined ? action.tagsInput.isDisplayed : oldTagsInput.isDisplayed,
-                inputText: action.tagsInput.inputText !== undefined ? action.tagsInput.inputText : oldTagsInput.inputText,
-                matchingIDs: action.tagsInput.matchingIDs !== undefined ? action.tagsInput.matchingIDs : oldTagsInput.matchingIDs
-            }
-        }
-    }
-}
 
 
 /*
@@ -405,7 +390,6 @@ const root = {
     REMOVE_EDITED_OBJECTS: removeEditedObjects,
     SET_EDITED_OBJECT: setEditedObject,
     CLEAR_UNSAVED_CURRENT_EDITED_OBJECT: clearUnsavedCurrentEditedObject,
-    SET_OBJECTS_EDIT_TAGS_INPUT: setObjectsEditTagsInput,
     SET_EDITED_OBJECT_TAGS: setEditedObjectTags,
     RESET_EDITED_OBJECTS_TAGS: resetEditedObjectsTags,
     SET_OBJECTS_EDIT_SELECT_TAB: setObjectsEditSelectedTab,

@@ -1,7 +1,7 @@
 import type { State } from "../../store/types/state";
 import { positiveInt, type Dispatch, type GetState } from "../../util/types/common";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
-import { getObjectsEditUI } from "../../store/types/ui/objects-edit";
+import { getObjectsEditUI, type ObjectEditTagsInput } from "../../store/types/ui/objects-edit";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,17 @@ const _loadObjectsEditExistingPage = (state: State, action: { currentObjectID: n
     // Returns state for a valida
     return { ...state, objectsEditUI: getObjectsEditUI({ currentObjectID: action.currentObjectID, selectedTab }) };
 };
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Performs partial update on the /objects/edit/:id page tags input's state. */
+export const setObjectsEditTagsInput = (tagsInput: Partial<ObjectEditTagsInput>) => ({ type: "SET_OBJECTS_EDIT_TAGS_INPUT", tagsInput });
+
+const _setObjectsEditTagsInput = (state: State, action: { tagsInput: Partial<ObjectEditTagsInput> }): State => {
+    const tagsInput = { ...state.objectsEditUI.tagsInput, ...action.tagsInput };
+    return { ...state, objectsEditUI: { ...state.objectsEditUI, tagsInput }};
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,5 +60,6 @@ const _loadObjectsEditExistingPage = (state: State, action: { currentObjectID: n
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const objectsEditRoot = {
     "LOAD_OBJECTS_EDIT_NEW_PAGE": _loadObjectsEditNewPage,
-    "LOAD_OBJECTS_EDIT_EXISTING_PAGE": _loadObjectsEditExistingPage
+    "LOAD_OBJECTS_EDIT_EXISTING_PAGE": _loadObjectsEditExistingPage,
+    "SET_OBJECTS_EDIT_TAGS_INPUT": _setObjectsEditTagsInput
 };

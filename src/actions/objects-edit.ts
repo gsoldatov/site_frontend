@@ -2,7 +2,6 @@ export const RESET_EDITED_OBJECTS = "RESET_EDITED_OBJECTS";
 export const REMOVE_EDITED_OBJECTS = "REMOVE_EDITED_OBJECTS";
 export const SET_EDITED_OBJECT = "SET_EDITED_OBJECT";
 export const CLEAR_UNSAVED_CURRENT_EDITED_OBJECT = "CLEAR_UNSAVED_CURRENT_EDITED_OBJECT";
-export const SET_OBJECTS_EDIT_TAGS_INPUT = "SET_OBJECTS_EDIT_TAGS_INPUT";
 export const SET_EDITED_OBJECT_TAGS = "SET_EDITED_OBJECT_TAGS";
 export const RESET_EDITED_OBJECTS_TAGS = "RESET_EDITED_OBJECTS_TAGS";
 export const SET_OBJECTS_EDIT_SELECT_TAB = "SET_OBJECTS_EDIT_SELECT_TAB";
@@ -29,8 +28,7 @@ export const setEditedObject                 = (object: any, objectID: any) => (
 /** [Reducer file](../reducers/objects-edit.js) */
 export const clearUnsavedCurrentEditedObject = ({ deleteNewObject, editedObjectID, excludedObjectID }: { deleteNewObject: any, editedObjectID: any, excludedObjectID: any }) => 
                                                 ({ type: CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, deleteNewObject, editedObjectID, excludedObjectID });
-/** [Reducer file](../reducers/objects-edit.js) */
-export const setObjectsEditTagsInput              = (inputState: any) => ({ type: SET_OBJECTS_EDIT_TAGS_INPUT, tagsInput: inputState });
+
 /** [Reducer file](../reducers/objects-edit.js) */
 export const setEditedObjectTags             = (tagUpdates: any) => ({ type: SET_EDITED_OBJECT_TAGS, tagUpdates });
 /** [Reducer file](../reducers/objects-edit.js) */
