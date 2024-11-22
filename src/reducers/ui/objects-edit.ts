@@ -74,9 +74,16 @@ const _setObjectsEditTagsInput = (state: State, action: { tagsInput: Partial<Obj
 };
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Toggles display of side menu reset dialog on the /objects/edit/:id page and closes other dialogs. */
+export const setObjectsEditShowResetDialog = (showResetDialog: boolean) => ({ type: "SET_OBJECTS_EDIT_SHOW_RESET_DIALOG", showResetDialog });
+
+const _setObjectsEditShowResetDialog = (state: State, action: { showResetDialog: boolean }): State => {
+    const { showResetDialog } = action;
+    const showDeleteDialog = showResetDialog ? false : state.objectsEditUI.showDeleteDialog;
+    return { ...state, objectsEditUI: { ...state.objectsEditUI, showResetDialog, showDeleteDialog }};
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,5 +99,6 @@ export const objectsEditRoot = {
     "SET_OBJECTS_EDIT_LOAD_FETCH_STATE": _setObjectsEditLoadFetchState,
     "SET_OBJECTS_EDIT_SAVE_FETCH_STATE": _setObjectsEditSaveFetchState,
     "SET_OBJECTS_EDIT_TAGS_INPUT": _setObjectsEditTagsInput,
-    "SET_OBJECTS_EDIT_SELECTED_TAB": _setObjectsEditSelectedTab
+    "SET_OBJECTS_EDIT_SELECTED_TAB": _setObjectsEditSelectedTab,
+    "SET_OBJECTS_EDIT_SHOW_RESET_DIALOG": _setObjectsEditShowResetDialog
 };
