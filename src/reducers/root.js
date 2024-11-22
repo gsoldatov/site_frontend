@@ -13,6 +13,7 @@ import { navigationRoot } from "./ui/navigation";
 import { tagsEditRoot } from "./ui/tags-edit";
 import { tagsListRoot } from "./ui/tags-list";
 import objectEdit from "./objects-edit";
+import { objectsEditRoot } from "./ui/objects-edit";
 import { objectsListRoot } from "./ui/objects-list";
 import { objectsEditedRoot } from "./ui/objects-edited";
 
@@ -53,6 +54,7 @@ const ACTION_HANDLERS = getActionHandlers({
     tagsListRoot,
     tagsEditRoot,
     objectEdit,
+    objectsEditRoot,
     objectsListRoot,
     objectsEditedRoot 
 });

@@ -1,4 +1,4 @@
-import { LOAD_OBJECTS_EDIT_NEW_PAGE, LOAD_OBJECTS_EDIT_EXISTING_PAGE, RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
+import { LOAD_OBJECTS_EDIT_EXISTING_PAGE, RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
     SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_OBJECTS_EDIT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_OBJECTS_EDIT_SELECT_TAB, 
     SET_OBJECTS_EDIT_SHOW_RESET_DIALOG, SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG, SET_TO_DO_LIST_RERENDER_PENDING, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
     PRE_SAVE_EDITED_OBJECTS_UPDATE, SET_OBJECTS_EDIT_LOAD_FETCH_STATE, SET_OBJECTS_EDIT_SAVE_FETCH_STATE
@@ -16,53 +16,6 @@ import { getUpdatedToDoList } from "../store/updaters/data/to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
 
-
-function loadObjectsEditNewPage(state, action) {
-    // Add a new edited object if it's missing
-    let editedObjects = state.editedObjects;
-    if (editedObjects[0] === undefined) {
-        editedObjects = deepCopy(editedObjects);
-        editedObjects[0] = getEditedObjectState({ object_id: 0, display_in_feed: true, owner_id: state.auth.user_id });
-    }
-
-    return {
-        ...state,
-
-        editedObjects,
-
-        objectsEditUI: {
-            ...state.objectsEditUI,
-
-            currentObjectID: 0,
-            
-            tagsInput: {
-                isDisplayed: false,
-                inputText: "",
-                matchingIDs: []
-            },
-
-            loadFetch: {
-                isFetching: false,
-                fetchError: ""
-            },
-
-            saveFetch: {
-                isFetching: false,
-                fetchError: ""
-            },
-
-            selectedTab: 0,
-            showResetDialog: false,
-
-            addCompositeSubobjectMenu: {
-                row: -1,
-                column: -1,
-                inputText: "",
-                matchingIDs: []
-            }
-        }
-    };
-}
 
 
 function loadObjectsEditExistingPage(state, action) {
@@ -112,6 +65,7 @@ function loadObjectsEditExistingPage(state, action) {
     If `hideObjectResetDialog` is true, hides reset dialog on /objects/edit/:id page.
 
     TODO split into "reset existing object from stores" & "load new object with optional custom props"
+    TODO remove unmodified existing subobjects of a reset composite (if a composite subobjects are reset, also remove their unmodified subobjects)
 */
 function resetEditedObjects(state, action) {
     const { hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed } = action;
@@ -486,7 +440,6 @@ function setObjectsEditSaveFetchState(state, action) {
 
 
 const root = {
-    LOAD_OBJECTS_EDIT_NEW_PAGE: loadObjectsEditNewPage,
     LOAD_OBJECTS_EDIT_EXISTING_PAGE: loadObjectsEditExistingPage,
     RESET_EDITED_OBJECTS: resetEditedObjects,
     REMOVE_EDITED_OBJECTS: removeEditedObjects,
