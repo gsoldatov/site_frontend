@@ -39,7 +39,8 @@ export const objectsEditUI = z.object({
 
 /** /objects/edit/:id page UI state type. */
 type ObjectsEditUI = z.infer<typeof objectsEditUI>;
-export type ObjectEditTagsInput = z.infer<typeof objectsEditUI.shape.tagsInput>;
+export type ObjectsEditTagsInput = z.infer<typeof objectsEditUI.shape.tagsInput>;
+export type ObjectsEditAddCompositeSubobjectMenu = z.infer<typeof objectsEditUI.shape.addCompositeSubobjectMenu>;
 
 
 /** Returns /objects/edit/:id state with default values being replaced `customValues`. */

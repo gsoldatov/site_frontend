@@ -4,10 +4,9 @@ import { objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "./data
 import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { setEditedObject, resetEditedObjects, setEditedObjectTags, 
-    setAddCompositeSubobjectMenu, preSaveEditedObjectsUpdate } from "../actions/objects-edit";
+import { setEditedObject, resetEditedObjects, setEditedObjectTags, preSaveEditedObjectsUpdate } from "../actions/objects-edit";
 import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setObjectsEditLoadFetchState, setObjectsEditSaveFetchState,
-    setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setToDoListRerenderPending
+    setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setToDoListRerenderPending, setAddCompositeSubobjectMenu
 } from "../reducers/ui/objects-edit";
 import { updateEditedComposite } from "../reducers/data/edited-objects";
 

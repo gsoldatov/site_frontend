@@ -5,7 +5,6 @@ export const CLEAR_UNSAVED_CURRENT_EDITED_OBJECT = "CLEAR_UNSAVED_CURRENT_EDITED
 export const SET_EDITED_OBJECT_TAGS = "SET_EDITED_OBJECT_TAGS";
 export const RESET_EDITED_OBJECTS_TAGS = "RESET_EDITED_OBJECTS_TAGS";
 
-export const SET_ADD_COMPOSITE_SUBOBJECT_MENU = "SET_ADD_COMPOSITE_SUBOBJECT_MENU";
 export const PRE_SAVE_EDITED_OBJECTS_UPDATE = "PRE_SAVE_EDITED_OBJECTS_UPDATE";
 
 
@@ -29,8 +28,6 @@ export const setEditedObjectTags             = (tagUpdates: any) => ({ type: SET
 /** [Reducer file](../reducers/objects-edit.js) */
 export const resetEditedObjectsTags          = (objectIDs: any, modified_at: any) => ({ type: RESET_EDITED_OBJECTS_TAGS, objectIDs, modified_at });
 
-/** [Reducer file](../reducers/objects-edit.js) */
-export const setAddCompositeSubobjectMenu    = (addCompositeSubobjectMenu: any) => ({ type: SET_ADD_COMPOSITE_SUBOBJECT_MENU, addCompositeSubobjectMenu });
 
 /** [Reducer file](../reducers/objects-edit.js) */
 export const preSaveEditedObjectsUpdate      = () => ({ type: PRE_SAVE_EDITED_OBJECTS_UPDATE });

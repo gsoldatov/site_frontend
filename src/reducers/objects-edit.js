@@ -1,8 +1,7 @@
 import { RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
     SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, 
-     SET_ADD_COMPOSITE_SUBOBJECT_MENU, PRE_SAVE_EDITED_OBJECTS_UPDATE
+    PRE_SAVE_EDITED_OBJECTS_UPDATE
     } from "../actions/objects-edit";
-import { deepCopy } from "../util/copy";
 
 import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
@@ -14,7 +13,6 @@ import { getEditedObjectState } from "../store/types/data/edited-objects";
 import { getUpdatedToDoList } from "../store/updaters/data/to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
-
 
 
 /*
@@ -264,29 +262,6 @@ function resetEditedObjectsTags(state, action) {
 }
 
 
-
-
-
-
-function setAddCompositeSubobjectMenu(state, action) {
-    const oldAddCompositeSubobjectMenu = state.objectsEditUI.addCompositeSubobjectMenu;
-    const newAddCompositeSubobjectMenu = {};
-    ["row", "column", "inputText", "matchingIDs"].forEach(attr => {
-        if (action.addCompositeSubobjectMenu[attr] !== undefined) newAddCompositeSubobjectMenu[attr] = action.addCompositeSubobjectMenu[attr];
-    });
-    return {
-        ...state,
-        objectsEditUI: {
-            ...state.objectsEditUI,
-            addCompositeSubobjectMenu: {
-                ...oldAddCompositeSubobjectMenu,
-                ...newAddCompositeSubobjectMenu
-            }
-        }
-    };
-}
-
-
 /**
  * Applies required updates to edited objects before they are saved:
  * - normalizes item ID numeration in to-do lists, so that it matches the numeration in the saved version of the object;
@@ -319,8 +294,6 @@ const preSaveEditedObjectsUpdate = (state, action) => {
 };
 
 
-
-
 const root = {
     RESET_EDITED_OBJECTS: resetEditedObjects,
     REMOVE_EDITED_OBJECTS: removeEditedObjects,
@@ -328,7 +301,6 @@ const root = {
     CLEAR_UNSAVED_CURRENT_EDITED_OBJECT: clearUnsavedCurrentEditedObject,
     SET_EDITED_OBJECT_TAGS: setEditedObjectTags,
     RESET_EDITED_OBJECTS_TAGS: resetEditedObjectsTags,
-    SET_ADD_COMPOSITE_SUBOBJECT_MENU: setAddCompositeSubobjectMenu,
     PRE_SAVE_EDITED_OBJECTS_UPDATE: preSaveEditedObjectsUpdate,
 };
 

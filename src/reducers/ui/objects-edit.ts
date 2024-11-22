@@ -1,7 +1,7 @@
 import type { State } from "../../store/types/state";
-import { positiveInt, type Dispatch, type GetState } from "../../util/types/common";
+import { positiveInt } from "../../util/types/common";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
-import { getObjectsEditUI, type ObjectEditTagsInput } from "../../store/types/ui/objects-edit";
+import { getObjectsEditUI, type ObjectsEditTagsInput, type ObjectsEditAddCompositeSubobjectMenu } from "../../store/types/ui/objects-edit";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,9 +66,9 @@ const _setObjectsEditSelectedTab = (state: State, action: { selectedTab: number 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** Performs partial update on the /objects/edit/:id page tags input's state. */
-export const setObjectsEditTagsInput = (tagsInput: Partial<ObjectEditTagsInput>) => ({ type: "SET_OBJECTS_EDIT_TAGS_INPUT", tagsInput });
+export const setObjectsEditTagsInput = (tagsInput: Partial<ObjectsEditTagsInput>) => ({ type: "SET_OBJECTS_EDIT_TAGS_INPUT", tagsInput });
 
-const _setObjectsEditTagsInput = (state: State, action: { tagsInput: Partial<ObjectEditTagsInput> }): State => {
+const _setObjectsEditTagsInput = (state: State, action: { tagsInput: Partial<ObjectsEditTagsInput> }): State => {
     const tagsInput = { ...state.objectsEditUI.tagsInput, ...action.tagsInput };
     return { ...state, objectsEditUI: { ...state.objectsEditUI, tagsInput }};
 };
@@ -106,9 +106,14 @@ const _setToDoListRerenderPending = (state: State, action: { toDoListRerenderPen
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Partially updates composite subobject menu state on the /objects/edit/:id page. */
+export const setAddCompositeSubobjectMenu = (addCompositeSubobjectMenu: Partial<ObjectsEditAddCompositeSubobjectMenu>) => 
+    ({ type: "SET_ADD_COMPOSITE_SUBOBJECT_MENU", addCompositeSubobjectMenu });
+
+const _setAddCompositeSubobjectMenu = (state: State, action: { addCompositeSubobjectMenu: Partial<ObjectsEditAddCompositeSubobjectMenu> }): State => {
+    const addCompositeSubobjectMenu = { ...state.objectsEditUI.addCompositeSubobjectMenu, ...action.addCompositeSubobjectMenu };
+    return { ...state, objectsEditUI: { ...state.objectsEditUI, addCompositeSubobjectMenu }};
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,5 +126,6 @@ export const objectsEditRoot = {
     "SET_OBJECTS_EDIT_SELECTED_TAB": _setObjectsEditSelectedTab,
     "SET_OBJECTS_EDIT_SHOW_RESET_DIALOG": _setObjectsEditShowResetDialog,
     "SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG": _setObjectsEditShowDeleteDialog,
-    "SET_TO_DO_LIST_RERENDER_PENDING": _setToDoListRerenderPending
+    "SET_TO_DO_LIST_RERENDER_PENDING": _setToDoListRerenderPending,
+    "SET_ADD_COMPOSITE_SUBOBJECT_MENU": _setAddCompositeSubobjectMenu
 };
