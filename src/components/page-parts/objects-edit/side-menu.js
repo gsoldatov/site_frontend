@@ -9,8 +9,8 @@ import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer, S
 
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
 import { CompositeSelectors } from "../../../store/selectors/data/objects/composite";
-import { resetEditedObjects, setToDoListRerenderPending } from "../../../actions/objects-edit";
-import { setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog } from "../../../reducers/ui/objects-edit";
+import { resetEditedObjects } from "../../../actions/objects-edit";
+import { setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog, setToDoListRerenderPending } from "../../../reducers/ui/objects-edit";
 import { objectsEditNewSaveFetch, objectsEditExistingSaveFetch, objectsEditExistingDeleteFetch } from "../../../fetches/ui-objects-edit";
 
 

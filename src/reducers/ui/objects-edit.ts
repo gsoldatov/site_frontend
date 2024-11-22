@@ -97,6 +97,14 @@ const _setObjectsEditShowDeleteDialog = (state: State, action: { showDeleteDialo
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Sets `toDoListRerenderPending` prop of the /objects/edit/:id UI state. */
+export const setToDoListRerenderPending = (toDoListRerenderPending: boolean) => ({ type: "SET_TO_DO_LIST_RERENDER_PENDING", toDoListRerenderPending });
+
+const _setToDoListRerenderPending = (state: State, action: { toDoListRerenderPending: boolean }): State => {
+    const { toDoListRerenderPending } = action;
+    return { ...state, objectsEditUI: { ...state.objectsEditUI, toDoListRerenderPending }};
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,5 +120,6 @@ export const objectsEditRoot = {
     "SET_OBJECTS_EDIT_TAGS_INPUT": _setObjectsEditTagsInput,
     "SET_OBJECTS_EDIT_SELECTED_TAB": _setObjectsEditSelectedTab,
     "SET_OBJECTS_EDIT_SHOW_RESET_DIALOG": _setObjectsEditShowResetDialog,
-    "SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG": _setObjectsEditShowDeleteDialog
+    "SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG": _setObjectsEditShowDeleteDialog,
+    "SET_TO_DO_LIST_RERENDER_PENDING": _setToDoListRerenderPending
 };

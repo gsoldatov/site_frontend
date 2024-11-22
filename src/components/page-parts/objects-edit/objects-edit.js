@@ -8,8 +8,7 @@ import { AttributesTabPane } from "./attributes-tab-pane";
 import { ObjectDataSwitch } from "../../state-users/objects-edit/data/object-data-switch";
 import { DisplayTab } from "../../state-users/objects-edit/display/display-tab";
 
-import { setToDoListRerenderPending } from "../../../actions/objects-edit";
-import { setObjectsEditSelectedTab } from "../../../reducers/ui/objects-edit";
+import { setObjectsEditSelectedTab, setToDoListRerenderPending } from "../../../reducers/ui/objects-edit";
 import { CompositeSelectors } from "../../../store/selectors/data/objects/composite";
 import { LayoutType } from "../../../store/types/ui/general/layout-type";
 

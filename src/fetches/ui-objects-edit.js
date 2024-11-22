@@ -5,9 +5,9 @@ import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
 import { setEditedObject, resetEditedObjects, setEditedObjectTags, 
-    setAddCompositeSubobjectMenu, preSaveEditedObjectsUpdate, setToDoListRerenderPending } from "../actions/objects-edit";
+    setAddCompositeSubobjectMenu, preSaveEditedObjectsUpdate } from "../actions/objects-edit";
 import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setObjectsEditLoadFetchState, setObjectsEditSaveFetchState,
-    setObjectsEditTagsInput, setObjectsEditShowDeleteDialog
+    setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setToDoListRerenderPending
 } from "../reducers/ui/objects-edit";
 import { updateEditedComposite } from "../reducers/data/edited-objects";
 
