@@ -5,7 +5,7 @@ import { fetchMissingTags } from "./data/tags";
 
 import { updateObjectsTags } from "../reducers/data/objects-tags";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../reducers/data/objects";
-import { setEditedObject, setObjectsEditSaveFetchState } from "../actions/objects-edit";
+import { setEditedObject } from "../actions/objects-edit";
 
 import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeObjectAttributesAndTagsForUpdateFetch,
     serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
@@ -27,7 +27,6 @@ export const objectsAddFetch = obj => {
         try {
             validateObject(state, obj);
         } catch (e) {
-            dispatch(setObjectsEditSaveFetchState(false, e.message));
             return { error: e.message };
         }
 
@@ -77,7 +76,6 @@ export const objectsUpdateFetch = obj => {
         try {
             validateObject(state, obj);
         } catch (e) {
-            dispatch(setObjectsEditSaveFetchState(false, e.message));
             return { error: e.message };
         }
 

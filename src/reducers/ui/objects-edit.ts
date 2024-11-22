@@ -43,7 +43,17 @@ export const setObjectsEditLoadFetchState = (isFetching: boolean, fetchError: st
 function _setObjectsEditLoadFetchState(state: State, action: { isFetching: boolean, fetchError: string }): State {
     const loadFetch = { isFetching: action.isFetching, fetchError: action. fetchError };
     return { ...state, objectsEditUI: { ...state.objectsEditUI, loadFetch }};
-}
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Sets /object/edit/:id save fetch state. */
+export const setObjectsEditSaveFetchState = (isFetching: boolean, fetchError: string) => ({ type: "SET_OBJECTS_EDIT_SAVE_FETCH_STATE", isFetching, fetchError });
+
+const _setObjectsEditSaveFetchState = (state: State, action: { isFetching: boolean, fetchError: string }): State => {
+    const saveFetch = { isFetching: action.isFetching, fetchError: action. fetchError };
+    return { ...state, objectsEditUI: { ...state.objectsEditUI, saveFetch }};
+};
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** Performs partial update on the /objects/edit/:id page tags input's state. */
@@ -54,7 +64,8 @@ const _setObjectsEditTagsInput = (state: State, action: { tagsInput: Partial<Obj
     return { ...state, objectsEditUI: { ...state.objectsEditUI, tagsInput }};
 };
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,5 +81,6 @@ export const objectsEditRoot = {
     "LOAD_OBJECTS_EDIT_NEW_PAGE": _loadObjectsEditNewPage,
     "LOAD_OBJECTS_EDIT_EXISTING_PAGE": _loadObjectsEditExistingPage,
     "SET_OBJECTS_EDIT_LOAD_FETCH_STATE": _setObjectsEditLoadFetchState,
+    "SET_OBJECTS_EDIT_SAVE_FETCH_STATE": _setObjectsEditSaveFetchState,
     "SET_OBJECTS_EDIT_TAGS_INPUT": _setObjectsEditTagsInput,
 };

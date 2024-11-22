@@ -8,7 +8,7 @@ import { addObjectsAttributes, addObjectsDataFromBackend } from "../../reducers/
 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 
-// import { setEditedObject, setObjectsEditSaveFetchState } from "../../actions/objects-edit";
+// import { setEditedObject } from "../../actions/objects-edit";
 
 // import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeObjectAttributesAndTagsForUpdateFetch,
 //     serializeObjectData, modifyObjectDataPostSave } from "../../store/state-util/objects";

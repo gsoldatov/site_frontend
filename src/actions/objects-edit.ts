@@ -10,7 +10,6 @@ export const SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG = "SET_OBJECTS_EDIT_SHOW_DELETE
 export const SET_TO_DO_LIST_RERENDER_PENDING = "SET_TO_DO_LIST_RERENDER_PENDING";
 export const SET_ADD_COMPOSITE_SUBOBJECT_MENU = "SET_ADD_COMPOSITE_SUBOBJECT_MENU";
 export const PRE_SAVE_EDITED_OBJECTS_UPDATE = "PRE_SAVE_EDITED_OBJECTS_UPDATE";
-export const SET_OBJECTS_EDIT_SAVE_FETCH_STATE = "SET_OBJECTS_EDIT_SAVE_FETCH_STATE";
 
 
 /** [Reducer file](../reducers/objects-edit.js) */
@@ -45,13 +44,3 @@ export const setAddCompositeSubobjectMenu    = (addCompositeSubobjectMenu: any) 
 
 /** [Reducer file](../reducers/objects-edit.js) */
 export const preSaveEditedObjectsUpdate      = () => ({ type: PRE_SAVE_EDITED_OBJECTS_UPDATE });
-
-
-/** [Reducer file](../reducers/objects-edit.js) */
-export const setObjectsEditSaveFetchState = (isFetching: boolean = false, fetchError: string = "") => {
-    return {
-        type: SET_OBJECTS_EDIT_SAVE_FETCH_STATE,
-        isFetching: isFetching,
-        fetchError: fetchError
-    };
-};
