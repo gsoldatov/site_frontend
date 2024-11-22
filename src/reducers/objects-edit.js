@@ -1,7 +1,7 @@
 import { RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
     SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_OBJECTS_EDIT_SELECT_TAB, 
     SET_OBJECTS_EDIT_SHOW_RESET_DIALOG, SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG, SET_TO_DO_LIST_RERENDER_PENDING, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
-    PRE_SAVE_EDITED_OBJECTS_UPDATE, SET_OBJECTS_EDIT_LOAD_FETCH_STATE, SET_OBJECTS_EDIT_SAVE_FETCH_STATE
+    PRE_SAVE_EDITED_OBJECTS_UPDATE, SET_OBJECTS_EDIT_SAVE_FETCH_STATE
     } from "../actions/objects-edit";
 import { deepCopy } from "../util/copy";
 
@@ -357,19 +357,6 @@ const preSaveEditedObjectsUpdate = (state, action) => {
 };
 
 
-function setObjectsEditLoadFetchState(state, action) {
-    return {
-        ...state,
-        objectsEditUI: {
-            ...state.objectsEditUI,
-            loadFetch: {
-                isFetching: action.isFetching,
-                fetchError: action.fetchError
-            }
-        }
-    };
-}
-
 
 function setObjectsEditSaveFetchState(state, action) {
     return {
@@ -398,7 +385,6 @@ const root = {
     SET_TO_DO_LIST_RERENDER_PENDING: setToDoListRerenderPending,
     SET_ADD_COMPOSITE_SUBOBJECT_MENU: setAddCompositeSubobjectMenu,
     PRE_SAVE_EDITED_OBJECTS_UPDATE: preSaveEditedObjectsUpdate,
-    SET_OBJECTS_EDIT_LOAD_FETCH_STATE: setObjectsEditLoadFetchState,
     SET_OBJECTS_EDIT_SAVE_FETCH_STATE: setObjectsEditSaveFetchState
 };
 
