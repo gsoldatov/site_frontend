@@ -4,16 +4,18 @@ import { objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "./data
 import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { loadObjectsEditExistingPage, setEditedObject, resetEditedObjects, setEditedObjectTags,
+import { setEditedObject, resetEditedObjects, setEditedObjectTags,
     setObjectsEditLoadFetchState, setObjectsEditSaveFetchState, setObjectsEditShowDeleteDialog,  
     setObjectsEditTagsInput, setAddCompositeSubobjectMenu,
     preSaveEditedObjectsUpdate, setToDoListRerenderPending } from "../actions/objects-edit";
-import { loadObjectsEditNewPage } from "../reducers/ui/objects-edit";
+import { loadObjectsEditNewPage, loadObjectsEditExistingPage } from "../reducers/ui/objects-edit";
 import { updateEditedComposite } from "../reducers/data/edited-objects";
 
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
+
+import { positiveInt } from "../util/types/common";
 
 
 /**
@@ -80,21 +82,19 @@ export const objectsEditNewSaveFetch = () => {
 
 
 /**
- * Fetches attributes, tags and data of an existing object with the provided `object_id` and adds them to state.editedObjects, if the object was not already edited.
+ * Fetches attributes, tags and data of an existing object with the provided `objectID` and adds them to state.editedObjects, if the object was not already edited.
  */
-export const objectsEditExistingOnLoad = object_id => {
+export const objectsEditExistingOnLoad = objectID => {
     return async (dispatch, getState) => {
-        // Set initial page state
-        dispatch(loadObjectsEditExistingPage(object_id));
+        // Set initial page state (or display an error for invalid `objectID`)
+        dispatch(loadObjectsEditExistingPage(objectID));
 
-        // Exit if object_id is not valid
-        object_id = parseInt(object_id);
-        if (!(object_id > 0)) {
-            dispatch(setObjectsEditLoadFetchState(false, "Object not found."));
-            return;
-        }
+        // Exit if objectID is not valid
+        const currentObjectValidation = positiveInt.safeParse(objectID);
+        if (!currentObjectValidation.success) return;
 
         // Update fetch status
+        const object_id = currentObjectValidation.data;
         dispatch(setObjectsEditLoadFetchState(true, ""));
         
         // Check if object attributes, tags and data should be fetched and/or added to state.editedObjects

@@ -1,4 +1,3 @@
-export const LOAD_OBJECTS_EDIT_EXISTING_PAGE = "LOAD_OBJECTS_EDIT_EXISTING_PAGE";
 export const RESET_EDITED_OBJECTS = "RESET_EDITED_OBJECTS";
 export const REMOVE_EDITED_OBJECTS = "REMOVE_EDITED_OBJECTS";
 export const SET_EDITED_OBJECT = "SET_EDITED_OBJECT";
@@ -16,8 +15,6 @@ export const SET_OBJECTS_EDIT_LOAD_FETCH_STATE = "SET_OBJECTS_EDIT_LOAD_FETCH_ST
 export const SET_OBJECTS_EDIT_SAVE_FETCH_STATE = "SET_OBJECTS_EDIT_SAVE_FETCH_STATE";
 
 
-/** [Reducer file](../reducers/objects-edit.js) */
-export const loadObjectsEditExistingPage              = (currentObjectID: any) => ({ type: LOAD_OBJECTS_EDIT_EXISTING_PAGE, currentObjectID });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const resetEditedObjects              = ({ objectIDs, hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed }: 
                                                 { objectIDs: number[], hideObjectResetDialog?: boolean, resetCompositeSubobjects?: boolean, 

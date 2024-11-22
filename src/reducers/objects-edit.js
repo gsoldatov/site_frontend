@@ -1,4 +1,4 @@
-import { LOAD_OBJECTS_EDIT_EXISTING_PAGE, RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
+import { RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
     SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_OBJECTS_EDIT_TAGS_INPUT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, SET_OBJECTS_EDIT_SELECT_TAB, 
     SET_OBJECTS_EDIT_SHOW_RESET_DIALOG, SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG, SET_TO_DO_LIST_RERENDER_PENDING, SET_ADD_COMPOSITE_SUBOBJECT_MENU,
     PRE_SAVE_EDITED_OBJECTS_UPDATE, SET_OBJECTS_EDIT_LOAD_FETCH_STATE, SET_OBJECTS_EDIT_SAVE_FETCH_STATE
@@ -16,45 +16,6 @@ import { getUpdatedToDoList } from "../store/updaters/data/to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
 
-
-
-function loadObjectsEditExistingPage(state, action) {
-    return {
-        ...state,
-        objectsEditUI: {
-            ...state.objectsEditUI,
-
-            currentObjectID: action.currentObjectID,
-            
-            tagsInput: {
-                isDisplayed: false,
-                inputText: "",
-                matchingIDs: []
-            },
-
-            loadFetch: {
-                isFetching: false,
-                fetchError: ""
-            },
-
-            saveFetch: {
-                isFetching: false,
-                fetchError: ""
-            },
-
-            // selectedTab: 0,  // not reset on edit object page
-            showResetDialog: false,
-            showDeleteDialog: false,
-
-            addCompositeSubobjectMenu: {
-                row: -1,
-                column: -1,
-                inputText: "",
-                matchingIDs: []
-            }
-        }
-    };
-}
 
 
 /*
@@ -440,7 +401,6 @@ function setObjectsEditSaveFetchState(state, action) {
 
 
 const root = {
-    LOAD_OBJECTS_EDIT_EXISTING_PAGE: loadObjectsEditExistingPage,
     RESET_EDITED_OBJECTS: resetEditedObjects,
     REMOVE_EDITED_OBJECTS: removeEditedObjects,
     SET_EDITED_OBJECT: setEditedObject,
