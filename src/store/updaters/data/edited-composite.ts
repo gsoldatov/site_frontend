@@ -26,7 +26,8 @@ export class EditedCompositeUpdaters {
 
         // Add a new edited object
         const { is_published } = state.editedObjects[objectID];     // Get `is_published` setting from parent object
-        const newEditedObject = getEditedObjectState({ object_id: subobjectID, is_published });
+        const owner_id = state.auth.user_id;                        // Set owner to current user
+        const newEditedObject = getEditedObjectState({ object_id: subobjectID, is_published, owner_id });
         const newState = EditedObjectsUpdaters.addEditedObjects(state, [newEditedObject]);
         
         // Add the new subobject to composite data
