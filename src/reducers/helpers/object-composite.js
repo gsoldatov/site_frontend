@@ -1,10 +1,8 @@
 import { EditedObjectsSelectors } from "../../store/selectors/data/objects/edited-objects";
 import { ObjectsUpdaters } from "../../store/updaters/data/objects";
-import { getStateWithDeletedEditedNewSubobjects, getStateWithResetEditedObjects } from "./object";
+import { getStateWithDeletedEditedNewSubobjects } from "./object";
 
-import { SubobjectDeleteMode, getCompositeSubobject } from "../../store/types/data/composite";
-import { CompositeSelectors } from "../../store/selectors/data/objects/composite";
-import { objectHasNoChanges } from "../../store/state-util/objects";
+import { SubobjectDeleteMode } from "../../store/types/data/composite";
 import { deepCopy } from "../../util/copy";
 
 
@@ -13,112 +11,6 @@ import { deepCopy } from "../../util/copy";
  */
 export const getStateWithCompositeUpdate = (state, objectID, update) => {
     const { command } = update;
-
-    // // Adds a new subobject with default state to state.editedObjects & composite object data.
-    // if (command === "addNew") {
-    //     // Add a new edited object
-    //     const newID = update.subobjectID !== undefined ? update.subobjectID : CompositeSelectors.getNewSubobjectID(state);     // take existing subobjectID if it's passed
-    //     let newState = getStateWithResetEditedObjects(state, [newID], { allowResetToDefaults: true });
-
-    //     // Set new object's `is_published` to its parents' value
-    //     newState.editedObjects[newID].is_published = newState.editedObjects[objectID].is_published;
-        
-    //     // Add the new object to composite data
-    //     let newCompositeData = {
-    //         ...state.editedObjects[objectID].composite,
-    //         subobjects: { ...state.editedObjects[objectID].composite.subobjects }
-    //     };
-
-    //     const { row, column } = update;
-    //     newCompositeData.subobjects[newID] = getCompositeSubobject({ row, column });
-
-    //     newState.editedObjects[objectID] = {
-    //         ...newState.editedObjects[objectID],
-    //         composite: newCompositeData
-    //     };
-
-    //     return newState;
-    // }
-
-    // // Adds an existing subobject to the composite object.
-    // // If `resetEditedObject` is set to true, resets the object in state.editedObjects (for composite objects also deletes all of their new subobjects).
-    // if (command === "addExisting") {
-    //     const { resetEditedObject, subobjectID, row, column } = update;
-    //     let newState = state;
-
-    //     if (resetEditedObject) {
-    //         newState = getStateWithDeletedEditedNewSubobjects(newState, [subobjectID]);
-    //         newState = getStateWithResetEditedObjects(newState, [subobjectID]);
-    //     }
-    //     const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };
-    //     newSubobjects[subobjectID] = getCompositeSubobject({ row, column });
-        
-    //     return {
-    //         ...newState,
-    //         editedObjects: {
-    //             ...newState.editedObjects,
-    //             [objectID]: {
-    //                 ...newState.editedObjects[objectID],
-    //                 composite: {
-    //                     ...newState.editedObjects[objectID].composite,
-    //                     subobjects: newSubobjects
-    //                 }
-    //             }
-    //         }
-    //     };
-    // }
-
-    // // Updates the state of the provided `subobjectID` with the provided attribute values
-    // if (command === "updateSubobject") {
-    //     const { subobjectID } = update;
-    //     const oldSubobjectState = state.editedObjects[objectID].composite.subobjects[subobjectID];
-    //     if (oldSubobjectState === undefined) return state;
-        
-    //     const newSubobjectState = { ...oldSubobjectState };
-    //     for (let attr of Object.keys(getCompositeSubobject()))
-    //         if (update[attr] !== undefined) newSubobjectState[attr] = update[attr];
-        
-    //     return {
-    //         ...state,
-    //         editedObjects: {
-    //             ...state.editedObjects,
-    //             [objectID]: {
-    //                 ...state.editedObjects[objectID],
-    //                 composite: {
-    //                     ...state.editedObjects[objectID].composite,
-    //                     subobjects: {
-    //                         ...state.editedObjects[objectID].composite.subobjects,
-    //                         [subobjectID]: newSubobjectState
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     };
-    // }
-
-    // // Updates `fetchError` values of the provided `subobjectIDs`
-    // if (command === "setFetchError") {
-    //     const { fetchError, subobjectIDs } = update;
-    //     const newSubobjects = { ...state.editedObjects[objectID].composite.subobjects };
-    //     subobjectIDs.forEach(subobjectID => {
-    //         if (newSubobjects[subobjectID] === undefined) throw Error(`setFetchError command received a non-existing subobject ID ${subobjectID} for object ID ${objectID}`);
-    //         newSubobjects[subobjectID] = { ...newSubobjects[subobjectID], fetchError };
-    //     });
-
-    //     return {
-    //         ...state,
-    //         editedObjects: {
-    //             ...state.editedObjects,
-    //             [objectID]: {
-    //                 ...state.editedObjects[objectID],
-    //                 composite: {
-    //                     ...state.editedObjects[objectID].composite,
-    //                     subobjects: newSubobjects
-    //                 }
-    //             }
-    //         }
-    //     };
-    // }
 
     // Updates state after add or update of a composite object:
     // - removes any new subobjects from state.editedObjects if the main object is not composite (for when it was changed after subobject creation);
@@ -142,9 +34,9 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
 
         // Remove new and unchanged (non-fully) deleted existing objects from state
         let subobjectIDs = Object.keys(newState.editedObjects[objectID].composite.subobjects);
-        let deletedSubobjectIDs = subobjectIDs.filter(subobjectID => 
-                                                    newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteMode.subobjectOnly
-                                                    && objectHasNoChanges(newState, subobjectID));
+        const deletedSubobjectIDs = subobjectIDs.filter(subobjectID => 
+                                    newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteMode.subobjectOnly
+                                    && EditedObjectsSelectors.isNewOrUnchangedExisting(newState, subobjectID));
         newState = ObjectsUpdaters.deleteObjects(newState, deletedSubobjectIDs);
         
         // Remove fully deleted existing objectsfrom state
@@ -234,133 +126,4 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
 
         return newState;
     }
-
-    // // Updates state when a subobject card is successfully dropped on another position.
-    // //
-    // // Accepts one of four sets of arguments:
-    // // 1) `subobjectID` of the dragged subobject and `dropTargetSubobjectID` if dropped on another subobject card;
-    // // 2) `subobjectID`, `newColumn` & `newRow` if dropped on an add menu;
-    // // 3) `subobjectID`, `newColumn`, `newRow` & `isDroppedToTheLeft` if dropped on a new column dropzone to the left of an existing column;
-    // // 4) `subobjectID`, `newColumn`, `newRow` & `isDroppedToTheRight` if dropped on a new column dropzone to the right an existing column.
-    // //
-    // // Updates column row and values of dropped subobject card and other subobjects, which should be affected by position change.
-    // if (command === "updatePositionsOnDrop") {
-    //     let { subobjectID, dropTargetSubobjectID, newColumn, newRow, isDroppedToTheLeft, isDroppedToTheRight } = update;
-    //     if (dropTargetSubobjectID !== undefined) {
-    //         newColumn = state.editedObjects[objectID].composite.subobjects[dropTargetSubobjectID].column;
-    //         newRow = state.editedObjects[objectID].composite.subobjects[dropTargetSubobjectID].row;
-    //     }
-
-    //     // Exit if position was not changed (dropped on the row after its starting position)
-    //     const { column, row } = state.editedObjects[objectID].composite.subobjects[subobjectID];
-    //     if (newColumn === column && newRow === row + 1) return state;
-        
-    //     subobjectID = subobjectID.toString();
-    //     let newSubobjects = deepCopy(state.editedObjects[objectID].composite.subobjects);
-
-    //     // Handle drop on a new column dropzone
-    //     if (isDroppedToTheLeft || isDroppedToTheRight) {
-    //         const minColumnToIncrease = isDroppedToTheLeft ? newColumn : newColumn + 1;
-    //         let remaininngItemsInStartColumn = 0;
-    //         for (let soID of Object.keys(newSubobjects))
-    //             if (soID !== subobjectID) {
-    //                 const so = newSubobjects[soID];
-    //                 // Reduce rows of subobjects in the start column after the start row
-    //                 if (so.column === column && so.row > row) so.row--;
-    //                 if (so.column === column) remaininngItemsInStartColumn++;
-                    
-    //                 // Increase column number to the right of the dropped column
-    //                 if (so.column >= minColumnToIncrease) so.column += 1;
-    //             }
-            
-    //         // Set new column & row of the dragged card
-    //         newSubobjects[subobjectID].column = isDroppedToTheLeft ? newColumn : newColumn + 1;
-    //         newSubobjects[subobjectID].row = 0;
-
-    //         // Reduce column numbers if start column has no remaining subobjects
-    //         if (remaininngItemsInStartColumn === 0) {
-    //             for (let soID of Object.keys(newSubobjects)) {
-    //                 const so = newSubobjects[soID];
-    //                 if (so.column > column) so.column--;
-    //             }
-    //         }
-    //     }
-    //     // Handle drop in the same column
-    //     else if (column === newColumn) {
-    //         // Dropped lower
-    //         if (newRow > row + 1) {
-    //             for (let soID of Object.keys(newSubobjects))
-    //                 if (soID !== subobjectID) {     // reduce rows of cards between start and end positions by 1
-    //                     const so = newSubobjects[soID];
-    //                     if (so.column === column && so.row > row && so.row < newRow) so.row -= 1;
-    //                 }
-    //             newSubobjects[subobjectID].row = newRow - 1;    // set new row of dragged subobject
-    //         // Dropped higher
-    //         } else {
-    //             for (let soID of Object.keys(newSubobjects))
-    //                 if (soID !== subobjectID) {     // increase rows of cards between end and start positions by 1
-    //                     const so = newSubobjects[soID];
-    //                     if (so.column === column && so.row >= newRow && so.row < row) so.row += 1;
-    //                 }
-    //             newSubobjects[subobjectID].row = newRow;    // set new row of dragged subobject
-    //         }
-    //     // Handle drop in another column
-    //     } else {
-    //         let remaininngItemsInStartColumn = 0;
-    //         for (let soID of Object.keys(newSubobjects))
-    //             if (soID !== subobjectID) {
-    //                 const so = newSubobjects[soID];
-    //                 // Reduce rows of subobjects in the start column after the start row
-    //                 if (so.column === column && so.row > row) so.row--;
-    //                 if (so.column === column) remaininngItemsInStartColumn++;
-
-    //                 // Increase rows of subobjects in the new column after the new row
-    //                 if (so.column === newColumn && so.row >= newRow) so.row++;
-    //             }
-            
-    //         // Set new column & row of the dragged card
-    //         newSubobjects[subobjectID].column = newColumn;
-    //         newSubobjects[subobjectID].row = newRow;
-
-    //         // Reduce column numbers if start column has no remaining subobjects
-    //         if (remaininngItemsInStartColumn === 0) {
-    //             for (let soID of Object.keys(newSubobjects)) {
-    //                 const so = newSubobjects[soID];
-    //                 if (so.column > column) so.column--;
-    //             }
-    //         }
-    //     }
-
-    //     return {
-    //         ...state,
-    //         editedObjects: {
-    //             ...state.editedObjects,
-    //             [objectID]: {
-    //                 ...state.editedObjects[objectID],
-    //                 composite: {
-    //                     ...state.editedObjects[objectID].composite,
-    //                     subobjects: newSubobjects
-    //                 }
-    //             }
-    //         }
-    //     };
-    // }
-
-    // // Toggles `is_published` of all subobjects based on the provided `subobjectsIsPublishedState` value.
-    // // If `subobjectsIsPublishedState` == "yes", sets `is_published` values to false, otherwise - to true.
-    // if (command === "toggleSubobjectsIsPublished") {
-    //     const editedObject = state.editedObjects[objectID];
-    //     if (editedObject.object_type !== "composite") return state;
-
-    //     const { subobjectsIsPublishedState } = update;
-    //     const newIsPublished = subobjectsIsPublishedState !== "yes";
-
-    //     const newEditedObjects = {};
-    //     Object.keys(editedObject.composite.subobjects).forEach(subobjectID => {
-    //         if (subobjectID in state.editedObjects)
-    //             newEditedObjects[subobjectID] = { ...state.editedObjects[subobjectID], is_published: newIsPublished };
-    //     })
-
-    //     return { ...state, editedObjects: { ...state.editedObjects, ...newEditedObjects }};
-    // }
 }

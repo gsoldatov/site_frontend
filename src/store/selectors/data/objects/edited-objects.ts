@@ -2,6 +2,7 @@ import { deepEqual } from "../../../../util/equality-checks";
 import { ObjectsSelectors } from "./objects";
 
 import type { State } from "../../../types/state";
+import { getEditedObjectState } from "../../../types/data/edited-objects";
 import type { Markdown } from "../../../types/data/markdown";
 
 
@@ -28,21 +29,62 @@ export class EditedObjectsSelectors {
         return EditedObjectsSelectors.subobjectIDs(state, objectIDs).filter(id => id < 0);
     }
 
-    // TODO
-    // - new object is modified check
-    // - existing object is modified check
-    // ? other checks, which replace `objectHasNoChanges` (with default values for new objects or missing data)
+    /** 
+     * Returns true, if an existing edited object `objectID` is modified, or false, otherwise.
+     * Throws if any object part is not present in state storages.
+     */
+    static isModifiedExisting(state: State, objectID: number): boolean {
+        return EditedObjectsSelectors.attributesAreModified(state, objectID)
+            || EditedObjectsSelectors.tagsAreModified(state, objectID)
+            || EditedObjectsSelectors.dataIsModified(state, objectID)
+        ;
+    }
+
+    /** 
+     * Returns true, if `objectID` belongs to a new or unchanged existing edited object, or false otherwise.
+     * Throws, if `objectID` is not present in any of the data stores.
+     */
+    static isNewOrUnchangedExisting(state: State, objectID: number | string): boolean {
+        if (typeof objectID === "string") objectID = parseInt(objectID);
+        return objectID <= 0 || !EditedObjectsSelectors.isModifiedExisting(state, objectID);
+    }
+
+    /**
+     * Returns true if a new edited object `objectID` is modified, or false, otherwise.
+     * Throws, if `objectID` is existing or not being edited.
+     */
+    static isModifiedNew(state: State, objectID: number): boolean {
+        if (objectID > 0) throw Error(`Can't use the function for an existing object '${objectID}'.`);
+        const editedObject = state.editedObjects[objectID];
+        if (editedObject === undefined)
+            throw new ObjectMissingInStoreError(`Edited object '${objectID}' is missing.`);
+
+        return !deepEqual(state.editedObjects[objectID], getEditedObjectState({ object_id: objectID, display_in_feed: true, owner_id: state.auth.user_id }));
+    }
+
+    /**
+     * Returns true, if a new or existing object `objectID` is modified, or false, otherwise.
+     * If modification status (both new & existing) could not be resolved, returns `defaultValue`.
+     */
+    static safeIsModified(state: State, objectID: number, defaultValue: boolean): boolean {
+        try {
+            if (objectID <= 0) return EditedObjectsSelectors.isModifiedNew(state, objectID);
+            return EditedObjectsSelectors.isModifiedExisting(state, objectID);
+        } catch (e) {
+            if (e instanceof ObjectMissingInStoreError) return defaultValue;
+            else throw e;
+        }
+    }
 
     /** 
      * Returns a boolean indicating if edited object's attributes of `objectID` are modified.
-     * Throws if object data is not present in state.objectsTags.
+     * Throws if object attributes are not present in state.objects.
      */
     static attributesAreModified(state: State, objectID: number): boolean {
         const objectAttributes = state.objects[objectID] as Record<string, any>;
         const editedObject = state.editedObjects[objectID] as Record<string, any>;
-        if (objectAttributes === undefined) throw new ObjectMissingInStoreError(`Attributes for object '${objectID}' are missing.`);
-        // Function should not be called if object is not edited
-        if (editedObject === undefined) throw Error(`Attempted to check tags modification for object '${objectID}', which is not being edited.`);
+        if (editedObject === undefined || objectAttributes === undefined)
+            throw new ObjectMissingInStoreError(`Edited object '${objectID}' or its attributes are missing.`);
 
         for (let key of Object.keys(objectAttributes)) 
             if (!deepEqual(objectAttributes[key], editedObject[key])) return true;
@@ -51,14 +93,13 @@ export class EditedObjectsSelectors {
 
     /** 
      * Returns a boolean indicating if edited object's tags of `objectID` are modified.
-     * Throws if object data is not present in state.objectsTags.
+     * Throws if object's tags are not present in state.objectsTags.
      */
     static tagsAreModified(state: State, objectID: number): boolean {
         const objectTags = state.objectsTags[objectID];
         const editedObject = state.editedObjects[objectID];
-        if (objectTags === undefined) throw new ObjectMissingInStoreError(`Tags for object '${objectID}' are missing.`);
-        // Function should not be called if object is not edited
-        if (editedObject === undefined) throw Error(`Attempted to check tags modification for object '${objectID}', which is not being edited.`);
+        if (editedObject === undefined || objectTags === undefined)
+            throw new ObjectMissingInStoreError(`Edited object '${objectID}' or its tags are missing.`);
 
         return editedObject.addedTags.length > 0 || editedObject.removedTagIDs.length > 0 || !deepEqual(editedObject.currentTagIDs, objectTags);
     }
@@ -70,9 +111,8 @@ export class EditedObjectsSelectors {
     static dataIsModified(state: State, objectID: number): boolean {
         const objectData = ObjectsSelectors.data(state, objectID);
         const editedObject = state.editedObjects[objectID];
-        if (objectData === undefined) throw new ObjectMissingInStoreError(`Data for object '${objectID}' is missing.`);
-        // Function should not be called if object is not edited
-        if (editedObject === undefined) throw Error(`Attempted to check data modification for object '${objectID}', which is not being edited.`);
+        if (editedObject === undefined || objectData === undefined)
+            throw new ObjectMissingInStoreError(`Edited object '${objectID}' or its data are missing.`);
 
         switch(editedObject.object_type) {
             case "link":

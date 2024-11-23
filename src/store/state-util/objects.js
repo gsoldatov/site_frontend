@@ -1,11 +1,10 @@
 import { deepCopy } from "../../util/copy";
-import { deepEqual } from "../../util/equality-checks";
-import { serializedCompositeObjectDataProps } from "../state-templates/composite-subobjects";
-import { SubobjectDeleteMode } from "../types/data/composite";
+import { EditedObjectsSelectors } from "../selectors/data/objects/edited-objects";
 import { CompositeSelectors } from "../selectors/data/objects/composite";
-import { getEditedObjectState } from "../../store/types/data/edited-objects";
+
+import { SubobjectDeleteMode } from "../types/data/composite";
+import { serializedCompositeObjectDataProps } from "../state-templates/composite-subobjects";
 import { compositeSubobjectObjectAttributes, addedObjectAttributes, updatedObjectAttributes } from "../state-templates/edited-object";
-import { ObjectsSelectors } from "../selectors/data/objects/objects";
 
 /*
     Functions for checking/getting objects state.
@@ -173,7 +172,7 @@ export const serializeObjectData = (state, obj) => {
                         eso.object_type !== "composite"
                         && (
                             object_id < 0
-                            || (object_id > 0 && !objectHasNoChanges(state, object_id))
+                            || (object_id > 0 && EditedObjectsSelectors.isModifiedExisting(state, object_id))
                         )
                     ) {
                         // Attributes
@@ -231,97 +230,5 @@ export const modifyObjectDataPostSave = (requestPayload, responseObject) => {
             };
         default:
             return request_object_data;
-    }
-};
-
-
-/**
- * Returns true if state of the object with provided `objectID` in state.editedObjects has no changes compared to its last saved state (or default edited object state, if object is new).
- * 
- * If object is not present in any of the storages (state.editedObjects, state.objects, state.objectsTags, data storages), returns `defaultReturnValue` (defaults to true).
- */
- export const objectHasNoChanges = (state, objectID, defaultReturnValue) => {
-    // New edited object
-    if (objectID === 0) return deepEqual(state.editedObjects[objectID], getEditedObjectState({ object_id: 0, display_in_feed: true, owner_id: state.auth.user_id }));
-
-    // Existing edited object
-    // Return default value if objectID is missing is editedObjects or attribute / tag / data storages
-    defaultReturnValue = defaultReturnValue !== undefined ? defaultReturnValue : true;
-    if (!state.editedObjects.hasOwnProperty(objectID) || !state.objects.hasOwnProperty(objectID) 
-        || !state.objectsTags.hasOwnProperty(objectID) || !ObjectsSelectors.dataIsPresent(state, objectID)) 
-        return defaultReturnValue;
-    
-    const object = state.objects[objectID], objectTags = state.objectsTags[objectID], objectData = ObjectsSelectors.data(state, objectID),
-        editedObject = state.editedObjects[objectID];
-    
-    // Check object attributes
-    if (objectAttributesAreModified(object, editedObject)) return false;
-
-    // Check object tags
-    if (objectTagsAreModified(objectTags, editedObject)) return false;
-
-    // Check object data
-    if (objectDataIsModified(objectData, editedObject)) return false;
-
-    // No changes were made
-    return true;
-};
-
-
-/**
- * Accepts saved object attributes `object` and edited object state `editedObject`.
- * 
- * Returns true if object attributes in `editedObjects` are different than in `object`.
- * 
- * If `object` or `editedObject` are undefined, returns false.
- */
-export const objectAttributesAreModified = (object, editedObject) => {
-    if (object === undefined || editedObject === undefined) return false;
-
-    for (let key of Object.keys(object))
-        if (!deepEqual(object[key], editedObject[key])) return true;
-    
-    return false;
-};
-
-
-/**
- * Accepts saved object tags `objectTags` and an edited object state `editedObject`.
- * 
- * Returns true if object tags in `editedObject` are modified.
- * 
- * If object is not present in state.editedObjects, returns false.
- */
-export const objectTagsAreModified = (objectTags, editedObject) => {
-    if (editedObject === undefined) return false;
-
-    return editedObject.addedTags.length > 0 || editedObject.removedTagIDs.length > 0 || 
-        (editedObject.object_id > 0 && !deepEqual(editedObject.currentTagIDs, objectTags));  // don't compare currentTagIDs for new objects
-};
-
-
-/**
- * Accepts saved in a storage object data `objectData` and an edited object state `editedObject`.
- * 
- * Returns true if object data `editedObject` is modified.
- * 
- * If `objectData` or `editedObject` are undefined, returns false.
- * 
- * If object is not present in state.editedObjects or corresponding data storage, returns false.
- */
-export const objectDataIsModified = (objectData, editedObject) => {
-    if (objectData === undefined || editedObject === undefined) return false;
-
-    switch(editedObject.object_type) {
-        case "link":
-            return !deepEqual(objectData, editedObject.link);
-        case "markdown":
-            return objectData.raw_text !== editedObject.markdown.raw_text;
-        case "to_do_list":
-            return !deepEqual(objectData, editedObject.toDoList);
-        case "composite":
-            return !deepEqual(objectData, editedObject.composite);
-        default:
-            throw Error(`objectDataIsModified received an unexpected object type ${editedObject.object_type} when checking object ${editedObject.objectID}`);
     }
 };

@@ -1,5 +1,6 @@
 import { deepCopy } from "../../util/copy";
-import { objectHasNoChanges } from "../../store/state-util/objects";
+
+import { EditedObjectsSelectors } from "../../store/selectors/data/objects/edited-objects";
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { ObjectsEditSelectors } from "../../store/selectors/ui/objects-edit";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
@@ -99,7 +100,7 @@ export const getStateWithRemovedEditedObjects = (state, objectIDs, { deleteAllSu
                 if (objectType !== "composite" &&
                     (
                         deleteAllSubobjects ||
-                        subobjectID < 0 || (subobjectID > 0 && objectHasNoChanges(state, subobjectID))
+                        subobjectID < 0 || (subobjectID > 0 && !EditedObjectsSelectors.isModifiedExisting(state, subobjectID))
                     )
                     && !_excludedIDs.has(subobjectID))
                     delete newEditedObjects[subobjectID];
@@ -197,7 +198,8 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID, { exclude
 
     for (let subobjectID of Object.keys(state.editedObjects[objectID].composite.subobjects)) {
         subobjectID = parseInt(subobjectID);
-        if (subobjectID > 0 && !_excludedIDs.has(subobjectID) && objectHasNoChanges(state, subobjectID, false)) delete newEditedObjects[subobjectID];
+        if (subobjectID > 0 && !_excludedIDs.has(subobjectID) && !EditedObjectsSelectors.safeIsModified(state, subobjectID, true))
+            delete newEditedObjects[subobjectID];
     }
     
     return { ...state, editedObjects: newEditedObjects }; 
@@ -209,7 +211,7 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID, { exclude
  * 
  * Expects either `deleteNewObject` = true or `editedObjectID` to be provided.
  * 
- *  - If `deleteNewObject` is true, removes new object and, its new and unchanged existing subobjects, if it's composite;
+ *  - If `deleteNewObject` is true, removes new object and its new and unchanged existing subobjects, if it's composite;
  *  - if `deleteNewObject` is false:
  *      - if `excludedObjectID` is provided, corresponding object and its subobjects are not removed;
  *      - if object with `editedObjectID` is unchanged:
@@ -227,7 +229,11 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID, { exclude
     // Delete unchanged edited object & subobject data for `editedObjectID`
     else if (editedObjectID !== undefined) {
         const excludedObjectIDs = excludedObjectID !== undefined ? [excludedObjectID] : undefined;
-        if (objectHasNoChanges(state, editedObjectID, false)) newState = getStateWithRemovedEditedObjects(newState, [editedObjectID], { excludedObjectIDs });
+        // Remove unchanged new or existing edited object
+        if (!EditedObjectsSelectors.safeIsModified(state, editedObjectID, true))
+            newState = getStateWithRemovedEditedObjects(newState, [editedObjectID], { excludedObjectIDs });
+        
+        // Remove unchanged subobjects of a modified object
         else newState = getStateWithRemovedUnchangedEditedSubobjects(newState, editedObjectID, { excludedObjectIDs });
     }
 
