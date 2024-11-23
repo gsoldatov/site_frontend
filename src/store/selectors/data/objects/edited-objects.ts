@@ -29,6 +29,18 @@ export class EditedObjectsSelectors {
         return EditedObjectsSelectors.subobjectIDs(state, objectIDs).filter(id => id < 0);
     }
 
+    /** Returns a set containing provided `objectIDs` and IDs of all their subobjects found in state.editedObjects. */
+    static objectAndSubobjectIDs(state: State, objectIDs: (number | string)[]) {
+        const objectAndSubobjectIDs = new Set(objectIDs.map(objectID => parseInt(objectID as string)));
+        objectAndSubobjectIDs.forEach(objectID => {
+            const editedObject = state.editedObjects[objectID];
+            if (editedObject !== undefined && editedObject.object_type === "composite")
+                Object.keys(editedObject.composite.subobjects).forEach(objectID => objectAndSubobjectIDs.add(parseInt(objectID)));
+        });
+    
+        return objectAndSubobjectIDs;
+    };
+
     /** 
      * Returns true, if an existing edited object `objectID` is modified, or false, otherwise.
      * Throws if any object part is not present in state storages.

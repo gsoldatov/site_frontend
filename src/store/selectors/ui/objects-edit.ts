@@ -29,18 +29,6 @@ export class ObjectsEditSelectors {
         return ObjectsEditSelectors.isFetching(state) || state.objectsEditUI.loadFetch.fetchError;
     }
 
-    /** Returns a set containing provided `objectIDs` and IDs of all their subobjects found in state.editedObjects. */
-    static objectAndSubobjectIDs(state: State, objectIDs: (number | string)[]) {
-        const objectAndSubobjectIDs = new Set(objectIDs.map(objectID => parseInt(objectID as string)));
-        objectAndSubobjectIDs.forEach(objectID => {
-            const editedObject = state.editedObjects[objectID];
-            if (editedObject !== undefined && editedObject.object_type === "composite")
-                Object.keys(editedObject.composite.subobjects).forEach(objectID => objectAndSubobjectIDs.add(parseInt(objectID)));
-        });
-    
-        return objectAndSubobjectIDs;
-    };
-
     /** Returns a list with current & added existing tag IDs. */
     static existingTagIDs(state: State) {
         return existingTagIDsSelector(state);

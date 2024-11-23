@@ -2,7 +2,6 @@ import { deepCopy } from "../../util/copy";
 
 import { EditedObjectsSelectors } from "../../store/selectors/data/objects/edited-objects";
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
-import { ObjectsEditSelectors } from "../../store/selectors/ui/objects-edit";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
 
 
@@ -83,7 +82,7 @@ export const getStateWithRemovedEditedObjects = (state, objectIDs, { deleteAllSu
     let newEditedObjects = { ...state.editedObjects };
 
     // Exclude subobjects of excluded objects
-    const _excludedIDs = ObjectsEditSelectors.objectAndSubobjectIDs(state, excludedObjectIDs);
+    const _excludedIDs = EditedObjectsSelectors.objectAndSubobjectIDs(state, excludedObjectIDs);
 
     // Remove objects and their subobjects, if they're not excluded
     objectIDs.forEach(objectID => {
@@ -194,7 +193,7 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID, { exclude
     excludedObjectIDs = excludedObjectIDs === undefined ? [] : excludedObjectIDs;
 
     // Exclude subobjects of excluded objects
-    const _excludedIDs = ObjectsEditSelectors.objectAndSubobjectIDs(state, excludedObjectIDs);
+    const _excludedIDs = EditedObjectsSelectors.objectAndSubobjectIDs(state, excludedObjectIDs);
 
     for (let subobjectID of Object.keys(state.editedObjects[objectID].composite.subobjects)) {
         subobjectID = parseInt(subobjectID);
