@@ -3,8 +3,7 @@ import { Button, Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
-import { objectAttributesAreModified, objectTagsAreModified, objectDataIsModified } from "../../../../../../store/state-util/objects";
-import { ObjectsSelectors } from "../../../../../../store/selectors/data/objects/objects";
+import { EditedObjectsSelectors } from "../../../../../../store/selectors/data/objects/edited-objects";
 import { CompositeSelectors } from "../../../../../../store/selectors/data/objects/composite";
 import { SubobjectDeleteMode } from "../../../../../../store/types/data/composite";
 import { objectTypeOptions } from "../../../../../../store/types/ui/general/object-type";
@@ -106,21 +105,9 @@ const Indicators = ({ objectID, subobjectID }) => {
         );
 
         // Existing modifed selectors
-        const attributesModifiedIsDisplayedSelector = createSelector(
-            state => state.objects[subobjectID],
-            state => state.editedObjects[subobjectID],
-            (object, editedObject) => objectAttributesAreModified(object, editedObject)
-        );
-        const tagsModifiedIsDisplayedSelector = createSelector(
-            state => state.objectsTags[subobjectID],
-            state => state.editedObjects[subobjectID],
-            (objectTags, editedObject) => objectTagsAreModified(objectTags, editedObject)
-        );
-        const dataModifiedIsDisplayedSelector = createSelector(
-            state => ObjectsSelectors.data(state, subobjectID),
-            state => state.editedObjects[subobjectID],
-            (objectData, editedObject) => objectDataIsModified(objectData, editedObject)
-        )
+        const attributesModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.attributesAreModified(state, subobjectID);
+        const tagsModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.tagsAreModified(state, subobjectID);
+        const dataModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.dataIsModified(state, subobjectID);
         const subobjectParamsModifiedIsDisplayedSelector = createSelector(
             state => (state.composite[objectID] || {subobjects: {}}).subobjects[subobjectID],
             state => (state.editedObjects[objectID] || {composite: {subobjects: {}}}).composite.subobjects[subobjectID],
@@ -141,9 +128,9 @@ const Indicators = ({ objectID, subobjectID }) => {
             { name: "plus", color: "green", title: "Subobject is new and will be created when main object is saved", isDisplayed: parseInt(subobjectID) < 0 },
 
             // Existing modified
-            { name: "font", color: "yellow", title: "Subobject attributes were modified", isDisplayedSelector: state => attributesModifiedIsDisplayedSelector(state) },
-            { name: "tags", color: "yellow", title: "Subobject tags were modified", isDisplayedSelector: state => tagsModifiedIsDisplayedSelector(state) },
-            { name: "file alternate outline", color: "yellow", title: "Subobject data was modified", isDisplayedSelector: state => dataModifiedIsDisplayedSelector(state) },
+            { name: "font", color: "yellow", title: "Subobject attributes were modified", isDisplayedSelector: attributesModifiedIsDisplayedSelector },
+            { name: "tags", color: "yellow", title: "Subobject tags were modified", isDisplayedSelector: tagsModifiedIsDisplayedSelector },
+            { name: "file alternate outline", color: "yellow", title: "Subobject data was modified", isDisplayedSelector: dataModifiedIsDisplayedSelector },
 
             { name: "list", color: "yellow", title: "Subobject parameters were modified", isDisplayedSelector: state => subobjectParamsModifiedIsDisplayedSelector(state) },
             
