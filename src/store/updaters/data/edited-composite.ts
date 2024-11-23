@@ -1,6 +1,5 @@
 import { deepCopy } from "../../../util/copy";
 
-import { ObjectsUpdaters } from "./objects";
 import { EditedObjectsUpdaters } from "./edited-objects";
 import { CompositeSelectors } from "../../selectors/data/objects/composite";
 import { getStateWithResetEditedObjects, getStateWithDeletedEditedNewSubobjects } from "../../../reducers/helpers/object";

@@ -3,6 +3,7 @@ import { deepCopy } from "../../util/copy";
 import { EditedObjectsSelectors } from "../../store/selectors/data/objects/edited-objects";
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
+import { ObjectsEditedUpdaters } from "../../store/updaters/ui/objects-edited";
 
 
 /** 
@@ -112,7 +113,7 @@ export const getStateWithRemovedEditedObjects = (state, objectIDs, { deleteAllSu
     let newState = { ...state, editedObjects: newEditedObjects };
 
     // Deselect deleted edited objects on the /objects/edited page
-    newState = deselectNonExistantEditedObjects(newState);
+    newState = ObjectsEditedUpdaters.deselectNonEditedObjects(newState);
 
     return newState;
 };
@@ -237,20 +238,4 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID, { exclude
     }
 
     return newState;
-};
-
-
-/**
- * Returns the state with non-existant edited objects being removed from state.objectsEditedUI.selectedObjectIds.
- */
-export const deselectNonExistantEditedObjects = (state) => {
-    const newSelectedObjectIDs = new Set([...state.objectsEditedUI.selectedObjectIDs].filter(objectID => objectID in state.editedObjects));
-    
-    return {
-        ...state,
-        objectsEditedUI: {
-            ...state.objectsEditedUI,
-            selectedObjectIDs: newSelectedObjectIDs
-        }
-    };
 };
