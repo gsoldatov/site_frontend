@@ -5,6 +5,7 @@ import { DisplayControlCheckbox } from "../../../modules/edit/display/display-co
 import { DisplayControlDropdown } from "../../../modules/edit/display/display-control-dropdown";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
+import { updateEditedComposite } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 import { showDescriptionCompositeOptions } from "../../../../store/types/ui/general/show-description-composite";
 
@@ -38,7 +39,7 @@ export const SubobjectShowDescriptionAsLinkSwitch = ({ objectID, subobjectID }) 
     const showDescriptionAsLink = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).composite.subobjects[subobjectID].show_description_as_link_composite);
 
     const onChange = useMemo(() => 
-        (e, data) => dispatch(setEditedObject({ compositeUpdate: { command: "updateSubobject", subobjectID, show_description_as_link_composite: data.value }}, objectID))
+        (e, data) => dispatch(updateEditedComposite(objectID, { command: "updateSubobject", subobjectID, show_description_as_link_composite: data.value }))
     , [objectID, subobjectID]);
 
     return isLink && (

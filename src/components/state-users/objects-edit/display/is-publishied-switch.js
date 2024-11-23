@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DisplayControlCheckbox } from "../../../modules/edit/display/display-control-checkbox";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
+import { updateEditedComposite } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
@@ -44,7 +45,7 @@ import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edi
     });
 
     const onClick = useMemo(() => () =>
-        dispatch(setEditedObject({ compositeUpdate: { command: "toggleSubobjectsIsPublished", subobjectsIsPublishedState }}, objectID))
+        dispatch(updateEditedComposite(objectID, { command: "toggleSubobjectsIsPublished", subobjectsIsPublishedState }))
     , [objectID, subobjectsIsPublishedState]);
 
     const objectTypeSelector = useMemo(() => state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).object_type, [objectID]);

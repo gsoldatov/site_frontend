@@ -5,6 +5,7 @@ import { DisplayControlCheckbox } from "../../../modules/edit/display/display-co
 import { DisplayControlDropdown } from "../../../modules/edit/display/display-control-dropdown";
 
 import { setEditedObject } from "../../../../actions/objects-edit";
+import { updateEditedComposite } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 import { showDescriptionCompositeOptions } from "../../../../store/types/ui/general/show-description-composite";
 
@@ -36,7 +37,7 @@ export const SubobjectShowDescriptionSwitch = ({ objectID, subobjectID }) => {
 
     // On change callback
     const onChange = useMemo(() => 
-        (e, data) => dispatch(setEditedObject({ compositeUpdate: { command: "updateSubobject", subobjectID, show_description_composite: data.value }}, objectID))
+        (e, data) => dispatch(updateEditedComposite(objectID, { command: "updateSubobject", subobjectID, show_description_composite: data.value }))
     , [objectID, subobjectID]);
 
     return (
