@@ -83,7 +83,7 @@ export const getStateWithRemovedEditedObjects = (state, objectIDs, { deleteAllSu
     let newEditedObjects = { ...state.editedObjects };
 
     // Exclude subobjects of excluded objects
-    const _excludedIDs = EditedObjectsSelectors.objectAndSubobjectIDs(state, excludedObjectIDs);
+    const _excludedIDs = new Set(EditedObjectsSelectors.objectAndSubobjectIDs(state, excludedObjectIDs));
 
     // Remove objects and their subobjects, if they're not excluded
     objectIDs.forEach(objectID => {
@@ -194,7 +194,7 @@ const getStateWithRemovedUnchangedEditedSubobjects = (state, objectID, { exclude
     excludedObjectIDs = excludedObjectIDs === undefined ? [] : excludedObjectIDs;
 
     // Exclude subobjects of excluded objects
-    const _excludedIDs = EditedObjectsSelectors.objectAndSubobjectIDs(state, excludedObjectIDs);
+    const _excludedIDs = new Set(EditedObjectsSelectors.objectAndSubobjectIDs(state, excludedObjectIDs));
 
     for (let subobjectID of Object.keys(state.editedObjects[objectID].composite.subobjects)) {
         subobjectID = parseInt(subobjectID);

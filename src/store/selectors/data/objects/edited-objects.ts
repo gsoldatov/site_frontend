@@ -29,16 +29,19 @@ export class EditedObjectsSelectors {
         return EditedObjectsSelectors.subobjectIDs(state, objectIDs).filter(id => id < 0);
     }
 
-    /** Returns a set containing provided `objectIDs` and IDs of all their subobjects found in state.editedObjects. */
+    /** Returns an array with `objectIDs` and IDs of all their subobjects found in state.editedObjects. */
     static objectAndSubobjectIDs(state: State, objectIDs: (number | string)[]) {
-        const objectAndSubobjectIDs = new Set(objectIDs.map(objectID => parseInt(objectID as string)));
-        objectAndSubobjectIDs.forEach(objectID => {
+        const numericObjectIDs = objectIDs.map(id => parseInt(id as string));
+        const result = numericObjectIDs.slice();
+        
+        numericObjectIDs.forEach(objectID => {
             const editedObject = state.editedObjects[objectID];
             if (editedObject !== undefined && editedObject.object_type === "composite")
-                Object.keys(editedObject.composite.subobjects).forEach(objectID => objectAndSubobjectIDs.add(parseInt(objectID)));
+                Object.keys(editedObject.composite.subobjects).forEach(subobjectID => result.push(parseInt(subobjectID)));
         });
-    
-        return objectAndSubobjectIDs;
+
+        // Deduplicate before return
+        return [...new Set(result)];
     };
 
     /** 
