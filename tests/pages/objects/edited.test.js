@@ -211,17 +211,18 @@ test("Delete control", () => {
     // Check if correct number of objects is displayed and present in state
     expect(getEditedObjectItemRow(container, "new composite").objectNameCell).toBeFalsy();
     expect(getEditedObjectItemRow(container, "new subobject").objectNameCell).toBeFalsy();
-    expect(Object.keys(store.getState().editedObjects).length).toEqual(4);  // 0 was the deleted parent object, -1 was a new subobject and 10 was an unchanged existing subobject
-    expect(store.getState().editedObjects).not.toHaveProperty("0");         // 11 was the subobject as well, but it was modified and therefore, not deleted
+    expect(Object.keys(store.getState().editedObjects).length).toEqual(5);  // 0 was the deleted parent object, -1 was a new subobject
+    expect(store.getState().editedObjects).not.toHaveProperty("0");
     expect(store.getState().editedObjects).not.toHaveProperty("-1");
-    expect(store.getState().editedObjects).not.toHaveProperty("10");
+    // expect(store.getState().editedObjects).not.toHaveProperty("10");     // 10 was removed in non-typed version due to being unmodified existing subobject of 0;
+                                                                            // unmodified existing objects are no longer deleted in typed version
 
     // Check if correct number of rows is displayed
     const table = container.querySelector(".edited-objects-table");
     expect(table).toBeTruthy();
 
     const rows = table.querySelectorAll("tbody tr");
-    expect(rows.length).toEqual(4); // [1, 11, 22, 23]
+    expect(rows.length).toEqual(5); // [1, 10, 11, 22, 23]
 });
 
 
@@ -356,17 +357,18 @@ test("Delete selected objects", () => {
     clickDeleteControl({ cell: headerCells.controlsCell, withSubobjects: false, selected: true });
     clickConfirmButton({ body: container.parentNode, confirm: true });
 
-    expect(Object.keys(store.getState().editedObjects).length).toEqual(3);
+    expect(Object.keys(store.getState().editedObjects).length).toEqual(4);
     expect(store.getState().editedObjects).not.toHaveProperty("0");
     expect(store.getState().editedObjects).not.toHaveProperty("-1");
-    expect(store.getState().editedObjects).not.toHaveProperty("10");
+    // expect(store.getState().editedObjects).not.toHaveProperty("10"); // 10 was removed in non-typed version due to being unmodified existing subobject of 0;
+                                                                        // unmodified existing objects are no longer deleted in typed version
 
     // Check if correct number of rows is displayed
     const table = container.querySelector(".edited-objects-table");
     expect(table).toBeTruthy();
 
     const rows = table.querySelectorAll("tbody tr");
-    expect(rows.length).toEqual(3); // [1, 11, 23]
+    expect(rows.length).toEqual(4); // [1, 10, 11, 23]
 });
 
 

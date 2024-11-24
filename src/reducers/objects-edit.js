@@ -14,27 +14,6 @@ import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
 
 
-
-/**
-    Removes edited objects from the state.
-
-    If `removeAll` flag is true, removes all edited objects.
-    
-    Otherwise, removes objects with provided `objectIDs`.
-    Removes all new subobjects of composite objects.
-    If `removeSubobjects` is true, also removes existing subobjects of composite objects.
-*/
-function removeEditedObjects(state, action) {
-    const { objectIDs, removeSubobjects, removeAll } = action;
-
-    // Remove all edited objects
-    if (removeAll) return { ...state, editedObjects: {} };
-
-    // Remove edited objects specified in `objectIDs` and their non-composite children
-    return getStateWithRemovedEditedObjects(state, objectIDs, { deleteAllSubobjects: removeSubobjects });
-}
-
-
 /*
     Updates an object in state.editedObjects store with attributes/data passed in `action.object` prop.
     
@@ -257,7 +236,6 @@ const preSaveEditedObjectsUpdate = (state, action) => {
 
 
 const root = {
-    REMOVE_EDITED_OBJECTS: removeEditedObjects,
     SET_EDITED_OBJECT: setEditedObject,
     CLEAR_UNSAVED_CURRENT_EDITED_OBJECT: clearUnsavedCurrentEditedObject,
     SET_EDITED_OBJECT_TAGS: setEditedObjectTags,

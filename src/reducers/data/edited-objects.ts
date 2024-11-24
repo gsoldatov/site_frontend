@@ -60,9 +60,29 @@ const _updateEditedComposite = (state: State, action: {objectID: number, update:
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const removeEditedObjects = (objectIDs: number[], removeAllSubobjects: boolean = false) => 
+    ({ type: "REMOVE_EDITED_OBJECTS", objectIDs, removeAllSubobjects });
+
+const _removeEditedObjects = (state: State, action: { objectIDs: number[], removeAllSubobjects: boolean }): State => {
+    const { objectIDs, removeAllSubobjects } = action;
+    return EditedObjectsUpdaters.removeEditedObjects(state, objectIDs, removeAllSubobjects);
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** Removes all records from state.editedObjects. */
+export const clearEditedObjects = () => ({ type: "CLEAR_EDITED_OBJECTS" });
+
+const _clearEditedObjects = (state: State, action: any): State => {
+    return { ...state, editedObjects: {}};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const editedObjectsRoot = {
     "ADD_EDITED_OBJECTS": _addEditedObjects,
     "LOAD_EDITED_OBJECTS": _loadEditedObjects,
     "UPDATE_EDITED_TO_DO_LIST": _updateEditedToDoList,
-    "UPDATE_EDITED_COMPOSITE": _updateEditedComposite
+    "UPDATE_EDITED_COMPOSITE": _updateEditedComposite,
+    "REMOVE_EDITED_OBJECTS": _removeEditedObjects,
+    "CLEAR_EDITED_OBJECTS": _clearEditedObjects
 };

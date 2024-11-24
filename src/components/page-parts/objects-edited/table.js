@@ -3,7 +3,7 @@ import { Checkbox, Icon, Label, Table } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { removeEditedObjects } from "../../../actions/objects-edit";
+import { removeEditedObjects, clearEditedObjects } from "../../../reducers/data/edited-objects";
 import { toggleObjectsEditedSelection, toggleObjectsEditedSelectAll } from "../../../reducers/ui/objects-edited";
 import { objectTypeOptions } from "../../../store/types/ui/general/object-type";
 
@@ -216,12 +216,12 @@ const EditedSubobjectsIndicator = ({ objectID }) => {
     const deleteCallback = useMemo(() => () => setConfirmState({
         open: true,
         content: "Delete edited object?",
-        onConfirm: () => dispatch(removeEditedObjects({ objectIDs: [objectID], removeSubobjects: false }))
+        onConfirm: () => dispatch(removeEditedObjects([objectID]))
     }), [objectID]);
     const deleteWithSubobjectsCallback = useMemo(() => () => setConfirmState({
         open: true,
         content: "Delete edited object and its subobjects?",
-        onConfirm: () => dispatch(removeEditedObjects({ objectIDs: [objectID], removeSubobjects: true }))
+        onConfirm: () => dispatch(removeEditedObjects([objectID], true))
     }), [objectID]);
 
     const deleteControl = (
@@ -249,22 +249,22 @@ const EditedSubobjectsIndicator = ({ objectID }) => {
  */
  const SelectedEditedObjectControls = ({ setConfirmState }) => {
     const dispatch = useDispatch();
-    const selectedEditedObjectIDs = useSelector(state => state.objectsEditedUI.selectedObjectIDs);
+    const selectedEditedObjectIDs = [...useSelector(state => state.objectsEditedUI.selectedObjectIDs)];
 
     const deleteAllCallback = useMemo(() => () => setConfirmState({
         open: true,
         content: "Delete all edited objects?",
-        onConfirm: () => dispatch(removeEditedObjects({ removeAll: true }))
+        onConfirm: () => dispatch(clearEditedObjects())
     }));
     const deleteCallback = useMemo(() => () => setConfirmState({
         open: true,
         content: "Delete selected edited objects?",
-        onConfirm: () => dispatch(removeEditedObjects({ objectIDs: selectedEditedObjectIDs, removeSubobjects: false }))
+        onConfirm: () => dispatch(removeEditedObjects(selectedEditedObjectIDs))
     }));
     const deleteWithSubobjectsCallback = useMemo(() => () => setConfirmState({
         open: true,
         content: "Delete selected edited objects and their subobjects?",
-        onConfirm: () => dispatch(removeEditedObjects({ objectIDs: selectedEditedObjectIDs, removeSubobjects: true }))
+        onConfirm: () => dispatch(removeEditedObjects(selectedEditedObjectIDs, true))
     }));
 
     const deleteAllControl = (
