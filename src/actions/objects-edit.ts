@@ -1,4 +1,3 @@
-export const RESET_EDITED_OBJECTS = "RESET_EDITED_OBJECTS";
 export const REMOVE_EDITED_OBJECTS = "REMOVE_EDITED_OBJECTS";
 export const SET_EDITED_OBJECT = "SET_EDITED_OBJECT";
 export const CLEAR_UNSAVED_CURRENT_EDITED_OBJECT = "CLEAR_UNSAVED_CURRENT_EDITED_OBJECT";
@@ -7,13 +6,6 @@ export const RESET_EDITED_OBJECTS_TAGS = "RESET_EDITED_OBJECTS_TAGS";
 
 export const PRE_SAVE_EDITED_OBJECTS_UPDATE = "PRE_SAVE_EDITED_OBJECTS_UPDATE";
 
-
-/** [Reducer file](../reducers/objects-edit.js) */
-export const resetEditedObjects              = ({ objectIDs, hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed }: 
-                                                { objectIDs: number[], hideObjectResetDialog?: boolean, resetCompositeSubobjects?: boolean, 
-                                                  allowResetToDefaults?: boolean, defaultDisplayInFeed?: boolean }) => 
-                                                    ({ type: RESET_EDITED_OBJECTS, objectIDs, hideObjectResetDialog, resetCompositeSubobjects, 
-                                                        allowResetToDefaults, defaultDisplayInFeed });
 /** [Reducer file](../reducers/objects-edit.js) */
 export const removeEditedObjects             = ({ objectIDs, removeSubobjects, removeAll }: { objectIDs: any, removeSubobjects: any, removeAll: any }) => 
                                                 ({ type: REMOVE_EDITED_OBJECTS, objectIDs, removeSubobjects, removeAll });

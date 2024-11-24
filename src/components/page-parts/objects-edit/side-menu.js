@@ -9,8 +9,7 @@ import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer, S
 
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
 import { CompositeSelectors } from "../../../store/selectors/data/objects/composite";
-import { resetEditedObjects } from "../../../actions/objects-edit";
-import { setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog, setToDoListRerenderPending } from "../../../reducers/ui/objects-edit";
+import { setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog, resetCurrentEditedObject } from "../../../reducers/ui/objects-edit";
 import { objectsEditNewSaveFetch, objectsEditExistingSaveFetch, objectsEditExistingDeleteFetch } from "../../../fetches/ui-objects-edit";
 
 
@@ -102,11 +101,8 @@ const ResetDialog = () => {
     const isVisible = useSelector(state => state.objectsEditUI.showResetDialog);
     const isCheckboxVisible = useSelector(state => ObjectsEditSelectors.currentObject(state).object_type === "composite");
 
-    const yesOnClick = useMemo(() => resetCompositeSubobjects => {
-        let params = { hideObjectResetDialog: true, resetCompositeSubobjects };
-        if (id === undefined) params = { ...params, allowResetToDefaults: true, defaultDisplayInFeed: true };
-        dispatch(resetEditedObjects(params));
-        dispatch(setToDoListRerenderPending(true)); // toggle rerender of content editable inputs with reset values
+    const yesOnClick = useMemo(() => resetAllSubobjects => {
+        dispatch(resetCurrentEditedObject(resetAllSubobjects));
     }, [id]);
     const noOnClick = useMemo(() => () => dispatch(setObjectsEditShowResetDialog(false)), []);
 

@@ -31,7 +31,7 @@ export class EditedObjectsUpdaters {
 
         // Load new objects
         const newObjectIDs = objectIDs.filter(id => id <= 0);
-        newState = loadNewEditedObjects(state, newObjectIDs, customValues);
+        newState = loadNewEditedObjects(newState, newObjectIDs, customValues);
 
         // Load existing objects & return result
         const existingObjectIDs = objectIDs.filter(id => id > 0);
@@ -57,13 +57,15 @@ export class EditedObjectsUpdaters {
 
 /**
  * Loads new edited objects `objectIDs` into state with default or `customValues`.
+ * 
+ * Adds current user as objects' owner.
  */
 const loadNewEditedObjects = (state: State, objectIDs: number[], customValues: Partial<EditedObject>): State => {
     const editedObjects = { ...state.editedObjects };
 
     objectIDs.forEach(object_id => {
         if (!(object_id <= 0)) throw Error(`objectID '${object_id}' must be <= 0.`);
-        editedObjects[object_id] = getEditedObjectState({ ...customValues, object_id });
+        editedObjects[object_id] = getEditedObjectState({ ...customValues, object_id, owner_id: state.auth.user_id });
     });
 
     return { ...state, editedObjects };

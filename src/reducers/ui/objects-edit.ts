@@ -3,6 +3,7 @@ import { EditedObjectsUpdaters } from "../../store/updaters/data/edited-objects"
 import type { State } from "../../store/types/state";
 import { positiveInt } from "../../util/types/common";
 import { getObjectsEditUI, type ObjectsEditTagsInput, type ObjectsEditAddCompositeSubobjectMenu } from "../../store/types/ui/objects-edit";
+import { EditedObjectsSelectors } from "../../store/selectors/data/objects/edited-objects";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +14,7 @@ const _loadObjectsEditNewPage = (state: State, action: any): State => {
     // Add a new edited object if it's missing
     const newState = "0" in state.editedObjects 
         ? state 
-        : EditedObjectsUpdaters.loadEditedObjects(state, [0], { display_in_feed: true, owner_id: state.auth.user_id });
+        : EditedObjectsUpdaters.loadEditedObjects(state, [0]);
     return { ...newState, objectsEditUI: getObjectsEditUI({ currentObjectID: 0 }) };
 };
 
@@ -86,6 +87,39 @@ const _setObjectsEditShowResetDialog = (state: State, action: { showResetDialog:
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** 
+ * Resets current edited object and its new (or all, if `resetAllSubobjects` is true) subobjects.
+ * 
+ * Closes reset dialog & toggles to-do list rerender.
+ */
+export const resetCurrentEditedObject = (resetAllSubobjects: boolean) => ({ type: "RESET_CURRENT_EDITED_OBJECT", resetAllSubobjects });
+
+const _resetCurrentEditedObject = (state: State, action: { resetAllSubobjects: boolean }): State => {
+    const { resetAllSubobjects } = action;
+    const { currentObjectID } = state.objectsEditUI;
+
+    // Close reset dialog & toggle to-do list rerender
+    let newState: State = { ...state, objectsEditUI: { ...state.objectsEditUI, showResetDialog: false, toDoListRerenderPending: true }};
+
+    // Reset current object & subobjects
+    const resetObjectIDs = resetAllSubobjects 
+        ? EditedObjectsSelectors.objectAndExistingSubobjectIDs(newState, [currentObjectID])
+        : [currentObjectID];
+    
+    newState = EditedObjectsUpdaters.loadEditedObjects(newState, resetObjectIDs);
+
+    // Delete unchanged existing objects, which are no longer subobjects of `currentObjectID`
+    if (resetAllSubobjects) {
+        const remainingObjectIDs = EditedObjectsSelectors.objectAndSubobjectIDs(newState, [currentObjectID]);
+        const removedObjectIDs = resetObjectIDs.filter(id => !remainingObjectIDs.includes(id));
+        newState = EditedObjectsUpdaters.removeEditedObjects(newState, removedObjectIDs);
+    }
+
+    return newState;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** Toggles display of side menu delete dialog on the /objects/edit/:id page and closes other dialogs. */
 export const setObjectsEditShowDeleteDialog = (showDeleteDialog: boolean) => ({ type: "SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG", showDeleteDialog });
 
@@ -125,6 +159,7 @@ export const objectsEditRoot = {
     "SET_OBJECTS_EDIT_TAGS_INPUT": _setObjectsEditTagsInput,
     "SET_OBJECTS_EDIT_SELECTED_TAB": _setObjectsEditSelectedTab,
     "SET_OBJECTS_EDIT_SHOW_RESET_DIALOG": _setObjectsEditShowResetDialog,
+    "RESET_CURRENT_EDITED_OBJECT": _resetCurrentEditedObject,
     "SET_OBJECTS_EDIT_SHOW_DELETE_DIALOG": _setObjectsEditShowDeleteDialog,
     "SET_TO_DO_LIST_RERENDER_PENDING": _setToDoListRerenderPending,
     "SET_ADD_COMPOSITE_SUBOBJECT_MENU": _setAddCompositeSubobjectMenu

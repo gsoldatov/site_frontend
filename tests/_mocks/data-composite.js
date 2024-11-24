@@ -267,10 +267,6 @@ export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsN
         const editedObject = getEditedObjectState({ ...attributes, ...editedObjectData });
         store.dispatch(addEditedObjects([editedObject]));
     }
-    
-    // Add edited objects (does not work for new objects: they must be added to store first, which is not possible with `addObjectsAttributes` function)
-    // NOTE: `resetEditedObjects` action was replaced by `loadEditedObjects`
-    // store.dispatch(resetEditedObjects({objectIDs: [mainObjectID, linkSubobjectID, markdownSubobjectID, TDLSubobjectID, compositeSubobjectID, 6], allowResetToDefaults: true }));
 
     // Add tags
     store.dispatch(addTags(tags));

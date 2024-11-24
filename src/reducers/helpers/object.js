@@ -144,44 +144,6 @@ export const getStateWithDeletedEditedNewSubobjects = (state, objectIDs) => {
 
 
 /**
- * Resets all edited existing non-composite subobjects of each composite object in `objectIDs` from state.editedObjects.
- * 
- * Removes edited existing non-composite subobjects, which were added since last save.
- * 
- * Returns the state after resets.
- */
-export const getStateWithResetEditedExistingSubobjects = (state, objectIDs) => {
-    if (objectIDs.length === 0) return state;
-    let resetIDs = new Set(), deletedIDs = new Set();
-
-    objectIDs.forEach(objectID => {
-        if (!(objectID in state.editedObjects) || state.editedObjects[objectID].object_type !== "composite") return;
-        const editedSubobjectIDs = Object.keys(state.editedObjects[objectID].composite.subobjects);
-        // Get subobjects from last saved state; if objectID is not in composite for some reason, all subobjects are deleted
-        const savedSubobjectIDs = objectID in state.composite ? Object.keys(state.composite[objectID].subobjects) : [];
-
-        editedSubobjectIDs.forEach(subobjectID => {
-            const subobjectObjectType = subobjectID in state.editedObjects ? state.editedObjects[subobjectID].object_type: "composite";  // don't delete or reset subobjects which are not present in editedObjects
-
-            if (parseInt(subobjectID) > 0 && subobjectObjectType !== "composite") {
-                const idAddedAfterSave = savedSubobjectIDs.indexOf(subobjectID) === -1;
-                if (idAddedAfterSave) deletedIDs.add(subobjectID);
-                else resetIDs.add(subobjectID);
-            }
-        });
-    });
-
-    // Delete composite subobjects which will be deleted from their parent objects after reset
-    let newState = getStateWithRemovedEditedObjects(state, [...deletedIDs]);
-
-    // Reset composite subobjects which will remain after their parent objects are reset
-    newState = getStateWithResetEditedObjects(newState, [...resetIDs]);
-
-    return newState;
-};
-
-
-/**
  * Returns state after all unchanged existing subobjects of an object `objectID` were removed.
  * 
  * If `excludedObjectIDs` is provided, object IDs contained inside it are excluded from deletion

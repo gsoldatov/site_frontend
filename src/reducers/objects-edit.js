@@ -1,4 +1,4 @@
-import { RESET_EDITED_OBJECTS, REMOVE_EDITED_OBJECTS,
+import { REMOVE_EDITED_OBJECTS,
     SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, 
     PRE_SAVE_EDITED_OBJECTS_UPDATE
     } from "../actions/objects-edit";
@@ -7,50 +7,12 @@ import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
 
-import { getStateWithResetEditedObjects, getStateWithResetEditedExistingSubobjects, getStateWithDeletedEditedNewSubobjects, 
-    getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects} from "./helpers/object";
+import { getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects} from "./helpers/object";
 import { getEditedObjectState } from "../store/types/data/edited-objects";
 import { getUpdatedToDoList } from "../store/updaters/data/to-do-lists";
 import { getStateWithCompositeUpdate } from "./helpers/object-composite";
 import { objectAttributes } from "../store/state-templates/edited-object";
 
-
-/*
-    Resets state of edited objects with provided `objectIDs` to their last saved states.
-    If `objectIDs` is provided, resets the object with these IDs; otherwise, resets currently edited object.
-    Does not reset new subobjects (with `objectID` < 0).
-
-    If `hideObjectResetDialog` is true, hides reset dialog on /objects/edit/:id page.
-
-    TODO split into "reset existing object from stores" & "load new object with optional custom props"
-    TODO remove unmodified existing subobjects of a reset composite (if a composite subobjects are reset, also remove their unmodified subobjects)
-*/
-function resetEditedObjects(state, action) {
-    const { hideObjectResetDialog, resetCompositeSubobjects, allowResetToDefaults, defaultDisplayInFeed } = action;
-    const objectIDs = action.objectIDs || [state.objectsEditUI.currentObjectID];
-    let newState = state;
-
-    // Remove all new subobjects of composite objects
-    newState = getStateWithDeletedEditedNewSubobjects(newState, objectIDs);
-
-    // Reset existing subobjects of composite objects
-    if (resetCompositeSubobjects) newState = getStateWithResetEditedExistingSubobjects(newState, objectIDs);
-
-    // Reset objects
-    newState = getStateWithResetEditedObjects(newState, objectIDs, { allowResetToDefaults, defaultDisplayInFeed });
-
-    // Hide object page reset dialog if required
-    if (hideObjectResetDialog)
-        newState = {
-            ...newState,
-            objectsEditUI: {
-                ...state.objectsEditUI,
-                showResetDialog: false  // hide reset dialog on the /object/:id page
-            }
-        }
-
-    return newState;
-}
 
 
 /**
@@ -295,7 +257,6 @@ const preSaveEditedObjectsUpdate = (state, action) => {
 
 
 const root = {
-    RESET_EDITED_OBJECTS: resetEditedObjects,
     REMOVE_EDITED_OBJECTS: removeEditedObjects,
     SET_EDITED_OBJECT: setEditedObject,
     CLEAR_UNSAVED_CURRENT_EDITED_OBJECT: clearUnsavedCurrentEditedObject,

@@ -46,7 +46,7 @@ export const getEditedObjectState = (customValues: Partial<EditedObject> = {}) =
     created_at: "",
     modified_at: "",
     is_published: false,
-    display_in_feed: false, 
+    display_in_feed: true,
     feed_timestamp: "",
     show_description: true,
     owner_id: 0,

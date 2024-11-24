@@ -44,6 +44,11 @@ export class EditedObjectsSelectors {
         return [...new Set(result)];
     };
 
+    /** Returns an array with `objectIDs` and IDs of their existing subobjects found in state.editedObjects. */
+    static objectAndExistingSubobjectIDs(state: State, objectIDs: (number | string)[]) {
+        return EditedObjectsSelectors.objectAndSubobjectIDs(state, objectIDs).filter(id => id > 0 || objectIDs.includes(id));
+    }
+
     /** 
      * Returns true, if an existing edited object `objectID` is modified, or false, otherwise.
      * Throws if any object part is not present in state storages.
@@ -74,7 +79,7 @@ export class EditedObjectsSelectors {
         if (editedObject === undefined)
             throw new ObjectMissingInStoreError(`Edited object '${objectID}' is missing.`);
 
-        return !deepEqual(state.editedObjects[objectID], getEditedObjectState({ object_id: objectID, display_in_feed: true, owner_id: state.auth.user_id }));
+        return !deepEqual(state.editedObjects[objectID], getEditedObjectState({ object_id: objectID, owner_id: state.auth.user_id }));
     }
 
     /**
