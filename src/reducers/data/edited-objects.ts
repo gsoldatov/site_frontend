@@ -6,6 +6,7 @@ import { getUpdatedToDoList, type ToDoListUpdateParams } from "../../store/updat
 import { getStateWithCompositeUpdate as OLD_getStateWithCompositeUpdate } from "../helpers/object-composite";
 import { getUpdatedEditedComposite, type GetUpdatedEditedCompositeParams } from "../../store/updaters/data/edited-composite";
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * Adds a list of `editedObjects` into state.editedObjects.
@@ -15,6 +16,21 @@ export const addEditedObjects = (editedObjects: EditedObject[]) => ({ type: "ADD
 
 const _addEditedObjects = (state: State, action: { editedObjects: EditedObject[] }): State => {
     return EditedObjectsUpdaters.addEditedObjects(state, action.editedObjects);
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** 
+ * Loads new or existing objects with `objectIDs` into state.editedObjects.
+ * 
+ * Existing objects are loaded from store, new objects are set to default values with optional overrides passed via `customValues`.
+ * 
+ * Deletes any present new composite subobjects of `objectIDs` from state.editedObjects.
+ */
+export const loadEditedObjects = (objectIDs: number[], customValues: Partial<EditedObject> = {}) => ({ type: "LOAD_EDITED_OBJECTS", objectIDs, customValues });
+
+const _loadEditedObjects = (state: State, action: { objectIDs: number[], customValues: Partial<EditedObject> }): State => {
+    return EditedObjectsUpdaters.loadEditedObjects(state, action.objectIDs, action.customValues);
 };
 
 
@@ -46,6 +62,7 @@ const _updateEditedComposite = (state: State, action: {objectID: number, update:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const editedObjectsRoot = {
     "ADD_EDITED_OBJECTS": _addEditedObjects,
+    "LOAD_EDITED_OBJECTS": _loadEditedObjects,
     "UPDATE_EDITED_TO_DO_LIST": _updateEditedToDoList,
     "UPDATE_EDITED_COMPOSITE": _updateEditedComposite
 };

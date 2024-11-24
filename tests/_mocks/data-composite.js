@@ -1,8 +1,7 @@
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../src/reducers/data/objects";
 import { addTags } from "../../src/reducers/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
-import { resetEditedObjects } from "../../src/actions/objects-edit";
-import { addEditedObjects } from "../../src/reducers/data/edited-objects";
+import { addEditedObjects, loadEditedObjects } from "../../src/reducers/data/edited-objects";
 import { getEditedObjectState } from "../../src/store/types/data/edited-objects";
 import { createTestStore } from "../_util/create-test-store";
 import { generateObjectAttributes, defaultObjectAttributeValueGetters, generateObjectData } from "./data-objects";
@@ -204,7 +203,7 @@ export const getStoreWithModifiedCompositeObject = () => {
     store.dispatch(addObjectsAttributes(objects));
     store.dispatch(addObjectsTags(objects));
     store.dispatch(addObjectsDataFromBackend(objectData));
-    store.dispatch(resetEditedObjects({objectIDs: [1, 2, -1], allowResetToDefaults: true }));
+    store.dispatch(loadEditedObjects([1, 2, -1]));
     store.dispatch(addTags(tags));
 
     return store;
@@ -270,6 +269,7 @@ export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsN
     }
     
     // Add edited objects (does not work for new objects: they must be added to store first, which is not possible with `addObjectsAttributes` function)
+    // NOTE: `resetEditedObjects` action was replaced by `loadEditedObjects`
     // store.dispatch(resetEditedObjects({objectIDs: [mainObjectID, linkSubobjectID, markdownSubobjectID, TDLSubobjectID, compositeSubobjectID, 6], allowResetToDefaults: true }));
 
     // Add tags

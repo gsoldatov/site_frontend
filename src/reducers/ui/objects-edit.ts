@@ -1,6 +1,7 @@
+import { EditedObjectsUpdaters } from "../../store/updaters/data/edited-objects";
+
 import type { State } from "../../store/types/state";
 import { positiveInt } from "../../util/types/common";
-import { getEditedObjectState } from "../../store/types/data/edited-objects";
 import { getObjectsEditUI, type ObjectsEditTagsInput, type ObjectsEditAddCompositeSubobjectMenu } from "../../store/types/ui/objects-edit";
 
 
@@ -10,11 +11,10 @@ export const loadObjectsEditNewPage = () => ({ type: "LOAD_OBJECTS_EDIT_NEW_PAGE
 
 const _loadObjectsEditNewPage = (state: State, action: any): State => {
     // Add a new edited object if it's missing
-    const editedObjects = "0" in state.editedObjects 
-        ? state.editedObjects
-        : { ...state.editedObjects, [0]: getEditedObjectState({ object_id: 0, display_in_feed: true, owner_id: state.auth.user_id })};
-    
-    return { ...state, editedObjects, objectsEditUI: getObjectsEditUI({ currentObjectID: 0 }) };
+    const newState = "0" in state.editedObjects 
+        ? state 
+        : EditedObjectsUpdaters.loadEditedObjects(state, [0], { display_in_feed: true, owner_id: state.auth.user_id });
+    return { ...newState, objectsEditUI: getObjectsEditUI({ currentObjectID: 0 }) };
 };
 
 

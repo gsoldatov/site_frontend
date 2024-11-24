@@ -4,11 +4,11 @@ import { objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "./data
 import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { setEditedObject, resetEditedObjects, setEditedObjectTags, preSaveEditedObjectsUpdate } from "../actions/objects-edit";
+import { setEditedObject, setEditedObjectTags, preSaveEditedObjectsUpdate } from "../actions/objects-edit";
 import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setObjectsEditLoadFetchState, setObjectsEditSaveFetchState,
     setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setToDoListRerenderPending, setAddCompositeSubobjectMenu
 } from "../reducers/ui/objects-edit";
-import { updateEditedComposite } from "../reducers/data/edited-objects";
+import { loadEditedObjects, updateEditedComposite } from "../reducers/data/edited-objects";
 
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
@@ -126,7 +126,7 @@ export const objectsEditExistingOnLoad = objectID => {
         }
 
         // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
-        if (setEditedObjects) dispatch(resetEditedObjects({}));  // object_id is taken from state.objectsEditUI.currentObjectID (which was set by loadObjectsEditExistingPage)
+        if (setEditedObjects) dispatch(loadEditedObjects([objectID]));
 
         // Get non-cached added existing tag information
         const addedExistingTagIDs = getState().editedObjects[object_id].addedTags.filter(tag => typeof(tag) === "number");
@@ -309,6 +309,6 @@ export const objectsEditLoadCompositeSubobjectsFetch = objectID => {
 
         // Add objects to state.editedObjects
         if (subobjectIDsToAddToEditedObjects.length > 0)
-            dispatch(resetEditedObjects({ objectIDs: subobjectIDsToAddToEditedObjects }));
+            dispatch(loadEditedObjects(subobjectIDsToAddToEditedObjects));
     };
 };

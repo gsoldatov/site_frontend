@@ -11,7 +11,7 @@ import { getCurrentObject, getObjectTypeSwitchElements, clickGeneralTabButton, c
 import { getMarkdownEditorElements, setMarkdownRawText, waitForMarkdownHeaderRender } from "../../../../_util/ui-markdown-editor";
 
 import { setNewState } from "../../../../../src/reducers/common";
-import { resetEditedObjects } from "../../../../../src/actions/objects-edit";
+import { loadEditedObjects } from "../../../../../src/reducers/data/edited-objects";
 
 import { App } from "../../../../../src/components/app";
 
@@ -43,7 +43,7 @@ test("Load page with a fetch error", async () => {
 
     // Create a store with an edited new object, which contains an existing tag (which data will be fetched on load)
     const { store } = createTestStore();
-    store.dispatch(resetEditedObjects({ objectIDs: [0], allowResetToDefaults: true }));    // add an edited new object
+    store.dispatch(loadEditedObjects([0]));    // add an edited new object
     const state = store.getState();
     store.dispatch(setNewState({    // add an existing tag ID as new object added tag
         ...state,

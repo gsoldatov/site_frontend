@@ -70,7 +70,7 @@ test("New object indicators", () => {
 });
 
 
-test("Objet type icons", () => {
+test("Object type icons", () => {
     // Add mock state
     const store = getStoreWithEditedObjects();
 

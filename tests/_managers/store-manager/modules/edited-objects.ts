@@ -1,4 +1,4 @@
-import { resetEditedObjects } from "../../../../src/actions/objects-edit";
+import { loadEditedObjects } from "../../../../src/reducers/data/edited-objects";
 
 import type { AppStore } from "../../../../src/util/types/common";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
@@ -20,6 +20,6 @@ export class EditedObjectsStoreManager {
      * Resets edited objects for the specified `objectID` to last saved or default state.
      */
     reset(objectIDs: number[]): void {
-        this.store.dispatch(resetEditedObjects({ objectIDs }));
+        this.store.dispatch(loadEditedObjects(objectIDs));
     }
 }

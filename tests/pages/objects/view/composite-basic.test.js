@@ -9,7 +9,7 @@ import { renderWithWrappers } from "../../../_util/render";
 import { getObjectsViewCardElements } from "../../../_util/ui-objects-view";
 import { waitForMarkdownHeaderRender } from "../../../_util/ui-markdown-editor";
 
-import { resetEditedObjects } from "../../../../src/actions/objects-edit";
+import { loadEditedObjects } from "../../../../src/reducers/data/edited-objects";
 
 import { App } from "../../../../src/components/app";
 
@@ -157,7 +157,7 @@ describe("Subobject attributes & tags", () => {
         expect(cardElements.attributes.objectIsEdited.element).toBeFalsy();
         
         // Add object to state.editedObjects & check if message if dispalyed
-        store.dispatch(resetEditedObjects({ objectIDs: [cardElements.objectID] }));
+        store.dispatch(loadEditedObjects([cardElements.objectID]));
         expect(getObjectsViewCardElements({ card: subobjectCards[0] }).attributes.objectIsEdited.element).toBeTruthy();
     });
 
