@@ -4,7 +4,7 @@ import { objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "./data
 import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { setEditedObjectTags, preSaveEditedObjectsUpdate } from "../actions/objects-edit";
+import { preSaveEditedObjectsUpdate } from "../actions/objects-edit";
 import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setObjectsEditLoadFetchState, setObjectsEditSaveFetchState,
     setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setToDoListRerenderPending, setAddCompositeSubobjectMenu
 } from "../reducers/ui/objects-edit";
@@ -174,8 +174,9 @@ export const objectsEditExistingSaveFetch = () => {
         }
 
         // Handle successful fetch end
-        dispatch(setEditedObjectTags({ currentTagIDs: getState().objectsTags[result.object_id], added: [], removed: [] }));
-        dispatch(updateEditedObject(result.object_id, result));
+        dispatch(updateEditedObject(result.object_id, 
+            { ...result, currentTagIDs: getState().objectsTags[result.object_id], addedTags: [], removedTagIDs: [] }
+        ));
         dispatch(setObjectsEditSaveFetchState(false, ""));
     };        
 };

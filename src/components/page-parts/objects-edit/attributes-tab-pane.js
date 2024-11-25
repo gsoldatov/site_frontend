@@ -10,8 +10,7 @@ import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
 
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
-import { setEditedObjectTags } from "../../../actions/objects-edit";
-import { updateEditedObject } from "../../../reducers/data/edited-objects";
+import { updateEditedObject, updateEditedObjectTags } from "../../../reducers/data/edited-objects";
 import { setObjectsEditTagsInput } from "../../../reducers/ui/objects-edit";
 import { objectsEditTagsDropdownFetch } from "../../../fetches/ui-objects-edit";
 
@@ -100,9 +99,10 @@ const AddedTags = () => {
 const NewTagInput = () => {
     const dispatch = useDispatch();
     const inputState = useSelector(state => state.objectsEditUI.tagsInput);
+    const currentObjectID = useSelector(state => state.objectsEditUI.currentObjectID);
     
     const setInputState = useMemo(() => newState => dispatch(setObjectsEditTagsInput(newState)), []);
-    const setItem = useMemo(() => params => dispatch(setEditedObjectTags(params)), []);
+    const setItem = useMemo(() => params => dispatch(updateEditedObjectTags(currentObjectID, params)), [currentObjectID]);
     const onSearchChangeDelayed = useMemo(() => (queryText, existingIDs) => dispatch(objectsEditTagsDropdownFetch(queryText, existingIDs)), []);
 
     const existingIDs = useSelector(ObjectsEditSelectors.existingTagIDs);
@@ -116,6 +116,7 @@ const NewTagInput = () => {
 const CurrentTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
 
+    const currentObjectID = useSelector(state => state.objectsEditUI.currentObjectID);
     const text = useSelector(state => state.tags[id] ? state.tags[id].tag_name : "?");
     const isRemoved = useSelector(state => ObjectsEditSelectors.currentObject(state).removedTagIDs.includes(id));
     const className = isRemoved ? "deleted" : undefined;
@@ -124,9 +125,9 @@ const CurrentTagItem = memo(({ id }) => {
         [{ 
             name: isRemoved ? "undo" : "remove", 
             title: isRemoved ? "Restore tag" : "Remove tag", 
-            onClick: () => { dispatch(setEditedObjectTags({ removed: [id] })) } 
+            onClick: () => { dispatch(updateEditedObjectTags(currentObjectID, { removed: [id] })) } 
         }]
-    , [id, isRemoved]);
+    , [currentObjectID, id, isRemoved]);
 
     return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
 });
@@ -136,12 +137,13 @@ const CurrentTagItem = memo(({ id }) => {
 const AddedTagItem = memo(({ id }) => {
     const dispatch = useDispatch();
 
+    const currentObjectID = useSelector(state => state.objectsEditUI.currentObjectID);
     const text = useSelector(state => typeof(id) === "string" ? id : state.tags[id] ? state.tags[id].tag_name : id);
     const className = typeof(id) === "number" ? "existing" : "new";
     const URL = typeof(id) === "number" ? `/tags/view?tagIDs=${id}` : undefined;
     const icons = useMemo(() => 
-        [{ name: "remove", title: "Remove tag", onClick: () => dispatch(setEditedObjectTags({ added: [id] })) }]
-    , [id]);
+        [{ name: "remove", title: "Remove tag", onClick: () => dispatch(updateEditedObjectTags(currentObjectID, { added: [id] })) }]
+    , [currentObjectID, id]);
 
     return <InlineItem text={text} className={className} URL={URL} icons={icons} />;
 });
