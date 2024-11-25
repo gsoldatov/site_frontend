@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useRef } from "react";
+import React, { memo, useMemo } from "react";
 import { Tab } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -10,7 +10,8 @@ import { InlineItem } from "../../modules/inline/inline-item";
 import { InlineInput } from "../../modules/inline/inline-input";
 
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
-import { setEditedObject, setEditedObjectTags } from "../../../actions/objects-edit";
+import { setEditedObjectTags } from "../../../actions/objects-edit";
+import { updateEditedObject } from "../../../reducers/data/edited-objects";
 import { setObjectsEditTagsInput } from "../../../reducers/ui/objects-edit";
 import { objectsEditTagsDropdownFetch } from "../../../fetches/ui-objects-edit";
 
@@ -49,16 +50,17 @@ const ObjectTimestamps = () => {
  */
 const ObjectNameDescription = () => {
     const dispatch = useDispatch();
+    const currentObjectID = useSelector(state => state.objectsEditUI.currentObjectID);
     const name = useSelector(state => ObjectsEditSelectors.currentObject(state).object_name);
     const description = useSelector(state => ObjectsEditSelectors.currentObject(state).object_description);
 
-    const nameOnChange = useRef(object_name => {
-        dispatch(setEditedObject({ object_name }));
-    }).current;
+    const nameOnChange = useMemo(() => object_name => {
+        dispatch(updateEditedObject(currentObjectID, { object_name }));
+    }, [currentObjectID]);
 
-    const descriptionOnChange = useRef(object_description => {
-        dispatch(setEditedObject({ object_description }));
-    }).current;
+    const descriptionOnChange = useMemo(() => object_description => {
+        dispatch(updateEditedObject(currentObjectID, { object_description }));
+    }, [currentObjectID]);
 
     return (
         <>

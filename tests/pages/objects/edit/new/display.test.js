@@ -13,9 +13,8 @@ import { getSubobjectCards } from "../../../../_util/ui-composite";
 import { getReactDatetimeElements } from "../../../../_util/ui-react-datetime";
 
 import { App } from "../../../../../src/components/app";
-import { setEditedObject } from "../../../../../src/actions/objects-edit";
+import { updateEditedObject } from "../../../../../src/reducers/data/edited-objects";
 import { compositeDisplayModeOptions } from "../../../../../src/store/types/ui/general/composite-display-mode";
-
 
 
 /*
@@ -155,7 +154,7 @@ describe("Publish subobjects", () => {
         // Fill required attributes & data
         await fillRequiredAttributesAndData(container, store, { objectType: "composite" });
 
-        clickDataTabButton(container);;
+        clickDataTabButton(container);
         let cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
         const [firstID, secondID] = cards[0].map(card => card.id);
 
@@ -163,7 +162,7 @@ describe("Publish subobjects", () => {
         clickDisplayTabButton(container);
 
         // Publish one subobject => check if "Publish Subobjects" checkbox is indeterminate state
-        store.dispatch(setEditedObject({ is_published: true }, secondID));
+        store.dispatch(updateEditedObject(secondID, { is_published: true }));
         const publishSubobjectsContainer = getObjectDisplayControls(container).publishSubobjects.parentNode;
         expect(publishSubobjectsContainer.classList.contains("indeterminate")).toBeTruthy();
 

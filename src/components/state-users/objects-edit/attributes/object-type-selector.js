@@ -2,7 +2,7 @@ import React, { useMemo, memo } from "react";
 import { Dropdown, Icon } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setEditedObject } from "../../../../actions/objects-edit";
+import { updateEditedObject } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 import { objectTypeOptions } from "../../../../store/types/ui/general/object-type";
 
@@ -26,7 +26,7 @@ export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
 
     // On change callback
     const onChange = useMemo(() => (e, data) => {
-        dispatch(setEditedObject({ object_type: data.value }, objectID));
+        dispatch(updateEditedObject(objectID, { object_type: data.value }));
     }, [objectID]);
 
     // Dropdown options

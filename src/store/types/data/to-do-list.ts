@@ -11,6 +11,7 @@ export const toDoListItem = z.object({
     is_expanded: z.boolean()
 });
 
+const newOrExistingToDoListItemID = int.or(z.literal("newItem"));
 
 /** To-do list data schema in state.toDoLists & state.editedObjects. */
 export const toDoList = z.object({
@@ -18,12 +19,12 @@ export const toDoList = z.object({
     items: z.record(nonNegativeIntIndex, toDoListItem),
 
     itemOrder: nonNegativeIntArray,
-    setFocusOnID: int.or(z.literal("newItem")),
+    setFocusOnID: newOrExistingToDoListItemID,
     caretPositionOnFocus: int,
     newItemInputIndent: nonNegativeInt.max(5),
     draggedParent: int,
     draggedChildren: nonNegativeIntArray,
-    draggedOver: int,
+    draggedOver: newOrExistingToDoListItemID,
     dropIndent: nonNegativeInt.max(5)
 });
 

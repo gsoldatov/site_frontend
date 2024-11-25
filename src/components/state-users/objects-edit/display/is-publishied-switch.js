@@ -3,8 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { DisplayControlCheckbox } from "../../../modules/edit/display/display-control-checkbox";
 
-import { setEditedObject } from "../../../../actions/objects-edit";
-import { updateEditedComposite } from "../../../../reducers/data/edited-objects";
+import { updateEditedComposite, updateEditedObject } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
@@ -15,7 +14,7 @@ import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edi
     const dispatch = useDispatch();
     const isPublished = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).is_published);
     const objectType = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).object_type);
-    const onClick = useMemo(() => () => dispatch(setEditedObject({ is_published: !isPublished }, objectID)), [objectID, isPublished]);
+    const onClick = useMemo(() => () => dispatch(updateEditedObject(objectID, { is_published: !isPublished })), [objectID, isPublished]);
 
     // Don't display if subobject is composite
     return !(isSubobject && objectType === "composite") && (

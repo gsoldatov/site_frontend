@@ -1,5 +1,4 @@
-import { setEditedObject } from "../../src/actions/objects-edit";
-import { addEditedObjects, loadEditedObjects, updateEditedComposite } from "../../src/reducers/data/edited-objects";
+import { addEditedObjects, loadEditedObjects, updateEditedComposite, updateEditedObject } from "../../src/reducers/data/edited-objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../src/reducers/data/objects";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { getEditedObjectState } from "../../src/store/types/data/edited-objects";
@@ -25,7 +24,7 @@ export const getStoreWithEditedObjects = () => {
 
     // 0: new composite with [-1, 10, 11] as children;
     store.dispatch(loadEditedObjects([0]));
-    store.dispatch(setEditedObject({ object_name: "new composite", object_type: "composite" }, 0));
+    store.dispatch(updateEditedObject(0, { object_name: "new composite", object_type: "composite" }));
     store.dispatch(updateEditedComposite(0, { command: "addNewSubobject", subobjectID: -1, column: 0, row: 0 }));
     store.dispatch(updateEditedComposite(0, { command: "addExistingSubobject", subobjectID: 10, column: 0, row: 1 }));
     store.dispatch(updateEditedComposite(0, { command: "addExistingSubobject", subobjectID: 11, column: 0, row: 2 }));
@@ -34,13 +33,13 @@ export const getStoreWithEditedObjects = () => {
     store.dispatch(addEditedObjects([
         getEditedObjectState({ object_id: 1, object_name: "existing composite", object_type: "composite" })
     ]));
-    store.dispatch(setEditedObject({ object_name: "existing composite", object_type: "composite" }, 1));
+    store.dispatch(updateEditedObject(1, { object_name: "existing composite", object_type: "composite" }));
     store.dispatch(updateEditedComposite(1, { command: "addExistingSubobject", subobjectID: 10, column: 0, row: 1 }));
     store.dispatch(updateEditedComposite(1, { command: "addExistingSubobject", subobjectID: 12, column: 0, row: 2 }));
 
     // -1: new subobject link;
     // store.dispatch(loadEditedObjects([-1]));     // edited object was loaded above
-    store.dispatch(setEditedObject({ object_name: "new subobject" }, -1));
+    store.dispatch(updateEditedObject(-1, { object_name: "new subobject" }));
 
     // 10, 11: existing links (present in storages, 11 was modified)
     let objects = [
@@ -65,7 +64,7 @@ export const getStoreWithEditedObjects = () => {
     store.dispatch(addObjectsDataFromBackend(objectData));
 
     store.dispatch(loadEditedObjects([10, 11]));
-    store.dispatch(setEditedObject({ object_name: "" }, 11));     // modify to unnamed subobject
+    store.dispatch(updateEditedObject(11, { object_name: "" }));     // modify to unnamed subobject
 
     // 12: existing link not present in edited objects (& therefore, not added to the state);
 

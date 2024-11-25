@@ -25,6 +25,9 @@ export const getStateWithCompositeUpdate = (state, objectID, update) => {
 
     // TODO add typing
     if (command === "updateSubobjectsOnSave") {
+        // Don't update non-existing edited object (e.g. when updating data via /objects/view/:id fetches)
+        if (state.editedObjects[objectID] === undefined) return state;
+
         // `object` contains response object attributes & data, `object_data` contains object data as it was sent in request
         const { object, object_data } = update;
 

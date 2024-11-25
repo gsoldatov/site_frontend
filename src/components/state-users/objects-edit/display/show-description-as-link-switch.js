@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DisplayControlCheckbox } from "../../../modules/edit/display/display-control-checkbox";
 import { DisplayControlDropdown } from "../../../modules/edit/display/display-control-dropdown";
 
-import { setEditedObject } from "../../../../actions/objects-edit";
-import { updateEditedComposite } from "../../../../reducers/data/edited-objects";
+import { updateEditedComposite, updateEditedObject } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 import { showDescriptionCompositeOptions } from "../../../../store/types/ui/general/show-description-composite";
 
@@ -19,7 +18,9 @@ import { showDescriptionCompositeOptions } from "../../../../store/types/ui/gene
     const isLink = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).object_type === "link");
     const showDescriptionAsLink = useSelector(state => ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).link.show_description_as_link);
 
-    const onClick = useMemo(() => () => dispatch(setEditedObject({ link: { show_description_as_link: !showDescriptionAsLink }}, objectID)), [objectID, showDescriptionAsLink]);
+    const onClick = useMemo(() => () => {
+        dispatch(updateEditedObject(objectID, { link: { show_description_as_link: !showDescriptionAsLink }}))
+    }, [objectID, showDescriptionAsLink]);
 
     return isLink && (
         <DisplayControlCheckbox checked={showDescriptionAsLink} onClick={onClick} label="Show Description as Link" />

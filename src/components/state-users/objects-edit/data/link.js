@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
+import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form } from "semantic-ui-react";
 
-import { setEditedObject } from "../../../../actions/objects-edit";
+import { updateEditedObject } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
@@ -14,7 +14,7 @@ export const LinkInput = ({ objectID }) => {
     
     const link = useSelector(ObjectsEditSelectors.editedOrDefaultSelector(objectID)).link.link;
 
-    const handleLinkChange = useRef(e => dispatch(setEditedObject({ link: { link: e.target.value }}, objectID))).current;
+    const handleLinkChange = useMemo(() => e => dispatch(updateEditedObject(objectID, { link: { link: e.target.value }})), [objectID]);
 
     return (
         <Form>

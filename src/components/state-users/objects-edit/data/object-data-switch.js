@@ -8,8 +8,7 @@ import { MarkdownDataEditor } from "./markdown";
 import { TDLContainer } from "./to-do-list/to-do-list";
 import { SubobjectsContainer } from "./composite/subobjects";
 
-import { setEditedObject } from "../../../../actions/objects-edit";
-import { updateEditedToDoList } from "../../../../reducers/data/edited-objects";
+import { updateEditedObject, updateEditedToDoList } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
@@ -31,7 +30,7 @@ export const ObjectDataSwitch = ({ objectID, subobjectCard = false }) => {
         if ("toDoListItemUpdate" in params) {
             dispatch(updateEditedToDoList(objectID, params.toDoListItemUpdate));
         } else if ("toDoList" in params) {
-            dispatch(setEditedObject(params, objectID));
+            dispatch(updateEditedObject(objectID, params));
         } else throw Error("Received incorrect `params` value in to-do list update callback.");
     }
     , [objectID]);

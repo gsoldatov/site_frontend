@@ -14,7 +14,7 @@ import { getSubobjectCards } from "../../../../_util/ui-composite";
 import { getReactDatetimeElements } from "../../../../_util/ui-react-datetime";
 
 import { App } from "../../../../../src/components/app";
-import { setEditedObject } from "../../../../../src/actions/objects-edit";
+import { updateEditedObject } from "../../../../../src/reducers/data/edited-objects";
 import { compositeDisplayModeOptions } from "../../../../../src/store/types/ui/general/composite-display-mode";
 
 
@@ -126,7 +126,7 @@ describe("Object display properties", () => {
             clickDisplayTabButton(container);
     
             // Publish subobjects: partially published -> fully published -> fully not published -> fully published
-            store.dispatch(setEditedObject({ is_published: true }, subobjectIDs[3]));
+            store.dispatch(updateEditedObject(subobjectIDs[3], { is_published: true }));
             for (let i = 0; i <= 2; i++) expect(store.getState().editedObjects[subobjectIDs[i]].is_published).toBeFalsy();
             expect(store.getState().editedObjects[subobjectIDs[3]].is_published).toBeTruthy();
 

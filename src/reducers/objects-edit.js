@@ -1,5 +1,4 @@
-import { REMOVE_EDITED_OBJECTS,
-    SET_EDITED_OBJECT, CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, 
+import { CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, SET_EDITED_OBJECT_TAGS, RESET_EDITED_OBJECTS_TAGS, 
     PRE_SAVE_EDITED_OBJECTS_UPDATE
     } from "../actions/objects-edit";
 
@@ -7,94 +6,8 @@ import { TagsSelectors } from "../store/selectors/data/tags";
 import { TagsTransformer } from "../store/transformers/data/tags";
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
 
-import { getStateAfterObjectPageLeave, getStateWithRemovedEditedObjects} from "./helpers/object";
-import { getEditedObjectState } from "../store/types/data/edited-objects";
+import { getStateAfterObjectPageLeave} from "./helpers/object";
 import { getUpdatedToDoList } from "../store/updaters/data/to-do-lists";
-import { getStateWithCompositeUpdate } from "./helpers/object-composite";
-import { objectAttributes } from "../store/state-templates/edited-object";
-
-
-/*
-    Updates an object in state.editedObjects store with attributes/data passed in `action.object` prop.
-    
-    If `action.objectID` is provided, updates the object with the provided ID, otherwise updates the object with ID == state.objectsEditUI.currentObjectID.
-
-    To-do lists can be updated with commands specified in `getUpdatedToDoList` function by passing an `action.object.toDoListItemUpdate` prop.
-    Composite objects can be updated with commands specified in `action.object.compositeUpdate` prop.
-*/
-function setEditedObject(state, action) {
-    const objectID = action.objectID !== undefined ? action.objectID : state.objectsEditUI.currentObjectID;
-    const oldObject = state.editedObjects[objectID];
-    if (oldObject === undefined) return state;      // don't update non-existing objects (i.e. when saving new Markdown object & redirecting to its page before it's data was parsed after last update)
-    
-    // Composite
-    let newComposite = oldObject.composite;
-    if ("compositeUpdate" in action.object) return getStateWithCompositeUpdate(state, objectID, action.object.compositeUpdate);
-    else if ("composite" in action.object) {
-        newComposite = { ...newComposite };
-        for (let attr of Object.keys(getEditedObjectState().composite))
-            if (action.object.composite[attr] !== undefined) newComposite[attr] = action.object.composite[attr];
-    }
-
-    // Links
-    let newLink = oldObject.link;
-    if ("link" in action.object) {
-        newLink = { ...newLink };
-        for (let attr of ["link", "show_description_as_link"])
-            if (action.object.link[attr] !== undefined) newLink[attr] = action.object.link[attr];
-    }
-
-    // Markdown
-    let newMarkdown = oldObject.markdown;
-    if ("markdown" in action.object) {
-        newMarkdown = { ...newMarkdown };
-        for (let attr of ["raw_text", "parsed"])
-            if (action.object.markdown[attr] !== undefined) newMarkdown[attr] = action.object.markdown[attr];
-    }
-
-    // To-do lists
-    let newToDoList = oldObject.toDoList;
-    /*if ("toDoListItemUpdate" in action.object) {              // TODO remove commented
-        newToDoList = getUpdatedToDoList(oldObject.toDoList, action.object.toDoListItemUpdate);
-    } else */ if ("toDoList" in action.object) {
-        const aTDL = action.object.toDoList;
-        
-        newToDoList = {
-            itemOrder: aTDL.itemOrder !== undefined ? aTDL.itemOrder : oldObject.toDoList.itemOrder,
-            setFocusOnID: aTDL.setFocusOnID !== undefined ? aTDL.setFocusOnID : oldObject.toDoList.setFocusOnID,
-            caretPositionOnFocus: aTDL.caretPositionOnFocus !== undefined ? aTDL.caretPositionOnFocus : oldObject.toDoList.caretPositionOnFocus,
-            newItemInputIndent: aTDL.newItemInputIndent !== undefined ? aTDL.newItemInputIndent : oldObject.toDoList.newItemInputIndent,
-            draggedParent: aTDL.draggedParent !== undefined ? aTDL.draggedParent : oldObject.toDoList.draggedParent,
-            draggedChildren: aTDL.draggedChildren !== undefined ? aTDL.draggedChildren : oldObject.toDoList.draggedChildren,
-            draggedOver: aTDL.draggedOver !== undefined ? aTDL.draggedOver : oldObject.toDoList.draggedOver,
-            dropIndent: aTDL.dropIndent !== undefined ? aTDL.dropIndent : oldObject.toDoList.dropIndent,
-
-            sort_type: aTDL.sort_type !== undefined ? aTDL.sort_type : oldObject.toDoList.sort_type,
-            items: aTDL.items !== undefined ? aTDL.items : oldObject.toDoList.items
-        };
-    }
-
-    const newObject = {
-        ...oldObject,
-
-        link: newLink,
-        markdown: newMarkdown,
-        toDoList: newToDoList,
-        composite: newComposite
-    };
-
-    objectAttributes.forEach(attr => {
-        if (attr in action.object) newObject[attr] = action.object[attr];
-    });
-
-    return {
-        ...state,
-        editedObjects: {
-            ...state.editedObjects,
-            [objectID]: newObject
-        }
-    };
-}
 
 
 function clearUnsavedCurrentEditedObject(state, action) {
@@ -236,7 +149,6 @@ const preSaveEditedObjectsUpdate = (state, action) => {
 
 
 const root = {
-    SET_EDITED_OBJECT: setEditedObject,
     CLEAR_UNSAVED_CURRENT_EDITED_OBJECT: clearUnsavedCurrentEditedObject,
     SET_EDITED_OBJECT_TAGS: setEditedObjectTags,
     RESET_EDITED_OBJECTS_TAGS: resetEditedObjectsTags,

@@ -1,10 +1,10 @@
-import React, { useRef } from "react";
+import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { ObjectTypeSelector } from "../../../attributes/object-type-selector";
 import { Timestamps, NameInput, DescriptionEditor } from "../../../../../modules/edit/attributes";
 
-import { setEditedObject } from "../../../../../../actions/objects-edit";
+import { updateEditedObject } from "../../../../../../reducers/data/edited-objects";
 
 
 /**
@@ -22,13 +22,13 @@ export const CardGeneralTab = ({ subobjectID }) => {
     const name = useSelector(state => state.editedObjects[subobjectID].object_name);
     const description = useSelector(state => state.editedObjects[subobjectID].object_description);
 
-    const nameOnChange = useRef(object_name => {
-        dispatch(setEditedObject({ object_name }, subobjectID));
-    }).current;
+    const nameOnChange = useMemo(() => object_name => {
+        dispatch(updateEditedObject(subobjectID, { object_name }))
+    }, [subobjectID]);
 
-    const descriptionOnChange = useRef(object_description => {
-        dispatch(setEditedObject({ object_description }, subobjectID));
-    }).current;
+    const descriptionOnChange = useMemo(() => object_description => {
+        dispatch(updateEditedObject(subobjectID, { object_description }))
+    }, [subobjectID]);
 
     const timestamps = areTimestampsDisplayed && <Timestamps createdAt={createdAt} modifiedAt={modifiedAt} />;
 

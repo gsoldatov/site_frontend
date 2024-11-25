@@ -469,20 +469,20 @@ const getToDoListWithNormalizedItemIDs = (toDoList: ToDoList) => {
     const mapping = toDoList.itemOrder.reduce((result, itemID, itemPosition) => {
         result[itemID] = itemPosition;
         return result;
-    }, {} as Record<number, number>);
+    }, {} as Record<number | string, number>);
 
     const { setFocusOnID, draggedParent, draggedOver } = toDoList;
 
     return {
         ...toDoList,
         itemOrder: toDoList.itemOrder.map(itemID => mapping[itemID]),
-        setFocusOnID: mapping[setFocusOnID as number] !== undefined ? mapping[setFocusOnID as number] : setFocusOnID,
+        setFocusOnID: mapping[setFocusOnID] !== undefined ? mapping[setFocusOnID as number] : setFocusOnID,
         draggedParent: mapping[draggedParent] !== undefined ? mapping[draggedParent] : draggedParent,
         draggedChildren: toDoList.draggedChildren.map(itemID => mapping[itemID]),
         draggedOver: mapping[draggedOver] !== undefined ? mapping[draggedOver] : draggedOver,
         
         items: [...Object.keys(toDoList.items)].reduce((result, itemID) => {
-            const newItemID = mapping[itemID as unknown as number];
+            const newItemID = mapping[itemID];
             result[newItemID] = deepCopy(toDoList.items[itemID as unknown as number]);
             return result;
         }, {} as ToDoList["items"])

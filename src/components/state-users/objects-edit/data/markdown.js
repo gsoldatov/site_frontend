@@ -1,7 +1,7 @@
 import React, { useMemo, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setEditedObject } from "../../../../actions/objects-edit";
+import { updateEditedObject } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 import { MarkdownEditor } from "../../../modules/markdown/markdown-editor";
@@ -17,8 +17,8 @@ export const MarkdownDataEditor = memo(({ objectID }) => {
     const rawMarkdown = useSelector(state => editedOrDefaultObjectSelector(state).markdown.raw_text);
     const parsedMarkdown = useSelector(state => editedOrDefaultObjectSelector(state).markdown.parsed);
 
-    const rawMarkdownOnChange = useMemo(() => raw_text => dispatch(setEditedObject({ markdown: { raw_text }}, objectID)), [objectID]);
-    const onPostParse = useMemo(() => parsed => dispatch(setEditedObject({ markdown: { parsed }}, objectID)), [objectID]);
+    const rawMarkdownOnChange = useMemo(() => raw_text => dispatch(updateEditedObject(objectID, { markdown: { raw_text }})), [objectID]);
+    const onPostParse = useMemo(() => parsed => dispatch(updateEditedObject(objectID, { markdown: { parsed }})), [objectID]);
 
     return <MarkdownEditor header="Markdown" rawMarkdown={rawMarkdown} rawMarkdownOnChange={rawMarkdownOnChange}
         parsedMarkdown={parsedMarkdown} onPostParse={onPostParse} />

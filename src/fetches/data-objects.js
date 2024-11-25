@@ -5,7 +5,7 @@ import { fetchMissingTags } from "./data/tags";
 
 import { updateObjectsTags } from "../reducers/data/objects-tags";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../reducers/data/objects";
-import { setEditedObject } from "../actions/objects-edit";
+import { updateEditedComposite } from "../reducers/data/edited-objects";
 
 import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeObjectAttributesAndTagsForUpdateFetch,
     serializeObjectData, modifyObjectDataPostSave } from "../store/state-util/objects";
@@ -46,7 +46,7 @@ export const objectsAddFetch = obj => {
                 let object = (await response.json()).object;
 
                 // Composite object data updates
-                dispatch(setEditedObject({ compositeUpdate: { command: "updateSubobjectsOnSave", object, object_data }}, 0));     // object_data must contain non-mapped IDs of new subobjects
+                dispatch(updateEditedComposite(0, { command: "updateSubobjectsOnSave", object, object_data }));     // object_data must contain non-mapped IDs of new subobjects
                 object_data = modifyObjectDataPostSave(payload, object);
 
                 // General updates
@@ -95,7 +95,7 @@ export const objectsUpdateFetch = obj => {
                 let object = (await response.json()).object;
 
                 // Composite object data updates
-                dispatch(setEditedObject({ compositeUpdate: { command: "updateSubobjectsOnSave", object, object_data }}, object.object_id));     // object_data must contain non-mapped IDs of new subobjects
+                dispatch(updateEditedComposite(object.object_id, { command: "updateSubobjectsOnSave", object, object_data }));     // object_data must contain non-mapped IDs of new subobjects
                 object_data = modifyObjectDataPostSave(payload, object);
 
                 // Set object attributes, tags and data

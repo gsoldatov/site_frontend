@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { DisplayControlTimestampSelector } from "../../../modules/edit/display/display-control-timestamp";
 
-import { setEditedObject } from "../../../../actions/objects-edit";
+import { updateEditedObject } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
 
 
@@ -18,7 +18,7 @@ export const FeedTimestampSelector = ({ objectID }) => {
     // onChange handler
     const onChange = useMemo(() => e => {
         const newFeedTimestamp = e._d ? e._d.toISOString() : "";    // `_d` prop contains a date, if it's set; otherwise `e` does not have it
-        dispatch(setEditedObject({ feed_timestamp: newFeedTimestamp }, objectID))
+        dispatch(updateEditedObject(objectID, { feed_timestamp: newFeedTimestamp }))
     }, [objectID]);
 
     return (
