@@ -7,7 +7,7 @@ import { getStateWithCompositeUpdate as OLD_getStateWithCompositeUpdate } from "
 import { getUpdatedEditedComposite, type GetUpdatedEditedCompositeParams } from "../../store/updaters/data/edited-composite";
 
 import type { State } from "../../store/types/state";
-import { type EditedObject } from "../../store/types/data/edited-objects";
+import { EditedObjects, type EditedObject } from "../../store/types/data/edited-objects";
 import type { EditedObjectUpdate } from "../../store/updaters/data/edited-objects";
 
 
@@ -35,6 +35,30 @@ export const loadEditedObjects = (objectIDs: number[], customValues: Partial<Edi
 
 const _loadEditedObjects = (state: State, action: { objectIDs: number[], customValues: Partial<EditedObject> }): State => {
     return EditedObjectsUpdaters.loadEditedObjects(state, action.objectIDs, action.customValues);
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/** 
+ * Loads tags of `objectIDs` into state.editedObjects and clears tag updates in corresponding edited objects. 
+ * 
+ * Updates `modified_at` of edited objects with the provided value.
+ * 
+ * Ignores objects, which are not present in state.editedObjects.
+ */
+export const loadEditedObjectsTags = (objectIDs: number[], modified_at: string) => ({ type: "LOAD_EDITED_OBJECTS_TAGS", objectIDs, modified_at });
+
+const _loadEditedObjectsTags = (state: State, action: {objectIDs: number[], modified_at: string }): State => {
+    const { objectIDs, modified_at } = action;
+    const editedObjects = objectIDs.reduce((result, objectID) => {
+        const editedObject = state.editedObjects[objectID];
+        if (editedObject !== undefined) {
+            result[objectID] = { ...editedObject, currentTagIDs: state.objectsTags[objectID], modified_at, addedTags: [], removedTagIDs: [] };
+        }
+        return result;
+    }, {} as EditedObjects);
+
+    return { ...state, editedObjects: { ...state.editedObjects, ...editedObjects }};
 };
 
 
@@ -147,6 +171,7 @@ const _clearEditedObjects = (state: State, action: any): State => {
 export const editedObjectsRoot = {
     "ADD_EDITED_OBJECTS": _addEditedObjects,
     "LOAD_EDITED_OBJECTS": _loadEditedObjects,
+    "LOAD_EDITED_OBJECTS_TAGS": _loadEditedObjectsTags,
     "UPDATE_EDITED_OBJECT": _updateEditedObject,
     "UPDATE_EDITED_OBJECT_TAGS": _updateEditedObjectTags,
     "UPDATE_EDITED_TO_DO_LIST": _updateEditedToDoList,

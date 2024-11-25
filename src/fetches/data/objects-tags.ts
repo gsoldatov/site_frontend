@@ -4,7 +4,7 @@ import { fetchMissingTags } from "./tags";
 
 import { updateObjectsTags } from "../../reducers/data/objects-tags";
 import { updateObjectsAttributes } from "../../reducers/data/objects";
-import { resetEditedObjectsTags } from "../../actions/objects-edit";
+import { loadEditedObjectsTags } from "../../reducers/data/edited-objects";
 
 import { objectsUpdateTagsResponseSchema } from "../types/data/objects-tags";
 import type { Dispatch, GetState } from "../../util/types/common";
@@ -38,7 +38,7 @@ export const objectsTagsUpdateFetch = (object_ids: number[], added_tags: (string
 
                 // Reset all updated objects' tags and modified_at in state.editedObjects
                 // NOTE: this is done after state.objectsTags is set
-                dispatch(resetEditedObjectsTags(object_ids, modified_at));
+                dispatch(loadEditedObjectsTags(object_ids, modified_at));
 
                 // Fetch non-cahced tags
                 const fetchMissingTagsResult = await dispatch(fetchMissingTags(tag_updates.added_tag_ids || []));
