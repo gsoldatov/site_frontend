@@ -3,6 +3,10 @@ import { ObjectsSelectors } from "../../selectors/data/objects/objects";
 
 import { editedObject, getEditedObjectState, type EditedObject, type EditedObjects } from "../../types/data/edited-objects";
 import type { State } from "../../types/state";
+import type { Link } from "../../../store/types/data/links";
+import type { Markdown } from "../../../store/types/data/markdown";
+import type { ToDoList } from "../../../store/types/data/to-do-list";
+import type { Composite } from "../../../store/types/data/composite";
 
 
 /** Contains state updating methods for state.editedObjects. */
@@ -37,6 +41,39 @@ export class EditedObjectsUpdaters {
         const existingObjectIDs = objectIDs.filter(id => id > 0);
         newState = loadExistingEditedObjects(newState, existingObjectIDs);
         return newState;
+    }
+
+    /**
+     * Performs partial updates on edited objects provided in `updatesList`.
+     * 
+     * Each `update` can contain partial top-level attributes of an edited object or partial top-level of data attributes.
+     * 
+     * Ignores updates for `objectID`, which is not present in state.editedObjects.
+     */
+    static updateEditedObjects(state: State, updatesList: { objectID: number, update: EditedObjectUpdate }[]): State {
+        const editedObjects: EditedObjects = {};
+
+        for (let { objectID, update } of updatesList) {
+            // Ignore attempts to update non-existing object
+            // (i.e. when saving new Markdown object & redirecting to its page before it's data was parsed after last update)
+            const old = state.editedObjects[objectID];            
+            if (old === undefined) continue;
+
+            editedObjects[objectID] = editedObject.parse({
+                ...old,
+    
+                // Top-level attributes
+                ...update,
+    
+                // Shallow partial update of data attributes
+                link: "link" in update ? { ...old.link, ...update.link } : old.link,
+                markdown: "markdown" in update ? { ...old.markdown, ...update.markdown } : old.markdown,
+                toDoList: "toDoList" in update ? { ...old.toDoList, ...update.toDoList } : old.toDoList,
+                composite: "composite" in update ? { ...old.composite, ...update.composite } : old.composite
+            });
+        }
+
+        return { ...state, editedObjects: { ...state.editedObjects, ...editedObjects }};
     }
 
     /**
@@ -89,3 +126,9 @@ const loadExistingEditedObjects = (state: State, objectIDs: number[]): State => 
 
     return { ...state, editedObjects };
 };
+
+
+export type EditedObjectUpdate = Partial<Omit<EditedObject, "link" | "markdown" | "toDoList" | "composite">>
+    & Partial<{ link: Partial<Link> }> & Partial<{ markdown: Partial<Markdown> }>
+    & Partial<{ toDoList: Partial<ToDoList> }> & Partial<{ composite: Partial<Composite> }>
+;
