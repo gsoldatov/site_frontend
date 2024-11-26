@@ -17,36 +17,6 @@ import { positiveInt } from "../util/types/common";
 
 
 /**
- * Loads default state of /objects/edit/new page & loads composite object's subobject data.
- */
-export const objectsEditNewOnLoad = () => {
-    return async (dispatch, getState) => {
-        // Load initial page state and start loading composite subobjects
-        dispatch(loadObjectsEditNewPage());
-
-        // Fetch tag data of added tags, if it's missing
-        // Update fetch status
-        dispatch(setObjectsEditLoadFetchState(true, ""));
-
-        // Fetch missing tags if object attributes, tags & data are present in the state
-        let result = await dispatch(fetchMissingTags(getState().editedObjects[0].addedTags));
-
-        // Handle fetch errors
-        if (result.failed) {
-            dispatch(setObjectsEditLoadFetchState(false, result.error));
-            return;
-        }
-
-        // Update fetch status
-        dispatch(setObjectsEditLoadFetchState(false, ""));
-
-        // Start loading composite objects
-        dispatch(objectsEditLoadCompositeSubobjectsFetch(0));
-    };
-};
-
-
-/**
  * Handles "Save" button click on new object page.
  */
 export const objectsEditNewSaveFetch = () => {
