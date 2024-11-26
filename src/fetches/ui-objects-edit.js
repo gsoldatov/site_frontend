@@ -1,9 +1,9 @@
 import { getResponseErrorType } from "./common";
 import { objectsAddFetch, objectsUpdateFetch } from "./data-objects";
-import { objectsViewFetch, objectsSearchFetch } from "./data/objects";
+import { objectsViewFetch } from "./data/objects";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { setObjectsEditSaveFetchState, setAddCompositeSubobjectMenu } from "../reducers/ui/objects-edit";
+import { setObjectsEditSaveFetchState } from "../reducers/ui/objects-edit";
 import { loadEditedObjects, updateEditedComposite, updateEditedObject, editedObjectsPreSaveUpdate } from "../reducers/data/edited-objects";
 
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
@@ -75,26 +75,6 @@ export const objectsEditExistingSaveFetch = () => {
         dispatch(setObjectsEditSaveFetchState(false, ""));
     };        
 };
-
-
-/**
- * Handles composite object add subobject dropdown values update.
- */
-export const objectsEditCompositeSubobjectDropdownFetch = (queryText, existingIDs) => {
-    return async (dispatch, getState) => {
-        // Exit fetch if an item was added before the start of the fetch
-        const inputText = getState().objectsEditUI.addCompositeSubobjectMenu.inputText;
-        if (inputText.length === 0) return;
-
-        // Run fetch & update matching objects
-        const result = await dispatch(objectsSearchFetch(queryText, existingIDs));
-
-        if (!result.failed) {
-            // Update matching tags if input text didn't change during fetch
-            if (inputText === getState().objectsEditUI.addCompositeSubobjectMenu.inputText) dispatch(setAddCompositeSubobjectMenu({ matchingIDs: result.object_ids }));
-        }
-    };
-}
 
 
 /**
