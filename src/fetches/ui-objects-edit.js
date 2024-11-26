@@ -1,15 +1,15 @@
 import { getResponseErrorType } from "./common";
 import { objectsAddFetch, objectsUpdateFetch } from "./data-objects";
 import { objectsViewFetch, objectsSearchFetch } from "./data/objects";
-import { tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { setObjectsEditSaveFetchState, setObjectsEditTagsInput, setAddCompositeSubobjectMenu } from "../reducers/ui/objects-edit";
+import { setObjectsEditSaveFetchState, setAddCompositeSubobjectMenu } from "../reducers/ui/objects-edit";
 import { loadEditedObjects, updateEditedComposite, updateEditedObject, editedObjectsPreSaveUpdate } from "../reducers/data/edited-objects";
 
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
+
 
 /**
  * Handles "Save" button click on new object page.
@@ -74,34 +74,6 @@ export const objectsEditExistingSaveFetch = () => {
         ));
         dispatch(setObjectsEditSaveFetchState(false, ""));
     };        
-};
-
-
-/**
- * Handles objects tags dropdown with matching tags update.
- */
-export const objectsEditTagsDropdownFetch = (queryText, existingIDs) => {
-    return async (dispatch, getState) => {
-        // Input text at the start of the query
-        const inputText = getState().objectsEditUI.tagsInput.inputText;
-
-        // Run fetch
-        const result = await dispatch(tagsSearchFetch(queryText, existingIDs));
-
-        // Update matching tags if fetch finished
-        if (result.tagIDs !== undefined) {
-            const currentInputText = getState().objectsEditUI.tagsInput.inputText;
-
-            // Reset matching IDs if an item was added before the fetch start
-            if (inputText.length === 0) {
-                dispatch(setObjectsEditTagsInput({ matchingIDs: [] }));
-                return;
-            }
-
-            // Update matching tags if input text didn't change during fetch
-            if (inputText === currentInputText) dispatch(setObjectsEditTagsInput({ matchingIDs: result.tagIDs }));
-        }
-    };
 };
 
 

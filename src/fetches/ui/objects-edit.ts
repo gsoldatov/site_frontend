@@ -143,3 +143,31 @@ export const objectsEditExistingDeleteFetch = (deleteSubobjects: boolean) => {
         dispatch(setRedirectOnRender("/objects/list"));
     };      
 };
+
+
+/**
+ * Handles objects tags dropdown with matching tags update.
+ */
+export const objectsEditTagsDropdownFetch = (queryText: string, existingIDs: number[]) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
+        // Input text at the start of the query
+        const inputText = getState().objectsEditUI.tagsInput.inputText;
+
+        // Run fetch
+        const result = await dispatch(tagsSearchFetch(queryText, existingIDs));
+
+        // Update matching tags if fetch finished
+        if (result.tagIDs !== undefined) {
+            const currentInputText = getState().objectsEditUI.tagsInput.inputText;
+
+            // Reset matching IDs if an item was added before the fetch start
+            if (inputText.length === 0) {
+                dispatch(setObjectsEditTagsInput({ matchingIDs: [] }));
+                return;
+            }
+
+            // Update matching tags if input text didn't change during fetch
+            if (inputText === currentInputText) dispatch(setObjectsEditTagsInput({ matchingIDs: result.tagIDs }));
+        }
+    };
+};

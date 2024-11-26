@@ -12,7 +12,7 @@ import { InlineInput } from "../../modules/inline/inline-input";
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
 import { updateEditedObject, updateEditedObjectTags } from "../../../reducers/data/edited-objects";
 import { setObjectsEditTagsInput } from "../../../reducers/ui/objects-edit";
-import { objectsEditTagsDropdownFetch } from "../../../fetches/ui-objects-edit";
+import { objectsEditTagsDropdownFetch } from "../../../fetches/ui/objects-edit";
 
 
 /**
