@@ -4,11 +4,10 @@ import { objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "./data
 import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { preSaveEditedObjectsUpdate } from "../actions/objects-edit";
 import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setObjectsEditLoadFetchState, setObjectsEditSaveFetchState,
-    setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setToDoListRerenderPending, setAddCompositeSubobjectMenu
+    setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setAddCompositeSubobjectMenu
 } from "../reducers/ui/objects-edit";
-import { loadEditedObjects, updateEditedComposite, updateEditedObject } from "../reducers/data/edited-objects";
+import { loadEditedObjects, updateEditedComposite, updateEditedObject, editedObjectsPreSaveUpdate } from "../reducers/data/edited-objects";
 
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
@@ -57,9 +56,8 @@ export const objectsEditNewSaveFetch = () => {
         // Exit if already fetching
         if (ObjectsEditSelectors.isFetching(state)) return;
 
-        // Prepare edited objects for fetch & trigger to-do list rerender (required due to ponential reassignment of item IDs)
-        dispatch(preSaveEditedObjectsUpdate());
-        dispatch(setToDoListRerenderPending(true));
+        // Prepare edited objects' data for fetch
+        dispatch(editedObjectsPreSaveUpdate());
 
         // Run fetch & add object
         dispatch(setObjectsEditSaveFetchState(true, ""));
@@ -157,9 +155,8 @@ export const objectsEditExistingSaveFetch = () => {
         // Exit if already fetching
         if (ObjectsEditSelectors.isFetching(state)) return;
 
-        // Prepare edited objects for fetch & trigger to-do list rerender (required due to ponential reassignment of item IDs)
-        dispatch(preSaveEditedObjectsUpdate());
-        dispatch(setToDoListRerenderPending(true));
+        // Prepare edited objects' data for fetch
+        dispatch(editedObjectsPreSaveUpdate());
 
         // Run fetch & update object
         dispatch(setObjectsEditSaveFetchState(true, ""));

@@ -10,11 +10,10 @@ import { editedObjectsRoot } from "./data/edited-objects";
 import { commonRoot } from "./common";
 import { modalRoot } from "./ui/modal";
 import { navigationRoot } from "./ui/navigation";
-import { tagsEditRoot } from "./ui/tags-edit";
 import { tagsListRoot } from "./ui/tags-list";
-import objectEdit from "./objects-edit";
-import { objectsEditRoot } from "./ui/objects-edit";
+import { tagsEditRoot } from "./ui/tags-edit";
 import { objectsListRoot } from "./ui/objects-list";
+import { objectsEditRoot } from "./ui/objects-edit";
 import { objectsEditedRoot } from "./ui/objects-edited";
 
 import { getConfig } from "../config";
@@ -53,9 +52,8 @@ const ACTION_HANDLERS = getActionHandlers({
     navigationRoot,
     tagsListRoot,
     tagsEditRoot,
-    objectEdit,
-    objectsEditRoot,
     objectsListRoot,
+    objectsEditRoot,
     objectsEditedRoot 
 });
 
