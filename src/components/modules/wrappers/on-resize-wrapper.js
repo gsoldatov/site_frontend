@@ -2,7 +2,7 @@ import React, { useRef, useLayoutEffect, useMemo } from "react";
 
 import { Ref } from "semantic-ui-react";
 
-import debounce from "../../../util/debounce";
+import { debounce } from "../../../util/debounce";
 
 
 /**

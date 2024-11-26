@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/dom";
 
-import debounce from "../../src/util/debounce";
+import { debounce } from "../../src/util/debounce";
 
 
 /** Test class for monitoring function call times and arguments passed */

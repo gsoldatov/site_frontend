@@ -2,9 +2,7 @@ import { useMemo } from "react";
 
 // @ts-ignore (worker file does not have default export, which results in a typing error)
 import ParseMarkdownWorker from "../markdown/parse-markdown.worker";
-import debounce from "../debounce";
-
-import type { DebounceDelayRefreshModes } from "../debounce";
+import { debounce, type DebounceDelayRefreshModes } from "../debounce";
 
 
 /**

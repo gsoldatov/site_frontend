@@ -75,7 +75,7 @@ class DebounceRunner {
  * 
  * @returns {function} callback for clearing scheduled call of wrapped function.
  */
-export default function debounce(func: Function, delay: number = 1000, refreshDelayMode: DebounceDelayRefreshModes = "noRefresh") {
+export const debounce = (func: Function, delay: number = 1000, refreshDelayMode: DebounceDelayRefreshModes = "noRefresh") => {
     // if (delay === undefined) delay = 1000;
     // if (refreshDelayMode === undefined) refreshDelayMode = "noRefresh";
     if (typeof(func) !== "function") throw TypeError("First argument must be a function.");

@@ -5,7 +5,7 @@ import { Button, Dropdown } from "semantic-ui-react";
 
 import { objectsEditCompositeSubobjectDropdownFetch, objectsEditLoadCompositeSubobjectsFetch } from "../../../../../fetches/ui-objects-edit";
 
-import debounce from "../../../../../util/debounce";
+import { debounce } from "../../../../../util/debounce";
 
 
 /**

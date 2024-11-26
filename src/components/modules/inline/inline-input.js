@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo, memo } from "react";
 import { Dropdown, Icon } from "semantic-ui-react";
 
-import debounce from "../../../util/debounce";
+import { debounce } from "../../../util/debounce";
 
 
 /**

@@ -1,7 +1,7 @@
 import React, { useState, useRef, memo, createContext, useContext } from "react";
 import { Button, Dropdown, Input, Menu } from "semantic-ui-react";
 
-import debounce from "../../util/debounce";
+import { debounce } from "../../util/debounce";
 
 import { WindowWidthContext } from "./wrappers/window-width-provider";
 

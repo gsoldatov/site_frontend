@@ -8,7 +8,7 @@ import { objectsViewToDoListObjectUpdateFetch } from "../../../../fetches/ui-obj
 
 import { getUpdatedToDoList } from "../../../../store/updaters/data/to-do-lists";
 import { deepCopy } from "../../../../util/copy";
-import debounce from "../../../../util/debounce";
+import { debounce } from "../../../../util/debounce";
 import { NumericUserLevel } from "../../../../store/types/data/auth";
 
 
