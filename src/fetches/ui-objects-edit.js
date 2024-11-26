@@ -1,10 +1,10 @@
 import { getResponseErrorType } from "./common";
 import { objectsAddFetch, objectsUpdateFetch } from "./data-objects";
 import { objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "./data/objects";
-import { fetchMissingTags, tagsSearchFetch } from "./data/tags";
+import { tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setObjectsEditLoadFetchState, setObjectsEditSaveFetchState,
+import { setObjectsEditSaveFetchState,
     setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setAddCompositeSubobjectMenu
 } from "../reducers/ui/objects-edit";
 import { loadEditedObjects, updateEditedComposite, updateEditedObject, editedObjectsPreSaveUpdate } from "../reducers/data/edited-objects";
@@ -12,9 +12,6 @@ import { loadEditedObjects, updateEditedComposite, updateEditedObject, editedObj
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
 import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
-
-import { positiveInt } from "../util/types/common";
-
 
 /**
  * Handles "Save" button click on new object page.
@@ -44,73 +41,6 @@ export const objectsEditNewSaveFetch = () => {
         // Handle successful fetch end
         dispatch(setObjectsEditSaveFetchState(false, ""));
         dispatch(setRedirectOnRender(`/objects/edit/${result.object_id}`, { deleteNewObject: true }));
-    };
-};
-
-
-/**
- * Fetches attributes, tags and data of an existing object with the provided `objectID` and adds them to state.editedObjects, if the object was not already edited.
- */
-export const objectsEditExistingOnLoad = objectID => {
-    return async (dispatch, getState) => {
-        // Set initial page state (or display an error for invalid `objectID`)
-        dispatch(loadObjectsEditExistingPage(objectID));
-
-        // Exit if objectID is not valid
-        const currentObjectValidation = positiveInt.safeParse(objectID);
-        if (!currentObjectValidation.success) return;
-
-        // Update fetch status
-        const object_id = currentObjectValidation.data;
-        dispatch(setObjectsEditLoadFetchState(true, ""));
-        
-        // Check if object attributes, tags and data should be fetched and/or added to state.editedObjects
-        let state = getState();
-        let setEditedObjects = true, fetchAttributesAndTags = true, fetchData = true;
-        if (object_id in state.editedObjects) setEditedObjects = false;
-        if (object_id in state.objects && object_id in state.objectsTags) fetchAttributesAndTags = false;
-        if (ObjectsSelectors.dataIsPresent(state, object_id)) fetchData = false;
-
-        // Fetch object attributes, tags and/or data if they are missing
-        if (fetchAttributesAndTags || fetchData) {
-            let objectIDs = fetchAttributesAndTags ? [object_id] : undefined;
-            let objectDataIDs = fetchData ? [object_id] : undefined;
-            const objectsViewResult = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
-
-            // Handle errors
-            if (objectsViewResult.failed) {
-                dispatch(setObjectsEditLoadFetchState(false, objectsViewResult.error));
-                return;
-            }
-        } else {
-            // Fetch missing tags if object attributes, tags & data are present in the state
-            let result = await dispatch(fetchMissingTags(state.objectsTags[object_id]));
-
-            // Handle fetch errors
-            if (result.failed) {
-                dispatch(setObjectsEditLoadFetchState(false, result.error));
-                return;
-            }
-        }
-
-        // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
-        if (setEditedObjects) dispatch(loadEditedObjects([objectID]));
-
-        // Get non-cached added existing tag information
-        const addedExistingTagIDs = getState().editedObjects[object_id].addedTags.filter(tag => typeof(tag) === "number");
-        let result = await dispatch(fetchMissingTags(addedExistingTagIDs));
-
-        // Handle fetch errors
-        if (result.failed) {
-            dispatch(setObjectsEditLoadFetchState(false, result.error));
-            return;
-        }
-
-        // Run composite object's subobject data load without awaiting it
-        dispatch(objectsEditLoadCompositeSubobjectsFetch(object_id));
-
-        // End fetch
-        dispatch(setObjectsEditLoadFetchState(false, ""));
     };
 };
 

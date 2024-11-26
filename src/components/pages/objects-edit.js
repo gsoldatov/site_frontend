@@ -4,8 +4,7 @@ import { useParams } from "react-router-dom";
 import { ObjectsEdit } from "../page-parts/objects-edit/objects-edit";
 import { ObjectsEditNewSideMenu, ObjectsEditExistingSideMenu } from "../page-parts/objects-edit/side-menu";
 
-import { objectsEditExistingOnLoad } from "../../fetches/ui-objects-edit";
-import { objectsEditNewOnLoad } from "../../fetches/ui/objects-edit";
+import { objectsEditNewOnLoad, objectsEditExistingOnLoad } from "../../fetches/ui/objects-edit";
 
 import StyleObjectsEdit from "../../styles/pages/objects-edit.css";
 

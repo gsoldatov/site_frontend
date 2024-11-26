@@ -44,3 +44,72 @@ export const objectsEditNewOnLoad = () => {
         dispatch(objectsEditLoadCompositeSubobjectsFetch(0));
     };
 };
+
+
+/**
+ * Fetches attributes, tags and data of an existing object with the provided `objectID`.
+ * Adds `objectID` to state.editedObjects, if it's not there.
+ * Triggers load of composite subobject data.
+ */
+export const objectsEditExistingOnLoad = (objectID: number) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
+        // Set initial page state (or display an error for invalid `objectID`)
+        dispatch(loadObjectsEditExistingPage(objectID));
+
+        // Exit if objectID is not valid
+        const currentObjectValidation = positiveInt.safeParse(objectID);
+        if (!currentObjectValidation.success) return;
+
+        // Update fetch status
+        const object_id = currentObjectValidation.data;
+        dispatch(setObjectsEditLoadFetchState(true, ""));
+        
+        // Check if object attributes, tags and data should be fetched and/or added to state.editedObjects
+        let state = getState();
+        let setEditedObjects = true, fetchAttributesAndTags = true, fetchData = true;
+        if (object_id in state.editedObjects) setEditedObjects = false;
+        if (object_id in state.objects && object_id in state.objectsTags) fetchAttributesAndTags = false;
+        if (ObjectsSelectors.dataIsPresent(state, object_id)) fetchData = false;
+
+        // Fetch object attributes, tags and/or data if they are missing
+        if (fetchAttributesAndTags || fetchData) {
+            let objectIDs = fetchAttributesAndTags ? [object_id] : undefined;
+            let objectDataIDs = fetchData ? [object_id] : undefined;
+            const objectsViewResult = await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
+
+            // Handle errors
+            if (objectsViewResult.failed) {
+                dispatch(setObjectsEditLoadFetchState(false, objectsViewResult.error!));
+                return;
+            }
+        } else {
+            // Fetch missing tags if object attributes, tags & data are present in the state
+            let result = await dispatch(fetchMissingTags(state.objectsTags[object_id]));
+
+            // Handle fetch errors
+            if (result.failed) {
+                dispatch(setObjectsEditLoadFetchState(false, result.error!));
+                return;
+            }
+        }
+
+        // Add an entry for the object in state.editedObjects if it doesn't exist and set object attributes, tags and data into it
+        if (setEditedObjects) dispatch(loadEditedObjects([objectID]));
+
+        // Get non-cached added existing tag information
+        const addedExistingTagIDs = getState().editedObjects[object_id].addedTags.filter(tag => typeof(tag) === "number");
+        let result = await dispatch(fetchMissingTags(addedExistingTagIDs));
+
+        // Handle fetch errors
+        if (result.failed) {
+            dispatch(setObjectsEditLoadFetchState(false, result.error!));
+            return;
+        }
+
+        // Run composite object's subobject data load without awaiting it
+        dispatch(objectsEditLoadCompositeSubobjectsFetch(object_id));
+
+        // End fetch
+        dispatch(setObjectsEditLoadFetchState(false, ""));
+    };
+};
