@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Redirect, useLocation } from "react-router";
 
 import { setRedirectOnRender } from "../../reducers/common";
-import { clearUnsavedCurrentEditedObject } from "../../actions/objects-edit";
 import { setModalImage } from "../../reducers/ui/modal";
 
 import { getModalUIState } from "../../store/types/ui/modal";
+import { clearUnchangedEditedObjects } from "../../reducers/data/edited-objects";
 
 
 /**
@@ -25,7 +25,7 @@ export const LocationManagerWrapper = ({ children }) => {
             const newModal = getModalUIState();
             dispatch(setModalImage(newModal.image));
 
-            // Clear unsaved editedObjects when leaving /objects/edit/:id (both new & existing cases)
+            // Clear unchanged edited objects when leaving /objects/edit/:id (both new & existing cases)
             if (previousLocation.current.pathname.startsWith("/objects/edit/")) {
                 // Previous object ID
                 const previousID = previousLocation.current.pathname.replace(/^\/objects\/edit\//g, "").replace(/\/$/g, "");
@@ -39,7 +39,7 @@ export const LocationManagerWrapper = ({ children }) => {
                 }
 
                 // Dispatch action
-                dispatch(clearUnsavedCurrentEditedObject({ editedObjectID: previousEditedObjectID, excludedObjectID: currentEditedObjectID }));
+                dispatch(clearUnchangedEditedObjects(previousEditedObjectID, currentEditedObjectID));
             }
         }
 

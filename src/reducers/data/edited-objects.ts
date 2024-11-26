@@ -1,4 +1,5 @@
-import { EditedObjectsUpdaters } from "../../store/updaters/data/edited-objects";
+import { EditedObjectsSelectors } from "../../store/selectors/data/objects/edited-objects";
+import { EditedObjectsUpdaters, type EditedObjectUpdate } from "../../store/updaters/data/edited-objects";
 import { TagsSelectors } from "../../store/selectors/data/tags";
 import { TagsTransformer } from "../../store/transformers/data/tags";
 
@@ -8,7 +9,6 @@ import { getUpdatedEditedComposite, type GetUpdatedEditedCompositeParams } from 
 
 import type { State } from "../../store/types/state";
 import { EditedObjects, type EditedObject } from "../../store/types/data/edited-objects";
-import type { EditedObjectUpdate } from "../../store/updaters/data/edited-objects";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,12 +158,38 @@ const _removeEditedObjects = (state: State, action: { objectIDs: number[], remov
     return EditedObjectsUpdaters.removeEditedObjects(state, objectIDs, removeAllSubobjects);
 };
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** Removes all records from state.editedObjects. */
 export const clearEditedObjects = () => ({ type: "CLEAR_EDITED_OBJECTS" });
 
 const _clearEditedObjects = (state: State, action: any): State => {
     return { ...state, editedObjects: {}};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const clearUnchangedEditedObjects = (rootObjectID: number, excludedRootID?: number) =>
+    ({ type: "CLEAR_UNCHANGED_EDITED_OBJECTS", rootObjectID, excludedRootID });
+
+
+const _clearUnchangedEditedObjects = (state: State, action: { rootObjectID: number, excludedRootID?: number }): State => {
+    const { rootObjectID, excludedRootID } = action;
+    // Exclude specified object & its children (when redirected on /objects/edit/`excludedRootID`)
+    const excludedObjectIDs = excludedRootID !== undefined ? EditedObjectsSelectors.objectAndSubobjectIDs(state, [excludedRootID]) : [];
+
+    // Get object IDs, which are in composite hierarchy starting from `rootObjectID`
+    const hierarchyObjectIDs = EditedObjectsSelectors.editedCompositeHierarchyObjectIDs(state, rootObjectID);
+
+    // Find unchanged object IDs (existing or object ID = 0)
+    const unchangedObjectIDs = hierarchyObjectIDs.filter(id => 
+        (id > 0 && !EditedObjectsSelectors.safeIsModified(state, id, true))
+        || (id === 0 && !EditedObjectsSelectors.isModifiedNew(state, id))
+    // Filter excluded object IDs from unchanged list
+    ).filter(id => !excludedObjectIDs.includes(id));
+
+    // Delete unchanged objects from the state
+    return EditedObjectsUpdaters.removeEditedObjects(state, unchangedObjectIDs);
 };
 
 
@@ -177,5 +203,6 @@ export const editedObjectsRoot = {
     "UPDATE_EDITED_TO_DO_LIST": _updateEditedToDoList,
     "UPDATE_EDITED_COMPOSITE": _updateEditedComposite,
     "REMOVE_EDITED_OBJECTS": _removeEditedObjects,
-    "CLEAR_EDITED_OBJECTS": _clearEditedObjects
+    "CLEAR_EDITED_OBJECTS": _clearEditedObjects,
+    "CLEAR_UNCHANGED_EDITED_OBJECTS": _clearUnchangedEditedObjects
 };

@@ -29,7 +29,9 @@ export class EditedObjectsSelectors {
         return EditedObjectsSelectors.subobjectIDs(state, objectIDs).filter(id => id < 0);
     }
 
-    /** Returns an array with `objectIDs` and IDs of all their subobjects found in state.editedObjects. */
+    /** 
+     * Returns a list with `objectIDs` and IDs of all their subobjects found in state.editedObjects. 
+     */
     static objectAndSubobjectIDs(state: State, objectIDs: (number | string)[]) {
         const numericObjectIDs = objectIDs.map(id => parseInt(id as string));
         const result = numericObjectIDs.slice();
@@ -44,9 +46,39 @@ export class EditedObjectsSelectors {
         return [...new Set(result)];
     };
 
-    /** Returns an array with `objectIDs` and IDs of their existing subobjects found in state.editedObjects. */
+    /** 
+     * Returns a list with `objectIDs` and IDs of their existing subobjects found in state.editedObjects. 
+     */
     static objectAndExistingSubobjectIDs(state: State, objectIDs: (number | string)[]) {
         return EditedObjectsSelectors.objectAndSubobjectIDs(state, objectIDs).filter(id => id > 0 || objectIDs.includes(id));
+    }
+
+    /**
+     * Returns a list object IDs present in state.editedObjects, which are part of a composite hierarchy starting from `rootObjectID`.
+     * 
+     * Objects, which aren't edited, including `rootObjectID`, are not returned.
+     */
+    static editedCompositeHierarchyObjectIDs(state: State, rootObjectID: number) {
+        const result: Set<number> = new Set();
+        const queue: number[] = [rootObjectID];
+
+        // Scan hierarchy members
+        while (queue.length > 0) {
+            const currentObjectID = queue.shift() as number;
+            if (!result.has(currentObjectID)) {
+                const editedObject = state.editedObjects[currentObjectID];
+                if (editedObject !== undefined) {
+                    // Add current object ID to result
+                    result.add(currentObjectID);
+
+                    // Add composite subobjects for further checks
+                    if (editedObject.object_type === "composite")
+                        Object.keys(editedObject.composite.subobjects).map(id => parseInt(id)).forEach(id => queue.push(id));
+                }
+            }
+        }
+
+        return [...result];
     }
 
     /** 

@@ -1,13 +1,6 @@
-import { CLEAR_UNSAVED_CURRENT_EDITED_OBJECT, PRE_SAVE_EDITED_OBJECTS_UPDATE } from "../actions/objects-edit";
+import { PRE_SAVE_EDITED_OBJECTS_UPDATE } from "../actions/objects-edit";
 
-import { getStateAfterObjectPageLeave} from "./helpers/object";
 import { getUpdatedToDoList } from "../store/updaters/data/to-do-lists";
-
-
-function clearUnsavedCurrentEditedObject(state, action) {
-    const { deleteNewObject, editedObjectID, excludedObjectID } = action;
-    return getStateAfterObjectPageLeave(state, { deleteNewObject, editedObjectID, excludedObjectID });
-}
 
 
 /**
@@ -43,7 +36,6 @@ const preSaveEditedObjectsUpdate = (state, action) => {
 
 
 const root = {
-    CLEAR_UNSAVED_CURRENT_EDITED_OBJECT: clearUnsavedCurrentEditedObject,
     PRE_SAVE_EDITED_OBJECTS_UPDATE: preSaveEditedObjectsUpdate,
 };
 
