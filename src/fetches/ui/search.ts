@@ -2,7 +2,7 @@ import { searchFetch } from "../data/search";
 import { fetchMissingObjects } from "../data/objects";
 import { fetchMissingTags } from "../data/tags";
 
-import type { Dispatch, GetState } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 import type { SearchRequestQuery, SearchFetchResult } from "../types/data/search";
 
 

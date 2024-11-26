@@ -1,6 +1,6 @@
 import { setAuthInformation } from "../../../../src/reducers/data/auth";
 
-import type { AppStore } from "../../../../src/util/types/common";
+import type { AppStore } from "../../../../src/store/types/store";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 import type { AuthData } from "../../../_mock-data/modules/auth";
 import { AuthTransformer } from "../../../../src/store/transformers/data/auth";

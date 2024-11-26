@@ -6,7 +6,7 @@ import { setTagsListFetch, setTagsListShowDeleteDialog, setTagsListPaginationInf
 import { TagsListSelectors } from "../../store/selectors/ui/tags-list";
 
 import { tagsGetPageTagIDsResponseSchema } from "../types/ui/tags-list";
-import type { Dispatch, GetState } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 import type { TagsListPaginationInfo } from "../../store/types/ui/tags-list";
 
 

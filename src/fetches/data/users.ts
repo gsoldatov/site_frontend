@@ -6,7 +6,8 @@ import { usersViewMinResponseSchema, usersViewFullResponseSchema, usersUpdateFet
 import { UsersSelectors } from "../../store/selectors/data/users";
 
 import {  partialUserExceptID, userFull, userMin } from "../../store/types/data/users";
-import type {Dispatch, GetState, InferNonNullablePartial } from "../../util/types/common";
+import type { InferNonNullablePartial } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 import type { UsersUpdateFetchData, UsersUpdateFetchValidationErrors } from "../types/data/users";
 
 

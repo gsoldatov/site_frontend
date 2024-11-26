@@ -7,7 +7,7 @@ import { TagsSelectors } from "../../store/selectors/data/tags";
 import { tag } from "../../store/types/data/tags";
 import { tagsAddTagSchema, tagsSearchResponseSchema, tagsUpdateTagSchema, tagsViewResponseSchema } from "../types/data/tags";
 import type { TagsAddTagSchema, TagsUpdateTagSchema } from "../types/data/tags";
-import type { Dispatch, GetState } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 import type { TagsAddFetchResult, TagsUpdateFetchResult, TagsSearchFetchResult } from "../types/data/tags";
 
 

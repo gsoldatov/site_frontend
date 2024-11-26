@@ -7,7 +7,7 @@ import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErr
 import { NumericUserLevel } from "../../store/types/data/auth";
 import { timestampString } from "../../util/types/common";
 
-import type {Dispatch, GetState } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 import type { AuthFetchValidationErrors, BackendAuth } from "../types/data/auth";
 
 

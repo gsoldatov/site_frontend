@@ -2,8 +2,7 @@ import { setNavigationUI } from "../../reducers/ui/navigation";
 import { fetchMissingUsers } from "../data/users";
 
 import { NumericUserLevel } from "../../store/types/data/auth";
-import type { Dispatch, GetState } from "../../util/types/common";
-
+import type { Dispatch, GetState } from "../../store/types/store";
 
 
 /**

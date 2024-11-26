@@ -14,7 +14,7 @@ import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 //     serializeObjectData, modifyObjectDataPostSave } from "../../store/state-util/objects";
 // import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 
-import type { Dispatch, GetState } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 import {
     objectsGetPageObjectIDsResponseSchema, objectsPaginationInfo, objectsSearchResponseSchema, 
     objectsViewCompositeHierarchyElementsResponseSchema, objectsViewResponseSchema, 

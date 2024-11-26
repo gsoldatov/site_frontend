@@ -1,4 +1,4 @@
-import type { AppStore } from "./types/common";
+import type { AppStore } from "../store/types/store";
 import type { AppConfig } from "./types/config";
 
 

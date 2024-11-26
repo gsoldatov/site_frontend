@@ -4,7 +4,7 @@ import { fetchMissingTags } from "../data/tags";
 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 
-import type { Dispatch, GetState } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 
 
 /**

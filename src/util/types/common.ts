@@ -1,9 +1,5 @@
 import { z, ZodType } from "zod";
 
-import type { AnyAction, Store } from "redux";
-import type { State } from "../../store/types/state";
-import type { ThunkDispatch } from "redux-thunk";
-
 
 /***********************
  * Integers & int arrays
@@ -55,17 +51,6 @@ export type DeepPartial<T> = { [P in keyof T]?: T[P] extends object ? DeepPartia
 
 // export type PositiveInteger<T extends number> = `${T}` extends "0" | `-${any}` | `${any}.${any}` ? never : T;   // does not work
 // export type NonnegativeInteger<T extends number> = `${T}` extends `-${any}` | `${any}.${any}` ? never : T;
-
-
-/***********************
- *     Redux types
- ***********************/
-// TODO move into create-store when its made
-export type AppStore = Store<State, any>;
-// export type Dispatch = AppStore["dispatch"];
-/** Extended version of dispatch type, which can propagate return types of dispatched thunks. */
-export type Dispatch = ThunkDispatch<State, unknown, AnyAction>;
-export type GetState = AppStore["getState"];
 
 
 /***********************

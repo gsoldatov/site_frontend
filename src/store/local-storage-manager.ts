@@ -3,7 +3,7 @@ import debounce from "../util/debounce";
 import { getConfig, addCallback } from "../config";
 
 import type { AppConfig } from "../util/types/config";
-import type { AppStore } from "../util/types/common";
+import type { AppStore } from "./types/store";
 import { getInitialState, type State } from "./types/state";
 import { getEditedObjectState, type EditedObject, type EditedObjects } from "./types/data/edited-objects";
 import { getDefaultAuthState, type Auth } from "./types/data/auth";

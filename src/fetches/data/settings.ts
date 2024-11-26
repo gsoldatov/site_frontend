@@ -3,7 +3,7 @@ import { FetchRunner } from "../fetch-runner";
 import  { settingsViewResponseBody, settingsViewAllResponsebody } from "../types/data/settings";
 
 import type { SettingNames, SettingsViewAllFetchResult, Settings } from "../types/data/settings";
-import type { Dispatch, GetState } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 import type { FetchResult } from "../fetch-runner";
 
 

@@ -1,6 +1,6 @@
 import { addUsers } from "../../../../src/reducers/data/users";
 
-import type { AppStore } from "../../../../src/util/types/common";
+import type { AppStore } from "../../../../src/store/types/store";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 import type { User } from "../../../_mock-data/modules/users";
 

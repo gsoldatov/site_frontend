@@ -1,6 +1,6 @@
 import { FetchRunner } from "../fetch-runner";
 
-import type { Dispatch, GetState } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 import { searchResponseBodySchema, type SearchRequestQuery, type SearchFetchResult } from "../types/data/search";
 
 

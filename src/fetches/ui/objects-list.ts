@@ -9,9 +9,10 @@ import { clearObjectsListTagUpdates, setObjectsListPaginationInfo, setObjectsLis
 import { ObjectsListSelectors } from "../../store/selectors/ui/objects-list";
 
 import type { State } from "../../store/types/state";
-import type { Dispatch, GetState } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../store/types/store";
 import type { ObjectsListPaginationInfo } from "../../store/types/ui/objects-list";
 import type { ObjectsListTagsInput } from "../../store/types/ui/objects-list";
+
 
 /**
  * On load UI reset & current page fetch.
