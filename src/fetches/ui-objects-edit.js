@@ -1,12 +1,10 @@
 import { getResponseErrorType } from "./common";
 import { objectsAddFetch, objectsUpdateFetch } from "./data-objects";
-import { objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "./data/objects";
+import { objectsViewFetch, objectsSearchFetch } from "./data/objects";
 import { tagsSearchFetch } from "./data/tags";
 
 import { setRedirectOnRender } from "../reducers/common";
-import { setObjectsEditSaveFetchState,
-    setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setAddCompositeSubobjectMenu
-} from "../reducers/ui/objects-edit";
+import { setObjectsEditSaveFetchState, setObjectsEditTagsInput, setAddCompositeSubobjectMenu } from "../reducers/ui/objects-edit";
 import { loadEditedObjects, updateEditedComposite, updateEditedObject, editedObjectsPreSaveUpdate } from "../reducers/data/edited-objects";
 
 import { ObjectsSelectors } from "../store/selectors/data/objects/objects";
@@ -76,36 +74,6 @@ export const objectsEditExistingSaveFetch = () => {
         ));
         dispatch(setObjectsEditSaveFetchState(false, ""));
     };        
-};
-
-
-/**
- * Handles delete confirmation button click on existing object page.
- * 
- * If `deleteSubobjects` is true, deletes all subobjects along with the composite object.
- */
-export const objectsEditExistingDeleteFetch = deleteSubobjects => {
-    return async (dispatch, getState) => {
-        // Exit if already fetching
-        let state = getState();
-        if (ObjectsEditSelectors.isFetching(state)) return;
-
-        // Hide delete dialog
-        dispatch(setObjectsEditShowDeleteDialog(false));
-
-        // Run fetch & delete object data from state
-        dispatch(setObjectsEditSaveFetchState(true, ""));
-        const result = await dispatch(objectsDeleteFetch([state.objectsEditUI.currentObjectID], deleteSubobjects));
-
-        // Handle fetch errors
-        if (result.failed) {
-            dispatch(setObjectsEditSaveFetchState(false, result.error));
-            return;
-        }
-
-        // Handle successful fetch end
-        dispatch(setRedirectOnRender("/objects/list"));
-    };      
 };
 
 

@@ -10,7 +10,8 @@ import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer, S
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
 import { CompositeSelectors } from "../../../store/selectors/data/objects/composite";
 import { setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog, resetCurrentEditedObject } from "../../../reducers/ui/objects-edit";
-import { objectsEditNewSaveFetch, objectsEditExistingSaveFetch, objectsEditExistingDeleteFetch } from "../../../fetches/ui-objects-edit";
+import { objectsEditNewSaveFetch, objectsEditExistingSaveFetch } from "../../../fetches/ui-objects-edit";
+import { objectsEditExistingDeleteFetch } from "../../../fetches/ui/objects-edit";
 
 
 /**

@@ -113,3 +113,33 @@ export const objectsEditExistingOnLoad = (objectID: number) => {
         dispatch(setObjectsEditLoadFetchState(false, ""));
     };
 };
+
+
+/**
+ * Handles delete confirmation button click on existing object page.
+ * 
+ * If `deleteSubobjects` is true, deletes all subobjects along with the composite object.
+ */
+export const objectsEditExistingDeleteFetch = (deleteSubobjects: boolean) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
+        // Exit if already fetching
+        let state = getState();
+        if (ObjectsEditSelectors.isFetching(state)) return;
+
+        // Hide delete dialog
+        dispatch(setObjectsEditShowDeleteDialog(false));
+
+        // Run fetch & delete object data from state
+        dispatch(setObjectsEditSaveFetchState(true, ""));
+        const result = await dispatch(objectsDeleteFetch([state.objectsEditUI.currentObjectID], deleteSubobjects));
+
+        // Handle fetch errors
+        if (result.failed) {
+            dispatch(setObjectsEditSaveFetchState(false, result.error!));
+            return;
+        }
+
+        // Handle successful fetch end
+        dispatch(setRedirectOnRender("/objects/list"));
+    };      
+};
