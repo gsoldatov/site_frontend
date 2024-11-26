@@ -1,6 +1,10 @@
+import { type State } from "./types/state";
+
+
 const LOGGING_ORDER = [
     "auth",
     "users",
+    
     "tags",
     
     "objects",
@@ -12,11 +16,13 @@ const LOGGING_ORDER = [
 
     "editedObjects",
 
-    "tagsEditUI",
     "tagsListUI",
-    "objectsEditedUI",
+    "tagsEditUI",
+    
     "objectsListUI",
     "objectsEditUI",
+
+    "objectsEditedUI",
     
     "modalUI",
     "navigationUI"
@@ -28,8 +34,8 @@ const LOGGING_ORDER = [
  * 
  * Prints top-level parts of the state set in the LOGGING_ORDER list, then prints the rest of the state.
  */
-export default (state, topLevelHeader) => {
-    const log = (state, header, isTopLevel = false) => {
+export const logState = (state: State, topLevelHeader: string) => {
+    const log = (state: any, header: string | undefined, isTopLevel = false) => {
         let oneLine = true;
         if (typeof(state) === "object" && state !== null) {
             if (state instanceof Array || state instanceof Set) {

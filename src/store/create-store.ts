@@ -1,18 +1,20 @@
-import { createStore, applyMiddleware } from "redux";
+import { createStore as createStoreRedux, applyMiddleware, type Reducer } from "redux";
 import thunkMiddleware from "redux-thunk";
 
 import { LocalStorageManager } from "./local-storage-manager";
-import getRootReducer from "../reducers/root";
+import { getRootReducer } from "../reducers/root";
 import { setDocumentApp } from "../util/document-app";
 
 
 /**
+ * Creates Redux store for the app, configures its local storage usage & adds it to the `documents.app`.
+ * 
  * Uses configuration from the `document.app.config`.
  */
-const createStoreFunc = () => {
+export const createStore = () => {
     const manager = new LocalStorageManager();
-    const store = createStore(
-        getRootReducer(),
+    const store = createStoreRedux(
+        getRootReducer() as Reducer,
         manager.loadState(),
         applyMiddleware(
             thunkMiddleware
@@ -24,6 +26,4 @@ const createStoreFunc = () => {
     setDocumentApp({ store });
 
     return store;
-}
-
-export default createStoreFunc;
+};

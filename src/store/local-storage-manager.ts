@@ -1,10 +1,12 @@
-import { getInitialState } from "./types/state";
-import { getEditedObjectState } from "./types/data/edited-objects";
-import { getDefaultAuthState } from "./types/data/auth";
-
 import debounce from "../util/debounce";
 
 import { getConfig, addCallback } from "../config";
+
+import type { AppConfig } from "../util/types/config";
+import type { AppStore } from "../util/types/common";
+import { getInitialState, type State } from "./types/state";
+import { getEditedObjectState, type EditedObject, type EditedObjects } from "./types/data/edited-objects";
+import { getDefaultAuthState, type Auth } from "./types/data/auth";
 
 
 /**
@@ -13,13 +15,16 @@ import { getConfig, addCallback } from "../config";
  * NOTE: save state timeout can be updated for an instance of this class via config changing functions, but not directly.
  */
 export class LocalStorageManager {
+    previousState: State
+    _authStateKeys: Array<keyof Auth>
+
     constructor() {
         this.previousState = getInitialState();
 
         this.loadState = this.loadState.bind(this);
         this.save = this.save.bind(this);
 
-        this._authStateKeys = Object.keys(getDefaultAuthState());
+        this._authStateKeys = Object.keys(getDefaultAuthState()) as Array<keyof Auth>;
 
         // Set up debounced save state function and its update on config updates
         this.setSaveState(this.getConfig());
@@ -27,10 +32,13 @@ export class LocalStorageManager {
         addCallback(this.setSaveState);
     }
 
+    /** Stub method, which is overwritten in constructor */
+    saveState(store: AppStore) {}
+
     /**
      * Assigns a new debounced state saving function to `this.saveState`
      */
-    setSaveState(config) {
+    setSaveState(config: AppConfig) {
         const { localStorageSaveTimeout } = config;
         this.saveState = debounce(this.save, localStorageSaveTimeout, "onCall");
     }
@@ -68,7 +76,7 @@ export class LocalStorageManager {
     /**
      * Loads auth information into the `state` object.
      */
-    loadAuthInfo(state) {
+    loadAuthInfo(state: State) {
         try {
             let authInfo = getAuthInfo();
 
@@ -82,32 +90,32 @@ export class LocalStorageManager {
             state.auth = authInfo;
             this.log(`Loaded auth information for ${authInfo.user_id > 0 ? "user " + authInfo.user_id : "anonymous"} from local storage.`);
         } catch(e) {
-            this.log(`Error when loading auth info from local storage:\n` + e.message);
+            this.log(`Error when loading auth info from local storage:\n` + (e as Error).message);
         }
     }
 
     /**
      * Loads edited objects from localStorage into the `state` object.
      */
-    loadEditedObjects(state) {
+    loadEditedObjects(state: State) {
         try {
             // Get list of saved edited objects
             const savedEditedObjects = getListOfSavedEditedObjects();
-            const loadedEditedObjects = {}, deletedEditedObjects = new Set();
+            const loadedEditedObjects: EditedObjects = {}, deletedEditedObjects: Set<string> = new Set();
 
             // Try to load saved edited objects
             savedEditedObjects.forEach(objectID => {
-                let editedObject = localStorage.getItem(getEditedObjectKey(objectID));
-                if (editedObject === null) {
+                const stringEditedObject = localStorage.getItem(getEditedObjectKey(objectID));
+                if (stringEditedObject === null) {
                     this.log(`Skipping load of invalid data from local storage for object "${objectID}"`);
                     deletedEditedObjects.add(objectID);
                     return;
                 } else {
-                    editedObject = deserializeData(editedObject);
+                    const editedObject = deserializeData(stringEditedObject) as Record<string, any>;
 
                     try {
                         validateState(getEditedObjectState(), editedObject);
-                        loadedEditedObjects[objectID] = editedObject;
+                        loadedEditedObjects[objectID as unknown as number] = editedObject as EditedObject;
                     } catch(e) {
                         this.log(`Validation fail for object "${objectID}":\n` + e);
                         deletedEditedObjects.add(objectID);
@@ -123,14 +131,14 @@ export class LocalStorageManager {
             state.editedObjects = loadedEditedObjects;
             this.log(`Finished loading edited objects from local storage, loaded: ${Object.keys(loadedEditedObjects).length}, removed invalid: ${savedEditedObjects.length - Object.keys(loadedEditedObjects).length}`);
         } catch (e) {
-            this.log("Error when loading edited objects from local storage:\n" + e.message);
+            this.log("Error when loading edited objects from local storage:\n" + (e as Error).message);
         }
     }
 
     /**
      * Saves changes in auth info & edited objects to the localStorage.
      */
-    save(store) {
+    save(store: AppStore) {
         // Exit if localStorage usage is disabled
         if (!this.getConfig().useLocalStorage) {
             this.log("useLocalStorage is set to false, skipping state save");
@@ -146,7 +154,7 @@ export class LocalStorageManager {
         this.previousState = currentState;
     }
 
-    saveAuthInfo(store) {
+    saveAuthInfo(store: AppStore) {
         try {
             // Get current & previous state
             const currentState = store.getState(), previousState = this.previousState;
@@ -160,11 +168,11 @@ export class LocalStorageManager {
             }
             this.log("Auth information did not change.")
         } catch(e) {
-            this.log("Error during auth information save:\n" + e.message);
+            this.log("Error during auth information save:\n" + (e as Error).message);
         }
     }
 
-    saveEditedObjects(store) {
+    saveEditedObjects(store: AppStore) {
         // Get current & previous state
         const currentState = store.getState(), previousState = this.previousState;
 
@@ -175,7 +183,7 @@ export class LocalStorageManager {
             return;
         }
 
-        let savedEditedObjects;
+        let savedEditedObjects: Set<string> | undefined;
         let numberOfSavedObjects = 0, numberOfRemovedObjects = 0;
 
         try {
@@ -183,20 +191,22 @@ export class LocalStorageManager {
             savedEditedObjects = new Set(getListOfSavedEditedObjects());
 
             // Save modified objects from current state
-            Object.keys(currentState.editedObjects).forEach(objectID => {
+            Object.keys(currentState.editedObjects).forEach(stringObjectID => {
+                const objectID = parseInt(stringObjectID);
                 if (currentState.editedObjects[objectID] !== previousState.editedObjects[objectID]) {
-                    savedEditedObjects.add(objectID);
+                    savedEditedObjects!.add(stringObjectID);
                     const serializedEditedObject = serializeData(currentState.editedObjects[objectID]);
-                    localStorage.setItem(getEditedObjectKey(objectID), serializedEditedObject);
+                    localStorage.setItem(getEditedObjectKey(stringObjectID), serializedEditedObject);
                     numberOfSavedObjects++;
                 }
             });
 
             // Delete objects which were removed from current state (but are present in the previous state)
-            Object.keys(previousState.editedObjects).forEach(objectID => {
+            Object.keys(previousState.editedObjects).forEach(stringObjectID => {
+                const objectID = parseInt(stringObjectID);
                 if (currentState.editedObjects[objectID] === undefined) {
-                    savedEditedObjects.delete(objectID);
-                    localStorage.removeItem(getEditedObjectKey(objectID));
+                    savedEditedObjects!.delete(stringObjectID);
+                    localStorage.removeItem(getEditedObjectKey(stringObjectID));
                     numberOfRemovedObjects++;
                 }
             });
@@ -204,7 +214,7 @@ export class LocalStorageManager {
             setListOfSavedEditedObjects(savedEditedObjects);
             this.log(`Saved state to local storage:\nSaved ${numberOfSavedObjects} edited objects, removed ${numberOfRemovedObjects} objects.`);
         } catch (e) {
-            this.log("Error during edited objects save:\n" + e.message);
+            this.log("Error during edited objects save:\n" + (e as Error).message);
             // Try to save savedEditedObjects if error occured in the middle of the function execution
             try {
                 if (savedEditedObjects) {
@@ -215,7 +225,7 @@ export class LocalStorageManager {
         }
     }
 
-    log(msg) {
+    log(msg: string) {
         if (this.getConfig().debugLogging) console.log(msg);
     }
 };
@@ -233,7 +243,7 @@ const getAuthInfo = () => {
 /**
  * Saves `auth` object with auth info to the local storage.
  */
-const setAuthInfo = auth => {
+const setAuthInfo = (auth: Auth) => {
     localStorage.setItem("authInfo", serializeData(auth));
 };
 
@@ -241,13 +251,13 @@ const setAuthInfo = auth => {
 /**
  * Returns a localStorage key for the provided `objectID`.
  */
-const getEditedObjectKey = objectID => `editedObject_${objectID}`;
+const getEditedObjectKey = (objectID: string) => `editedObject_${objectID}`;
 
 
 /**
  * Returns a deserialized list of edited objects saved in local storage.
  */
-const getListOfSavedEditedObjects = () => {
+const getListOfSavedEditedObjects = (): string[] => {
     let savedEditedObjects = localStorage.getItem("savedEditedObjects");
     if (!savedEditedObjects) return [];
     else return deserializeData(savedEditedObjects);
@@ -257,7 +267,7 @@ const getListOfSavedEditedObjects = () => {
 /**
  * Saves list of provided Array of edited objects into local storage.
  */
-const setListOfSavedEditedObjects = savedEditedObjects => {
+const setListOfSavedEditedObjects = (savedEditedObjects: Set<string> | string[]) => {
     if (savedEditedObjects instanceof Set) savedEditedObjects = new Array(...savedEditedObjects);
     if (!(savedEditedObjects instanceof Array)) throw TypeError("savedEditedObjects must be an Array or a Set.");
     localStorage.setItem("savedEditedObjects", serializeData(savedEditedObjects));
@@ -285,7 +295,7 @@ const setListOfSavedEditedObjects = savedEditedObjects => {
  * 
  * 3. If all properties are checked, return true.
  */
-const validateState = (expectedState, parsedState) => {
+const validateState = (expectedState: Record<string, any>, parsedState: Record<string, any>) => {
     let expectedStateKeys = Object.keys(expectedState).sort();
     let parsedStateKeys = Object.keys(parsedState).sort();
     if (JSON.stringify(expectedStateKeys) !== JSON.stringify(parsedStateKeys)) {
@@ -305,7 +315,7 @@ const validateState = (expectedState, parsedState) => {
     for (let key of expectedStateKeys) {
         if (typeof(expectedState[key]) === "object"
                 // not an Array
-                && [Array].reduce((prev, curr) => prev && !(expectedState[key] instanceof curr))
+                && [Array].reduce((prev, curr) => prev && !(expectedState[key] instanceof curr), true)
                 // not an empty object
                 && Object.keys(expectedState[key]).length > 0) { 
             validateState(expectedState[key], parsedState[key]);
@@ -319,7 +329,7 @@ const validateState = (expectedState, parsedState) => {
 /**
  * Deserializes provided `data` from local storage.
  */
-const deserializeData = data => {
+const deserializeData = (data: string) => {
     return JSON.parse(data);
     // return JSON.parse(serializedState, (k, v) => {
     //     // parse date strings into Date objects
@@ -331,6 +341,6 @@ const deserializeData = data => {
 /**
  * Serializes provided `data` into the format in which it will be stored in local storage.
  */
-const serializeData = data => {
+const serializeData = (data: object) => {
     return JSON.stringify(data);
 };

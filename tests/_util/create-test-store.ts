@@ -1,4 +1,4 @@
-import createStore from "../../src/store/create-store";
+import { createStore } from "../../src/store/create-store";
 import { updateConfig } from "../../src/config";
 import { StoreManager } from "../_managers/store-manager/store-manager";
 

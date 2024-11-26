@@ -1,4 +1,4 @@
-import logState from "../store/log-state";
+import { logState } from "../store/log-state";
 
 import { authRoot } from "./data/auth";
 import { usersRoot } from "./data/users";
@@ -18,8 +18,11 @@ import { objectsEditedRoot } from "./ui/objects-edited";
 
 import { getConfig } from "../config";
 
+import type { State } from "../store/types/state";
+import type { ActionHandlers } from "../util/types/reducers";
 
-function getActionHandlers(rootObjects) {
+
+const getActionHandlers = (rootObjects: Record<string, ActionHandlers>): ActionHandlers => {
     let actionHandlers = {};
 
     for (let k in rootObjects) {
@@ -58,8 +61,8 @@ const ACTION_HANDLERS = getActionHandlers({
 });
 
 
-export default function getRootReducer() {
-    return (state, action) => {
+export const getRootReducer = () => {
+    return (state: State, action: any): State => {
         const config =  getConfig();
         
         let handler = typeof(action) === "object" 

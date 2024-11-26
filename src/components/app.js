@@ -7,7 +7,7 @@ import { DndProvider } from "react-dnd";
 import { Provider } from "react-redux";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-import createStore from "../store/create-store";
+import { createStore } from "../store/create-store";
 
 import { WindowWidthProvider } from "./modules/wrappers/window-width-provider";
 import { LocationManagerWrapper } from "./state-users/location-manager-wrapper";
