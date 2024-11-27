@@ -6,7 +6,7 @@ import { object } from "../../store/types/data/objects";
 import type { PartialExcept } from "../../util/types/common";
 import type { State } from "../../store/types/state";
 import type { ObjectAttributes, Objects, ObjectType } from "../../store/types/data/objects";
-import { type BackendObjectData } from "../../fetches/types/data/objects";
+import { type BackendObjectData } from "../../fetches/types/data/objects/general";
 import { ObjectDataMap } from "../../store/types/general";
 import { links, type Links } from "../../store/types/data/links";
 import { markdownStore, type MarkdownStore } from "../../store/types/data/markdown";

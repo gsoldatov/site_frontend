@@ -1,4 +1,4 @@
-import { type BackendLink, type BackendMarkdown, type BackendToDoList, type BackendComposite, type BackendObjectData } from "../../../fetches/types/data/objects";
+import { type BackendLink, type BackendMarkdown, type BackendToDoList, type BackendComposite, type BackendObjectData } from "../../../fetches/types/data/objects/general";
 import { getLink, type Link } from "../../types/data/links";
 import { getMarkdown, type Markdown } from "../../types/data/markdown";
 import { type ToDoList, getToDoListItem, getToDoList } from "../../types/data/to-do-list";

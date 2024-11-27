@@ -15,12 +15,64 @@ import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 // import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 
 import type { Dispatch, GetState } from "../../store/types/store";
+import type { EditedObject } from "../../store/types/data/edited-objects";
 import {
     objectsGetPageObjectIDsResponseSchema, objectsPaginationInfo, objectsSearchResponseSchema, 
     objectsViewCompositeHierarchyElementsResponseSchema, objectsViewResponseSchema, 
     type ObjectsViewFetchResult, type ObjectsSearchFetchResult, type ObjectsGetPageObjectIDsFetchResult, 
     type ObjectsPaginationInfo, type ObjectsViewCompositeHierarchyElementsFetchResult
-} from "../types/data/objects";
+} from "../types/data/objects/general";
+
+
+
+
+// /**
+//  * Fetches backend to add a new `editedObject`.
+//  * 
+//  * Adds the object to the state in case of success.
+//  * 
+//  * Returns object attributes from backend response or an object with `error` attribute containing error message in case of failure.
+//  */
+// export const objectsAddFetch = (editedObject: EditedObject) => {
+//     return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
+//         // Validate current object
+//         let state = getState();
+//         try {
+//             validateObject(state, editedObject);
+//         } catch (e) {
+//             return { error: e.message };
+//         }
+
+//         // Run fetch & handle response
+//         let payload = { object: serializeObjectAttributesAndTagsForAddFetch(editedObject) };
+//         let object_data = serializeObjectData(state, editedObject);
+//         payload.object.object_data = object_data;
+        
+//         let response = await dispatch(runFetch(`${backendURL}/objects/add`, {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify(payload)
+//         }));
+
+//         switch (response.status) {
+//             case 200:
+//                 let object = (await response.json()).object;
+
+//                 // Composite object data updates
+//                 dispatch(updateEditedComposite(0, { command: "updateSubobjectsOnSave", object, object_data }));     // object_data must contain non-mapped IDs of new subobjects
+//                 object_data = modifyObjectDataPostSave(payload, object);
+
+//                 // General updates
+//                 dispatch(addObjectsAttributes([object]));         // Add object
+//                 const { added_tag_ids = [], removed_tag_ids = [] } = object.tag_updates;
+//                 dispatch(updateObjectsTags([object.object_id], added_tag_ids, removed_tag_ids));    // Set objects tags
+//                 dispatch(addObjectsDataFromBackend([{ object_id: object.object_id, object_type: object.object_type, object_data: object_data }]));
+//                 return object;
+//             default:
+//                 return getErrorFromResponse(response);
+//         }
+//     };
+// };
 
 
 /**

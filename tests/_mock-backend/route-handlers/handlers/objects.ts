@@ -247,18 +247,21 @@ const compositeSubobjectWithAttributesAndData =
     .or(compositeSubobjectWithAttributesBase
         .merge(z.object({ 
             object_type: z.literal("to_do_list"), 
-            object_data: linkData
+            object_data: toDoListData
     })))
 ;
 
 /** Full schema of a composite subobject (with & without attributes and data) */
-const compositeSubobject = compositeSubobjectBase.or(compositeSubobjectWithAttributesAndData);
+const compositeSubobject = compositeSubobjectWithAttributesAndData.or(compositeSubobjectBase.strict());
 
 /** Full composite data schema */
 const compositeData = z.object({
     display_mode: z.enum(["basic", "grouped_links", "multicolumn", "chapters"]),
     numerate_chapters: z.boolean(),    
-    subobjects: compositeSubobject.array().min(1)
+    subobjects: compositeSubobject.array().min(1),
+    deleted_subobjects: z.object({
+        object_id: positiveInt, is_full_delete: z.boolean()
+    }).array()
 });
 
 type CompositeData = z.infer<typeof compositeData>;

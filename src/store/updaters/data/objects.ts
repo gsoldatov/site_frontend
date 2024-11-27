@@ -10,7 +10,7 @@ import { link, type Links } from "../../types/data/links";
 import { markdown, type MarkdownStore } from "../../types/data/markdown";
 import { toDoList, type ToDoLists } from "../../types/data/to-do-list";
 import { composite, type CompositeStore } from "../../types/data/composite";
-import type { BackendObjectData } from "../../../fetches/types/data/objects";
+import type { BackendObjectData } from "../../../fetches/types/data/objects/general";
 
 
 /** Contains state updating methods for object attributes, tags & data. */
