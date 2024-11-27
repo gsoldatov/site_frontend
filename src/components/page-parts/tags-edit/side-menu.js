@@ -58,8 +58,7 @@ const ViewTag = () => {
 
 const Save = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => !TagsEditSelectors.isFetching(state) 
-        && state.tagsEditUI.currentTag.tag_name.length >= 1 && state.tagsEditUI.currentTag.tag_name.length <= 255);
+    const isActive = useSelector(state => !TagsEditSelectors.isFetchingOrLoadFailed(state));
     const { id } = useParams(); // undefined for new tag page
     const onClick = useMemo(() => () => {
         const onSave = id === undefined ? tagsEditNewSaveFetch : tagsEditExistingSaveFetch;

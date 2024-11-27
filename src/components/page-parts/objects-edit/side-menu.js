@@ -68,9 +68,7 @@ const ViewObject = () => {
 
 const Save = () => {
     const dispatch = useDispatch();
-    const isActive = useSelector(state => 
-        !ObjectsEditSelectors.isFetching(state) && ObjectsEditSelectors.currentObject(state).object_name.length >= 1 
-                                                && ObjectsEditSelectors.currentObject(state).object_name.length <= 255);
+    const isActive = useSelector(state => !ObjectsEditSelectors.isFetchingOrLoadFailed(state));
     const { id } = useParams(); // undefined for new object page
     const onClick = useMemo(() => () => {
         const onSave = id === undefined ? objectsEditNewSaveFetch : objectsEditExistingSaveFetch;

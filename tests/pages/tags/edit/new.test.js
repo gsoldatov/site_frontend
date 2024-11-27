@@ -59,22 +59,26 @@ describe("Basic render & side menu", () => {
             route: "/tags/edit/new"
         });
 
-        // Check if save button is disabled if no tag name is entered
+        // Check if save button is always enabled
         const { saveButton } = getTagsEditElements(container).sideMenu;
-        expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
-
-        // Check if save button is enabled when input text has minimal length
-        const { tagNameInput } = getTagsEditElements(container);
-        fireEvent.change(tagNameInput, { target: { value: "a" } });
         expect(saveButton.classList.contains("disabled")).toBeFalsy();
 
-        // Check if save button is disabled when input text exceeds maximum length
-        fireEvent.change(tagNameInput, { target: { value: "a".repeat(256) } });
-        expect(saveButton.classList.contains("disabled")).toBeTruthy();
+        // // Check if save button is disabled if no tag name is entered
+        // const { saveButton } = getTagsEditElements(container).sideMenu;
+        // expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
 
-        // Check if save button is disabled when input text has maximum length
-        fireEvent.change(tagNameInput, { target: { value: "a".repeat(255) } });
-        expect(saveButton.classList.contains("disabled")).toBeFalsy();
+        // // Check if save button is enabled when input text has minimal length
+        // const { tagNameInput } = getTagsEditElements(container);
+        // fireEvent.change(tagNameInput, { target: { value: "a" } });
+        // expect(saveButton.classList.contains("disabled")).toBeFalsy();
+
+        // // Check if save button is disabled when input text exceeds maximum length
+        // fireEvent.change(tagNameInput, { target: { value: "a".repeat(256) } });
+        // expect(saveButton.classList.contains("disabled")).toBeTruthy();
+
+        // // Check if save button is disabled when input text has maximum length
+        // fireEvent.change(tagNameInput, { target: { value: "a".repeat(255) } });
+        // expect(saveButton.classList.contains("disabled")).toBeFalsy();
     });
 
 

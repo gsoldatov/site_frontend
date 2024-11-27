@@ -78,13 +78,13 @@ test("Render page and click cancel button", async () => {
     expect(objectNameInput.value).toBe("");
     expect(objectDescriptionInput.value).toBe("");
 
-    // Check if an empty name can't be submitted
-    let saveButton = getSideMenuItem(container, "Save");
-    let cancelButton = getSideMenuItem(container, "Cancel");
-    expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
-    // expect(saveButton.onclick).toBeNull(); 
+    // // Check if an empty name can't be submitted
+    // let saveButton = getSideMenuItem(container, "Save");
+    // expect(saveButton.classList.contains("disabled")).toBeTruthy(); // Semantic UI always adds onClick event to div elements, even if they are disabled (which does nothing in this case)
+    // // expect(saveButton.onclick).toBeNull(); 
 
     // Check if cancel button redirects to /objects page
+    let cancelButton = getSideMenuItem(container, "Cancel");
     fireEvent.click(cancelButton);
     historyManager.ensureCurrentURL("/objects/list");
 });
