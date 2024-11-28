@@ -98,8 +98,13 @@ const _resetCurrentEditedObject = (state: State, action: { resetAllSubobjects: b
     const { resetAllSubobjects } = action;
     const { currentObjectID } = state.objectsEditUI;
 
-    // Close reset dialog & toggle to-do list rerender
-    let newState: State = { ...state, objectsEditUI: { ...state.objectsEditUI, showResetDialog: false, toDoListRerenderPending: true }};
+    // Close reset dialog, clear save errors & toggle to-do list rerender
+    let newState: State = { ...state, objectsEditUI: { 
+        ...state.objectsEditUI,
+        showResetDialog: false,
+        toDoListRerenderPending: true,
+        saveFetch: { isFetching: false, fetchError: "" }
+    }};
 
     // Reset current object & subobjects
     const resetObjectIDs = resetAllSubobjects 
