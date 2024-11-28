@@ -1,5 +1,6 @@
 import { getResponseErrorType } from "./common";
-import { objectsAddFetch, objectsUpdateFetch } from "./data-objects";
+import { objectsUpdateFetch } from "./data-objects";
+import { objectsAddFetch } from "./data/objects";
 
 import { setRedirectOnRender } from "../reducers/common";
 import { setObjectsEditSaveFetchState } from "../reducers/ui/objects-edit";
@@ -27,10 +28,8 @@ export const objectsEditNewSaveFetch = () => {
         const result = await dispatch(objectsAddFetch(ObjectsEditSelectors.currentObject(state)));
 
         // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectsEditSaveFetchState(false, errorMessage));
+        if (result.failed) {
+            dispatch(setObjectsEditSaveFetchState(false, result.error));
             return;
         }
 

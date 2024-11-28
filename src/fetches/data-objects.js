@@ -14,55 +14,6 @@ const backendURL = getConfig().backendURL;
 
 
 /**
- * Fetches backend to add provided edited object `obj` as a new object.
- * 
- * Adds the object to the state in case of success.
- * 
- * Returns object attributes from backend response or an object with `error` attribute containing error message in case of failure.
- */
-export const objectsAddFetch = obj => {
-    return async (dispatch, getState) => {
-        // Validate current object
-        let state = getState();
-        try {
-            validateObject(state, obj);
-        } catch (e) {
-            return { error: e.message };
-        }
-
-        // Run fetch & handle response
-        let payload = { object: serializeObjectAttributesAndTagsForAddFetch(obj) };
-        let object_data = serializeObjectData(state, obj);
-        payload.object.object_data = object_data;
-        
-        let response = await dispatch(runFetch(`${backendURL}/objects/add`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        }));
-
-        switch (response.status) {
-            case 200:
-                let object = (await response.json()).object;
-
-                // Composite object data updates
-                dispatch(updateEditedComposite(0, { command: "updateSubobjectsOnSave", object, object_data }));     // object_data must contain non-mapped IDs of new subobjects
-                object_data = modifyObjectDataPostSave(payload, object);
-
-                // General updates
-                dispatch(addObjectsAttributes([object]));         // Add object
-                const { added_tag_ids = [], removed_tag_ids = [] } = object.tag_updates;
-                dispatch(updateObjectsTags([object.object_id], added_tag_ids, removed_tag_ids));    // Set objects tags
-                dispatch(addObjectsDataFromBackend([{ object_id: object.object_id, object_type: object.object_type, object_data: object_data }]));
-                return object;
-            default:
-                return getErrorFromResponse(response);
-        }
-    };
-};
-
-
-/**
  * Fetches backend to update provided `obj` data.
  * 
  * Fetches non-cached tags and updates the object in the state in case of success.

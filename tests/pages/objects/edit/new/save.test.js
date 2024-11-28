@@ -82,7 +82,7 @@ describe("Save new object errors", () => {
         fireEvent.click(switchContainer);
         fireEvent.click(linkOption);
         fireEvent.click(saveButton);
-        await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
+        await waitFor(() => getByText(container, "Valid URL is required.", { exact: false }));
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().links[1]).toBeUndefined();
     });
@@ -252,7 +252,7 @@ describe("Save new object errors", () => {
 
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
-        await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
+        await waitFor(() => getByText(container, "Valid URL is required.", { exact: false }));
         historyManager.ensureCurrentURL("/objects/edit/new");
         expect(store.getState().objects[1]).toBeUndefined();
         expect(store.getState().composite[1]).toBeUndefined();

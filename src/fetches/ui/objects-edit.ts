@@ -1,4 +1,3 @@
-import { objectsAddFetch, objectsUpdateFetch } from "../data-objects";
 import { objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "../data/objects";
 import { fetchMissingTags, tagsSearchFetch } from "../data/tags";
 

@@ -1,3 +1,5 @@
+import { ZodError } from "zod";
+
 import { FetchRunner, FetchResult, FetchErrorType } from "../fetch-runner";
 
 import { fetchMissingTags } from "../data/tags";
@@ -5,8 +7,11 @@ import { fetchMissingTags } from "../data/tags";
 import { addObjectsTags, updateObjectsTags } from "../../reducers/data/objects-tags";
 import { deleteObjects } from "../../reducers/data/objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../reducers/data/objects";
+import { updateEditedComposite } from "../../reducers/data/edited-objects";
 
+import { EditedObjectsTransformers, parseObjectsUpdateRequestValidationErrors } from "../../store/transformers/data/edited-objects";
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
+import { EditedCompositeUpdaters } from "../../store/updaters/data/edited-composite";
 
 // import { setEditedObject } from "../../actions/objects-edit";
 
@@ -22,57 +27,56 @@ import {
     type ObjectsViewFetchResult, type ObjectsSearchFetchResult, type ObjectsGetPageObjectIDsFetchResult, 
     type ObjectsPaginationInfo, type ObjectsViewCompositeHierarchyElementsFetchResult
 } from "../types/data/objects/general";
+import { type ObjectsAddFetchResult, objectsAddResponseSchema } from "../types/data/objects/add";
 
 
+/**
+ * Fetches backend to add a new `editedObject`.
+ * 
+ * Adds the object to the state in case of success.
+ * 
+ * Returns object attributes from backend response or an object with `error` attribute containing error message in case of failure.
+ */
+export const objectsAddFetch = (editedObject: EditedObject) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsAddFetchResult> => {
+        try {
+            // Validate and serialize edited object
+            const object = EditedObjectsTransformers.toObjectsAddBody(getState(), editedObject);
 
+            // Fetch backend
+            const runner = new FetchRunner("/objects/add", { method: "POST", body: { object } });
+            const result = await runner.run();
 
-// /**
-//  * Fetches backend to add a new `editedObject`.
-//  * 
-//  * Adds the object to the state in case of success.
-//  * 
-//  * Returns object attributes from backend response or an object with `error` attribute containing error message in case of failure.
-//  */
-// export const objectsAddFetch = (editedObject: EditedObject) => {
-//     return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
-//         // Validate current object
-//         let state = getState();
-//         try {
-//             validateObject(state, editedObject);
-//         } catch (e) {
-//             return { error: e.message };
-//         }
+            // Handle response
+            switch (result.status) {
+                case 200:
+                    const { object: responseObject } = objectsAddResponseSchema.parse(result.json);
 
-//         // Run fetch & handle response
-//         let payload = { object: serializeObjectAttributesAndTagsForAddFetch(editedObject) };
-//         let object_data = serializeObjectData(state, editedObject);
-//         payload.object.object_data = object_data;
+                    // Modify object before adding it
+                    dispatch(updateEditedComposite(0, { command: "updateSubobjectsOnSave", object: responseObject, object_data: object.object_data }));     // object_data must contain non-mapped IDs of new subobjects
+                    const object_data = EditedCompositeUpdaters.modifyObjectDataPostSave(object.object_data, responseObject);
+
+                    // Add attributes, tags & data
+                    dispatch(addObjectsAttributes([responseObject]));
+                    const { object_id, tag_updates: { added_tag_ids = [], removed_tag_ids = [] }} = responseObject;
+                    dispatch(updateObjectsTags([object_id], added_tag_ids, removed_tag_ids));
+                    dispatch(addObjectsDataFromBackend([{ object_id, object_type: object.object_type, object_data }]));
+                    return result.withCustomProps({ object_id });
+                default:
+                    return result;
+            }
         
-//         let response = await dispatch(runFetch(`${backendURL}/objects/add`, {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify(payload)
-//         }));
+        } catch (e) {
+            // Handle validation errors
+            if (e instanceof ZodError) {
+                const error = parseObjectsUpdateRequestValidationErrors(e);
+                return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error });
+            }
 
-//         switch (response.status) {
-//             case 200:
-//                 let object = (await response.json()).object;
-
-//                 // Composite object data updates
-//                 dispatch(updateEditedComposite(0, { command: "updateSubobjectsOnSave", object, object_data }));     // object_data must contain non-mapped IDs of new subobjects
-//                 object_data = modifyObjectDataPostSave(payload, object);
-
-//                 // General updates
-//                 dispatch(addObjectsAttributes([object]));         // Add object
-//                 const { added_tag_ids = [], removed_tag_ids = [] } = object.tag_updates;
-//                 dispatch(updateObjectsTags([object.object_id], added_tag_ids, removed_tag_ids));    // Set objects tags
-//                 dispatch(addObjectsDataFromBackend([{ object_id: object.object_id, object_type: object.object_type, object_data: object_data }]));
-//                 return object;
-//             default:
-//                 return getErrorFromResponse(response);
-//         }
-//     };
-// };
+            throw e;
+        }
+    };
+};
 
 
 /**

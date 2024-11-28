@@ -7,6 +7,7 @@ import { getStateWithResetEditedObjects, getStateWithDeletedEditedNewSubobjects 
 import { compositeSubobject, getCompositeSubobject, type CompositeSubobject } from "../../types/data/composite";
 import { getEditedObjectState, type EditedObjects } from "../../types/data/edited-objects";
 import type { State } from "../../types/state"
+import { type ObjectsAddRequestObjectData, type ObjectsAddResponseBodyObject } from "../../../fetches/types/data/objects/add";
 
 
 /** Contains methods, which update state of an edited composite object & related data (edited subobjects, etc). */
@@ -231,8 +232,38 @@ export class EditedCompositeUpdaters {
             }
         };
     }
+
+    static updateSubobjectsOnSave(state: State, objectID: number, update: ParamsUpdateSubobjectsOnSave): State {
+        throw Error("Not implemented"); // TODO add typed post-update composite data typing or remove
+    }
+
+    /**
+     * Modifies object data sent via /objects/add & /objects/update fetches 
+     * to prepare it for adding to the respective storage/
+     */
+    static modifyObjectDataPostSave(object_data: ObjectsAddRequestObjectData, object: ObjectsAddResponseBodyObject) {
+        const { object_type } = object;
+        
+        switch (object_type) {
+            // Map IDs of the new subobjects to their new values
+            case "composite":
+                const IDMapping = object.object_data?.id_mapping;
+                if (IDMapping === undefined) throw Error("Missing `id_mapping` in successful object update response.");
+                if (!("subobjects" in object_data)) throw Error("Missing `subobjects` in composite request data.");
+                return {
+                    ...object_data,
+                    subobjects: object_data.subobjects.map(so => {
+                        const object_id = IDMapping[so.object_id] !== undefined ? IDMapping[so.object_id] : so.object_id;
+                        return { ...so, object_id };
+                    })
+                };
+            default:
+                return object_data;
+        }
+    }
 }
 
+// TODO swap dispatching function & with handlers (in & out of the class)
 
 type ParamsAddNewSubobject = { command: "addNewSubobject", subobjectID?: number, row: number, column: number };
 type ParamsAddExistingSubobject = { command: "addExistingSubobject", 
@@ -245,9 +276,9 @@ type ParamsUpdatePositionsOnDrop = { command: "updatePositionsOnDrop"
     subobjectID: number, dropTargetSubobjectID?: number, newColumn?: number, newRow?: number, 
     isDroppedToTheLeft?: number, isDroppedToTheRight?: number
 };
-type ParamsUpdateSubobjectsOnSave = { command: "updateSubobjectsOnSave" }
+type ParamsUpdateSubobjectsOnSave = { command: "updateSubobjectsOnSave", object: ObjectsAddResponseBodyObject, object_data: ObjectsAddRequestObjectData };
 export type GetUpdatedEditedCompositeParams = ParamsAddNewSubobject | ParamsAddExistingSubobject | ParamsUpdateSubobject | 
-    ParamsToggleSubobjectsIsPublished | ParamsSetSubobjectsFetchError;
+    ParamsToggleSubobjectsIsPublished | ParamsSetSubobjectsFetchError | ParamsUpdatePositionsOnDrop | ParamsUpdateSubobjectsOnSave;
 
 export const getUpdatedEditedComposite = (state: State, objectID: number, update: GetUpdatedEditedCompositeParams): State => {
     const { command } = update;
@@ -257,6 +288,6 @@ export const getUpdatedEditedComposite = (state: State, objectID: number, update
     if (command === "toggleSubobjectsIsPublished") return EditedCompositeUpdaters.toggleSubobjectsIsPublished(state, objectID, update);
     if (command === "setSubobjectsFetchError") return EditedCompositeUpdaters.setSubobjectsFetchError(state, objectID, update);
     if (command === "updatePositionsOnDrop") return EditedCompositeUpdaters.updatePositionsOnDrop(state, objectID, update);
-    // if (command === "updateSubobjectsOnSave") return EditedCompositeUpdaters.updateSubobjectsOnSave(state, objectID, update);
+    if (command === "updateSubobjectsOnSave") return EditedCompositeUpdaters.updateSubobjectsOnSave(state, objectID, update);
     throw Error(`Command '${command}' handler not implemented.`);
 };
