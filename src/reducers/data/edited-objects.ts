@@ -4,7 +4,6 @@ import { TagsSelectors } from "../../store/selectors/data/tags";
 import { TagsTransformer } from "../../store/transformers/data/tags";
 
 import { getUpdatedToDoList, type ToDoListUpdateParams } from "../../store/updaters/data/to-do-lists";
-import { getStateWithCompositeUpdate as OLD_getStateWithCompositeUpdate } from "../helpers/object-composite";
 import { EditedCompositeUpdaters, type GetUpdatedEditedCompositeParams } from "../../store/updaters/data/edited-composite";
 
 import type { State } from "../../store/types/state";
@@ -142,10 +141,7 @@ export const updateEditedComposite = (objectID: number, update: GetUpdatedEdited
 
 const _updateEditedComposite = (state: State, action: {objectID: number, update: GetUpdatedEditedCompositeParams }): State => {
     const { objectID, update } = action;
-    if (["addNewSubobject", "addExistingSubobject", "updateSubobject", "toggleSubobjectsIsPublished",
-        "setSubobjectsFetchError", "updatePositionsOnDrop", 
-    ].includes(update.command)) return EditedCompositeUpdaters.runUpdateCommand(state, objectID, update);
-    return OLD_getStateWithCompositeUpdate(state, objectID, update);    // TODO remove old function call
+    return EditedCompositeUpdaters.runUpdateCommand(state, objectID, update);
 };
 
 
