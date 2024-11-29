@@ -103,7 +103,7 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
         // Process tag updates (main object only)
         let tagUpdates: { added_tag_ids: number[], removed_tag_ids: number[] };
         if (hasTags) {
-            tagUpdates = { added_tag_ids: [], removed_tag_ids: object.removed_tag_ids };
+            tagUpdates = { added_tag_ids: [], removed_tag_ids: object?.removed_tag_ids || [] };
             (object["added_tags"] || []).forEach(tagIDOrName => {
                 // Added existing tags
                 if (typeof(tagIDOrName) === "number") tagUpdates.added_tag_ids.push(tagIDOrName);
@@ -187,7 +187,7 @@ const objectsUpdateAttributes = z.object({
     show_description: z.boolean(),
     owner_id: positiveInt.optional(),
     added_tags: positiveInt.or(z.string().min(1)).array().optional(),
-    removed_tag_ids: positiveIntArray
+    removed_tag_ids: positiveIntArray.optional()
 });
 
 

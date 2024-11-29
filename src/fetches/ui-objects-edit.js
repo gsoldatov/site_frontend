@@ -1,13 +1,10 @@
-import { getResponseErrorType } from "./common";
-import { objectsUpdateFetch } from "./data-objects";
-import { objectsAddFetch } from "./data/objects";
+import { objectsAddFetch, objectsUpdateFetch } from "./data/objects";
 
 import { setRedirectOnRender } from "../reducers/common";
 import { setObjectsEditSaveFetchState } from "../reducers/ui/objects-edit";
 import { updateEditedObject, editedObjectsPreSaveUpdate } from "../reducers/data/edited-objects";
 
 import { ObjectsEditSelectors } from "../store/selectors/ui/objects-edit";
-import { enumResponseErrorType } from "../util/enums/enum-response-error-type";
 
 
 /**
@@ -58,16 +55,15 @@ export const objectsEditExistingSaveFetch = () => {
         const result = await dispatch(objectsUpdateFetch(ObjectsEditSelectors.currentObject(state)));
         
         // Handle fetch errors
-        const responseErrorType = getResponseErrorType(result);
-        if (responseErrorType > enumResponseErrorType.none) {
-            const errorMessage = responseErrorType === enumResponseErrorType.general ? result.error : "";
-            dispatch(setObjectsEditSaveFetchState(false, errorMessage));
+        if (result.failed) {
+            dispatch(setObjectsEditSaveFetchState(false, result.error));
             return;
         }
 
         // Handle successful fetch end
-        dispatch(updateEditedObject(result.object_id, 
-            { ...result, currentTagIDs: getState().objectsTags[result.object_id], addedTags: [], removedTagIDs: [] }
+        const { object } = result;
+        dispatch(updateEditedObject(object.object_id, 
+            { ...object, currentTagIDs: getState().objectsTags[object.object_id], addedTags: [], removedTagIDs: [] }
         ));
         dispatch(setObjectsEditSaveFetchState(false, ""));
     };        

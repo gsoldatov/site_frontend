@@ -24,7 +24,9 @@ export const objectsAddRequestBodyObject = objectsAddAttributes.merge(z.object({
 
 /** /objects/add response body schema */
 export const objectsAddResponseSchema = z.object({
-    object: objectsAddAttributes.merge(z.object({
+    object: objectsAddAttributes
+    .omit({ added_tags: true })
+    .merge(z.object({
         object_id: positiveInt,
         created_at: timestampString,
         modified_at: timestampString,

@@ -88,7 +88,7 @@ describe("Update object errors", () => {
         fireEvent.change(linkInput, { target: { value: "" } });
         await waitFor(() => expect(getCurrentObject(store.getState()).link.link).toBe(""));
         fireEvent.click(saveButton);
-        await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
+        await waitFor(() => getByText(container, "Valid URL is required.", { exact: false }));
         expect(store.getState().links[1].link).toEqual(oldObjectData.link);
     });
 
@@ -214,7 +214,7 @@ describe("Update object errors", () => {
 
         // Click save button and check if error message is displayed and save did not occur
         fireEvent.click(getSideMenuItem(container, "Save"));
-        await waitFor(() => getByText(container, "Link value is required.", { exact: false }));
+        await waitFor(() => getByText(container, "Valid URL is required.", { exact: false }));
         expect(store.getState().links[card.id].link).not.toEqual("");
     });
 });

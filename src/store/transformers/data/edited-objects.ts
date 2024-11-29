@@ -1,17 +1,20 @@
+import { type ZodError } from "zod";
+
 import { deepCopy } from "../../../util/copy";
 
 import { EditedObjectsSelectors } from "../../selectors/data/objects/edited-objects";
 import { CompositeSelectors } from "../../selectors/data/objects/composite";
 
-import { objectsAddRequestBodyObject } from "../../../fetches/types/data/objects/add";
 import type { State } from "../../types/state";
 import type { EditedObject } from "../../types/data/edited-objects";
+
 import { type Composite, SubobjectDeleteMode } from "../../types/data/composite";
+import { objectsAddRequestBodyObject } from "../../../fetches/types/data/objects/add";
 import { 
     objectsUpdateCompositeSubobject, type ObjectsUpdateObjectData,
-    type ObjectsUpdateCompositeSubobjects, type ObjectsUpdateCompositeDeletedSubobjects    
+    type ObjectsUpdateCompositeSubobjects, type ObjectsUpdateCompositeDeletedSubobjects,    
+    objectsUpdateRequestBodyObject
 } from "../../../fetches/types/data/objects/update";
-import { ZodError } from "zod";
 
 
 export class EditedObjectsTransformers {
@@ -24,7 +27,6 @@ export class EditedObjectsTransformers {
         return objectsAddRequestBodyObject.parse({
             ...editedObject,
 
-            // TODO convert feed timestamp?
             added_tags: editedObject.addedTags,
 
             object_data: editedObjectDataToBackend(state, editedObject)
@@ -37,10 +39,9 @@ export class EditedObjectsTransformers {
      * Throws if zod validation fails.
      */
     static toObjectsUpdateBody(state: State, editedObject: EditedObject) {
-        return objectsAddRequestBodyObject.parse({
+        return objectsUpdateRequestBodyObject.parse({
             ...editedObject,
 
-            // TODO convert feed timestamp?
             added_tags: editedObject.addedTags,
             removed_tag_ids: editedObject.removedTagIDs,
 

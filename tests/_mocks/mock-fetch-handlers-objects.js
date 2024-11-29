@@ -133,7 +133,7 @@ function handleUpdate(body) {
         tag_updates: tagUpdates
     }};
     for (let attr of ["added_tags", "removed_tag_ids", "object_data"])
-        delete response[attr];
+        delete response.object[attr];
 
     if (objectType === "composite") response.object["object_data"] = mapAndCacheNewSubobjects(object["object_data"], createdAt, modifiedAt);
 

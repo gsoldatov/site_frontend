@@ -13,12 +13,6 @@ import { EditedObjectsTransformers, parseObjectsUpdateRequestValidationErrors } 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { EditedCompositeUpdaters } from "../../store/updaters/data/edited-composite";
 
-// import { setEditedObject } from "../../actions/objects-edit";
-
-// import { validateObject, serializeObjectAttributesAndTagsForAddFetch, serializeObjectAttributesAndTagsForUpdateFetch,
-//     serializeObjectData, modifyObjectDataPostSave } from "../../store/state-util/objects";
-// import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
-
 import type { Dispatch, GetState } from "../../store/types/store";
 import type { EditedObject } from "../../store/types/data/edited-objects";
 import {
@@ -28,14 +22,13 @@ import {
     type ObjectsPaginationInfo, type ObjectsViewCompositeHierarchyElementsFetchResult
 } from "../types/data/objects/general";
 import { type ObjectsAddFetchResult, objectsAddResponseSchema } from "../types/data/objects/add";
+import { objectsUpdateResponseSchema, type ObjectsUpdateFetchResult } from "../types/data/objects/update";
 
 
 /**
  * Fetches backend to add a new `editedObject`.
  * 
  * Adds the object to the state in case of success.
- * 
- * Returns object attributes from backend response or an object with `error` attribute containing error message in case of failure.
  */
 export const objectsAddFetch = (editedObject: EditedObject) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsAddFetchResult> => {
@@ -53,7 +46,7 @@ export const objectsAddFetch = (editedObject: EditedObject) => {
                     const { object: responseObject } = objectsAddResponseSchema.parse(result.json);
 
                     // Modify object before adding it
-                    dispatch(updateEditedComposite(0, { command: "updateSubobjectsOnSave", object: responseObject, object_data: object.object_data }));     // object_data must contain non-mapped IDs of new subobjects
+                    dispatch(updateEditedComposite(0, { command: "updateSubobjectsOnSave", object_data: object.object_data, object: responseObject }));
                     const object_data = EditedCompositeUpdaters.modifyObjectDataPostSave(object.object_data, responseObject);
 
                     // Add attributes, tags & data
@@ -66,6 +59,68 @@ export const objectsAddFetch = (editedObject: EditedObject) => {
                     return result;
             }
         
+        } catch (e) {
+            // Handle validation errors
+            if (e instanceof ZodError) {
+                const error = parseObjectsUpdateRequestValidationErrors(e);
+                return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error });
+            }
+
+            throw e;
+        }
+    };
+};
+
+
+/**
+ * Fetches backend to update an object with provided `editedObject` data.
+ * 
+ * Fetches non-cached tags and updates the object in the state in case of success.
+ */
+export const objectsUpdateFetch = (editedObject: EditedObject) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsUpdateFetchResult> => {
+        try {
+            // Validate and serialize edited object
+            const object = EditedObjectsTransformers.toObjectsUpdateBody(getState(), editedObject);
+            // console.log("REQUEST OBJECT")
+            // console.log(object)
+
+            // Fetch backend
+            const runner = new FetchRunner("/objects/update", { method: "PUT", body: { object } });
+            const result = await runner.run();
+
+            // Handle response
+            switch (result.status) {
+                case 200:
+                    // console.log("JSON")
+                    // console.log(result.json)
+                    const { object: responseObject } = objectsUpdateResponseSchema.parse(result.json);
+                    const { object_id, tag_updates: { added_tag_ids = [], removed_tag_ids = [] }} = responseObject;
+                    // console.log("responseObject")
+                    // console.log(responseObject)
+
+                    // Modify object before adding it
+                    dispatch(updateEditedComposite(object_id, { command: "updateSubobjectsOnSave", object_data: object.object_data, object: responseObject }));
+                    const object_data = EditedCompositeUpdaters.modifyObjectDataPostSave(object.object_data, responseObject);
+
+                    // Add attributes, tags & data
+                    dispatch(addObjectsAttributes([responseObject]));
+                    dispatch(updateObjectsTags([object_id], added_tag_ids, removed_tag_ids));
+                    dispatch(addObjectsDataFromBackend([{ object_id, object_type: responseObject.object_type, object_data }]));
+
+                    // Fetch non-cached tags
+                    const fetchMissingTagsResult = await dispatch(fetchMissingTags(getState().objectsTags[object.object_id]));
+
+                    // Handle tag fetch errors
+                    if (fetchMissingTagsResult.failed) return fetchMissingTagsResult;
+
+                    return result.withCustomProps({ object: responseObject });
+            case 404:
+                return result.withCustomProps({ error: "Object not found." });
+            default:
+                return result;
+
+            }
         } catch (e) {
             // Handle validation errors
             if (e instanceof ZodError) {

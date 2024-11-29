@@ -46,7 +46,7 @@ export const ToDoList = ({ objectID }) => {
 
         if (!isReadonly) {
             const result = await dispatch(objectsViewToDoListObjectUpdateFetch(objectID, toDoList));
-            if ("error" in result) setError(result.error);
+            if (result.failed) setError(result.error);
         }
     }, 1000, "onCall")), [isReadonly]);
     

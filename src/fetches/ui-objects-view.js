@@ -1,7 +1,7 @@
 import { getConfig } from "../config";
 
 import { getResponseErrorType } from "./common";
-import { objectsUpdateFetch } from "./data-objects";
+import { objectsUpdateFetch } from "./data/objects";
 import { objectsViewFetch, objectsViewCompositeHierarchyElements } from "./data/objects";
 import { fetchMissingTags } from "./data/tags";
 

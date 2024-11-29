@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { int, positiveInt, positiveIntArray, nonNegativeInt, timestampOrEmptyString } from "../../../../util/types/common";
+import { 
+    int, intIndex, positiveInt, positiveIntArray, nonNegativeInt, timestampOrEmptyString, timestampString
+} from "../../../../util/types/common";
+import { objectType } from "../../../../store/types/data/objects";
+import type { FetchResult } from "../../../fetch-runner";
 
 
 export const objectsUpdateAttributes = z.object({
@@ -12,7 +16,7 @@ export const objectsUpdateAttributes = z.object({
     show_description: z.boolean(),
     owner_id: positiveInt.optional(),
     added_tags: positiveInt.or(z.string().min(1)).array().optional(),
-    removed_tag_ids: positiveIntArray
+    removed_tag_ids: positiveIntArray.optional()
 });
 
 
@@ -106,8 +110,35 @@ export const objectsUpdateRequestBodyObject = objectsUpdateAttributes.merge(z.ob
 //         .merge(z.object({ object_data: objectsUpdateData }))
 // });
 
+
+/** /objects/update response body schema */
+export const objectsUpdateResponseSchema = z.object({
+    object: objectsUpdateAttributes
+    .omit({ added_tags: true, removed_tag_ids: true })
+    .merge(z.object({
+        object_type: objectType,
+        created_at: timestampString,
+        modified_at: timestampString,
+        owner_id: positiveInt,
+
+        tag_updates: z.object({
+            added_tag_ids: positiveIntArray.optional(),
+            removed_tag_ids: positiveIntArray.optional()
+        }),
+
+        object_data: z.object({
+            id_mapping: z.record(intIndex, positiveInt)
+        }).optional()
+    }))
+});
+
+
 export type ObjectsUpdateObjectData = z.infer<typeof linkData> | z.infer<typeof markdownData> | z.infer<typeof toDoListData>
     | z.infer<typeof compositeData>;
 export type ObjectsUpdateCompositeSubobject = z.infer<typeof objectsUpdateCompositeSubobject>;
 export type ObjectsUpdateCompositeSubobjects = z.infer<typeof compositeData.shape.subobjects>;
 export type ObjectsUpdateCompositeDeletedSubobjects = z.infer<typeof compositeData.shape.deleted_subobjects>;
+
+export type ObjectsUpdateRequestObjectData = z.infer<typeof objectsUpdateRequestBodyObject.shape.object_data>;
+export type ObjectsUpdateResponseBodyObject = z.infer<typeof objectsUpdateResponseSchema.shape.object>;
+export type ObjectsUpdateFetchResult = FetchResult | FetchResult & { object: ObjectsUpdateResponseBodyObject };

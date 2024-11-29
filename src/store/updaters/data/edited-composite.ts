@@ -6,13 +6,11 @@ import { ObjectsUpdaters } from "./objects";
 import { CompositeSelectors } from "../../selectors/data/objects/composite";
 import { getStateWithResetEditedObjects, getStateWithDeletedEditedNewSubobjects } from "../../../reducers/helpers/object";
 
-import {
-    compositeSubobject, getCompositeSubobject, SubobjectDeleteMode, 
-    type CompositeSubobject, type CompositeSubobjects
-} from "../../types/data/composite";
+import type { State } from "../../types/state";
 import { type EditedObjects } from "../../types/data/edited-objects";
-import type { State } from "../../types/state"
+import { compositeSubobject, getCompositeSubobject, SubobjectDeleteMode, type CompositeSubobject, type CompositeSubobjects } from "../../types/data/composite";
 import { type ObjectsAddRequestObjectData, type ObjectsAddResponseBodyObject } from "../../../fetches/types/data/objects/add";
+import { type ObjectsUpdateRequestObjectData, type ObjectsUpdateResponseBodyObject } from "../../../fetches/types/data/objects/update";
 import { type ObjectsTags } from "../../types/data/objects-tags";
 
 
@@ -35,7 +33,8 @@ export class EditedCompositeUpdaters {
      * Modifies object data sent via /objects/add & /objects/update fetches 
      * to prepare it for adding to the respective storage/
      */
-    static modifyObjectDataPostSave(object_data: ObjectsAddRequestObjectData, object: ObjectsAddResponseBodyObject) {
+    static modifyObjectDataPostSave(object_data: ObjectsAddRequestObjectData | ObjectsUpdateRequestObjectData, 
+        object: ObjectsAddResponseBodyObject | ObjectsUpdateResponseBodyObject) {
         const { object_type } = object;
         
         switch (object_type) {
@@ -416,6 +415,9 @@ type ParamsUpdatePositionsOnDrop = { command: "updatePositionsOnDrop"
     subobjectID: number, dropTargetSubobjectID?: number, newColumn?: number, newRow?: number, 
     isDroppedToTheLeft?: number, isDroppedToTheRight?: number
 };
-type ParamsUpdateSubobjectsOnSave = { command: "updateSubobjectsOnSave", object: ObjectsAddResponseBodyObject, object_data: ObjectsAddRequestObjectData };
+type ParamsUpdateSubobjectsOnSave = { command: "updateSubobjectsOnSave", 
+    object: ObjectsAddResponseBodyObject | ObjectsUpdateResponseBodyObject, 
+    object_data: ObjectsAddRequestObjectData | ObjectsUpdateRequestObjectData
+};
 export type GetUpdatedEditedCompositeParams = ParamsAddNewSubobject | ParamsAddExistingSubobject | ParamsUpdateSubobject | 
     ParamsToggleSubobjectsIsPublished | ParamsSetSubobjectsFetchError | ParamsUpdatePositionsOnDrop | ParamsUpdateSubobjectsOnSave;
