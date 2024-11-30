@@ -3,7 +3,6 @@ import { deepCopy } from "../../../util/copy";
 import { EditedObjectsSelectors } from "../../selectors/data/objects/edited-objects";
 import { EditedObjectsUpdaters } from "./edited-objects";
 import { ObjectsUpdaters } from "./objects";
-import { getStateWithResetEditedObjects, getStateWithDeletedEditedNewSubobjects } from "../../../reducers/helpers/object";
 
 import type { State } from "../../types/state";
 import { type EditedObjects } from "../../types/data/edited-objects";
@@ -89,8 +88,7 @@ const addExistingSubobject = (state: State, objectID: number, update: ParamsAddE
     let newState = state;
 
     if (resetEditedObject) {
-        newState = getStateWithDeletedEditedNewSubobjects(newState, [subobjectID]);
-        newState = getStateWithResetEditedObjects(newState, [subobjectID]);
+        newState = EditedObjectsUpdaters.loadEditedObjects(newState, [subobjectID]);
     }
     const newSubobjects = { ...newState.editedObjects[objectID].composite.subobjects };
     newSubobjects[subobjectID] = getCompositeSubobject({ row, column });
@@ -303,7 +301,10 @@ const updateSubobjectsOnSave = (state: State, objectID: number, update: ParamsUp
     const { object, object_data } = update;
 
     // If object is not composite, delete any new subobjects which were created before object type was changed
-    if (object.object_type !== "composite") return getStateWithDeletedEditedNewSubobjects(state, [objectID]);
+    if (object.object_type !== "composite") {
+        const newSubobjectIDs = EditedObjectsSelectors.newSubobjectIDs(state, [objectID]);
+        return EditedObjectsUpdaters.removeEditedObjects(state, newSubobjectIDs);
+    }
     let newState = state;
 
     // Remove new and unchanged (non-fully) deleted existing objects from state
