@@ -143,17 +143,4 @@ export class CompositeSelectors {
         
         return false;
     };
-
-    /**
-     * Serializes an object with `objectID` from `state` stores (state.objects, etc.) into an edited object, 
-     * which can then be passed into an object update fetch.
-     * If `newProps` is an object, its attributes are passed into returned object.
-     * 
-     * TODO replace with a transformer method
-     */
-    static serializeObjectForUpdate = (state: State, objectID: number, newProps = {}) => {
-        let result = getEditedObjectState(state.objects[objectID]);
-        result = deepMerge(result, ObjectsSelectors.editedObjectData(state, objectID));
-        return deepMerge(result, newProps);
-    };
 }

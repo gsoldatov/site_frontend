@@ -4,8 +4,9 @@ import { fetchMissingTags } from "../data/tags";
 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { ObjectsViewSelectors } from "../../store/selectors/ui/objects-view";
-import { CompositeSelectors } from "../../store/selectors/data/objects/composite";
 import { getEditedObjectState } from "../../store/types/data/edited-objects";
+
+import { deepMerge } from "../../util/copy";
 
 import type { Dispatch, GetState } from "../../store/types/store";
 import type { ToDoList } from "../../store/types/data/to-do-list";
@@ -113,10 +114,13 @@ export const objectsViewMulticolumnExpandToggleUpdateFetch = (objectID: number, 
         const state = getState();
         if (!ObjectsViewSelectors.canEditObject(state, objectID)) return FetchResult.fetchNotRun();
 
-        const newProps = { composite: { subobjects: { [subobjectID]: { is_expanded }}}};
+        // Build an `EditedObject` with updated `is_expanded` prop for `subobjectID`, then run update fetch
+        const newObjectData = deepMerge(
+            ObjectsSelectors.editedObjectData(state, objectID),
+            { composite: { subobjects: { [subobjectID]: { is_expanded }}}}
+        );
+        const editedObject = getEditedObjectState({ ...state.objects[objectID], ...newObjectData });
 
-        const object = CompositeSelectors.serializeObjectForUpdate(state, objectID, newProps);
-        
-        return await dispatch(objectsUpdateFetch(object));
+        return await dispatch(objectsUpdateFetch(editedObject));
     };
 };
