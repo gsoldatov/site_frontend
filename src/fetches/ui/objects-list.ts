@@ -152,8 +152,7 @@ const dropdownFetchThunkCreatorCreator = (actionCreator: (params: Partial<Object
                 }
 
                 // Update matching tags if input text didn't change during fetch
-                const matchingIDs = result instanceof Array ? result : result.tagIDs;   // TODO fix to use the result structure when objects fetch is typed
-                if (inputText === inputTextSelector(getState())) dispatch(actionCreator({ matchingIDs }));
+                if (inputText === inputTextSelector(getState())) dispatch(actionCreator({ matchingIDs: result.tagIDs }));
             }
         };
     }
