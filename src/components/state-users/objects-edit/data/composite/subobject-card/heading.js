@@ -108,12 +108,7 @@ const Indicators = ({ objectID, subobjectID }) => {
         const attributesModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.attributesAreModified(state, subobjectID);
         const tagsModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.tagsAreModified(state, subobjectID);
         const dataModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.dataIsModified(state, subobjectID);
-        const subobjectParamsModifiedIsDisplayedSelector = createSelector(
-            state => (state.composite[objectID] || {subobjects: {}}).subobjects[subobjectID],
-            state => (state.editedObjects[objectID] || {composite: {subobjects: {}}}).composite.subobjects[subobjectID],
-            (stateInObjectData, stateInEditedObject) => CompositeSelectors.subobjectStateIsModified(stateInObjectData, stateInEditedObject)
-        );
-
+        const subobjectParamsModifiedIsDisplayedSelector = state => EditedObjectsSelectors.subobjectStateIsModified(state, objectID, subobjectID);
 
         return [
             // Non-composite validation error & composite
@@ -132,7 +127,7 @@ const Indicators = ({ objectID, subobjectID }) => {
             { name: "tags", color: "yellow", title: "Subobject tags were modified", isDisplayedSelector: tagsModifiedIsDisplayedSelector },
             { name: "file alternate outline", color: "yellow", title: "Subobject data was modified", isDisplayedSelector: dataModifiedIsDisplayedSelector },
 
-            { name: "list", color: "yellow", title: "Subobject parameters were modified", isDisplayedSelector: state => subobjectParamsModifiedIsDisplayedSelector(state) },
+            { name: "list", color: "yellow", title: "Subobject parameters were modified", isDisplayedSelector: subobjectParamsModifiedIsDisplayedSelector },
             
             // Deleted
             { name: "trash alternate", color: "black", title: "Subobject is marked for deletion", 

@@ -4,6 +4,7 @@ import { ObjectsSelectors } from "./objects";
 import type { State } from "../../../types/state";
 import { getEditedObjectState } from "../../../types/data/edited-objects";
 import type { Markdown } from "../../../types/data/markdown";
+import { compositeSubobject } from "../../../types/data/composite";
 
 
 export class EditedObjectsSelectors {
@@ -56,7 +57,7 @@ export class EditedObjectsSelectors {
 
         // Deduplicate before return
         return [...new Set(result)];
-    };
+    }
 
     /** 
      * Returns a list with `objectIDs` and IDs of their existing subobjects found in state.editedObjects. 
@@ -190,6 +191,29 @@ export class EditedObjectsSelectors {
             default:
                 throw Error(`Incorrect object type '${editedObject.object_type}' for object ID ${objectID}`);
         }
+    }
+
+    /**
+     * Returns true, if subobject data of `subobjectID` in `objectID` is modified, or false otherwise.
+     * 
+     * If subobject is not found in store or edited object state, returns false.
+     */
+    static subobjectStateIsModified(state: State, objectID: number, subobjectID: number) {
+        const storeState = state.composite[objectID]?.subobjects[subobjectID];
+        const editedState = state.editedObjects[objectID]?.composite.subobjects[subobjectID];
+        if (storeState === undefined || editedState === undefined) return false;
+        const excludedAttributes = new Set(["deleteMode", "fetchError"]);
+        const checkedAttributes = Object.keys(compositeSubobject.shape).filter(k => !excludedAttributes.has(k));
+
+        for (let attr of checkedAttributes) {
+            if (!deepEqual(
+                (storeState as Record<string, any>)[attr],
+                (editedState as Record<string, any>)[attr])) {
+                    return true;
+                }
+        }
+
+        return false;
     }
 }
 

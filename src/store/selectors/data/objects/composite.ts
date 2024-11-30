@@ -1,13 +1,5 @@
-import { deepEqual } from "../../../../util/equality-checks";
-import { deepMerge } from "../../../../util/copy";
 import { validateNonCompositeObject } from "../../../state-util/objects";
-import { ObjectsSelectors } from "./objects";
-import { ObjectsEditSelectors } from "../../ui/objects-edit";
 
-import { getEditedObjectState } from "../../../types/data/edited-objects";
-import { compositeSubobject } from "../../../types/data/composite";
-
-import type { State } from "../../../types/state";
 import type { EditedObject } from "../../../types/data/edited-objects";
 import type { Composite, CompositeSubobjects } from "../../../types/data/composite";
 
@@ -53,31 +45,7 @@ export class CompositeSelectors {
 
         return displayOrder;
     };
-
-    /**
-     * Accepts subobject state from object data (`stateInObjectData`) and editedObject (`stateInEditedObject`).
-     * 
-     * Returns true if the two state have different user-editable attributes.
-     * 
-     * Returns false if any of the two states are not found.
-     * 
-     * TODO move to edited objects selector & replace argument types (EditedObject & Composite)?
-     */
-    static subobjectStateIsModified(stateInObjectData: Composite | undefined, stateInEditedObject: Composite | undefined) {
-        if (stateInObjectData === undefined || stateInEditedObject === undefined) return false;
-        const excludedAttributes = new Set(["deleteMode", "fetchError"]);
-        const checkedAttributes = Object.keys(compositeSubobject.shape).filter(k => !excludedAttributes.has(k));
-
-        for (let attr of checkedAttributes) {
-            if (!deepEqual(
-                (stateInObjectData as Record<string, any>)[attr],
-                (stateInEditedObject as Record<string, any>)[attr])) {
-                    return true;
-                }
-        }
-
-        return false;
-    };
+    
 
     /**
      * Returns true if non-composite subobject attributes/data of `editedObject` are valid.
