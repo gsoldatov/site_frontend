@@ -1,6 +1,3 @@
-import { validateNonCompositeObject } from "../../../state-util/objects";
-
-import type { EditedObject } from "../../../types/data/edited-objects";
 import type { Composite, CompositeSubobjects } from "../../../types/data/composite";
 
 
@@ -45,35 +42,4 @@ export class CompositeSelectors {
 
         return displayOrder;
     };
-    
-
-    /**
-     * Returns true if non-composite subobject attributes/data of `editedObject` are valid.
-     * 
-     * Always returns true for subobjects with composite object type or not present in the state.
-     * 
-     * TODO move to edited object's selectors?
-     */
-    static nonCompositeSubobjectIsValid(editedObject: EditedObject) {
-        return CompositeSelectors.getNonCompositeSubobjectValidationError(editedObject) === undefined;
-    };
-
-    /**
-     * Returns validation error text for a non-composite edited object `editedObject`, if it's not valid.
-     * 
-     * If object is valid, has "composite" object type or not being edited, returns undefined.
-     * 
-     * TODO move to edited object's selectors?
-     */
-    static getNonCompositeSubobjectValidationError(editedObject: EditedObject | undefined) {
-        if (editedObject === undefined || editedObject.object_type === "composite") return undefined;
-
-        try {
-            validateNonCompositeObject(editedObject);
-            return undefined;
-        } catch (e) {
-            if (e instanceof Error) return e.message;
-            throw Error("Unhandled validateNonCompositeObject exception");
-        }
-    }
 }

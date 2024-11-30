@@ -1,10 +1,12 @@
+import { z } from "zod";
 import { deepEqual } from "../../../../util/equality-checks";
 import { ObjectsSelectors } from "./objects";
 
-import type { State } from "../../../types/state";
 import { getEditedObjectState } from "../../../types/data/edited-objects";
-import type { Markdown } from "../../../types/data/markdown";
 import { compositeSubobject } from "../../../types/data/composite";
+
+import type { State } from "../../../types/state";
+import type { Markdown } from "../../../types/data/markdown";
 
 
 export class EditedObjectsSelectors {
@@ -214,6 +216,44 @@ export class EditedObjectsSelectors {
         }
 
         return false;
+    }    
+
+    /**
+     * Returns true if non-composite edited object's attributes/data of `objectID` are valid.
+     * 
+     * Always returns true for an object with "composite" object type or if it's not present in the state.
+     */
+    static nonCompositeObjectIsValid(state: State, objectID: number) {
+        return EditedObjectsSelectors.nonCompositeObjectValidationError(state, objectID) === undefined;
+    };
+
+    /**
+     * Returns validation error text for a non-composite edited object with `objectID`, if it's not valid.
+     * 
+     * If object is valid, has "composite" object type or not being edited, returns undefined.
+     */
+    static nonCompositeObjectValidationError(state: State, objectID: number) {
+        const editedObject = state.editedObjects[objectID];
+        if (editedObject === undefined || editedObject.object_type === "composite") return undefined;
+
+        // Object name
+        if (editedObject.object_name.length === 0) return "Object name is required.";
+        if (editedObject.object_name.length > 255) return "Object name can't be longer than 255 chars.";
+
+        // Object data
+        switch (editedObject.object_type) {
+            case "link":
+                if (!z.string().url().safeParse(editedObject.link.link).success) return "Valid URL is required.";
+                break;
+            case "markdown":
+                if (editedObject.markdown.raw_text.length === 0) return "Markdown text is required.";
+                break;
+            case "to_do_list":
+                if (Object.keys(editedObject.toDoList.items).length === 0) return "At least one item is required in the to-do list.";
+                break;
+            default:
+                throw Error(`nonCompositeObjectValidationError received an unexpected object type "${editedObject.object_type}" when validating object ${objectID}`);
+        }   
     }
 }
 

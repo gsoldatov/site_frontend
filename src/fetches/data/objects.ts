@@ -245,7 +245,6 @@ export const objectsDeleteFetch = (object_ids: (string | number)[], delete_subob
 };
 
 
-
 /**
  * Fetches backend to get objects which match provided `query_text` and are not present in `existing_ids`.
  * 

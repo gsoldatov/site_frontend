@@ -1,10 +1,8 @@
 import React, { forwardRef, useMemo, useState } from "react";
 import { Button, Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
-import { createSelector } from "reselect";
 
 import { EditedObjectsSelectors } from "../../../../../../store/selectors/data/objects/edited-objects";
-import { CompositeSelectors } from "../../../../../../store/selectors/data/objects/composite";
 import { SubobjectDeleteMode } from "../../../../../../store/types/data/composite";
 import { objectTypeOptions } from "../../../../../../store/types/ui/general/object-type";
 
@@ -95,14 +93,8 @@ const HeadingLeft = ({ objectID, subobjectID, updateCallback, isHoveredOver, onE
 const Indicators = ({ objectID, subobjectID }) => {
     const indicatorList = useMemo(() => {
         // Non-composite validation error & composite selectors
-        const validationErrorTitleTextSelector = createSelector(
-            state => state.editedObjects[subobjectID],
-            editedObject => CompositeSelectors.getNonCompositeSubobjectValidationError(editedObject)
-        );
-        const validationErrorIsDisplayedSelector = createSelector(
-            state => state.editedObjects[subobjectID],
-            editedObject => !CompositeSelectors.nonCompositeSubobjectIsValid(editedObject)
-        );
+        const validationErrorTitleTextSelector = state => EditedObjectsSelectors.nonCompositeObjectValidationError(state, subobjectID);
+        const validationErrorIsDisplayedSelector = state => !EditedObjectsSelectors.nonCompositeObjectIsValid(state, subobjectID);
 
         // Existing modifed selectors
         const attributesModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.attributesAreModified(state, subobjectID);
@@ -113,8 +105,8 @@ const Indicators = ({ objectID, subobjectID }) => {
         return [
             // Non-composite validation error & composite
             { name: "warning", color: "red", title: "Subobject is not valid: ", 
-                titleTextSelector: state => validationErrorTitleTextSelector(state),
-                isDisplayedSelector: state => validationErrorIsDisplayedSelector(state) },
+                titleTextSelector: validationErrorTitleTextSelector,
+                isDisplayedSelector: validationErrorIsDisplayedSelector },
             
             { name: "copy outline", color: "black", title: "Subobject is composite. All changes made to it must be saved from its page.", 
                 isDisplayedSelector: state => state.editedObjects[subobjectID].object_type === "composite"},
