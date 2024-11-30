@@ -5,7 +5,7 @@ import { fetchMissingTags } from "../data/tags";
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { ObjectsViewSelectors } from "../../store/selectors/ui/objects-view";
 import { CompositeSelectors } from "../../store/selectors/data/objects/composite";
-import { getToDoListUpdateFetchBody } from "../../store/state-util/to-do-lists";
+import { getEditedObjectState } from "../../store/types/data/edited-objects";
 
 import type { Dispatch, GetState } from "../../store/types/store";
 import type { ToDoList } from "../../store/types/data/to-do-list";
@@ -95,8 +95,9 @@ export const objectsViewCompositeChaptersOnLoad = (rootObjectID: string | number
  */
 export const objectsViewToDoListObjectUpdateFetch = (objectID: number, toDoList: ToDoList) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
-        const obj = getToDoListUpdateFetchBody(getState(), objectID, toDoList);
-        return await dispatch(objectsUpdateFetch(obj));
+        // Build an edited object with updated to-do list's data, then run the update fetch
+        const editedObject = getEditedObjectState({...getState().objects[objectID], toDoList});
+        return await dispatch(objectsUpdateFetch(editedObject));
     };
 };
 
