@@ -5,7 +5,7 @@ import { Icon } from "semantic-ui-react";
 
 import { SubobjectObjectsViewCard } from "../objects-view-card";
 
-import { objectsViewMulticolumnExpandToggleUpdateFetch } from "../../../../fetches/ui-objects-view";
+import { objectsViewMulticolumnExpandToggleUpdateFetch } from "../../../../fetches/ui/objects-view";
 
 import { CompositeSelectors } from "../../../../store/selectors/data/objects/composite";
 import { debounce } from "../../../../util/debounce";

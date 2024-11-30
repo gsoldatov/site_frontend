@@ -4,7 +4,7 @@ import { Message } from "semantic-ui-react";
 
 import { TDLContainer } from "../../../state-users/objects-edit/data/to-do-list/to-do-list";
 
-import { objectsViewToDoListObjectUpdateFetch } from "../../../../fetches/ui-objects-view";
+import { objectsViewToDoListObjectUpdateFetch } from "../../../../fetches/ui/objects-view";
 
 import { getUpdatedToDoList } from "../../../../store/updaters/data/to-do-lists";
 import { deepCopy } from "../../../../util/copy";

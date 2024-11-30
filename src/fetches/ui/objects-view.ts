@@ -1,10 +1,14 @@
 import { FetchErrorType, FetchResult } from "../fetch-runner";
-import { objectsViewFetch, objectsViewCompositeHierarchyElements } from "../data/objects";
+import { objectsUpdateFetch, objectsViewFetch, objectsViewCompositeHierarchyElements } from "../data/objects";
 import { fetchMissingTags } from "../data/tags";
 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
+import { ObjectsViewSelectors } from "../../store/selectors/ui/objects-view";
+import { CompositeSelectors } from "../../store/selectors/data/objects/composite";
+import { getToDoListUpdateFetchBody } from "../../store/state-util/to-do-lists";
 
 import type { Dispatch, GetState } from "../../store/types/store";
+import type { ToDoList } from "../../store/types/data/to-do-list";
 
 
 /**
@@ -82,5 +86,36 @@ export const objectsViewCompositeChaptersOnLoad = (rootObjectID: string | number
         const objectDataIDs = viewHierarchyResult.composite.filter(objectID => !ObjectsSelectors.dataIsPresent(state, objectID));
 
         return await dispatch(objectsViewFetch(objectIDs, objectDataIDs));
+    };
+};
+
+
+/**
+ * Runs to-do list object update fetch, which saves changes made to to-do list data on the /objects/view/:id page
+ */
+export const objectsViewToDoListObjectUpdateFetch = (objectID: number, toDoList: ToDoList) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
+        const obj = getToDoListUpdateFetchBody(getState(), objectID, toDoList);
+        return await dispatch(objectsUpdateFetch(obj));
+    };
+};
+
+
+/**
+ * Updates suboobject's `is_expanded` state on expand/collapse toggle
+ * 
+ * NOTE: patched update would be preferred here, because parallel fetch calls can lead to data inconsistencies.
+ */
+export const objectsViewMulticolumnExpandToggleUpdateFetch = (objectID: number, subobjectID: number, is_expanded: boolean) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
+        // Check if current user can update the object
+        const state = getState();
+        if (!ObjectsViewSelectors.canEditObject(state, objectID)) return FetchResult.fetchNotRun();
+
+        const newProps = { composite: { subobjects: { [subobjectID]: { is_expanded }}}};
+
+        const object = CompositeSelectors.serializeObjectForUpdate(state, objectID, newProps);
+        
+        return await dispatch(objectsUpdateFetch(object));
     };
 };
