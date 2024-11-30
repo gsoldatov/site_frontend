@@ -8,6 +8,18 @@ import type { Markdown } from "../../../types/data/markdown";
 
 export class EditedObjectsSelectors {
     /**
+     *  Returns an available `object_id` value for a new subobject.
+     */
+    static getNewSubobjectID(state: State) {
+        let minObjectID = 0;
+        for (let objectID of Object.keys(state.editedObjects).map(id => parseInt(id))) {
+            if (isNaN(objectID)) throw TypeError(`Received a non-numerical object ID when calculating an ID of new subobject: "${objectID}"`);
+            minObjectID = Math.min(minObjectID, objectID);
+        }
+        return minObjectID - 1;
+    };
+
+    /**
      * Returns a list of composite subobject IDs stored in `state.editedObjects` for the parent `objectIDs`.
      */
     static subobjectIDs(state: State, objectIDs: number[]): number[] {

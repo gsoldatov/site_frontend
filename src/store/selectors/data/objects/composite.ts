@@ -15,20 +15,6 @@ import type { Composite, CompositeSubobjects } from "../../../types/data/composi
 /** Composite object's data state selectors. */
 export class CompositeSelectors {
     /**
-     *  Returns an available `object_id` value for a new subobject.
-     *  TODO move to edited objects selectors
-     */
-    static getNewSubobjectID(state: State) {
-        let minObjectID = 0;
-        for (let id of Object.keys(state.editedObjects)) {
-            let currID = parseInt(id);
-            if (isNaN(currID)) throw TypeError(`Received a non-numerical object ID when calculating an ID of new subobject: "${id}"`);
-            minObjectID = Math.min(minObjectID, currID);
-        }
-        return minObjectID - 1;
-    };
-
-    /**
      * Returns a list of subobject IDs sorted by their column and rows in the ascending order.
      */
     static getSingleColumnSubobjectDisplayOrder (composite: Composite) {

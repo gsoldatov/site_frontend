@@ -3,7 +3,6 @@ import { deepCopy } from "../../../util/copy";
 import { EditedObjectsSelectors } from "../../selectors/data/objects/edited-objects";
 import { EditedObjectsUpdaters } from "./edited-objects";
 import { ObjectsUpdaters } from "./objects";
-import { CompositeSelectors } from "../../selectors/data/objects/composite";
 import { getStateWithResetEditedObjects, getStateWithDeletedEditedNewSubobjects } from "../../../reducers/helpers/object";
 
 import type { State } from "../../types/state";
@@ -66,7 +65,7 @@ export class EditedCompositeUpdaters {
  */
 const addNewSubobject = (state: State, objectID: number, update: ParamsAddNewSubobject): State  => {
     const { row, column } = update;
-    const subobjectID = update.subobjectID !== undefined ? update.subobjectID : CompositeSelectors.getNewSubobjectID(state);
+    const subobjectID = update.subobjectID !== undefined ? update.subobjectID : EditedObjectsSelectors.getNewSubobjectID(state);
 
     // Add a new edited object
     const { is_published } = state.editedObjects[objectID];     // Get `is_published` setting from parent object
