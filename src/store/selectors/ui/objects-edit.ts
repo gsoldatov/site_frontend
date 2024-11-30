@@ -44,6 +44,35 @@ export class ObjectsEditSelectors {
         return !ObjectsEditSelectors.isFetching(state) 
             && ObjectsEditSelectors.editedOrDefaultSelector(objectID)(state).toDoList.sort_type === "default";
     }
+
+    /** Returns a boolean indicating if composite object's drag and drop functionality is enabled. */
+    static isCompositeDragAndDropEnabled(state: State) {
+        return !ObjectsEditSelectors.isFetching(state);
+    }
+
+    /**
+     * Accepts current `state` and, optionally, `objectID` (if the latter is not provided, uses state.objectsEditUI.currentObjectID instead).
+     * 
+     * Returns true if:
+     * - data tab is being displayed on the /objects/edit/:id page;
+     * - current edited object is composite;
+     * - edited object's subobjects are placed on more than one column.
+     */
+    static isMultiColumnCompositeDataDisplayed(state: State, objectID: number) {
+        // Check if data tab is displayed
+        if (state.objectsEditUI.selectedTab !== 1) return false;
+
+        // Check if current edited object is loaded and has `composite` object_type
+        objectID = objectID !== undefined ? objectID : state.objectsEditUI.currentObjectID;
+        const editedObject = state.editedObjects[objectID];
+        if (editedObject === undefined || editedObject.object_type !== "composite") return false;
+
+        // Check if subobjects are placed on more than one column
+        for (let subobject of Object.values(editedObject.composite.subobjects))
+            if (subobject.column > 0) return true;
+        
+        return false;
+    };
 }
 
 

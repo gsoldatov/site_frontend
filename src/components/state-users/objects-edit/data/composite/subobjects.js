@@ -9,6 +9,7 @@ import { updateEditedComposite } from "../../../../../reducers/data/edited-objec
 import { setAddCompositeSubobjectMenu } from "../../../../../reducers/ui/objects-edit";
 
 import { CompositeSelectors } from "../../../../../store/selectors/data/objects/composite";
+import { ObjectsEditSelectors } from "../../../../../store/selectors/ui/objects-edit";
 import { SubobjectDeleteMode } from "../../../../../store/types/data/composite";
 
 import StyleCompositeSubobjects from "../../../../../styles/modules/edit/composite-subobjects.css";
@@ -30,7 +31,7 @@ export const SubobjectsContainer = ({ objectID }) => {
     const composite = useSelector(state => state.editedObjects[objectID].composite);
     const subobjectOrder = CompositeSelectors.getSubobjectDisplayOrder(composite);
     
-    const canDrag = useSelector(CompositeSelectors.isCompositeDragAndDropEnabledSelector);
+    const canDrag = useSelector(state => ObjectsEditSelectors.isCompositeDragAndDropEnabled(state));
     const existingObjectInputRow = useSelector(state => state.objectsEditUI.addCompositeSubobjectMenu.row);
     const existingObjectInputColumn = useSelector(state => state.objectsEditUI.addCompositeSubobjectMenu.column);
     

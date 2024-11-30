@@ -8,7 +8,6 @@ import { SideMenuLink } from "../../modules/side-menu/side-menu-link";
 import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer, SideMenuDialogCheckbox } from "../../modules/side-menu/side-menu-dialog";
 
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
-import { CompositeSelectors } from "../../../store/selectors/data/objects/composite";
 
 import { setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog, resetCurrentEditedObject } from "../../../reducers/ui/objects-edit";
 import { objectsEditNewSaveFetch, objectsEditExistingSaveFetch } from "../../../fetches/ui/objects-edit";
@@ -19,7 +18,7 @@ import { objectsEditExistingDeleteFetch } from "../../../fetches/ui/objects-edit
  * /objects/edit/:id side menu for new object page
  */
 export const ObjectsEditNewSideMenu = () => {
-    const usePlaceholderWhenStacked = useSelector(CompositeSelectors.isMultiColumnCompositeDataDisplayed);
+    const usePlaceholderWhenStacked = useSelector(ObjectsEditSelectors.isMultiColumnCompositeDataDisplayed);
 
     return (
         <SideMenu usePlaceholderWhenStacked={usePlaceholderWhenStacked}>
@@ -36,7 +35,7 @@ export const ObjectsEditNewSideMenu = () => {
  * /objects/edit/:id side menu for existing object page
  */
 export const ObjectsEditExistingSideMenu = () => {
-    const usePlaceholderWhenStacked = useSelector(CompositeSelectors.isMultiColumnCompositeDataDisplayed);
+    const usePlaceholderWhenStacked = useSelector(ObjectsEditSelectors.isMultiColumnCompositeDataDisplayed);
 
     return (
         <SideMenu usePlaceholderWhenStacked={usePlaceholderWhenStacked}>
