@@ -97,9 +97,9 @@ const Indicators = ({ objectID, subobjectID }) => {
         const validationErrorIsDisplayedSelector = state => !EditedObjectsSelectors.nonCompositeObjectIsValid(state, subobjectID);
 
         // Existing modifed selectors
-        const attributesModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.attributesAreModified(state, subobjectID);
-        const tagsModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.tagsAreModified(state, subobjectID);
-        const dataModifiedIsDisplayedSelector = state => subobjectID < 0 ? false : EditedObjectsSelectors.dataIsModified(state, subobjectID);
+        const attributesModifiedIsDisplayedSelector = state => EditedObjectsSelectors.safeAttributesAreModified(state, subobjectID, false);
+        const tagsModifiedIsDisplayedSelector = state => EditedObjectsSelectors.safeTagsAreModified(state, subobjectID, false);
+        const dataModifiedIsDisplayedSelector = state => EditedObjectsSelectors.safeDataIsModified(state, subobjectID, false);
         const subobjectParamsModifiedIsDisplayedSelector = state => EditedObjectsSelectors.subobjectStateIsModified(state, objectID, subobjectID);
 
         return [
