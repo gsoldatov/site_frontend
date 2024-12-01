@@ -41,7 +41,12 @@ class SubobjectCard extends React.PureComponent {
     onResizeCallback(cardRef) {
         const height = parseInt(getComputedStyle(cardRef).height.replace("px", ""));
         const isCollapseAreaDisplayed = height >= 1000;
-        this.setState({ isCollapseAreaDisplayed });
+
+        // Changing state of a component in ResizeObserver callback triggers additional resize during a single node repaint,
+        // which leads to an error (the error is displayed by Webpack Dev Server when using Typescript).
+        // As a workaround to avoid the error, state update is run after a short timeout, so that component repaint happens first.
+        // https://stackoverflow.com/questions/76187282/react-resizeobserver-loop-completed-with-undelivered-notifications
+        setTimeout((() => { this.setState({ isCollapseAreaDisplayed }) }).bind(this), 50);
     }
 
     render() {
