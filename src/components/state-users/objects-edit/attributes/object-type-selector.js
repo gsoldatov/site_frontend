@@ -46,10 +46,10 @@ export const ObjectTypeSelector = memo(({ objectID, isSubobject = false }) => {
             {/* <Dropdown selection className="object-type-dropdown-switch" */}
             <Dropdown className="selection object-type-dropdown-switch"     // Add SUIR classname for styling (`selection` prop is not compatible with `trigger`)
                 disabled={isDisabled}
-                defaultValue={objectType}
                 trigger={trigger}
                 options={options}
                 onChange={onChange}
+                value={objectType}      // make component controlled by `objectType` of the object it's displayed for
             />
         </div>
     );
