@@ -98,8 +98,8 @@ class TDLItem extends React.PureComponent {
         // On `Enter` split current item into two and focus the second (or add a new empty item and focus it if previous failed)
         if (e.key === "Enter") {
             e.preventDefault(); // disable adding new lines
-            const splitText = caret.getSplitText(this.inputRef.current);
-            if (typeof(splitText) === "object") 
+            const splitText = caret.getSplitByRangeText(this.inputRef.current);
+            if (splitText !== null) 
                 this.props.updateCallback({ toDoListItemUpdate: { command: "splitItem", itemID: this.props.id, ...splitText }});
             else 
                 this.props.updateCallback({ toDoListItemUpdate: { command: "addItem", previousItemID: this.props.id }});

@@ -35,12 +35,14 @@ beforeEach(() => {
 
 describe("Keybinds in default sort", () => {
     beforeEach(() => {
-        // Mock caret.getSplitText function to enable mergeWithNext/mergeWithPrev testing (if not mocked, delete command is issued instead)
+        // Mock caret functions to enable mergeWithNext/mergeWithPrev testing (if not mocked, delete command is issued instead)
         global.getSplitText = jest.spyOn(caret, "getSplitText").mockImplementation(element => ({ before: "", after: "" }));
+        global.getSplitByRangeText = jest.spyOn(caret, "getSplitByRangeText").mockImplementation(element => ({ before: "", after: "" }));
     });
 
     afterEach(() => {
         global.getSplitText.mockRestore();
+        global.getSplitByRangeText.mockRestore();
     });
 
     test("Up/down", async () => {
@@ -152,7 +154,7 @@ describe("Keybinds in default sort", () => {
                 - if delete correctly merges 2 non-empty item texts;
                 - delete keypress does nothing when caret is at the end of the last item (for default and state sort).
         */
-        // Mock getSplitText function from src\util\caret.js (getElementCaretPosition doesn't work in test env => a mock is required to properly trigger merge command)
+        // Mock getSplitText function from src\util\caret.js (getCaretPositionInElement doesn't work in test env => a mock is required to properly trigger merge command)
         
 
 
@@ -396,12 +398,14 @@ describe("Keybinds in default sort", () => {
 
 describe("Keybinds in sort by state", () => {
     beforeEach(() => {
-        // Mock caret.getSplitText function to enable mergeWithNext/mergeWithPrev testing (if not mocked, delete command is issued instead)
+        // Mock caret functions to enable mergeWithNext/mergeWithPrev testing (if not mocked, delete command is issued instead)
         global.getSplitText = jest.spyOn(caret, "getSplitText").mockImplementation(element => ({ before: "", after: "" }));
+        global.getSplitByRangeText = jest.spyOn(caret, "getSplitByRangeText").mockImplementation(element => ({ before: "", after: "" }));
     });
 
     afterEach(() => {
         global.getSplitText.mockRestore();
+        global.getSplitByRangeText.mockRestore();
     });
 
     test("Up/down", async () => {

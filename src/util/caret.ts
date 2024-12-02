@@ -3,14 +3,36 @@ import { parseComputedPropSize } from "./element-styles";
 
 /**
  * Returns text before and after caret position in the `element`.
+ * 
+ * If caret position can't be determined, returns null.
  */
 export const getSplitText = (element: HTMLElement) => {
-    const position = getElementCaretPosition(element);
+    const position = getCaretPositionInElement(element);
     if (position === -1) return null;
 
     return {
         before: (element.textContent as string).slice(0, position),
         after: (element.textContent as string).slice(position)
+    };
+};
+
+
+/**
+ * Returns text before and after selected range in the `element`.
+ * 
+ * If selected range start & end positions can't be determined, returns null.
+ */
+export const getSplitByRangeText = (element: HTMLElement) => {
+    const [anchorPosition, focusPosition] = getRangePositionInElement(element);
+
+    if (anchorPosition === -1 || focusPosition === -1) return null;
+
+    const min = Math.min(anchorPosition, focusPosition);
+    const max = Math.max(anchorPosition, focusPosition)
+
+    return {
+        before: (element.textContent as string).slice(0, min),
+        after: (element.textContent as string).slice(max)
     };
 };
 
@@ -28,7 +50,7 @@ export const getSplitText = (element: HTMLElement) => {
  */
 export const getCaretPositionData = (element: HTMLElement): [number, number] => {
     // Get caret position
-    const caretPosition = getElementCaretPosition(element);
+    const caretPosition = getCaretPositionInElement(element);
     if (caretPosition === -1) return [-1, 0];
 
     // Get max line width in px
@@ -182,11 +204,11 @@ export const isRangeSelected = () => {
 
 
 /**
- * Returns the caret position or selection range's end inside the `node`.
+ * Returns the position of caret or selection's rang end in the text content of `node`.
  * 
- * If caret position is outside of `node`, returns -1.
+ * If `window.getSelection()` is not supported, caret or range end position is outside of `node` or its direct children, returns -1.
  */
-const getElementCaretPosition = (node: Node) => {
+const getCaretPositionInElement = (node: Node) => {
     const isSupported = typeof window.getSelection !== "undefined";
     if (!isSupported) return -1;
     
@@ -206,4 +228,45 @@ const getElementCaretPosition = (node: Node) => {
     }
 
     return position;
+};
+
+
+/**
+ * Returns the position of selection range start & end in the text content of `node`.
+ * 
+ * If `window.getSelection()` is not supported, range start or end position is outside of `node` or its direct children, returns -1.
+ */
+const getRangePositionInElement = (node: Node): [number, number] => {
+    // Return default values if not supported
+    const isSupported = typeof window.getSelection !== "undefined";
+    if (!isSupported) return [-1, -1];
+
+    const selection = window.getSelection();
+    if (!selection) return [-1, -1];
+
+    // If a range is not selected, return caret position for both start & end
+    if (selection.type !== "Range") {
+        const position = getCaretPositionInElement(node);
+        return [position, position];
+    }
+
+    // Calculate range start & end positions
+    // (assume the case where range start & end are placed in text node children of `node`)
+    if (selection.anchorNode?.parentNode === node && selection.focusNode?.parentNode === node) {
+        if (!(selection.anchorNode instanceof Text) || !(selection.focusNode instanceof Text)) return [-1, -1];
+        
+        let anchorPosition = -1, focusPosition = -1;
+        let position = 0;
+
+        for (let child of node.childNodes) {
+            if (child === selection.anchorNode) anchorPosition = position + selection.anchorOffset;
+            if (child === selection.focusNode) focusPosition = position + selection.focusOffset;
+
+            if (anchorPosition > -1 && focusPosition > -1) return [anchorPosition, focusPosition];
+            
+            position += (child.textContent as string).length;
+        }
+    }
+
+    return [-1, -1];
 };
