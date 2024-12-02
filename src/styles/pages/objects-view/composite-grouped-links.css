@@ -17,3 +17,16 @@
     margin-bottom: 1rem;
     border-bottom: solid 1px var(--border-color-light);
 }
+
+
+/* Links table */
+.grouped-links-table {
+    /* Set explicit max width to fix into container */
+    table-layout: fixed;
+    width: 100%;
+}
+
+.grouped-links-table td:nth-child(1) {
+    /* Set width of link column */
+    width: 33%
+}
