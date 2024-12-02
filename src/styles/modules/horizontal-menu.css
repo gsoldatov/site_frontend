@@ -109,10 +109,10 @@ div.horizontal-menu .ui.dropdown {
     padding-top: 0rem;
     padding-bottom: 0rem;
     
-    height: 2.25rem;
+    min-height: 2.25rem;
     margin-top: auto;
     margin-bottom: auto;
-    min-height: 0;
+    /* min-height: 0; */
 
     /* Set min-width (required for fullscreen mode) */
     min-width: var(--dropdown-and-input-min-width);
@@ -136,6 +136,16 @@ div.horizontal-menu .ui.dropdown > i.dropdown.icon {
     top: 50%;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
+}
+
+div.horizontal-menu .ui.dropdown.horizontal-menu-updatable-dropdown > .text {
+    /* Adjust tooltip text position in tags filter
+       (settings are taken from object type filter tooltip, except for last margin value) */
+    position: static;
+    padding: 0;
+    max-width: 100%;
+    margin: .45238095em 0 .45238095em 0;
+    line-height: 1.21428571em;
 }
 
 div.horizontal-menu div.ui.dropdown > .visible.menu.transition {   
