@@ -82,8 +82,6 @@ export const objectsUpdateFetch = (editedObject: EditedObject) => {
         try {
             // Validate and serialize edited object
             const object = EditedObjectsTransformers.toObjectsUpdateBody(getState(), editedObject);
-            // console.log("REQUEST OBJECT")
-            // console.log(object)
 
             // Fetch backend
             const runner = new FetchRunner("/objects/update", { method: "PUT", body: { object } });
@@ -92,12 +90,8 @@ export const objectsUpdateFetch = (editedObject: EditedObject) => {
             // Handle response
             switch (result.status) {
                 case 200:
-                    // console.log("JSON")
-                    // console.log(result.json)
                     const { object: responseObject } = objectsUpdateResponseSchema.parse(result.json);
                     const { object_id, tag_updates: { added_tag_ids = [], removed_tag_ids = [] }} = responseObject;
-                    // console.log("responseObject")
-                    // console.log(responseObject)
 
                     // Modify object before adding it
                     dispatch(updateEditedComposite(object_id, { command: "updateSubobjectsOnSave", object_data: object.object_data, object: responseObject }));
