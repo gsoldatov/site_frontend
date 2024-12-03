@@ -185,7 +185,7 @@ describe("Edit mode", () => {
         fireEvent.change(inputs.passwordRepeat, { target: { value: "a".repeat(7) } });
         fireEvent.change(inputs.tokenOwnerPassword, { target: { value: "Correct password" } });
         fireEvent.click(updateButton);
-        await checkValidInputErrorDisplay(container, "password", "Password is too short.");
+        await checkValidInputErrorDisplay(container, "password", "Password must be at least 8 characters long.");
         clearFormData(container);
 
         // Enter & submit form data with a too long password
@@ -193,7 +193,7 @@ describe("Edit mode", () => {
         fireEvent.change(inputs.passwordRepeat, { target: { value: "a".repeat(73) } });
         fireEvent.change(inputs.tokenOwnerPassword, { target: { value: "Correct password" } });
         fireEvent.click(updateButton);
-        await checkValidInputErrorDisplay(container, "password", "Password is too long.");
+        await checkValidInputErrorDisplay(container, "password", "Password must be at most 72 characters long.");
         clearFormData(container);
 
         // Enter & submit form data with a password not repeated correctly
@@ -213,7 +213,7 @@ describe("Edit mode", () => {
 
         // Submit form data with an omitted token owner password
         fireEvent.click(updateButton);
-        await checkValidInputErrorDisplay(container, "tokenOwnerPassword", "Password is too short.");
+        await checkValidInputErrorDisplay(container, "tokenOwnerPassword", "Password must be at least 8 characters long.");
     });
 
 

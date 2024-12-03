@@ -23,7 +23,7 @@ export const usersViewFullResponseSchema = z.object({
  * /users/update types & validation
  **********************************/
 const login = z.string().min(1, { message: "Login is required." }).max(255, "Login is too long.");
-const password = z.string().min(8, { message: "Password is too short." }).max(72, "Password is too long.");
+const password = z.string().min(8, { message: "Password must be at least 8 characters long." }).max(72, "Password must be at most 72 characters long.");
 const username = z.string().min(1, { message: "Username is required." }).max(255, "Username is too long.");
 
 const optionalLogin = login.or(z.string().max(0));

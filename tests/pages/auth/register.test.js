@@ -81,14 +81,14 @@ test("Check validation error display", async () => {
     fireEvent.change(inputs.password, { target: { value: "a".repeat(7) } });
     fireEvent.change(inputs.password_repeat, { target: { value: "a".repeat(7) } });
     fireEvent.click(submitButton);
-    await checkValidInputErrorDisplay(container, "register", "password", "Password is too short.");
+    await checkValidInputErrorDisplay(container, "register", "password", "Password must be at least 8 characters long.");
 
     // Enter & submit form data with a too long password
     enterValidFormData(container, "register");
     fireEvent.change(inputs.password, { target: { value: "a".repeat(73) } });
     fireEvent.change(inputs.password_repeat, { target: { value: "a".repeat(73) } });
     fireEvent.click(submitButton);
-    await checkValidInputErrorDisplay(container, "register", "password", "Password is too long.");
+    await checkValidInputErrorDisplay(container, "register", "password", "Password must be at most 72 characters long.");
 
     // Enter & submit form data with a password not repeated correctly
     enterValidFormData(container, "register");
