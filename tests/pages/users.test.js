@@ -241,16 +241,16 @@ describe("Edit mode", () => {
         setFetchFail();
 
         // Set mock non-unique login error & submit correct update
-        addCustomRouteResponse("/users/update", "PUT", { status: 400, body: { _error: "Submitted login already exists." }});
+        addCustomRouteResponse("/users/update", "PUT", { status: 400, body: { _error: "Submitted login is unavailable." }});
         fireEvent.click(updateButton);
         expect(getUserPageEditModeElements(container).message).toBeFalsy();
-        await checkValidInputErrorDisplay(container, "login", "Submitted login already exists.");
+        await checkValidInputErrorDisplay(container, "login", "Submitted login is unavailable.");
 
         // Set mock non-unique username error & submit correct update
-        addCustomRouteResponse("/users/update", "PUT", { status: 400, body: { _error: "Submitted username already exists." }});
+        addCustomRouteResponse("/users/update", "PUT", { status: 400, body: { _error: "Submitted username is unavailable." }});
         fireEvent.click(updateButton);
         expect(getUserPageEditModeElements(container).message).toBeFalsy();
-        await checkValidInputErrorDisplay(container, "username", "Submitted username already exists.");
+        await checkValidInputErrorDisplay(container, "username", "Submitted username is unavailable.");
 
         // Set mock non-unique username error & submit correct update
         addCustomRouteResponse("/users/update", "PUT", { status: 400, body: { _error: "Token owner password is incorrect." }});

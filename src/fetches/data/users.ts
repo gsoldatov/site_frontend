@@ -89,7 +89,7 @@ export const usersUpdateFetch = (updates: UsersUpdateFetchData) => {
                 // const errorJSON = await getErrorFromResponse(response);
                 // Attribute backend error messages to specific form fields
                 const errors = {} as any;
-                let match = result.error!.match(/Submitted (\w+) already exists./);
+                let match = result.error!.match(/Submitted (\w+) is unavailable./);
                 if (match && ["login", "username"].includes(match[1])) errors[match[1]] = match[0];
                 
                 if (result.error!.indexOf("Token owner password is incorrect.") > -1) errors.token_owner_password = "Incorrect password.";

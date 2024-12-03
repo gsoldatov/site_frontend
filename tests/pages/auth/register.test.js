@@ -143,7 +143,7 @@ test("Fetch error display for existing data & form disabling during fetch", asyn
     await waitForEnabledRegistationForm(container);
 
     // Add a mock error for non-unique login
-    addCustomRouteResponse("/auth/register", "POST", { status: 400, body: { _error: "Submitted login already exists." }});
+    addCustomRouteResponse("/auth/register", "POST", { status: 400, body: { _error: "Submitted login is unavailable." }});
 
     // Enter valid data & submit
     enterValidFormData(container, "register");
@@ -153,19 +153,19 @@ test("Fetch error display for existing data & form disabling during fetch", asyn
     expect(getRegistrationFormElements(container).submitButton.disabled).toBeTruthy();
 
     // Wait for input error message to be displayed
-    await checkValidInputErrorDisplay(container, "register", "login", "Submitted login already exists.");
+    await checkValidInputErrorDisplay(container, "register", "login", "Submitted login is unavailable.");
 
     // Check if form is enabled after fetch which ended with an error
     expect(getRegistrationFormElements(container).submitButton.disabled).toBeFalsy();
 
     // Add a mock error for non-unique username
-    addCustomRouteResponse("/auth/register", "POST", { status: 400, body: { _error: "Submitted username already exists." }});
+    addCustomRouteResponse("/auth/register", "POST", { status: 400, body: { _error: "Submitted username is unavailable." }});
 
     // Submit data again
     fireEvent.click(getRegistrationFormElements(container).submitButton);
 
     // Wait for input error message to be displayed
-    await checkValidInputErrorDisplay(container, "register", "username", "Submitted username already exists.");
+    await checkValidInputErrorDisplay(container, "register", "username", "Submitted username is unavailable.");
 });
 
 

@@ -32,7 +32,7 @@ export const registerFetch = (login: string, password: string, password_repeat: 
             default:
                 // Attribute backend error message to a specific form field or return a form error
                 const errors = {} as any;
-                const match = result.error!.match(/Submitted (\w+) already exists./);
+                const match = result.error!.match(/Submitted (\w+) is unavailable./);
                 if (match && ["login", "username"].includes(match[1])) errors[match[1]] = match[0];
                 else errors.form = result.error;
                 return authFetchValidationErrors.parse({ errors });
