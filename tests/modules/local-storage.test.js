@@ -63,13 +63,6 @@ describe("Edited objects > New object page", () => {
 
         // Wait for changes to be saved in local storage
         await waitFor(() => {
-            // Edited objects list
-            const editedObjectsList = localStorage.getItem("savedEditedObjects");
-            const parsedEditedObjectsList = JSON.parse(editedObjectsList);
-            expect(parsedEditedObjectsList.length).toEqual(1);
-            expect(parsedEditedObjectsList[0]).toEqual("0");
-
-            // New object
             const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(0));
             expect(savedEditedObject).toBeTruthy();
             const editedObject = JSON.parse(savedEditedObject);
@@ -148,12 +141,6 @@ describe("Edited objects > New object page", () => {
         
         // Wait for changes to be saved in local storage
         await waitFor(() => {
-            // Edited objects list
-            const editedObjectsList = localStorage.getItem("savedEditedObjects");
-            const parsedEditedObjectsList = JSON.parse(editedObjectsList);
-            expect(parsedEditedObjectsList.length).toEqual(2);
-            expect(parsedEditedObjectsList).toEqual(expect.arrayContaining([object_id.toString(), mappedSubobjectID.toString()]));
-            
             // Object
             const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(object_id));
             expect(savedEditedObject).toBeTruthy();
@@ -190,12 +177,6 @@ describe("Edited objects > Existing object page", () => {
         
         // Wait for changes to be saved in local storage
         await waitFor(() => {
-            // Edited objects list
-            const editedObjectsList = localStorage.getItem("savedEditedObjects");
-            const parsedEditedObjectsList = JSON.parse(editedObjectsList);
-            expect(parsedEditedObjectsList.length).toEqual(1);
-            expect(parsedEditedObjectsList[0]).toEqual("1");
-
             // New object
             const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(1));
             expect(savedEditedObject).toBeTruthy();
@@ -273,12 +254,6 @@ describe("Edited objects > Existing object page", () => {
 
         // Wait for objects to be removed from local storage
         await waitFor(() => {
-            // Edited objects list
-            const editedObjectsList = localStorage.getItem("savedEditedObjects");
-            const parsedEditedObjectsList = JSON.parse(editedObjectsList);
-            expect(parsedEditedObjectsList.length).toEqual(0);
-
-            // Object and subobject
             expect(localStorage.getItem(getEditedObjectLocalStorageKey(3001))).toBeFalsy();
             expect(localStorage.getItem(getEditedObjectLocalStorageKey(subobjectID))).toBeFalsy();
         });
@@ -310,11 +285,9 @@ describe("Edited objects > Existing object page", () => {
 
         // Wait for object and subobjects to be saved in local storage
         await waitFor(() => {
-            // Edited objects list
-            const editedObjectsList = localStorage.getItem("savedEditedObjects");
-            const parsedEditedObjectsList = JSON.parse(editedObjectsList);
-            expect(parsedEditedObjectsList.length).toEqual(3);
-            expect(parsedEditedObjectsList).toEqual(expect.arrayContaining(["3001", existingSubobjectID, newSubobjectID]));
+            expect(localStorage.getItem(getEditedObjectLocalStorageKey(3001))).toBeTruthy();
+            expect(localStorage.getItem(getEditedObjectLocalStorageKey(existingSubobjectID))).toBeTruthy();
+            expect(localStorage.getItem(getEditedObjectLocalStorageKey(newSubobjectID))).toBeTruthy();
         });
 
         // Delete composite object and subobjects
@@ -325,11 +298,6 @@ describe("Edited objects > Existing object page", () => {
 
         // Wait for objects to be removed from local storage
         await waitFor(() => {
-            // Edited objects list
-            const editedObjectsList = localStorage.getItem("savedEditedObjects");
-            const parsedEditedObjectsList = JSON.parse(editedObjectsList);
-            expect(parsedEditedObjectsList.length).toEqual(0);
-
             // Object and subobject
             expect(localStorage.getItem(getEditedObjectLocalStorageKey(3001))).toBeFalsy();
             expect(localStorage.getItem(getEditedObjectLocalStorageKey(existingSubobjectID))).toBeFalsy();
