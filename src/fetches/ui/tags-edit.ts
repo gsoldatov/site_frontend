@@ -20,7 +20,10 @@ export const tagsEditNewSaveFetch = () => {
 
         // Run fetch & add tag
         dispatch(setTagsEditSaveFetchState({ isFetching: true, fetchError: "" }));
-        const result = await dispatch(tagsAddFetch(state.tagsEditUI.currentTag));
+        const result = await dispatch(tagsAddFetch({
+            added_object_ids: [],   // currently unused in frontend, but required by backend schema
+            ...state.tagsEditUI.currentTag}
+        ));
 
         // Handle fetch errors
         if (result.failed) {
@@ -81,7 +84,10 @@ export const tagsEditExistingSaveFetch = () => {
         // Run fetch & update tag
         dispatch(setTagsEditSaveFetchState({ isFetching: true, fetchError: "" }));
         
-        const result = await dispatch(tagsUpdateFetch(state.tagsEditUI.currentTag));
+        const result = await dispatch(tagsUpdateFetch({
+            added_object_ids: [],  removed_object_ids: [],  // currently unused in frontend, but required by backend schema
+            ...state.tagsEditUI.currentTag
+        }));
 
         // Handle fetch errors
         if (result.failed) {

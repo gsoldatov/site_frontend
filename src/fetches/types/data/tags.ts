@@ -11,7 +11,8 @@ import type { FetchResult } from "../../fetch-runner";
 export const tagsAddTagSchema = z.object({
     tag_name: z.string(),
     tag_description: z.string(),
-    is_published: z.boolean()
+    is_published: z.boolean(),
+    added_object_ids: positiveInt.array()
 });
 /** New tag's attributes, which are sent to backend during tags add fetch. */
 export type TagsAddTagSchema = z.infer<typeof tagsAddTagSchema>;
@@ -24,7 +25,9 @@ export const tagsUpdateTagSchema = z.object({
     tag_id: positiveInt,
     tag_name: z.string(),
     tag_description: z.string(),
-    is_published: z.boolean()
+    is_published: z.boolean(),
+    added_object_ids: positiveInt.array(),
+    removed_object_ids: positiveInt.array()
 });
 /** Existing tag's attributes, which are sent to backend during tags update fetch. */
 export type TagsUpdateTagSchema = z.infer<typeof tagsUpdateTagSchema>;
