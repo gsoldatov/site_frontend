@@ -1,6 +1,6 @@
 import { loadEditedObjects } from "../../../../src/reducers/data/edited-objects";
 
-import type { AppStore } from "../../../../src/store/types/store";
+import type { AppStore } from "../../../../src/types/store/store";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 
 

@@ -1,7 +1,7 @@
 import { deepCopy } from "../../../../util/copy";
 
-import type { State } from "../../../types/state";
-import type { EditedObjectDataPart } from "../../../types/data/edited-objects";
+import type { State } from "../../../../types/store/state";
+import type { EditedObjectDataPart } from "../../../../types/store/data/edited-objects";
 import { ObjectsTransformers } from "../../../transformers/data/objects";
 
 

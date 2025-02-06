@@ -1,4 +1,4 @@
-import type { State } from "../../store/types/state";
+import type { State } from "../../types/store/state";
 
 /** Sets default state of the /objects/edited page. */
 export const loadObjectsEditedPage = () => ({ type: "LOAD_OBJECTS_EDITED_PAGE" });

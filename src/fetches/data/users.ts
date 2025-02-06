@@ -2,13 +2,13 @@ import { FetchResult, FetchRunner } from "../fetch-runner";
 import { addUsers, updateUser } from "../../reducers/data/users";
 
 import { usersViewMinResponseSchema, usersViewFullResponseSchema, usersUpdateFetchData, 
-    getUsersUpdateFetchValidationErrors, usersUpdateFetchValidationErrors } from "../types/data/users";
+    getUsersUpdateFetchValidationErrors, usersUpdateFetchValidationErrors } from "../../types/fetches/data/users";
 import { UsersSelectors } from "../../store/selectors/data/users";
 
-import {  partialUserExceptID, userFull, userMin } from "../../store/types/data/users";
-import type { InferNonNullablePartial } from "../../util/types/common";
-import type { Dispatch, GetState } from "../../store/types/store";
-import type { UsersUpdateFetchData, UsersUpdateFetchValidationErrors } from "../types/data/users";
+import { partialUserExceptID, userFull, userMin } from "../../types/store/data/users";
+import type { InferNonNullablePartial } from "../../types/common";
+import type { Dispatch, GetState } from "../../types/store/store";
+import type { UsersUpdateFetchData, UsersUpdateFetchValidationErrors } from "../../types/fetches/data/users";
 
 
 /**

@@ -1,9 +1,9 @@
 import { ObjectsSelectors } from "../data/objects/objects";
 import { CompositeSelectors } from "../data/objects/composite";
 
-import { NumericUserLevel } from "../../types/data/auth";
-import type { State } from "../../types/state";
-import type { CompositeChaptersHierarchyElement, ChapterHierarchyElementData } from "../../types/ui/objects-view";
+import { NumericUserLevel } from "../../../types/store/data/auth";
+import type { State } from "../../../types/store/state";
+import type { CompositeChaptersHierarchyElement, ChapterHierarchyElementData } from "../../../types/store/ui/objects-view";
 
 
 /** /objects/view/:id page state selectors. */

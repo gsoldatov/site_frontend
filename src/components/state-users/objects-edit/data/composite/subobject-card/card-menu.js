@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { Button, Menu } from "semantic-ui-react";
 
-import { SubobjectDeleteMode } from "../../../../../../store/types/data/composite";
+import { SubobjectDeleteMode } from "../../../../../../types/store/data/composite";
 
 const _tabIndexes = { "general": 0, "data": 1, "display": 2 };
 

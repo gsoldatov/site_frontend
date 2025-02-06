@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Button, Message } from "semantic-ui-react";
 
-import { SubobjectDeleteMode } from "../../../../../../../store/types/data/composite";
+import { SubobjectDeleteMode } from "../../../../../../../types/store/data/composite";
 
 
 /**

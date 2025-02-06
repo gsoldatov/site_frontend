@@ -1,7 +1,7 @@
-import { getCurrentTagState } from "../../store/types/ui/tags-edit";
+import { getCurrentTagState } from "../../types/store/ui/tags-edit";
 
-import type { State } from "../../store/types/state";
-import type { CurrentTag, TagsEditLoadFetch, TagsEditSaveFetch } from "../../store/types/ui/tags-edit";
+import type { State } from "../../types/store/state";
+import type { CurrentTag, TagsEditLoadFetch, TagsEditSaveFetch } from "../../types/store/ui/tags-edit";
 
 
 /** Sets default state of a /tags/edit/:id page for a new tag. */

@@ -5,7 +5,7 @@ import { DisplayControlDropdown } from "../../../modules/edit/display/display-co
 
 import { updateEditedObject } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
-import { compositeDisplayModeOptions } from "../../../../store/types/ui/general/composite-display-mode";
+import { compositeDisplayModeOptions } from "../../../../types/store/ui/general/composite-display-mode";
 
 
 const showDescriptionDropdownOptions = Object.values(compositeDisplayModeOptions).map((t, k) => ({ key: k, text: t.name, value: t.value }));

@@ -3,8 +3,8 @@ import { Button, Icon } from "semantic-ui-react";
 import { useSelector } from "react-redux";
 
 import { EditedObjectsSelectors } from "../../../../../../store/selectors/data/objects/edited-objects";
-import { SubobjectDeleteMode } from "../../../../../../store/types/data/composite";
-import { objectTypeOptions } from "../../../../../../store/types/ui/general/object-type";
+import { SubobjectDeleteMode } from "../../../../../../types/store/data/composite";
+import { objectTypeOptions } from "../../../../../../types/store/ui/general/object-type";
 
 
 /**

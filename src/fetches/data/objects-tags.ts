@@ -6,8 +6,8 @@ import { updateObjectsTags } from "../../reducers/data/objects-tags";
 import { updateObjectsAttributes } from "../../reducers/data/objects";
 import { loadEditedObjectsTags } from "../../reducers/data/edited-objects";
 
-import { objectsUpdateTagsResponseSchema } from "../types/data/objects-tags";
-import type { Dispatch, GetState } from "../../store/types/store";
+import { objectsUpdateTagsResponseSchema } from "../../types/fetches/data/objects-tags";
+import type { Dispatch, GetState } from "../../types/store/store";
 
 
 /**

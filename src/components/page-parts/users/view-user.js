@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { Button, Message, Loader, Header } from "semantic-ui-react";
 
 import { fetchMissingUsers } from "../../../fetches/data/users";
-import { NumericUserLevel } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../types/store/data/auth";
 
 
 /**

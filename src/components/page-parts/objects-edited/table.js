@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { removeEditedObjects, clearEditedObjects } from "../../../reducers/data/edited-objects";
 import { toggleObjectsEditedSelection, toggleObjectsEditedSelectAll } from "../../../reducers/ui/objects-edited";
-import { objectTypeOptions } from "../../../store/types/ui/general/object-type";
+import { objectTypeOptions } from "../../../types/store/ui/general/object-type";
 
 
 /**

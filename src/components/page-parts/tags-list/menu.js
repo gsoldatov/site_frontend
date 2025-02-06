@@ -7,7 +7,7 @@ import { selectTags, clearSelectedTags, setTagsListPaginationInfo } from "../../
 import { setTagsListPaginationInfoAndFetchPage } from "../../../fetches/ui/tags-list";
 import { TagsListSelectors } from "../../../store/selectors/ui/tags-list";
 
-import { NumericUserLevel } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../types/store/data/auth";
 
 
 /**

@@ -1,4 +1,4 @@
-import { toDoListItemState, type ToDoListItemState, type ToDoList } from "../../../types/data/to-do-list";
+import { toDoListItemState, type ToDoListItemState, type ToDoList } from "../../../../types/store/data/to-do-list";
 
 
 /** Contains selectors for to-do list object data. */

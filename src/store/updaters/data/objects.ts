@@ -2,15 +2,15 @@ import { EditedObjectsSelectors } from "../../selectors/data/objects/edited-obje
 import { ObjectsSelectors } from "../../selectors/data/objects/objects";
 import { ObjectsTransformers } from "../../transformers/data/objects";
 
-import { object } from "../../types/data/objects";
-import type { State } from "../../types/state";
-import type { ObjectAttributes, Objects, ObjectType } from "../../types/data/objects";
-import { type ObjectData } from "../../types/general";
-import { link, type Links } from "../../types/data/links";
-import { markdown, type MarkdownStore } from "../../types/data/markdown";
-import { toDoList, type ToDoLists } from "../../types/data/to-do-list";
-import { composite, type CompositeStore } from "../../types/data/composite";
-import type { BackendObjectData } from "../../../fetches/types/data/objects/general";
+import { object } from "../../../types/store/data/objects";
+import type { State } from "../../../types/store/state";
+import type { ObjectAttributes, Objects, ObjectType } from "../../../types/store/data/objects";
+import { type ObjectData } from "../../../types/store/general";
+import { link, type Links } from "../../../types/store/data/links";
+import { markdown, type MarkdownStore } from "../../../types/store/data/markdown";
+import { toDoList, type ToDoLists } from "../../../types/store/data/to-do-list";
+import { composite, type CompositeStore } from "../../../types/store/data/composite";
+import type { BackendObjectData } from "../../../types/fetches/data/objects/general";
 
 
 /** Contains state updating methods for object attributes, tags & data. */

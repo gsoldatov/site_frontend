@@ -4,7 +4,7 @@ import { Redirect, useParams } from "react-router";
 import { Layout } from "../modules/layout/layout";
 import { ObjectsFeed } from "../page-parts/index/objects-feed";
 
-import { LayoutType } from "../../store/types/ui/general/layout-type";
+import { LayoutType } from "../../types/store/ui/general/layout-type";
 
 
 /**

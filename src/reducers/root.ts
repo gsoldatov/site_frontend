@@ -18,8 +18,8 @@ import { objectsEditedRoot } from "./ui/objects-edited";
 
 import { getConfig } from "../config";
 
-import type { State } from "../store/types/state";
-import type { ActionHandlers } from "../store/types/store";
+import type { State } from "../types/store/state";
+import type { ActionHandlers } from "../types/store/store";
 
 
 const getActionHandlers = (rootObjects: Record<string, ActionHandlers>): ActionHandlers => {

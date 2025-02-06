@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { RouteHandler } from "../route-handler";
 
-import { nonEmptyPositiveIntArray } from "../../../../src/util/types/common";
+import { nonEmptyPositiveIntArray } from "../../../../src/types/common";
 import type { MockBackend } from "../../mock-backend";
 
 

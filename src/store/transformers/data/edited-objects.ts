@@ -5,16 +5,16 @@ import { deepCopy } from "../../../util/copy";
 import { EditedObjectsSelectors } from "../../selectors/data/objects/edited-objects";
 import { CompositeSelectors } from "../../selectors/data/objects/composite";
 
-import type { State } from "../../types/state";
-import type { EditedObject } from "../../types/data/edited-objects";
+import type { State } from "../../../types/store/state";
+import type { EditedObject } from "../../../types/store/data/edited-objects";
 
-import { type Composite, SubobjectDeleteMode } from "../../types/data/composite";
-import { objectsAddRequestBodyObject } from "../../../fetches/types/data/objects/add";
+import { type Composite, SubobjectDeleteMode } from "../../../types/store/data/composite";
+import { objectsAddRequestBodyObject } from "../../../types/fetches/data/objects/add";
 import { 
     objectsUpdateCompositeSubobject, type ObjectsUpdateObjectData,
     type ObjectsUpdateCompositeSubobjects, type ObjectsUpdateCompositeDeletedSubobjects,    
     objectsUpdateRequestBodyObject
-} from "../../../fetches/types/data/objects/update";
+} from "../../../types/fetches/data/objects/update";
 
 
 export class EditedObjectsTransformers {

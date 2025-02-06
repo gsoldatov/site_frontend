@@ -1,12 +1,12 @@
 import { EditedObjectsSelectors } from "../../selectors/data/objects/edited-objects";
 import { ObjectsSelectors } from "../../selectors/data/objects/objects";
 
-import { editedObject, getEditedObjectState, type EditedObject, type EditedObjects } from "../../types/data/edited-objects";
-import type { State } from "../../types/state";
-import type { Link } from "../../../store/types/data/links";
-import type { Markdown } from "../../../store/types/data/markdown";
-import type { ToDoList } from "../../../store/types/data/to-do-list";
-import type { Composite } from "../../../store/types/data/composite";
+import { editedObject, getEditedObjectState, type EditedObject, type EditedObjects } from "../../../types/store/data/edited-objects";
+import type { State } from "../../../types/store/state";
+import type { Link } from "../../../types/store/data/links";
+import type { Markdown } from "../../../types/store/data/markdown";
+import type { ToDoList } from "../../../types/store/data/to-do-list";
+import type { Composite } from "../../../types/store/data/composite";
 
 
 /** Contains state updating methods for state.editedObjects. */

@@ -8,7 +8,7 @@ import { SelectedTags } from "../page-parts/tags-view/selected-tags";
 import { TagInformation } from "../page-parts/tags-view/tag-information";
 import { TagPageObjectsFeed } from "../page-parts/tags-view/tag-page-objects-feed";
 
-import { LayoutType } from "../../store/types/ui/general/layout-type";
+import { LayoutType } from "../../types/store/ui/general/layout-type";
 
 
 import StyleTagsView from "../../styles/pages/tags-view.css";

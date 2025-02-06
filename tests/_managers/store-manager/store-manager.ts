@@ -5,7 +5,7 @@ import { EditedObjectsStoreManager } from "./modules/edited-objects";
 import { ObjectsStoreManager } from "./modules/objects";
 import { UsersStoreManager } from "./modules/users";
 
-import type { AppStore } from "../../../src/store/types/store";
+import type { AppStore } from "../../../src/types/store/store";
 
 
 /**

@@ -2,10 +2,10 @@ import { ObjectsListSelectors } from "../../store/selectors/ui/objects-list";
 import { TagsSelectors } from "../../store/selectors/data/tags";
 import { TagsTransformer } from "../../store/transformers/data/tags";
 
-import type { State } from "../../store/types/state"
+import type { State } from "../../types/store/state"
 import { 
     type ObjectsListFetch, type ObjectsListPaginationInfo, type ObjectsListTagsFilterInput, type ObjectsListTagsInput
-} from "../../store/types/ui/objects-list"
+} from "../../types/store/ui/objects-list"
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

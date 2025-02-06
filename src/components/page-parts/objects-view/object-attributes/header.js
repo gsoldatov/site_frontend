@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Button, Header } from "semantic-ui-react";
 
-import { NumericUserLevel } from "../../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../../types/store/data/auth";
 
 
 /**

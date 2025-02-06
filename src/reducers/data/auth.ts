@@ -1,5 +1,5 @@
-import type { State } from "../../store/types/state";
-import { auth, type Auth } from "../../store/types/data/auth";
+import type { State } from "../../types/store/state";
+import { auth, type Auth } from "../../types/store/data/auth";
 
 /** 
  * Sets auth data values in state to props of `auth`.

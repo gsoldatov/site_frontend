@@ -10,7 +10,7 @@ import { TagsListPagination } from "./tags-list-pagination";
 import { toggleTagSelection } from "../../../reducers/ui/tags-list";
 import { tagsListPageFetch } from "../../../fetches/ui/tags-list";
 
-import { NumericUserLevel } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../types/store/data/auth";
 
 
 /**

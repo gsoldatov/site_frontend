@@ -5,8 +5,8 @@ import { loadTagsEditExistingPage, setTagsEditLoadFetchState, setTagsEditSaveFet
 
 import { TagsEditSelectors } from "../../store/selectors/ui/tags-edit";
 
-import { currentTag } from "../../store/types/ui/tags-edit";
-import type { Dispatch, GetState } from "../../store/types/store";
+import { currentTag } from "../../types/store/ui/tags-edit";
+import type { Dispatch, GetState } from "../../types/store/store";
 
 
 /**

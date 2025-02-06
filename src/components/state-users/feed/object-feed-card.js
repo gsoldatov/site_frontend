@@ -8,7 +8,7 @@ import { InlineItemList } from "../../modules/inline/inline-item-list";
 import { InlineTextItem } from "../../modules/inline/inline-text-item";
 import { InlineItem } from "../../modules/inline/inline-item";
 
-import { objectTypeOptions } from "../../../store/types/ui/general/object-type";
+import { objectTypeOptions } from "../../../types/store/ui/general/object-type";
 
 
 /**

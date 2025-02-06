@@ -1,5 +1,5 @@
-import type { ModalImageUI } from "../../store/types/ui/modal";
-import type { State } from "../../store/types/state";
+import type { ModalImageUI } from "../../types/store/ui/modal";
+import type { State } from "../../types/store/state";
 
 
 /**

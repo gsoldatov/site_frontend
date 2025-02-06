@@ -10,8 +10,8 @@ import { getMockLoginResponse } from "../../_mocks/data-auth";
 import { App } from "../../../src/components/app";
 
 import { deepEqual } from "../../../src/util/equality-checks";
-import { getDefaultAuthState } from "../../../src/store/types/data/auth";
-import { NumericUserLevel } from "../../../src/store/types/data/auth";
+import { getDefaultAuthState } from "../../../src/types/store/data/auth";
+import { NumericUserLevel } from "../../../src/types/store/data/auth";
 
 
 /*

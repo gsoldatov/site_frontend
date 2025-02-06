@@ -1,10 +1,10 @@
-import { type BackendLink, type BackendMarkdown, type BackendToDoList, type BackendComposite, type BackendObjectData } from "../../../fetches/types/data/objects/general";
-import { getLink, type Link } from "../../types/data/links";
-import { getMarkdown, type Markdown } from "../../types/data/markdown";
-import { type ToDoList, getToDoListItem, getToDoList } from "../../types/data/to-do-list";
-import { type Composite, getCompositeSubobject, getComposite } from "../../types/data/composite";
-import type { ObjectData } from "../../types/general";
-import { type EditedObject } from "../../types/data/edited-objects";
+import type { BackendLink, BackendMarkdown, BackendToDoList, BackendComposite, BackendObjectData } from "../../../types/fetches/data/objects/general";
+import { getLink, type Link } from "../../../types/store/data/links";
+import { getMarkdown, type Markdown } from "../../../types/store/data/markdown";
+import { type ToDoList, getToDoListItem, getToDoList } from "../../../types/store/data/to-do-list";
+import { type Composite, getCompositeSubobject, getComposite } from "../../../types/store/data/composite";
+import type { ObjectData } from "../../../types/store/general";
+import { type EditedObject } from "../../../types/store/data/edited-objects";
 
 
 export class ObjectsTransformers {

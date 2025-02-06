@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { updateEditedObject } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
-import { objectTypeOptions } from "../../../../store/types/ui/general/object-type";
+import { objectTypeOptions } from "../../../../types/store/ui/general/object-type";
 
 
 /**

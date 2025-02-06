@@ -1,4 +1,4 @@
-import { type State } from "./types/state";
+import { type State } from "../types/store/state";
 
 
 const LOGGING_ORDER = [

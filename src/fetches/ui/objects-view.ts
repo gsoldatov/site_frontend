@@ -4,12 +4,12 @@ import { fetchMissingTags } from "../data/tags";
 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { ObjectsViewSelectors } from "../../store/selectors/ui/objects-view";
-import { getEditedObjectState } from "../../store/types/data/edited-objects";
+import { getEditedObjectState } from "../../types/store/data/edited-objects";
 
 import { deepMerge } from "../../util/copy";
 
-import type { Dispatch, GetState } from "../../store/types/store";
-import type { ToDoList } from "../../store/types/data/to-do-list";
+import type { Dispatch, GetState } from "../../types/store/store";
+import type { ToDoList } from "../../types/store/data/to-do-list";
 
 
 /**

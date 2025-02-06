@@ -2,11 +2,11 @@ import { debounce } from "../util/debounce";
 
 import { getConfig, addCallback } from "../config";
 
-import type { AppConfig } from "../util/types/config";
-import type { AppStore } from "./types/store";
-import { getInitialState, type State } from "./types/state";
-import { editedObject, type EditedObjects } from "./types/data/edited-objects";
-import { getDefaultAuthState, auth, type Auth } from "./types/data/auth";
+import type { AppConfig } from "../types/config";
+import type { AppStore } from "../types/store/store";
+import { getInitialState, type State } from "../types/store/state";
+import { editedObject, type EditedObjects } from "../types/store/data/edited-objects";
+import { getDefaultAuthState, auth, type Auth } from "../types/store/data/auth";
 
 
 /**

@@ -4,11 +4,11 @@ import { addTags, deleteTags } from "../../reducers/data/tags";
 import { deselectTags } from "../../reducers/ui/tags-list";
 import { TagsSelectors } from "../../store/selectors/data/tags";
 
-import { tag } from "../../store/types/data/tags";
-import { tagsAddTagSchema, tagsSearchResponseSchema, tagsUpdateTagSchema, tagsViewResponseSchema } from "../types/data/tags";
-import type { TagsAddTagSchema, TagsUpdateTagSchema } from "../types/data/tags";
-import type { Dispatch, GetState } from "../../store/types/store";
-import type { TagsAddFetchResult, TagsUpdateFetchResult, TagsSearchFetchResult } from "../types/data/tags";
+import { tag } from "../../types/store/data/tags";
+import { tagsAddTagSchema, tagsSearchResponseSchema, tagsUpdateTagSchema, tagsViewResponseSchema } from "../../types/fetches/data/tags";
+import type { TagsAddTagSchema, TagsUpdateTagSchema } from "../../types/fetches/data/tags";
+import type { Dispatch, GetState } from "../../types/store/store";
+import type { TagsAddFetchResult, TagsUpdateFetchResult, TagsSearchFetchResult } from "../../types/fetches/data/tags";
 
 
 /**

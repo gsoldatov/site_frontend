@@ -1,5 +1,5 @@
-import type { AppStore } from "../store/types/store";
-import type { AppConfig } from "./types/config";
+import type { AppStore } from "../types/store/store";
+import type { AppConfig } from "../types/config";
 
 
 /***************************************************

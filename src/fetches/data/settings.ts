@@ -1,9 +1,9 @@
 import { FetchRunner } from "../fetch-runner";
 
-import  { settingsViewResponseBody, settingsViewAllResponsebody } from "../types/data/settings";
+import  { settingsViewResponseBody, settingsViewAllResponsebody } from "../../types/fetches/data/settings";
 
-import type { SettingNames, SettingsViewAllFetchResult, Settings } from "../types/data/settings";
-import type { Dispatch, GetState } from "../../store/types/store";
+import type { SettingNames, SettingsViewAllFetchResult, Settings } from "../../types/fetches/data/settings";
+import type { Dispatch, GetState } from "../../types/store/store";
 import type { FetchResult } from "../fetch-runner";
 
 

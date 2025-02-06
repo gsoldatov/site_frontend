@@ -4,12 +4,13 @@ import { EditedObjectsSelectors } from "../../selectors/data/objects/edited-obje
 import { EditedObjectsUpdaters } from "./edited-objects";
 import { ObjectsUpdaters } from "./objects";
 
-import type { State } from "../../types/state";
-import { type EditedObjects } from "../../types/data/edited-objects";
-import { compositeSubobject, getCompositeSubobject, SubobjectDeleteMode, type CompositeSubobject, type CompositeSubobjects } from "../../types/data/composite";
-import { type ObjectsAddRequestObjectData, type ObjectsAddResponseBodyObject } from "../../../fetches/types/data/objects/add";
-import { type ObjectsUpdateRequestObjectData, type ObjectsUpdateResponseBodyObject } from "../../../fetches/types/data/objects/update";
-import { type ObjectsTags } from "../../types/data/objects-tags";
+import type { State } from "../../../types/store/state";
+import { type EditedObjects } from "../../../types/store/data/edited-objects";
+import { compositeSubobject, getCompositeSubobject, SubobjectDeleteMode, 
+    type CompositeSubobject, type CompositeSubobjects } from "../../../types/store/data/composite";
+import { type ObjectsAddRequestObjectData, type ObjectsAddResponseBodyObject } from "../../../types/fetches/data/objects/add";
+import { type ObjectsUpdateRequestObjectData, type ObjectsUpdateResponseBodyObject } from "../../../types/fetches/data/objects/update";
+import { type ObjectsTags } from "../../../types/store/data/objects-tags";
 
 
 /** Contains methods, which update state of an edited composite object & related data (edited subobjects, etc). */

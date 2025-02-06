@@ -2,7 +2,7 @@ import { addObjectsAttributes, addObjectsDataFromBackend } from "../../src/reduc
 import { addTags } from "../../src/reducers/data/tags";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
 import { addEditedObjects, loadEditedObjects } from "../../src/reducers/data/edited-objects";
-import { getEditedObjectState } from "../../src/store/types/data/edited-objects";
+import { getEditedObjectState } from "../../src/types/store/data/edited-objects";
 import { createTestStore } from "../_util/create-test-store";
 import { generateObjectAttributes, defaultObjectAttributeValueGetters, generateObjectData } from "./data-objects";
 

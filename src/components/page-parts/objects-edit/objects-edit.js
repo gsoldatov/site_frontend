@@ -11,7 +11,7 @@ import { DisplayTab } from "../../state-users/objects-edit/display/display-tab";
 import { setObjectsEditSelectedTab, setToDoListRerenderPending } from "../../../reducers/ui/objects-edit";
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
 
-import { LayoutType } from "../../../store/types/ui/general/layout-type";
+import { LayoutType } from "../../../types/store/ui/general/layout-type";
 
 
 /**

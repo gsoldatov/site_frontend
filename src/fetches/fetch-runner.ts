@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 import { setAuthInformation } from "../reducers/data/auth";
-import { getDefaultAuthState } from "../store/types/data/auth";
+import { getDefaultAuthState } from "../types/store/data/auth";
 import { getConfig } from "../config";
 import { getFromDocumentApp } from "../util/document-app";
 
-import { int } from "../util/types/common";
+import { int } from "../types/common";
 
 
 const { backendURL } = getConfig();

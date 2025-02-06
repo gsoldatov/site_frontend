@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
 
-import { getEditedObjectState } from "../../types/data/edited-objects";
-import type { State } from "../../types/state";
+import { getEditedObjectState } from "../../../types/store/data/edited-objects";
+import type { State } from "../../../types/store/state";
 
 
 export class ObjectsEditSelectors {

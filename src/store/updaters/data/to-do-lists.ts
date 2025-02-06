@@ -1,7 +1,8 @@
 import { deepCopy } from "../../../util/copy";
 
 import { ToDoListSelectors } from "../../selectors/data/objects/to-do-list";
-import { getToDoListItem, type ToDoListItem, type ToDoList, type ToDoListNewOrExistingItemNumber } from "../../types/data/to-do-list";
+import { getToDoListItem, type ToDoListItem, type ToDoList, 
+    type ToDoListNewOrExistingItemNumber } from "../../../types/store/data/to-do-list";
 
 
 export class ToDoListUpdaters {

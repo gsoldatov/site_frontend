@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 import { Layout } from "../modules/layout/layout";
 import { ObjectsViewRootCard } from "../page-parts/objects-view/objects-view-root-card";
 
-import { LayoutType } from "../../store/types/ui/general/layout-type";
+import { LayoutType } from "../../types/store/ui/general/layout-type";
 
 
 /**

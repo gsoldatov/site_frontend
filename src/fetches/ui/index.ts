@@ -1,8 +1,8 @@
 import { FetchResult } from "../fetch-runner";
 import { objectsGetPageObjectIDs, objectsViewFetch } from "../data/objects";
 
-import type { Dispatch, GetState } from "../../store/types/store";
-import { type ObjectsPaginationInfo, type ObjectsGetPageObjectIDsFetchResult } from "../types/data/objects/general";
+import type { Dispatch, GetState } from "../../types/store/store";
+import { type ObjectsPaginationInfo } from "../../types/fetches/data/objects/general";
 
 
 /**

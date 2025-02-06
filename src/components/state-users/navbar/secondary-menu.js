@@ -7,7 +7,7 @@ import { fetchCurrentUserData } from "../../../fetches/ui/navbar";
 import { logoutFetch } from "../../../fetches/data/auth";
 import { registrationStatusFetch } from "../../../fetches/data/settings";
 
-import { NumericUserLevel } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../types/store/data/auth";
 import { useMountedState } from "../../../util/hooks/use-mounted-state";
 
 

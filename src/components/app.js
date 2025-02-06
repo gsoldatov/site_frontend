@@ -28,7 +28,7 @@ import { ObjectsEditedPage } from "./pages/objects-edited";
 import { ObjectsListPage } from "./pages/objects-list";
 import { NotFoundPage } from "./pages/not-found";
 
-import { NumericUserLevel } from "../store/types/data/auth";
+import { NumericUserLevel } from "../types/store/data/auth";
 
 
 export const isAuthenticatedCondition = state => state.auth.numeric_user_level > NumericUserLevel.anonymous;

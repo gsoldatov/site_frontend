@@ -2,11 +2,11 @@ import { z } from "zod";
 import { deepEqual } from "../../../../util/equality-checks";
 import { ObjectsSelectors } from "./objects";
 
-import { getEditedObjectState } from "../../../types/data/edited-objects";
-import { compositeSubobject } from "../../../types/data/composite";
+import { getEditedObjectState } from "../../../../types/store/data/edited-objects";
+import { compositeSubobject } from "../../../../types/store/data/composite";
 
-import type { State } from "../../../types/state";
-import type { Markdown } from "../../../types/data/markdown";
+import type { State } from "../../../../types/store/state";
+import type { Markdown } from "../../../../types/store/data/markdown";
 
 
 export class EditedObjectsSelectors {

@@ -1,7 +1,7 @@
 import { EditedObjectsUpdaters } from "../store/updaters/data/edited-objects";
-import { getInitialState } from "../store/types/state";
+import { getInitialState } from "../types/store/state";
 
-import type { State } from "../store/types/state";
+import type { State } from "../types/store/state";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@ import { Layout } from "../modules/layout/layout";
 import { SearchFeed } from "../page-parts/search/search-feed";
 import { SearchInput } from "../page-parts/search/search-input";
 
-import { LayoutType } from "../../store/types/ui/general/layout-type";
+import { LayoutType } from "../../types/store/ui/general/layout-type";
 
 import StyleSearch from "../../styles/pages/search.css";
 

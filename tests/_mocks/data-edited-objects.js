@@ -1,7 +1,7 @@
 import { addEditedObjects, loadEditedObjects, updateEditedComposite, updateEditedObject } from "../../src/reducers/data/edited-objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../src/reducers/data/objects";
 import { addObjectsTags } from "../../src/reducers/data/objects-tags";
-import { getEditedObjectState } from "../../src/store/types/data/edited-objects";
+import { getEditedObjectState } from "../../src/types/store/data/edited-objects";
 
 import { createTestStore } from "../_util/create-test-store";
 import { generateObjectAttributes, generateObjectData } from "./data-objects";

@@ -1,5 +1,5 @@
-import type { State } from "../../store/types/state";
-import type { TagsListPaginationInfo, TagsListFetch } from "../../store/types/ui/tags-list";
+import type { State } from "../../types/store/state";
+import type { TagsListPaginationInfo, TagsListFetch } from "../../types/store/ui/tags-list";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

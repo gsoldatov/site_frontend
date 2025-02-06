@@ -15,7 +15,7 @@ import { getReactDatetimeElements } from "../../../../_util/ui-react-datetime";
 
 import { App } from "../../../../../src/components/app";
 import { updateEditedObject } from "../../../../../src/reducers/data/edited-objects";
-import { compositeDisplayModeOptions } from "../../../../../src/store/types/ui/general/composite-display-mode";
+import { compositeDisplayModeOptions } from "../../../../../src/types/store/ui/general/composite-display-mode";
 
 
 /*

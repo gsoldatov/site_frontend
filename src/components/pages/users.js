@@ -5,7 +5,7 @@ import { Layout } from "../modules/layout/layout";
 import { ViewUser } from "../page-parts/users/view-user";
 import { EditUser } from "../page-parts/users/edit-user";
 
-import { LayoutType } from "../../store/types/ui/general/layout-type";
+import { LayoutType } from "../../types/store/ui/general/layout-type";
 
 import StyleUsers from "../../styles/pages/users.css";
 

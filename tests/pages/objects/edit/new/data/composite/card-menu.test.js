@@ -10,7 +10,7 @@ import { addANewSubobject, addAnExistingSubobject, getSubobjectCardAttributeElem
     clickSubobjectCardDataTabButton, getSubobjectCardMenuButtons, getSubobjectCardTabSelectionButtons } from "../../../../../../_util/ui-composite";
 
 import { App } from "../../../../../../../src/components/app";
-import { SubobjectDeleteMode } from "../../../../../../../src/store/types/data/composite";
+import { SubobjectDeleteMode } from "../../../../../../../src/types/store/data/composite";
 
 
 /*

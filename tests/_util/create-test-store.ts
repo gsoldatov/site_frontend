@@ -2,7 +2,7 @@ import { createStore } from "../../src/store/create-store";
 import { updateConfig } from "../../src/config";
 import { StoreManager } from "../_managers/store-manager/store-manager";
 
-import type { AppConfig } from "../../src/util/types/config";
+import type { AppConfig } from "../../src/types/config";
 
 /**
  * Creates a test Redux store object used by the app and wraps it in a `StoreManager` instance.

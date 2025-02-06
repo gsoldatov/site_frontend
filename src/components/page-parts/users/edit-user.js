@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import { Button, Message, Form, Header } from "semantic-ui-react";
 
 import { usersUpdateFetch } from "../../../fetches/data/users";
-import { NumericUserLevel, userLevelInfo } from "../../../store/types/data/auth";
+import { NumericUserLevel, userLevelInfo } from "../../../types/store/data/auth";
 
 
 const getDefaultErrors = () => ({ login: "", password: "", password_repeat: "", username: "", token_owner_password: "" });

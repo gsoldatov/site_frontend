@@ -8,7 +8,7 @@ import { HorizontalMenu, HorizontalMenuGroup, HorizontalMenuButton,
 import { setObjectsListPaginationInfo, setObjectsListTagsFilterInput, selectObjects, clearSelectedObjects } from "../../../reducers/ui/objects-list";
 import { objectsListTagsFilterDropdownFetch, setObjectsListPaginationInfoAndFetchPage, setObjectsListTagsFilterAndFetchPage } from "../../../fetches/ui/objects-list";
 import { ObjectsListSelectors } from "../../../store/selectors/ui/objects-list";
-import { objectTypeOptions } from "../../../store/types/ui/general/object-type";
+import { objectTypeOptions } from "../../../types/store/ui/general/object-type";
 
 
 /**

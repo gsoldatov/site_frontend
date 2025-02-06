@@ -1,8 +1,8 @@
 import { EditedObjectsUpdaters } from "../../store/updaters/data/edited-objects";
 
-import type { State } from "../../store/types/state";
-import { positiveInt } from "../../util/types/common";
-import { getObjectsEditUI, type ObjectsEditTagsInput, type ObjectsEditAddCompositeSubobjectMenu } from "../../store/types/ui/objects-edit";
+import type { State } from "../../types/store/state";
+import { positiveInt } from "../../types/common";
+import { getObjectsEditUI, type ObjectsEditTagsInput, type ObjectsEditAddCompositeSubobjectMenu } from "../../types/store/ui/objects-edit";
 import { EditedObjectsSelectors } from "../../store/selectors/data/objects/edited-objects";
 
 

@@ -2,8 +2,8 @@ import { objectsGetPageObjectIDs, objectsViewFetch } from "../data/objects";
 import { fetchMissingTags, tagsSearchFetch } from "../data/tags";
 
 import { type FetchResult } from "../fetch-runner";
-import type { Dispatch, GetState } from "../../store/types/store";
-import type { ObjectsPaginationInfo, ObjectsGetPageObjectIDsFetchResult } from "../types/data/objects/general";
+import type { Dispatch, GetState } from "../../types/store/store";
+import type { ObjectsPaginationInfo, ObjectsGetPageObjectIDsFetchResult } from "../../types/fetches/data/objects/general";
 
 
 /** 

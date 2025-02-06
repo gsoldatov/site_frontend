@@ -10,7 +10,7 @@ import { setTagsListShowDeleteDialog } from "../../../reducers/ui/tags-list";
 import { tagsListDeleteFetch } from "../../../fetches/ui/tags-list";
 import { TagsListSelectors } from "../../../store/selectors/ui/tags-list";
 
-import { NumericUserLevel } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../types/store/data/auth";
 
 /**
  * /tags/list page side menu.

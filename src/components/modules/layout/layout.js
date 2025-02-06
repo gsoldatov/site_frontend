@@ -5,7 +5,7 @@ import { WindowWidthContext } from "../wrappers/window-width-provider";
 import { Navbar } from "../../state-users/navbar/navbar";
 import { ModalWindow } from "../../state-users/modal-window";
 
-import { LayoutType } from "../../../store/types/ui/general/layout-type";
+import { LayoutType } from "../../../types/store/ui/general/layout-type";
 
 import StyleLayout from "../../../styles/modules/layout.css";
 

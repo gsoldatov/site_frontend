@@ -10,7 +10,7 @@ import { setAddCompositeSubobjectMenu } from "../../../../../reducers/ui/objects
 
 import { CompositeSelectors } from "../../../../../store/selectors/data/objects/composite";
 import { ObjectsEditSelectors } from "../../../../../store/selectors/ui/objects-edit";
-import { SubobjectDeleteMode } from "../../../../../store/types/data/composite";
+import { SubobjectDeleteMode } from "../../../../../types/store/data/composite";
 
 import StyleCompositeSubobjects from "../../../../../styles/modules/edit/composite-subobjects.css";
 

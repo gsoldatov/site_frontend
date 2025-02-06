@@ -1,5 +1,5 @@
-import type { State } from "../../store/types/state";
-import type { ObjectsTags } from "../../store/types/data/objects-tags";
+import type { State } from "../../types/store/state";
+import type { ObjectsTags } from "../../types/store/data/objects-tags";
 
 /**
  * Accepts a list of `objects` with `object_id` and `current_tag_ids` array, and sets the latter into state.objectsTags.

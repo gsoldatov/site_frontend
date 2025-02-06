@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { int } from "../../src/util/types/common";
+import { int } from "../../src/types/common";
 
 
 /** Arguments passed to `fetch`, which are used by mock backend */

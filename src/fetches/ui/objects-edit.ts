@@ -10,8 +10,8 @@ import { loadEditedObjects, updateEditedComposite, updateEditedObject, editedObj
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { ObjectsEditSelectors } from "../../store/selectors/ui/objects-edit";
 
-import type { Dispatch, GetState } from "../../store/types/store";
-import { positiveInt } from "../../util/types/common";
+import type { Dispatch, GetState } from "../../types/store/store";
+import { positiveInt } from "../../types/common";
 
 
 /**

@@ -1,4 +1,4 @@
-import type { Composite, CompositeSubobjects } from "../../../types/data/composite";
+import type { Composite, CompositeSubobjects } from "../../../../types/store/data/composite";
 
 
 /** Composite object's data state selectors. */

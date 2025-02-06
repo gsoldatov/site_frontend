@@ -19,7 +19,7 @@ import { getStoreWithCompositeObjectAndSubobjects, getStoreWithCompositeObject }
 import { App } from "../../../../../src/components/app";
 import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../../../../src/reducers/data/objects";
-import { SubobjectDeleteMode } from "../../../../../src/store/types/data/composite";
+import { SubobjectDeleteMode } from "../../../../../src/types/store/data/composite";
 import { generateObjectAttributes, generateObjectData } from "../../../../_mocks/data-objects";
 
 

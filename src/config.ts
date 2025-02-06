@@ -6,9 +6,9 @@ import originalConfig from "./config.json";
 
 import { useMountedState } from "./util/hooks/use-mounted-state";
 import { getFromDocumentApp, setDocumentApp } from "./util/document-app";
-import { config } from "./util/types/config";
+import { config } from "./types/config";
 
-import type { AppConfig } from "./util/types/config";
+import type { AppConfig } from "./types/config";
 
 
 /***************************************************

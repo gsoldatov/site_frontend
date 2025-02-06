@@ -13,16 +13,16 @@ import { EditedObjectsTransformers, parseObjectsUpdateRequestValidationErrors } 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { EditedCompositeUpdaters } from "../../store/updaters/data/edited-composite";
 
-import type { Dispatch, GetState } from "../../store/types/store";
-import type { EditedObject } from "../../store/types/data/edited-objects";
+import type { Dispatch, GetState } from "../../types/store/store";
+import type { EditedObject } from "../../types/store/data/edited-objects";
 import {
     objectsGetPageObjectIDsResponseSchema, objectsPaginationInfo, objectsSearchResponseSchema, 
     objectsViewCompositeHierarchyElementsResponseSchema, objectsViewResponseSchema, 
     type ObjectsViewFetchResult, type ObjectsSearchFetchResult, type ObjectsGetPageObjectIDsFetchResult, 
     type ObjectsPaginationInfo, type ObjectsViewCompositeHierarchyElementsFetchResult
-} from "../types/data/objects/general";
-import { type ObjectsAddFetchResult, objectsAddResponseSchema } from "../types/data/objects/add";
-import { objectsUpdateResponseSchema, type ObjectsUpdateFetchResult } from "../types/data/objects/update";
+} from "../../types/fetches/data/objects/general";
+import { type ObjectsAddFetchResult, objectsAddResponseSchema } from "../../types/fetches/data/objects/add";
+import { objectsUpdateResponseSchema, type ObjectsUpdateFetchResult } from "../../types/fetches/data/objects/update";
 
 
 /**

@@ -1,7 +1,7 @@
-import type { State } from "../../store/types/state";
-import type { Tag, Tags } from "../../store/types/data/tags";
-import type { EditedObjects } from "../../store/types/data/edited-objects";
-import type { ObjectsTags } from "../../store/types/data/objects-tags";
+import type { State } from "../../types/store/state";
+import type { Tag, Tags } from "../../types/store/data/tags";
+import type { EditedObjects } from "../../types/store/data/edited-objects";
+import type { ObjectsTags } from "../../types/store/data/objects-tags";
 
 
 /**

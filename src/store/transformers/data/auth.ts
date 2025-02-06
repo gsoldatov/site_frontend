@@ -1,5 +1,5 @@
-import { BackendAuth } from "../../../fetches/types/data/auth"
-import { Auth, auth, NumericUserLevel } from "../../types/data/auth"
+import { BackendAuth } from "../../../types/fetches/data/auth"
+import { Auth, auth, NumericUserLevel } from "../../../types/store/data/auth"
 
 
 export class AuthTransformer {

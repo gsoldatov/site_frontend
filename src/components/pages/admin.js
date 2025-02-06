@@ -4,7 +4,7 @@ import { Tab } from "semantic-ui-react";
 import { Layout } from "../modules/layout/layout";
 import { SettingsTabPane } from "../page-parts/admin";
 
-import { LayoutType } from "../../store/types/ui/general/layout-type";
+import { LayoutType } from "../../types/store/ui/general/layout-type";
 
 
 /**

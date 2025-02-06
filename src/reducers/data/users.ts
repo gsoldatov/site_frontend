@@ -1,6 +1,6 @@
-import type { User, Users } from "../../store/types/data/users";
-import { PartialExcept } from "../../util/types/common";
-import type { State } from "../../store/types/state";
+import type { User, Users } from "../../types/store/data/users";
+import { PartialExcept } from "../../types/common";
+import type { State } from "../../types/store/state";
 
 
 /** Add a list of `users` to the user store. */

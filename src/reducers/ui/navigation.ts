@@ -1,5 +1,5 @@
-import type { State } from "../../store/types/state";
-import type { NavigationUI } from "../../store/types/ui/navigation";
+import type { State } from "../../types/store/state";
+import type { NavigationUI } from "../../types/store/ui/navigation";
 
 
 /**

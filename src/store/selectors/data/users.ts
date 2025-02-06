@@ -1,5 +1,5 @@
-import type { UsersUpdateFetchData } from "../../../fetches/types/data/users";
-import type { State } from "../../types/state";
+import type { UsersUpdateFetchData } from "../../../types/fetches/data/users";
+import type { State } from "../../../types/store/state";
 
 
 /** 

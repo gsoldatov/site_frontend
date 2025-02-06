@@ -6,7 +6,7 @@ import { DisplayControlDropdown } from "../../../modules/edit/display/display-co
 
 import { updateEditedComposite, updateEditedObject } from "../../../../reducers/data/edited-objects";
 import { ObjectsEditSelectors } from "../../../../store/selectors/ui/objects-edit";
-import { showDescriptionCompositeOptions } from "../../../../store/types/ui/general/show-description-composite";
+import { showDescriptionCompositeOptions } from "../../../../types/store/ui/general/show-description-composite";
 
 
 /**

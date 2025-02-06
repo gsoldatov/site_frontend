@@ -9,7 +9,7 @@ import { NavbarSubmenu, NavbarSubmenuItem } from "./submenu";
 import { NavbarSearch } from "./search";
 
 import { WindowWidthContext } from "../../modules/wrappers/window-width-provider";
-import { NumericUserLevel } from "../../../store/types/data/auth";
+import { NumericUserLevel } from "../../../types/store/data/auth";
 
 import StyleNavigation from "../../../styles/modules/navigation.css";
 

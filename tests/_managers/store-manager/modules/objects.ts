@@ -1,10 +1,10 @@
 import { addObjectsAttributes, updateObjectsAttributes, addObjectsDataFromBackend, updateObjectsData } from "../../../../src/reducers/data/objects";
 
-import type { PartialExcept } from "../../../../src/util/types/common";
-import type { AppStore } from "../../../../src/store/types/store";
+import type { PartialExcept } from "../../../../src/types/common";
+import type { AppStore } from "../../../../src/types/store/store";
 import type { DataGenerator } from "../../../_mock-data/data-generator";
 import type { ObjectType, ObjectAttributes, PartialObjectData, ObjectData } from "../../../_mock-data/modules/objects";
-import type { PickPartial } from "../../../../src/util/types/common";
+import type { PickPartial } from "../../../../src/types/common";
 
 
 

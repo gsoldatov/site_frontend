@@ -1,17 +1,18 @@
 import { ObjectsUpdaters } from "../../store/updaters/data/objects";
 import { deepMerge } from "../../util/copy";
 
-import type { DeepPartial } from "../../util/types/common";
-import { object } from "../../store/types/data/objects";
-import type { PartialExcept } from "../../util/types/common";
-import type { State } from "../../store/types/state";
-import type { ObjectAttributes, Objects, ObjectType } from "../../store/types/data/objects";
-import { type BackendObjectData } from "../../fetches/types/data/objects/general";
-import { ObjectDataMap } from "../../store/types/general";
-import { links, type Links } from "../../store/types/data/links";
-import { markdownStore, type MarkdownStore } from "../../store/types/data/markdown";
-import { toDoLists, type ToDoLists } from "../../store/types/data/to-do-list";
-import { compositeStore, type CompositeStore } from "../../store/types/data/composite";
+import type { DeepPartial } from "../../types/common";
+import { object } from "../../types/store/data/objects";
+import type { PartialExcept } from "../../types/common";
+import type { State } from "../../types/store/state";
+import type { ObjectAttributes, Objects, ObjectType } from "../../types/store/data/objects";
+import { type BackendObjectData } from "../../types/fetches/data/objects/general";
+import { ObjectDataMap } from "../../types/store/general";
+import { links, type Links } from "../../types/store/data/links";
+import { markdownStore, type MarkdownStore } from "../../types/store/data/markdown";
+import { toDoLists, type ToDoLists } from "../../types/store/data/to-do-list";
+import { compositeStore, type CompositeStore } from "../../types/store/data/composite";
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** Adds objects' attributes from `objects` into state.objects store. */

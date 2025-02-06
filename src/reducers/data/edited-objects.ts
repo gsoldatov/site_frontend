@@ -6,8 +6,8 @@ import { TagsTransformer } from "../../store/transformers/data/tags";
 import { getUpdatedToDoList, type ToDoListUpdateParams } from "../../store/updaters/data/to-do-lists";
 import { EditedCompositeUpdaters, type GetUpdatedEditedCompositeParams } from "../../store/updaters/data/edited-composite";
 
-import type { State } from "../../store/types/state";
-import { type EditedObjects, type EditedObject } from "../../store/types/data/edited-objects";
+import type { State } from "../../types/store/state";
+import { type EditedObjects, type EditedObject } from "../../types/store/data/edited-objects";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

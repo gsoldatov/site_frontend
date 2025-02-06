@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import type { State } from "../../types/state";
+import type { State } from "../../../types/store/state";
 
 
 export class ObjectsListSelectors {

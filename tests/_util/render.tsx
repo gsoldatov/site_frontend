@@ -15,7 +15,7 @@ import { createTestStore } from "./create-test-store";
 import { StoreManager } from "../_managers/store-manager/store-manager";
 import { getBackend } from "../_mock-backend/mock-backend";
 
-import type { AppConfig } from "../../src/util/types/config";
+import type { AppConfig } from "../../src/types/config";
 import type { Store } from "redux";
 
 

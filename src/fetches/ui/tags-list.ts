@@ -5,9 +5,9 @@ import { setTagsListFetch, setTagsListShowDeleteDialog, setTagsListPaginationInf
 
 import { TagsListSelectors } from "../../store/selectors/ui/tags-list";
 
-import { tagsGetPageTagIDsResponseSchema } from "../types/ui/tags-list";
-import type { Dispatch, GetState } from "../../store/types/store";
-import type { TagsListPaginationInfo } from "../../store/types/ui/tags-list";
+import { tagsGetPageTagIDsResponseSchema } from "../../types/fetches/ui/tags-list";
+import type { Dispatch, GetState } from "../../types/store/store";
+import type { TagsListPaginationInfo } from "../../types/store/ui/tags-list";
 
 
 /**

@@ -3,12 +3,12 @@ import { FetchRunner } from "../fetch-runner";
 import { fetchMissingUsers } from "../data/users";
 import { resetStateExceptForEditedObjects } from "../../reducers/common";
 
-import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErrors, loginFetchData, backendAuth } from "../types/data/auth";
-import { NumericUserLevel } from "../../store/types/data/auth";
-import { timestampString } from "../../util/types/common";
+import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErrors, loginFetchData, backendAuth } from "../../types/fetches/data/auth";
+import { NumericUserLevel } from "../../types/store/data/auth";
+import { timestampString } from "../../types/common";
 
-import type { Dispatch, GetState } from "../../store/types/store";
-import type { AuthFetchValidationErrors, BackendAuth } from "../types/data/auth";
+import type { Dispatch, GetState } from "../../types/store/store";
+import type { AuthFetchValidationErrors, BackendAuth } from "../../types/fetches/data/auth";
 
 
 /** Runs a register fetch with the provided user data. Returns any validation or fetch errors or an emtpy object. */
