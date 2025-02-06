@@ -39,7 +39,7 @@ test("Loading & error placeholders", async () => {
 
         if ("object_ids" in parsedBody) {
             const sortedObjectIDs = parsedBody.object_ids.sort();
-            const expectedSubobjectIDs = compositeWithGroupedLinksDisplayMode.subobjects.map(s => s.object_id).sort();
+            const expectedSubobjectIDs = compositeWithGroupedLinksDisplayMode.subobjects.map(s => s.subobject_id).sort();
             if (!compareArrays(sortedObjectIDs, expectedSubobjectIDs)) return null;
             
             // Throw network error when fetching subobjects of `compositeWithGroupedLinksDisplayMode`
@@ -68,13 +68,15 @@ test("Missing objects display", async () => {
         const response = handleView(body);
         const filteredObjectIDs = [201, 1201];
 
-        if ("objects" in response.body)
-            response.body.objects = response.body.objects.filter(object => filteredObjectIDs.indexOf(parseInt(object.object_id)) === -1);
+        if ("objects_attributes_and_tags" in response.body)
+            response.body.objects_attributes_and_tags = response.body.objects_attributes_and_tags.filter(
+                object => filteredObjectIDs.indexOf(parseInt(object.object_id)) === -1);
 
-        if ("object_data" in response.body)                
-            response.body.object_data = response.body.object_data.filter(object => filteredObjectIDs.indexOf(parseInt(object.object_id)) === -1);
+        if ("objects_data" in response.body)
+            response.body.objects_data = response.body.objects_data.filter(
+                object => filteredObjectIDs.indexOf(parseInt(object.object_id)) === -1);
         
-        if (response.status === 200 && response.body.objects.length === 0 && response.body.object_data.length === 0)
+        if (response.status === 200 && response.body.objects_attributes_and_tags.length === 0 && response.body.objects_data.length === 0)
             response.status === 404
         
         return response;
@@ -121,7 +123,7 @@ test("Correct display, object without link subobjects", async () => {
     // Check non-link objects
     const objectsViewCardElements = getObjectsViewCardElements({ container });
     expect(objectsViewCardElements.data.compositeGroupedLinks.subobjectCards.length).toEqual(3);
-    const expectedNonLinkIDs = compositeWithGroupedLinksDisplayModeAndNoLinkSubobjects.subobjects.map(subobject => subobject.object_id);
+    const expectedNonLinkIDs = compositeWithGroupedLinksDisplayModeAndNoLinkSubobjects.subobjects.map(subobject => subobject.subobject_id);
     const renderedNonLinkIDs = objectsViewCardElements.data.compositeGroupedLinks.subobjectCards.map(card => parseInt(getObjectsViewCardElements({ card }).objectID));
     expect(compareArrays(expectedNonLinkIDs, renderedNonLinkIDs)).toBeTruthy();
 
@@ -144,14 +146,14 @@ test("Correct display", async () => {
     // Check non-link objects
     const objectsViewCardElements = getObjectsViewCardElements({ container });
     expect(objectsViewCardElements.data.compositeGroupedLinks.subobjectCards.length).toEqual(4);
-    const expectedNonLinkIDs = compositeWithGroupedLinksDisplayMode.subobjects.map(subobject => subobject.object_id).filter(id => id >= 1000);
+    const expectedNonLinkIDs = compositeWithGroupedLinksDisplayMode.subobjects.map(subobject => subobject.subobject_id).filter(id => id >= 1000);
     const renderedNonLinkIDs = objectsViewCardElements.data.compositeGroupedLinks.subobjectCards.map(card => parseInt(getObjectsViewCardElements({ card }).objectID));
     expect(compareArrays(expectedNonLinkIDs, renderedNonLinkIDs)).toBeTruthy();
 
     // Check link subobjects
     expect(objectsViewCardElements.data.compositeGroupedLinks.linksCard.header).toBeTruthy();
     expect(objectsViewCardElements.data.compositeGroupedLinks.linksCard.linkRows.length).toEqual(3);
-    const expectedLinkIDs = compositeWithGroupedLinksDisplayMode.subobjects.map(subobject => subobject.object_id).filter(id => id < 1000);
+    const expectedLinkIDs = compositeWithGroupedLinksDisplayMode.subobjects.map(subobject => subobject.subobject_id).filter(id => id < 1000);
     const state = store.getState();
 
     for (let i = 0; i < expectedLinkIDs.length; i++) {

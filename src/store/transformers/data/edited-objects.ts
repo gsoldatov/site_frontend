@@ -92,7 +92,7 @@ const editedObjectDataToBackend = (state: State, editedObject: EditedObject): Ob
             for (let subobjectID of Object.keys(nonDeletedSubobjects).map(id => parseInt(id))) {
                 // Add state of subobject in the composite object
                 const so = nonDeletedSubobjects[subobjectID];
-                let subobject: any = { ...so, object_id: subobjectID };
+                let subobject: any = { ...so, subobject_id: subobjectID };
                 for (let key of ["fetchError", "deleteMode"]) delete subobject[key];    // delete frontend-only subobject props
 
                 // Add subobjects' attributes & data changes

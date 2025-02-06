@@ -30,7 +30,7 @@ export class ObjectsTransformers {
         // composite
         if ("subobjects" in data) {
             const subobjects = data.subobjects.reduce((result, so) => {
-                result[so.object_id] = getCompositeSubobject(so);
+                result[so.subobject_id] = getCompositeSubobject(so);
                 return result;
             }, {} as Composite["subobjects"]);
             return getComposite({ ...data, subobjects }) as R;

@@ -40,8 +40,8 @@ export class ObjectsRouteHandlers {
             getResponse: requestContext => {
                 const { object_ids = [], object_data_ids = [] } = objectsViewBody.parse(requestContext.body);
 
-                const objects = object_ids.map(object_id => this.backend.data.object(object_id).attributes);
-                const object_data = object_data_ids.map(object_id => {
+                const objects_attributes_and_tags = object_ids.map(object_id => this.backend.data.object(object_id).attributes);
+                const objects_data = object_data_ids.map(object_id => {
                     const object = this.backend.data.object(object_id);
                     return {
                         object_id,
@@ -50,7 +50,7 @@ export class ObjectsRouteHandlers {
                     }
                 });
 
-                return {status: 200, body: { objects, object_data }};
+                return {status: 200, body: { objects_attributes_and_tags, objects_data }};
             }
         });
 
@@ -93,8 +93,9 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
 
     const inner = (function(this: RouteHandler, object: ObjectsAddUpdateObject | CompositeSubobjectWithAttributesAndData): Record<string, any> {
         const hasTags = "added_tags" in object || "removed_tag_ids" in object;
-        const isNewObject = object.object_id < 0;
-        const object_id = isNewObject ? ++(this.getResponseParams as GetResponseParams).currentObjectID : object.object_id;
+        const objectID = "subobject_id" in object ? object.subobject_id : object.object_id; // composite subobjects have `subobject_id` instead of `object_id`
+        const isNewObject = objectID < 0;
+        const object_id = isNewObject ? ++(this.getResponseParams as GetResponseParams).currentObjectID : objectID;
         const object_type = isNewObject ? object.object_type : this.backend.data.object(object_id).attributes.object_type;
 
         // Get current `current_tag_ids` for the object
@@ -137,7 +138,7 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
                 // (add it to cache and get object mapping)
                 if ("object_type" in subobject) {
                     const response = inner(subobject);
-                    if (subobject.object_id !== response.object_id) id_mapping[subobject.object_id] = response.object_id;
+                    if (subobject.subobject_id !== response.object_id) id_mapping[subobject.subobject_id] = response.object_id;
                 }
             })
         }
@@ -147,7 +148,7 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
             // map subobject IDs to new values & remove non-composite props
             data = data as CompositeData;
             data = { ...data, subobjects: data.subobjects.map(subobject => {
-                    const object_id = id_mapping[subobject.object_id] || subobject.object_id;
+                    const object_id = id_mapping[subobject.subobject_id] || subobject.subobject_id;
                     return { ...compositeSubobjectBase.parse(subobject), object_id };
                 })
             };
@@ -214,7 +215,7 @@ const toDoListData = z.object({
 
 /** Subobject props without props passed for update */
 const compositeSubobjectBase = z.object({
-    object_id: int,
+    subobject_id: int,
     row: nonNegativeInt,
     column: nonNegativeInt,
     selected_tab: nonNegativeInt,
@@ -226,7 +227,7 @@ const compositeSubobjectBase = z.object({
 /** Subobject attributes can be passed along with basic props */
 const compositeSubobjectWithAttributesBase = objectsUpdateAttributes
     .omit({ object_id: true, added_tags: true, removed_tag_ids: true })
-    .merge(z.object({ object_id: int }))
+    // .merge(z.object({ object_id: int }))
     .merge(compositeSubobjectBase)
 ;
 

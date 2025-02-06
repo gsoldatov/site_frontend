@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { 
-    int, intIndex, positiveInt, positiveIntArray, nonNegativeInt, timestampOrEmptyString, timestampString
+    int, intIndex, positiveInt, positiveIntArray, nonNegativeInt, timestampOrNull, timestampString
 } from "../../../../util/types/common";
 import { objectType } from "../../../../store/types/data/objects";
 import type { FetchResult } from "../../../fetch-runner";
@@ -12,7 +12,7 @@ export const objectsUpdateAttributes = z.object({
     object_description: z.string(),
     is_published: z.boolean(),
     display_in_feed: z.boolean(),
-    feed_timestamp: timestampOrEmptyString,
+    feed_timestamp: timestampOrNull,
     show_description: z.boolean(),
     owner_id: positiveInt.optional(),
     added_tags: positiveInt.or(z.string().min(1)).array().optional(),
@@ -43,7 +43,7 @@ const toDoListData = z.object({
 
 /** Subobject props without props passed for update */
 const compositeSubobjectBase = z.object({
-    object_id: int,
+    subobject_id: int,
     row: nonNegativeInt,
     column: nonNegativeInt,
     selected_tab: nonNegativeInt,

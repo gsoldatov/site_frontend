@@ -363,7 +363,7 @@ describe("Object display properties", () => {
                 const { feedTimestampContainer } = getObjectDisplayControls(container);
                 let rdtElements = getReactDatetimeElements(feedTimestampContainer);
                 fireEvent.change(rdtElements.input, { target: { value: "" }});
-                expect(store.getState().editedObjects[objectID].feed_timestamp).toEqual("");
+                expect(store.getState().editedObjects[objectID].feed_timestamp).toEqual(null);
 
                 // Set feed timestamp to `newDate`
                 const now = new Date();
@@ -393,7 +393,7 @@ describe("Object display properties", () => {
             const { feedTimestampContainer } = getObjectDisplayControls(container);
             let rdtElements = getReactDatetimeElements(feedTimestampContainer);
             fireEvent.change(rdtElements.input, { target: { value: "" }});
-            expect(store.getState().editedObjects[1].feed_timestamp).toEqual("");
+            expect(store.getState().editedObjects[1].feed_timestamp).toEqual(null);
 
             // Set feed timestamp to `newDate`
             const now = new Date();

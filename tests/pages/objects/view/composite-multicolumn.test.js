@@ -191,7 +191,7 @@ describe("Expand/collapse toggle", () => {
         await waitFor(() => {
             expect(backend.history.getMatchingRequestsCount("/objects/update")).toEqual(1);
             const { body } = backend.history.getMatchingRequests("/objects/update")[0].requestContext;
-            const changedSubobjectData = body.object.object_data.subobjects.filter(so => so.object_id === changedSubobjectID)[0];
+            const changedSubobjectData = body.object.object_data.subobjects.filter(so => so.subobject_id === changedSubobjectID)[0];
             expect(changedSubobjectData.is_expanded).toEqual(true);
         });
     });

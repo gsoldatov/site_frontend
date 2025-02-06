@@ -11,8 +11,10 @@ import StyleDisplayControls from "../../../../styles/modules/edit/display-contro
  * 
  * Implements UI logic only. Specific props should be provided by a wrapper component.
  */
-export const DisplayControlTimestampSelector = memo(({ stringTimestamp, onChange, label }) => {
+export const DisplayControlTimestampSelector = memo(({ stringTimestampOrNull, onChange, label }) => {
     // Set correct value for <Datetime> component
+    const stringTimestamp = stringTimestampOrNull === null ? "": stringTimestampOrNull; // new Date(null) returns a valid date,
+                                                                                        // so null is replaced with "", which will not
     let timestamp = new Date(stringTimestamp);              // `Date` object if `stringTimestamp` contains a valid date
     if (isNaN(timestamp.getTime())) timestamp = undefined;  // undefined otherwise
 

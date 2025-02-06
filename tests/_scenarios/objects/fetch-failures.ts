@@ -34,7 +34,7 @@ export function addNonExistingObjectsForObjectsView(this: RouteHandler, objectID
         object_ids = object_ids.filter(id => !objectIDs.includes(id));
         object_data_ids = object_data_ids.filter(id => !objectIDs.includes(id));
 
-        if (object_data_ids.length === 0 && object_data_ids.length === 0) return { status: 4040, body: { _error: "Objects not found." }};
+        if (object_data_ids.length === 0 && object_data_ids.length === 0) return { status: 404, body: { _error: "Objects not found." }};
 
         requestContext = { ...requestContext, body: {
             ...requestContext.body, object_ids, object_data_ids

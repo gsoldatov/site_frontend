@@ -44,8 +44,8 @@ export class EditedCompositeUpdaters {
                 return {
                     ...object_data,
                     subobjects: object_data.subobjects.map(so => {
-                        const object_id = IDMapping[so.object_id] !== undefined ? IDMapping[so.object_id] : so.object_id;
-                        return { ...so, object_id };
+                        const subobject_id = IDMapping[so.subobject_id] !== undefined ? IDMapping[so.subobject_id] : so.subobject_id;
+                        return { ...so, subobject_id };
                     })
                 };
             default:
@@ -325,7 +325,7 @@ const updateSubobjectsOnSave = (state: State, objectID: number, update: ParamsUp
     const objectUpdateTimeStamp = object.modified_at;
     const IDMapping = object.object_data!.id_mapping;
     if (!("subobjects" in object_data)) throw Error("Missing `subobjects` in object_data.");
-    const modifiedExistingSubobjectIDs = object_data.subobjects.filter(so => so.object_id > 0 && "object_name" in so).map(so => so.object_id);
+    const modifiedExistingSubobjectIDs = object_data.subobjects.filter(so => so.subobject_id > 0 && "object_name" in so).map(so => so.subobject_id);
     let newEditedObjects: EditedObjects = {}, newObjectsTags: ObjectsTags = {};
     for (let oldObjectID of Object.keys(newState.editedObjects).map(id => parseInt(id))) {
         const isNewSubobject = IDMapping[oldObjectID] !== undefined;
@@ -376,7 +376,7 @@ const updateSubobjectsOnSave = (state: State, objectID: number, update: ParamsUp
     // Update row positions of non-deleted objects.
     const newRowPositions: Record<number, number> = {};
     object_data.subobjects.forEach(so => {
-        newRowPositions[so.object_id] = so.row;
+        newRowPositions[so.subobject_id] = so.row;
     });
     const newComposite = { ...newState.editedObjects[objectID].composite };
     const newSubobjects: CompositeSubobjects["subobjects"] = {};

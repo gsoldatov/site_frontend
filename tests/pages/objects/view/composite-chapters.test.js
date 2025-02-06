@@ -80,8 +80,10 @@ describe("Table of contents", () => {
                 const filteredObjectIDs = ["401", "3911"];
                 
                 const result = handler(body);
-                result.body.objects = result.body.objects.filter(o => filteredObjectIDs.indexOf(o.object_id.toString()) === -1);
-                result.body.object_data = result.body.object_data.filter(d => filteredObjectIDs.indexOf(d.object_id.toString()) === -1);
+                result.body.objects_attributes_and_tags = result.body.objects_attributes_and_tags.filter(
+                    o => filteredObjectIDs.indexOf(o.object_id.toString()) === -1);
+                result.body.objecst_data = result.body.objects_data.filter(
+                    d => filteredObjectIDs.indexOf(d.object_id.toString()) === -1);
                 
                 return result;
             }});
@@ -250,7 +252,7 @@ describe("Table of contents", () => {
             addCustomRouteResponse("/objects/view", "POST", { generator: (body, handler) => {
                 // Add custom tag IDs for root composite object                
                 const result = handler(body);
-                result.body.objects = result.body.objects.map(o => {
+                result.body.objects = result.body.objects_attributes_and_tags.map(o => {
                     if (o.object_id === 3910) o.current_tag_ids = [101, 102, 103, 104, 105, 106];
                     return o;
                 });
@@ -383,7 +385,7 @@ describe("Chapter object", () => {
             // Throw network error when fetching object data for the chapter
             const result = handler(body);
             let isChapterDataInResponse = false;
-            for (let d of result.body.object_data)
+            for (let d of result.body.objects_data)
                 if (d.object_id === 401) {
                     isChapterDataInResponse = true;
                     break;

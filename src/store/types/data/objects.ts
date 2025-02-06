@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { nameString, positiveInt, positiveIntIndex, timestampOrEmptyString, timestampString } from "../../../util/types/common";
+import { nameString, positiveInt, positiveIntIndex, timestampOrNull, timestampString } from "../../../util/types/common";
 
 
 /** Object type enum schema */
@@ -17,7 +17,7 @@ export const object = z.object({
     object_description: z.string(),
     is_published: z.boolean(),
     display_in_feed: z.boolean(),
-    feed_timestamp: timestampOrEmptyString,
+    feed_timestamp: timestampOrNull,
     show_description: z.boolean(),
     owner_id: positiveInt
 });

@@ -538,7 +538,7 @@ describe("Feed timestamp", () => {
             clickSubobjectCardDisplayTabButton(subobjectCard);
 
             // Check default value
-            expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual("");
+            expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual(null);
 
             // Set feed timestamp to `newDate`
             const now = new Date();
@@ -548,7 +548,7 @@ describe("Feed timestamp", () => {
 
             // Reset subobject
             resetSubobject(subobjectCard);
-            expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual("");
+            expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual(null);
         }
     });
 
@@ -578,7 +578,7 @@ describe("Feed timestamp", () => {
         clickSubobjectCardDisplayTabButton(subobjectCard);
 
         // Check default value
-        expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual("");
+        expect(store.getState().editedObjects[subobjectID].feed_timestamp).toEqual(null);
 
         // Set feed timestamp to `newDate`
         const now = new Date();

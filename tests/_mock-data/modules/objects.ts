@@ -46,7 +46,7 @@ interface ToDoListData {
 interface PartialToDoListData extends Omit<Partial<ToDoListData>, "items"> { items?: PartialToDoListItemData[] };
 
 export interface CompositeSubobjectData {
-    object_id: number,
+    subobject_id: number,
     column: number,
     row: number,
     selected_tab: number,
@@ -279,9 +279,9 @@ export class ObjectGenerator {
      * Note that `object_id` represents id of the subobject being generated.
      */
     compositeDataSubobject(customValues?: PartialCompositeSubobjectData): CompositeSubobjectData {
-        let { object_id, column, row, selected_tab, is_expanded, show_description_composite, show_description_as_link_composite } = customValues || {};
+        let { subobject_id, column, row, selected_tab, is_expanded, show_description_composite, show_description_as_link_composite } = customValues || {};
         return {
-            object_id: object_id || 101,
+            subobject_id: subobject_id || 101,
             column: column || 0,
             row: row || 0,
             selected_tab: selected_tab || 0,

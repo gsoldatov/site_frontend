@@ -292,10 +292,10 @@ export const objectsEditLoadCompositeSubobjectsFetch = (objectID: number) => {
             }
 
             // Set fetch error for subobjects which were not fetched
-            if (!("objects" in objectsViewResult)) throw Error("Missing objects in successful fetch result.");
-            let returnedObjectIDs = objectsViewResult["objects"].map(object => object.object_id);
+            if (!("objects_attributes_and_tags" in objectsViewResult)) throw Error("Missing objects in successful fetch result.");
+            let returnedObjectIDs = objectsViewResult["objects_attributes_and_tags"].map(object => object.object_id);
             let notFoundObjectIDs = subobjectIDsWithMissingAttributesOrTags.filter(objectID => returnedObjectIDs.indexOf(objectID) === -1);
-            let returndedObjectDataIDs = objectsViewResult["object_data"].map(object => object.object_id);
+            let returndedObjectDataIDs = objectsViewResult["objects_data"].map(object => object.object_id);
             notFoundObjectIDs = notFoundObjectIDs.concat(subobjectIDsWithMissingData.filter(objectID => returndedObjectDataIDs.indexOf(objectID) === -1));
             if (notFoundObjectIDs.length > 0)
                 dispatch(updateEditedComposite(objectID, { command: "setSubobjectsFetchError", 

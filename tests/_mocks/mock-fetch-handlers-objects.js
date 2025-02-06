@@ -68,8 +68,8 @@ export function handleView(body) {
     if (object_ids.length === 0 && object_data_ids.length === 0)
         return { status: 404, body: { _error: "Objects not found." }};
 
-    // Set objects list
-    let objects = object_ids.map(id => {
+    // Set `objects_attributes_and_tags` list
+    let objects_attributes_and_tags = object_ids.map(id => {
         if (_cachedObjects.hasOwnProperty(id)) {
             let object = _cachedObjects[id];
             if (object.hasOwnProperty("tag_updates")) {
@@ -83,8 +83,8 @@ export function handleView(body) {
         return generateObjectAttributes(id);
     });
 
-    // Set object_data list
-    let object_data = object_data_ids.map(id => {
+    // Set `objects_data` list
+    let objects_data = object_data_ids.map(id => {
         if (_cachedObjectData.hasOwnProperty(id)) {
             let data = _cachedObjectData[id];
             delete _cachedObjectData[id];
@@ -95,7 +95,7 @@ export function handleView(body) {
     });
 
     // Send response
-    return { status: 200, body: { objects: objects, object_data: object_data }};
+    return { status: 200, body: { objects_attributes_and_tags, objects_data }};
 }
 
 

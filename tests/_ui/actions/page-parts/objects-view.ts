@@ -188,12 +188,12 @@ export class ObjectsViewCardActions {
         if (subobjects.length !== numberOfDisplayedCards) throw Error(`Expected ${subobjects.length} cards, but found ${numberOfDisplayedCards}.`);
 
         subobjects.forEach(subobject => {
-            const { object_id, column, row } = subobject;
+            const { subobject_id, column, row } = subobject;
 
             if (displayedColumns.length < column) throw Error(`Column ${column} not found.`);
             if (!displayedColumns[column][row]) throw Error(`Card not found at [${column}][${row}].`);
             const cardLayout = new ObjectsViewCardLayout(displayedColumns[column][row].card);
-            if (cardLayout.objectID !== object_id.toString()) throw Error(`Expected subobject ID '${object_id}' at [${column}][${row}], found '${cardLayout.objectID}'.`);
+            if (cardLayout.objectID !== subobject_id.toString()) throw Error(`Expected subobject ID '${subobject_id}' at [${column}][${row}], found '${cardLayout.objectID}'.`);
         })
     }
 }

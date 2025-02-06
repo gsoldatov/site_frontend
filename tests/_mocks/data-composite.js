@@ -16,10 +16,10 @@ import { ObjectsTransformers } from "../../src/store/transformers/data/objects";
 export const mapAndCacheNewSubobjects = (requestObjectData, createdAt, modifiedAt) => {
     const id_mapping = {};
     requestObjectData.subobjects.forEach(subobject => {
-        if (subobject.object_id < 0 && subobject.object_type !== undefined) {
-            let newID = getMappedSubobjectID(subobject.object_id, subobject.object_type);
-            if (newID === undefined) throw Error (`Received an unexpected object_type "${subobject.object_type}" when mapping subobject id ${subobject.object_id}`);
-            id_mapping[subobject.object_id] = newID;
+        if (subobject.subobject_id < 0 && subobject.object_type !== undefined) {
+            let newID = getMappedSubobjectID(subobject.subobject_id, subobject.object_type);
+            if (newID === undefined) throw Error (`Received an unexpected object_type "${subobject.object_type}" when mapping subobject id ${subobject.subobject_id}`);
+            id_mapping[subobject.subobject_id] = newID;
 
             _cachedObjects[newID] = { 
                 object_id: newID, 
@@ -74,11 +74,11 @@ export const mapAndCacheNewSubobjects = (requestObjectData, createdAt, modifiedA
 /**
  * Returns composite subobject object data (for the `subobjects` array of composite object data).
  * 
- * Accepts `object_id`, `column`, `row` and, optionally, other object attributes inside `overrideValues` object.
+ * Accepts `subobject_id`, `column`, `row` and, optionally, other object attributes inside `overrideValues` object.
  * 
  * NOTE: this function must be updated when any changes to composite subobject data structure are made.
  */
-export const generateCompositeSubobject = (object_id, column, row, overrideValues = {}) => {
+export const generateCompositeSubobject = (subobject_id, column, row, overrideValues = {}) => {
     const defaultSubobjectValues = {
         selected_tab: 0,
         is_expanded: true,
@@ -89,7 +89,7 @@ export const generateCompositeSubobject = (object_id, column, row, overrideValue
     for (let attr of Object.keys(overrideValues))
         if (!(attr in defaultSubobjectValues)) throw Error(`getCompositeSubobject received an incorrect attribute name in 'overrideValues' object: '${attr}'`);
 
-    const result = { object_id, column, row };
+    const result = { subobject_id, column, row };
     for (let attr of Object.keys(defaultSubobjectValues))
         result[attr] = attr in overrideValues ? overrideValues[attr] : defaultSubobjectValues[attr];
     

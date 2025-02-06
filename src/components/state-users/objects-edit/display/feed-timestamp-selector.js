@@ -18,10 +18,10 @@ export const FeedTimestampSelector = ({ objectID }) => {
     // onChange handler
     const onChange = useMemo(() => e => {
         const newFeedTimestamp = e._d ? e._d.toISOString() : "";    // `_d` prop contains a date, if it's set; otherwise `e` does not have it
-        dispatch(updateEditedObject(objectID, { feed_timestamp: newFeedTimestamp }))
+        dispatch(updateEditedObject(objectID, { feed_timestamp: newFeedTimestamp }));
     }, [objectID]);
 
     return (
-        <DisplayControlTimestampSelector stringTimestamp={feedTimestamp} onChange={onChange} label="Feed Timestamp" />
+        <DisplayControlTimestampSelector stringTimestampOrNull={feedTimestamp} onChange={onChange} label="Feed Timestamp" />
     );
 };

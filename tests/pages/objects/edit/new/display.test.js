@@ -403,7 +403,7 @@ describe("Feed timestamp", () => {
             clickDisplayTabButton(container);
 
             // Check default value
-            expect(store.getState().editedObjects[0].feed_timestamp).toEqual("");
+            expect(store.getState().editedObjects[0].feed_timestamp).toEqual(null);
 
             // Set feed timestamp to `newDate`
             const now = new Date();
@@ -413,7 +413,7 @@ describe("Feed timestamp", () => {
 
             // Reset object
             resetObject(container, false);
-            expect(store.getState().editedObjects[0].feed_timestamp).toEqual("");
+            expect(store.getState().editedObjects[0].feed_timestamp).toEqual(null);
             const { feedTimestampContainer } = getObjectDisplayControls(container);
             const { input } = getReactDatetimeElements(feedTimestampContainer);
             expect(input.textContent).toEqual("");
@@ -436,7 +436,7 @@ describe("Feed timestamp", () => {
         clickDisplayTabButton(container);
 
         // Check default value
-        expect(store.getState().editedObjects[0].feed_timestamp).toEqual("");
+        expect(store.getState().editedObjects[0].feed_timestamp).toEqual(null);
 
         // Set feed timestamp to `newDate`
         const now = new Date();

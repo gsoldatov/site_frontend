@@ -259,7 +259,7 @@ describe("Object feed card", () => {
         // Show description for a particular object & hide for other
         addCustomRouteResponse("/objects/view", "POST", { generator: (body, handler) => {
             const response = handler(body);
-            response.body.objects.forEach(o => {
+            response.body.objects_attributes_and_tags.forEach(o => {
                 if (o.object_id === 10) o.show_description = true;
                 else o.show_description = false;
             });

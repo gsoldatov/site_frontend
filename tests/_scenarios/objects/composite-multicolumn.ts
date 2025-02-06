@@ -9,11 +9,11 @@ export const basicCompositeMulticolumnObject = (objectID: number) => {
     const backend = getBackend();
     backend.cache.objects.update(1, { object_type: "composite" }, { 
         display_mode: "multicolumn", subobjects: [
-            { object_id: objectID + 1, column: 0, row: 0, is_expanded: true },
-            { object_id: objectID + 2, column: 0, row: 1, is_expanded: false },
-            { object_id: objectID + 3, column: 1, row: 0, is_expanded: true },
-            { object_id: objectID + 4, column: 1, row: 1, is_expanded: false },
-            { object_id: objectID + 5, column: 2, row: 0, is_expanded: true },
+            { subobject_id: objectID + 1, column: 0, row: 0, is_expanded: true },
+            { subobject_id: objectID + 2, column: 0, row: 1, is_expanded: false },
+            { subobject_id: objectID + 3, column: 1, row: 0, is_expanded: true },
+            { subobject_id: objectID + 4, column: 1, row: 1, is_expanded: false },
+            { subobject_id: objectID + 5, column: 2, row: 0, is_expanded: true },
         ]});
     
     backend.cache.objects.update(objectID + 1, { object_type: "link" });

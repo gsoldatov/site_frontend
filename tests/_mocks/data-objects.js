@@ -159,7 +159,7 @@ export const addCustomResponsesForSinglePageTagsView = () => {
     // Set custom object data
     addCustomRouteResponse("/objects/view", "POST", { generator: (body, handler) => {
         const response = handler(body);
-        response.body.objects.forEach(o => {
+        response.body.objects_attributes_and_tags.forEach(o => {
             if (o.object_id === 5) {
                 o.show_description = true;
                 o.current_tag_ids = firstObjectTagIDs;

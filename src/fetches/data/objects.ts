@@ -145,9 +145,10 @@ export const objectsViewFetch = (objectIDs: (string | number)[] = [], objectData
         if (objectIDsLength === 0 && objectDataIDsLength === 0) return FetchResult.fetchNotRun();
 
         // Fetch backend
-        const body: { object_ids?: number[], object_data_ids?: number[] } = {};
-        if (objectIDsLength > 0) body.object_ids = objectIDs.map(id => parseInt(id as string));
-        if (objectDataIDsLength > 0) body.object_data_ids = objectDataIDs.map(id => parseInt(id as string));
+        const body = {
+            object_ids: objectIDsLength > 0 ? objectIDs.map(id => parseInt(id as string)) : [],
+            object_data_ids: objectDataIDsLength > 0 ? objectDataIDs.map(id => parseInt(id as string)) : []
+        };
         
         const runner = new FetchRunner("/objects/view", { method: "POST", body });
         const result = await runner.run();
@@ -158,24 +159,24 @@ export const objectsViewFetch = (objectIDs: (string | number)[] = [], objectData
                 const data = objectsViewResponseSchema.parse(result.json);
 
                 // Add objects data
-                if (data["object_data"].length > 0) dispatch(addObjectsDataFromBackend(data["object_data"]));
+                if (data["objects_data"].length > 0) dispatch(addObjectsDataFromBackend(data["objects_data"]));
 
                 // Set object attributes & fetch non-cached tags
-                if (data["objects"].length > 0) {
-                    dispatch(addObjectsAttributes(data["objects"]));
-                    dispatch(addObjectsTags(data["objects"]));
+                if (data["objects_attributes_and_tags"].length > 0) {
+                    dispatch(addObjectsAttributes(data["objects_attributes_and_tags"]));
+                    dispatch(addObjectsTags(data["objects_attributes_and_tags"]));
                     
                     // Fetch non cached tags
                     let allObjectsTags: Set<number> = new Set();
-                    data["objects"].forEach(object => object.current_tag_ids.forEach(tagID => allObjectsTags.add(tagID)));
+                    data["objects_attributes_and_tags"].forEach(object => object.current_tag_ids.forEach(tagID => allObjectsTags.add(tagID)));
                     const fetchMissingTagsResult = await dispatch(fetchMissingTags([...allObjectsTags]));
 
                     // Handle tag fetch errors
                     if (fetchMissingTagsResult.failed) return fetchMissingTagsResult;
                 }
                 
-                const { objects, object_data } = data;
-                return result.withCustomProps({ objects, object_data });
+                const { objects_attributes_and_tags, objects_data } = data;
+                return result.withCustomProps({ objects_attributes_and_tags, objects_data });
             case 404:
                 result.error = Math.max(objectIDs.length, objectDataIDs.length) > 1 ? "Objects not found." : "Object not found.";
                 return result;
