@@ -1,4 +1,4 @@
-import { hasEqualAttributes as h } from "../../src/util/equality-checks";
+import { hasEqualAttributes as h } from "../../../src/util/equality-checks";
 
 
 const _PRIMITIVES = ["str", 1, BigInt(9007199254740991), true, null, undefined];

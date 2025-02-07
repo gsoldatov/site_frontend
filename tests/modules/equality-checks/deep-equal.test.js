@@ -1,4 +1,4 @@
-import { deepEqual } from "../../src/util/equality-checks";
+import { deepEqual } from "../../../src/util/equality-checks";
 
 
 const _PRIMITIVES = ["str", 1, BigInt(9007199254740991), true, null, undefined];
@@ -138,7 +138,6 @@ test("Sets", () => {
     a = new Set([ new Set([ {x: 1} ]) ]), b = new Set([ new Set([ {x: 1} ]) ]);
     expect(deepEqual(a, b)).toBeTruthy();
 });
-
 
 
 test("Nested objects", () => {
