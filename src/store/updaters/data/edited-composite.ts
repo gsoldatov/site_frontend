@@ -357,13 +357,14 @@ const updateSubobjectsOnSave = (state: State, objectID: number, update: ParamsUp
     // Filter new & modified existing subobjects and map new subobject IDs from object_data
     let subobjectsToAddToState = object_data.subobjects.filter(so => "object_name" in so).map(so => {
         const newSO = deepCopy(so);
-        const newObjectID = IDMapping[so.object_id];
+        const newObjectID = IDMapping[so.subobject_id];
         if (newObjectID !== undefined) {
             newSO.object_id = newObjectID;
             newSO.created_at = objectUpdateTimeStamp;
             newSO.modified_at = objectUpdateTimeStamp;
         } else {
-            newSO.created_at = newState.objects[so.object_id].created_at;
+            newSO.object_id = newSO.subobject_id;
+            newSO.created_at = newState.objects[so.subobject_id].created_at;
             newSO.modified_at = objectUpdateTimeStamp;
         }
         return newSO;

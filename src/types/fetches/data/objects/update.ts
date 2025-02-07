@@ -55,7 +55,7 @@ const compositeSubobjectBase = z.object({
 /** Subobject attributes can be passed along with basic props */
 const compositeSubobjectWithAttributesBase = objectsUpdateAttributes
     .omit({ object_id: true, added_tags: true, removed_tag_ids: true })
-    .merge(z.object({ object_id: int }))
+    // .merge(z.object({ object_id: int }))
     .merge(compositeSubobjectBase)
 ;
 

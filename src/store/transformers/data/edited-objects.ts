@@ -108,6 +108,7 @@ const editedObjectDataToBackend = (state: State, editedObject: EditedObject): Ob
                     ) {
                         // Attributes
                         subobject = { ...subobject, ...eso };
+                        delete subobject["object_id"];
                         
                         // Data
                         subobject.object_data = editedObjectDataToBackend(state, eso);

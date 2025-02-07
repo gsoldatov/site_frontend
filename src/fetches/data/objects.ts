@@ -224,7 +224,7 @@ export const objectsDeleteFetch = (object_ids: (string | number)[], delete_subob
     return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         // Fetch backend
         object_ids = object_ids.map(id => parseInt(id as string));
-        const runner = new FetchRunner("/objects/delete", { method: "DELETE", body: { object_ids }});
+        const runner = new FetchRunner("/objects/delete", { method: "DELETE", body: { object_ids, delete_subobjects }});
         const result = await runner.run();
 
         // Handle response
