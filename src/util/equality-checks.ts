@@ -71,7 +71,7 @@ export const getInequalAttributes = (a: any, b: any, exclusions: string[][] = []
         
         // General object check
         let keys = Object.keys(a);
-        if (!(deepEqual(keys, Object.keys(b)))) return [currPath];
+        if (!(deepEqual(keys.sort(), Object.keys(b).sort()))) return [currPath];
 
         let result: string[][] = [];
         for (let k of keys) {

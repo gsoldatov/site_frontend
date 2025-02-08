@@ -52,6 +52,13 @@ test("Objects", () => {
 
     a = {x: 1}, b = {x: 1};
     expect(deepEqual(a, b)).toBeTruthy();
+
+    // Order of keys does not matter
+    a = {x: 1, y: 2}, b = {y: 2, x: 1};
+    expect(deepEqual(a, b)).toBeTruthy();
+
+    a = {x: 1, y: 2}, b = {y: 2, x: 0};
+    expect(deepEqual(a, b)).toBeFalsy();
 });
 
 
