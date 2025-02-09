@@ -1,9 +1,10 @@
 import { DataGenerator } from "../../_mock-data/data-generator";
 
 import { AuthStoreManager } from "./modules/auth";
-import { EditedObjectsStoreManager } from "./modules/edited-objects";
-import { ObjectsStoreManager } from "./modules/objects";
 import { UsersStoreManager } from "./modules/users";
+import { TagsStoreManager } from "./modules/tags";
+import { ObjectsStoreManager } from "./modules/objects";
+import { EditedObjectsStoreManager } from "./modules/edited-objects";
 
 import type { AppStore } from "../../../src/types/store/store";
 
@@ -17,6 +18,7 @@ export class StoreManager {
 
     auth: AuthStoreManager
     users: UsersStoreManager
+    tags: TagsStoreManager
     objects: ObjectsStoreManager
     editedObjects: EditedObjectsStoreManager
     
@@ -26,8 +28,8 @@ export class StoreManager {
 
         this.auth = new AuthStoreManager(this.store, this.generator);
         this.users = new UsersStoreManager(this.store, this.generator);
+        this.tags = new TagsStoreManager(this.store, this.generator);
         this.objects = new ObjectsStoreManager(this.store, this.generator);
-
         this.editedObjects = new EditedObjectsStoreManager(this.store, this.generator);
     }
 }

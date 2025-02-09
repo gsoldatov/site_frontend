@@ -150,7 +150,7 @@ export class ObjectGenerator {
      * Any overrides of default values can be passed in `object_data`
      * (including to-do list items & composite subobjects with partially defined values).
      */
-    data<T extends ObjectType>(object_id: number, object_type: T, object_data: PartialObjectData<T>): ObjectData<T> {
+    data<T extends ObjectType>(object_id: number, object_type: T, object_data?: PartialObjectData<T>): ObjectData<T> {
         // NOTE: `object_data` props are correctly narrowed by `object_type` value outside of function, when using currently implemented typing with generics;
         // however, additional type assertions are required:
         // 1) for `object_data` is required when calling object type specific data generation function;
