@@ -34,7 +34,7 @@ export class EditedObjectsSelectors {
                 );
             }
         }
-        return result;
+        return [...new Set(result)];
     }
 
     /**
@@ -87,8 +87,10 @@ export class EditedObjectsSelectors {
                     result.add(currentObjectID);
 
                     // Add composite subobjects for further checks
-                    if (editedObject.object_type === "composite")
-                        Object.keys(editedObject.composite.subobjects).map(id => parseInt(id)).forEach(id => queue.push(id));
+                    // (check non-composite edited objects as well
+                    // (for the case of a new `rootObjectID` of non-composite type with previously added subobjects))
+                    // // if (editedObject.object_type === "composite")
+                    Object.keys(editedObject.composite.subobjects).map(id => parseInt(id)).forEach(id => queue.push(id));
                 }
             }
         }
