@@ -204,4 +204,4 @@ const setAuthInfo = (auth: Auth) => {
  * Returns a localStorage key for the provided `objectID`.
  */
 const getEditedObjectKey = (objectID: string | number) => `editedObject_${objectID}`;
-const editedObjectKeyRegex = /^editedObject_(\d+)$/;
+const editedObjectKeyRegex = /^editedObject_([-]?\d+)$/;
