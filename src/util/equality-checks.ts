@@ -32,12 +32,7 @@ export const getInequalAttributes = (a: any, b: any, exclusions: string[] = []):
             // Exclusion matches current path
             return true;
         });
-        // console.log(`currPath = ${JSON.stringify(currPath)}`)
-        // console.log(`splitCurrPath = ${JSON.stringify(splitCurrPath)}`)
-        // console.log(`exclusions = ${JSON.stringify(exclusions)}`)
-        // console.log(`splitExclusions = ${JSON.stringify(splitExclusions)}`)
-        // console.log(`disableRecursion = ${JSON.stringify(disableRecursion)}`)
-        // console.log(`matchingExclusions = ${JSON.stringify(matchingExclusions)}`)
+        
         if (matchingExclusions.length > 0) return [];
 
         // Check if types are the same
@@ -119,10 +114,12 @@ export const getInequalAttributes = (a: any, b: any, exclusions: string[] = []):
 /**
  * Returns true if `a` is deeply equal to `b` (cyclic references are not supported).
  * 
+ * `exclusions` can contain a list of dot-separated paths, as accepted by `getInequalAttributes`.
+ * 
  * NOTE: if this function is decoupled from `getInequalAttributes`, test cases of the latter must be updated.
  */
-export const deepEqual = (a: any, b: any): boolean => {
-    return getInequalAttributes(a, b, []).length === 0;
+export const deepEqual = (a: any, b: any, exclusions: string[] = []): boolean => {
+    return getInequalAttributes(a, b, exclusions).length === 0;
 };
 
 
@@ -189,7 +186,6 @@ export const deepEqual = (a: any, b: any): boolean => {
  * 
  * Same non-object types and nulls are considered to have equal attributes.
  * Diffrent types and objects with different constructors are consiredered to have different attributes.
- * 
  */
 export const hasEqualAttributes = (a: any, b: any) => {
     // Different types are considered to always have different attributes.

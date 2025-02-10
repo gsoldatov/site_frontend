@@ -41,7 +41,7 @@ test("Objects", () => {
     a = {}, b = null;
     expect(deepEqual(a, b)).toBeFalsy();
 
-    a = {x: 1}, {x: 1, y: 2};
+    a = {x: 1}, b = {x: 1, y: 2};
     expect(deepEqual(a, b)).toBeFalsy();
 
     a = {x: 1}, b = {x: 2};
@@ -168,4 +168,15 @@ test("Nested objects", () => {
 
     a = {x: 1, y: [{x: 1}]}, b = {x: 1, y: [{x: 1}]};
     expect(deepEqual(a, b)).toBeTruthy();
+});
+
+
+test("Exclusions", () => {
+    // Check if exclusions are propagated to `getInEqualAttributes`
+    // (detailed exclusion options are checked in the test cases for that function).
+    const a = {x: 1}, b = {x: 2};
+    expect(deepEqual(a, b)).toBeFalsy();
+    
+    const exclusions = ["x"];
+    expect(deepEqual(a, b, exclusions)).toBeTruthy();
 });
