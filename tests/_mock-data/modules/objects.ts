@@ -9,7 +9,7 @@ export interface ObjectAttributes {
     modified_at: string,
     is_published: boolean,
     display_in_feed: boolean,
-    feed_timestamp: string,
+    feed_timestamp: string | null,
     show_description: boolean,
     owner_id: number,
     current_tag_ids: number[]
@@ -116,7 +116,7 @@ export class ObjectGenerator {
         }
 
         if (feed_timestamp  === undefined) {
-            if (object_id < 0) feed_timestamp = "";
+            if (object_id < 0) feed_timestamp = null;
             else {
                 const now = new Date();
                 const date = new Date(now.getFullYear(), now.getMonth(), 1, /*0, Math.abs(object_id)*/);
