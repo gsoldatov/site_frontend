@@ -151,10 +151,10 @@ describe("Data", () => {
     });
 
 
-    test("Markdown changes are persisted", () => {
-        for (let [attr, value] of [
-            ["raw_text", "raw text"],
-            // ["parsed", "parsed text"],   // parsed text is ignored
+    test("Markdown changes", () => {
+        for (let [attr, value, expectedToPersist] of [
+            ["raw_text", "raw text", true],
+            ["parsed", "parsed text", false]
         ]) {
             // Add an existing object, update its markdown attribute & check if update persists
             const storeManager = createTestStore(), { store } = storeManager;
@@ -166,7 +166,8 @@ describe("Data", () => {
             expect(store.getState()).toHaveProperty(`editedObjects.1.markdown.${attr}`, value);
 
             store.dispatch(clearUnchangedEditedObjects(1));
-            expect(store.getState()).toHaveProperty(`editedObjects.1.markdown.${attr}`, value);
+            if (expectedToPersist) expect(store.getState()).toHaveProperty(`editedObjects.1.markdown.${attr}`, value);
+            else expect(store.getState()).not.toHaveProperty("editedObjects.1");
         }
     });
 

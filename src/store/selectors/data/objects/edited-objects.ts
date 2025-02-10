@@ -136,7 +136,11 @@ export class EditedObjectsSelectors {
         if (editedObject === undefined)
             throw new ObjectMissingInStoreError(`Edited object '${objectID}' is missing.`);
 
-        return !deepEqual(state.editedObjects[objectID], getEditedObjectState({ object_id: objectID, owner_id: state.auth.user_id }));
+        return !deepEqual(
+            state.editedObjects[objectID],
+            getEditedObjectState({ object_id: objectID, owner_id: state.auth.user_id }),
+            ["markdown.parsed"]
+        );
     }
 
     /**
