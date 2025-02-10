@@ -25,7 +25,7 @@ export class ObjectsStoreManager {
      * 
      * `data` can contain partially defined to-do list items & subobjects.
      */
-    addObject<T extends ObjectType = "link">(
+    add<T extends ObjectType = "link">(
         object_id: number,
         customValues: { 
             attributes?: Partial<ObjectAttributesWithType<T>>,

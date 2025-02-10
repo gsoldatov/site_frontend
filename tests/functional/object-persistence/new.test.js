@@ -226,7 +226,7 @@ describe("Composite subobjects", () => {
     test("New subobjects of a nested composite object are persisted", () => {
         // Add an existing composite with 2 new subobjects
         const storeManager = createTestStore(), { store } = storeManager;
-        storeManager.objects.addObject(100, {
+        storeManager.objects.add(100, {
             attributes: { object_type: "composite" }, data: {subobjects: []}
         });
         storeManager.editedObjects.reset([100]);
@@ -260,7 +260,7 @@ describe("Composite subobjects", () => {
     test("Existing subobjects of a composite object", () => {
         // Add a new composite with 2 existing subobjects
         const storeManager = createTestStore(), { store } = storeManager;
-        for (let i of [101, 102]) storeManager.objects.addObject(i);
+        for (let i of [101, 102]) storeManager.objects.add(i);
         storeManager.editedObjects.reset([0, 101, 102]);
         for (let i of [0, 101, 102]) expect(store.getState()).toHaveProperty(`editedObjects.${i}`);
 
@@ -277,7 +277,7 @@ describe("Composite subobjects", () => {
         store.dispatch(clearUnchangedEditedObjects(0));
         for (let i of [0, 102]) expect(store.getState()).toHaveProperty(`editedObjects.${i}`);
 
-        // Check if unmodified subobject were removed
+        // Check if unmodified subobject was removed
         for (let i of [101]) expect(store.getState()).not.toHaveProperty(`editedObjects.${i}`);
     });
 
@@ -285,11 +285,11 @@ describe("Composite subobjects", () => {
     test("Existing subobjects of a nested composite object", () => {
         // Add an existing composite with 2 existing subobjects
         const storeManager = createTestStore(), { store } = storeManager;
-        storeManager.objects.addObject(100, {
+        storeManager.objects.add(100, {
             attributes: { object_type: "composite" },
             data: {subobjects: [{ subobject_id: 101, row: 0 }, { subobject_id: 102, row: 1 }]}
         });
-        for (let i of [101, 102]) storeManager.objects.addObject(i);
+        for (let i of [101, 102]) storeManager.objects.add(i);
         storeManager.editedObjects.reset([100, 101, 102]);
         for (let i of [100, 101, 102]) expect(store.getState()).toHaveProperty(`editedObjects.${i}`);
 
@@ -304,7 +304,7 @@ describe("Composite subobjects", () => {
         storeManager.editedObjects.updateEditedComposite(0, { command: "addExistingSubobject", subobjectID: 100, column: 0, row: 0 });
         expect(store.getState()).toHaveProperty("editedObjects.0.composite.subobjects.100");
 
-        // Check if new object & modified subobject of the latter persist the clear
+        // Check if new object & its modified sub-subobject persist the clear
         store.dispatch(clearUnchangedEditedObjects(0));
         for (let i of [0, 102]) expect(store.getState()).toHaveProperty(`editedObjects.${i}`);
 
@@ -318,7 +318,7 @@ describe("Exclusions from removal", () => {
     test("Unmodified subobject persists, if it's excluded", () => {
         // Add a new composite with 3 existing subobjects
         const storeManager = createTestStore(), { store } = storeManager;
-        for (let i of [101, 102, 103]) storeManager.objects.addObject(i);
+        for (let i of [101, 102, 103]) storeManager.objects.add(i);
         storeManager.editedObjects.reset([0, 101, 102, 103]);
         for (let i of [0, 101, 102, 103]) expect(store.getState()).toHaveProperty(`editedObjects.${i}`);
 
@@ -345,13 +345,13 @@ describe("Exclusions from removal", () => {
     test("Unmodified subobject persists, if its other parent is excluded", () => {
         // Add an existing composite with an existing subobject
         const storeManager = createTestStore(), { store } = storeManager;
-        storeManager.objects.addObject(100, {
+        storeManager.objects.add(100, {
             attributes: { object_type: "composite" }, data: { subobjects: [{ subobject_id: 103 }]}
         });
         storeManager.editedObjects.reset([100]);
 
         // Add a new composite with 3 existing subobjects
-        for (let i of [101, 102, 103]) storeManager.objects.addObject(i);
+        for (let i of [101, 102, 103]) storeManager.objects.add(i);
         storeManager.editedObjects.reset([0, 101, 102, 103]);
         for (let i of [0, 101, 102, 103]) expect(store.getState()).toHaveProperty(`editedObjects.${i}`);
 
@@ -368,7 +368,7 @@ describe("Exclusions from removal", () => {
 
         // Check if new composite, its modified subobject, existing excluded composite and its subobject
         // persist the clear
-        store.dispatch(clearUnchangedEditedObjects(0, 103));
+        store.dispatch(clearUnchangedEditedObjects(0, 100));
         for (let i of [0, 102, 100, 103]) expect(store.getState()).toHaveProperty(`editedObjects.${i}`);
 
         // Check if unmodified unexcluded subobject is removed

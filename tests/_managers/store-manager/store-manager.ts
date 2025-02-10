@@ -6,7 +6,10 @@ import { TagsStoreManager } from "./modules/tags";
 import { ObjectsStoreManager } from "./modules/objects";
 import { EditedObjectsStoreManager } from "./modules/edited-objects";
 
+import { setNewState } from "../../../src/reducers/common";
+
 import type { AppStore } from "../../../src/types/store/store";
+import type { State } from "../../../src/types/store/state";
 
 
 /**
@@ -31,5 +34,12 @@ export class StoreManager {
         this.tags = new TagsStoreManager(this.store, this.generator);
         this.objects = new ObjectsStoreManager(this.store, this.generator);
         this.editedObjects = new EditedObjectsStoreManager(this.store, this.generator);
+    }
+
+    /**
+     * Partially updates state with values from `newState` (top-level attributes only).
+     */
+    updateState(newState: Partial<State>) {
+        this.store.dispatch(setNewState({ ...this.store.getState(), ...newState }));
     }
 }
