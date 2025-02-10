@@ -179,7 +179,7 @@ const _clearUnchangedEditedObjects = (state: State, action: { rootObjectID: numb
 
     // Find unchanged object IDs (existing or object ID = 0)
     const unchangedObjectIDs = hierarchyObjectIDs.filter(id => 
-        (id > 0 && !EditedObjectsSelectors.safeIsModified(state, id, true))
+        (id > 0 && !EditedObjectsSelectors.safeIsModified(state, id, "persist", true))
         || (id === 0 && !EditedObjectsSelectors.isModifiedNew(state, id))
     // Filter excluded object IDs from unchanged list
     ).filter(id => !excludedObjectIDs.includes(id));

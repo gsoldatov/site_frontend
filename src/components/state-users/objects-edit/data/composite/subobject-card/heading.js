@@ -99,7 +99,7 @@ const Indicators = ({ objectID, subobjectID }) => {
         // Existing modifed selectors
         const attributesModifiedIsDisplayedSelector = state => EditedObjectsSelectors.safeAttributesAreModified(state, subobjectID, false);
         const tagsModifiedIsDisplayedSelector = state => EditedObjectsSelectors.safeTagsAreModified(state, subobjectID, false);
-        const dataModifiedIsDisplayedSelector = state => EditedObjectsSelectors.safeDataIsModified(state, subobjectID, false);
+        const dataModifiedIsDisplayedSelector = state => EditedObjectsSelectors.safeDataIsModified(state, subobjectID, "persist", false);
         const subobjectParamsModifiedIsDisplayedSelector = state => EditedObjectsSelectors.subobjectStateIsModified(state, objectID, subobjectID);
 
         return [

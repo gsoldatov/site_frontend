@@ -312,7 +312,7 @@ const updateSubobjectsOnSave = (state: State, objectID: number, update: ParamsUp
     let subobjectIDs = Object.keys(newState.editedObjects[objectID].composite.subobjects).map(id => parseInt(id));
     const deletedSubobjectIDs = subobjectIDs.filter(subobjectID => 
                                 newState.editedObjects[objectID].composite.subobjects[subobjectID].deleteMode === SubobjectDeleteMode.subobjectOnly
-                                && EditedObjectsSelectors.isNewOrUnchangedExisting(newState, subobjectID));
+                                && EditedObjectsSelectors.isNewOrUnchangedExisting(newState, subobjectID, "save"));
     newState = ObjectsUpdaters.deleteObjects(newState, deletedSubobjectIDs);
     
     // Remove fully deleted existing objectsfrom state

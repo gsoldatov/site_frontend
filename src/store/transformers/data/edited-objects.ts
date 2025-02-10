@@ -103,7 +103,7 @@ const editedObjectDataToBackend = (state: State, editedObject: EditedObject): Ob
                         eso.object_type !== "composite"
                         && (
                             subobjectID < 0
-                            || (subobjectID > 0 && EditedObjectsSelectors.isModifiedExisting(state, subobjectID))
+                            || (subobjectID > 0 && EditedObjectsSelectors.isModifiedExisting(state, subobjectID, "save"))
                         )
                     ) {
                         // Attributes

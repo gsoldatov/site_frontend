@@ -9,6 +9,10 @@ import type { State } from "../../../../types/store/state";
 import type { Markdown } from "../../../../types/store/data/markdown";
 
 
+/** Specifies, how an edited object is checked for modification (which attributes are ignored). */
+type IsModifiedMode = "persist" | "save";
+
+
 export class EditedObjectsSelectors {
     /**
      *  Returns an available `object_id` value for a new subobject.
@@ -101,21 +105,25 @@ export class EditedObjectsSelectors {
     /** 
      * Returns true, if an existing edited object `objectID` is modified, or false, otherwise.
      * Throws if any object part is not present in state storages.
+     * 
+     * `mode` specifies, which attributes are not checked for modification.
      */
-    static isModifiedExisting(state: State, objectID: number): boolean {
+    static isModifiedExisting(state: State, objectID: number, mode: IsModifiedMode): boolean {
         return attributesAreModified(state, objectID)
             || tagsAreModified(state, objectID)
-            || dataIsModified(state, objectID)
+            || dataIsModified(state, objectID, mode)
         ;
     }
 
     /** 
      * Returns true, if `objectID` belongs to a new or unchanged existing edited object, or false otherwise.
      * Throws, if `objectID` is not present in any of the data stores.
+     * 
+     * `mode` specifies, which attributes are not checked for modification.
      */
-    static isNewOrUnchangedExisting(state: State, objectID: number | string): boolean {
+    static isNewOrUnchangedExisting(state: State, objectID: number | string, mode: IsModifiedMode): boolean {
         if (typeof objectID === "string") objectID = parseInt(objectID);
-        return objectID <= 0 || !EditedObjectsSelectors.isModifiedExisting(state, objectID);
+        return objectID <= 0 || !EditedObjectsSelectors.isModifiedExisting(state, objectID, mode);
     }
 
     /**
@@ -134,11 +142,13 @@ export class EditedObjectsSelectors {
     /**
      * Returns true, if a new or existing object `objectID` is modified, or false, otherwise.
      * If modification status (both new & existing) could not be resolved, returns `defaultValue`.
+     * 
+     * `mode` specifies, which attributes are not checked for modification.
      */
-    static safeIsModified(state: State, objectID: number, defaultValue: boolean): boolean {
+    static safeIsModified(state: State, objectID: number, mode: IsModifiedMode, defaultValue: boolean): boolean {
         try {
             if (objectID <= 0) return EditedObjectsSelectors.isModifiedNew(state, objectID);
-            return EditedObjectsSelectors.isModifiedExisting(state, objectID);
+            return EditedObjectsSelectors.isModifiedExisting(state, objectID, mode);
         } catch (e) {
             if (e instanceof ObjectMissingInStoreError) return defaultValue;
             throw e;
@@ -174,10 +184,12 @@ export class EditedObjectsSelectors {
     /** 
      * Returns a boolean indicating if edited object's data of `objectID` is modified.
      * If modification status could not be resolved, returns `defaultValue`.
+     * 
+     * `mode` specifies, which attributes are not checked for modification.
      */
-    static safeDataIsModified(state: State, objectID: number, defaultValue: boolean): boolean {
+    static safeDataIsModified(state: State, objectID: number, mode: IsModifiedMode, defaultValue: boolean): boolean {
         try {
-            return dataIsModified(state, objectID);
+            return dataIsModified(state, objectID, mode);
         } catch (e) {
             if (e instanceof ObjectMissingInStoreError) return defaultValue;
             throw e;
@@ -284,8 +296,10 @@ const tagsAreModified = (state: State, objectID: number): boolean => {
 /** 
  * Returns a boolean indicating if edited object's data of `objectID` is modified.
  * Throws if object data is not present in a corresponding data store.
+ * 
+ * `mode` specifies, which attributes are not checked for modification.
  */
-const dataIsModified = (state: State, objectID: number): boolean => {
+const dataIsModified = (state: State, objectID: number, mode: IsModifiedMode): boolean => {
     const objectData = ObjectsSelectors.data(state, objectID);
     const editedObject = state.editedObjects[objectID];
     if (editedObject === undefined || objectData === undefined)
@@ -299,7 +313,10 @@ const dataIsModified = (state: State, objectID: number): boolean => {
         case "to_do_list":
             return !deepEqual(objectData, editedObject.toDoList);
         case "composite":
-            return !deepEqual(objectData, editedObject.composite);
+            const exclusions = mode === "persist" 
+                ? ["subobjects.*.is_expanded", "subobjects.*.selected_tab", "subobjects.*.fetchError"]
+                : ["subobjects.*.fetchError"];
+            return !deepEqual(objectData, editedObject.composite, exclusions);
         default:
             throw Error(`Incorrect object type '${editedObject.object_type}' for object ID ${objectID}`);
     }
