@@ -1,21 +1,43 @@
 /**
  * Returns a list of attribute paths in `a`, which are not equal to those in `b`,
- * where each path is a list of attribute names in top-down order.
+ * where each path is a string with dot-separated attribute names in top-down order.
  * 
  * `exclusions` may contain paths for attributes or list/set items or their subattributes,
  * which are excluded from comparison, e.g.:
  * - `x.y.z` will exclude `a.x.y.z` and its subattributes from comparison;
- * - `x.*.z` will exclude attribute `z` of every attribute of `a.x` (this can also be applied to array/set item checks).
+ * - `x.*.z` will exclude attribute `z` of every attribute of `a.x` (this can also be applied to array/set item checks);
+ * - `x.*` will compare `a.x` with `b.x`, but not their children, if any.
  */
-export const getInequalAttributes = (a: any, b: any, exclusions: string[][] = []): string[][] => {
-    const inner = (a: any, b: any, currPath: string[]): string[][] => {
+export const getInequalAttributes = (a: any, b: any, exclusions: string[] = []): string[] => {
+    const getAttrPath = (currPath: string, attr: string): string => currPath.length > 0 ? `${currPath}.${attr}` : attr;
+    const splitExclusions = exclusions.map(e => e.split("."));
+
+    // Boolean for edge case, when recursive calls should not be called
+    // (but top-level object attributes and array & set lengths are still checked)
+    const disableRecursion = exclusions.some(e => ["*", ""].includes(e));
+
+    const inner = (a: any, b: any, currPath: string): string[] => {
         // Exit if current path is excluded from the check
-        const matchingExclusions = exclusions.filter(e => {
-            if (currPath.length !== e.length) return false;
+        const splitCurrPath = currPath.split(".");
+        const matchingExclusions = splitExclusions.filter(e => {
+            // Find differencies between current path & exclusion
+            if (splitCurrPath.length !== e.length) return false;
             for (let i = 0; i < e.length; i++)
-                if (e[i] !== currPath[i] && e[i] !== "*") return false;
+                if (e[i] !== splitCurrPath[i] && e[i] !== "*") return false;
+            
+            // Handle edge case with top-level exclusion (allow comparing current (top-level) args,
+            // but disable recursive comparison (`disableRecursion` is true in this case))
+            if (currPath === "" && ["*", ""].includes(e.join("."))) return false;
+
+            // Exclusion matches current path
             return true;
         });
+        // console.log(`currPath = ${JSON.stringify(currPath)}`)
+        // console.log(`splitCurrPath = ${JSON.stringify(splitCurrPath)}`)
+        // console.log(`exclusions = ${JSON.stringify(exclusions)}`)
+        // console.log(`splitExclusions = ${JSON.stringify(splitExclusions)}`)
+        // console.log(`disableRecursion = ${JSON.stringify(disableRecursion)}`)
+        // console.log(`matchingExclusions = ${JSON.stringify(matchingExclusions)}`)
         if (matchingExclusions.length > 0) return [];
 
         // Check if types are the same
@@ -45,9 +67,12 @@ export const getInequalAttributes = (a: any, b: any, exclusions: string[][] = []
         if (a instanceof Array) {
             if (a.length !== b.length) return [currPath];
 
-            let result: string[][] = [];
+            // Exit if recursive checks are disabled
+            if (disableRecursion) return [];
+
+            let result: string[] = [];
             for (let i in a) {
-                const childResult = inner(a[i], b[i], currPath.concat(i));
+                const childResult = inner(a[i], b[i], getAttrPath(currPath, i));
                 if (childResult.length > 0) result = result.concat(childResult);
             }
             return result;
@@ -57,6 +82,9 @@ export const getInequalAttributes = (a: any, b: any, exclusions: string[][] = []
         if (a instanceof Set) {
             if (a.size !== b.size) return [currPath];
             
+            // Exit if recursive checks are disabled
+            if (disableRecursion) return [];
+            
             // Allow comparing elements of sets, but don't return their paths
             // (since they can't be directly addressed)
             const areEqual = [...a].every(valueA => {
@@ -64,7 +92,7 @@ export const getInequalAttributes = (a: any, b: any, exclusions: string[][] = []
                 if (typeof(valueA) !== "object") return b.has(valueA);
 
                 // Object valueA
-                return [...b].some(valueB => inner(valueA, valueB, currPath.concat("*")).length === 0);
+                return [...b].some(valueB => inner(valueA, valueB, getAttrPath(currPath, "*")).length === 0);
             });
             return areEqual ? [] : [currPath];
         }
@@ -73,15 +101,18 @@ export const getInequalAttributes = (a: any, b: any, exclusions: string[][] = []
         let keys = Object.keys(a);
         if (!(deepEqual(keys.sort(), Object.keys(b).sort()))) return [currPath];
 
-        let result: string[][] = [];
+        // Exit if recursive checks are disabled
+        if (disableRecursion) return [];
+
+        let result: string[] = [];
         for (let k of keys) {
-            const childResult = inner(a[k], b[k], currPath.concat(k));
+            const childResult = inner(a[k], b[k], getAttrPath(currPath, k));
             if (childResult.length > 0) result = result.concat(childResult);
         }
         return result;
     };
 
-    return inner(a, b, []);
+    return inner(a, b, "");
 };
 
 
