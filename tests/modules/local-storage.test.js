@@ -18,6 +18,7 @@ import { App } from "../../src/components/app";
 import { getDefaultAuthState } from "../../src/types/store/data/auth";
 
 import { getConfig, setConfig } from "../../src/config";
+import { getInequalAttributes } from "../../src/util/equality-checks";
 
 import { setAuthInformation } from "../../src/reducers/data/auth";
 
@@ -39,6 +40,66 @@ beforeEach(() => {
         global.setFetchFail = jest.fn(setFetchFail);
 
         localStorage.clear();
+    });
+});
+
+
+describe("Edited objects > Basic operations", () => {
+    test("Save to & load from localStorage", async () => {
+        // Add objects edited objects into store, which uses local storage
+        const storeManagerOne = createTestStore(undefined, { useLocalStorage: true });
+        storeManagerOne.objects.add(1);
+        storeManagerOne.editedObjects.reset([1, 0, -1]);    // existing & new objects (check negative ID case as well)
+        
+        // Wait for edited objects to be saved
+        await waitFor(() => {
+            for (let i of [1, 0, -1]) {
+                const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(i));
+                expect(savedEditedObject).toBeTruthy();
+            }
+        });
+
+        // Load objects from localStorage into another store
+        const storeManagerTwo = createTestStore(undefined, { useLocalStorage: true });
+        for (let i of [1, 0, -1]) {
+            expect(storeManagerTwo.store.getState()).toHaveProperty(`editedObjects.${i}`)
+            expect(getInequalAttributes(
+                storeManagerOne.store.getState().editedObjects[i], 
+                storeManagerTwo.store.getState().editedObjects[i]
+            )).toEqual([]);
+        }
+    });
+
+
+    test("Removal from localStorage", async () => {
+        // Add objects edited objects into store, which uses local storage
+        const storeManager = createTestStore(undefined, { useLocalStorage: true }), { store } = storeManager;
+        for (let i of [1, 2]) storeManager.objects.add(i);
+        storeManager.editedObjects.reset([2, 1, 0, -1]);    // existing & new objects (check negative ID case as well)
+        
+        // Wait for edited objects to be saved
+        await waitFor(() => {
+            for (let i of [1, 0, -1]) {
+                const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(i));
+                expect(savedEditedObject).toBeTruthy();
+            }
+        });
+
+        // Remove all edited objects, except one
+        const editedObjects = {2: store.getState().editedObjects[2]};
+        storeManager.updateState({ ...store.getState(), editedObjects });
+
+        // Check if removed edited objects are removed from the state
+        await waitFor(() => {
+            for (let i of [1, 0, -1]) {
+                const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(i));
+                expect(savedEditedObject).toBeNull();
+            }
+        });
+
+        // Check if remaining edited object is not removed
+        const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(2));
+        expect(savedEditedObject).toBeTruthy();
     });
 });
 
