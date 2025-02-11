@@ -25,7 +25,7 @@ interface PartialLinkData extends Partial<LinkData> {};
 interface MarkdownData { raw_text: string };
 interface PartialMarkdownData extends Partial<MarkdownData> {};
 
-interface ToDoListItemData {
+export interface ToDoListItemData {
     item_number: number,
     item_state: "active" | "optional" | "completed" | "cancelled",
     item_text: string,

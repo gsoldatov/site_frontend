@@ -50,14 +50,17 @@ export class EditedObjectsSelectors {
 
     /** 
      * Returns a list with `objectIDs` and IDs of all their subobjects found in state.editedObjects. 
+     * 
+     * `checkNonComposite` can be set to true to get all subobjects, regardless of object type of `objectID`.
      */
-    static objectAndSubobjectIDs(state: State, objectIDs: (number | string)[]) {
+    static objectAndSubobjectIDs(state: State, objectIDs: (number | string)[], checkNonComposite?: boolean) {
         const numericObjectIDs = objectIDs.map(id => parseInt(id as string));
         const result = numericObjectIDs.slice();
         
         numericObjectIDs.forEach(objectID => {
             const editedObject = state.editedObjects[objectID];
-            if (editedObject !== undefined && editedObject.object_type === "composite")
+            if (editedObject !== undefined && 
+                (checkNonComposite || editedObject.object_type === "composite"))
                 Object.keys(editedObject.composite.subobjects).forEach(subobjectID => result.push(parseInt(subobjectID)));
         });
 
@@ -67,9 +70,11 @@ export class EditedObjectsSelectors {
 
     /** 
      * Returns a list with `objectIDs` and IDs of their existing subobjects found in state.editedObjects. 
+     * 
+     * `checkNonComposite` can be set to true to get all subobjects, regardless of object type of `objectID`.
      */
-    static objectAndExistingSubobjectIDs(state: State, objectIDs: (number | string)[]) {
-        return EditedObjectsSelectors.objectAndSubobjectIDs(state, objectIDs).filter(id => id > 0 || objectIDs.includes(id));
+    static objectAndExistingSubobjectIDs(state: State, objectIDs: (number | string)[], checkNonComposite?: boolean) {
+        return EditedObjectsSelectors.objectAndSubobjectIDs(state, objectIDs, checkNonComposite).filter(id => id > 0 || objectIDs.includes(id));
     }
 
     /**

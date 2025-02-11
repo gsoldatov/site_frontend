@@ -108,14 +108,14 @@ const _resetCurrentEditedObject = (state: State, action: { resetAllSubobjects: b
 
     // Reset current object & subobjects
     const resetObjectIDs = resetAllSubobjects 
-        ? EditedObjectsSelectors.objectAndExistingSubobjectIDs(newState, [currentObjectID])
+        ? EditedObjectsSelectors.objectAndExistingSubobjectIDs(newState, [currentObjectID], true)   // get subobjects of non-composite objects as well
         : [currentObjectID];
     
     newState = EditedObjectsUpdaters.loadEditedObjects(newState, resetObjectIDs);
 
     // Delete unchanged existing objects, which are no longer subobjects of `currentObjectID`
     if (resetAllSubobjects) {
-        const remainingObjectIDs = EditedObjectsSelectors.objectAndSubobjectIDs(newState, [currentObjectID]);
+        const remainingObjectIDs = EditedObjectsSelectors.objectAndSubobjectIDs(newState, [currentObjectID], true);
         const removedObjectIDs = resetObjectIDs.filter(id => !remainingObjectIDs.includes(id));
         newState = EditedObjectsUpdaters.removeEditedObjects(newState, removedObjectIDs);
     }
