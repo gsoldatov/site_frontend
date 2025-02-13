@@ -10,13 +10,11 @@ import type { EditedObject } from "../../../types/store/data/edited-objects";
 
 import { type Composite, SubobjectDeleteMode } from "../../../types/store/data/composite";
 import { objectsBulkUpsertRequestBody, type ObjectsBulkUpsertObjectData } from "../../../types/fetches/data/objects/bulk_upsert";
-import { objectsAddRequestBodyObject } from "../../../types/fetches/data/objects/add";
 import { 
     objectsUpdateCompositeSubobject, type ObjectsUpdateObjectData,
     type ObjectsUpdateCompositeSubobjects, type ObjectsUpdateCompositeDeletedSubobjects,    
     objectsUpdateRequestBodyObject
 } from "../../../types/fetches/data/objects/update";
-
 
 
 export class EditedObjectsTransformers {
@@ -46,21 +44,6 @@ export class EditedObjectsTransformers {
         .filter(eo => !fully_deleted_subobject_ids.includes(eo.object_id));
 
         return objectsBulkUpsertRequestBody.parse({ objects, fully_deleted_subobject_ids });
-    }
-
-    /**
-     * Validates and converts `editedObjects` into a request body to the /objects/add route.
-     * 
-     * Throws if zod validation fails.
-     */
-    static toObjectsAddBody(state: State, editedObject: EditedObject) {
-        return objectsAddRequestBodyObject.parse({
-            ...editedObject,
-
-            added_tags: editedObject.addedTags,
-
-            object_data: editedObjectDataToAddUpdateRequest(state, editedObject)
-        });
     }
 
     /**

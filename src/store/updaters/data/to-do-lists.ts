@@ -402,12 +402,6 @@ export class ToDoListUpdaters {
             }
         }
     }
-
-
-    /** Returns a new to-do list with its items being numerated continiously. */
-    static normalizeItemIDs(toDoList: ToDoList, update: ParamsNormalizeItemIDs): ToDoList {
-        return getToDoListWithNormalizedItemIDs(toDoList);
-    }
 }
 
 
@@ -430,7 +424,6 @@ export const getUpdatedToDoList = (toDoList: ToDoList, update: ToDoListUpdatePar
     if (command === "endItemDrag") return ToDoListUpdaters.endItemDrag(toDoList, update);
     if (command === "moveItems") return ToDoListUpdaters.moveItems(toDoList, update);
     if (command === "setItemIndent") return ToDoListUpdaters.setItemIndent(toDoList, update);
-    if (command === "normalizeItemIDs") return ToDoListUpdaters.normalizeItemIDs(toDoList, update);
     throw Error(`Command '${command}' handler not implemented.`);
 };
 
@@ -462,35 +455,6 @@ const expandParents = (toDoList: ToDoList, itemID: number) => {
 };
 
 
-/**
- * Returns a copy of `toDoList` with continiously numerated item IDs, i.e.:
- * 2, 3, 5, 6 => 1, 2, 3, 4
- */
-const getToDoListWithNormalizedItemIDs = (toDoList: ToDoList) => {
-    const mapping = toDoList.itemOrder.reduce((result, itemID, itemPosition) => {
-        result[itemID] = itemPosition;
-        return result;
-    }, {} as Record<number | string, number>);
-
-    const { setFocusOnID, draggedParent, draggedOver } = toDoList;
-
-    return {
-        ...toDoList,
-        itemOrder: toDoList.itemOrder.map(itemID => mapping[itemID]),
-        setFocusOnID: mapping[setFocusOnID] !== undefined ? mapping[setFocusOnID as number] : setFocusOnID,
-        draggedParent: mapping[draggedParent] !== undefined ? mapping[draggedParent] : draggedParent,
-        draggedChildren: toDoList.draggedChildren.map(itemID => mapping[itemID]),
-        draggedOver: mapping[draggedOver] !== undefined ? mapping[draggedOver] : draggedOver,
-        
-        items: [...Object.keys(toDoList.items)].reduce((result, itemID) => {
-            const newItemID = mapping[itemID];
-            result[newItemID] = deepCopy(toDoList.items[itemID as unknown as number]);
-            return result;
-        }, {} as ToDoList["items"])
-    };
-};
-
-
 type ParamsAddItem = { command: "addItem", previousItemID?: number, position?: number, newItemID?: number } & Partial<ToDoListItem>;
 type ParamsUpdateItem = { command: "updateItem", itemID: number } & Partial<ToDoListItem>;
 type ParamsDeleteItem = { command: "deleteItem", itemID: number, setFocus?: "prev" | "next", deleteChildren?: boolean };
@@ -505,7 +469,6 @@ type ParamsMoveItems = { command: "moveItems", movedItemID: number, targetItemID
 type ParamsSetItemIndent = { command: "setItemIndent",
     itemID: ToDoListNewOrExistingItemNumber, increase?: boolean, decrease?: boolean, indent?: number
 };
-type ParamsNormalizeItemIDs = { command: "normalizeItemIDs" };
 export type ToDoListUpdateParams = ParamsAddItem | ParamsUpdateItem | ParamsDeleteItem | ParamsFocusPrevItem | 
     ParamsFocusNextItem | ParamsSplitItem | ParamsMergeItemWithPrev | ParamsMergeItemWithNext | 
-    ParamsStartItemDrag | ParamsEndItemDrag | ParamsMoveItems | ParamsSetItemIndent | ParamsNormalizeItemIDs;
+    ParamsStartItemDrag | ParamsEndItemDrag | ParamsMoveItems | ParamsSetItemIndent;

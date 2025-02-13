@@ -1,5 +1,4 @@
-import { objectsBulkUpsertFetch, objectsAddFetch, objectsUpdateFetch, 
-    objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "../data/objects";
+import { objectsBulkUpsertFetch, objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "../data/objects";
 import { fetchMissingTags, tagsSearchFetch } from "../data/tags";
 
 import { setRedirectOnRender } from "../../reducers/common";
@@ -7,7 +6,7 @@ import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setObjectsEditLoad
     setObjectsEditSaveFetchState, setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, 
     setAddCompositeSubobjectMenu, setToDoListRerenderPending
 } from "../../reducers/ui/objects-edit";
-import { loadEditedObjects, updateEditedComposite, updateEditedObject, editedObjectsPreSaveUpdate } from "../../reducers/data/edited-objects";
+import { loadEditedObjects, updateEditedComposite } from "../../reducers/data/edited-objects";
 import { deleteObjects } from "../../reducers/data/objects";
 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
@@ -45,37 +44,6 @@ export const objectsEditNewOnLoad = () => {
 
         // Start loading composite objects
         dispatch(objectsEditLoadCompositeSubobjectsFetch(0));
-    };
-};
-
-
-/**
- * Handles "Save" button click on new object page.
- */
-export const objectsEditNewSaveFetch = () => {      // TODO delete?
-    return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
-        let state = getState();
-
-        // Exit if already fetching
-        if (ObjectsEditSelectors.isFetching(state)) return;
-
-        // Prepare edited objects' data for fetch
-        dispatch(editedObjectsPreSaveUpdate());
-
-        // Run fetch & add object
-        dispatch(setObjectsEditSaveFetchState(true, ""));
-        const result = await dispatch(objectsAddFetch(ObjectsEditSelectors.currentObject(state)));
-
-        // Handle fetch errors
-        if (result.failed) {
-            dispatch(setObjectsEditSaveFetchState(false, result.error!));
-            return;
-        }
-
-        // Handle successful fetch end
-        if (!("object_id" in result)) throw Error("Missing `object_id` in successful fetch result.");
-        dispatch(setObjectsEditSaveFetchState(false, ""));
-        dispatch(setRedirectOnRender(`/objects/edit/${result.object_id}`, { deleteNewObject: true }));
     };
 };
 
@@ -146,40 +114,6 @@ export const objectsEditExistingOnLoad = (objectID: number) => {
         // End fetch
         dispatch(setObjectsEditLoadFetchState(false, ""));
     };
-};
-
-
-/**
- * Handles "Save" button click on existing object page.
- */
-export const objectsEditExistingSaveFetch = () => {     // TODO delete?
-    return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
-        let state = getState();
-
-        // Exit if already fetching
-        if (ObjectsEditSelectors.isFetching(state)) return;
-
-        // Prepare edited objects' data for fetch
-        dispatch(editedObjectsPreSaveUpdate());
-
-        // Run fetch & update object
-        dispatch(setObjectsEditSaveFetchState(true, ""));
-        const result = await dispatch(objectsUpdateFetch(ObjectsEditSelectors.currentObject(state)));
-        
-        // Handle fetch errors
-        if (result.failed) {
-            dispatch(setObjectsEditSaveFetchState(false, result.error!));
-            return;
-        }
-
-        // Handle successful fetch end
-        if (!("object" in result)) throw Error("Missing `object` in successful fetch result.");
-        const { object } = result;
-        dispatch(updateEditedObject(object.object_id, 
-            { ...object, currentTagIDs: getState().objectsTags[object.object_id], addedTags: [], removedTagIDs: [] }
-        ));
-        dispatch(setObjectsEditSaveFetchState(false, ""));
-    };        
 };
 
 

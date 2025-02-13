@@ -22,7 +22,6 @@ import {
     type ObjectsPaginationInfo, type ObjectsViewCompositeHierarchyElementsFetchResult
 } from "../../types/fetches/data/objects/general";
 import { objectsBulkUpsertResponseSchema, type ObjectsBulkUpsertFetchResult } from "../../types/fetches/data/objects/bulk_upsert";
-import { type ObjectsAddFetchResult, objectsAddResponseSchema } from "../../types/fetches/data/objects/add";
 import { objectsUpdateResponseSchema, type ObjectsUpdateFetchResult } from "../../types/fetches/data/objects/update";
 
 
@@ -63,53 +62,6 @@ export const objectsBulkUpsertFetch = (editedObjects: EditedObject[]) => {
                     return result;
             }
 
-        } catch (e) {
-            // Handle validation errors
-            if (e instanceof ZodError) {
-                const error = parseObjectsUpdateRequestValidationErrors(e);
-                return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error });
-            }
-
-            throw e;
-        }
-    };
-};
-
-
-/**
- * Fetches backend to add a new `editedObject`.
- * 
- * Adds the object to the state in case of success.
- */
-export const objectsAddFetch = (editedObject: EditedObject) => {
-    return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsAddFetchResult> => {
-        try {
-            // Validate and serialize edited object
-            const object = EditedObjectsTransformers.toObjectsAddBody(getState(), editedObject);
-
-            // Fetch backend
-            const runner = new FetchRunner("/objects/add", { method: "POST", body: { object } });
-            const result = await runner.run();
-
-            // Handle response
-            switch (result.status) {
-                case 200:
-                    const { object: responseObject } = objectsAddResponseSchema.parse(result.json);
-
-                    // Modify object before adding it
-                    dispatch(updateEditedComposite(0, { command: "updateSubobjectsOnSave", object_data: object.object_data, object: responseObject }));
-                    const object_data = EditedCompositeUpdaters.modifyObjectDataPostSave(object.object_data, responseObject);
-
-                    // Add attributes, tags & data
-                    dispatch(addObjectsAttributes([responseObject]));
-                    const { object_id, tag_updates: { added_tag_ids = [], removed_tag_ids = [] }} = responseObject;
-                    dispatch(updateObjectsTags([object_id], added_tag_ids, removed_tag_ids));
-                    dispatch(addObjectsDataFromBackend([{ object_id, object_type: object.object_type, object_data }]));
-                    return result.withCustomProps({ object_id });
-                default:
-                    return result;
-            }
-        
         } catch (e) {
             // Handle validation errors
             if (e instanceof ZodError) {

@@ -8,7 +8,6 @@ import type { State } from "../../../types/store/state";
 import { type EditedObjects } from "../../../types/store/data/edited-objects";
 import { compositeSubobject, getCompositeSubobject, SubobjectDeleteMode, 
     type CompositeSubobject, type CompositeSubobjects } from "../../../types/store/data/composite";
-import { type ObjectsAddRequestObjectData, type ObjectsAddResponseBodyObject } from "../../../types/fetches/data/objects/add";
 import { type ObjectsUpdateRequestObjectData, type ObjectsUpdateResponseBodyObject } from "../../../types/fetches/data/objects/update";
 import { type ObjectsTags } from "../../../types/store/data/objects-tags";
 
@@ -32,8 +31,8 @@ export class EditedCompositeUpdaters {
      * Modifies object data sent via /objects/add & /objects/update fetches 
      * to prepare it for adding to the respective storage/
      */
-    static modifyObjectDataPostSave(object_data: ObjectsAddRequestObjectData | ObjectsUpdateRequestObjectData, 
-        object: ObjectsAddResponseBodyObject | ObjectsUpdateResponseBodyObject) {
+    static modifyObjectDataPostSave(object_data: ObjectsUpdateRequestObjectData, 
+        object: ObjectsUpdateResponseBodyObject) {
         const { object_type } = object;
         
         switch (object_type) {
@@ -418,8 +417,8 @@ type ParamsUpdatePositionsOnDrop = { command: "updatePositionsOnDrop"
     isDroppedToTheLeft?: number, isDroppedToTheRight?: number
 };
 type ParamsUpdateSubobjectsOnSave = { command: "updateSubobjectsOnSave", 
-    object: ObjectsAddResponseBodyObject | ObjectsUpdateResponseBodyObject, 
-    object_data: ObjectsAddRequestObjectData | ObjectsUpdateRequestObjectData
+    object: ObjectsUpdateResponseBodyObject, 
+    object_data: ObjectsUpdateRequestObjectData
 };
 export type GetUpdatedEditedCompositeParams = ParamsAddNewSubobject | ParamsAddExistingSubobject | ParamsUpdateSubobject | 
     ParamsToggleSubobjectsIsPublished | ParamsSetSubobjectsFetchError | ParamsUpdatePositionsOnDrop | ParamsUpdateSubobjectsOnSave;

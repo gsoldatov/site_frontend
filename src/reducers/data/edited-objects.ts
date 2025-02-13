@@ -189,40 +189,6 @@ const _clearUnchangedEditedObjects = (state: State, action: { rootObjectID: numb
 };
 
 
-/**
- * Applies required updates to edited objects before they are saved:
- * - normalizes item ID numeration in to-do lists, so that it matches the numeration in the saved version of the object;
- * - triggers to-do list rerender to update item IDs in rendered components;
- */
-export const editedObjectsPreSaveUpdate = () => ({ type: "EDITED_OBJECTS_PRE_SAVE_UPDATE" });
-
-const _editedObjectsPreSaveUpdate = (state: State, action: any): State => {
-    let newState = state;
-
-    // Get object IDs of to-do lists, which are being saved
-    const { currentObjectID } = newState.objectsEditUI;
-    const toDoListObjectIDs = EditedObjectsSelectors.objectAndSubobjectIDs(state, [currentObjectID])
-        .filter(id => state.editedObjects[id].object_type === "to_do_list");
-    
-    // Normalize itemIDs in to-do lists
-    if (toDoListObjectIDs.length > 0) {
-        const newEditedObjects = toDoListObjectIDs.reduce((result, objectID) => {
-            const editedObject = newState.editedObjects[objectID];
-            const toDoList = getUpdatedToDoList(editedObject.toDoList, { command: "normalizeItemIDs" });
-            result[objectID] = { ...editedObject, toDoList };
-            return result;
-        }, {} as EditedObjects);
-        newState = { 
-            ...newState,
-            editedObjects: { ...newState.editedObjects, ...newEditedObjects },
-            objectsEditUI: { ...state.objectsEditUI, toDoListRerenderPending: true }
-        };
-    }
-    
-    return newState;
-};
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const editedObjectsRoot = {
     "ADD_EDITED_OBJECTS": _addEditedObjects,
@@ -234,6 +200,5 @@ export const editedObjectsRoot = {
     "UPDATE_EDITED_COMPOSITE": _updateEditedComposite,
     "REMOVE_EDITED_OBJECTS": _removeEditedObjects,
     "CLEAR_EDITED_OBJECTS": _clearEditedObjects,
-    "CLEAR_UNCHANGED_EDITED_OBJECTS": _clearUnchangedEditedObjects,
-    "EDITED_OBJECTS_PRE_SAVE_UPDATE": _editedObjectsPreSaveUpdate
+    "CLEAR_UNCHANGED_EDITED_OBJECTS": _clearUnchangedEditedObjects
 };
