@@ -81,8 +81,10 @@ export class EditedObjectsSelectors {
      * Returns a list object IDs present in state.editedObjects, which are part of a composite hierarchy starting from `rootObjectID`.
      * 
      * Objects, which aren't edited, including `rootObjectID`, are not returned.
+     * 
+     * If `checkNonComposite` is true, any subobjects from non-composite objects will be included 
      */
-    static editedCompositeHierarchyObjectIDs(state: State, rootObjectID: number) {
+    static editedCompositeHierarchyObjectIDs(state: State, rootObjectID: number, checkNonComposite: boolean) {
         const result: Set<number> = new Set();
         const queue: number[] = [rootObjectID];
 
@@ -96,10 +98,10 @@ export class EditedObjectsSelectors {
                     result.add(currentObjectID);
 
                     // Add composite subobjects for further checks
-                    // (check non-composite edited objects as well
-                    // (for the case of a new `rootObjectID` of non-composite type with previously added subobjects))
-                    // // if (editedObject.object_type === "composite")
-                    Object.keys(editedObject.composite.subobjects).map(id => parseInt(id)).forEach(id => queue.push(id));
+                    // (check non-composite edited objects as well, if specified to
+                    // (for the case of clearing new subobjects of non-composite objects))
+                    if (checkNonComposite || editedObject.object_type === "composite")
+                        Object.keys(editedObject.composite.subobjects).map(id => parseInt(id)).forEach(id => queue.push(id));
                 }
             }
         }

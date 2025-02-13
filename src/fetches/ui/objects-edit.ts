@@ -1,17 +1,22 @@
-import { objectsAddFetch, objectsUpdateFetch, objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "../data/objects";
+import { objectsBulkUpsertFetch, objectsAddFetch, objectsUpdateFetch, 
+    objectsViewFetch, objectsDeleteFetch, objectsSearchFetch } from "../data/objects";
 import { fetchMissingTags, tagsSearchFetch } from "../data/tags";
 
 import { setRedirectOnRender } from "../../reducers/common";
-import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setObjectsEditLoadFetchState, setObjectsEditSaveFetchState,
-    setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, setAddCompositeSubobjectMenu
+import { loadObjectsEditNewPage, loadObjectsEditExistingPage, setObjectsEditLoadFetchState, 
+    setObjectsEditSaveFetchState, setObjectsEditTagsInput, setObjectsEditShowDeleteDialog, 
+    setAddCompositeSubobjectMenu, setToDoListRerenderPending
 } from "../../reducers/ui/objects-edit";
 import { loadEditedObjects, updateEditedComposite, updateEditedObject, editedObjectsPreSaveUpdate } from "../../reducers/data/edited-objects";
+import { deleteObjects } from "../../reducers/data/objects";
 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
+import { EditedObjectsSelectors } from "../../store/selectors/data/objects/edited-objects";
 import { ObjectsEditSelectors } from "../../store/selectors/ui/objects-edit";
 
 import type { Dispatch, GetState } from "../../types/store/store";
 import { positiveInt } from "../../types/common";
+import { SubobjectDeleteMode } from "../../types/store/data/composite";
 
 
 /**
@@ -47,7 +52,7 @@ export const objectsEditNewOnLoad = () => {
 /**
  * Handles "Save" button click on new object page.
  */
-export const objectsEditNewSaveFetch = () => {
+export const objectsEditNewSaveFetch = () => {      // TODO delete?
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         let state = getState();
 
@@ -147,7 +152,7 @@ export const objectsEditExistingOnLoad = (objectID: number) => {
 /**
  * Handles "Save" button click on existing object page.
  */
-export const objectsEditExistingSaveFetch = () => {
+export const objectsEditExistingSaveFetch = () => {     // TODO delete?
     return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
         let state = getState();
 
@@ -175,6 +180,76 @@ export const objectsEditExistingSaveFetch = () => {
         ));
         dispatch(setObjectsEditSaveFetchState(false, ""));
     };        
+};
+
+
+/**
+ * Handles "Save" button click on the /objects/edit/:id page (uses bulk upsert fetch).
+ */
+export const objectsEditSaveFetch = () => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<void> => {
+        // Exit if already fetching
+        let state = getState();
+        if (ObjectsEditSelectors.isFetching(state)) return;
+
+        // Get edited objects to be upserted
+        const { currentObjectID } = state.objectsEditUI;
+        const hierarchyObjectIDs = EditedObjectsSelectors.editedCompositeHierarchyObjectIDs(state, currentObjectID, false);     // exclude subobjects of non-composite
+        const upsertedObjectIDs = hierarchyObjectIDs.filter(objectID => 
+            // Current edited object
+            objectID === currentObjectID 
+            // New objects
+            || objectID <= 0
+            // Modified existing objects
+            || (objectID > 0 && EditedObjectsSelectors.safeIsModified(state, objectID, "save", true))
+        );
+        const upsertedEditedObjects = upsertedObjectIDs.map(objectID => state.editedObjects[objectID]);
+
+        // Get object IDs to be cleared if fetch succeeds
+        // // New subobject IDs of upserted objects, including deleted and subobjects of non-composite
+        const deletedNewSubobjectIDs = EditedObjectsSelectors.editedCompositeHierarchyObjectIDs(state, currentObjectID, true)
+            .filter(objectID => objectID <= 0);
+        // // Existing subobjects, marked as fully deleted
+        const deletedExistingSubobjectIDs = upsertedObjectIDs.reduce((result, objectID) => {
+            const eo = state.editedObjects[objectID];
+            if (eo.object_type !== "composite") return result;
+            const deletedSubobjectIDs = Object.keys(eo.composite.subobjects).map(id => parseInt(id)).filter(
+                subobjectID => eo.composite.subobjects[subobjectID].deleteMode !== SubobjectDeleteMode.none);
+            return [...new Set(result.concat(deletedSubobjectIDs))]
+        }, [] as number[]);
+        // // Resulting array of object IDs to delete
+        const deletedObjectIDs = [...new Set(deletedNewSubobjectIDs.concat(deletedExistingSubobjectIDs))];
+
+        // Run upsert fetch
+        dispatch(setObjectsEditSaveFetchState(true, ""));
+        const result = await dispatch(objectsBulkUpsertFetch(upsertedEditedObjects));
+        
+        // Handle fetch errors
+        if (result.failed) {
+            dispatch(setObjectsEditSaveFetchState(false, result.error!));
+            return;
+        }
+
+        // Load returned data into edited objects
+        if (!("response" in result)) throw Error("Missing `response` in successful fetch result.");
+        const objectIDs = result.response.objects_attributes_and_tags.map(oa => oa.object_id);
+        dispatch(loadEditedObjects(objectIDs));
+
+        // Trigger to-do list rerender
+        dispatch(setToDoListRerenderPending(true));
+
+        // Disable fetch placeholder
+        dispatch(setObjectsEditSaveFetchState(false, ""));
+
+        // Redirect from new to existing object's page
+        if (currentObjectID <= 0) {
+            const mappedObjectID = result.response.new_object_ids_map[currentObjectID];
+            dispatch(setRedirectOnRender(`/objects/edit/${mappedObjectID}`));
+        }
+
+        // Delete object data, which is no longer used
+        dispatch(deleteObjects(deletedObjectIDs, false));
+    };
 };
 
 

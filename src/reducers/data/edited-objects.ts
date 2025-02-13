@@ -175,7 +175,7 @@ const _clearUnchangedEditedObjects = (state: State, action: { rootObjectID: numb
     const excludedObjectIDs = excludedRootID !== undefined ? EditedObjectsSelectors.objectAndSubobjectIDs(state, [excludedRootID]) : [];
 
     // Get object IDs, which are in composite hierarchy starting from `rootObjectID`
-    const hierarchyObjectIDs = EditedObjectsSelectors.editedCompositeHierarchyObjectIDs(state, rootObjectID);
+    const hierarchyObjectIDs = EditedObjectsSelectors.editedCompositeHierarchyObjectIDs(state, rootObjectID, true);
 
     // Find unchanged object IDs (existing or object ID = 0)
     const unchangedObjectIDs = hierarchyObjectIDs.filter(id => 

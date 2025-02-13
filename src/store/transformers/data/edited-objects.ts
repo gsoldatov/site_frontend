@@ -9,6 +9,7 @@ import type { State } from "../../../types/store/state";
 import type { EditedObject } from "../../../types/store/data/edited-objects";
 
 import { type Composite, SubobjectDeleteMode } from "../../../types/store/data/composite";
+import { objectsBulkUpsertRequestBody, type ObjectsBulkUpsertObjectData } from "../../../types/fetches/data/objects/bulk_upsert";
 import { objectsAddRequestBodyObject } from "../../../types/fetches/data/objects/add";
 import { 
     objectsUpdateCompositeSubobject, type ObjectsUpdateObjectData,
@@ -17,9 +18,38 @@ import {
 } from "../../../types/fetches/data/objects/update";
 
 
+
 export class EditedObjectsTransformers {
     /**
-     * Validates and converts `editedObject` into /objects/add backed request body.
+     * Validates and converts `editedObjects` into a request body to the /objects/bulk_upsert route.
+     * 
+     * Throws if zod validation fails. 
+     */
+    static toObjectsBulkUpsertBody(editedObjects: EditedObject[]) {
+        // Get a list of subobjects marked for full deletion
+        const fully_deleted_subobject_ids = editedObjects.reduce((result, eo) => {
+            const curr_fully_deleted = eo.object_type === "composite"
+                ? Object.keys(eo.composite.subobjects).map(id => parseInt(id)).filter(
+                    subobject_id => eo.composite.subobjects[subobject_id].deleteMode === SubobjectDeleteMode.full
+                ) : [];
+            return [...new Set(result.concat(curr_fully_deleted))]
+        }, [] as number[]);
+
+        // Get a list of upserted objects
+        const objects = editedObjects.map(eo => ({
+            ...eo,
+            added_tags: eo.addedTags,
+            removed_tag_ids: eo.removedTagIDs,
+            object_data: editedObjectDataToBulkUpsertRequest(eo)
+        }))
+        // Don't update fully deleted subobjects 
+        .filter(eo => !fully_deleted_subobject_ids.includes(eo.object_id));
+
+        return objectsBulkUpsertRequestBody.parse({ objects, fully_deleted_subobject_ids });
+    }
+
+    /**
+     * Validates and converts `editedObjects` into a request body to the /objects/add route.
      * 
      * Throws if zod validation fails.
      */
@@ -29,12 +59,12 @@ export class EditedObjectsTransformers {
 
             added_tags: editedObject.addedTags,
 
-            object_data: editedObjectDataToBackend(state, editedObject)
+            object_data: editedObjectDataToAddUpdateRequest(state, editedObject)
         });
     }
 
     /**
-     * Validates and converts `editedObject` into /objects/add backed request body.
+     * Validates and converts `editedObjects` into a request body to the /objects/update route.
      * 
      * Throws if zod validation fails.
      */
@@ -45,19 +75,51 @@ export class EditedObjectsTransformers {
             added_tags: editedObject.addedTags,
             removed_tag_ids: editedObject.removedTagIDs,
 
-            object_data: editedObjectDataToBackend(state, editedObject)
+            object_data: editedObjectDataToAddUpdateRequest(state, editedObject)
         });
     }
 }
 
 
+const editedObjectDataToBulkUpsertRequest = (editedObject: EditedObject): ObjectsBulkUpsertObjectData => {
+    switch (editedObject.object_type) {
+        case "link":
+            return editedObject.link;
+        case "markdown":
+            return { raw_text: editedObject.markdown.raw_text };
+        case "to_do_list":
+            return {
+                sort_type: editedObject.toDoList.sort_type,
+                items: editedObject.toDoList.itemOrder.map((id, index) => ({ item_number: index, ...editedObject.toDoList.items[id] }))
+            };
+        case "composite":
+            const subobjects = [];
+            for (let subobject_id of Object.keys(editedObject.composite.subobjects).map(id => parseInt(id))) {
+                const so = editedObject.composite.subobjects[subobject_id];
+                if (so.deleteMode === SubobjectDeleteMode.none) {
+                    const serializedSubobject = { subobject_id, ...so };
+                    for (let key of ["fetchError", "deleteMode"]) delete (serializedSubobject as Record<any, any>)[key];    // delete frontend-only subobject props
+                    subobjects.push(serializedSubobject);
+                }
+            }
+            return {
+                subobjects,
+                display_mode: editedObject.composite.display_mode,
+                numerate_chapters: editedObject.composite.numerate_chapters,
+            };
+        default:
+            throw Error(`Incorrect object_type '${editedObject.object_type}'`);
+    }
+};
+
+
 /**
- * Returns `obj` object data serialized into a format required by backed API.
+ * Returns object data of `editedObject` serialized into a format required by backend API.
  * 
  * Serializes object data from `editedObject` into /objects/add & /objects/update backend fetch format
  * (`object_data` request body prop).
  */
-const editedObjectDataToBackend = (state: State, editedObject: EditedObject): ObjectsUpdateObjectData => {
+const editedObjectDataToAddUpdateRequest = (state: State, editedObject: EditedObject): ObjectsUpdateObjectData => {
     switch (editedObject.object_type) {
         case "link":
             return editedObject.link;
@@ -111,7 +173,7 @@ const editedObjectDataToBackend = (state: State, editedObject: EditedObject): Ob
                         delete subobject["object_id"];
                         
                         // Data
-                        subobject.object_data = editedObjectDataToBackend(state, eso);
+                        subobject.object_data = editedObjectDataToAddUpdateRequest(state, eso);
                     }
                 }
 

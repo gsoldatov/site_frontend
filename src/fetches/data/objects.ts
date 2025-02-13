@@ -21,8 +21,59 @@ import {
     type ObjectsViewFetchResult, type ObjectsSearchFetchResult, type ObjectsGetPageObjectIDsFetchResult, 
     type ObjectsPaginationInfo, type ObjectsViewCompositeHierarchyElementsFetchResult
 } from "../../types/fetches/data/objects/general";
+import { objectsBulkUpsertResponseSchema, type ObjectsBulkUpsertFetchResult } from "../../types/fetches/data/objects/bulk_upsert";
 import { type ObjectsAddFetchResult, objectsAddResponseSchema } from "../../types/fetches/data/objects/add";
 import { objectsUpdateResponseSchema, type ObjectsUpdateFetchResult } from "../../types/fetches/data/objects/update";
+
+
+
+/**
+ * Upserts data of `editedObjects` to backend.
+ * 
+ * Adds their attributes, tags and data to the store.
+ */
+export const objectsBulkUpsertFetch = (editedObjects: EditedObject[]) => {
+    return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsBulkUpsertFetchResult> => {
+        try {
+            if (editedObjects.length === 0) return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "No objects were provided for upsert." });
+
+            // Validate and serialize edited objects
+            const body = EditedObjectsTransformers.toObjectsBulkUpsertBody(editedObjects);
+
+            // Fetch backend
+            const runner = new FetchRunner("/objects/bulk_upsert", { method: "POST", body });
+            const result = await runner.run();
+            
+             // Handle response
+            switch (result.status) {
+                case 200:
+                    const data = objectsBulkUpsertResponseSchema.parse(result.json);
+
+                    // Add attributes, tags & data
+                    dispatch(addObjectsAttributes(data.objects_attributes_and_tags));
+                    dispatch(addObjectsTags(data.objects_attributes_and_tags));
+                    dispatch(addObjectsDataFromBackend(data.objects_data));
+
+                    // Return fetch result
+                    return result.withCustomProps({
+                        response: data,
+                        fully_deleted_subobject_ids: body.fully_deleted_subobject_ids
+                    });
+                default:
+                    return result;
+            }
+
+        } catch (e) {
+            // Handle validation errors
+            if (e instanceof ZodError) {
+                const error = parseObjectsUpdateRequestValidationErrors(e);
+                return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error });
+            }
+
+            throw e;
+        }
+    };
+};
 
 
 /**

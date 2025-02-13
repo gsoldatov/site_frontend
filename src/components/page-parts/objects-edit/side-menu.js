@@ -10,7 +10,7 @@ import { SideMenuDialog, SideMenuDialogButton, SideMenuDialogButtonsContainer, S
 import { ObjectsEditSelectors } from "../../../store/selectors/ui/objects-edit";
 
 import { setObjectsEditShowResetDialog, setObjectsEditShowDeleteDialog, resetCurrentEditedObject } from "../../../reducers/ui/objects-edit";
-import { objectsEditNewSaveFetch, objectsEditExistingSaveFetch } from "../../../fetches/ui/objects-edit";
+import { objectsEditSaveFetch } from "../../../fetches/ui/objects-edit";
 import { objectsEditExistingDeleteFetch } from "../../../fetches/ui/objects-edit";
 
 
@@ -69,11 +69,9 @@ const ViewObject = () => {
 const Save = () => {
     const dispatch = useDispatch();
     const isActive = useSelector(state => !ObjectsEditSelectors.isFetchingOrLoadFailed(state));
-    const { id } = useParams(); // undefined for new object page
     const onClick = useMemo(() => () => {
-        const onSave = id === undefined ? objectsEditNewSaveFetch : objectsEditExistingSaveFetch;
-        dispatch(onSave());
-    }, [id]);
+        dispatch(objectsEditSaveFetch());
+    }, []);
     
     return <SideMenuItem text="Save" icon="save outline" isActive={isActive} onClick={onClick} />;
 };

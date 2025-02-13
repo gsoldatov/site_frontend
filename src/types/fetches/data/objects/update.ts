@@ -20,16 +20,19 @@ export const objectsUpdateAttributes = z.object({
 });
 
 
-const linkData = z.object({
+/** `object_data` schema for link objects. */
+export const linkData = z.object({
     link: z.string().url(),
     show_description_as_link: z.boolean()
 });
 
-const markdownData = z.object({
+/** `object_data` schema for markdown objects. */
+export const markdownData = z.object({
     raw_text: z.string().min(1)
 });
 
-const toDoListData = z.object({
+/** `object_data` schema for to-do list objects. */
+export const toDoListData = z.object({
     sort_type: z.enum(["default", "state"]),
     items: z.object({
         item_number: nonNegativeInt,
@@ -41,8 +44,8 @@ const toDoListData = z.object({
     }).array().min(1)
 });
 
-/** Subobject props without props passed for update */
-const compositeSubobjectBase = z.object({
+/** Basic attributes of a composite subobject (without attributes of an object, passed for add or update). */
+export const compositeSubobject = z.object({
     subobject_id: int,
     row: nonNegativeInt,
     column: nonNegativeInt,
@@ -56,7 +59,7 @@ const compositeSubobjectBase = z.object({
 const compositeSubobjectWithAttributesBase = objectsUpdateAttributes
     .omit({ object_id: true, added_tags: true, removed_tag_ids: true })
     // .merge(z.object({ object_id: int }))
-    .merge(compositeSubobjectBase)
+    .merge(compositeSubobject)
 ;
 
 /** Full schema of composite subobjects with attributes & data provided */
@@ -81,10 +84,10 @@ const compositeSubobjectWithAttributesAndData =
 ;
 
 /** Full schema of a composite subobject (with & without attributes and data) */
-export const objectsUpdateCompositeSubobject = compositeSubobjectWithAttributesAndData.or(compositeSubobjectBase.strict());
+export const objectsUpdateCompositeSubobject = compositeSubobjectWithAttributesAndData.or(compositeSubobject.strict());
 
-/** Full composite data schema */
-const compositeData = z.object({
+/** `object_data` schema for composite objects (for /objects/add & /objects/update requests). */
+export const compositeDataAddUpdate = z.object({
     display_mode: z.enum(["basic", "grouped_links", "multicolumn", "chapters"]),
     numerate_chapters: z.boolean(),    
     subobjects: objectsUpdateCompositeSubobject.array().min(1),
@@ -97,7 +100,7 @@ export const objectsUpdateData =
     linkData
     .or(markdownData)
     .or(toDoListData)
-    .or(compositeData)
+    .or(compositeDataAddUpdate)
 ;
 
 
@@ -134,10 +137,10 @@ export const objectsUpdateResponseSchema = z.object({
 
 
 export type ObjectsUpdateObjectData = z.infer<typeof linkData> | z.infer<typeof markdownData> | z.infer<typeof toDoListData>
-    | z.infer<typeof compositeData>;
+    | z.infer<typeof compositeDataAddUpdate>;
 export type ObjectsUpdateCompositeSubobject = z.infer<typeof objectsUpdateCompositeSubobject>;
-export type ObjectsUpdateCompositeSubobjects = z.infer<typeof compositeData.shape.subobjects>;
-export type ObjectsUpdateCompositeDeletedSubobjects = z.infer<typeof compositeData.shape.deleted_subobjects>;
+export type ObjectsUpdateCompositeSubobjects = z.infer<typeof compositeDataAddUpdate.shape.subobjects>;
+export type ObjectsUpdateCompositeDeletedSubobjects = z.infer<typeof compositeDataAddUpdate.shape.deleted_subobjects>;
 
 export type ObjectsUpdateRequestObjectData = z.infer<typeof objectsUpdateRequestBodyObject.shape.object_data>;
 export type ObjectsUpdateResponseBodyObject = z.infer<typeof objectsUpdateResponseSchema.shape.object>;
