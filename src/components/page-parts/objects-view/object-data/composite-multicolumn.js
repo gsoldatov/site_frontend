@@ -18,7 +18,7 @@ import StyleCompositeMulticolumn from "../../../../styles/pages/objects-view/com
  */
 export const CompositeMulticolumn = ({ objectID }) => {
     const composite = useSelector(state => state.composite[objectID]);
-    const subobjectOrder = CompositeSelectors.getSubobjectDisplayOrder(composite);
+    const subobjectOrder = CompositeSelectors.getSubobjectDisplayOrder(composite, true);
     
     const columns = subobjectOrder.map((columnSubobjectIDs, k) => <Column key={k} objectID={objectID} subobjectIDs={columnSubobjectIDs} />);
 

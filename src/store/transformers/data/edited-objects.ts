@@ -9,7 +9,7 @@ import type { State } from "../../../types/store/state";
 import type { EditedObject } from "../../../types/store/data/edited-objects";
 
 import { type Composite, SubobjectDeleteMode } from "../../../types/store/data/composite";
-import { objectsBulkUpsertRequestBody, type ObjectsBulkUpsertObjectData } from "../../../types/fetches/data/objects/bulk_upsert";
+import { objectsBulkUpsertObject, type ObjectsBulkUpsertObjectData } from "../../../types/fetches/data/objects/bulk_upsert";
 import { 
     objectsUpdateCompositeSubobject, type ObjectsUpdateObjectData,
     type ObjectsUpdateCompositeSubobjects, type ObjectsUpdateCompositeDeletedSubobjects,    
@@ -19,35 +19,21 @@ import {
 
 export class EditedObjectsTransformers {
     /**
-     * Validates and converts `editedObjects` into a request body to the /objects/bulk_upsert route.
+     * Validates and converts `editedObject` into a /objects/bulk_upsert route format.
      * 
      * Throws if zod validation fails. 
      */
-    static toObjectsBulkUpsertBody(editedObjects: EditedObject[]) {
-        // Get a list of subobjects marked for full deletion
-        const fully_deleted_subobject_ids = editedObjects.reduce((result, eo) => {
-            const curr_fully_deleted = eo.object_type === "composite"
-                ? Object.keys(eo.composite.subobjects).map(id => parseInt(id)).filter(
-                    subobject_id => eo.composite.subobjects[subobject_id].deleteMode === SubobjectDeleteMode.full
-                ) : [];
-            return [...new Set(result.concat(curr_fully_deleted))]
-        }, [] as number[]);
-
-        // Get a list of upserted objects
-        const objects = editedObjects.map(eo => ({
-            ...eo,
-            added_tags: eo.addedTags,
-            removed_tag_ids: eo.removedTagIDs,
-            object_data: editedObjectDataToBulkUpsertRequest(eo)
-        }))
-        // Don't update fully deleted subobjects 
-        .filter(eo => !fully_deleted_subobject_ids.includes(eo.object_id));
-
-        return objectsBulkUpsertRequestBody.parse({ objects, fully_deleted_subobject_ids });
+    static toObjectsBulkUpsertBody(editedObject: EditedObject) {
+        return objectsBulkUpsertObject.parse({
+            ...editedObject,
+            added_tags: editedObject.addedTags,
+            removed_tag_ids: editedObject.removedTagIDs,
+            object_data: editedObjectDataToBulkUpsertRequest(editedObject)
+        });
     }
 
     /**
-     * Validates and converts `editedObjects` into a request body to the /objects/update route.
+     * Validates and converts `editedObject` into a /objects/update route format.
      * 
      * Throws if zod validation fails.
      */

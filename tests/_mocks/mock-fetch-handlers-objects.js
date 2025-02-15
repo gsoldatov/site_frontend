@@ -2,12 +2,66 @@ import { autoGenerateTag } from "./mock-fetch-handlers-tags";
 import { getObjectTypeFromID, generateObjectData, generateObjectAttributes } from "./data-objects";
 import { getMockCompositeHierarchyElements, mapAndCacheNewSubobjects } from "./data-composite";
 import { getIntegerList } from "../_util/data-generation";
+import { deepCopy } from "../../src/util/copy";
 
 export let _cachedObjects = {};      // object & object data caches, which are used to pass object data from add/update to view handler
 export let _cachedObjectData = {};
 export const resetObjectsCaches = () => { _cachedObjects = {}; _cachedObjectData = {} };
 export const setCachedObject = (object) => {
     _cachedObjects[object.object_id] = object;
+};
+
+
+const handleBulkUpsert = body => {
+    const { objects } = JSON.parse(body);
+    // Get object ID map
+    const new_object_ids_map = objects.reduce((result, curr) => {
+        if (curr.object_id <= 0) {
+            const mappedObjectIDs = Object.values(result).map(id => parseInt(id));
+            result[curr.object_id] = 1000 + (-1 * curr.object_id);
+        }
+        return result;
+    }, {});
+
+    // Get objects' attributes and tags
+    const objects_attributes_and_tags = objects.map(object => {
+        const addedTagIDs = object.added_tags.map(t => typeof(t) === "number" ? t : autoGenerateTag({ tag_name: t }));
+        const current_tag_ids = object.object_id <= 0
+            // New objects get tags from added
+            ? addedTagIDs
+            // Existing objects get fixed tag IDs + added - removed
+            : [...new Set([1, 2, 3, 4, 5].concat(addedTagIDs).filter(tagID => !object.removed_tag_ids.includes(tagID)))]
+
+        const result = {
+            ...object,
+            object_id: new_object_ids_map[object.object_id] || object.object_id,
+            created_at: (new Date(Date.now() + 24*60*60*1000 + object.object_id)).toISOString(),
+            modified_at: (new Date(Date.now() + 2*24*60*60*1000 + object.object_id)).toISOString(),
+            current_tag_ids
+        }
+
+        for (let attr of ["added_tags", "removed_tag_ids", "object_data"]) delete result[attr];
+        return result;
+    });
+
+    // Get objects' data
+    const objects_data = objects.map(o => {
+        // Map new subobject IDs
+        const object_data = deepCopy(o.object_data);
+        if (o.object_type === "composite") {
+            for (let subobject of object_data.subobjects)
+                subobject.subobject_id = subobject.subobject_id <= 0 ? new_object_ids_map[subobject.subobject_id] : subobject.subobject_id;
+        }
+
+        return {
+            object_id: new_object_ids_map[o.object_id] || o.object_id,
+            object_type: o.object_type,
+            object_data
+        };
+    });
+
+    // Send response
+    return { status: 200, body: { objects_attributes_and_tags, objects_data, new_object_ids_map }};
 };
 
 
@@ -294,10 +348,11 @@ function handlerViewCompositeHierarchyElements(body) {
 
 
 export const objectsHandlersList = new Map([
+    ["/objects/bulk_upsert", {"POST": handleBulkUpsert}],
     ["/objects/add", {"POST": handleAdd}],
+    ["/objects/update", {"PUT": handleUpdate}],
     ["/objects/view", {"POST": handleView}],
     ["/objects/delete", {"DELETE": handleDelete}],
-    ["/objects/update", {"PUT": handleUpdate}],
     ["/objects/get_page_object_ids", {"POST": handleGetPageObjectIDs}],
     ["/objects/update_tags", {"PUT": handleUpdateTags}],
     ["/objects/search", {"POST": handleObjectsSearch}],

@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 import { type FetchResult } from "../../../../fetches/fetch-runner";
-import { int, intIndex, positiveInt } from "../../../common"
+import { int, intIndex, positiveInt, positiveIntArray } from "../../../common"
 import { objectsUpdateAttributes, linkData, markdownData, toDoListData, 
     compositeDataAddUpdate, compositeSubobject } from "./update"
 import { objectsViewResponseSchema } from "./general";
@@ -10,7 +10,11 @@ import { objectsViewResponseSchema } from "./general";
 /** Object attributes in the /objects/bulk_upsert request format. */
 const objectsBulkUpsertAttributes = objectsUpdateAttributes
     .omit({ object_id: true })
-    .merge(z.object({ object_id: int }));
+    .merge(z.object({ 
+        object_id: int,
+        added_tags: positiveInt.or(z.string().min(1)).array(),
+        removed_tag_ids: positiveIntArray
+    }));
 
 
 /** `object_data` of a composite object in the /objects/bulk_upser request format. */
@@ -35,7 +39,7 @@ const compositeObjectTypeAndData = z.object({ object_type: z.literal("composite"
 
 
 /** Object's attributes, tags & data in the /objects/bulk_upsert format. */
-const upsertedObject = objectsBulkUpsertAttributes.merge(linkObjectTypeAndData)
+export const objectsBulkUpsertObject = objectsBulkUpsertAttributes.merge(linkObjectTypeAndData)
     .or(objectsBulkUpsertAttributes.merge(markdownObjectTypeAndData))
     .or(objectsBulkUpsertAttributes.merge(toDoListObjectTypeAndData))
     .or(objectsBulkUpsertAttributes.merge(compositeObjectTypeAndData));
@@ -43,8 +47,8 @@ const upsertedObject = objectsBulkUpsertAttributes.merge(linkObjectTypeAndData)
 
 /** /objects/bulk_upsert request body schema. */
 export const objectsBulkUpsertRequestBody = z.object({
-    objects: upsertedObject.array().min(1).max(100),
-    fully_deleted_subobject_ids: positiveInt.array().max(1000)
+    objects: objectsBulkUpsertObject.array().min(1).max(100),
+    deleted_object_ids: positiveInt.array().max(1000)
 })
 
 
@@ -56,7 +60,4 @@ export const objectsBulkUpsertResponseSchema = objectsViewResponseSchema
 
 
 export type ObjectsBulkUpsertFetchResult = FetchResult
-    | FetchResult & { 
-        response: z.infer<typeof objectsBulkUpsertResponseSchema>
-        fully_deleted_subobject_ids: z.infer<typeof objectsBulkUpsertRequestBody.shape.fully_deleted_subobject_ids>     // TODO delete if unused
-    };
+    | FetchResult & { response: z.infer<typeof objectsBulkUpsertResponseSchema> };

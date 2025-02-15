@@ -29,7 +29,7 @@ export const SubobjectsContainer = ({ objectID }) => {
 
     const editedObjects = useSelector(state => state.editedObjects);
     const composite = useSelector(state => state.editedObjects[objectID].composite);
-    const subobjectOrder = CompositeSelectors.getSubobjectDisplayOrder(composite);
+    const subobjectOrder = CompositeSelectors.getSubobjectDisplayOrder(composite, true);
     
     const canDrag = useSelector(state => ObjectsEditSelectors.isCompositeDragAndDropEnabled(state));
     const existingObjectInputRow = useSelector(state => state.objectsEditUI.addCompositeSubobjectMenu.row);

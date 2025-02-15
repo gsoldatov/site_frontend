@@ -21,7 +21,8 @@ import {
     type ObjectsViewFetchResult, type ObjectsSearchFetchResult, type ObjectsGetPageObjectIDsFetchResult, 
     type ObjectsPaginationInfo, type ObjectsViewCompositeHierarchyElementsFetchResult
 } from "../../types/fetches/data/objects/general";
-import { objectsBulkUpsertResponseSchema, type ObjectsBulkUpsertFetchResult } from "../../types/fetches/data/objects/bulk_upsert";
+import { objectsBulkUpsertRequestBody, objectsBulkUpsertResponseSchema,
+    type ObjectsBulkUpsertFetchResult } from "../../types/fetches/data/objects/bulk_upsert";
 import { objectsUpdateResponseSchema, type ObjectsUpdateFetchResult } from "../../types/fetches/data/objects/update";
 
 
@@ -31,13 +32,16 @@ import { objectsUpdateResponseSchema, type ObjectsUpdateFetchResult } from "../.
  * 
  * Adds their attributes, tags and data to the store.
  */
-export const objectsBulkUpsertFetch = (editedObjects: EditedObject[]) => {
+export const objectsBulkUpsertFetch = (editedObjects: EditedObject[], deleted_object_ids: number[]) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsBulkUpsertFetchResult> => {
         try {
             if (editedObjects.length === 0) return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "No objects were provided for upsert." });
 
             // Validate and serialize edited objects
-            const body = EditedObjectsTransformers.toObjectsBulkUpsertBody(editedObjects);
+            const body = objectsBulkUpsertRequestBody.parse({
+                objects: editedObjects.map(eo => EditedObjectsTransformers.toObjectsBulkUpsertBody(eo)),
+                deleted_object_ids
+            });
 
             // Fetch backend
             const runner = new FetchRunner("/objects/bulk_upsert", { method: "POST", body });
@@ -54,10 +58,7 @@ export const objectsBulkUpsertFetch = (editedObjects: EditedObject[]) => {
                     dispatch(addObjectsDataFromBackend(data.objects_data));
 
                     // Return fetch result
-                    return result.withCustomProps({
-                        response: data,
-                        fully_deleted_subobject_ids: body.fully_deleted_subobject_ids
-                    });
+                    return result.withCustomProps({ response: data });
                 default:
                     return result;
             }

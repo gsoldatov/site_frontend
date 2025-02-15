@@ -126,47 +126,42 @@ export const objectsEditSaveFetch = () => {
         let state = getState();
         if (ObjectsEditSelectors.isFetching(state)) return;
 
-        // Get edited objects to be upserted
+        // Get edited objects to be upserted, deleted & removed from state (the latter is additionally filtered later)
         const { currentObjectID } = state.objectsEditUI;
-        const hierarchyObjectIDs = EditedObjectsSelectors.editedCompositeHierarchyObjectIDs(state, currentObjectID, false);     // exclude subobjects of non-composite
-        const upsertedObjectIDs = hierarchyObjectIDs.filter(objectID => 
-            // Current edited object
-            objectID === currentObjectID 
-            // New objects
-            || objectID <= 0
-            // Modified existing objects
-            || (objectID > 0 && EditedObjectsSelectors.safeIsModified(state, objectID, "save", true))
-        );
+        const {upsertedObjectIDs, deletedObjectIDs, removedFromStateObjectIDs } = 
+            EditedObjectsSelectors.getUpsertedDeletedAndRemovedObjectIDs(state, currentObjectID);
         const upsertedEditedObjects = upsertedObjectIDs.map(objectID => state.editedObjects[objectID]);
 
-        // Get object IDs to be cleared if fetch succeeds
-        // // New subobject IDs of upserted objects, including deleted and subobjects of non-composite
-        const deletedNewSubobjectIDs = EditedObjectsSelectors.editedCompositeHierarchyObjectIDs(state, currentObjectID, true)
-            .filter(objectID => objectID <= 0);
-        // // Existing subobjects, marked as fully deleted
-        const deletedExistingSubobjectIDs = upsertedObjectIDs.reduce((result, objectID) => {
-            const eo = state.editedObjects[objectID];
-            if (eo.object_type !== "composite") return result;
-            const deletedSubobjectIDs = Object.keys(eo.composite.subobjects).map(id => parseInt(id)).filter(
-                subobjectID => eo.composite.subobjects[subobjectID].deleteMode !== SubobjectDeleteMode.none);
-            return [...new Set(result.concat(deletedSubobjectIDs))]
-        }, [] as number[]);
-        // // Resulting array of object IDs to delete
-        const deletedObjectIDs = [...new Set(deletedNewSubobjectIDs.concat(deletedExistingSubobjectIDs))];
+        // Exit, if current object if marked for full deletion
+        if (deletedObjectIDs.includes(currentObjectID)) {
+            dispatch(setObjectsEditSaveFetchState(false, "Cannot save object marked for full deletion."));
+            return;
+        }
 
         // Run upsert fetch
         dispatch(setObjectsEditSaveFetchState(true, ""));
-        const result = await dispatch(objectsBulkUpsertFetch(upsertedEditedObjects));
+        const upsertResult = await dispatch(objectsBulkUpsertFetch(upsertedEditedObjects, deletedObjectIDs));
         
         // Handle fetch errors
-        if (result.failed) {
-            dispatch(setObjectsEditSaveFetchState(false, result.error!));
+        if (upsertResult.failed) {
+            dispatch(setObjectsEditSaveFetchState(false, upsertResult.error!));
+            return;
+        }
+
+        // Fetch non cached tags
+        if (!("response" in upsertResult)) throw Error("Missing `response` in successful fetch result.");
+        const allObjectsTags: Set<number> = new Set();
+        upsertResult.response.objects_attributes_and_tags.forEach(object => object.current_tag_ids.forEach(tagID => allObjectsTags.add(tagID)));
+        const fetchMissingTagsResult = await dispatch(fetchMissingTags([...allObjectsTags]));
+
+        // Handle tag fetch errors
+        if (fetchMissingTagsResult.failed) {
+            dispatch(setObjectsEditSaveFetchState(false, fetchMissingTagsResult.error!));
             return;
         }
 
         // Load returned data into edited objects
-        if (!("response" in result)) throw Error("Missing `response` in successful fetch result.");
-        const objectIDs = result.response.objects_attributes_and_tags.map(oa => oa.object_id);
+        const objectIDs = upsertResult.response.objects_attributes_and_tags.map(oa => oa.object_id);
         dispatch(loadEditedObjects(objectIDs));
 
         // Trigger to-do list rerender
@@ -177,12 +172,17 @@ export const objectsEditSaveFetch = () => {
 
         // Redirect from new to existing object's page
         if (currentObjectID <= 0) {
-            const mappedObjectID = result.response.new_object_ids_map[currentObjectID];
+            const mappedObjectID = upsertResult.response.new_object_ids_map[currentObjectID];
             dispatch(setRedirectOnRender(`/objects/edit/${mappedObjectID}`));
         }
 
+        // Get final list of objects, deleted from state (which excludes new current edited object & its subobjects)
+        const newCurrentObjectID = currentObjectID > 0 ? currentObjectID : upsertResult.response.new_object_ids_map[currentObjectID];
+        const displayedObjectIDs = EditedObjectsSelectors.objectAndSubobjectIDs(getState(), [newCurrentObjectID]);
+        const finalRemovedObjectIDs = removedFromStateObjectIDs.filter(id => !displayedObjectIDs.includes(id));
+
         // Delete object data, which is no longer used
-        dispatch(deleteObjects(deletedObjectIDs, false));
+        dispatch(deleteObjects(finalRemovedObjectIDs, false));
     };
 };
 

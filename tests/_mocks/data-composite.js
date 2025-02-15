@@ -279,10 +279,13 @@ export const getStoreWithCompositeObjectAndSubobjectsOfEachType = (mainObjectIsN
  * Returns mapped id for a `subobjectID` based on its `objectType`.
  */
 export const getMappedSubobjectID = (subobjectID, subobjectType) => {
-    return subobjectType === "link" ? -1 * subobjectID + 800
-    : subobjectType === "markdown" ? -1 * subobjectID + 1800
-    : subobjectType === "to_do_list" ? -1 * subobjectID + 2800
-    : undefined;
+    // NOTE: reimplemented to match /objects/bulk_upsert mock request handler logic
+    return 1000 + -1 * subobjectID;
+    
+    // return subobjectType === "link" ? -1 * subobjectID + 800
+    // : subobjectType === "markdown" ? -1 * subobjectID + 1800
+    // : subobjectType === "to_do_list" ? -1 * subobjectID + 2800
+    // : undefined;
 };
 
 

@@ -3,7 +3,7 @@ import { deepEqual } from "../../../../util/equality-checks";
 import { ObjectsSelectors } from "./objects";
 
 import { getEditedObjectState } from "../../../../types/store/data/edited-objects";
-import { compositeSubobject } from "../../../../types/store/data/composite";
+import { compositeSubobject, SubobjectDeleteMode } from "../../../../types/store/data/composite";
 
 import type { State } from "../../../../types/store/state";
 import type { Markdown } from "../../../../types/store/data/markdown";
@@ -107,6 +107,97 @@ export class EditedObjectsSelectors {
         }
 
         return [...result];
+    }
+
+    /**
+     * Returns IDs of edited objects, which are to be upserted, fully deleted
+     * and removed from state after bulk upsert for the composite hierarchy starting from `rootObjectID`.
+     * 
+     * NOTE: objects, removed from state, must be additionally filtered from objects, which will be displayed on the
+     * object edit page (i.e., current edited object & its subobjects) after a successful bulk upsert.
+     */
+    static getUpsertedDeletedAndRemovedObjectIDs(state: State, rootObjectID: number) {
+        const upsertedObjectIDs: number[] = [];
+        const deletedObjectIDs: number[] = [];
+        const removedFromStateObjectIDs: number[] = [];
+
+        // Root object (upserted & removed from state, if new)
+        upsertedObjectIDs.push(rootObjectID);
+        if (rootObjectID <= 0) removedFromStateObjectIDs.push(rootObjectID);
+
+        // Recursively loop through subobjects, until all present in `state.editedObjects` are visited
+        const queue: number[] = [rootObjectID];
+        const visited: Set<number> = new Set();
+
+        while (queue.length > 0) {
+            // Check if object was not visited before, or not being edited
+            const objectID = queue.shift() as number;
+            if (visited.has(objectID)) continue;
+            visited.add(objectID);
+            
+            const editedObject = state.editedObjects[objectID]
+            if (editedObject === undefined) continue;
+
+            // Subobjects of non-composite objects
+            if (editedObject.object_type !== "composite") {
+                for (let subobjectID of Object.keys(editedObject.composite.subobjects).map(id => parseInt(id)))
+                    // Both new & existing are removed from state
+                    removedFromStateObjectIDs.push(subobjectID);
+                    // Subobjects are not recursively looped through
+            } else {
+                for (let subobjectID of Object.keys(editedObject.composite.subobjects).map(id => parseInt(id))) {
+                    const { deleteMode } = editedObject.composite.subobjects[subobjectID];
+                    
+                    // Add subobject for recursive chec
+                    queue.push(subobjectID);
+
+                    // Non-deleted subobjects
+                    if (deleteMode === SubobjectDeleteMode.none) {
+                        // New & existing modified subobjects are upserted
+                        if (subobjectID <= 0) upsertedObjectIDs.push(subobjectID);
+                        else if (EditedObjectsSelectors.safeIsModified(state, subobjectID, "save", true)) upsertedObjectIDs.push(subobjectID);
+
+                        // New subobjects are removed from state
+                        if (subobjectID <= 0) removedFromStateObjectIDs.push(subobjectID);
+                    } 
+                    // Deleted subobjects
+                    else if (deleteMode === SubobjectDeleteMode.subobjectOnly) {
+                        // New & existing subobjects are removed from state
+                        removedFromStateObjectIDs.push(subobjectID);
+                    }
+                    // Fully deleted subobjects
+                    else {
+                        // Existing subobjects are fully deleted
+                        if (subobjectID > 0) deletedObjectIDs.push(subobjectID);
+                        
+                        // New & existing subobjects are removed from state
+                        removedFromStateObjectIDs.push(subobjectID);
+                    }
+                }
+            }
+        }
+            
+        return {
+            upsertedObjectIDs: [...new Set(upsertedObjectIDs)],
+            deletedObjectIDs: [...new Set(deletedObjectIDs)],
+            removedFromStateObjectIDs: [...new Set(removedFromStateObjectIDs)]
+        }
+    }
+
+    /**
+     * Returns a list of object IDs from `subobjectIDs`, which are composite subobjects with specified `deleteModes`
+     * in any composite object from `objectIDs`.
+     */
+    static subobjectIDsWithDeleteModes(state: State, objectIDs: number[], subobjectIDs: number[], deleteModes: SubobjectDeleteMode[]): number[] {
+        const subobjectsWithMatchingDeleteMode = subobjectIDs.reduce((result, objectID) => {
+            const eo = state.editedObjects[objectID];
+            if (eo.object_type === "composite")
+                for (let subobjectID of Object.keys(eo.composite.subobjects).map(id => parseInt(id)))
+                    if (deleteModes.includes(eo.composite.subobjects[subobjectID].deleteMode))
+                        result.add(subobjectID);
+            return result;
+        }, new Set() as Set<number>);
+        return subobjectIDs.filter(id => subobjectsWithMatchingDeleteMode.has(id));
     }
 
     /** 
