@@ -4,6 +4,7 @@ import { getMockCompositeHierarchyElements, mapAndCacheNewSubobjects } from "./d
 import { getIntegerList } from "../_util/data-generation";
 import { deepCopy } from "../../src/util/copy";
 
+
 export let _cachedObjects = {};      // object & object data caches, which are used to pass object data from add/update to view handler
 export let _cachedObjectData = {};
 export const resetObjectsCaches = () => { _cachedObjects = {}; _cachedObjectData = {} };
@@ -17,7 +18,6 @@ const handleBulkUpsert = body => {
     // Get object ID map
     const new_object_ids_map = objects.reduce((result, curr) => {
         if (curr.object_id <= 0) {
-            const mappedObjectIDs = Object.values(result).map(id => parseInt(id));
             result[curr.object_id] = 1000 + (-1 * curr.object_id);
         }
         return result;

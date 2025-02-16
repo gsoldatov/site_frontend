@@ -2,7 +2,9 @@ import { z } from "zod";
 
 import { RouteHandler } from "../route-handler";
 
-import { int, nonEmptyPositiveIntArray, nonNegativeInt, positiveInt, positiveIntArray, timestampOrEmptyString } from "../../../../src/types/common";
+import { deepCopy } from "../../../../src/util/copy";
+
+import { int, nonEmptyPositiveIntArray, nonNegativeInt, positiveInt, positiveIntArray, timestampOrNull } from "../../../../src/types/common";
 import type { MockBackend } from "../../mock-backend";
 
 
@@ -15,6 +17,82 @@ export class ObjectsRouteHandlers {
 
     constructor(backend: MockBackend) {
         this.backend = backend;
+
+        this.bulkUpsert = new RouteHandler(backend, {
+            route: "/objects/bulk_upsert", method: "POST",
+            getResponseParams: {
+                currentObjectID: 1000,  // current "existing" object_id (incremented, when a new composite subobject is added) 
+                currentTagID: 1000      // current "existing" tag_id (incremented, when a new tag is added)
+            },
+            getResponse: function(this: RouteHandler, requestContext) {
+                const { objects } = objectsBulkUpsertRequestBody.parse(requestContext.body);
+                // Get object ID map
+                const new_object_ids_map = objects.reduce((result, curr) => {
+                    if (curr.object_id <= 0) {
+                        result[curr.object_id] = (this.getResponseParams as any).currentObjectID++;
+                    }
+                    return result;
+                }, {} as Record<number, number>);
+            
+                // Get objects' attributes and tags
+                const objects_attributes_and_tags = objects.map(object => {
+                    const addedTagIDs = object.added_tags.map(t => {
+                        if (typeof(t) === "number") return t;
+                        
+                        // Add string tags to cache & map them to cached tag ID
+                        const tagID = (this.getResponseParams as any).currentTagID++;
+                        this.backend.cache.tags.update(tagID, { tag_name: t });
+                        return tagID;
+                    });
+                    const current_tag_ids = object.object_id <= 0
+                        // New objects get tags from added
+                        ? addedTagIDs
+                        // Existing objects get generated tag IDs + added - removed
+                        : [ ...new Set(
+                            this.backend.data.object(object.object_id).attributes.current_tag_ids
+                            .concat(addedTagIDs)
+                            .filter(tagID => !object.removed_tag_ids.includes(tagID))
+                        )]
+            
+                    const result = {
+                        ...object,
+                        object_id: new_object_ids_map[object.object_id] || object.object_id,
+                        created_at: (new Date(Date.now() + 24*60*60*1000 + object.object_id)).toISOString(),
+                        modified_at: (new Date(Date.now() + 2*24*60*60*1000 + object.object_id)).toISOString(),
+                        current_tag_ids
+                    }
+            
+                    for (let attr of ["added_tags", "removed_tag_ids", "object_data"]) delete (result as any)[attr];
+
+                    // Add object attributes to cache before returning them
+                    this.backend.cache.objects.update(result.object_id, result);
+                    return result;
+                });
+            
+                // Get objects' data
+                const objects_data = objects.map(o => {
+                    const object_id = new_object_ids_map[o.object_id] || o.object_id;
+                    // Map new subobject IDs
+                    const object_data = deepCopy(o.object_data);
+                    if (o.object_type === "composite") {
+                        for (let subobject of object_data.subobjects)
+                            subobject.subobject_id = subobject.subobject_id <= 0 ? new_object_ids_map[subobject.subobject_id] : subobject.subobject_id;
+                    }
+
+                    // Add object data to cache
+                    this.backend.cache.objects.update(object_id, undefined, object_data);
+            
+                    return {
+                        object_id,
+                        object_type: o.object_type,
+                        object_data
+                    };
+                });
+            
+                // Send response
+                return { status: 200, body: { objects_attributes_and_tags, objects_data, new_object_ids_map }};
+            }
+        })
 
         this.update = new RouteHandler(backend, {
             route: "/objects/update", method: "PUT",
@@ -133,7 +211,7 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
         // NOTE: resursive `inner` calls will skip this block, since composite subobjects can't contain updates
         let data = object["object_data"], id_mapping: Record<number, number> = {};
         if (object_type === "composite") {
-            (data as CompositeData).subobjects.forEach(subobject => {
+            (data as ObjectsUpdateComposite).subobjects.forEach(subobject => {
                 // Process only subobjects, which contain data that needs to be updated
                 // (add it to cache and get object mapping)
                 if ("object_type" in subobject) {
@@ -146,10 +224,10 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
         // Update data in cache
         if (object_type === "composite") {
             // map subobject IDs to new values & remove non-composite props
-            data = data as CompositeData;
+            data = data as ObjectsUpdateComposite;
             data = { ...data, subobjects: data.subobjects.map(subobject => {
                     const object_id = id_mapping[subobject.subobject_id] || subobject.subobject_id;
-                    return { ...compositeSubobjectBase.parse(subobject), object_id };
+                    return { ...compositeSubobject.parse(subobject), object_id };
                 })
             };
         }
@@ -175,23 +253,24 @@ const processObjectUpdate = function(this: RouteHandler, object: ObjectsAddUpdat
 };
 
 
-/***************************
- * /objects/update schemas
-***************************/
-const objectsUpdateAttributes = z.object({
-    object_id: positiveInt,
+/*******************************
+ * /objects/bulk_upsert schemas
+*******************************/
+/** Attributes & tags without `object_type` */
+const objectsBulkUpsertAttributes = z.object({
+    object_id: int,
     object_name: z.string().min(1).max(255),
     object_description: z.string(),
     is_published: z.boolean(),
     display_in_feed: z.boolean(),
-    feed_timestamp: timestampOrEmptyString,
+    feed_timestamp: timestampOrNull,
     show_description: z.boolean(),
-    owner_id: positiveInt.optional(),
-    added_tags: positiveInt.or(z.string().min(1)).array().optional(),
-    removed_tag_ids: positiveIntArray.optional()
+    owner_id: positiveInt,
+    added_tags: positiveInt.or(z.string().min(1)).array(),
+    removed_tag_ids: positiveIntArray
 });
 
-
+// Object data
 const linkData = z.object({
     link: z.string().url(),
     show_description_as_link: z.boolean()
@@ -213,8 +292,7 @@ const toDoListData = z.object({
     }).array().min(1)
 });
 
-/** Subobject props without props passed for update */
-const compositeSubobjectBase = z.object({
+const compositeSubobject = z.object({
     subobject_id: int,
     row: nonNegativeInt,
     column: nonNegativeInt,
@@ -224,11 +302,52 @@ const compositeSubobjectBase = z.object({
     show_description_as_link_composite: z.enum(["yes", "no", "inherit"])
 });
 
+const objectsBulkUpsertComposite = z.object({
+    display_mode: z.enum(["basic", "grouped_links", "multicolumn", "chapters"]),
+    numerate_chapters: z.boolean(),    
+    subobjects: compositeSubobject.array()
+});
+
+const objectsBulkUpsertObject = 
+    objectsBulkUpsertAttributes.merge(z.object({ object_type: z.literal("link"), object_data: linkData }))
+    .or(
+        objectsBulkUpsertAttributes.merge(z.object({ object_type: z.literal("markdown"), object_data: markdownData }))
+    )
+    .or(
+        objectsBulkUpsertAttributes.merge(z.object({ object_type: z.literal("to_do_list"), object_data: toDoListData }))
+    )
+    .or(
+        objectsBulkUpsertAttributes.merge(z.object({ object_type: z.literal("composite"), object_data: objectsBulkUpsertComposite }))
+    )
+;
+
+const objectsBulkUpsertRequestBody = z.object({
+    objects: objectsBulkUpsertObject.array(),
+    deleted_object_ids: positiveInt.array()
+});
+
+
+/***************************
+ * /objects/update schemas
+***************************/
+const objectsUpdateAttributes = z.object({
+    object_id: positiveInt,
+    object_name: z.string().min(1).max(255),
+    object_description: z.string(),
+    is_published: z.boolean(),
+    display_in_feed: z.boolean(),
+    feed_timestamp: timestampOrNull,
+    show_description: z.boolean(),
+    owner_id: positiveInt.optional(),
+    added_tags: positiveInt.or(z.string().min(1)).array().optional(),
+    removed_tag_ids: positiveIntArray.optional()
+});
+
 /** Subobject attributes can be passed along with basic props */
 const compositeSubobjectWithAttributesBase = objectsUpdateAttributes
     .omit({ object_id: true, added_tags: true, removed_tag_ids: true })
     // .merge(z.object({ object_id: int }))
-    .merge(compositeSubobjectBase)
+    .merge(compositeSubobject)
 ;
 
 /** Full schema of composite subobjects with attributes & data provided */
@@ -253,37 +372,35 @@ const compositeSubobjectWithAttributesAndData =
 ;
 
 /** Full schema of a composite subobject (with & without attributes and data) */
-const compositeSubobject = compositeSubobjectWithAttributesAndData.or(compositeSubobjectBase.strict());
+const objectsUpdateCompositeSubobject = compositeSubobjectWithAttributesAndData.or(compositeSubobject.strict());
 
 /** Full composite data schema */
-const compositeData = z.object({
+const objectsUpdateComposite = z.object({
     display_mode: z.enum(["basic", "grouped_links", "multicolumn", "chapters"]),
     numerate_chapters: z.boolean(),    
-    subobjects: compositeSubobject.array().min(1),
+    subobjects: objectsUpdateCompositeSubobject.array().min(1),
     deleted_subobjects: z.object({
         object_id: positiveInt, is_full_delete: z.boolean()
     }).array()
 });
 
-type CompositeData = z.infer<typeof compositeData>;
+type ObjectsUpdateComposite = z.infer<typeof objectsUpdateComposite>;
 type CompositeSubobjectWithAttributesAndData = z.infer<typeof compositeSubobjectWithAttributesAndData>;
 
-
-const objectData = 
+const objectsUpdateObjectData = 
     linkData
     .or(markdownData)
     .or(toDoListData)
-    .or(compositeData)
+    .or(objectsUpdateComposite)
 ;
 
 const objectsUpdate = z.object({
     object: 
         objectsUpdateAttributes
-        .merge(z.object({ object_data: objectData }))
+        .merge(z.object({ object_data: objectsUpdateObjectData }))
 });
 
 type ObjectsUpdateObject = z.infer<typeof objectsUpdate.shape.object>;
-
 type ObjectsAddUpdateObject = ObjectsUpdateObject & { object_type?: string };    // NOTE: implement fully if/when required
 
 
