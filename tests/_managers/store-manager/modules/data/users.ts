@@ -1,8 +1,8 @@
-import { addUsers } from "../../../../src/reducers/data/users";
+import { addUsers } from "../../../../../src/reducers/data/users";
 
-import type { AppStore } from "../../../../src/types/store/store";
-import type { DataGenerator } from "../../../_mock-data/data-generator";
-import type { User } from "../../../_mock-data/modules/users";
+import type { AppStore } from "../../../../../src/types/store/store";
+import type { DataGenerator } from "../../../../_mock-data/data-generator";
+import type { User } from "../../../../_mock-data/modules/users";
 
 /**
  * Performs operations with `state.users` part of the state.

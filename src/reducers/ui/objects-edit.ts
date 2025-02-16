@@ -26,13 +26,13 @@ export const loadObjectsEditExistingPage = (currentObjectID: number) => ({ type:
 const _loadObjectsEditExistingPage = (state: State, action: { currentObjectID: number }): State => {
     const { selectedTab } = state.objectsEditUI;    // don't reset to default
 
-    // Validate current object & handle invalid currentObjectID
+    // Validate current object & handle invalid `currentObjectID`
     const { currentObjectID } = action;
     const currentObjectValidation = positiveInt.safeParse(currentObjectID);
     if (!currentObjectValidation.success)
         return { ...state, objectsEditUI: getObjectsEditUI({ loadFetch: { isFetching: false, fetchError: "Object not found." }, selectedTab })};
 
-    // Returns state for a valida
+    // Returns state for a valid `currentObjectID`
     return { ...state, objectsEditUI: getObjectsEditUI({ currentObjectID: action.currentObjectID, selectedTab }) };
 };
 

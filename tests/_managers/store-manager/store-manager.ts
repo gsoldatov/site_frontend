@@ -1,10 +1,12 @@
 import { DataGenerator } from "../../_mock-data/data-generator";
 
-import { AuthStoreManager } from "./modules/auth";
-import { UsersStoreManager } from "./modules/users";
-import { TagsStoreManager } from "./modules/tags";
-import { ObjectsStoreManager } from "./modules/objects";
-import { EditedObjectsStoreManager } from "./modules/edited-objects";
+import { AuthStoreManager } from "./modules/data/auth";
+import { UsersStoreManager } from "./modules/data/users";
+import { TagsStoreManager } from "./modules/data/tags";
+import { ObjectsStoreManager } from "./modules/data/objects";
+import { EditedObjectsStoreManager } from "./modules/data/edited-objects";
+
+import { ObjectsEditStoreManager } from "./modules/ui/objects-edit";
 
 import { setNewState } from "../../../src/reducers/common";
 
@@ -24,6 +26,8 @@ export class StoreManager {
     tags: TagsStoreManager
     objects: ObjectsStoreManager
     editedObjects: EditedObjectsStoreManager
+
+    objectsEdit: ObjectsEditStoreManager
     
     constructor(store: AppStore) {
         this.store = store;
@@ -34,6 +38,8 @@ export class StoreManager {
         this.tags = new TagsStoreManager(this.store, this.generator);
         this.objects = new ObjectsStoreManager(this.store, this.generator);
         this.editedObjects = new EditedObjectsStoreManager(this.store, this.generator);
+
+        this.objectsEdit = new ObjectsEditStoreManager(this.store, this.generator);
     }
 
     /**

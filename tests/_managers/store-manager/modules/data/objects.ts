@@ -1,11 +1,11 @@
-import { addObjectsAttributes, updateObjectsAttributes, addObjectsDataFromBackend, updateObjectsData } from "../../../../src/reducers/data/objects";
-import { addObjectsTags } from "../../../../src/reducers/data/objects-tags";
+import { addObjectsAttributes, updateObjectsAttributes, addObjectsDataFromBackend, updateObjectsData } from "../../../../../src/reducers/data/objects";
+import { addObjectsTags } from "../../../../../src/reducers/data/objects-tags";
 
-import type { PartialExcept } from "../../../../src/types/common";
-import type { AppStore } from "../../../../src/types/store/store";
-import type { DataGenerator } from "../../../_mock-data/data-generator";
-import type { ObjectType, ObjectAttributes, ObjectAttributesWithType, PartialObjectData, ObjectData } from "../../../_mock-data/modules/objects";
-import type { PickPartial } from "../../../../src/types/common";
+import type { PartialExcept } from "../../../../../src/types/common";
+import type { AppStore } from "../../../../../src/types/store/store";
+import type { DataGenerator } from "../../../../_mock-data/data-generator";
+import type { ObjectType, ObjectAttributes, ObjectAttributesWithType, PartialObjectData, ObjectData } from "../../../../_mock-data/modules/objects";
+import type { PickPartial } from "../../../../../src/types/common";
 
 
 /**

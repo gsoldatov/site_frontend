@@ -1,8 +1,8 @@
-import { addTags } from "../../../../src/reducers/data/tags";
+import { addTags } from "../../../../../src/reducers/data/tags";
 
-import type { AppStore } from "../../../../src/types/store/store";
-import type { DataGenerator } from "../../../_mock-data/data-generator";
-import type { Tag } from "../../../_mock-data/modules/tags";
+import type { AppStore } from "../../../../../src/types/store/store";
+import type { DataGenerator } from "../../../../_mock-data/data-generator";
+import type { Tag } from "../../../../_mock-data/modules/tags";
 
 /**
  * Performs operations with `state.tags` part of the state.
