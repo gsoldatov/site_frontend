@@ -1,7 +1,7 @@
-import { createTestStore } from "../../_util/create-test-store";
-import { resetTestConfig } from "../../_mocks/config";
+import { createTestStore } from "../../../_util/create-test-store";
+import { resetTestConfig } from "../../../_mocks/config";
 
-import { clearUnchangedEditedObjects } from "../../../src/reducers/data/edited-objects";
+import { clearUnchangedEditedObjects } from "../../../../src/reducers/data/edited-objects";
 
 
 /*

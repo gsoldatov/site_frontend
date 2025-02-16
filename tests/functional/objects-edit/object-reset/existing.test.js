@@ -1,9 +1,9 @@
-import { createTestStore } from "../../_util/create-test-store";
-import { resetTestConfig } from "../../_mocks/config";
+import { createTestStore } from "../../../_util/create-test-store";
+import { resetTestConfig } from "../../../_mocks/config";
 
-import { loadObjectsEditExistingPage, resetCurrentEditedObject } from "../../../src/reducers/ui/objects-edit";
-import { clearUnchangedEditedObjects } from "../../../src/reducers/data/edited-objects";
-import { SubobjectDeleteMode } from "../../../src/types/store/data/composite";
+import { loadObjectsEditExistingPage, resetCurrentEditedObject } from "../../../../src/reducers/ui/objects-edit";
+import { clearUnchangedEditedObjects } from "../../../../src/reducers/data/edited-objects";
+import { SubobjectDeleteMode } from "../../../../src/types/store/data/composite";
 
 
 /*

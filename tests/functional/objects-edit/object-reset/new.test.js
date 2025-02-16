@@ -1,8 +1,8 @@
-import { createTestStore } from "../../_util/create-test-store";
-import { resetTestConfig } from "../../_mocks/config";
+import { createTestStore } from "../../../_util/create-test-store";
+import { resetTestConfig } from "../../../_mocks/config";
 
-import { loadObjectsEditNewPage, resetCurrentEditedObject } from "../../../src/reducers/ui/objects-edit";
-import { clearUnchangedEditedObjects } from "../../../src/reducers/data/edited-objects";
+import { loadObjectsEditNewPage, resetCurrentEditedObject } from "../../../../src/reducers/ui/objects-edit";
+import { clearUnchangedEditedObjects } from "../../../../src/reducers/data/edited-objects";
 
 
 /*
