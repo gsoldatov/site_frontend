@@ -12,10 +12,10 @@ const objectsBulkUpsertAttributes = objectsUpdateAttributes
     .omit({ object_id: true })
     .merge(z.object({ 
         object_id: int,
+        owner_id: positiveInt,
         added_tags: positiveInt.or(z.string().min(1)).array(),
         removed_tag_ids: positiveIntArray
     }));
-
 
 /** `object_data` of a composite object in the /objects/bulk_upser request format. */
 const compositeData = compositeDataAddUpdate
