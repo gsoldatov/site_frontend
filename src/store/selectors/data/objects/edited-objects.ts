@@ -140,10 +140,11 @@ export class EditedObjectsSelectors {
 
             // Subobjects of non-composite objects
             if (editedObject.object_type !== "composite") {
-                for (let subobjectID of Object.keys(editedObject.composite.subobjects).map(id => parseInt(id)))
+                for (let subobjectID of Object.keys(editedObject.composite.subobjects).map(id => parseInt(id))) {
                     // Both new & existing are removed from state
                     removedFromStateObjectIDs.push(subobjectID);
                     // Subobjects are not recursively looped through
+                }
             } else {
                 for (let subobjectID of Object.keys(editedObject.composite.subobjects).map(id => parseInt(id))) {
                     const { deleteMode } = editedObject.composite.subobjects[subobjectID];
@@ -154,11 +155,19 @@ export class EditedObjectsSelectors {
                     // Non-deleted subobjects
                     if (deleteMode === SubobjectDeleteMode.none) {
                         // New & existing modified subobjects are upserted
-                        if (subobjectID <= 0) upsertedObjectIDs.push(subobjectID);
-                        else if (EditedObjectsSelectors.safeIsModified(state, subobjectID, "save", true)) upsertedObjectIDs.push(subobjectID);
+                        if (subobjectID <= 0) {
+                            upsertedObjectIDs.push(subobjectID);
+                        }
+                        else {
+                            if (EditedObjectsSelectors.safeIsModified(state, subobjectID, "save", true)) {
+                                upsertedObjectIDs.push(subobjectID);
+                            }
+                        }
 
                         // New subobjects are removed from state
-                        if (subobjectID <= 0) removedFromStateObjectIDs.push(subobjectID);
+                        if (subobjectID <= 0) {
+                            removedFromStateObjectIDs.push(subobjectID);
+                        }
                     } 
                     // Deleted subobjects
                     else if (deleteMode === SubobjectDeleteMode.subobjectOnly) {

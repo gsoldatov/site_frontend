@@ -11,7 +11,7 @@ import { ObjectsViewActions } from "../../../_ui/actions/pages/objects-view";
 import { ExpandToggleActions, ObjectsViewCardActions } from "../../../_ui/actions/page-parts/objects-view";
 
 import { basicCompositeMulticolumnObject } from "../../../_scenarios/objects/composite-multicolumn";
-import { addNonExistingObjectsForObjectsView, mockFetchFailForObjectsView } from "../../../_scenarios/objects/fetch-failures";
+import { addNonExistingObjectsForObjectsView, mockFetchFailForObjectsView } from "../../../_scenarios/backend-responses/fetch-failures";
 import { ObjectsViewCardLayout } from "../../../_ui/layout/page-parts/objects-view";
 
 

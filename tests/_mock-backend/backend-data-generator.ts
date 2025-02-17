@@ -11,11 +11,11 @@ import type { User, UserMin } from "../_mock-data/modules/users";
  */
 export class BackendDataGenerator {
     private backend: MockBackend
-    private _generator: DataGenerator
+    generator: DataGenerator
 
     constructor(backend: MockBackend) {
         this.backend = backend;
-        this._generator = new DataGenerator();
+        this.generator = new DataGenerator();
     }
 
     /**
@@ -24,8 +24,8 @@ export class BackendDataGenerator {
     object(object_id: number | string): { attributes: ObjectAttributes, data: ObjectDataUnion } {
         object_id = parseInt(object_id as string);
         const [cachedAttributes, cachedData] = this.backend.cache.objects.get(object_id);
-        const attributes = this._generator.object.attributes({ ...cachedAttributes, object_id });
-        const data = this._generator.object.data(object_id, attributes.object_type, cachedData);
+        const attributes = this.generator.object.attributes({ ...cachedAttributes, object_id });
+        const data = this.generator.object.data(object_id, attributes.object_type, cachedData);
         return { attributes, data };
     }
 
@@ -34,7 +34,7 @@ export class BackendDataGenerator {
      */
     tag(tag_id: number): Tag {
         const cachedTag = this.backend.cache.tags.get(tag_id);
-        return this._generator.tag.tag({ ...cachedTag, tag_id });
+        return this.generator.tag.tag({ ...cachedTag, tag_id });
     }
 
     /**
@@ -42,7 +42,7 @@ export class BackendDataGenerator {
      */
     user(user_id: number): User {
         const cachedUser = this.backend.cache.users.get(user_id);
-        return this._generator.user.user({ ...cachedUser, user_id });
+        return this.generator.user.user({ ...cachedUser, user_id });
     }
 
     /**
@@ -50,7 +50,7 @@ export class BackendDataGenerator {
      */
     userMin(user_id: number): UserMin {
         const cachedUser = this.backend.cache.users.get(user_id);
-        return this._generator.user.userMin({ ...cachedUser, user_id });
+        return this.generator.user.userMin({ ...cachedUser, user_id });
     }
 
     /**
@@ -58,6 +58,6 @@ export class BackendDataGenerator {
      */
     settings() {
         const cachedSettings = this.backend.cache.settings.get();
-        return this._generator.settings.settings(cachedSettings);
+        return this.generator.settings.settings(cachedSettings);
     }
 }

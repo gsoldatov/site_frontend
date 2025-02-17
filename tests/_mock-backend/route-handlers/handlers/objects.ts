@@ -11,6 +11,7 @@ import type { MockBackend } from "../../mock-backend";
 export class ObjectsRouteHandlers {
     [index: string]: RouteHandler | MockBackend
     private backend: MockBackend
+    bulkUpsert: RouteHandler
     update: RouteHandler
     view: RouteHandler
     getPageObjectIDs: RouteHandler
