@@ -161,7 +161,7 @@ describe("Expand/collapse toggle", () => {
         expandToggleActions.ensureHidden();
         
         // Wait for update fetch to complete (otherwise it will fire during the next test)
-        await waitFor(() => { expect(backend.history.getMatchingRequestsCount("/objects/update")).toEqual(1); });
+        await waitFor(() => { expect(backend.history.getMatchingRequestsCount("/objects/bulk_upsert")).toEqual(1); });
     });
 
 
@@ -189,9 +189,9 @@ describe("Expand/collapse toggle", () => {
         
         // Check if update fetch was fired
         await waitFor(() => {
-            expect(backend.history.getMatchingRequestsCount("/objects/update")).toEqual(1);
-            const { body } = backend.history.getMatchingRequests("/objects/update")[0].requestContext;
-            const changedSubobjectData = body.object.object_data.subobjects.filter(so => so.subobject_id === changedSubobjectID)[0];
+            expect(backend.history.getMatchingRequestsCount("/objects/bulk_upsert")).toEqual(1);
+            const { body } = backend.history.getMatchingRequests("/objects/bulk_upsert")[0].requestContext;
+            const changedSubobjectData = body.objects[0].object_data.subobjects.filter(so => so.subobject_id === changedSubobjectID)[0];
             expect(changedSubobjectData.is_expanded).toEqual(true);
         });
     });
@@ -219,6 +219,6 @@ describe("Expand/collapse toggle", () => {
         
         // Check if update fetch was not fired
         for (let i = 0; i < 5; i++) await waitFor(() => undefined);
-        expect(backend.history.getMatchingRequestsCount("/objects/update")).toEqual(0);
+        expect(backend.history.getMatchingRequestsCount("/objects/bulk_upsert")).toEqual(0);
     });
 });

@@ -4,14 +4,12 @@ import { FetchRunner, FetchResult, FetchErrorType } from "../fetch-runner";
 
 import { fetchMissingTags } from "../data/tags";
 
-import { addObjectsTags, updateObjectsTags } from "../../reducers/data/objects-tags";
+import { addObjectsTags } from "../../reducers/data/objects-tags";
 import { deleteObjects } from "../../reducers/data/objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../reducers/data/objects";
-import { updateEditedComposite } from "../../reducers/data/edited-objects";
 
 import { EditedObjectsTransformers, parseObjectsUpdateRequestValidationErrors } from "../../store/transformers/data/edited-objects";
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
-import { EditedCompositeUpdaters } from "../../store/updaters/data/edited-composite";
 
 import type { Dispatch, GetState } from "../../types/store/store";
 import type { EditedObject } from "../../types/store/data/edited-objects";
@@ -23,8 +21,6 @@ import {
 } from "../../types/fetches/data/objects/general";
 import { objectsBulkUpsertRequestBody, objectsBulkUpsertResponseSchema,
     type ObjectsBulkUpsertFetchResult } from "../../types/fetches/data/objects/bulk_upsert";
-import { objectsUpdateResponseSchema, type ObjectsUpdateFetchResult } from "../../types/fetches/data/objects/update";
-
 
 
 /**
@@ -63,62 +59,6 @@ export const objectsBulkUpsertFetch = (editedObjects: EditedObject[], deleted_ob
                     return result;
             }
 
-        } catch (e) {
-            // Handle validation errors
-            if (e instanceof ZodError) {
-                const error = parseObjectsUpdateRequestValidationErrors(e);
-                return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error });
-            }
-
-            throw e;
-        }
-    };
-};
-
-
-/**
- * Fetches backend to update an object with provided `editedObject` data.
- * 
- * Fetches non-cached tags and updates the object in the state in case of success.
- */
-export const objectsUpdateFetch = (editedObject: EditedObject) => {
-    return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsUpdateFetchResult> => {
-        try {
-            // Validate and serialize edited object
-            const object = EditedObjectsTransformers.toObjectsUpdateBody(getState(), editedObject);
-
-            // Fetch backend
-            const runner = new FetchRunner("/objects/update", { method: "PUT", body: { object } });
-            const result = await runner.run();
-
-            // Handle response
-            switch (result.status) {
-                case 200:
-                    const { object: responseObject } = objectsUpdateResponseSchema.parse(result.json);
-                    const { object_id, tag_updates: { added_tag_ids = [], removed_tag_ids = [] }} = responseObject;
-
-                    // Modify object before adding it
-                    dispatch(updateEditedComposite(object_id, { command: "updateSubobjectsOnSave", object_data: object.object_data, object: responseObject }));
-                    const object_data = EditedCompositeUpdaters.modifyObjectDataPostSave(object.object_data, responseObject);
-
-                    // Add attributes, tags & data
-                    dispatch(addObjectsAttributes([responseObject]));
-                    dispatch(updateObjectsTags([object_id], added_tag_ids, removed_tag_ids));
-                    dispatch(addObjectsDataFromBackend([{ object_id, object_type: responseObject.object_type, object_data }]));
-
-                    // Fetch non-cached tags
-                    const fetchMissingTagsResult = await dispatch(fetchMissingTags(getState().objectsTags[object.object_id]));
-
-                    // Handle tag fetch errors
-                    if (fetchMissingTagsResult.failed) return fetchMissingTagsResult;
-
-                    return result.withCustomProps({ object: responseObject });
-            case 404:
-                return result.withCustomProps({ error: "Object not found." });
-            default:
-                return result;
-
-            }
         } catch (e) {
             // Handle validation errors
             if (e instanceof ZodError) {

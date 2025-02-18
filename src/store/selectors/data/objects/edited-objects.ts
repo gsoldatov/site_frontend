@@ -193,22 +193,6 @@ export class EditedObjectsSelectors {
         }
     }
 
-    /**
-     * Returns a list of object IDs from `subobjectIDs`, which are composite subobjects with specified `deleteModes`
-     * in any composite object from `objectIDs`.
-     */
-    static subobjectIDsWithDeleteModes(state: State, objectIDs: number[], subobjectIDs: number[], deleteModes: SubobjectDeleteMode[]): number[] {
-        const subobjectsWithMatchingDeleteMode = subobjectIDs.reduce((result, objectID) => {
-            const eo = state.editedObjects[objectID];
-            if (eo.object_type === "composite")
-                for (let subobjectID of Object.keys(eo.composite.subobjects).map(id => parseInt(id)))
-                    if (deleteModes.includes(eo.composite.subobjects[subobjectID].deleteMode))
-                        result.add(subobjectID);
-            return result;
-        }, new Set() as Set<number>);
-        return subobjectIDs.filter(id => subobjectsWithMatchingDeleteMode.has(id));
-    }
-
     /** 
      * Returns true, if an existing edited object `objectID` is modified, or false, otherwise.
      * Throws if any object part is not present in state storages.
@@ -220,17 +204,6 @@ export class EditedObjectsSelectors {
             || tagsAreModified(state, objectID)
             || dataIsModified(state, objectID, mode)
         ;
-    }
-
-    /** 
-     * Returns true, if `objectID` belongs to a new or unchanged existing edited object, or false otherwise.
-     * Throws, if `objectID` is not present in any of the data stores.
-     * 
-     * `mode` specifies, which attributes are not checked for modification.
-     */
-    static isNewOrUnchangedExisting(state: State, objectID: number | string, mode: IsModifiedMode): boolean {
-        if (typeof objectID === "string") objectID = parseInt(objectID);
-        return objectID <= 0 || !EditedObjectsSelectors.isModifiedExisting(state, objectID, mode);
     }
 
     /**

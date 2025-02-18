@@ -1,5 +1,5 @@
 import { FetchErrorType, FetchResult } from "../fetch-runner";
-import { objectsUpdateFetch, objectsViewFetch, objectsViewCompositeHierarchyElements } from "../data/objects";
+import { objectsViewFetch, objectsViewCompositeHierarchyElements, objectsBulkUpsertFetch } from "../data/objects";
 import { fetchMissingTags } from "../data/tags";
 
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
@@ -98,7 +98,7 @@ export const objectsViewToDoListObjectUpdateFetch = (objectID: number, toDoList:
     return async (dispatch: Dispatch, getState: GetState): Promise<FetchResult> => {
         // Build an edited object with updated to-do list's data, then run the update fetch
         const editedObject = getEditedObjectState({...getState().objects[objectID], toDoList});
-        return await dispatch(objectsUpdateFetch(editedObject));
+        return await dispatch(objectsBulkUpsertFetch([editedObject], []));
     };
 };
 
@@ -121,6 +121,6 @@ export const objectsViewMulticolumnExpandToggleUpdateFetch = (objectID: number, 
         );
         const editedObject = getEditedObjectState({ ...state.objects[objectID], ...newObjectData });
 
-        return await dispatch(objectsUpdateFetch(editedObject));
+        return await dispatch(objectsBulkUpsertFetch([editedObject], []));
     };
 };
