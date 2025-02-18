@@ -270,13 +270,17 @@ test("Composite hierarchy", async () => {
     ).toEqual([5, 6]);  // unmodified & modified existing marked for full deletion
     
     // Check objects, which were deleted from the state
-    for (let objectID of [-2, -1, 0, 1, 2, 3, 4, 5, 6]) { // all new & existing sub-subobjects
+    const objectIDMap = requests[0].response.body["new_object_ids_map"];
+    for (let objectID of [
+        -2, -1, 0,          // all new sub-subojects
+        objectIDMap[-1], // existing sub-subobject, created during the fetch
+        1, 2, 3, 4, 5, 6    // all existing sub-subobjects
+    ]) {
         expect(store.getState()).not.toHaveProperty(`objects.${objectID}`);
         expect(store.getState()).not.toHaveProperty(`editedObjects.${objectID}`);
     }
 
     // Check objects, which remain in the state
-    const objectIDMap = requests[0].response.body["new_object_ids_map"];
     for (let objectID of [
         objectIDMap[0],     // existing object created for main object
         100                 // composite subobject

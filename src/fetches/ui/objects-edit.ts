@@ -15,7 +15,6 @@ import { ObjectsEditSelectors } from "../../store/selectors/ui/objects-edit";
 
 import type { Dispatch, GetState } from "../../types/store/store";
 import { positiveInt } from "../../types/common";
-import { SubobjectDeleteMode } from "../../types/store/data/composite";
 
 
 /**
@@ -176,10 +175,14 @@ export const objectsEditSaveFetch = () => {
             dispatch(setRedirectOnRender(`/objects/edit/${mappedObjectID}`));
         }
 
-        // Get final list of objects, deleted from state (which excludes new current edited object & its subobjects)
+        // Get final list of objects, deleted from state:
+        // - add existing objects, which were created during the fetch;
+        // - exclude new current edited object & its subobjects.
         const newCurrentObjectID = currentObjectID > 0 ? currentObjectID : upsertResult.response.new_object_ids_map[currentObjectID];
         const displayedObjectIDs = EditedObjectsSelectors.objectAndSubobjectIDs(getState(), [newCurrentObjectID]);
-        const finalRemovedObjectIDs = removedFromStateObjectIDs.filter(id => !displayedObjectIDs.includes(id));
+        const finalRemovedObjectIDs = removedFromStateObjectIDs
+            .concat(Object.values(upsertResult.response.new_object_ids_map))
+            .filter(id => !displayedObjectIDs.includes(id));
 
         // Delete object data, which is no longer used
         dispatch(deleteObjects(finalRemovedObjectIDs, false));
