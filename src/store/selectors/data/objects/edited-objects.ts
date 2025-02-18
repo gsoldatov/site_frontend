@@ -141,16 +141,23 @@ export class EditedObjectsSelectors {
             // Subobjects of non-composite objects
             if (editedObject.object_type !== "composite") {
                 for (let subobjectID of Object.keys(editedObject.composite.subobjects).map(id => parseInt(id))) {
-                    // Both new & existing are removed from state
-                    removedFromStateObjectIDs.push(subobjectID);
+                    // New & unmodified existing subobjects are removed from state
+                    if (subobjectID <= 0
+                        || !EditedObjectsSelectors.safeIsModified(state, subobjectID, "save", true)
+                    ) removedFromStateObjectIDs.push(subobjectID);
+                    
                     // Subobjects are not recursively looped through
                 }
             } else {
                 for (let subobjectID of Object.keys(editedObject.composite.subobjects).map(id => parseInt(id))) {
                     const { deleteMode } = editedObject.composite.subobjects[subobjectID];
                     
-                    // Add subobject for recursive chec
+                    // Add subobject for recursive check
                     queue.push(subobjectID);
+
+                    // Mark subobject to be removed from state
+                    // (displayed subobjects are expected to be filtered out of this array outside this function)
+                    removedFromStateObjectIDs.push(subobjectID);
 
                     // Non-deleted subobjects
                     if (deleteMode === SubobjectDeleteMode.none) {
@@ -163,24 +170,17 @@ export class EditedObjectsSelectors {
                                 upsertedObjectIDs.push(subobjectID);
                             }
                         }
-
-                        // New subobjects are removed from state
-                        if (subobjectID <= 0) {
-                            removedFromStateObjectIDs.push(subobjectID);
-                        }
                     } 
-                    // Deleted subobjects
+                    // Removed subobjects
                     else if (deleteMode === SubobjectDeleteMode.subobjectOnly) {
-                        // New & existing subobjects are removed from state
-                        removedFromStateObjectIDs.push(subobjectID);
+                        // Modified existing are upserted
+                        if (subobjectID > 0 && EditedObjectsSelectors.safeIsModified(state, subobjectID, "save", true))
+                            upsertedObjectIDs.push(subobjectID);
                     }
                     // Fully deleted subobjects
                     else {
                         // Existing subobjects are fully deleted
                         if (subobjectID > 0) deletedObjectIDs.push(subobjectID);
-                        
-                        // New & existing subobjects are removed from state
-                        removedFromStateObjectIDs.push(subobjectID);
                     }
                 }
             }
@@ -379,10 +379,12 @@ class ObjectMissingInStoreError extends Error {};
  * Throws if object attributes are not present in state.objects.
  */
 const attributesAreModified = (state: State, objectID: number): boolean => {
-    const objectAttributes = state.objects[objectID] as Record<string, any>;
     const editedObject = state.editedObjects[objectID] as Record<string, any>;
-    if (editedObject === undefined || objectAttributes === undefined)
-        throw new ObjectMissingInStoreError(`Edited object '${objectID}' or its attributes are missing.`);
+    if (editedObject === undefined) return false;
+    
+    const objectAttributes = state.objects[objectID] as Record<string, any>;
+    if (objectAttributes === undefined)
+        throw new ObjectMissingInStoreError(`Attributes of edited object '${objectID}' are missing.`);
 
     for (let key of Object.keys(objectAttributes)) 
         if (!deepEqual(objectAttributes[key], editedObject[key])) return true;
@@ -395,10 +397,12 @@ const attributesAreModified = (state: State, objectID: number): boolean => {
  * Throws if object's tags are not present in state.objectsTags.
  */
 const tagsAreModified = (state: State, objectID: number): boolean => {
+    const editedObject = state.editedObjects[objectID] as Record<string, any>;
+    if (editedObject === undefined) return false;
+
     const objectTags = state.objectsTags[objectID];
-    const editedObject = state.editedObjects[objectID];
-    if (editedObject === undefined || objectTags === undefined)
-        throw new ObjectMissingInStoreError(`Edited object '${objectID}' or its tags are missing.`);
+    if (objectTags === undefined)
+        throw new ObjectMissingInStoreError(`Tags of edited object '${objectID}' are missing.`);
 
     return editedObject.addedTags.length > 0 || editedObject.removedTagIDs.length > 0 || !deepEqual(editedObject.currentTagIDs, objectTags);
 };
@@ -411,10 +415,12 @@ const tagsAreModified = (state: State, objectID: number): boolean => {
  * `mode` specifies, which attributes are not checked for modification.
  */
 const dataIsModified = (state: State, objectID: number, mode: IsModifiedMode): boolean => {
+    const editedObject = state.editedObjects[objectID] as Record<string, any>;
+    if (editedObject === undefined) return false;
+
     const objectData = ObjectsSelectors.data(state, objectID);
-    const editedObject = state.editedObjects[objectID];
-    if (editedObject === undefined || objectData === undefined)
-        throw new ObjectMissingInStoreError(`Edited object '${objectID}' or its data are missing.`);
+    if (objectData === undefined)
+        throw new ObjectMissingInStoreError(`Data of edited object '${objectID}' is missing.`);
 
     switch(editedObject.object_type) {
         case "link":

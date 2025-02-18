@@ -245,3 +245,40 @@ test("Composite object data", async () => {
         expect(store.getState()).toHaveProperty(`editedObjects.${mappedObjectID}.composite.subobjects.${mappedSubobjectID}.${attr}`, subobject[attr]);
     }
 });
+
+
+describe("Object modification check", () => {
+    // NOTE: most of object modification check is tested in `object-persistence` tests.
+    // This block tests only differences of the `save` check mode.
+    test("`is_expanded` & `selected_tab`", async () => {
+        // Add a new composite object with a new subobject & fill required attributes
+        const storeManager = createTestStore(), { store } = storeManager;
+        storeManager.objectsEdit.loadObjectsEditNewPage();
+        storeManager.editedObjects.updateForUpsert(0, "composite", { composite: { subobjects: {} }});
+
+        // Add 2 existing composite objects as its subobjects
+        for (let objectID of [1, 2]) {
+            storeManager.objects.add(objectID, { attributes: { object_type: "composite" },
+                data: { subobjects: [{ subobject_id: 3, is_expanded: false, selected_tab: 0 }] }});
+            storeManager.editedObjects.reset([objectID]);
+            storeManager.editedObjects.updateEditedComposite(0, { command: "addExistingSubobject", subobjectID: objectID, column: 0, row: objectID - 1 });
+        }
+
+        // Modify `is_expanded` & `selected_tab` props of sub-subobjects
+        storeManager.editedObjects.updateEditedComposite(1, { command: "updateSubobject", subobjectID: 3, is_expanded: true });
+        storeManager.editedObjects.updateEditedComposite(2, { command: "updateSubobject", subobjectID: 3, selected_tab: 1 });
+
+        // Run upsert fetch
+        await storeManager.objectsEdit.save();
+
+        // Check if main object & subobjects were upserted
+        const requests = backend.history.getMatchingRequests("/objects/bulk_upsert");
+        expect(requests.length).toEqual(1);
+        const { body } = requests[0].requestContext;
+        expect(
+            body["objects"]
+            .map(o => o["object_id"])
+            .sort((a, b) => a - b)
+        ).toEqual([0, 1, 2]);
+    });
+});
