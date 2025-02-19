@@ -289,7 +289,7 @@ export class EditedObjectsSelectors {
         const storeState = state.composite[objectID]?.subobjects[subobjectID];
         const editedState = state.editedObjects[objectID]?.composite.subobjects[subobjectID];
         if (storeState === undefined || editedState === undefined) return false;
-        const excludedAttributes = new Set(["deleteMode", "fetchError"]);
+        const excludedAttributes = new Set(["deleteMode", "fetchError", "is_expanded", "selected_tab"]);
         const checkedAttributes = Object.keys(compositeSubobject.shape).filter(k => !excludedAttributes.has(k));
 
         for (let attr of checkedAttributes) {

@@ -229,9 +229,9 @@ test("Is existing subobject with modified parameters", async () => {
     const card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
     expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeFalsy();
 
-    // Check if indicator is displayed after card tab is changed
+    // Check if indicator is not displayed after card tab is changed
     clickSubobjectCardDataTabButton(card);
-    expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeTruthy();
+    expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeFalsy();
 
     // Check if indicator is not displayed after card tab is changed back
     clickSubobjectCardAttributeTabButton(card);
@@ -239,7 +239,7 @@ test("Is existing subobject with modified parameters", async () => {
 
     // Check if indicator is displayed after card expand is toggled
     fireEvent.click(getSubobjectExpandToggleButton(card));
-    expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeTruthy();
+    expect(getSubobjectCardIndicators(card).isExistingSubobjectWithModifiedParameters).toBeFalsy();
 
     // Check if indicator is not displayed after card expand is toggled twice
     fireEvent.click(getSubobjectExpandToggleButton(card));
