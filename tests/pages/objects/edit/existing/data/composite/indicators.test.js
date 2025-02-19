@@ -91,26 +91,6 @@ test("Validation error", async () => {
 });
 
 
-test("Is composite subobject", async () => {
-    let { container, store } = renderWithWrappers(<App />, {
-        route: "/objects/edit/3001"
-    });
-
-    // Wait for object and its subobject(-s) to load
-    await waitFor(() => getByText(container, "Object Information"));
-    await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
-    clickDataTabButton(container);
-
-    // Add an existing composite subobject
-    await addAnExistingSubobject(container, 0, "composite subobject", store, { waitForObjectLoad: true });
-    const cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
-
-    // Check if indicator is displayed for the composite subobject
-    expect(getSubobjectCardIndicators(cards[0][0]).isComposite).toBeFalsy();
-    expect(getSubobjectCardIndicators(cards[0][1]).isComposite).toBeTruthy();
-});
-
-
 test("Is existing subobject with modified attributes", async () => {
     let { container, store } = renderWithWrappers(<App />, {
         route: "/objects/edit/3001"

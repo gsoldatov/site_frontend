@@ -107,9 +107,6 @@ const Indicators = ({ objectID, subobjectID }) => {
             { name: "warning", color: "red", title: "Subobject is not valid: ", 
                 titleTextSelector: validationErrorTitleTextSelector,
                 isDisplayedSelector: validationErrorIsDisplayedSelector },
-            
-            { name: "copy outline", color: "black", title: "Subobject is composite. All changes made to it must be saved from its page.", 
-                isDisplayedSelector: state => state.editedObjects[subobjectID].object_type === "composite"},
 
             // New
             { name: "plus", color: "green", title: "Subobject is new and will be created when main object is saved", isDisplayed: parseInt(subobjectID) < 0 },

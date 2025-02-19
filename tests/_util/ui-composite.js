@@ -213,7 +213,6 @@ export const getSubobjectCardIndicators = card => {
         isNewSubobject: queryByTitle(headingRight, "Subobject is new and will be created when main object is saved"),
         
         validationError: queryByTitle(headingRight, "Subobject is not valid:", { exact: false }),
-        isComposite: queryByTitle(headingRight, "Subobject is composite. All changes made to it must be saved from its page."),
         
         isExistingSubobjectWithModifiedAttributes: queryByTitle(headingRight, "Subobject attributes were modified"),
         isExistingSubobjectWithModifiedTags: queryByTitle(headingRight, "Subobject tags were modified"),
