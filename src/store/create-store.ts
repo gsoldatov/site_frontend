@@ -15,13 +15,13 @@ export const createStore = () => {
     const manager = new LocalStorageManager();
     const store = createStoreRedux(
         getRootReducer() as Reducer,
-        manager.loadState(),
+        manager.loadInitialState(),
         applyMiddleware(
             thunkMiddleware
         )
     );
 
-    store.subscribe(() => manager.saveState(store));
+    store.subscribe(() => manager.onStateChangeCallback(store));
 
     setDocumentApp({ store });
 

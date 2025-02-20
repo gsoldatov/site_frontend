@@ -6,7 +6,7 @@ import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 
 import { resetTestConfig } from "../_mocks/config";
 import { renderWithWrappers } from "../_util/render";
-import { getEditedObjectLocalStorageKey, waitForAuthInfoToBeSavedIntoLocalStorage } from "../_util/local-storage";
+import { LocalStorageTestUtils } from "../_util/local-storage";
 import { getSideMenuItem, getSideMenuDialogControls } from "../_util/ui-common";
 import { getCurrentObject, waitForEditObjectPageLoad, getObjectTypeSwitchElements, clickDataTabButton, resetObject } from "../_util/ui-objects-edit";
 import { addANewSubobject, clickSubobjectCardDataTabButton, getSubobjectCardAttributeElements, getSubobjectCards } from "../_util/ui-composite";
@@ -52,12 +52,7 @@ describe("Edited objects > Basic operations", () => {
         storeManagerOne.editedObjects.reset([1, 0, -1]);    // existing & new objects (check negative ID case as well)
         
         // Wait for edited objects to be saved
-        await waitFor(() => {
-            for (let i of [1, 0, -1]) {
-                const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(i));
-                expect(savedEditedObject).toBeTruthy();
-            }
-        });
+        await LocalStorageTestUtils.waitForSavedObjectIDs([1, 0, -1]);
 
         // Load objects from localStorage into another store
         const storeManagerTwo = createTestStore(undefined, { useLocalStorage: true });
@@ -78,28 +73,17 @@ describe("Edited objects > Basic operations", () => {
         storeManager.editedObjects.reset([2, 1, 0, -1]);    // existing & new objects (check negative ID case as well)
         
         // Wait for edited objects to be saved
-        await waitFor(() => {
-            for (let i of [1, 0, -1]) {
-                const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(i));
-                expect(savedEditedObject).toBeTruthy();
-            }
-        });
+        await LocalStorageTestUtils.waitForSavedObjectIDs([1, 0, -1]);
 
         // Remove all edited objects, except one
         const editedObjects = {2: store.getState().editedObjects[2]};
         storeManager.updateState({ ...store.getState(), editedObjects });
 
         // Check if removed edited objects are removed from the state
-        await waitFor(() => {
-            for (let i of [1, 0, -1]) {
-                const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(i));
-                expect(savedEditedObject).toBeNull();
-            }
-        });
+        await LocalStorageTestUtils.waitForAbsentObjectIDs([1, 0, -1]);
 
         // Check if remaining edited object is not removed
-        const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(2));
-        expect(savedEditedObject).toBeTruthy();
+        LocalStorageTestUtils.editedObjectIsSaved(2);
     });
 });
 
@@ -124,9 +108,7 @@ describe("Edited objects > New object page", () => {
 
         // Wait for changes to be saved in local storage
         await waitFor(() => {
-            const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(0));
-            expect(savedEditedObject).toBeTruthy();
-            const editedObject = JSON.parse(savedEditedObject);
+            const editedObject = LocalStorageTestUtils.getEditedObject(0);
             expect(editedObject.object_name).toEqual(objectNameValue);
         });
 
@@ -203,16 +185,12 @@ describe("Edited objects > New object page", () => {
         // Wait for changes to be saved in local storage
         await waitFor(() => {
             // Object
-            const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(object_id));
-            expect(savedEditedObject).toBeTruthy();
-            const editedObject = JSON.parse(savedEditedObject);
-            expect(editedObject.object_name).toEqual(objectNameValue);
+            const savedEditedObject = LocalStorageTestUtils.getEditedObject(object_id);
+            expect(savedEditedObject.object_name).toEqual(objectNameValue);
 
             // Subobject
-            const savedEditedSubobject = localStorage.getItem(getEditedObjectLocalStorageKey(mappedSubobjectID));
-            expect(savedEditedSubobject).toBeTruthy();
-            const editedSubbject = JSON.parse(savedEditedSubobject);
-            expect(editedSubbject.object_name).toEqual(newSubobjectName);
+            const savedEditedSubobject = LocalStorageTestUtils.getEditedObject(mappedSubobjectID);
+            expect(savedEditedSubobject.object_name).toEqual(newSubobjectName);
         });
     });
 });
@@ -239,10 +217,8 @@ describe("Edited objects > Existing object page", () => {
         // Wait for changes to be saved in local storage
         await waitFor(() => {
             // New object
-            const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(1));
-            expect(savedEditedObject).toBeTruthy();
-            const editedObject = JSON.parse(savedEditedObject);
-            expect(editedObject.object_name).toEqual(objectNameValue);
+            const savedEditedObject = LocalStorageTestUtils.getEditedObject(1);
+            expect(savedEditedObject.object_name).toEqual(objectNameValue);
         });
 
         // Unmount renredered page
@@ -292,10 +268,8 @@ describe("Edited objects > Existing object page", () => {
         // Wait for changes to be saved in local storage
         await waitFor(() => {
             // Subobject
-            const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(subobjectID));
-            expect(savedEditedObject).toBeTruthy();
-            const editedObject = JSON.parse(savedEditedObject);
-            expect(editedObject.object_name).toEqual(newSubobjectName);
+            const savedEditedObject = LocalStorageTestUtils.getEditedObject(subobjectID);
+            expect(savedEditedObject.object_name).toEqual(newSubobjectName);
         });
 
         // Reset object with subobjects
@@ -304,20 +278,15 @@ describe("Edited objects > Existing object page", () => {
         // Wait for objects to be reset in local storage
         await waitFor(() => {
             // Subobject
-            const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(subobjectID));
-            expect(savedEditedObject).toBeTruthy();
-            const editedObject = JSON.parse(savedEditedObject);
-            expect(editedObject.object_name).toEqual(unmodifiedSubobjectName);
+            const savedEditedObject = LocalStorageTestUtils.getEditedObject(subobjectID);
+            expect(savedEditedObject.object_name).toEqual(unmodifiedSubobjectName);
         });
 
         // Click cancel button
         fireEvent.click(getSideMenuItem(container, "Cancel"));
 
         // Wait for objects to be removed from local storage
-        await waitFor(() => {
-            expect(localStorage.getItem(getEditedObjectLocalStorageKey(3001))).toBeFalsy();
-            expect(localStorage.getItem(getEditedObjectLocalStorageKey(subobjectID))).toBeFalsy();
-        });
+        await LocalStorageTestUtils.waitForAbsentObjectIDs([3001, subobjectID]);
     });
 
 
@@ -345,11 +314,7 @@ describe("Edited objects > Existing object page", () => {
         await waitFor(() => expect(store.getState().editedObjects[existingSubobjectID].object_name).toEqual(newSubobjectName));
 
         // Wait for object and subobjects to be saved in local storage
-        await waitFor(() => {
-            expect(localStorage.getItem(getEditedObjectLocalStorageKey(3001))).toBeTruthy();
-            expect(localStorage.getItem(getEditedObjectLocalStorageKey(existingSubobjectID))).toBeTruthy();
-            expect(localStorage.getItem(getEditedObjectLocalStorageKey(newSubobjectID))).toBeTruthy();
-        });
+        await LocalStorageTestUtils.waitForSavedObjectIDs([3001, existingSubobjectID, newSubobjectID]);
 
         // Delete composite object and subobjects
         let deleteButton = getSideMenuItem(container, "Delete");
@@ -358,12 +323,7 @@ describe("Edited objects > Existing object page", () => {
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
         // Wait for objects to be removed from local storage
-        await waitFor(() => {
-            // Object and subobject
-            expect(localStorage.getItem(getEditedObjectLocalStorageKey(3001))).toBeFalsy();
-            expect(localStorage.getItem(getEditedObjectLocalStorageKey(existingSubobjectID))).toBeFalsy();
-            expect(localStorage.getItem(getEditedObjectLocalStorageKey(newSubobjectID))).toBeFalsy();
-        });
+        await LocalStorageTestUtils.waitForAbsentObjectIDs([3001, existingSubobjectID, newSubobjectID]);
     });
 });
 
@@ -378,7 +338,7 @@ describe("Auth information", () => {
         for (let [k, v] of [["access_token", "some value"], ["access_token_expiration_time", (new Date()).toISOString()], ["user_id", 50], ["numeric_user_level", 20]]) {
             authInfo[k] = v;
             store.dispatch(setAuthInformation(authInfo));
-            await waitForAuthInfoToBeSavedIntoLocalStorage(authInfo);
+            await LocalStorageTestUtils.waitForAuthInfo(authInfo);
         }
     });
 
@@ -391,14 +351,14 @@ describe("Auth information", () => {
         expect(store.getState().auth).toMatchObject(authInfo);
         expect(authInfo).toMatchObject(store.getState().auth);
 
-        // Wait for auth info to be saved into local storage, then clear it
-        await waitForAuthInfoToBeSavedIntoLocalStorage(authInfo);
-        localStorage.clear();
-
-        // Set a non-default auth info into localStorage, then check if it's correctly read into state on store initialization
+        // Set a non-default auth info into localStorage
         authInfo = { access_token: "some_token", access_token_expiration_time: (new Date()).toISOString(), user_id: 15, numeric_user_level: 10 }
-        localStorage.setItem("authInfo", JSON.stringify(authInfo));
+        store.dispatch(setAuthInformation(authInfo));
 
+        // Wait for auth info to be saved into local storage
+        await LocalStorageTestUtils.waitForAuthInfo(authInfo);
+
+        // Check if saved auth info is correctly added to the state of a new store
         store = createTestStore({ addAdminToken: false }, { useLocalStorage: true, localStorageSaveTimeout: 25 }).store;
         expect(store.getState().auth).toMatchObject(authInfo);
         expect(authInfo).toMatchObject(store.getState().auth);
@@ -419,16 +379,15 @@ describe("Local storage configuration", () => {
         // Wait for the page to load
         await waitFor(() => getByText(container, "Add a New Object"));
 
-        // Change edited object's name with local storage enabled and wait for changes to ba saved
+        // Change edited object's name with local storage enabled and wait for changes to be saved
         let objectNameValue = "first";
         const objectNameInput = getByPlaceholderText(container, "Object name");
         fireEvent.change(objectNameInput, { target: { value: objectNameValue } });
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe(objectNameValue));
 
         await waitFor(() => {
-            const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(0));
-            const editedObject = JSON.parse(savedEditedObject);
-            expect(editedObject.object_name).toEqual(objectNameValue);
+            const savedEditedObject = LocalStorageTestUtils.getEditedObject(0);
+            expect(savedEditedObject.object_name).toEqual(objectNameValue);
         });
 
         // Disable local storage use and check that edited object's modifications are not saved
@@ -438,9 +397,8 @@ describe("Local storage configuration", () => {
         const time = performance.now();
         await waitFor(() => expect(performance.now() - time).toBeGreaterThan(localStorageSaveTimeout + 1), { interval: 10 });
 
-        const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(0));
-        const editedObject = JSON.parse(savedEditedObject);
-        expect(editedObject.object_name).toEqual(objectNameValue);
+        const savedEditedObject = LocalStorageTestUtils.getEditedObject(0);
+        expect(savedEditedObject.object_name).toEqual(objectNameValue);
 
         // Enable local storage use and check that changes are saved into local storage again
         setConfig({ ...getConfig(), useLocalStorage: true });
@@ -450,9 +408,8 @@ describe("Local storage configuration", () => {
         await waitFor(() => expect(getCurrentObject(store.getState()).object_name).toBe(objectNameValue));
 
         await waitFor(() => {
-            const savedEditedObject = localStorage.getItem(getEditedObjectLocalStorageKey(0));
-            const editedObject = JSON.parse(savedEditedObject);
-            expect(editedObject.object_name).toEqual(objectNameValue);
+            const savedEditedObject = LocalStorageTestUtils.getEditedObject(0);
+            expect(savedEditedObject.object_name).toEqual(objectNameValue);
         });
     });
 });
