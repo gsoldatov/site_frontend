@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import { fireEvent } from "@testing-library/react";
 import { getByText, getByPlaceholderText, waitFor } from "@testing-library/dom";
 
+import { getBackend, MockBackend } from "../_mock-backend/mock-backend";
 import { resetTestConfig } from "../_mocks/config";
 import { renderWithWrappers } from "../_util/render";
 import { LocalStorageTestUtils } from "../_util/local-storage";
@@ -23,21 +24,20 @@ import { getInequalAttributes } from "../../src/util/equality-checks";
 import { setAuthInformation } from "../../src/reducers/data/auth";
 
 
+
 /*
     /objects/edit/new page tests.
 */
 beforeEach(() => {
     // isolate fetch mock to avoid tests state collision because of cached data in fetch
     jest.isolateModules(() => {
-        const { mockFetch, setFetchFail } = require("../_mocks/mock-fetch");
-        
         // Set test app configuration
         resetTestConfig();
         
         // reset fetch mocks
         jest.resetAllMocks();
-        global.fetch = jest.fn(mockFetch);
-        global.setFetchFail = jest.fn(setFetchFail);
+        global.backend = new MockBackend();
+        global.fetch = global.backend.fetch;
 
         localStorage.clear();
     });
@@ -239,11 +239,16 @@ describe("Edited objects > Existing object page", () => {
 
 
     test("Unchanged composite object removal", async () => {
+        // Set mock data
+        const backend = getBackend();
+        const object_id = 1, subobject_id = 2;
+        backend.cache.objects.update(object_id, { object_type: "composite" }, { subobjects: [{ subobject_id }]});
+
         // Render existing object page and modify object name
         let { store } = createTestStore(undefined, { useLocalStorage: true });
 
         var { container } = renderWithWrappers(<App />, {
-            route: "/objects/edit/3001", store 
+            route: `/objects/edit/${object_id}`, store 
         });
         await waitForEditObjectPageLoad(container, store);
 
@@ -255,20 +260,19 @@ describe("Edited objects > Existing object page", () => {
 
         // Wait for an existing subobject to load
         clickDataTabButton(container);
-        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+        await waitFor(() => expect(store.getState()).toHaveProperty(`editedObjects.${subobject_id}`));
         const card = getSubobjectCards(container, { expectedNumbersOfCards: [1] })[0][0];
-        const subobjectID = card.id;
 
         // Modify subobject name
-        const unmodifiedSubobjectName = store.getState().editedObjects[subobjectID].object_name;
+        const unmodifiedSubobjectName = store.getState().editedObjects[subobject_id].object_name;
         const newSubobjectName = "updated subobject name";
         fireEvent.change(getSubobjectCardAttributeElements(card).subobjectNameInput, { target: { value: newSubobjectName } });
-        await waitFor(() => expect(store.getState().editedObjects[subobjectID].object_name).toEqual(newSubobjectName));
+        await waitFor(() => expect(store.getState().editedObjects[subobject_id].object_name).toEqual(newSubobjectName));
 
         // Wait for changes to be saved in local storage
         await waitFor(() => {
             // Subobject
-            const savedEditedObject = LocalStorageTestUtils.getEditedObject(subobjectID);
+            const savedEditedObject = LocalStorageTestUtils.getEditedObject(subobject_id);
             expect(savedEditedObject.object_name).toEqual(newSubobjectName);
         });
 
@@ -278,43 +282,47 @@ describe("Edited objects > Existing object page", () => {
         // Wait for objects to be reset in local storage
         await waitFor(() => {
             // Subobject
-            const savedEditedObject = LocalStorageTestUtils.getEditedObject(subobjectID);
+            const savedEditedObject = LocalStorageTestUtils.getEditedObject(subobject_id);
             expect(savedEditedObject.object_name).toEqual(unmodifiedSubobjectName);
         });
-
         // Click cancel button
         fireEvent.click(getSideMenuItem(container, "Cancel"));
 
         // Wait for objects to be removed from local storage
-        await LocalStorageTestUtils.waitForAbsentObjectIDs([3001, subobjectID]);
+        await LocalStorageTestUtils.waitForAbsentObjectIDs([object_id, subobject_id]);
     });
 
 
     test("Deleted composite object removal", async () => {
+        // Set mock data
+        const backend = getBackend();
+        const object_id = 1, subobject_id = 2;
+        backend.cache.objects.update(object_id, { object_type: "composite" }, { subobjects: [{ subobject_id }]});
+
         // Render existing object page and modify object name
         let { store } = createTestStore(undefined, { useLocalStorage: true });
 
         var { container } = renderWithWrappers(<App />,
-            { route: "/objects/edit/3001", store }
+            { route: `/objects/edit/${object_id}`, store }
         );
         await waitForEditObjectPageLoad(container, store);
     
         // Wait for an existing subobject to load
-        await waitFor(() => expect(store.getState().editedObjects).toHaveProperty(Object.keys(store.getState().editedObjects[3001].composite.subobjects)[0]));
+        await waitFor(() => expect(store.getState()).toHaveProperty(`editedObjects.${subobject_id}`));
         clickDataTabButton(container);
 
         // Add a new subobject
         addANewSubobject(container);
         const cards = getSubobjectCards(container, { expectedNumbersOfCards: [2] });
-        const [existingSubobjectID, newSubobjectID] = cards[0].map(card => card.id.toString());
+        const [_, newSubobjectID] = cards[0].map(card => card.id.toString());
 
         // Modify existing subobject
         let newSubobjectName = "updated name";
         fireEvent.change(getSubobjectCardAttributeElements(cards[0][0]).subobjectNameInput, { target: { value: newSubobjectName } });
-        await waitFor(() => expect(store.getState().editedObjects[existingSubobjectID].object_name).toEqual(newSubobjectName));
+        await waitFor(() => expect(store.getState().editedObjects[subobject_id].object_name).toEqual(newSubobjectName));
 
         // Wait for object and subobjects to be saved in local storage
-        await LocalStorageTestUtils.waitForSavedObjectIDs([3001, existingSubobjectID, newSubobjectID]);
+        await LocalStorageTestUtils.waitForSavedObjectIDs([object_id, subobject_id, newSubobjectID]);
 
         // Delete composite object and subobjects
         let deleteButton = getSideMenuItem(container, "Delete");
@@ -323,7 +331,7 @@ describe("Edited objects > Existing object page", () => {
         fireEvent.click(getSideMenuDialogControls(container).buttons["Yes"]);
 
         // Wait for objects to be removed from local storage
-        await LocalStorageTestUtils.waitForAbsentObjectIDs([3001, existingSubobjectID, newSubobjectID]);
+        await LocalStorageTestUtils.waitForAbsentObjectIDs([object_id, subobject_id, newSubobjectID]);
     });
 });
 
@@ -413,3 +421,25 @@ describe("Local storage configuration", () => {
         });
     });
 });
+
+
+// describe("Multitab local storage sync", () => {
+//     test("Storage event handler is added", async () => {
+//         // NOTE: this tests, if an event handler was added, but not that it's executed on storage change
+//         // (testing the latter would required to somehow implemented multiple connected `window` objects in JSDom)
+//         window.addEventListener = jest.fn().mockImplementationOnce((event, callback) => {});
+//         const { store } = createTestStore(undefined, { useLocalStorage: true, debugLogging: false });
+//         expect(window.addEventListener).toHaveBeenCalledTimes(1);
+//         expect(window.addEventListener).toHaveBeenCalledWith("storage", expect.any(Function));
+//     });
+
+
+//     // test("Auth state updates", async () => {
+//     //     const { store } = createTestStore({ addAdminToken: false }, { useLocalStorage: true, debugLogging: false });
+
+//     //     // Add an admin token to local storage
+//     //     LocalStorageTestUtils.updateLocalStorageState({ })
+//     //     // Fire storage event
+//     //     // Check if state was 
+//     // });
+// });

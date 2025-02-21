@@ -135,20 +135,32 @@ export class ObjectsRouteHandlers {
 
         this.getPageObjectIDs = new RouteHandler(backend, {
             route: "/objects/get_page_object_ids", method: "POST",
-            getResponse: requestContext => {
+            getResponseParams: {
+                object_ids: [1],
+                total_items: 1
+            },
+            getResponse: function(this: RouteHandler, requestContext) {
                 // NOTE: this is a stub, not full implementation
                 const { pagination_info } = getPageObjectIDs.parse(requestContext.body);
                 const responseObj = { 
                     pagination_info: {
                         ...pagination_info,
-                        total_items: 1,
-                        object_ids: [1]
+                        ...this.getResponseParams
                     }
                 };
             
                 return { status: 200, body: responseObj };  
             }
         });
+
+        this.delete = new RouteHandler(backend, {
+            route: "/objects/delete", method: "DELETE",
+            getResponse: requestContext => {
+                // Validate request body & return data
+                const { object_ids } = objectsDeleteRequestBody.parse(requestContext.body);
+                return { status: 200, body: { object_ids }};
+            }
+        })
     }
 }
 
@@ -409,8 +421,8 @@ type ObjectsAddUpdateObject = ObjectsUpdateObject & { object_type?: string };   
  * /objects/view schema
 ***************************/
 export const objectsViewBody = z.object({
-    object_ids: nonEmptyPositiveIntArray.optional(),
-    object_data_ids: nonEmptyPositiveIntArray.optional()
+    object_ids: positiveIntArray.optional(),
+    object_data_ids: positiveIntArray.optional()
 }).refine(({ object_ids, object_data_ids}) => (object_ids || []).length > 0 || (object_data_ids || []).length > 0);
 
 
@@ -424,8 +436,17 @@ const getPageObjectIDs = z.object({
         order_by: z.enum(["object_name", "modified_at", "feed_timestamp"]),
         sort_order: z.enum(["asc", "desc"]),
         filter_text: z.string().max(255).optional(),
-        object_types: z.enum(["link", "markdown", "to_do_list", "composite"]).optional(),
+        object_types: z.enum(["link", "markdown", "to_do_list", "composite"]).array().optional(),
         tags_filter: positiveIntArray.optional(),
         show_only_displayed_in_feed: z.boolean().optional()
     })
+});
+
+
+/***********************************
+ * /objects/delete schema
+***********************************/
+const objectsDeleteRequestBody = z.object({
+    object_ids: nonEmptyPositiveIntArray,
+    delete_subobjects: z.boolean()
 });
