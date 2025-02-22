@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { auth, getDefaultAuthState } from "./data/auth";
+import { auth, getAuthState } from "./data/auth";
 import { users } from "./data/users";
 import { tags } from "./data/tags";
 import { objects } from "./data/objects";
@@ -53,7 +53,7 @@ export type State = z.infer<typeof state>;
 /** Returns a copy of app's initial state */
 export const getInitialState = () => state.parse({
     // Data stores, auth & users
-    auth: getDefaultAuthState(),    // current user's auth data
+    auth: getAuthState(),    // current user's auth data
     users: {},
     
     // Data store, tags

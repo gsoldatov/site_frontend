@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { setAuthInformation } from "../reducers/data/auth";
-import { getDefaultAuthState } from "../types/store/data/auth";
+import { getAuthState } from "../types/store/data/auth";
 import { getConfig } from "../config";
 import { getFromDocumentApp } from "../util/document-app";
 
@@ -51,7 +51,7 @@ export class FetchRunner {
 
         // Check if access token expired
         if (state.auth.access_token_expiration_time.length > 0 && (new Date(state.auth.access_token_expiration_time)).getTime() <= Date.now()) {
-            getFromDocumentApp("store").dispatch(setAuthInformation(getDefaultAuthState()));
+            getFromDocumentApp("store").dispatch(setAuthInformation(getAuthState()));
             throw new TokenValidationError("Invalid token.");
         }
 
@@ -87,7 +87,7 @@ export class FetchRunner {
 
                 case 401:
                     // Clear auth data, if token is invalid
-                    if (this.useAccessToken) getFromDocumentApp("store").dispatch(setAuthInformation(getDefaultAuthState()));
+                    if (this.useAccessToken) getFromDocumentApp("store").dispatch(setAuthInformation(getAuthState()));
                     break;
             }
 

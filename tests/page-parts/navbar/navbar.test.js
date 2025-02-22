@@ -8,7 +8,7 @@ import { renderWithWrappers } from "../../_util/render";
 
 import { App } from "../../../src/components/app";
 
-import { getDefaultAuthState } from "../../../src/types/store/data/auth";
+import { getAuthState } from "../../../src/types/store/data/auth";
 import { getAdminPageElements } from "../../_util/ui-admin";
 import { getObjectsViewCardElements } from "../../_util/ui-objects-view";
 import { getSearchPageElements } from "../../_util/ui-search";
@@ -305,7 +305,7 @@ describe("Secondary menu logged in state", () => {
             
             // Check if auth state is reset, redirect to index page is triggered & index on load fetch is started
             await waitFor(() => {
-                expect(store.getState().auth).toEqual(getDefaultAuthState());
+                expect(store.getState().auth).toEqual(getAuthState());
                 historyManager.ensureCurrentURL("/");
                 expect(getFeedElements(container).placeholders.loading).toBeTruthy();
             });

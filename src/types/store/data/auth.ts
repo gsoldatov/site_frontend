@@ -29,13 +29,14 @@ export const auth = z.object({
 export type Auth = z.infer<typeof auth>;
 
 
-/** Returns default auth data object. */
-export const getDefaultAuthState = () => {
+/** Returns state.auth object with default (anonymous) or `customValues`. */
+export const getAuthState = (customValues: Partial<Auth> = {}) => {
     const state = {
         access_token: "",
         access_token_expiration_time: "",
         user_id: 0,
-        numeric_user_level: NumericUserLevel.anonymous
+        numeric_user_level: NumericUserLevel.anonymous,
+        ...customValues
     };
 
     return auth.parse(state);

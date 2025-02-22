@@ -10,7 +10,7 @@ import { getMockLoginResponse } from "../../_mocks/data-auth";
 import { App } from "../../../src/components/app";
 
 import { deepEqual } from "../../../src/util/equality-checks";
-import { getDefaultAuthState } from "../../../src/types/store/data/auth";
+import { getAuthState } from "../../../src/types/store/data/auth";
 import { NumericUserLevel } from "../../../src/types/store/data/auth";
 
 
@@ -101,7 +101,7 @@ test("Correct login", async () => {
         route: "/auth/login", store
     });
 
-    expect(deepEqual(store.getState().auth, getDefaultAuthState())).toBeTruthy();
+    expect(deepEqual(store.getState().auth, getAuthState())).toBeTruthy();
 
     // Add a mock network error
     setFetchFail(true);
@@ -148,7 +148,7 @@ test("Correct login with URL query params", async () => {
         route: "/auth/login?" + params.toString(), store
     });
 
-    expect(deepEqual(store.getState().auth, getDefaultAuthState())).toBeTruthy();
+    expect(deepEqual(store.getState().auth, getAuthState())).toBeTruthy();
 
     // Set mock login response
     const body = getMockLoginResponse();

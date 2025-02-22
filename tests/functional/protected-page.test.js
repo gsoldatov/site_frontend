@@ -10,7 +10,7 @@ import { ProtectedRoute } from "../../src/components/modules/wrappers/protected-
 import { setAuthInformation } from "../../src/reducers/data/auth";
 
 import { deepEqual } from "../../src/util/equality-checks";
-import { getDefaultAuthState } from "../../src/types/store/data/auth";
+import { getAuthState } from "../../src/types/store/data/auth";
 
 
 /*
@@ -123,5 +123,5 @@ test("Fetch backend with an invalid token", async () => {
     
     // Check if a redirect occured & token was cleared
     await historyManager.waitForCurrentURLToBe("/auth/login");
-    expect(deepEqual(store.getState().auth, getDefaultAuthState())).toBeTruthy();
+    expect(deepEqual(store.getState().auth, getAuthState())).toBeTruthy();
 });
