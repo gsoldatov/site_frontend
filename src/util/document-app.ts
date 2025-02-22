@@ -10,6 +10,7 @@ import type { AppConfig } from "../types/config";
 export type DocumentApp = {
     config: AppConfig,
     store: AppStore,
+    storageListeners: Function[],
     updateConfig: (newProps: Partial<AppConfig>) => void        // config.ts -> `updateConfig` function signature
 }
 

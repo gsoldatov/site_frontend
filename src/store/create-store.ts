@@ -22,8 +22,13 @@ export const createStore = () => {
     );
 
     store.subscribe(() => manager.onStateChangeCallback(store));
+    manager.store = store;  // NOTE: setting reference to the store is required for handling storage events
 
-    setDocumentApp({ store });
+    // Save references to store & storage event listeners
+    // NOTE: the latter is only required in tests for proper clean up of events between tests,
+    // as long as a single store is used for the entire lifetime of the document
+    const storageListeners = ((document as any).app?.storageListeners || []).concat([manager.storageEventHandler]);
+    setDocumentApp({ store, storageListeners });
 
     return store;
 };
