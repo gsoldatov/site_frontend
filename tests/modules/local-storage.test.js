@@ -16,7 +16,7 @@ import { getMappedSubobjectID } from "../_mocks/data-composite";
 
 import { App } from "../../src/components/app";
 
-import { getDefaultAuthState } from "../../src/types/store/data/auth";
+import { getAuthState } from "../../src/types/store/data/auth";
 
 import { getConfig, setConfig } from "../../src/config";
 import { getInequalAttributes } from "../../src/util/equality-checks";
@@ -26,21 +26,25 @@ import { setAuthInformation } from "../../src/reducers/data/auth";
 
 
 /*
-    /objects/edit/new page tests.
+    `localStorage` tests.
 */
 beforeEach(() => {
-    // isolate fetch mock to avoid tests state collision because of cached data in fetch
-    jest.isolateModules(() => {
-        // Set test app configuration
-        resetTestConfig();
-        
-        // reset fetch mocks
-        jest.resetAllMocks();
-        global.backend = new MockBackend();
-        global.fetch = global.backend.fetch;
+    // Set test app configuration
+    resetTestConfig();
+    
+    // reset fetch mocks
+    jest.resetAllMocks();
 
-        localStorage.clear();
-    });
+    global.backend = new MockBackend();
+    global.fetch = global.backend.fetch;
+
+    localStorage.clear();
+
+    // Clear event listeners from store managers created in previous tests
+    const storageListeners = document.app?.storageListeners;
+    if (storageListeners)
+        for (let listener of storageListeners) 
+            window.removeEventListener("storage", listener);
 });
 
 
@@ -336,11 +340,10 @@ describe("Edited objects > Existing object page", () => {
 });
 
 
-
 describe("Auth information", () => {
     test("Save auth updates into local storage", async () => {
         const { store } = createTestStore({ addAdminToken: false }, { useLocalStorage: true, localStorageSaveTimeout: 25 });
-        let authInfo = getDefaultAuthState();
+        let authInfo = getAuthState();
 
         // Modify each attribute in auth info and check if it's saved to the local storage
         for (let [k, v] of [["access_token", "some value"], ["access_token_expiration_time", (new Date()).toISOString()], ["user_id", 50], ["numeric_user_level", 20]]) {
@@ -355,7 +358,7 @@ describe("Auth information", () => {
         let { store } = createTestStore({ addAdminToken: false },  { useLocalStorage: true, localStorageSaveTimeout: 25 });
         
         // Check if default auth information is correctly loaded if no auth is saved in the local storage
-        let authInfo = getDefaultAuthState();
+        let authInfo = getAuthState();
         expect(store.getState().auth).toMatchObject(authInfo);
         expect(authInfo).toMatchObject(store.getState().auth);
 
@@ -423,23 +426,188 @@ describe("Local storage configuration", () => {
 });
 
 
-// describe("Multitab local storage sync", () => {
-//     test("Storage event handler is added", async () => {
-//         // NOTE: this tests, if an event handler was added, but not that it's executed on storage change
-//         // (testing the latter would required to somehow implemented multiple connected `window` objects in JSDom)
-//         window.addEventListener = jest.fn().mockImplementationOnce((event, callback) => {});
-//         const { store } = createTestStore(undefined, { useLocalStorage: true, debugLogging: false });
-//         expect(window.addEventListener).toHaveBeenCalledTimes(1);
-//         expect(window.addEventListener).toHaveBeenCalledWith("storage", expect.any(Function));
-//     });
+describe("Multitab local storage sync", () => {
+    test("Storage event handler is added", async () => {
+        // NOTE: this tests, if an event handler was added, but not that it's executed on storage change
+        // (testing the latter would required to somehow implemented multiple connected `window` objects in JSDom)
+        const spy = jest.spyOn(window, "addEventListener");
+        const { store } = createTestStore(undefined, { useLocalStorage: true, debugLogging: false });
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith("storage", expect.any(Function));
+
+        spy.mockRestore();
+    });
 
 
-//     // test("Auth state updates", async () => {
-//     //     const { store } = createTestStore({ addAdminToken: false }, { useLocalStorage: true, debugLogging: false });
+    describe("Auth", () => {
+        test("Log in", async () => {
+            // Create a store with an anonymous user
+            const backend = getBackend();
+            const { store } = createTestStore({ addAdminToken: false }, { useLocalStorage: true, debugLogging: false });
+            expect(location.reload).toHaveBeenCalledTimes(0);
 
-//     //     // Add an admin token to local storage
-//     //     LocalStorageTestUtils.updateLocalStorageState({ })
-//     //     // Fire storage event
-//     //     // Check if state was 
-//     // });
-// });
+            // Add an admin token to local storage & fire storage event
+            const auth = backend.data.generator.auth.frontendAuthAdmin();
+            LocalStorageTestUtils.mockStorageEvent({ auth });
+
+            // Check if page reload was run
+            // NOTE: state update is not checked, since reload does not occur in test env
+            expect(location.reload).toHaveBeenCalledTimes(1);
+        });
+
+
+        test("Log out", async () => {
+            // Create a store with an admin token
+            const backend = getBackend();
+            const { store } = createTestStore(undefined, { useLocalStorage: true, debugLogging: false });
+            expect(location.reload).toHaveBeenCalledTimes(0);
+
+            // Remove admin token from local storage & fire storage event
+            const auth = backend.data.generator.auth.frontendAuth();
+            LocalStorageTestUtils.mockStorageEvent({ auth });
+
+            // Check if page reload was run
+            // NOTE: state update is not checked, since reload does not occur in test env
+            expect(location.reload).toHaveBeenCalledTimes(1);
+        });
+
+
+        test("Update access token expiration time", async () => {
+            // Create a store with an admin token
+            const { store } = createTestStore(undefined, { useLocalStorage: true, debugLogging: false });
+            expect(location.reload).toHaveBeenCalledTimes(0);
+
+            // Update access token expiration time & fire storage event
+            const expirationTime = new Date();
+            expirationTime.setDate(expirationTime.getDate() + 15);
+            const access_token_expiration_time = expirationTime.toISOString();
+            
+            const auth = { ...store.getState().auth, access_token_expiration_time }
+            LocalStorageTestUtils.mockStorageEvent({ auth });
+
+            // Check if state was updated & page reload was not run
+            await waitFor(() => expect(store.getState().auth.access_token_expiration_time).toEqual(access_token_expiration_time));
+            expect(location.reload).toHaveBeenCalledTimes(0);
+        });
+    });
+
+
+    describe("Edited objects", () => {
+        test("Objects are updated", async () => {
+            // Create a store with 2 edited objects
+            const storeManager = createTestStore(undefined, { useLocalStorage: true, debugLogging: false }), { store } = storeManager; 
+            for (let objectID of [1, 2]) {
+                storeManager.objects.add(objectID);
+                storeManager.editedObjects.reset([objectID]);
+            }
+
+            // Update, remove & add edited objects in `localStorage`
+            const object_name = "modified name";
+            const oldEditedObjects = store.getState().editedObjects;
+            const editedObjects = {
+                1: { ...oldEditedObjects[1], object_name },
+                3: { ...oldEditedObjects[2] }
+            };
+
+            // Set local storage & fire storage event
+            LocalStorageTestUtils.mockStorageEvent({ auth: store.getState().auth, editedObjects });
+
+            // Check if edited objects were properly updated in the state
+            await waitFor(() => {
+                expect(store.getState()).toHaveProperty("editedObjects.1.object_name", object_name);
+                expect(store.getState()).not.toHaveProperty("editedObjects.2");
+                expect(store.getState()).toHaveProperty("editedObjects.3");
+            })
+        });
+
+
+        test("Redirect on new object removal", async () => {
+            // Set current location
+            location.pathname = "/objects/edit/new";
+
+            // Create a store with a new edited object
+            const storeManager = createTestStore(undefined, { useLocalStorage: true, debugLogging: false }), { store } = storeManager; 
+            storeManager.objectsEdit.loadObjectsEditNewPage();
+
+            // Add a modified new object to the localStorage
+            const object_name = "modified name";
+            const oldEditedObjects = store.getState().editedObjects;
+            const editedObjects = {
+                0: { ...oldEditedObjects[0], object_name },
+            };
+
+            // Set local storage & fire storage event
+            LocalStorageTestUtils.mockStorageEvent({ auth: store.getState().auth, editedObjects });
+
+            // Check if redirect was not fired
+            await waitFor(() => {
+                expect(store.getState()).toHaveProperty("editedObjects.0.object_name", object_name);
+                expect(location.replace).toHaveBeenCalledTimes(0);
+            });
+
+            // Remove new object from state in the local storage & fire storage event
+            LocalStorageTestUtils.mockStorageEvent({ editedObjects: {} });
+
+            // Check if redirect was fired
+            expect(location.replace).toHaveBeenCalledTimes(1);
+            expect(location.replace).toHaveBeenLastCalledWith("/");
+        });
+
+
+        test("Redirect on existing object removal", async () => {
+            // Set current location
+            location.pathname = "/objects/edit/1";
+            
+            // Create a store with an existing edited object
+            const storeManager = createTestStore(undefined, { useLocalStorage: true, debugLogging: false }), { store } = storeManager; 
+            await storeManager.objectsEdit.loadObjectsEditExistingPage(1);
+
+            // Modify object in the localStorage
+            const object_name = "modified name";
+            const oldEditedObjects = store.getState().editedObjects;
+            const editedObjects = {
+                1: { ...oldEditedObjects[1], object_name },
+            };
+
+            // Set local storage & fire storage event
+            LocalStorageTestUtils.mockStorageEvent({ auth: store.getState().auth, editedObjects });
+
+            // Check if redirect was not fired
+            await waitFor(() => {
+                expect(store.getState()).toHaveProperty("editedObjects.1.object_name", object_name);
+                expect(location.replace).toHaveBeenCalledTimes(0);
+            });
+
+            // Remove existing object from state in the local storage & fire storage event
+            LocalStorageTestUtils.mockStorageEvent({ editedObjects: {} });
+
+            // Check if redirect was fired
+            expect(location.replace).toHaveBeenCalledTimes(1);
+            expect(location.replace).toHaveBeenLastCalledWith("/");
+        });
+
+
+        test("Redirect on composite subobject removal", async () => {
+            // Set current location
+            location.pathname = "/objects/edit/1";
+            
+            // Create a store & load an existing composite object with a subobject
+            const backend = getBackend();
+            backend.cache.objects.update(1, { object_type: "composite" }, { subobjects: [{ subobject_id: 2 }]});
+
+            const storeManager = createTestStore(undefined, { useLocalStorage: true, debugLogging: false }), { store } = storeManager; 
+            await storeManager.objectsEdit.loadObjectsEditExistingPage(1);
+            storeManager.objects.add(2);
+            storeManager.editedObjects.reset([2]);
+
+            // Remove subobject from the localStorage & fire storage event
+            const oldEditedObjects = store.getState().editedObjects;
+            const editedObjects = { 1: { ...oldEditedObjects[1] }};
+            LocalStorageTestUtils.mockStorageEvent({ auth: store.getState().auth, editedObjects });
+
+            // Check if redirect was fired
+            expect(location.replace).toHaveBeenCalledTimes(1);
+            expect(location.replace).toHaveBeenLastCalledWith("/");
+        });
+    });
+});

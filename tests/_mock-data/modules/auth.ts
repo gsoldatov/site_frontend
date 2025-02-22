@@ -1,3 +1,4 @@
+import { getAuthState, NumericUserLevel, type Auth } from "../../../src/types/store/data/auth";
 import type { UserLevel } from "./users";
 
 
@@ -37,5 +38,34 @@ export class AuthGenerator {
                 access_token_expiration_time
             }
         };
+    }
+
+    /**
+     * Returns a `state.auth` object with default (anonymous) or `customValues`.
+     */
+    frontendAuth(customValues?: Partial<Auth>) {
+        return getAuthState(customValues);
+    }
+
+    /**
+     * Returns a `state.auth` with default or custom admin data.
+     */
+    frontendAuthAdmin(customValues: Partial<Auth> = {}) {
+        let { user_id, access_token, numeric_user_level, access_token_expiration_time } = customValues;
+
+        user_id = user_id || 1;
+
+        if (!access_token_expiration_time) {
+            let expirationTime = new Date();
+            expirationTime.setDate(expirationTime.getDate() + 7);
+            access_token_expiration_time = expirationTime.toISOString();
+        }
+
+        return getAuthState({
+            user_id,
+            numeric_user_level: numeric_user_level || NumericUserLevel.admin,
+            access_token: access_token || `user ${user_id} token`,
+            access_token_expiration_time
+        });
     }
 }
