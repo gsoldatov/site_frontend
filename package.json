@@ -53,6 +53,7 @@
     "html-webpack-plugin": "^4.5.2",
     "jest-cli": "^26.6.3",
     "jest-environment-jsdom": "^29.7.0",
+    "jest-location-mock": "^2.0.0",
     "mini-css-extract-plugin": "^1.6.2",
     "sloc": "^0.2.1",
     "source-map-loader": "^4.0.2",

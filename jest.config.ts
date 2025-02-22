@@ -26,7 +26,12 @@ const config: Config = {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/_mocks/file-mock.js",
       "\\.(css|less)$": "<rootDir>/tests/_mocks/style-mock.js",
       "parse-markdown\\.worker(?:\\.jsx?)?$": "<rootDir>/tests/_mocks/markdown-parse-worker-mock.js"
-    }
+    },
+
+    // Run additional imports before tests are executed
+    setupFilesAfterEnv: [
+      "./jest-setup.ts"
+    ]
 };
 
 module.exports = config;
