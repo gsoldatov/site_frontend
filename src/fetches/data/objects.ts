@@ -8,7 +8,7 @@ import { addObjectsTags } from "../../reducers/data/objects-tags";
 import { deleteObjects } from "../../reducers/data/objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../reducers/data/objects";
 
-import { EditedObjectsTransformers, parseObjectsUpdateRequestValidationErrors } from "../../store/transformers/data/edited-objects";
+import { EditedObjectsTransformers, parseObjectsBulkUpsertZodValidationErrors } from "../../store/transformers/data/edited-objects";
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 
 import type { Dispatch, GetState } from "../../types/store/store";
@@ -30,43 +30,41 @@ import { objectsBulkUpsertRequestBody, objectsBulkUpsertResponseSchema,
  */
 export const objectsBulkUpsertFetch = (editedObjects: EditedObject[], deleted_object_ids: number[]) => {
     return async (dispatch: Dispatch, getState: GetState): Promise<ObjectsBulkUpsertFetchResult> => {
+        if (editedObjects.length === 0) return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "No objects were provided for upsert." });
+        let body;
+
         try {
-            if (editedObjects.length === 0) return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error: "No objects were provided for upsert." });
-
             // Validate and serialize edited objects
-            const body = objectsBulkUpsertRequestBody.parse({
-                objects: editedObjects.map(eo => EditedObjectsTransformers.toObjectsBulkUpsertBody(eo)),
-                deleted_object_ids
-            });
-
-            // Fetch backend
-            const runner = new FetchRunner("/objects/bulk_upsert", { method: "POST", body });
-            const result = await runner.run();
-            
-             // Handle response
-            switch (result.status) {
-                case 200:
-                    const data = objectsBulkUpsertResponseSchema.parse(result.json);
-
-                    // Add attributes, tags & data
-                    dispatch(addObjectsAttributes(data.objects_attributes_and_tags));
-                    dispatch(addObjectsTags(data.objects_attributes_and_tags));
-                    dispatch(addObjectsDataFromBackend(data.objects_data));
-
-                    // Return fetch result
-                    return result.withCustomProps({ response: data });
-                default:
-                    return result;
-            }
-
+            const objects = editedObjects.map(eo => EditedObjectsTransformers.toObjectsBulkUpsertBody(eo));
+            body = objectsBulkUpsertRequestBody.parse({ objects, deleted_object_ids });
         } catch (e) {
             // Handle validation errors
             if (e instanceof ZodError) {
-                const error = parseObjectsUpdateRequestValidationErrors(e);
+                const { currentObjectID } = getState().objectsEditUI;
+                const error = parseObjectsBulkUpsertZodValidationErrors(e, editedObjects, currentObjectID);
                 return FetchResult.fetchNotRun({ errorType: FetchErrorType.general, error });
             }
-
             throw e;
+        }
+
+        // Fetch backend
+        const runner = new FetchRunner("/objects/bulk_upsert", { method: "POST", body });
+        const result = await runner.run();
+        
+            // Handle response
+        switch (result.status) {
+            case 200:
+                const data = objectsBulkUpsertResponseSchema.parse(result.json);
+
+                // Add attributes, tags & data
+                dispatch(addObjectsAttributes(data.objects_attributes_and_tags));
+                dispatch(addObjectsTags(data.objects_attributes_and_tags));
+                dispatch(addObjectsDataFromBackend(data.objects_data));
+
+                // Return fetch result
+                return result.withCustomProps({ response: data });
+            default:
+                return result;
         }
     };
 };

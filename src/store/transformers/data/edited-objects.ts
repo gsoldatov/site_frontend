@@ -3,22 +3,22 @@ import { type ZodError } from "zod";
 import type { EditedObject } from "../../../types/store/data/edited-objects";
 
 import { SubobjectDeleteMode } from "../../../types/store/data/composite";
-import { objectsBulkUpsertObject, type ObjectsBulkUpsertObjectData } from "../../../types/fetches/data/objects/bulk_upsert";
+import { type ObjectsBulkUpsertObjectData } from "../../../types/fetches/data/objects/bulk_upsert";
 
 
 export class EditedObjectsTransformers {
     /**
-     * Validates and converts `editedObject` into a /objects/bulk_upsert route format.
+     * Adds attributes to the `editedObject`, which are required in the /objects/bulk_upsert route format.
      * 
-     * Throws if zod validation fails. 
+     * Does not perform validation & remove excess attributes.
      */
     static toObjectsBulkUpsertBody(editedObject: EditedObject) {
-        return objectsBulkUpsertObject.parse({
+        return {
             ...editedObject,
             added_tags: editedObject.addedTags,
             removed_tag_ids: editedObject.removedTagIDs,
             object_data: editedObjectDataToBulkUpsertRequest(editedObject)
-        });
+        };
     }
 }
 
@@ -55,30 +55,44 @@ const editedObjectDataToBulkUpsertRequest = (editedObject: EditedObject): Object
 };
 
 
-/**  TODO remove when bulk upsert validation is implemented
- * Processes zod validation errors during the transformation of an edited object
- * into a /objects/add or /objects/update request body into a string error message.
+/**
+ * Processes validation errors during /objects/bulk_upsert request body serialization
+ * into a string error message.
+ * 
+ * Current implementation tries to map the first occured error to a corresponding error message,
+ * or returns the first error as is.
  */
-export const parseObjectsUpdateRequestValidationErrors = (error: ZodError): string => {
-    // Parse the first issue & display it
-    // NOTE: subobject validation errors have the same paths, as those which occur in main object
-    const msg = error.issues[0];
+export const parseObjectsBulkUpsertZodValidationErrors = (error: ZodError, editedObjects: EditedObject[], currentObjectID: number): string => {
+    const firstIssue = error.issues[0];
 
-    // object_name
-    if (msg.path[0] === "object_name" && msg.code === "too_small") return "Object name is required.";
-    if (msg.path[0] === "object_name" && msg.code === "too_big") return "Object name can't be longer than 255 chars.";
+    if (firstIssue.path[0] === "objects") {
+        const editedObject = editedObjects[firstIssue.path[1] as number];
+        const objectInfo = editedObject.object_id === currentObjectID ? ""
+            : ` (object "${editedObject.object_name}" (${editedObject.object_id}))`;     // info about object, where error occured, if it's not current
+        let message;
 
-    // link data
-    if (msg.path[0] === "object_data" && msg.path[1] === "link" && msg.message === "Invalid url") return "Valid URL is required.";
+        // object_name
+        if (firstIssue.path[2] === "object_name" && firstIssue.code === "too_small") 
+            message = "Object name is required.";
+        else if (firstIssue.path[2] === "object_name" && firstIssue.code === "too_big") 
+            message = "Object name can't be longer than 255 chars.";
 
-    // markdown data
-    if (msg.path[0] === "object_data" && msg.path[1] === "raw_text" && msg.code === "too_small") return "Markdown text is required.";
+        // link data
+        else if (firstIssue.path[2] === "object_data" && firstIssue.path[3] === "link" && firstIssue.message === "Invalid url")
+             message = "Valid URL is required.";
 
-    // to-do list data
-    if (msg.path[0] === "object_data" && msg.path[1] === "items" && msg.code === "too_small") return "At least one item is required in the to-do list.";
+        // markdown data
+        else if (firstIssue.path[2] === "object_data" && firstIssue.path[3] === "raw_text" && firstIssue.code === "too_small") 
+            message = "Markdown text is required.";
 
-    // composite data (subobjects with attributes are handled by the checks above)
-    if (msg.path[0] === "object_data" && msg.path[1] === "subobjects" && msg.code === "too_small") return "Composite object must have at least one non-deleted subobject.";
+        // to-do list data
+        else if (firstIssue.path[2] === "object_data" && firstIssue.path[3] === "items" && firstIssue.code === "too_small") 
+            message = "At least one item is required in the to-do list.";
+
+        else message = JSON.stringify(firstIssue);
+
+        return `${message}${objectInfo}`;
+    }
     
     return error.toString();
 };
