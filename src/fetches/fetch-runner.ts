@@ -6,6 +6,7 @@ import { getConfig } from "../config";
 import { getFromDocumentApp } from "../util/document-app";
 
 import { int } from "../types/common";
+import { pydanticErrorsSchema, type PydanticErrorsSchema } from "../types/fetches/errors";
 
 
 const { backendURL } = getConfig();
@@ -21,6 +22,8 @@ export class FetchRunner {
     init: RequestInit
     useAccessToken: boolean
 
+    requestBody: RequestBody | undefined
+
 
     constructor(URL: string, init: RequestInitWithObjectBody = {}, options: FetchRunnerOptions = {}) {
         const {
@@ -31,6 +34,7 @@ export class FetchRunner {
 
         this.URL = `${URLPrefix}${URL}`;
 
+        this.requestBody = init.body;
         // NOTE: this might need a rework, if permitted by fetch spec objects are passed a body (https://developer.mozilla.org/en-US/docs/Web/API/RequestInit)
         if (init.body instanceof Object) this.init = { ...init, body: JSON.stringify(init.body) };
         else this.init = init as RequestInit;
@@ -73,7 +77,7 @@ export class FetchRunner {
             // Send request
             if (this.init.body && typeof(this.init.body) === "object") this.init.body = JSON.stringify(this.init.body);
             const response = await fetch(this.URL, this.init);
-            const result = await FetchResult.fromResponse(response);
+            const result = await FetchResult.fromResponse(response, this);
 
             // Handle response auth data
             switch (result.status) {
@@ -107,22 +111,31 @@ export class FetchRunner {
 
 /** Contains results of a fetch run by a `FetchRunner` instance. */
 export class FetchResult {
+    requestBody: RequestBody | undefined
+
     status: number | string
     headers: Headers | { get: (h: string) => string | null }
+    
     text: string | undefined
     json: Record<string, any> | undefined
+    
     error: string | undefined
     errorType: FetchErrorType
+    private _pydanticErrors: PydanticErrorsSchema | null | undefined
 
     constructor(args: FetchResultArgs) {
         // Validate args before assignment
         fetchResultArgs.parse(args);
 
-        const { status, headers, text, json, error, errorType } = args;
+        const { requestBody, status, headers, text, json, error, errorType } = args;
+        this.requestBody = requestBody;
+
         this.status = status;
         this.headers = headers || { get: h => null };
+        
         this.text = text;
         this.json = json;
+        
         this.error = error;
         this.errorType = errorType;
     }
@@ -131,8 +144,25 @@ export class FetchResult {
         return this.errorType > FetchErrorType.none;
     }
 
+    /** Returns Pydantic errors parsed from response error, or null. */
+    get pydanticErrors(): PydanticErrorsSchema | null {
+        if (this._pydanticErrors === undefined) {
+            try {
+                const responseError = JSON.parse(this.json!["_error"]);
+                this._pydanticErrors = pydanticErrorsSchema.parse(responseError);
+            } catch (e) {
+                this._pydanticErrors = null;
+            }
+        }
+        return this._pydanticErrors;
+    }
+
     /** Processes a `response` from fetch into a `FetchResult` instance. */
-    static async fromResponse(response: Response) {
+    static async fromResponse(response: Response, fetchRunner: FetchRunner) {
+        // Request
+        const { requestBody } = fetchRunner;
+
+        // Response
         const { status, headers } = response;
 
         // text & json
@@ -149,7 +179,7 @@ export class FetchResult {
         // errorType
         const errorType = !error ? FetchErrorType.none : status === 401 ? FetchErrorType.auth : FetchErrorType.general;
 
-        return new FetchResult({ status, headers, text, json, error, errorType });
+        return new FetchResult({ requestBody, status, headers, text, json, error, errorType });
     }
 
     /** Generates a FetchResult indicating that a fetch was not run. */
@@ -199,6 +229,8 @@ export enum FetchErrorType {
 
 /** FetchResult constructor args schema. */
 const fetchResultArgs = z.object({
+    requestBody: z.any().optional(),
+
     status: int.or(z.string()),
     // headers: z.instanceof(Headers).or(z.record(z.string())).optional(),
     headers: z.instanceof(Headers).or(z.object({
@@ -218,5 +250,7 @@ const fetchResultArgs = z.object({
 
 /** FetchResult constructor args type. */
 type FetchResultArgs = z.infer<typeof fetchResultArgs>;
+/** Request body type (object, string, null or BodyInit). */
+type RequestBody = BodyInit | null | object;
 /** RequestInit type with `body` capable of being an object (JSON.stringify is applied to it in that case). */
-type RequestInitWithObjectBody = Omit<RequestInit, "body"> & { body?: BodyInit | null | object };
+type RequestInitWithObjectBody = Omit<RequestInit, "body"> & { body?: RequestBody };

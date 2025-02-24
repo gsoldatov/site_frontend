@@ -81,14 +81,18 @@ const compositeObjectTypeAndData = z.object({ object_type: z.literal("composite"
 export const objectsBulkUpsertObject = objectsBulkUpsertAttributes.merge(linkObjectTypeAndData)
     .or(objectsBulkUpsertAttributes.merge(markdownObjectTypeAndData))
     .or(objectsBulkUpsertAttributes.merge(toDoListObjectTypeAndData))
-    .or(objectsBulkUpsertAttributes.merge(compositeObjectTypeAndData));
+    .or(objectsBulkUpsertAttributes.merge(compositeObjectTypeAndData))
+;
 
 
 /** /objects/bulk_upsert request body schema. */
 export const objectsBulkUpsertRequestBody = z.object({
     objects: objectsBulkUpsertObject.array().min(1).max(100),
     deleted_object_ids: positiveInt.array().max(1000)
-})
+});
+
+/** /objects/bulk_upsert request object. */
+export type ObjectsBulkUpsertRequestBody = z.infer<typeof objectsBulkUpsertRequestBody>;
 
 
 /** /objects/bulk_upser response body schema. */

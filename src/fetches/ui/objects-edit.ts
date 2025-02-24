@@ -12,6 +12,7 @@ import { deleteObjects } from "../../reducers/data/objects";
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
 import { EditedObjectsSelectors } from "../../store/selectors/data/objects/edited-objects";
 import { ObjectsEditSelectors } from "../../store/selectors/ui/objects-edit";
+import { parseObjectsBulkUpsertPydanticErrors } from "../../util/errors/objects-edit";
 
 import type { Dispatch, GetState } from "../../types/store/store";
 import { positiveInt } from "../../types/common";
@@ -143,7 +144,8 @@ export const objectsEditSaveFetch = () => {
         
         // Handle fetch errors
         if (upsertResult.failed) {
-            dispatch(setObjectsEditSaveFetchState(false, upsertResult.error!));
+            const error = parseObjectsBulkUpsertPydanticErrors(upsertResult, getState());
+            dispatch(setObjectsEditSaveFetchState(false, error));
             return;
         }
 
