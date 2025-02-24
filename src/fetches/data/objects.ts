@@ -8,8 +8,9 @@ import { addObjectsTags } from "../../reducers/data/objects-tags";
 import { deleteObjects } from "../../reducers/data/objects";
 import { addObjectsAttributes, addObjectsDataFromBackend } from "../../reducers/data/objects";
 
-import { EditedObjectsTransformers, parseObjectsBulkUpsertZodValidationErrors } from "../../store/transformers/data/edited-objects";
+import { EditedObjectsTransformers } from "../../store/transformers/data/edited-objects";
 import { ObjectsSelectors } from "../../store/selectors/data/objects/objects";
+import { parseObjectsBulkUpsertZodValidationErrors } from "../../util/errors/objects-edit";
 
 import type { Dispatch, GetState } from "../../types/store/store";
 import type { EditedObject } from "../../types/store/data/edited-objects";
