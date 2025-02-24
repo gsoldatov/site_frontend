@@ -7,6 +7,7 @@ import { TagsEditSelectors } from "../../store/selectors/ui/tags-edit";
 
 import { currentTag } from "../../types/store/ui/tags-edit";
 import type { Dispatch, GetState } from "../../types/store/store";
+import { parseTagsAddUpdatePydanticErrors } from "../../util/errors/tags-edit";
 
 
 /**
@@ -27,7 +28,8 @@ export const tagsEditNewSaveFetch = () => {
 
         // Handle fetch errors
         if (result.failed) {
-            dispatch(setTagsEditSaveFetchState({ isFetching: false, fetchError: result.error || "" }));
+            const error = parseTagsAddUpdatePydanticErrors(result);
+            dispatch(setTagsEditSaveFetchState({ isFetching: false, fetchError: error }));
             return;
         }
         
