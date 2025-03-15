@@ -117,10 +117,20 @@ const loadExistingEditedObjects = (state: State, objectIDs: number[]): State => 
     const editedObjects = { ...state.editedObjects };
 
     objectIDs.forEach(objectID => {
-        const attributes = state.objects[objectID], currentTagIDs = state.objectsTags[objectID], data = ObjectsSelectors.editedObjectData(state, objectID);
+        const attributes = state.objects[objectID];
         if (attributes === undefined) throw Error(`Failed to load edited object '${objectID}': attributes are missing.`);
+
+        const currentTagIDs = state.objectsTags[objectID]
         if (currentTagIDs === undefined) throw Error(`Failed to load edited object '${objectID}': tags are missing.`);
+
+        let data = ObjectsSelectors.editedObjectData(state, objectID);
         if (data === undefined) throw Error(`Failed to load edited object '${objectID}': data is missing.`);
+        // Preserve parsed markdown, if raw_text is already loaded (after an upsert)
+        const existingEditedObject = state.editedObjects[objectID];
+        if (existingEditedObject !== undefined && existingEditedObject.object_type === "markdown" 
+            && existingEditedObject.markdown.raw_text === (data as Pick<EditedObject, "markdown">).markdown.raw_text)
+            (data as Pick<EditedObject, "markdown">).markdown.parsed = existingEditedObject.markdown.parsed;
+
         editedObjects[objectID] = getEditedObjectState({ ...attributes, currentTagIDs, ...data });
     });
 
