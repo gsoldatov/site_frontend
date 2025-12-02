@@ -6,7 +6,6 @@
         "sourceMap": true,      // enable source map generation
         
         
-        
         /* Modules & compilation */
         "module": "NodeNext",   // which module system is used in the project 
                                 // (Node supports ES modules, so it can be used for React code;
@@ -27,6 +26,11 @@
 
         "resolveJsonModule": true,   // allow importing JSON files as modules
 
+        "plugins": [
+            // Enables loading CSS modules into .ts files
+            // https://stackoverflow.com/questions/41336858/how-to-import-css-modules-with-typescript-react-and-webpack/66356082#66356082
+            { "name": "typescript-plugin-css-modules" }
+        ],
         
         
         /* Code checks */
