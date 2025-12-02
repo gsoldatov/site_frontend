@@ -229,8 +229,8 @@ export function getMockedPageObjectIDs(pI) {
     if (pI.order_by === "feed_timestamp") {
         if (pI.sort_order === "asc") throw Error("Sort by feed_timestamp asc not implemented")
 
-        // Desc
-        if (!pI.show_only_displayed_in_feed) throw Error("Sort by feed_timestamp desc without `show_only_displayed_in_feed` not implemented");
+        // // Desc
+        // if (!pI.show_only_displayed_in_feed) throw Error("Sort by feed_timestamp desc without `show_only_displayed_in_feed` not implemented");
 
         // // Single page
         // if (pI.items_per_page === 100) return [100, 1100, 2100, 3100, 101, 1101, 2101, 3101];
