@@ -2,11 +2,11 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 import { Layout } from "../modules/layout/layout";
-import { TagDropdown } from "../page-parts/tags-view/tag-dropdown";
+import { TagsViewDropdown } from "../page-parts/tags-view/dropdown";
 import { SelectPrompt } from "../page-parts/tags-view/select-prompt";
 import { SelectedTags } from "../page-parts/tags-view/selected-tags";
 import { TagInformation } from "../page-parts/tags-view/tag-information";
-import { TagPageObjectsFeed } from "../page-parts/tags-view/tag-page-objects-feed";
+import { TagsViewObjectsFeed } from "../page-parts/tags-view/objects-feed";
 
 import { LayoutType } from "../../types/store/ui/general/layout-type";
 
@@ -25,11 +25,11 @@ export const TagsViewPage = () => {
 
     const body = (
         <div className="tags-view-container">
-            <TagDropdown />
+            <TagsViewDropdown />
             <SelectedTags />
             <SelectPrompt />
             <TagInformation />
-            <TagPageObjectsFeed page={page} />
+            <TagsViewObjectsFeed page={page} />
         </div>
     );
     

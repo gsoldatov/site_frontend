@@ -15,7 +15,7 @@ import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
  * 
  * Fetches displayed objects and renders feed cards for them and feed pagination.
  */
-export const TagPageObjectsFeed = ({ page, items_per_page = 10 }) => {
+export const TagsViewObjectsFeed = ({ page, items_per_page = 10 }) => {
     const dispatch = useDispatch();
     const tagIDs = useURLParamIDs("tagIDs");
 

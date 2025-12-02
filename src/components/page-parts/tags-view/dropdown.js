@@ -14,7 +14,7 @@ import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
 /**
  * /tags/view page tag filter
  */
-export const TagDropdown = () => {
+export const TagsViewDropdown = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const isMounted = useMountedState();
