@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
 
 import { FeedContainer, FeedCardsContainer } from "../../modules/feed/feed-container";
@@ -15,21 +15,14 @@ import { useURLParamIDs } from "../../../util/hooks/use-url-param-ids";
  * 
  * Fetches displayed objects and renders feed cards for them and feed pagination.
  */
-export const TagsViewObjectsFeed = ({ page, items_per_page = 10 }) => {
+export const TagsViewObjectsFeed = ({
+    page,
+    paginationInfo,
+    setPaginationInfo
+}) => {
     const dispatch = useDispatch();
     const tagIDs = useURLParamIDs("tagIDs");
-
-    // Pagination info
-    const [paginationInfo, setPaginationInfo] = useState({
-            page,
-            items_per_page,
-            order_by: "feed_timestamp",
-            sort_order: "desc",
-            show_only_displayed_in_feed: true,
-
-            totalItems: 0,
-            currentPageObjectIDs: []
-    });
+    const { items_per_page, show_only_displayed_in_feed } = paginationInfo;
 
     // On load fetch
     const onLoad = useMemo(() => async () => {
@@ -51,10 +44,10 @@ export const TagsViewObjectsFeed = ({ page, items_per_page = 10 }) => {
         
         return result;
     
-    }, [page, items_per_page, tagIDs]);
+    }, [tagIDs, page, items_per_page, show_only_displayed_in_feed]);
 
     // Feed pagination params
-    const totalPages = paginationInfo ? Math.ceil(paginationInfo.totalItems / paginationInfo.items_per_page) : null;
+    const totalPages = paginationInfo ? Math.ceil(paginationInfo.totalItems / items_per_page) : null;
     const getNewURL = useMemo(() => newPage => {
         const params = new URLSearchParams();
         params.append("tagIDs", tagIDs);
