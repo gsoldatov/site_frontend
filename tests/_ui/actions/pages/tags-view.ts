@@ -40,6 +40,19 @@ export class TagsViewActions {
         return this.layout;
     }
 
+    /**
+     * Awaits for feed reload to start & end
+     */
+    async waitForFeedReload() {
+        // Wait for placeholder to appear
+        await waitFor((function(this: TagsViewActions) {
+            this.layout = new TagsViewLayout(this.container);
+            expect(this.layout.feed.placeholders.loading).toBeTruthy();
+        }).bind(this));
+
+        return await this.waitForFeedLoad();
+    }
+
     // /**
     //  * Waits for card loading placeholder to disappear and markdown containers to render.
     //  * If `text` is provided, ensures it's in the error message.
