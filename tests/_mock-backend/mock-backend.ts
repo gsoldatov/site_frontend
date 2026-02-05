@@ -4,6 +4,7 @@ import { RequestContext } from "./request-context";
 import { RequestHistory } from "./request-history";
 
 import { RouteHandler } from "./route-handlers/route-handler";
+import { AuthRouteHandlers } from "./route-handlers/handlers/auth";
 import { ObjectsRouteHandlers } from "./route-handlers/handlers/objects";
 import { TagsRouteHandlers } from "./route-handlers/handlers/tags";
 import { UsersRouteHandlers } from "./route-handlers/handlers/users";
@@ -22,6 +23,7 @@ export class MockBackend {
 
     routeHandlers: {
         [index: string]: { [index: string]: RouteHandler | MockBackend },
+        auth: AuthRouteHandlers,
         objects: ObjectsRouteHandlers,
         tags: TagsRouteHandlers,
         users: UsersRouteHandlers,
@@ -34,6 +36,7 @@ export class MockBackend {
         this.data = new BackendDataGenerator(this);
 
         this.routeHandlers = {
+            auth: new AuthRouteHandlers(this),
             objects: new ObjectsRouteHandlers(this),
             tags: new TagsRouteHandlers(this),
             users: new UsersRouteHandlers(this),

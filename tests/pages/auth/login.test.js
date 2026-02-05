@@ -1,36 +1,27 @@
 import React from "react";
-import { fireEvent, waitFor } from "@testing-library/dom";
 
+import { getBackend, MockBackend } from "../../_mock-backend/mock-backend";
 import { resetTestConfig } from "../../_mocks/config";
 import { createTestStore } from "../../_util/create-test-store";
 import { renderWithWrappers } from "../../_util/render";
-import { getLoginFormElements, waitForFormErrorMessage, enterValidFormData, checkValidInputErrorDisplay } from "../../_util/ui-auth";
-import { getMockLoginResponse } from "../../_mocks/data-auth";
+
+import { AuthLoginActions } from "../../_ui/actions/pages/auth-login";
 
 import { App } from "../../../src/components/app";
 
 import { deepEqual } from "../../../src/util/equality-checks";
 import { getAuthState } from "../../../src/types/store/data/auth";
-import { NumericUserLevel } from "../../../src/types/store/data/auth";
 
 
 /*
     /auth/login page tests.
 */
 beforeEach(() => {
-    // isolate fetch mock to avoid tests state collision because of cached data in fetch
-    jest.isolateModules(() => {
-        const { mockFetch, setFetchFail, addCustomRouteResponse } = require("../../_mocks/mock-fetch");
-        
-        // Set test app configuration
-        resetTestConfig();
-
-        // reset fetch mocks
-        jest.resetAllMocks();
-        global.fetch = jest.fn(mockFetch);
-        global.setFetchFail = jest.fn(setFetchFail);
-        global.addCustomRouteResponse = jest.fn(addCustomRouteResponse);
-    });
+    // Set test app configuration
+    resetTestConfig();
+    
+    global.backend = new MockBackend();
+    global.fetch = global.backend.fetch;
 });
 
 
@@ -41,31 +32,26 @@ test("Check validation error display", async () => {
         route: "/auth/login", store
     });
 
-    const { inputs, submitButton } = getLoginFormElements(container);
+    const authLoginActions = new AuthLoginActions(container);
 
     // Enter & submit form data with omitted login
-    enterValidFormData(container, "login");
-    fireEvent.change(inputs.login, { target: { value: "" } });
-    fireEvent.click(submitButton);
-    await checkValidInputErrorDisplay(container, "login", "login", "Login is required.");
-
+    authLoginActions.enterCredentialsAndSubmit("", "password");
+    await authLoginActions.waitForLoginError("Login is required.");
+    
     // Enter & submit form data with a too long login
-    enterValidFormData(container, "login");
-    fireEvent.change(inputs.login, { target: { value: "a".repeat(256) } });
-    fireEvent.click(submitButton);
-    await checkValidInputErrorDisplay(container, "login", "login", "Login is too long.");
+    authLoginActions.enterCredentialsAndSubmit("a".repeat(256), "password");
+    authLoginActions.ensureNoErrors();      // Check if form field errors are cleared
+    await authLoginActions.waitForLoginError("Login is too long.");
 
     // Enter & sumit form data with a too short password
-    enterValidFormData(container, "login");
-    fireEvent.change(inputs.password, { target: { value: "a".repeat(7) } });
-    fireEvent.click(submitButton);
-    await checkValidInputErrorDisplay(container, "login", "password", "Password must be at least 8 characters long.");
-
+    authLoginActions.enterCredentialsAndSubmit("login", "a".repeat(7));
+    authLoginActions.ensureNoErrors();      // Check if form field errors are cleared
+    await authLoginActions.waitForPasswordError("Password must be at least 8 characters long.");
+    
     // Enter & submit form data with a too long password
-    enterValidFormData(container, "login");
-    fireEvent.change(inputs.password, { target: { value: "a".repeat(73) } });
-    fireEvent.click(submitButton);
-    await checkValidInputErrorDisplay(container, "login", "password", "Password must be at most 72 characters long.");
+    authLoginActions.enterCredentialsAndSubmit("login", "a".repeat(256));
+    authLoginActions.ensureNoErrors();      // Check if form field errors are cleared
+    await authLoginActions.waitForPasswordError("Password must be at most 72 characters long.");
 });
 
 
@@ -76,64 +62,65 @@ test("Check fetch error display & form disabling during fetch", async () => {
         route: "/auth/login", store
     });
 
-    // Add a mock network error
-    setFetchFail(true);
+    const authLoginActions = new AuthLoginActions(container);
 
-    // Enter valid data & submit
-    enterValidFormData(container, "login");
-    fireEvent.click(getLoginFormElements(container).submitButton);
+    // Add a mock network error
+    const backend = getBackend();
+    backend.routeHandlers.auth.login.throwNetworkError = true;
+
+    // Submit correct credentials
+    authLoginActions.enterCredentialsAndSubmit("login", "password");
 
     // Check if form is disabled during fetch
-    expect(getLoginFormElements(container).submitButton.disabled).toBeTruthy();
+    authLoginActions.ensureFormIsDisabled();
 
-    // Wait for form error message to be displayed
-    await waitForFormErrorMessage(container, "login", "Failed to fetch data.");
+    // Wait for error message to appear
+    await authLoginActions.waitForFormError("Failed to fetch data.");
 
-    // Check if form is enabled after fetch which ended with an error
-    expect(getLoginFormElements(container).submitButton.disabled).toBeFalsy();
+    // Check if login form is enabled after fetch
+    authLoginActions.ensureFormIsEnabled();
 });
 
 
-test("Correct login", async () => {
+test("Correct login and form error reset", async () => {
     // Render login page
     const { store } = createTestStore({ addAdminToken: false });
     let { container, historyManager } = renderWithWrappers(<App />, {
         route: "/auth/login", store
     });
 
+    // Check default auth state
     expect(deepEqual(store.getState().auth, getAuthState())).toBeTruthy();
 
     // Add a mock network error
-    setFetchFail(true);
+    const backend = getBackend();
+    backend.routeHandlers.auth.login.throwNetworkError = true;
 
-    // Enter valid data & submit
-    enterValidFormData(container, "login");
-    fireEvent.click(getLoginFormElements(container).submitButton);
+    // Submit correct credentials & wait for error message to appear
+    const authLoginActions = new AuthLoginActions(container);
+    authLoginActions.enterCredentialsAndSubmit("login", "password");
+    await authLoginActions.waitForFormError("Failed to fetch data.");
 
-    // Wait for form error message to be displayed
-    await waitForFormErrorMessage(container, "login", "Failed to fetch data.");
+    // Remove mock network error and submit credentials again
+    backend.routeHandlers.auth.login.throwNetworkError = false;
+    authLoginActions.enterCredentialsAndSubmit("login", "password");
 
-    // Remove the mock network error, set mock login response & submit data again
-    setFetchFail();
-    const body = getMockLoginResponse();
-    addCustomRouteResponse("/auth/login", "POST", { status: 200, body });
-    fireEvent.click(getLoginFormElements(container).submitButton);
-
-    // Check if form error was reset
-    let formElements = getLoginFormElements(container);
-    expect(formElements.errors.form.textContent).toEqual("");
-    expect(formElements.formContainer.classList.contains("error")).toBeFalsy();
-
-    // Wait for the auth info to be added to the state
-    await waitFor(() => {
-        const expectedAuth = { ...body.auth, numeric_user_level: NumericUserLevel[body.auth.user_level] };   // replace string user level with numeric
-        delete expectedAuth["user_level"];
-        expect(deepEqual(store.getState().auth, expectedAuth)).toBeTruthy();
-    });
+    // Check if form error was removed
+    authLoginActions.ensureNoErrors();
 
     // Wait for redirect to index page and index page fetches to end
     await historyManager.waitForCurrentURLToBe("/");
-    await waitFor(() => expect(container.querySelector(".feed-card")).toBeTruthy());
+
+    // Check if auth info was added to the state
+    const authState = store.getState().auth;
+    const expectedState = backend.data.generator.auth.login()["auth"];
+    expect(authState.user_id).toEqual(expectedState.user_id);
+    expect(authState.access_token).toEqual(expectedState.access_token);
+    expect(authState.numeric_user_level).toEqual(20);   // admin user level
+    expect(
+        (new Date(expectedState.access_token_expiration_time)).getTime()
+        - (new Date(authState.access_token_expiration_time)).getTime()
+    ).toBeLessThan(1000);   // expiration time is (almost) the same, as generated by backend on the next call
 });
 
 
@@ -142,34 +129,30 @@ test("Correct login with URL query params", async () => {
     const params = new URLSearchParams();
     const redirectPath = "/objects/edit/1";
     params.append("from", redirectPath);
-    params.append("message", "registrationComplete");
     const { store } = createTestStore({ addAdminToken: false });
     let { container, historyManager } = renderWithWrappers(<App />, {
         route: "/auth/login?" + params.toString(), store
     });
 
+    // Check default auth state
     expect(deepEqual(store.getState().auth, getAuthState())).toBeTruthy();
 
-    // Set mock login response
-    const body = getMockLoginResponse();
-    addCustomRouteResponse("/auth/login", "POST", { status: 200, body });
-
-    // Enter valid data & submit
-    enterValidFormData(container, "login");
-    fireEvent.click(getLoginFormElements(container).submitButton);
-
-    // Check if form message was reset
-    let formElements = getLoginFormElements(container);
-    expect(formElements.formMessage.textContent).toEqual("");
-    expect(formElements.formContainer.classList.contains("success")).toBeFalsy();
-
-    // Wait for the auth info to be added to the state
-    await waitFor(() => {
-        const expectedAuth = { ...body.auth, numeric_user_level: NumericUserLevel[body.auth.user_level] };   // replace string user level with numeric
-        delete expectedAuth["user_level"];
-        expect(deepEqual(store.getState().auth, expectedAuth)).toBeTruthy();
-    });
+    // Submit correct credentials
+    const authLoginActions = new AuthLoginActions(container);
+    authLoginActions.enterCredentialsAndSubmit("login", "password");
 
     // Wait for redirect to the specified page
     await historyManager.waitForCurrentURLToBe(redirectPath);
+
+    // Check if auth info was added to the state
+    const backend = getBackend();
+    const authState = store.getState().auth;
+    const expectedState = backend.data.generator.auth.login()["auth"];
+    expect(authState.user_id).toEqual(expectedState.user_id);
+    expect(authState.access_token).toEqual(expectedState.access_token);
+    expect(authState.numeric_user_level).toEqual(20);   // admin user level
+    expect(
+        (new Date(expectedState.access_token_expiration_time)).getTime()
+        - (new Date(authState.access_token_expiration_time)).getTime()
+    ).toBeLessThan(1000);   // expiration time is (almost) the same, as generated by backend on the next call
 });
