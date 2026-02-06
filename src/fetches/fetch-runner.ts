@@ -172,7 +172,7 @@ export class FetchResult {
 
         // error
         let error = undefined;
-        if (status === 401) error = "Invalid token.";
+        if (status === 401 && fetchRunner.useAccessToken) error = "Invalid token.";
         else if (status === 500) error = text;
         else if (json !== undefined) error = json._error;
 

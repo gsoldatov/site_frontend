@@ -5,7 +5,6 @@ import { resetStateExceptForEditedObjects } from "../../reducers/common";
 
 import { getAuthFetchValidationErrors, registerFetchData, authFetchValidationErrors, loginFetchData, backendAuth } from "../../types/fetches/data/auth";
 import { NumericUserLevel } from "../../types/store/data/auth";
-import { timestampString } from "../../types/common";
 
 import type { Dispatch, GetState } from "../../types/store/store";
 import type { AuthFetchValidationErrors, BackendAuth } from "../../types/fetches/data/auth";
@@ -78,8 +77,8 @@ export const loginFetch = (login: string, password: string) => {
                                                             // which is caused by having a <ProtectedRoute> wrapper over /auth/login route, which redirects auth'd users to index page.
 
             case 429:
-                const retryAfterString = timestampString.parse(result.headers.get("Retry-After"));
-                const retryAfter = parseInt(retryAfterString);
+                const retryAfterString = result.headers.get("Retry-After");
+                const retryAfter = parseInt(retryAfterString!);
                 const retryAfterDate = new Date();
                 retryAfterDate.setSeconds(retryAfterDate.getSeconds() + retryAfter);
                 return { errors: { form: `Too many login attempts performed. Retry after ${retryAfterDate.toLocaleString()}.` }};
