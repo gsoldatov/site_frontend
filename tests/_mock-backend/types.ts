@@ -9,7 +9,8 @@ export type FetchArgs = { method?: string, headers?: Record<string, string>, bod
 /** Mock backend's response object schema for route handlers */
 export const routeHandlerResponse = z.object({
     status: int,
-    body: z.record(z.string(), z.any()).optional()
+    body: z.record(z.string(), z.any()).optional(),
+    headers: z.record(z.string(), z.any()).optional()
 });
 
 /** Response type returned by mock backend's route handlers. */

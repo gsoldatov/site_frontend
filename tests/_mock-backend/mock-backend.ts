@@ -93,8 +93,13 @@ export class MockBackend {
             // Mock methods used by app 
             headers: { 
                 get: header => {
-                    if (header === "content-type") return "body" in response ? "application/json" : "";
-                    return null;
+                    const responseHeaders: Record<string, string> = {
+                        // default
+                        "content-type": "body" in response ? "application/json" : "",
+                        // custom headers, returned by route handler
+                        ...response.headers,
+                    }
+                    return responseHeaders[header] || null;
                 }
             },
             clone: () => ({ ...result }),
