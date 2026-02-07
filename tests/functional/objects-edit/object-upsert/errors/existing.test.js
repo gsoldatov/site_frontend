@@ -1,7 +1,7 @@
 import { MockBackend, getBackend } from "../../../../_mock-backend/mock-backend";
 import { resetTestConfig } from "../../../../_mocks/config";
 import { createTestStore } from "../../../../_util/create-test-store";
-import { getErrorResponse } from "../../../../_scenarios/backend-responses/fetch-failures";
+import { getErrorResponse } from "../../../../_scenarios/backend-responses/common";
 
 import { SubobjectDeleteMode } from "../../../../../src/types/store/data/composite";
 

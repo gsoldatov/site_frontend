@@ -2,7 +2,7 @@ import { getBackend } from "../../_mock-backend/mock-backend";
 
 import type { RequestContext } from "../../_mock-backend/request-context";
 import type { RouteHandler } from "../../_mock-backend/route-handlers/route-handler";
-import { getErrorResponse } from "./fetch-failures";
+import { getErrorResponse } from "./common";
 
 
 export const mockAuthLoginUnauthorizedMessage = "Incorrect login or password.";

@@ -3,7 +3,7 @@ import React from "react";
 import { MockBackend, getBackend } from "../../../../_mock-backend/mock-backend";
 import { resetTestConfig } from "../../../../_mocks/config";
 import { renderWithWrappers } from "../../../../_util/render";
-import { getErrorResponse } from "../../../../_scenarios/backend-responses/fetch-failures";
+import { getErrorResponse } from "../../../../_scenarios/backend-responses/common";
 
 /*
     Tests for error handling during new object's upsert on the /objects/edit/:id page.
