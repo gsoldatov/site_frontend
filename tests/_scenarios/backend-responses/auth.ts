@@ -1,8 +1,9 @@
 import { getBackend } from "../../_mock-backend/mock-backend";
+import { getErrorResponse } from "./common";
 
 import type { RequestContext } from "../../_mock-backend/request-context";
 import type { RouteHandler } from "../../_mock-backend/route-handlers/route-handler";
-import { getErrorResponse } from "./common";
+import type { RouteHandlerResponse } from "../../_mock-backend/types";
 
 
 export const mockAuthLoginUnauthorizedMessage = "Incorrect login or password.";
@@ -14,7 +15,7 @@ export const mockAuthLoginUnauthorizedMessage = "Incorrect login or password.";
 export function mockAuthLoginUnauthorized(this: RouteHandler, objectIDs: number[]) {
     const backend = getBackend();
 
-    backend.routeHandlers.auth.login.setCustomResponseFunction(function (this: RouteHandler, requestContext: RequestContext) {
+    backend.routeHandlers.auth.login.setCustomResponseFunction(function (this: RouteHandler, requestContext: RequestContext): RouteHandlerResponse {
         return getErrorResponse(401, mockAuthLoginUnauthorizedMessage);
     });
 };
@@ -26,7 +27,7 @@ export function mockAuthLoginUnauthorized(this: RouteHandler, objectIDs: number[
 export function mockAuthLoginTooManyRequests(this: RouteHandler, objectIDs: number[]) {
     const backend = getBackend();
 
-    backend.routeHandlers.auth.login.setCustomResponseFunction(function (this: RouteHandler, requestContext: RequestContext) {
+    backend.routeHandlers.auth.login.setCustomResponseFunction(function (this: RouteHandler, requestContext: RequestContext): RouteHandlerResponse {
         return { status: 429, headers: {"Retry-After": 100}};
     });
 };

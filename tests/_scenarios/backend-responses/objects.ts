@@ -3,6 +3,7 @@ import { objectsViewBody } from "../../_mock-backend/route-handlers/handlers/obj
 
 import type { RequestContext } from "../../_mock-backend/request-context";
 import type { RouteHandler } from "../../_mock-backend/route-handlers/route-handler";
+import type { RouteHandlerResponse } from "../../_mock-backend/types";
 
 
 /**
@@ -29,7 +30,7 @@ export function mockFetchFailForObjectsView(this: RouteHandler, objectIDs: numbe
 export function addNonExistingObjectsForObjectsView(this: RouteHandler, objectIDs: number[]) {
     const backend = getBackend();
 
-    backend.routeHandlers.objects.view.setCustomResponseFunction(function (this: RouteHandler, requestContext: RequestContext) {
+    backend.routeHandlers.objects.view.setCustomResponseFunction(function (this: RouteHandler, requestContext: RequestContext): RouteHandlerResponse {
         let { object_ids = [], object_data_ids = [] } = objectsViewBody.parse(requestContext.body);
         object_ids = object_ids.filter(id => !objectIDs.includes(id));
         object_data_ids = object_data_ids.filter(id => !objectIDs.includes(id));
