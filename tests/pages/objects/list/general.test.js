@@ -658,11 +658,11 @@ describe("Field menu", () => {
 
         // Search text is reset on blur
         await searchTagInFilter("tag #", tagsFilterInput, store);
-        let eventHandlers;                                      // workaround to call onBlur event of the tags filter input container, which should reset tagsFilterInput state; 
+        let reactProps;                                         // workaround to call onBlur event of the tags filter input container, which should reset tagsFilterInput state; 
         Object.keys(tagsFilterContainer).forEach(key => {       // fireEvent.blur(clearTagsFilterButton) does not trigger the event
-            if (key.indexOf("reactEventHandlers") > -1) eventHandlers = tagsFilterContainer[key];
+            if (key.indexOf("reactProps") > -1) reactProps = tagsFilterContainer[key];
         });
-        eventHandlers.onBlur();
+        reactProps.onBlur();
 
         expect(tagsFilterInput.value).toEqual("");                                          // search text is reset
         expect(tagsFilterContainer.querySelector(".visible.menu.transition")).toBeFalsy();  // dropdown list is not displayed
