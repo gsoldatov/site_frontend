@@ -235,14 +235,15 @@ const fetchResultArgs = z.object({
     // headers: z.instanceof(Headers).or(z.record(z.string())).optional(),
     headers: z.instanceof(Headers).or(z.object({
         // get: (h: string) => z.string().or(z.null())
-        get: z.function()
-            .args(z.string())
-            .returns(z.string().or(z.null()))
+        get: z.function({
+            input: [z.string()],
+            output: z.string().or(z.null())
+        })
     })
         
     ).optional(),
     text: z.string().optional(),
-    json: z.record(z.any()).optional(),
+    json: z.record(z.any(), z.any()).optional(),
     error: z.string().optional(),
     errorType: z.nativeEnum(FetchErrorType)
 });

@@ -32,7 +32,7 @@ export const parseObjectsBulkUpsertZodValidationErrors = (error: ZodError, edite
             message = mappedErrorMessages["objectNameTooLong"];
 
         // link data
-        else if (firstIssue.path[2] === "object_data" && firstIssue.path[3] === "link" && firstIssue.message === "Invalid url")
+        else if (firstIssue.path[2] === "object_data" && firstIssue.path[3] === "link" && firstIssue.message === "Invalid URL")
              message = mappedErrorMessages["linkInvalidURL"];
 
         // markdown data

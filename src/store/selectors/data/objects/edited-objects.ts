@@ -328,7 +328,7 @@ export class EditedObjectsSelectors {
         // Object data
         switch (editedObject.object_type) {
             case "link":
-                if (!z.string().url().safeParse(editedObject.link.link).success) return "Valid URL is required.";
+                if (!z.url().safeParse(editedObject.link.link).success) return "Valid URL is required.";
                 break;
             case "markdown":
                 if (editedObject.markdown.raw_text.length === 0) return "Markdown text is required.";

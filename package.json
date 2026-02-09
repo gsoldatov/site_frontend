@@ -30,7 +30,7 @@
     "reselect": "^4.0.0",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.5",
-    "zod": "^3.23.8"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@testing-library/react": "<=12.1.5",

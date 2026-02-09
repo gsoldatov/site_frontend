@@ -22,7 +22,7 @@ const objectsBulkUpsertAttributes = z.object({
 
 /** `object_data` schema of a link object in the /objects/bulk_upsert request format. */
 const linkData = z.object({
-    link: z.string().url(),
+    link: z.url(),
     show_description_as_link: z.boolean()
 });
 

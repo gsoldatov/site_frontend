@@ -22,13 +22,21 @@ export const usersViewFullResponseSchema = z.object({
 /**********************************
  * /users/update types & validation
  **********************************/
-const login = z.string().min(1, { message: "Login is required." }).max(255, "Login is too long.");
-const password = z.string().min(8, { message: "Password must be at least 8 characters long." }).max(72, "Password must be at most 72 characters long.");
-const username = z.string().min(1, { message: "Username is required." }).max(255, "Username is too long.");
+const optionalLogin = z.string().max(255, { error: "Login is too long." });
 
-const optionalLogin = login.or(z.string().max(0));
-const optionalPassword = password.or(z.string().max(0));
-const optionalUsername = username.or(z.string().max(0));
+const _passwordTooShortError = "Password must be at least 8 characters long."
+const optionalPassword = z.string()     // replaced type union version for zod v4, since it no longer displays correct error messages
+    .max(72, "Password must be at most 72 characters long.")
+    .refine(
+        value => value.length == 0 || value.length >= 8
+        , { error: _passwordTooShortError }
+    );
+const password = optionalPassword.refine(
+    value => value.length >= 8
+    , { error: _passwordTooShortError }
+);
+
+const optionalUsername = z.string().max(255, "Username is too long.");
 
 
 /** `usersUpdateFetch` request data schema. */
@@ -42,7 +50,7 @@ export const usersUpdateFetchData = z.object({
     can_login: z.boolean(),
     can_edit_objects: z.boolean(),
     token_owner_password: password
-}).refine(data => data.password === data.password_repeat, { path: ["password_repeat"], message: "Password must be repeated correctly." });
+}).refine(data => data.password === data.password_repeat, { path: ["password_repeat"], error: "Password must be repeated correctly." });
 
 
 /** Schema of errors returned by `usersUpdateFetch`. */
