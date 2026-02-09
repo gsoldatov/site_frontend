@@ -37,8 +37,6 @@ export const renderWithWrappers = (ui: React.ReactElement, params: RenderParams)
     const wrapper = ({ children }: React.PropsWithChildren): React.ReactNode => {
         return (
             <Provider store={storeManager.store}>
-                {/* NOTE: react-dnd typing does not support children until v15: https://github.com/microsoft/TypeScript/issues/49972
-                // @ts-expect-error  */}
                 <DndProvider backend={HTML5Backend}>
                     <Router history={history}>
                         {children}
