@@ -1,5 +1,6 @@
 import { createStore as createStoreRedux, applyMiddleware, type Reducer } from "redux";
-import thunkMiddleware from "redux-thunk";
+import { thunk } from "redux-thunk";
+import { setGlobalDevModeChecks } from "reselect";
 
 import { LocalStorageManager } from "./local-storage-manager";
 import { getRootReducer } from "../reducers/root";
@@ -17,7 +18,7 @@ export const createStore = () => {
         getRootReducer() as Reducer,
         manager.loadInitialState(),
         applyMiddleware(
-            thunkMiddleware
+            thunk
         )
     );
 
@@ -32,3 +33,7 @@ export const createStore = () => {
 
     return store;
 };
+
+
+// Disable reselect v5 warnings in dev mode
+setGlobalDevModeChecks({ inputStabilityCheck: "never", identityFunctionCheck: "never" });

@@ -94,19 +94,31 @@ const commonAndPartiallyAppliedTagsSelector = createSelector(
             partiallyAppliedTagIDs: allTagIDs ? [...allTagIDs].filter(tagID => !commonTagIDs.has(tagID)) : [] 
         };
     }
+    // disable warnings in dev mode
+    , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
 );
 
 
 /**
  * Selector with memoization which returns common tag IDs of selected objects on /objects/list page.
  */
-const commonTagIDsSelector = createSelector(commonAndPartiallyAppliedTagsSelector, commonAndPartiallyAppliedTags => commonAndPartiallyAppliedTags.commonTagIDs);
+const commonTagIDsSelector = createSelector(
+    commonAndPartiallyAppliedTagsSelector,
+    commonAndPartiallyAppliedTags => commonAndPartiallyAppliedTags.commonTagIDs
+    // disable warnings in dev mode
+    , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
+);
 
 
 /**
  * Selector with memoization which returns partially applied tag IDs of selected objects on /objects/list page.
  */
-const partiallyAppliedTagIDsSelector = createSelector(commonAndPartiallyAppliedTagsSelector, commonAndPartiallyAppliedTags => commonAndPartiallyAppliedTags.partiallyAppliedTagIDs);
+const partiallyAppliedTagIDsSelector = createSelector(
+    commonAndPartiallyAppliedTagsSelector,
+    commonAndPartiallyAppliedTags => commonAndPartiallyAppliedTags.partiallyAppliedTagIDs
+    // disable warnings in dev mode
+    , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
+);
 
 
 /**
@@ -135,6 +147,8 @@ const addedTagsSelector = createSelector(
     (state: State) => state.objectsListUI.addedTags,
     partiallyAppliedTagIDsSelector,
     (addedTags, partiallyAppliedTagIDs) => addedTags.filter(tagID => !partiallyAppliedTagIDs.includes(tagID as number))
+    // disable warnings in dev mode
+    , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
 );
 
 
@@ -148,4 +162,6 @@ const matchingTagIDsNames = createSelector(
         result[tagID] = tagsStore[tagID].tag_name;
         return result; 
     }, {} as Record<number, string>)
+    // disable warnings in dev mode
+    , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
 );

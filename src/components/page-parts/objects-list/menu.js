@@ -64,6 +64,8 @@ export const ObjectsListHorizontalMenu = () => {
                 return { key: tagID, text: tags[tagID].tag_name, value: tagID };
             });
         }
+        // disable warnings in dev mode
+        , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
     ), []);
     const tagsFilterOptions = useSelector(tagsFilterOptionsSelector);
     

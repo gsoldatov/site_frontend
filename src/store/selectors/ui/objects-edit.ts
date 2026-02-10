@@ -85,6 +85,8 @@ export const existingTagIDsSelector = createSelector(
     (currentTagIDs, addedTags) => currentTagIDs.concat(
         addedTags.filter(tag => typeof(tag) === "number")
     )
+    // disable warnings in dev mode
+    , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
 );
 
 
@@ -98,4 +100,6 @@ export const matchingTagIDsNames = createSelector(
         result[tagID] = tagsStore[tagID].tag_name;
         return result; 
     }, {} as Record<number, string>)
+    // disable warnings in dev mode
+    , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
 );

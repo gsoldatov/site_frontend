@@ -36,7 +36,8 @@ export const renderWithWrappers = (ui: React.ReactElement, params: RenderParams)
     // Render & return results
     const wrapper = ({ children }: React.PropsWithChildren): React.ReactNode => {
         return (
-            <Provider store={storeManager.store}>
+            // stabilityCheck="never" disables Redux warnings for reducers, which return values with different references for the same args
+            <Provider store={storeManager.store} stabilityCheck="never">
                 <DndProvider backend={HTML5Backend}>
                     <Router history={history}>
                         {children}

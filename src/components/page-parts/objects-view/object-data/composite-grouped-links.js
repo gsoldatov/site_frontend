@@ -76,6 +76,8 @@ const GroupedLinksOther = ({ objectID }) => {
         state => state.objects,
         (composite, objects) => CompositeSelectors.getSingleColumnSubobjectDisplayOrder(composite)
                                 .filter(subobjectID => objects[subobjectID] !== undefined && objects[subobjectID].object_type !== "link")
+        // disable warnings in dev mode
+        , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
     ), [objectID]);
     const nonLinkSubobjectIDs = useSelector(nonLinkSubobjectIDsSelector);
 
@@ -97,6 +99,8 @@ const GroupedLinksCard = ({ objectID }) => {
         state => state.objects,
         (composite, objects) => CompositeSelectors.getSingleColumnSubobjectDisplayOrder(composite)
                                 .filter(subobjectID => (objects[subobjectID] || {}).object_type === "link")
+        // disable warnings in dev mode
+        , { devModeChecks: { inputStabilityCheck: "never", identityFunctionCheck: "never" }}
     );
     const linkSubobjectIDs = useSelector(linkSubobjectIDsSelector);
 

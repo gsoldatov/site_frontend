@@ -130,7 +130,8 @@ export const WrappedApp = () => {
     const store = createStore();
 
     return (
-        <Provider store={store}>
+        // stabilityCheck="never" disables Redux warnings for reducers, which return values with different references for the same args
+        <Provider store={store} stabilityCheck="never">
             <DndProvider backend={HTML5Backend}>
                 <BrowserRouter>
                     <WindowWidthProvider>
