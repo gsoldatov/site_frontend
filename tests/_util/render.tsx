@@ -34,7 +34,7 @@ export const renderWithWrappers = (ui: React.ReactElement, params: RenderParams)
     const historyManager = new HistoryManager(history);
 
     // Render & return results
-    const wrapper = ({ children }: React.PropsWithChildren): React.ReactNode => {
+const wrapper = ({ children }: React.PropsWithChildren<any>): React.ReactElement => {
         return (
             // stabilityCheck="never" disables Redux warnings for reducers, which return values with different references for the same args
             <Provider store={storeManager.store} stabilityCheck="never">
@@ -48,7 +48,7 @@ export const renderWithWrappers = (ui: React.ReactElement, params: RenderParams)
     };
 
     return { 
-        ...render(ui, { wrapper }),
+    ...render(ui, { wrapper }),
         historyManager,
         store: storeManager.store, storeManager,
         backend: getBackend()
