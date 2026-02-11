@@ -18,7 +18,16 @@ const config: Config = {
     // (current prject configuration treats .js / .ts files as written using CJS modules, and so does Jest;
     // transpilation allows testing app (and using test utils) with ES modules)
     transform: {
-        "^.+\\.[jt]sx?$": "ts-jest",
+        "^.+\\.[jt]sx?$": [
+          "ts-jest", {
+            diagnostics: {
+              ignoreCodes: [
+                // Using hybrid module kind (Node16/18/Next) is only supported in "isolatedModules: true"
+                151002
+              ]
+            }
+          }
+        ],
     },
     
     // Map files to test stubs
