@@ -2,10 +2,35 @@ import marked from "marked";
 // @ts-ignore (import from library subfolder results in no types being visible)
 import { escape } from "marked/src/helpers";
 
-// Import core library and white-listed languages to manually register them
-// @ts-ignore (import from library subfolder results in no types being visible)
+// Import highlight.js library and white-listed languages to manually register them
 import hljs from "highlight.js/lib/core";
-import HLJSUsedLanguages from "./hljs-used-languages.json";
+
+import bash from "highlight.js/lib/languages/bash";
+import c from "highlight.js/lib/languages/c";
+import cpp from "highlight.js/lib/languages/cpp";
+import csharp from "highlight.js/lib/languages/csharp";
+import css from "highlight.js/lib/languages/css";
+import dockerfile from "highlight.js/lib/languages/dockerfile";
+import excel from "highlight.js/lib/languages/excel";
+import go from "highlight.js/lib/languages/go";
+import http from "highlight.js/lib/languages/http";
+import java from "highlight.js/lib/languages/java";
+import javascript from "highlight.js/lib/languages/javascript";
+import json from "highlight.js/lib/languages/json";
+import lua from "highlight.js/lib/languages/lua";
+import markdown from "highlight.js/lib/languages/markdown";
+import nginx from "highlight.js/lib/languages/nginx";
+import pgsql from "highlight.js/lib/languages/pgsql";
+import plaintext from "highlight.js/lib/languages/plaintext";
+import powershell from "highlight.js/lib/languages/powershell";
+import python from "highlight.js/lib/languages/python";
+import pythonRepl from "highlight.js/lib/languages/python-repl";
+import ruby from "highlight.js/lib/languages/ruby";
+import shell from "highlight.js/lib/languages/shell";
+import sql from "highlight.js/lib/languages/sql";
+import typescript from "highlight.js/lib/languages/typescript";
+import xml from "highlight.js/lib/languages/xml";
+import yaml from "highlight.js/lib/languages/yaml";
 
 import katex from "katex";
 
@@ -170,16 +195,33 @@ const renderer = {
     }
 };
 
-
-// Register white-listed languages in HLJS
-// NOTE: to add highlighting of a language, add it and its dependencies to `hljs-used-languages.json` => rebuild the app.
-HLJSUsedLanguages.forEach(lang => {
-    // use eager mode for dynamic import to add imported modules into the current (worker) bundle
-    import(/* webpackChunkName: 'hljs-language', webpackMode: 'eager' */ `highlight.js/lib/languages/${lang}`)
-    .then(m => {
-        hljs.registerLanguage(lang, m.default);
-    });
-});
+// Register HLJS languages, included in the bundle
+hljs.registerLanguage("bash", bash);
+hljs.registerLanguage("c", c);
+hljs.registerLanguage("cpp", cpp);
+hljs.registerLanguage("csharp", csharp);
+hljs.registerLanguage("css", css);
+hljs.registerLanguage("dockerfile", dockerfile);
+hljs.registerLanguage("excel", excel);
+hljs.registerLanguage("go", go);
+hljs.registerLanguage("http", http);
+hljs.registerLanguage("java", java);
+hljs.registerLanguage("javascript", javascript);
+hljs.registerLanguage("json", json);
+hljs.registerLanguage("lua", lua);
+hljs.registerLanguage("markdown", markdown);
+hljs.registerLanguage("nginx", nginx);
+hljs.registerLanguage("pgsql", pgsql);
+hljs.registerLanguage("plaintext", plaintext);
+hljs.registerLanguage("powershell", powershell);
+hljs.registerLanguage("python", python);
+hljs.registerLanguage("python-repl", pythonRepl);
+hljs.registerLanguage("ruby", ruby);
+hljs.registerLanguage("shell", shell);
+hljs.registerLanguage("sql", sql);
+hljs.registerLanguage("typescript", typescript);
+hljs.registerLanguage("xml", xml);
+hljs.registerLanguage("yaml", yaml);
 
 
 /**
