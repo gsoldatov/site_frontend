@@ -1,6 +1,5 @@
-import marked from "marked";
-// @ts-ignore (import from library subfolder results in no types being visible)
-import { escape } from "marked/src/helpers";
+import { Marked, Tokenizer, Tokens, Renderer } from "marked";
+import { markedHighlight } from "marked-highlight";
 
 // Import highlight.js library and white-listed languages to manually register them
 import hljs from "highlight.js/lib/core";
@@ -34,15 +33,17 @@ import yaml from "highlight.js/lib/languages/yaml";
 
 import katex from "katex";
 
-import rules from "./markdown-rules";
+import { rules, escape } from "./util";
 
 
 /**
  * Markdown parser setup. 
  */
 const tokenizer = {
-    code(src: string) {
-        // Tokenize block formulas ($$ ... $$) as code
+    /**
+     * Tokenize block formulas ($$ ... $$) as code
+     */
+    code(src: string): Tokens.Code | false {
         const match = src.match(rules.blockFormula);
 
         if (match) {
@@ -52,12 +53,15 @@ const tokenizer = {
                 text: match[0]
             }
         }
+        
         // Use original tokenizer if no match is found
         return false;
     },
-
-    codespan(src: string) {
-        // Tokenize inline block formulas ($ ... $) as a codespan
+    
+    /**
+     * Tokenize inline block formulas ($ ... $) as a codespan
+     */
+    codespan(src: string): Tokens.Codespan | false {
         const match = src.match(rules.inlineFormula);
         if (match) {
             return {
@@ -71,20 +75,18 @@ const tokenizer = {
         return false;
     },
 
-    inlineText(this: marked.Tokenizer, src: string, inRawBlock: boolean, smartypants: any) {
-        // Default inline text tokenizer with an additional rule for stopping before inline formulas
+    /**
+     * Default inline text tokenizer with an additional rule for stopping before inline formulas
+     */
+    inlineText(this: Tokenizer, src: string, inRawBlock: boolean, smartypants: any): Tokens.Text | undefined {
         const cap = rules.inlineText.exec(src);
         if (cap) {
-            let text;
-            if (inRawBlock) {
-                text = this.options.sanitize ? (this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0])) : cap[0];
-            } else {
-            text = escape(this.options.smartypants ? smartypants(cap[0]) : cap[0]);
-            }
+            const escaped = this.lexer.state.inRawBlock;
             return {
                 type: 'text',
                 raw: cap[0],
-                text
+                text: cap[0],
+                escaped,
             };
         }
     }
@@ -92,60 +94,81 @@ const tokenizer = {
 
 
 const renderer = {
-    // Modified default heading renderer which adds +2 to header levels and adds a classname
-    heading(this: marked.Tokenizer, text: string, _level: number, raw: string, slugger: any) {
-        const level = Math.min(_level + 2, 6);
-      
-        if (this.options.headerIds) {
-            return '<h'
-                + level
-                + ' id="'
-                + this.options.headerPrefix
-                + slugger.slug(raw)
-                + '" class="markdown-header"'
-                + '>'
-                + text
-                + '</h'
-                + level
-                + '>\n';
+    /**
+     * Modified default heading renderer which adds +2 to header levels and adds a classname
+     */
+    heading(this: Renderer, { tokens, depth }: Tokens.Heading) {
+        const text = this.parser.parseInline(tokens);
+        const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+        depth = Math.min(depth + 2, 6);
+
+        return (
+            `<h${depth} class="markdown-header">` +
+                `${text}` +
+            `</h${depth}>`
+        );
+    },
+
+    /**
+     * Default renderer with a custom classname
+     */
+    blockquote(this: Renderer, { tokens }: Tokens.Blockquote) {
+        const body = this.parser.parse(tokens);
+        return (
+            '<blockquote class="markdown-blockquote">' +
+                `${body}` +
+            '</blockquote>'
+        );
+    },
+
+    /**
+     * Default renderer with a custom classname
+     */
+    hr(token: Tokens.Hr) {
+        return '<hr class="markdown-hr">\n';
+    },
+
+    /**
+     * Default renderer with a custom classname
+     */
+    table(this: Renderer, token: Tokens.Table) {
+        let header = '';
+
+        // header
+        let cell = '';
+        for (let j = 0; j < token.header.length; j++) {
+        cell += this.tablecell(token.header[j]);
         }
-        // ignore IDs
-        return '<h' + level + '>' + text + '</h' + level + '>\n';
-    },
+        header += this.tablerow({ text: cell });
 
-    // Default renderer with a custom classname
-    blockquote(quote: string) {
-        return '<blockquote class="markdown-blockquote">\n' + quote + '</blockquote>\n';
-    },
+        let body = '';
+        for (let j = 0; j < token.rows.length; j++) {
+        const row = token.rows[j];
 
-    // Default renderer with a custom classname
-    hr(this: marked.Tokenizer) {
-        return this.options.xhtml ? '<hr class="markdown-hr"/>\n' : '<hr class="markdown-hr">\n';
-    },
+        cell = '';
+        for (let k = 0; k < row.length; k++) {
+            cell += this.tablecell(row[k]);
+        }
 
-    // Default renderer with a custom classname
-    table(header: string, body: string) {
-        if (body) body = '<tbody>' + body + '</tbody>';
+        body += this.tablerow({ text: cell });
+        }
+        if (body) body = `<tbody>${body}</tbody>`;
 
         return '<table class="ui striped table">\n'
-            + '<thead>\n'
-            + header
-            + '</thead>\n'
-            + body
-            + '</table>\n';
+        + '<thead>\n'
+        + header
+        + '</thead>\n'
+        + body
+        + '</table>\n';
     },
 
-    // Default renderer with a custom classname
-    tablecell(content: string, flags: any) {
-        const type = flags.header ? 'th' : 'td';
-        // const className = ' class="markdown-' + type + '"';
-        const tag = flags.align
-            ? '<' + type /*+ className*/ + ' align="' + flags.align + '">'
-            : '<' + type /*+ className*/ + '>';
-    return tag + content + '</' + type + '>\n';
-    },
-    
-    code(this: marked.Tokenizer, code: string, infostring: string, escaped: boolean) {
+    /**
+     * Render block KaTeX formulae
+     */
+    code(this: Renderer,{ text, lang, escaped }: Tokens.Code) {
+        // Default code renderer start (with patterns being)
+        let code = text.replace(rules.endingNewline, '') + '\n';
+
         // Formula code renderer
         const isFormula = code.match(rules.blockFormula);
 
@@ -155,32 +178,14 @@ const renderer = {
             return "<p>" + formula + "</p>";
         }
 
-        // Default code renderer with an added "hljs" classname required for highlighting
-        const lang = ((infostring || '').match(/\S*/) || [])[0] || "";
-        if (this.options.highlight) {
-            const out = this.options.highlight(code, lang);
-            if (out != null && out !== code) {
-                escaped = true;
-                code = out;
-            }
-        }
+        // Use default renderer for code blocks (marked-highlight handles addition of CSS classnames)
+        return false;
+    },
 
-        if (!lang) {
-            return '<pre><code class="hljs">'
-                + (escaped ? code : escape(code, true))
-                + '</code></pre>\n';
-        }
-
-        return '<pre><code class="'
-            + this.options.langPrefix
-            + escape(lang, true)
-            + ' hljs'
-            + '">'
-            + (escaped ? code : escape(code, true))
-            + '</code></pre>\n';
-        },
-  
-    codespan(text: string) {
+    /**
+     * Render inline KaTeX formulae & add highlight.js CSS class name to codespans
+     */
+    codespan({ text }: Tokens.Codespan) {
         // Inline formula renderer
         const isFormula = text.match(rules.inlineFormula);
 
@@ -191,9 +196,11 @@ const renderer = {
         }
 
         // Default inline code renderer with an added "hljs" classname required for highlighting
-        return '<code class="hljs">' + text + '</code>';
-    }
+        // (marked-highlight does not process codespans)
+        return `<code class="hljs">${escape(text, true)}</code>`;
+    },
 };
+
 
 // Register HLJS languages, included in the bundle
 hljs.registerLanguage("bash", bash);
@@ -225,15 +232,20 @@ hljs.registerLanguage("yaml", yaml);
 
 
 /**
- * Add a code highlighting with Highlight.js
- * (an additional "hljs" classname must be added separately to \<code\> tags in order to apply styles them).
+ * Use marked-highlight extension to add highlighting for code blocks.
+ * (NOTE: inline code spans are not processed by it)
  */
-// const highlight = (code) => hljs.highlightAuto(code).value;  // very slow
-const highlight = (code: string, language: string) => {
-    const validLanguage = hljs.getLanguage(language) ? language : "plaintext";
-    return hljs.highlight(code, { language: validLanguage }).value;
-};
+const marked = new Marked(
+    markedHighlight({
+        emptyLangClass: "hljs",
+        langPrefix: "hljs language-",
+        highlight(code, lang, info) {
+            const language = hljs.getLanguage(lang) ? lang : "plaintext";
+            return hljs.highlight(code, { language }).value;
+        }
+    })
+);
 
-// @ts-ignore (optional props for tokenizer & renderer overrides are declared as required in types)
-marked.use({ tokenizer, renderer, highlight });
-export default (text: string) => marked(text);
+// @ts-ignore
+marked.use({ tokenizer, renderer });
+export default (text: string) => marked.parse(text);

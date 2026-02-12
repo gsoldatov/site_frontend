@@ -12,7 +12,7 @@ test("Headers + check rendering", () => {
     });
 
     [4, 5, 6].forEach(i => {
-        const parsed = parse(`${"#".repeat(i)} Header`);
+        const parsed = parse(`${"#".repeat(i)} Header`).replace("\n", "");
         const re = new RegExp(`<h6[\\s\\S]+class="(?<classNames>[^"]+)"[\\s\\S]*>Header<\\/h6>`);
         const match = parsed.match(re);
         expect(match).toBeTruthy();
@@ -96,7 +96,7 @@ test("Block formula", () => {
 });
 
 
-test("Inline code", () => {
+test("Inline formula", () => {
     // Inline formula is rendered regardless of its position in a paragraph and allows usage of escaped dollar-signs
     const re = new RegExp(`<span[\\s\\S]+?class="(?<classNames>[^"]+)"[\\s\\S]*?>[\s\S]*<annotation`);  // raw formula is placed in an <annotation> tag, and dollar-signs should not be searched insed
     ["$ \\alpha = \\beta \\$ \\$ $", "Text before code $ \\alpha = \\beta \\$ \\$ $", "$ \\alpha = \\beta \\$ \\$ $ text after code", "Text before code $ \\alpha = \\beta \\$ \\$ $ text after code"].forEach(raw => {

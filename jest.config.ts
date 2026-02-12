@@ -19,27 +19,34 @@ const config: Config = {
     // transpilation allows testing app (and using test utils) with ES modules)
     transform: {
         "^.+\\.[jt]sx?$": [
-          "ts-jest", {
-            diagnostics: {
-              ignoreCodes: [
-                // Using hybrid module kind (Node16/18/Next) is only supported in "isolatedModules: true"
-                151002
-              ]
-            }
+            "ts-jest", {
+                diagnostics: {
+                    ignoreCodes: [
+                        // Using hybrid module kind (Node16/18/Next) is only supported in "isolatedModules: true"
+                        151002
+                    ]
+                }
           }
         ],
     },
+
+    // Files, which will not be transformed
+    transformIgnorePatterns: [
+        // node_modules, except the following packages:
+        // - marked (v17 can't be used in tests without transformation)
+        '/node_modules/(?!(marked)/)'
+    ],
     
     // Map files to test stubs
     moduleNameMapper: {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/_mocks/file-mock.js",
-      "\\.(css|less)$": "<rootDir>/tests/_mocks/style-mock.js",
-      "parse-markdown\\.worker(?:\\.jsx?)?$": "<rootDir>/tests/_mocks/markdown-parse-worker-mock.js"
+        "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/_mocks/file-mock.js",
+        "\\.(css|less)$": "<rootDir>/tests/_mocks/style-mock.js",
+        "parse-markdown\\.worker(?:\\.jsx?)?$": "<rootDir>/tests/_mocks/markdown-parse-worker-mock.js"
     },
 
     // Run additional imports before tests are executed
     setupFilesAfterEnv: [
-      "./jest-setup.ts"
+        "./jest-setup.ts"
     ]
 };
 
