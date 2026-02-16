@@ -34,6 +34,18 @@ npm test /objects/view
 npm version [patch|minor|major] --force -m "Commit message"
 ```
 
+## Profile Bundle Size (via webpack-bundle-analyzer)
+```bash
+export BUNDLE_ANALYZE=1 && npm run build
+```
+
+## Webpack Build Process Flamegraph
+```bash
+# Alternative to Webpack's Profiling Plugin
+npm install -D 0x
+npx 0x -D ./profiling/0x ./node_modules/webpack-cli/bin/cli.js
+```
+
 ## Show Lines of Code
 ```bash
 npx sloc [<dir1> [... <din n>]]

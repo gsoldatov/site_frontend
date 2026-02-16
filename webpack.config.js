@@ -2,6 +2,7 @@ const webpack = require("webpack");
 const path = require("path");
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const HeapSamplingPlugin = require("heap-sampling-webpack-plugin");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
@@ -79,6 +80,17 @@ module.exports = {
 
 
     plugins: [
+        // // CPU usage profiler (generates an event log, but
+        // // it fails to be imported into Chrome)
+        // new webpack.debug.ProfilingPlugin({
+        //     outputPath: path.resolve(__dirname, "profiling/events.json"),
+        // }),
+
+        // // Memory profiler (does not generate and output on build)
+        // new HeapSamplingPlugin({
+        //     outputPath: path.resolve(__dirname, "profiling/heapprofile"),
+        // }),
+
         // Generate a treemap chart on build
         new BundleAnalyzerPlugin({
             analyzerMode: bundleAnalyze ? "static" : "disabled"
@@ -100,7 +112,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: "Site",
             template: "./src/index.html"
-        })
+        }),
     ],
 
 
